@@ -605,9 +605,65 @@
         }
     }
 
+    .pr-time-label-start-date{
+        background: red;
+        grid-area: head;
+    }
+    .pr-time-label-start-time{
+        background: red;
+        grid-area: headd;
+    }
+    .pr-time-input-start-date{
+        background: blue;
+        grid-area: headdd;
+    }
+    .pr-time-input-start-time{
+        background: blue;
+        grid-area: inputStartTime;
+    }
+
+    .icon-arrows-right-left{
+        background: green;
+        grid-area: arrowIcon;
+    }
+    .pr-time-label-end-date{
+        background: red;
+        grid-area: endDate;
+    }
+    .pr-time-label-end-time{
+        background: red;
+        grid-area: endTime;
+
+    }
+    .pr-time-input-end-date{
+        background: blue;
+        grid-area: inputEndDate;
+    }
+    .pr-time-input-end-time{
+        background: blue;
+        grid-area: inputEndTime;
+    }
+    .pr-time-input--buttons{
+        background: purple;
+        grid-area: buttons;
+    }
+    .pr-time-label-blank-grid{
+        background: yellow;
+        grid-area: blankSpace;
+    }
+
     &--fixed-mode {
         .c-tc-input-popup__input-grid {
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+            // grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+            grid-template-rows: 50px 1fr 30px;
+            grid-template-columns: 150px 1fr;
+            // grid-template-areas: 
+            //     "start_date start_time blank-space end_date end_time blank-space"
+            //     "input_start_date input_start_time arrow_icon input_end_date input_end_time buttons";
+            grid-template-areas: 
+               "head headd headdd";
+
+
         }
     }
 
