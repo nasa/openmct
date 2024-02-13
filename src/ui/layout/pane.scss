@@ -191,6 +191,19 @@
       }
     }
 
+    &[class*='--collapsed'] {
+      &.collapse-horizontal {
+        [class*='expand-button'] {
+          display: block;
+          position: absolute;
+          top: 0;
+          width: 100%;
+          border-top-right-radius: $controlCr;
+          border-top-left-radius: $controlCr;
+        }
+      }
+    }
+
     &[class*='--horizontal'] {
       > .l-pane__handle {
         cursor: col-resize;
