@@ -163,13 +163,13 @@ export default {
     },
     updateView() {
       //If this object is not persistable, then package it with it's parent
-      const object = this.getPlotObject();
+      const plotObject = this.getPlotObject();
 
-      if (this.openmct.telemetry.isTelemetryObject(object)) {
-        this.subscribeToStaleness(object);
+      if (this.openmct.telemetry.isTelemetryObject(plotObject)) {
+        this.subscribeToStaleness(plotObject);
       } else {
         // possibly overlay or other composition based plot
-        this.composition = this.openmct.composition.get(object);
+        this.composition = this.openmct.composition.get(plotObject);
 
         this.composition.on('add', this.subscribeToStaleness);
         this.composition.on('remove', this.triggerUnsubscribeFromStaleness);
@@ -209,61 +209,63 @@ export default {
       this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
     },
     getPlotObject() {
-      if (this.childObject.configuration?.series) {
-        //If the object has a configuration (like an overlay plot), allow initialization of the config from it's persisted config
-        return this.childObject;
-      } else {
-        //If object is missing, warn and return object
-        if (this.openmct.objects.isMissing(this.childObject)) {
-          console.warn('Missing domain object');
-
-          return this.childObject;
-        }
-
-        // If the object does not have configuration, initialize the series config with the persisted config from the stacked plot
-        const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
-        let config = configStore.get(configId);
-        if (!config) {
-          let persistedSeriesConfig = this.domainObject.configuration.series.find(
-            (seriesConfig) => {
-              return this.openmct.objects.areIdsEqual(
-                seriesConfig.identifier,
-                this.childObject.identifier
-              );
-            }
+      this.checkPlotConfiguration();
+      // If object is missing, warn
+      if (this.openmct.objects.isMissing(this.childObject)) {
+        console.warn('Missing domain object for stacked plot', this.childObject);
+      }
+      return this.childObject;
+    },
+    checkPlotConfiguration() {
+      // If the object has its own configuration (like an overlay plot), don't initialize a stacked plot configuration
+      // and instead use its configuration directly.
+      // Otherwise ensure we've got a stacked plot item configuration ready for us.
+      if (
+        !this.openmct.objects.isMissing(this.childObject) &&
+        !this.childObject.configuration?.series
+      ) {
+        this.ensureStackedSeriesConfigInitialization();
+      }
+    },
+    ensureStackedSeriesConfigInitialization() {
+      const configId = this.openmct.objects.makeKeyString(this.childObject.identifier);
+      const existingConfig = configStore.get(configId);
+      if (!existingConfig) {
+        let persistedSeriesConfig = this.domainObject.configuration.series.find((seriesConfig) => {
+          return this.openmct.objects.areIdsEqual(
+            seriesConfig.identifier,
+            this.childObject.identifier
           );
+        });
 
-          if (!persistedSeriesConfig) {
-            persistedSeriesConfig = {
-              series: {},
-              yAxis: {}
-            };
-          }
-
-          config = new PlotConfigurationModel({
-            id: configId,
-            domainObject: {
-              ...this.childObject,
-              configuration: {
-                series: [
-                  {
-                    identifier: this.childObject.identifier,
-                    ...persistedSeriesConfig.series
-                  }
-                ],
-                yAxis: persistedSeriesConfig.yAxis
-              }
-            },
-            openmct: this.openmct,
-            palette: this.colorPalette,
-            callback: (data) => {
-              this.data = data;
-            }
-          });
-          configStore.add(configId, config);
+        if (!persistedSeriesConfig) {
+          persistedSeriesConfig = {
+            series: {},
+            yAxis: {}
+          };
         }
 
-        return this.childObject;
+        const newConfig = new PlotConfigurationModel({
+          id: configId,
+          domainObject: {
+            ...this.childObject,
+            configuration: {
+              series: [
+                {
+                  identifier: this.childObject.identifier,
+                  ...persistedSeriesConfig.series
+                }
+              ],
+              yAxis: persistedSeriesConfig.yAxis
+            }
+          },
+          openmct: this.openmct,
+          palette: this.colorPalette,
+          callback: (data) => {
+            this.data = data;
+          }
+        });
+        configStore.add(configId, newConfig);
       }
     }
   }
