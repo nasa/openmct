@@ -75,7 +75,6 @@ export default {
       type: String,
       default: ''
     },
-    paneType: String,
     persistPosition: {
       type: Boolean,
       default: false
@@ -190,7 +189,7 @@ export default {
       delete this.dragCollapse;
       this.collapsed = false;
     },
-    handleHideUrl() {      
+    handleHideUrl() {
       const hideParam = this.openmct.router.getSearchParam(this.hideParam);
 
       if (hideParam === 'true') {
