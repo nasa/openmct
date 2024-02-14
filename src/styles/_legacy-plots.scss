@@ -658,13 +658,6 @@ mct-plot {
 
 .gl-plot,
 .c-plot {
-  &.plot-legend-collapsed .plot-wrapper-expanded-legend {
-    display: none;
-  }
-  &.plot-legend-expanded .plot-wrapper-collapsed-legend {
-    display: none;
-  }
-
   &.plot-legend-collapsed .icon-cursor-lock::before {
     padding-right: 5px;
   }

@@ -150,7 +150,7 @@ export default {
         return true;
       }
 
-      const regex = new RegExp(/^([a-zA-Z0-9_\-\s,])+$/g);
+      const regex = new RegExp(/^([a-zA-Z0-9_.\-\s,])+$/g);
 
       return regex.test(value);
     }
