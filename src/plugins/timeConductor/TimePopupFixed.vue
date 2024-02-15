@@ -3,7 +3,7 @@
     <div class="c-tc-input-popup__input-grid">
       <div class="pr-time-label pr-time-label-start-date"><em>Start</em> Date</div>
       <div class="pr-time-label pr-time-label-start-time">Time</div>
-      <div class="pr-time-label pr-time-label-blank-grid"></div>
+      <div class="pr-time-label pr-time__label-blank-grid"></div>
       <div class="pr-time-label pr-time-label-end-date"><em>End</em> Date</div>
       <div class="pr-time-label pr-time-label-end-time">Time</div>
       <div class="pr-time-label pr-time-label-blank-grid"></div>
