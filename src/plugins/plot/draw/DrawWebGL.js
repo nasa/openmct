@@ -228,8 +228,8 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
   }
 
   if (dimensions && dimensions.length > 0 && origin && origin.length > 0) {
-    this.gl.uniform2fv(this.uDimensions, dimensions);
-    this.gl.uniform2fv(this.uOrigin, origin);
+    this.gl?.uniform2fv(this.uDimensions, dimensions);
+    this.gl?.uniform2fv(this.uOrigin, origin);
   }
 };
 

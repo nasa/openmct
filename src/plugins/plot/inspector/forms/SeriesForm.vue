@@ -157,7 +157,8 @@ export default {
       limitLines: this.series.get('limitLines'),
       markerSize: this.series.get('markerSize'),
       validation: {},
-      swatchActive: false
+      swatchActive: false,
+      status: null
     };
   },
   computed: {
@@ -190,7 +191,7 @@ export default {
       return this.series.get('color').asHexString();
     }
   },
-  mounted() {
+  created() {
     this.initialize();
 
     this.status = this.openmct.status.get(this.series.domainObject.identifier);
@@ -205,7 +206,7 @@ export default {
     }
   },
   methods: {
-    initialize: function () {
+    initialize() {
       this.fields = [
         {
           modelProp: 'yKey',
