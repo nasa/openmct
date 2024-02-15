@@ -27,7 +27,7 @@ import { createDomainObjectWithDefaults, expandEntireTree } from '../../../../ap
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Preview mode', () => {
-  test.only('all context menu items are available for a telemetry table', async ({ page }) => {
+  test('all context menu items are available for a telemetry table', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Create a Display Layout
     const displayLayout = await createDomainObjectWithDefaults(page, {
