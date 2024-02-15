@@ -34,13 +34,13 @@ test.describe('User Roles', () => {
     // we have multiple available roles, so it should prompt the user
     await expect(page.getByText('Select Role')).toBeVisible();
     await page.getByRole('combobox').selectOption('driver');
-    await page.getByRole('button', { name: 'Select' }).click();
+    await page.getByRole('button', { name: 'Select', exact: true }).click();
     await expect(page.getByLabel('User Role')).toContainText('driver');
 
     // attempt changing the role to another valid available role
     await page.getByRole('button', { name: 'Change Role' }).click();
     await page.getByRole('combobox').selectOption('flight');
-    await page.getByRole('button', { name: 'Select' }).click();
+    await page.getByRole('button', { name: 'Select', exact: true }).click();
     await expect(page.getByLabel('User Role')).toContainText('flight');
 
     // reload page
@@ -63,7 +63,7 @@ test.describe('User Roles', () => {
 
     // select real role of "driver"
     await page.getByRole('combobox').selectOption('driver');
-    await page.getByRole('button', { name: 'Select' }).click();
+    await page.getByRole('button', { name: 'Select', exact: true }).click();
     await expect(page.getByLabel('User Role')).toContainText('driver');
   });
 });

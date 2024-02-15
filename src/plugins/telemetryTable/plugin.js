@@ -19,16 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 import TableConfigurationViewProvider from './TableConfigurationViewProvider.js';
-import TelemetryTableType from './TelemetryTableType.js';
+import getTelemetryTableType from './TelemetryTableType.js';
 import TelemetryTableViewProvider from './TelemetryTableViewProvider.js';
 import TelemetryTableViewActions from './ViewActions.js';
 
-export default function plugin() {
+export default function plugin(options) {
   return function install(openmct) {
-    openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
+    openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct, options));
     openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
-    openmct.types.addType('table', TelemetryTableType);
+    openmct.types.addType('table', getTelemetryTableType(options));
     openmct.composition.addPolicy((parent, child) => {
       if (parent.type === 'table') {
         return Object.prototype.hasOwnProperty.call(child, 'telemetry');

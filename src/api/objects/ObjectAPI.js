@@ -99,7 +99,13 @@ export default class ObjectAPI {
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
-    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
+    this.SYNCHRONIZED_OBJECT_TYPES = [
+      'notebook',
+      'restricted-notebook',
+      'plan',
+      'annotation',
+      'activity-states'
+    ];
 
     this.errors = {
       Conflict: ConflictError
@@ -348,6 +354,9 @@ export default class ObjectAPI {
   isPersistable(idOrKeyString) {
     let identifier = utils.parseKeyString(idOrKeyString);
     let provider = this.getProvider(identifier);
+    if (provider?.isReadOnly) {
+      return !provider.isReadOnly();
+    }
 
     return provider !== undefined && provider.create !== undefined && provider.update !== undefined;
   }

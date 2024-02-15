@@ -222,6 +222,7 @@
           ref="contentTable"
           class="c-table__body c-telemetry-table__body js-telemetry-table__content"
           :style="{ height: totalHeight + 'px' }"
+          :aria-label="`${table.domainObject.name} table content`"
         >
           <tbody>
             <telemetry-table-row
@@ -233,7 +234,7 @@
               :object-path="objectPath"
               :row-offset="rowOffset"
               :row-height="rowHeight"
-              :row="row"
+              :row="getRow(rowIndex)"
               :marked="row.marked"
               @mark="markRow"
               @unmark="unmarkRow"
@@ -276,6 +277,8 @@
         class="c-telemetry-table__footer"
         :marked-rows="markedRows.length"
         :total-rows="totalNumberOfRows"
+        :telemetry-mode="telemetryMode"
+        @telemetry-mode-change="updateTelemetryMode"
       />
     </div>
   </div>
@@ -292,6 +295,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import throttle from '../../../utils/throttle';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -300,7 +304,7 @@ import TelemetryTableRow from './TableRow.vue';
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
-const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
+const AUTO_SCROLL_TRIGGER_HEIGHT = ROW_HEIGHT * 3;
 
 export default {
   components: {
@@ -384,7 +388,9 @@ export default {
       enableRegexSearch: {},
       hideHeaders: configuration.hideHeaders,
       totalNumberOfRows: 0,
-      rowContext: {}
+      rowContext: {},
+      telemetryMode: configuration.telemetryMode,
+      persistModeChanges: configuration.persistModeChanges
     };
   },
   computed: {
@@ -437,6 +443,12 @@ export default {
   watch: {
     loading: {
       handler(isLoading) {
+        if (isLoading) {
+          this.setLoadingPromise();
+        } else {
+          this.loadFinishResolve();
+        }
+
         if (this.viewActionsCollection) {
           let action = isLoading ? 'disable' : 'enable';
           this.viewActionsCollection[action](['export-csv-all']);
@@ -503,6 +515,8 @@ export default {
       });
     }
 
+    this.updateVisibleRows = throttle(this.updateVisibleRows, 1000);
+
     this.table.on('object-added', this.addObject);
     this.table.on('object-removed', this.removeObject);
     this.table.on('refresh', this.clearRowsAndRerender);
@@ -555,6 +569,12 @@ export default {
     this.table.destroy();
   },
   methods: {
+    setLoadingPromise() {
+      this.loadFinishResolve = null;
+      this.isFinishedLoading = new Promise((resolve, reject) => {
+        this.loadFinishResolve = resolve;
+      });
+    },
     updateVisibleRows() {
       if (!this.updatingView) {
         this.updatingView = this.renderWhenVisible(() => {
@@ -632,7 +652,21 @@ export default {
 
       this.calculateScrollbarWidth();
     },
+    getRow(rowIndex) {
+      return toRaw(this.visibleRows[rowIndex]);
+    },
     sortBy(columnKey) {
+      let timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === 'performance' && columnKey !== timeSystemKey) {
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Sort', () => {
+          this.initiateSort(columnKey);
+        });
+      } else {
+        this.initiateSort(columnKey);
+      }
+    },
+    initiateSort(columnKey) {
       // If sorting by the same column, flip the sort direction.
       if (this.sortOptions.key === columnKey) {
         if (this.sortOptions.direction === 'asc') {
@@ -643,7 +677,7 @@ export default {
       } else {
         this.sortOptions = {
           key: columnKey,
-          direction: 'asc'
+          direction: 'desc'
         };
       }
 
@@ -653,7 +687,7 @@ export default {
       this.updateVisibleRows();
       this.synchronizeScrollX();
 
-      if (this.shouldSnapToBottom()) {
+      if (this.shouldAutoScroll()) {
         this.autoScroll = true;
       } else {
         // If user scrolls away from bottom, disable auto-scroll.
@@ -661,13 +695,17 @@ export default {
         this.autoScroll = false;
       }
     },
-    shouldSnapToBottom() {
+    shouldAutoScroll() {
+      if (this.sortOptions.direction === 'desc') {
+        return false;
+      }
+
       return (
         this.scrollable.scrollTop >=
         this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT
       );
     },
-    scrollToBottom() {
+    initiateAutoScroll() {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
@@ -716,7 +754,7 @@ export default {
       }
 
       if (this.autoScroll) {
-        this.scrollToBottom();
+        this.initiateAutoScroll();
       }
 
       this.updateVisibleRows();
@@ -743,12 +781,25 @@ export default {
         headers: headerKeys
       });
     },
-    exportAllDataAsCSV() {
+    getTableRowData() {
       const justTheData = this.table.tableRows
         .getRows()
         .map((row) => row.getFormattedDatum(this.headers));
 
-      this.exportAsCSV(justTheData);
+      return justTheData;
+    },
+    exportAllDataAsCSV() {
+      if (this.telemetryMode === 'performance') {
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Export', () => {
+          const data = this.getTableRowData();
+
+          this.exportAsCSV(data);
+        });
+      } else {
+        const data = this.getTableRowData();
+
+        this.exportAsCSV(data);
+      }
     },
     exportMarkedDataAsCSV() {
       const data = this.table.tableRows
@@ -842,7 +893,7 @@ export default {
             // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
             // Need to preserve scroll position in this case.
             if (this.autoScroll) {
-              this.scrollToBottom();
+              this.initiateAutoScroll();
             } else {
               this.scrollable.scrollTop = scrollTop;
             }
@@ -1097,6 +1148,54 @@ export default {
       } else {
         this.viewActionsCollection.show(['autosize-columns']);
         this.viewActionsCollection.hide(['expand-columns']);
+      }
+    },
+    confirmUnlimitedMode(
+      label,
+      callback,
+      message = 'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?'
+    ) {
+      const dialog = this.openmct.overlays.dialog({
+        iconClass: 'alert',
+        message,
+        buttons: [
+          {
+            label,
+            emphasis: true,
+            callback: async () => {
+              this.updateTelemetryMode();
+              await this.isFinishedLoading;
+
+              callback();
+
+              dialog.dismiss();
+            }
+          },
+          {
+            label: 'Cancel',
+            callback: () => {
+              dialog.dismiss();
+            }
+          }
+        ]
+      });
+    },
+    updateTelemetryMode() {
+      this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
+
+      if (this.persistModeChanges) {
+        this.table.configuration.setTelemetryMode(this.telemetryMode);
+      }
+
+      this.table.updateTelemetryMode(this.telemetryMode);
+
+      const timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === 'performance' && this.sortOptions.key !== timeSystemKey) {
+        this.openmct.notifications.info(
+          'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
+        );
+        this.initiateSort(timeSystemKey);
       }
     },
     setRowHeight(height) {

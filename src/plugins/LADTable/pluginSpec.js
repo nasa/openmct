@@ -423,7 +423,7 @@ describe('The LAD Table Set', () => {
         (viewProvider) => viewProvider.key === ladTableSetKey
       );
       ladTableSetView = ladTableSetViewProvider.view(mockObj.ladTableSet, [mockObj.ladTableSet]);
-      ladTableSetView.show(child);
+      ladTableSetView.show(child, false, { renderWhenVisible });
 
       return nextTick();
     });

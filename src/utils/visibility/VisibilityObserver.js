@@ -32,24 +32,35 @@ export default class VisibilityObserver {
    * Constructs a VisibilityObserver instance to manage visibility-based requestAnimationFrame calls.
    *
    * @param {HTMLElement} element - The DOM element to observe for visibility changes.
+   * @param {HTMLElement} rootContainer - The DOM element that is the root of the viewport.
    * @throws {Error} If element is not provided.
    */
-  constructor(element) {
-    if (!element) {
-      throw new Error(`VisibilityObserver must be created with an element`);
+  constructor(element, rootContainer) {
+    if (!element || !rootContainer) {
+      throw new Error(`VisibilityObserver must be created with an element and a rootContainer.`);
     }
     this.#element = element;
     this.isIntersecting = true;
     this.calledOnce = false;
-
-    this.#observer = new IntersectionObserver(this.#observerCallback);
+    const options = {
+      root: rootContainer
+    };
+    this.#observer = new IntersectionObserver(this.#observerCallback, options);
     this.lastUnfiredFunc = null;
     this.renderWhenVisible = this.renderWhenVisible.bind(this);
   }
 
+  #inOverlay() {
+    return this.#element.closest('.js-overlay') !== null;
+  }
+
   #observerCallback = ([entry]) => {
     if (entry.target === this.#element) {
-      this.isIntersecting = entry.isIntersecting;
+      if (this.#inOverlay() && !entry.isIntersecting) {
+        this.isIntersecting = true;
+      } else {
+        this.isIntersecting = entry.isIntersecting;
+      }
       if (this.isIntersecting && this.lastUnfiredFunc) {
         window.requestAnimationFrame(this.lastUnfiredFunc);
         this.lastUnfiredFunc = null;

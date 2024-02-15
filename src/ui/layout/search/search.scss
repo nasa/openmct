@@ -24,35 +24,42 @@
 .c-gsearch {
   .l-shell__head & {
     // Search input in the shell head
-    width: 20%;
-
     .c-search {
       background: rgba($colorHeadFg, 0.2);
       box-shadow: none;
-      // body.mobile & {
-      //   @include phonePortrait() { // This logic of expanding the search input upon click only happens in mobile portrait mode
-      //     background: $colorHeadBg;
-      //     width: 15%;
-      //     &:hover {
-      //       background-color: rgba($colorHeadFg, 0.2);
-      //       width: 100%;
-      //     }
-      //   }
-      // }
+      flex: 1 1 auto;
+      body.mobile & {
+        @include phonePortrait() { // This logic of expanding the search input upon click only happens in mobile portrait mode
+          background: $colorHeadBg;
+          width: 15%;
+          &:hover { // When clicked, expand the search bar
+            background-color: rgba($colorHeadFg, 0.2);
+            width: 50vw;
+            transition: width 120ms;
+          }
+        }
+      }
     }
   }
 
-  &__results-wrapper {
+  &__dropdown {
     @include menuOuter();
     display: flex;
     flex-direction: column;
     padding: $interiorMarginLg;
     min-width: 500px;
     max-height: 500px;
+    top: $formInputH;
     z-index: 60;
-    body.mobile & {
-      min-width: 95vw;
-      min-height: 95vh;
+    body.mobile & { // Makes search in mobile look less like an overlay, and more fullscreen.
+      position: absolute;
+      top: 25px;
+      left: -12px;
+      height: calc(100vh - 22px);
+      min-width: 100vw;
+      max-height: none;
+      border-radius: 0px;
+      box-shadow: none;
     }
   }
 
@@ -99,19 +106,16 @@
   }
 
   body.mobile & {
-    width: 50%;
-    @include phonePortrait() { // This logic only appears for a mobile portrait mode
-      width: 100%;
-    }
+    width: 50vw;
   }
 }
 
 .c-gsearch-result {
   display: flex;
-  padding: $interiorMargin $interiorMarginSm;
+  padding: $interiorMarginSm 0;
 
   > * + * {
-    margin-left: $interiorMarginLg;
+    margin-left: $interiorMargin;
   }
 
   + .c-gsearch-result {
@@ -125,7 +129,7 @@
 
   &__type-icon {
     color: $colorItemTreeIcon;
-    font-size: 2.2em;
+    font-size: 1.5em;
 
     // TEMP: uses object-label component, hide label part
     .c-object-label__name {
@@ -145,6 +149,7 @@
     }
 
     .c-location {
+      color: $colorBodyFg;
       font-size: 0.9em;
       opacity: 0.8;
     }

@@ -46,14 +46,14 @@ describe('DeviceMatchers', function () {
     return 'is' + deviceType[0].toUpperCase() + deviceType.slice(1);
   }
 
-  ['mobile', 'phone', 'tablet', 'landscape', 'portrait', 'landscape', 'touch'].forEach(function (
-    deviceType
-  ) {
-    it('detects when a device is a ' + deviceType + ' device', function () {
-      mockAgent[method(deviceType)].and.returnValue(true);
-      expect(DeviceMatchers[deviceType](mockAgent)).toBe(true);
-      mockAgent[method(deviceType)].and.returnValue(false);
-      expect(DeviceMatchers[deviceType](mockAgent)).toBe(false);
-    });
-  });
+  ['mobile', 'phone', 'tablet', 'landscape', 'portrait', 'landscape', 'touch'].forEach(
+    function (deviceType) {
+      it('detects when a device is a ' + deviceType + ' device', function () {
+        mockAgent[method(deviceType)].and.returnValue(true);
+        expect(DeviceMatchers[deviceType](mockAgent)).toBe(true);
+        mockAgent[method(deviceType)].and.returnValue(false);
+        expect(DeviceMatchers[deviceType](mockAgent)).toBe(false);
+      });
+    }
+  );
 });

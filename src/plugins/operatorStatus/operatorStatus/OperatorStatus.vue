@@ -20,11 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div
-    :style="position"
-    class="c-status-poll-panel c-status-poll-panel--operator"
-    @click.stop="noop"
-  >
+  <div :style="position" class="c-status-poll-panel c-status-poll-panel--operator" @click.stop>
     <div class="c-status-poll-panel__section c-status-poll-panel__top">
       <div class="c-status-poll-panel__title">Status Poll</div>
       <div class="c-status-poll-panel__user-role icon-person">{{ role }}</div>
@@ -191,8 +187,7 @@ export default {
       } else {
         return status;
       }
-    },
-    noop() {}
+    }
   }
 };
 </script>

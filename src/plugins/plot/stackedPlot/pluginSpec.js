@@ -360,13 +360,15 @@ describe('the plugin', function () {
       expect(legend[0].innerHTML).toEqual('Test Object');
     });
 
-    it('Renders an expanded legend for every telemetry', () => {
+    it('Renders an expanded legend for every telemetry', async () => {
       let legendControl = element.querySelector(
         '.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle'
       );
       const clickEvent = createMouseEvent('click');
 
       legendControl.dispatchEvent(clickEvent);
+
+      await nextTick();
 
       let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
       expect(legend.length).toBe(6);

@@ -60,10 +60,22 @@ const STATUSES = [
     statusFgColor: '#fff'
   }
 ];
+
+const MISSION_STATUSES = [
+  {
+    key: 0,
+    label: 'NO GO'
+  },
+  {
+    key: 1,
+    label: 'GO'
+  }
+];
 /**
  * @implements {StatusUserProvider}
  */
 export default class ExampleUserProvider extends EventEmitter {
+  #actionToStatusMap;
   constructor(
     openmct,
     { statusRoles } = {
@@ -73,6 +85,11 @@ export default class ExampleUserProvider extends EventEmitter {
     super();
 
     this.openmct = openmct;
+    this.#actionToStatusMap = {
+      Imagery: MISSION_STATUSES[0],
+      Commanding: MISSION_STATUSES[0],
+      Driving: MISSION_STATUSES[0]
+    };
     this.user = undefined;
     this.loggedIn = false;
     this.autoLoginUser = undefined;
@@ -110,6 +127,11 @@ export default class ExampleUserProvider extends EventEmitter {
   canSetPollQuestion() {
     return Promise.resolve(true);
   }
+
+  canSetMissionStatus() {
+    return Promise.resolve(true);
+  }
+
   hasRole(roleId) {
     if (!this.loggedIn) {
       Promise.resolve(undefined);
@@ -120,6 +142,28 @@ export default class ExampleUserProvider extends EventEmitter {
 
   getPossibleRoles() {
     return this.user.getRoles();
+  }
+
+  getPossibleMissionActions() {
+    return Promise.resolve(Object.keys(this.#actionToStatusMap));
+  }
+
+  getPossibleMissionActionStatuses() {
+    return Promise.resolve(MISSION_STATUSES);
+  }
+
+  getStatusForMissionAction(action) {
+    return Promise.resolve(this.#actionToStatusMap[action]);
+  }
+
+  setStatusForMissionAction(action, status) {
+    this.#actionToStatusMap[action] = status;
+    this.emit('missionStatusChange', {
+      action,
+      status
+    });
+
+    return true;
   }
 
   getAllStatusRoles() {

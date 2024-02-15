@@ -94,7 +94,7 @@ export default class XAxisModel extends Model {
    */
   defaultModel(options) {
     const bounds = options.openmct.time.bounds();
-    const timeSystem = options.openmct.time.timeSystem();
+    const timeSystem = options.openmct.time.getTimeSystem();
     const format = options.openmct.telemetry.getFormatter(timeSystem.timeFormat);
 
     /** @type {XAxisModelType} */

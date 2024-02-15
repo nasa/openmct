@@ -98,6 +98,7 @@ body.desktop {
   }
 
   div,
+  ul,
   span {
     // Firefox
     scrollbar-color: $scrollbarThumbColor $scrollbarTrackColorBg;
@@ -360,11 +361,12 @@ body.desktop .has-local-controls {
   }
 }
 
+[aria-disabled = 'true'],
 *[disabled],
 .disabled {
   opacity: $controlDisabledOpacity;
+  cursor: not-allowed !important;
   pointer-events: none !important;
-  cursor: default !important;
 }
 
 /******************************************************** RESPONSIVE CONTAINERS */

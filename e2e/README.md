@@ -109,7 +109,7 @@ For those interested in the mechanics of snapshot testing with Playwright, you c
 // from our package.json or circleCI configuration file
 docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
-npx playwright test --config=e2e/playwright-ci.config.js --project=chrome --grep @snapshot
+npm run test:e2e:checksnapshots
 ```
 
 ### Updating Snapshots
@@ -132,6 +132,12 @@ Linux/CI
 docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
 npm install
 npm run test:e2e:updatesnapshots
+```
+
+Once that's done, you'll need to run the following to verify that the changes do not cause more problems:
+
+```sh
+npm run test:e2e:checksnapshots
 ```
 
 ## Automated Accessibility (a11y) Testing

@@ -20,7 +20,10 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-indicator c-indicator--clickable icon-clear-data s-status-caution">
+  <div
+    aria-label="Global Clear Indicator"
+    class="c-indicator c-indicator--clickable icon-clear-data s-status-caution"
+  >
     <span class="label c-indicator__label">
       <button @click="globalClearEmit">Clear Data</button>
     </span>

@@ -21,18 +21,80 @@
 -->
 
 <template>
-  <div class="c-indicator icon-person c-indicator--clickable">
+  <div
+    ref="userIndicatorRef"
+    class="c-indicator c-indicator--user icon-person"
+    :class="canSetMissionStatus ? 'clickable' : ''"
+    v-bind="$attrs"
+    @click.stop="togglePopup"
+  >
     <span class="label c-indicator__label" aria-label="User Role">
       {{ role ? `${userName}: ${role}` : userName }}
-      <button v-if="availableRoles?.length > 1" @click="promptForRoleSelection">Change Role</button>
+      <button v-if="availableRoles?.length > 1" @click.stop="promptForRoleSelection">
+        Change Role
+      </button>
+      <button
+        v-if="canSetMissionStatus"
+        aria-label="Toggle Mission Status Panel"
+        @click.stop="togglePopup"
+      >
+        Mission Status
+      </button>
     </span>
   </div>
+  <Teleport to="body">
+    <div
+      v-show="isPopupVisible"
+      ref="popupRef"
+      class="c-user-control-panel"
+      role="dialog"
+      aria-label="User Control Panel"
+      :style="popupStyle"
+    >
+      <Suspense>
+        <template #default>
+          <MissionStatusPopup v-if="canSetMissionStatus" @dismiss="togglePopup" />
+        </template>
+        <template #fallback>
+          <div>Loading...</div>
+        </template>
+      </Suspense>
+    </div>
+  </Teleport>
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import ActiveRoleSynchronizer from '../../../api/user/ActiveRoleSynchronizer.js';
+import { useEventListener } from '../../../ui/composables/event.js';
+import { useWindowResize } from '../../../ui/composables/resize.js';
+import MissionStatusPopup from './MissionStatusPopup.vue';
+
 export default {
+  name: 'UserIndicator',
+  components: {
+    MissionStatusPopup
+  },
   inject: ['openmct'],
+  inheritAttrs: false,
+  setup() {
+    const { windowSize } = useWindowResize();
+    const isPopupVisible = ref(false);
+    const userIndicatorRef = ref(null);
+    const popupRef = ref(null);
+
+    // eslint-disable-next-line func-style
+    const handleOutsideClick = (event) => {
+      if (isPopupVisible.value && popupRef.value && !popupRef.value.contains(event.target)) {
+        isPopupVisible.value = false;
+      }
+    };
+
+    useEventListener(document, 'click', handleOutsideClick);
+
+    return { windowSize, isPopupVisible, popupRef, userIndicatorRef };
+  },
   data() {
     return {
       userName: undefined,
@@ -40,16 +102,50 @@ export default {
       availableRoles: [],
       loggedIn: false,
       inputRoleSelection: undefined,
-      roleSelectionDialog: undefined
+      roleSelectionDialog: undefined,
+      canSetMissionStatus: false
     };
   },
+  computed: {
+    popupStyle() {
+      return {
+        top: `${this.position.top}px`,
+        left: `${this.position.left}px`
+      };
+    },
+    position() {
+      if (!this.isPopupVisible) {
+        return { top: 0, left: 0 };
+      }
+      const indicator = this.userIndicatorRef;
+      const indicatorRect = indicator.getBoundingClientRect();
+      let top = indicatorRect.bottom;
+      let left = indicatorRect.left;
 
-  async mounted() {
+      const popupRect = this.popupRef.getBoundingClientRect();
+      const popupWidth = popupRect.width;
+      const popupHeight = popupRect.height;
+
+      // Check if the popup goes beyond the right edge of the window
+      if (left + popupWidth > this.windowSize.width) {
+        left = this.windowSize.width - popupWidth; // Adjust left to fit within the window
+      }
+
+      // Check if the popup goes beyond the bottom edge of the window
+      if (top + popupHeight > this.windowSize.height) {
+        top = indicatorRect.top - popupHeight; // Place popup above the indicator
+      }
+
+      return { top, left };
+    }
+  },
+  async created() {
+    await this.getUserInfo();
+  },
+  mounted() {
     // need to wait for openmct to be loaded before using openmct.overlays.selection
     // as document.body could be null
     this.openmct.on('start', this.fetchOrPromptForRole);
-
-    await this.getUserInfo();
     this.roleChannel = new ActiveRoleSynchronizer(this.openmct);
     this.roleChannel.subscribeToRoleChanges(this.onRoleChange);
   },
@@ -60,6 +156,7 @@ export default {
   methods: {
     async getUserInfo() {
       const user = await this.openmct.user.getCurrentUser();
+      this.canSetMissionStatus = await this.openmct.user.status.canSetMissionStatus();
       this.userName = user.getName();
       this.role = this.openmct.user.getActiveRole();
       this.loggedIn = this.openmct.user.isLoggedIn();
@@ -138,6 +235,9 @@ export default {
       this.openmct.user.setActiveRole(role);
       // update other tabs through broadcast channel
       this.roleChannel.broadcastNewRole(role);
+    },
+    togglePopup() {
+      this.isPopupVisible = !this.isPopupVisible && this.canSetMissionStatus;
     }
   }
 };
