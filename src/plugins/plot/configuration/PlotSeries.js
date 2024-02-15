@@ -226,13 +226,27 @@ export default class PlotSeries extends Model {
     try {
       const points = await this.openmct.telemetry.request(this.domainObject, options);
       const data = this.getSeriesData();
-      // eslint-disable-next-line you-dont-need-lodash-underscore/concat
-      const newPoints = _(data)
-        .concat(points)
-        .sortBy(this.getXVal)
-        .uniq(true, (point) => [this.getXVal(point), this.getYVal(point)].join())
-        .value();
-      this.reset(newPoints);
+
+      // Create a Set to track unique composite keys
+      const seen = new Set(data.map((d) => `${this.getXVal(d)}-${this.getYVal(d)}`));
+
+      // Filter points to include only those not already in 'data'
+      const newPoints = points.filter((p) => {
+        const key = `${this.getXVal(p)}-${this.getYVal(p)}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          return true;
+        }
+        return false;
+      });
+
+      // Assuming 'data' is already sorted, append and sort only if necessary
+      if (newPoints.length > 0) {
+        data.push(...newPoints);
+        data.sort((a, b) => this.getXVal(a) - this.getXVal(b));
+      }
+
+      this.reset(data);
     } catch (error) {
       console.warn('Error fetching data', error);
     }
