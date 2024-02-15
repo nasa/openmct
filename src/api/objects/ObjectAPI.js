@@ -696,10 +696,12 @@ export default class ObjectAPI {
   /**
    * Updates a domain object based on its latest persisted state. Note that this will mutate the provided object.
    * @param {module:openmct.DomainObject} domainObject an object to refresh from its persistence store
+   * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
+   *          dirty/in-transaction objects use and the provider.get method
    * @returns {Promise} the provided object, updated to reflect the latest persisted state of the object.
    */
-  async refresh(domainObject) {
-    const refreshedObject = await this.get(domainObject.identifier);
+  async refresh(domainObject, forceRemote = false) {
+    const refreshedObject = await this.get(domainObject.identifier, null, forceRemote);
 
     if (domainObject.isMutable) {
       domainObject.$refresh(refreshedObject);

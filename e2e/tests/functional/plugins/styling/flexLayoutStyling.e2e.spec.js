@@ -35,7 +35,7 @@ const defaultFrameBorderColor = '#e6b8af'; //default border color
 const defaultBorderTargetColor = '#acacac';
 const defaultTextColor = '#acacac'; // default text color
 const inheritedColor = '#acacac'; // inherited from the body style
-const pukeGreen = '#6aa84f'; //Ugliest green known to man
+const pukeGreen = '#6aa84f'; //Ugliest green known to man 🤮
 const NO_STYLE_RGBA = 'rgba(0, 0, 0, 0)'; //default background color value
 
 test.describe('Flexible Layout styling', () => {
@@ -409,6 +409,41 @@ test.describe('Flexible Layout styling', () => {
       NO_STYLE_RGBA,
       hexToRGB(inheritedColor),
       page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+    );
+  });
+
+  test('Styling, and then canceling reverts to previous style', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7233'
+    });
+
+    await page.goto(flexibleLayout.url);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Styles' }).click();
+    await setStyles(
+      page,
+      setBorderColor,
+      setBackgroundColor,
+      setTextColor,
+      page.getByLabel('Flexible Layout Column')
+    );
+    await page.getByLabel('Cancel Editing').click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
+      NO_STYLE_RGBA,
+      hexToRGB(inheritedColor),
+      page.getByLabel('Flexible Layout Column')
+    );
+
+    await page.reload();
+    await checkStyles(
+      hexToRGB(defaultBorderTargetColor),
+      NO_STYLE_RGBA,
+      hexToRGB(inheritedColor),
+      page.getByLabel('Flexible Layout Column')
     );
   });
 });
