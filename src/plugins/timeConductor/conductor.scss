@@ -605,64 +605,109 @@
         }
     }
     .pr-time{
-        .-label-start-date{
+        // FIXED TIME MODE
+        &-label-start-date{
             grid-area: sDate;
         }
-        .-label-start-time{
+        &-label-start-time{
             grid-area: sTime;
         }
-        .-input-start-date{
+        &-input-start-date{
             grid-area: sDateInput;
         }
-        .-input-start-time{
+        &-input-start-time{
             grid-area: sTimeInput;
         }
-
-        &.icon-arrows-right-left{
-            grid-area: arrowIcon;
-        }
-        .-label-end-date{
+        &-label-end-date{
             grid-area: eDate;
         }
-        .-label-end-time{
+        &-label-end-time{
             grid-area: eTime;
 
         }
-        .-input-end-date{
+        &-input-end-date{
             grid-area: eDateInput;
         }
-        .-input-end-time{
+        &-input-end-time{
             grid-area: eTimeInput;
         }
-        .-input--buttons{
-            grid-area: buttons;
-        }
-        .-label-blank-grid{
+        &-label-blank-grid{
             grid-area: blank;
+        }
+
+        //REAL TIME MODE
+        &-label-minus-hrs{
+            grid-area: labelMinusHrs;
+        }
+        &-label-minus-mins{
+            grid-area: labelMinusMins;
+        }
+        &-label-minus-secs{
+            grid-area: labelMinusSecs;
+        }
+        &-label-plus-hrs{
+            grid-area: labelPlusHrs;
+        }
+        &-label-plus-mins{
+            grid-area: labelPlusMins;
+        }
+        &-label-plus-secs{
+            grid-area: labelPlusSecs;
+        }
+        &-input-minus-hrs{
+            grid-area: inputMinusHrs;
+        }
+        &-input-minus-mins{
+            grid-area: inputMinusMins;
+        }
+        &-input-minus-secs{
+            grid-area: inputMinusSecs;
+        }
+        &-input-plus-hrs{
+            grid-area: inputPlusHrs;
+        }
+        &-input-plus-mins{
+            grid-area: inputPlusMins;
+        }
+        &-input-plus-secs{
+            grid-area: inputPlusSecs;
+        }
+        // USED FOR BOTH 
+        &-label-blank-grid{
+            grid-area: empty;
+        }
+        &-input__start-end-sep{
+            grid-area: arrowIcon;
+        }
+        &-input--buttons{
+            grid-area: buttons;
         }
     }
 
     &--fixed-mode {
         .c-tc-input-popup__input-grid {
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+            grid-template-rows: 1fr 1fr; // hardcode the rows to avoid the random row gap
             grid-template-areas: 
                "sDate sTime . eDate eTime ."
-               "sDateInput sTimeInput arrowIcon eDateInput eTimeInput buttons ";
-
-
+               "sDateInput sTimeInput arrowIcon eDateInput eTimeInput buttons";
         }
     }
 
     &--realtime-mode {
         .c-tc-input-popup__input-grid {
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+            grid-row-gap: $interiorMargin; // Add only to real-time mode since this code for fixed mode is giving a random row gap.
+
+            grid-template-areas:
+                "labelMinusHrs labelMinusMins labelMinusSecs . labelPlusHrs labelPlusMins labelPlusSecs ."
+                "inputMinusHrs inputMinusMins inputMinusSecs arrowIcon inputPlusHrs inputPlusMins inputPlusSecs buttons";
         }
     }
 
     &__input-grid {
         display: grid;
         grid-column-gap: 3px;
-        grid-row-gap: $interiorMargin;
         align-items: start;
     }
 }
