@@ -129,7 +129,7 @@ export default {
       this.role = activeRole;
       const status = await this.openmct.user.status.getStatusForRole(activeRole);
       if (status !== undefined) {
-        this.setStatus({ status });
+        this.setStatus({ role: this.role, status });
       }
     },
     subscribeToMyStatus() {
