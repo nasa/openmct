@@ -108,6 +108,15 @@ export default class TelemetryAPI {
     this.#isGreedyLAD = true;
     this.BatchingWebSocket = BatchingWebSocket;
     this.#subscribeCache = {};
+    this.itemsGarbageCollected = 0;
+
+    // eslint-disable-next-line no-undef
+    this.registry = new FinalizationRegistry((heldValue) => {
+      this.itemsGarbageCollected++;
+      console.debug(
+        `🗑️ 🛜 TELEMETRY API garbage collected: ${this.itemsGarbageCollected} - ${JSON.stringify(heldValue)}`
+      );
+    });
   }
 
   abortAllRequests() {
@@ -383,6 +392,10 @@ export default class TelemetryAPI {
     arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
     try {
       const telemetry = await provider.request(...arguments);
+      // add each piece of data individually to be registry
+      telemetry.forEach((datum) => {
+        this.registry.register(datum, `${new Date()} Data with: ${JSON.stringify(datum)}`);
+      });
 
       return telemetry;
     } catch (error) {
@@ -462,9 +475,14 @@ export default class TelemetryAPI {
     } else {
       subscriber.latestCallbacks.push(callback);
     }
-
+    const telemetryAPI = this;
     // Guarantees that view receive telemetry in the expected form
     function invokeCallbackWithRequestedStrategy(data) {
+      // add each piece of data individually to be registry
+      data.forEach((datum) => {
+        const heldValue = `${new Date()} Data with: ${JSON.stringify(datum)}`;
+        telemetryAPI.registry.register(datum, heldValue);
+      });
       invokeCallbacksWithArray(data, subscriber.batchCallbacks);
       invokeCallbacksWithSingleValue(data, subscriber.latestCallbacks);
     }

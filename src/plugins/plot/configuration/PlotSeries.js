@@ -87,6 +87,15 @@ export default class PlotSeries extends Model {
     this.onYKeyChange(this.get('yKey'));
 
     this.unPlottableValues = [undefined, Infinity, -Infinity];
+    this.itemsGarbageCollected = 0;
+
+    // eslint-disable-next-line no-undef
+    this.registry = new FinalizationRegistry((heldValue) => {
+      this.itemsGarbageCollected++;
+      console.debug(
+        `🗑️ 📈 PLOT garbage collected: ${this.itemsGarbageCollected} - ${JSON.stringify(heldValue)}`
+      );
+    });
   }
 
   getLogMode(options) {
@@ -225,6 +234,7 @@ export default class PlotSeries extends Model {
 
     try {
       const points = await this.openmct.telemetry.request(this.domainObject, options);
+
       const data = this.getSeriesData();
       // eslint-disable-next-line you-dont-need-lodash-underscore/concat
       const newPoints = _(data)
@@ -232,6 +242,7 @@ export default class PlotSeries extends Model {
         .sortBy(this.getXVal)
         .uniq(true, (point) => [this.getXVal(point), this.getYVal(point)].join())
         .value();
+
       this.reset(newPoints);
     } catch (error) {
       console.warn('Error fetching data', error);
@@ -426,6 +437,9 @@ export default class PlotSeries extends Model {
    *                  a point to the end without dupe checking.
    */
   add(newData, sorted = false) {
+    const heldValue = `${new Date()} Data with ${JSON.stringify(newData)}`;
+    this.registry.register(newData, heldValue);
+
     let data = this.getSeriesData();
     let insertIndex = data.length;
     const currentYVal = this.getYVal(newData);
