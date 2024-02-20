@@ -8,7 +8,7 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 
 * [ ] Have you followed the guidelines in our [Contributing document](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md)?
 * [ ] Have you checked to ensure there aren't other open [Pull Requests](https://github.com/nasa/openmct/pulls) for the same update/change?
-* [ ] Is this change backwards compatible? For example, developers won't need to change how they are calling the API or how they've extended core plugins such as Tables or Plots.
+* [ ] Is this a notable change that will require a special callout in the release notes [Notable Change](../docs/src/process/release.md) ? For example, will this break compatibility with existing APIs or projects which source these plugins?
 
 ### Author Checklist
 
