@@ -723,7 +723,7 @@
         }
         @include phonePortrait(){ 
             .c-tc-input-popup__input-grid {
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                grid-template-columns: 15%  15%  15%  7%  15%  15%  15%;
                 grid-template-areas:
                     "labelMinusHrs labelMinusMins labelMinusSecs . labelPlusHrs labelPlusMins labelPlusSecs"
                     "inputMinusHrs inputMinusMins inputMinusSecs arrowIcon inputPlusHrs inputPlusMins inputPlusSecs"
