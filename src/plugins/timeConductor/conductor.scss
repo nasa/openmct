@@ -693,10 +693,7 @@
         }
         @include phonePortrait(){ 
             .c-tc-input-popup__input-grid {
-                > * {
-                    
-                }
-                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-columns: 45% 10% 45%;
                 grid-template-areas:
                     "sDate . sTime"
                     "sDateInput . sTimeInput"
@@ -724,6 +721,15 @@
                 "labelMinusHrs labelMinusMins labelMinusSecs . labelPlusHrs labelPlusMins labelPlusSecs ."
                 "inputMinusHrs inputMinusMins inputMinusSecs arrowIcon inputPlusHrs inputPlusMins inputPlusSecs buttons";
         }
+        @include phonePortrait(){ 
+            .c-tc-input-popup__input-grid {
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                grid-template-areas:
+                    "labelMinusHrs labelMinusMins labelMinusSecs . labelPlusHrs labelPlusMins labelPlusSecs"
+                    "inputMinusHrs inputMinusMins inputMinusSecs arrowIcon inputPlusHrs inputPlusMins inputPlusSecs"
+                    ". . . . . . buttons";
+            }
+        }
     }
 
     &__input-grid {
@@ -735,15 +741,17 @@
 }
 @include phonePortrait(){ // Additional styling for mobile portrait.
     .c-tc-input-popup{
-        left: -$interiorMarginLg !important;
+        width: calc(100vw - 20px);
     }
     .pr-time-input-end-time, .pr-time-input-start-time{
         > * {
-            width: fit-content !important;
+            width: 100% !important;
+            margin-right: $interiorMargin;
         } 
     }
     .pr-time-input--buttons{
         margin-left: auto;
+        margin-right: $interiorMargin;
     }
     .pr-time-input__start-end-sep{
         margin: auto;
