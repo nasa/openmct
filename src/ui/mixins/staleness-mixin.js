@@ -22,6 +22,7 @@
 
 import { isProxy, toRaw } from 'vue';
 
+import { isIdentifier } from '@/api/objects/object-utils';
 import StalenessUtils from '@/utils/staleness';
 
 export default {
@@ -40,7 +41,9 @@ export default {
   },
   methods: {
     getSubscriptionId(domainObject) {
-      return this.openmct?.objects.makeKeyString(domainObject.identifier);
+      // Only extract the identifier if it is not already an identifier
+      const identifier = isIdentifier(domainObject) ? domainObject : domainObject.identifier;
+      return this.openmct?.objects.makeKeyString(identifier);
     },
     setupClockChangedEvent(callback) {
       this.setupClockChanged = true;
@@ -97,6 +100,7 @@ export default {
         if (isProxy(domainObject)) {
           domainObject = toRaw(domainObject);
         }
+
         const id = this.getSubscriptionId(domainObject);
         if (!this.stalenessSubscription[id]) {
           return;
