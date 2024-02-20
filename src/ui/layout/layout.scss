@@ -263,7 +263,7 @@
   }
 
   &__create-button {
-    margin-right: $interiorMarginLg;
+    // margin-right: $interiorMarginLg;
     body.mobile & {
       // Fixes weird gap in mobile status area
       margin-right: 0px;
