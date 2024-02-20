@@ -4,11 +4,9 @@
       <div class="pr-time-label icon-minus pr-time-label-minus-hrs">Hrs</div>
       <div class="pr-time-label pr-time-label-minus-mins">Mins</div>
       <div class="pr-time-label pr-time-label-minus-secs">Secs</div>
-      <div class="pr-time-label"></div>
       <div class="pr-time-label icon-plus pr-time-label-plus-hrs">Hrs</div>
       <div class="pr-time-label pr-time-label-plus-mins">Mins</div>
       <div class="pr-time-label pr-time-label-plus-secs">Secs</div>
-      <div class="pr-time-label"></div>
 
       <div class="pr-time-input pr-time-input-minus-hrs">
         <input
