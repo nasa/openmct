@@ -108,7 +108,7 @@
           <pane
             handle="before"
             label="Recently Viewed"
-            :persist-position="true"
+            persist-position="true"
             collapse-type="horizontal"
             hide-param="hideRecents"
           >
