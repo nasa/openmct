@@ -171,7 +171,7 @@
     }
   }
 
-  &__head,
+  //&__head,
   &__pane-inspector {
     body.mobile & {
       display: none;
@@ -187,6 +187,18 @@
   &__main-view-browse-bar {
     flex: 0 0 auto;
     margin-bottom: $interiorMargin; // Needs some additional visual separation
+  }
+
+  &__head {
+    body.mobile & {
+      .c-create-button,
+      .c-create-menu,
+      .c-indicator,
+      .c-icon-button {
+        // Making status area visible, but hiding some widgets for mobile.
+        display: none;
+      }
+    }
   }
 
   body.mobile & .l-shell__main-view-browse-bar {
@@ -241,7 +253,20 @@
     border-left: $brdr;
     align-items: start;
     $p: $interiorMarginSm;
-    padding-left: $p; padding-right: $p;
+    padding-left: $p;
+    padding-right: $p;
+  }
+
+  &__create-button,
+  &__app-logo {
+    flex: 0 0 auto;
+  }
+
+  &__create-button {
+    body.mobile & {
+      // Fixes weird gap in mobile status area
+      margin-right: 0px;
+    }
   }
 
   &__indicators {
@@ -254,7 +279,6 @@
       height: 24px;
       overflow: hidden;
     }
-
   }
 
   /******************************* MAIN AREA */
@@ -355,14 +379,18 @@
 .is-editing {
   .l-shell__main-container {
     $m: 3px;
-    box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
+    box-shadow:
+      $colorBodyBg 0 0 0 1px,
+      $editUIAreaShdw;
     margin-left: $m;
     margin-right: $m;
     top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
 
     &[s-selected] {
       // Provide a clearer selection context articulation for the main edit area
-      box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdwSelected;
+      box-shadow:
+        $colorBodyBg 0 0 0 1px,
+        $editUIAreaShdwSelected;
     }
   }
 }
