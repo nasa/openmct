@@ -105,7 +105,13 @@
               class="l-shell__tree"
             />
           </pane>
-          <pane handle="before" label="Recently Viewed" :persist-position="true">
+          <pane
+            handle="before"
+            label="Recently Viewed"
+            :persist-position="true"
+            collapse-type="horizontal"
+            hide-param="hideRecents"
+          >
             <RecentObjectsList
               ref="recentObjectsList"
               class="l-shell__tree"

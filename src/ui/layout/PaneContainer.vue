@@ -56,6 +56,10 @@ const LOCAL_STORAGE_KEY__PANE_POSITIONS = 'mct-pane-positions';
 export default {
   inject: ['openmct'],
   props: {
+    collapseType: {
+      type: String,
+      default: 'vertical'
+    },
     handle: {
       type: String,
       default: '',
@@ -107,6 +111,7 @@ export default {
         'l-pane--vertical-handle-before': this.type === 'vertical' && this.handle === 'before',
         'l-pane--vertical-handle-after': this.type === 'vertical' && this.handle === 'after',
         'l-pane--collapsed': this.collapsed,
+        'collapse-horizontal': this.collapseType === 'horizontal',
         'l-pane--reacts': !this.handle,
         'l-pane--resizing': this.resizing === true
       };
@@ -177,7 +182,9 @@ export default {
       this.collapsed = true;
     },
     handleExpand() {
-      this.$el.style[this.styleProp] = this.currentSize;
+      let size = this.currentSize ? this.currentSize : this.getSavedPosition();
+      this.$el.style[this.styleProp] = size;
+
       delete this.currentSize;
       delete this.dragCollapse;
       this.collapsed = false;
