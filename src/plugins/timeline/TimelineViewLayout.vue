@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -53,7 +53,7 @@ import _ from 'lodash';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
-import { getValidatedData } from '../plan/util';
+import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
@@ -108,7 +108,8 @@ export default {
       let objectPath = [domainObject].concat(this.objectPath.slice());
       let rowCount = 0;
       if (domainObject.type === 'plan') {
-        rowCount = Object.keys(getValidatedData(domainObject)).length;
+        const planData = getValidatedData(domainObject);
+        rowCount = getValidatedGroups(domainObject, planData).length;
       } else if (domainObject.type === 'gantt-chart') {
         rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
       }

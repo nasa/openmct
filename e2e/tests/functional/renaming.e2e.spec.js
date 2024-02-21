@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,11 +24,8 @@
 This test suite is dedicated to tests for renaming objects, and their global application effects.
 */
 
-const { test, expect } = require('../../baseFixtures.js');
-const {
-  createDomainObjectWithDefaults,
-  renameObjectFromContextMenu
-} = require('../../appActions.js');
+import { createDomainObjectWithDefaults, renameObjectFromContextMenu } from '../../appActions.js';
+import { expect, test } from '../../baseFixtures.js';
 
 test.describe('Renaming objects', () => {
   test.beforeEach(async ({ page }) => {

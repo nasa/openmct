@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,9 +25,9 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 /* globals process */
-const { waitForAnimations } = require('../../../../baseFixtures');
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, setRealTimeMode } = require('../../../../appActions');
+import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
+import { waitForAnimations } from '../../../../baseFixtures.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
@@ -60,6 +60,31 @@ test.describe('Example Imagery Object', () => {
   test('Compass HUD should be hidden by default', async ({ page }) => {
     await expect(page.locator('.c-hud')).toBeHidden();
   });
+
+  test('Can right click on image and open it in a new tab @2p', async ({ page, context }) => {
+    // try to right click on image
+    const backgroundImage = await page.locator(backgroundImageSelector);
+    await backgroundImage.click({
+      button: 'right',
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+    // expect context menu to appear
+    await expect(page.getByText('Save Image As')).toBeVisible();
+    await expect(page.getByText('Open Image in New Tab')).toBeVisible();
+
+    // click on open image in new tab
+    const pagePromise = context.waitForEvent('page');
+    await page.getByText('Open Image in New Tab').click();
+    // expect new tab to be in browser
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState();
+    // expect new tab url to have jpg in it
+    await expect(newPage.url()).toContain('.jpg');
+  });
+
+  // this requires CORS to be enabled in some fashion
+  test.fixme('Can right click on image and save it as a file', async ({ page }) => {});
 
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
     page,
@@ -247,6 +272,14 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.click(canvasCenterX - 50, canvasCenterY - 50);
     await expect(page.getByText('Driving')).toBeVisible();
     await expect(page.getByText('Science')).toBeVisible();
+
+    // add another tag and expect it to appear without changing selection
+    await page.getByRole('button', { name: /Add Tag/ }).click();
+    await page.getByPlaceholder('Type to select tag').click();
+    await page.getByText('Drilling').click();
+    await expect(page.getByText('Driving')).toBeVisible();
+    await expect(page.getByText('Science')).toBeVisible();
+    await expect(page.getByText('Drilling')).toBeVisible();
   });
 
   test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
@@ -364,7 +397,7 @@ test.describe('Example Imagery in Display Layout', () => {
     });
 
     // Edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
@@ -383,7 +416,7 @@ test.describe('Example Imagery in Display Layout', () => {
   test('Resizing the layout changes thumbnail visibility and size', async ({ page }) => {
     const thumbsWrapperLocator = page.locator('.c-imagery__thumbs-wrapper');
     // Edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Click on example imagery to expose toolbar
     await page.locator('.c-so-view__header').click();
@@ -456,11 +489,38 @@ test.describe('Example Imagery in Flexible layout', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
+
+    // Create Example Imagery inside the Flexible Layout
+    await createDomainObjectWithDefaults(page, {
+      type: 'Example Imagery',
+      parent: flexibleLayout.uuid
+    });
+
+    // Navigate back to Flexible Layout
+    await page.goto(flexibleLayout.url);
+  });
+
+  test('Can double-click on the image to view large image', async ({ page }) => {
+    // Double-click on the image to open large view
+    const imageElement = await page.getByRole('button', { name: 'Image Wrapper' });
+    await imageElement.dblclick();
+
+    // Check if the large view is visible
+    await page.getByRole('button', { name: 'Background Image', state: 'visible' });
+
+    // Close the large view
+    await page.getByLabel('Close').click();
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
     await page.goto(flexibleLayout.url);
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -504,7 +564,7 @@ test.describe('Example Imagery in Tabs View', () => {
 
     /* Create Sine Wave Generator with minimum Image Load Delay */
     // Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
     await page.click('li[role="menuitem"]:has-text("Example Imagery")');
@@ -547,6 +607,7 @@ test.describe('Example Imagery in Time Strip', () => {
     // Navigate to timestrip
     await page.goto(timeStripObject.url);
   });
+
   test('Clicking a thumbnail loads the image in large view', async ({ page, browserName }) => {
     test.info().annotations.push({
       type: 'issue',
@@ -951,7 +1012,7 @@ async function resetImageryPanAndZoom(page) {
  */
 async function createImageryView(page) {
   // Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click text=Example Imagery
   await page.click('li[role="menuitem"]:has-text("Example Imagery")');

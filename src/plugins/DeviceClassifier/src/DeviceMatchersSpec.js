@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DeviceMatchers from './DeviceMatchers';
+import DeviceMatchers from './DeviceMatchers.js';
 
 describe('DeviceMatchers', function () {
   let mockAgent;
@@ -46,14 +46,14 @@ describe('DeviceMatchers', function () {
     return 'is' + deviceType[0].toUpperCase() + deviceType.slice(1);
   }
 
-  ['mobile', 'phone', 'tablet', 'landscape', 'portrait', 'landscape', 'touch'].forEach(function (
-    deviceType
-  ) {
-    it('detects when a device is a ' + deviceType + ' device', function () {
-      mockAgent[method(deviceType)].and.returnValue(true);
-      expect(DeviceMatchers[deviceType](mockAgent)).toBe(true);
-      mockAgent[method(deviceType)].and.returnValue(false);
-      expect(DeviceMatchers[deviceType](mockAgent)).toBe(false);
-    });
-  });
+  ['mobile', 'phone', 'tablet', 'landscape', 'portrait', 'landscape', 'touch'].forEach(
+    function (deviceType) {
+      it('detects when a device is a ' + deviceType + ' device', function () {
+        mockAgent[method(deviceType)].and.returnValue(true);
+        expect(DeviceMatchers[deviceType](mockAgent)).toBe(true);
+        mockAgent[method(deviceType)].and.returnValue(false);
+        expect(DeviceMatchers[deviceType](mockAgent)).toBe(false);
+      });
+    }
+  );
 });

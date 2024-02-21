@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryTableView from './TelemetryTableView';
+import TelemetryTableView from './TelemetryTableView.js';
 
-export default function TelemetryTableViewProvider(openmct) {
+export default function TelemetryTableViewProvider(openmct, options) {
   function hasTelemetry(domainObject) {
     if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
       return false;
@@ -44,7 +44,7 @@ export default function TelemetryTableViewProvider(openmct) {
       return domainObject.type === 'table';
     },
     view(domainObject, objectPath) {
-      return new TelemetryTableView(openmct, domainObject, objectPath);
+      return new TelemetryTableView(openmct, domainObject, objectPath, options);
     },
     priority() {
       return 1;

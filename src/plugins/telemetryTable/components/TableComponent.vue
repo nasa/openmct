@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,11 +21,12 @@
 -->
 <template>
   <div ref="root" class="c-table-wrapper" :class="tableClasses">
-    <div v-if="enableLegacyToolbar" class="c-table-control-bar c-control-bar">
+    <div v-if="enableLegacyToolbar" class="c-table-control-bar c-control-bar" role="menubar">
       <button
         v-if="allowExport"
         v-show="!markedRows.length"
         class="c-button icon-download labeled"
+        aria-label="Export this view's data"
         title="Export this view's data"
         @click="exportAllDataAsCSV()"
       >
@@ -35,6 +36,7 @@
         v-if="allowExport"
         v-show="markedRows.length"
         class="c-button icon-download labeled"
+        aria-label="Export marked rows as CSV"
         title="Export marked rows as CSV"
         @click="exportMarkedDataAsCSV()"
       >
@@ -43,6 +45,7 @@
       <button
         v-show="markedRows.length"
         class="c-button icon-x labeled"
+        aria-label="Unmark all rows"
         title="Unmark all rows"
         @click="unmarkAllRows()"
       >
@@ -51,6 +54,7 @@
       <div v-if="marking.enable" class="c-separator"></div>
       <button
         v-if="marking.enable"
+        :aria-label="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
         class="c-button icon-pause pause-play labeled"
         :class="paused ? 'icon-play is-paused' : 'icon-pause'"
         :title="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
@@ -62,10 +66,11 @@
       </button>
 
       <template v-if="!isEditing">
-        <div class="c-separator"></div>
+        <div class="c-separator" role="separator"></div>
         <button
           v-if="isAutosizeEnabled"
           class="c-button icon-arrows-right-left labeled"
+          aria-label="Increase column widths to fit currently available data."
           title="Increase column widths to fit currently available data."
           @click="recalculateColumnWidths"
         >
@@ -73,6 +78,7 @@
         </button>
         <button
           v-else
+          aria-label="Automatically size columns to fit the table into the available space."
           class="c-button icon-expand labeled"
           title="Automatically size columns to fit the table into the available space."
           @click="autosizeColumns"
@@ -104,6 +110,7 @@
       <button
         :class="{ 'hide-nice': !markedRows.length }"
         class="c-icon-button icon-x labeled"
+        aria-label="Deselect All"
         title="Deselect All"
         @click="unmarkAllRows()"
       >
@@ -174,6 +181,7 @@
                 :header-index="headerIndex"
                 :column-width="columnWidths[key]"
                 :is-editing="isEditing"
+                :aria-label="`${headers[key]} filter header`"
                 @resize-column="resizeColumn"
                 @drop-target-offset-changed="setDropTargetOffset"
                 @drop-target-active="dropTargetActive"
@@ -181,14 +189,16 @@
                 @resize-column-end="updateConfiguredColumnWidths"
               >
                 <search
-                  v-model="filters[key]"
+                  :value="filters[key]"
                   class="c-table__search"
-                  @input="filterChanged(key)"
+                  :aria-label="`${key} filter input`"
+                  @input="filterChanged(key, $event)"
                   @clear="clearFilter(key)"
                 >
                   <button
                     class="c-search__use-regex"
                     :class="{ 'is-active': enableRegexSearch[key] }"
+                    aria-label="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
                     title="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
                     @click="toggleRegex(key)"
                   >
@@ -212,6 +222,7 @@
           ref="contentTable"
           class="c-table__body c-telemetry-table__body js-telemetry-table__content"
           :style="{ height: totalHeight + 'px' }"
+          :aria-label="`${table.domainObject.name} table content`"
         >
           <tbody>
             <telemetry-table-row
@@ -223,7 +234,7 @@
               :object-path="objectPath"
               :row-offset="rowOffset"
               :row-height="rowHeight"
-              :row="row"
+              :row="getRow(rowIndex)"
               :marked="row.marked"
               @mark="markRow"
               @unmark="unmarkRow"
@@ -266,6 +277,8 @@
         class="c-telemetry-table__footer"
         :marked-rows="markedRows.length"
         :total-rows="totalNumberOfRows"
+        :telemetry-mode="telemetryMode"
+        @telemetry-mode-change="updateTelemetryMode"
       />
     </div>
   </div>
@@ -282,6 +295,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import throttle from '../../../utils/throttle';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -290,7 +304,7 @@ import TelemetryTableRow from './TableRow.vue';
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const RESIZE_POLL_INTERVAL = 200;
-const AUTO_SCROLL_TRIGGER_HEIGHT = 100;
+const AUTO_SCROLL_TRIGGER_HEIGHT = ROW_HEIGHT * 3;
 
 export default {
   components: {
@@ -303,7 +317,7 @@ export default {
     ProgressBar
   },
   mixins: [stalenessMixin],
-  inject: ['openmct', 'objectPath', 'table', 'currentView'],
+  inject: ['openmct', 'objectPath', 'table', 'currentView', 'renderWhenVisible'],
   props: {
     isEditing: {
       type: Boolean,
@@ -374,7 +388,9 @@ export default {
       enableRegexSearch: {},
       hideHeaders: configuration.hideHeaders,
       totalNumberOfRows: 0,
-      rowContext: {}
+      rowContext: {},
+      telemetryMode: configuration.telemetryMode,
+      persistModeChanges: configuration.persistModeChanges
     };
   },
   computed: {
@@ -427,6 +443,12 @@ export default {
   watch: {
     loading: {
       handler(isLoading) {
+        if (isLoading) {
+          this.setLoadingPromise();
+        } else {
+          this.loadFinishResolve();
+        }
+
         if (this.viewActionsCollection) {
           let action = isLoading ? 'disable' : 'enable';
           this.viewActionsCollection[action](['export-csv-all']);
@@ -475,7 +497,7 @@ export default {
     }
   },
   created() {
-    this.filterChanged = _.debounce(this.filterChanged, 500);
+    this.filterTelemetry = _.debounce(this.filterTelemetry, 500);
   },
   mounted() {
     this.csvExporter = new CSVExporter();
@@ -492,6 +514,8 @@ export default {
         this.initializeViewActions();
       });
     }
+
+    this.updateVisibleRows = throttle(this.updateVisibleRows, 1000);
 
     this.table.on('object-added', this.addObject);
     this.table.on('object-removed', this.removeObject);
@@ -545,10 +569,15 @@ export default {
     this.table.destroy();
   },
   methods: {
+    setLoadingPromise() {
+      this.loadFinishResolve = null;
+      this.isFinishedLoading = new Promise((resolve, reject) => {
+        this.loadFinishResolve = resolve;
+      });
+    },
     updateVisibleRows() {
       if (!this.updatingView) {
-        this.updatingView = true;
-        requestAnimationFrame(() => {
+        this.updatingView = this.renderWhenVisible(() => {
           let start = 0;
           let end = VISIBLE_ROW_COUNT;
           let tableRows = this.table.tableRows.getRows();
@@ -623,7 +652,21 @@ export default {
 
       this.calculateScrollbarWidth();
     },
+    getRow(rowIndex) {
+      return toRaw(this.visibleRows[rowIndex]);
+    },
     sortBy(columnKey) {
+      let timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === 'performance' && columnKey !== timeSystemKey) {
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Sort', () => {
+          this.initiateSort(columnKey);
+        });
+      } else {
+        this.initiateSort(columnKey);
+      }
+    },
+    initiateSort(columnKey) {
       // If sorting by the same column, flip the sort direction.
       if (this.sortOptions.key === columnKey) {
         if (this.sortOptions.direction === 'asc') {
@@ -634,7 +677,7 @@ export default {
       } else {
         this.sortOptions = {
           key: columnKey,
-          direction: 'asc'
+          direction: 'desc'
         };
       }
 
@@ -644,7 +687,7 @@ export default {
       this.updateVisibleRows();
       this.synchronizeScrollX();
 
-      if (this.shouldSnapToBottom()) {
+      if (this.shouldAutoScroll()) {
         this.autoScroll = true;
       } else {
         // If user scrolls away from bottom, disable auto-scroll.
@@ -652,13 +695,17 @@ export default {
         this.autoScroll = false;
       }
     },
-    shouldSnapToBottom() {
+    shouldAutoScroll() {
+      if (this.sortOptions.direction === 'desc') {
+        return false;
+      }
+
       return (
         this.scrollable.scrollTop >=
         this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT
       );
     },
-    scrollToBottom() {
+    initiateAutoScroll() {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
@@ -666,7 +713,7 @@ export default {
         this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
       }
     },
-    filterChanged(columnKey) {
+    filterTelemetry(columnKey) {
       if (this.enableRegexSearch[columnKey]) {
         if (this.isCompleteRegex(this.filters[columnKey])) {
           this.table.tableRows.setColumnRegexFilter(
@@ -681,6 +728,10 @@ export default {
       }
 
       this.setHeight();
+    },
+    filterChanged(columnKey, newFilterValue) {
+      this.filters[columnKey] = newFilterValue;
+      this.filterTelemetry(columnKey);
     },
     clearFilter(columnKey) {
       this.filters[columnKey] = '';
@@ -703,7 +754,7 @@ export default {
       }
 
       if (this.autoScroll) {
-        this.scrollToBottom();
+        this.initiateAutoScroll();
       }
 
       this.updateVisibleRows();
@@ -730,12 +781,25 @@ export default {
         headers: headerKeys
       });
     },
-    exportAllDataAsCSV() {
+    getTableRowData() {
       const justTheData = this.table.tableRows
         .getRows()
         .map((row) => row.getFormattedDatum(this.headers));
 
-      this.exportAsCSV(justTheData);
+      return justTheData;
+    },
+    exportAllDataAsCSV() {
+      if (this.telemetryMode === 'performance') {
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Export', () => {
+          const data = this.getTableRowData();
+
+          this.exportAsCSV(data);
+        });
+      } else {
+        const data = this.getTableRowData();
+
+        this.exportAsCSV(data);
+      }
     },
     exportMarkedDataAsCSV() {
       const data = this.table.tableRows
@@ -823,21 +887,23 @@ export default {
       let scrollTop = this.scrollable.scrollTop;
 
       this.resizePollHandle = setInterval(() => {
-        if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
-          this.calculateTableSize();
-          // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
-          // Need to preserve scroll position in this case.
-          if (this.autoScroll) {
-            this.scrollToBottom();
-          } else {
-            this.scrollable.scrollTop = scrollTop;
+        this.renderWhenVisible(() => {
+          if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
+            this.calculateTableSize();
+            // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
+            // Need to preserve scroll position in this case.
+            if (this.autoScroll) {
+              this.initiateAutoScroll();
+            } else {
+              this.scrollable.scrollTop = scrollTop;
+            }
+
+            width = el.clientWidth;
+            height = el.clientHeight;
           }
 
-          width = el.clientWidth;
-          height = el.clientHeight;
-        }
-
-        scrollTop = this.scrollable.scrollTop;
+          scrollTop = this.scrollable.scrollTop;
+        });
       }, RESIZE_POLL_INTERVAL);
     },
     clearRowsAndRerender() {
@@ -1082,6 +1148,54 @@ export default {
       } else {
         this.viewActionsCollection.show(['autosize-columns']);
         this.viewActionsCollection.hide(['expand-columns']);
+      }
+    },
+    confirmUnlimitedMode(
+      label,
+      callback,
+      message = 'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?'
+    ) {
+      const dialog = this.openmct.overlays.dialog({
+        iconClass: 'alert',
+        message,
+        buttons: [
+          {
+            label,
+            emphasis: true,
+            callback: async () => {
+              this.updateTelemetryMode();
+              await this.isFinishedLoading;
+
+              callback();
+
+              dialog.dismiss();
+            }
+          },
+          {
+            label: 'Cancel',
+            callback: () => {
+              dialog.dismiss();
+            }
+          }
+        ]
+      });
+    },
+    updateTelemetryMode() {
+      this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
+
+      if (this.persistModeChanges) {
+        this.table.configuration.setTelemetryMode(this.telemetryMode);
+      }
+
+      this.table.updateTelemetryMode(this.telemetryMode);
+
+      const timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === 'performance' && this.sortOptions.key !== timeSystemKey) {
+        this.openmct.notifications.info(
+          'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
+        );
+        this.initiateSort(timeSystemKey);
       }
     },
     setRowHeight(height) {

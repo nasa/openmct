@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,73 +19,84 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets. Note: this
 suite is sharing state between tests which is considered an anti-pattern. Implementing in this way to
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
-const { test, expect } = require('../../../../pluginFixtures.js');
-const {
+import { fileURLToPath } from 'url';
+
+import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} = require('../../../../appActions');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;
-let getConditionSetIdentifierFromUrl;
 
-test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
+test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () => {
   test.beforeAll(async ({ browser }) => {
     //TODO: This needs to be refactored
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
 
     await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
 
     //Save localStorage for future test execution
-    await context.storageState({ path: './e2e/test-data/recycled_local_storage.json' });
+    await context.storageState({
+      path: fileURLToPath(
+        new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+      )
+    });
 
     //Set object identifier from url
     conditionSetUrl = page.url();
 
-    getConditionSetIdentifierFromUrl = conditionSetUrl.split('/').pop().split('?')[0];
-    console.debug(`getConditionSetIdentifierFromUrl: ${getConditionSetIdentifierFromUrl}`);
     await page.close();
   });
 
   //Load localStorage for subsequent tests
-  test.use({ storageState: './e2e/test-data/recycled_local_storage.json' });
+  test.use({
+    storageState: fileURLToPath(
+      new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+    )
+  });
 
   //Begin suite of tests again localStorage
-  test('Condition set object properties persist in main view and inspector @localStorage', async ({
-    page
-  }) => {
-    //Navigate to baseURL with injected localStorage
-    await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+  test.fixme(
+    'Condition set object properties persist in main view and inspector @localStorage',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/7421'
+      });
+      //Navigate to baseURL with injected localStorage
+      await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
 
-    //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
+      //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
+      await expect
+        .soft(page.locator('.l-browse-bar__object-name'))
+        .toContainText('Unnamed Condition Set');
 
-    //Assertions on loaded Condition Set in Inspector
-    expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
+      //Assertions on loaded Condition Set in Inspector
+      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
 
-    //Reload Page
-    await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+      //Reload Page
+      await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
 
-    //Re-verify after reload
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
-    //Assertions on loaded Condition Set in Inspector
-    expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
-  });
+      //Re-verify after reload
+      await expect
+        .soft(page.locator('.l-browse-bar__object-name'))
+        .toContainText('Unnamed Condition Set');
+      //Assertions on loaded Condition Set in Inspector
+      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
+    }
+  );
   test('condition set object can be modified on @localStorage', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
@@ -117,7 +128,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
       .nth(1)
       .click();
     // Click Save and Finish Editing Option
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     //Verify Main section reflects updated Name Property
     await expect
@@ -187,7 +198,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
       .first()
       .click();
     // Click hamburger button
-    await page.locator('[title="More options"]').click();
+    await page.locator('[title="More actions"]').click();
 
     // Click 'Remove' and press OK
     await page.locator('li[role="menuitem"]:has-text("Remove")').click();
@@ -225,7 +236,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Click Add Condition button
     await page.locator('#addCondition').click();
@@ -253,7 +264,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     page.click('button[title="Show selected item in tree"]');
@@ -290,7 +301,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByTitle('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Create two conditions
     await page.locator('#addCondition').click();
@@ -357,7 +368,7 @@ test.describe('Basic Condition Set Use', () => {
 
     // Edit SWG to add 8 second loading delay to simulate the case
     // where telemetry is not available.
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
     await page.getByLabel('Save').click();

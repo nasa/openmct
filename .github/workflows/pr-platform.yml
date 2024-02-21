@@ -22,14 +22,14 @@ jobs:
           - macos-latest
           - windows-latest
         node_version:
-          - lts/gallium
+          - lts/iron
           - lts/hydrogen
         architecture:
           - x64
 
     name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup node
         uses: actions/setup-node@v4

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,9 +24,9 @@ import EventEmitter from 'EventEmitter';
 
 import StalenessUtils from '@/utils/staleness';
 
-import { IS_OLD_KEY, IS_STALE_KEY } from '../utils/constants';
-import { getOperatorText, OPERATIONS } from '../utils/operations';
-import { checkIfOld } from '../utils/time';
+import { IS_OLD_KEY, IS_STALE_KEY } from '../utils/constants.js';
+import { getOperatorText, OPERATIONS } from '../utils/operations.js';
+import { checkIfOld } from '../utils/time.js';
 
 export default class TelemetryCriterion extends EventEmitter {
   /**

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,8 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-preview-window js-preview-window">
+  <div role="dialog" aria-label="Preview Container" class="l-preview-window js-preview-window">
     <PreviewHeader
+      ref="previewHeader"
       :current-view="currentViewProvider"
       :action-collection="actionCollection"
       :domain-object="domainObject"
@@ -34,6 +35,8 @@
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
@@ -48,7 +51,7 @@ export default {
     viewOptions: {
       type: Object,
       default() {
-        return undefined;
+        return {};
       }
     },
     existingView: {
@@ -142,15 +145,22 @@ export default {
         this.view = this.currentViewProvider.view(this.domainObject, this.objectPath);
       }
 
-      this.getActionsCollection(this.view);
-
       if (isExistingView) {
         this.viewContainer.appendChild(this.existingViewElement);
       } else {
+        // in preview mode, we're always visible
+        this.viewOptions.renderWhenVisible = (func) => {
+          window.requestAnimationFrame(func);
+          return true;
+        };
         this.view.show(this.viewContainer, false, this.viewOptions);
       }
 
       this.initObjectStyles();
+
+      nextTick(() => {
+        this.getActionsCollection(this.view);
+      });
     },
     addExistingViewBackToParent() {
       this.existingView.parentElement.appendChild(this.existingViewElement);

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,8 +23,8 @@
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
-import { TIME_CONTEXT_EVENTS } from '../time/constants';
-import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
+import { TIME_CONTEXT_EVENTS } from '../time/constants.js';
+import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants.js';
 
 /**
  * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
@@ -180,11 +180,14 @@ export default class TelemetryCollection extends EventEmitter {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
+    const options = { ...this.options };
+    //We always want to receive all available values in telemetry tables.
+    options.strategy = this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH;
 
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,
       (datum) => this._processNewTelemetry(datum),
-      this.options
+      options
     );
   }
 
@@ -209,6 +212,8 @@ export default class TelemetryCollection extends EventEmitter {
     let added = [];
     let addedIndices = [];
     let hasDataBeforeStartBound = false;
+    let size = this.options.size;
+    let enforceSize = size !== undefined && this.options.enforceSize;
 
     // loop through, sort and dedupe
     for (let datum of data) {
@@ -271,6 +276,13 @@ export default class TelemetryCollection extends EventEmitter {
         }
       } else {
         this.emit('add', added, addedIndices);
+
+        if (enforceSize && this.boundedTelemetry.length > size) {
+          const removeCount = this.boundedTelemetry.length - size;
+          const removed = this.boundedTelemetry.splice(0, removeCount);
+
+          this.emit('remove', removed);
+        }
       }
     }
   }

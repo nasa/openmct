@@ -22,3 +22,7 @@ export const SORT_ORDER_OPTIONS = [
 ];
 
 export const TIMELIST_TYPE = 'timelist';
+
+export const CURRENT_CSS_SUFFIX = '--is-current';
+export const PAST_CSS_SUFFIX = '--is-past';
+export const FUTURE_CSS_SUFFIX = '--is-future';

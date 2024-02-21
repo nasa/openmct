@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,25 +19,39 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
-const { test, expect, streamToString } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
-const path = require('path');
+import { fileURLToPath } from 'url';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import * as nbUtils from '../../../../helper/notebookUtils.js';
+import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
 const NOTEBOOK_NAME = 'Notebook';
 
 test.describe('Notebook CRUD Operations', () => {
-  test.fixme('Can create a Notebook Object', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
+    //Navigate to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+  test('Can create a Notebook Object', async ({ page }) => {
     //Create domain object
+    await createDomainObjectWithDefaults(page, {
+      type: NOTEBOOK_NAME
+    });
     //Newly created notebook should have one Section and one page, 'Unnamed Section'/'Unnamed Page'
+    const notebookSectionNames = page.locator('.c-notebook__sections .c-list__item__name');
+    const notebookPageNames = page.locator('.c-notebook__pages .c-list__item__name');
+    await expect(notebookSectionNames).toBeHidden();
+    await expect(notebookPageNames).toBeHidden();
+    await expect(notebookSectionNames).toHaveText('Unnamed Section');
+    await expect(notebookPageNames).toHaveText('Unnamed Page');
   });
   test.fixme('Can update a Notebook Object', async ({ page }) => {});
-  test.fixme('Can view a perviously created Notebook Object', async ({ page }) => {});
+  test.fixme('Can view a previously created Notebook Object', async ({ page }) => {});
   test.fixme('Can Delete a Notebook Object', async ({ page }) => {
     // Other than non-persistable objects
   });
@@ -233,7 +247,7 @@ test.describe('Notebook export tests', () => {
   test('can export notebook as text', async ({ page }) => {
     await nbUtils.enterTextEntry(page, `Foo bar entry`);
     // Click on 3 Dot Menu
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
     const downloadPromise = page.waitForEvent('download');
 
     await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();
@@ -265,7 +279,7 @@ test.describe('Notebook entry tests', () => {
   test.beforeEach(async ({ page }) => {
     // eslint-disable-next-line no-undef
     await page.addInitScript({
-      path: path.join(__dirname, '../../../../helper/', 'addInitNotebookWithUrls.js')
+      path: fileURLToPath(new URL('../../../../helper/addInitNotebookWithUrls.js', import.meta.url))
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 

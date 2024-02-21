@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,7 +23,7 @@
   <div v-if="loaded" class="js-plot-options-edit">
     <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
       <h2 class="--first" title="Display properties for this object">Plot Series</h2>
-      <li v-for="series in plotSeries" :key="series.key">
+      <li v-for="series in plotSeries" :key="series.keyString">
         <series-form :series="series" @series-updated="updateSeriesConfigForObject" />
       </li>
     </ul>
@@ -48,8 +48,8 @@
 <script>
 import _ from 'lodash';
 
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import LegendForm from './forms/LegendForm.vue';
 import SeriesForm from './forms/SeriesForm.vue';
 import YAxisForm from './forms/YAxisForm.vue';

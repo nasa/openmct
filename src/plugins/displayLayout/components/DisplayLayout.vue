@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,6 +27,7 @@
       'is-multi-selected': selectedLayoutItems.length > 1,
       'allow-editing': isEditing
     }"
+    :aria-label="`${domainObject.name} Layout`"
     @dragover="handleDragOver"
     @click.capture="bypassSelection"
     @drop="handleDrop"
@@ -36,6 +37,8 @@
       :grid-size="gridSize"
       :show-grid="showGrid"
       :grid-dimensions="gridDimensions"
+      :aria-label="`${domainObject.name} Layout Grid`"
+      :aria-hidden="showGrid ? 'false' : 'true'"
     />
     <div
       v-if="shouldDisplayLayoutDimensions"

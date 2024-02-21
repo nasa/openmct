@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -633,13 +633,22 @@ describe('The Imagery View Layouts', () => {
       imageWrapper[2].dispatchEvent(mouseDownEvent);
       await nextTick();
       const timestamp = imageWrapper[2].id.replace('wrapper-', '');
-      expect(componentView.previewAction.invoke).toHaveBeenCalledWith(
-        [componentView.objectPath[0]],
-        {
-          timestamp: Number(timestamp),
-          objectPath: componentView.objectPath
-        }
-      );
+      const mockInvoke = componentView.previewAction.invoke;
+      // Make sure the function was called
+      expect(mockInvoke).toHaveBeenCalled();
+
+      // Get the arguments of the first call
+      const firstArg = mockInvoke.calls.mostRecent().args[0];
+      const secondArg = mockInvoke.calls.mostRecent().args[1];
+
+      // Compare the first argument
+      expect(firstArg).toEqual([componentView.objectPath[0]]);
+
+      // Compare the "timestamp" property of the second argument
+      expect(secondArg.timestamp).toEqual(Number(timestamp));
+
+      // Compare the "objectPath" property of the second argument
+      expect(secondArg.objectPath).toEqual(componentView.objectPath);
     });
 
     it('should remove images when clock advances', async () => {

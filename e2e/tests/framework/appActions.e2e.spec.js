@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../pluginFixtures.js');
-const {
+import {
   createDomainObjectWithDefaults,
   createNotification,
-  expandEntireTree
-} = require('../../appActions.js');
+  expandEntireTree,
+  openObjectTreeContextMenu
+} from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('AppActions', () => {
   test('createDomainObjectsWithDefaults', async ({ page }) => {
@@ -155,7 +156,7 @@ test.describe('AppActions', () => {
 
     await page.goto('./#/browse/mine');
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
     await page.click(`li[role='menuitem']:text("Clock")`);
@@ -165,5 +166,14 @@ test.describe('AppActions', () => {
     });
     const locatorTreeCollapsedItems = locatorTree.locator('role=treeitem[expanded=false]');
     expect(await locatorTreeCollapsedItems.count()).toBe(0);
+  });
+  test('openObjectTreeContextMenu', async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder'
+    });
+    await openObjectTreeContextMenu(page, folder.url);
+    await expect(page.getByLabel('Menu')).toBeVisible();
   });
 });

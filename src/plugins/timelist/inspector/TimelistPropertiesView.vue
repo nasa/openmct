@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,17 +24,32 @@
   <div class="c-timelist-properties">
     <div class="c-inspect-properties">
       <ul class="c-inspect-properties__section">
-        <div class="c-inspect-properties_header" title="'Timeframe options'">Timeframe</div>
+        <div class="c-inspect-properties_header" title="'Display options'">Display Options</div>
         <li class="c-inspect-properties__row">
           <div v-if="canEdit" class="c-inspect-properties__hint span-all">
             These settings don't affect the view while editing, but will be applied after editing is
             finished.
           </div>
+          <div class="c-inspect-properties__label" title="Display Style">Display Style</div>
+          <div class="c-inspect-properties__value">
+            <select
+              v-if="canEdit"
+              v-model="isExpanded"
+              aria-label="Display Style"
+              @change="updateExpandedView"
+            >
+              <option :key="'expanded-view-option-enabled'" :value="true">Expanded</option>
+              <option :key="'expanded-view-option-disabled'" :value="false">Compact</option>
+            </select>
+            <span v-else>{{ isExpanded ? 'Expanded' : 'Compact' }}</span>
+          </div>
+        </li>
+        <li class="c-inspect-properties__row">
           <div class="c-inspect-properties__label" title="Sort order of the timelist.">
             Sort Order
           </div>
-          <div v-if="canEdit" class="c-inspect-properties__value">
-            <select v-model="sortOrderIndex" @change="updateSortOrder()">
+          <div class="c-inspect-properties__value">
+            <select v-if="canEdit" v-model="sortOrderIndex" @change="updateSortOrder()">
               <option
                 v-for="(sortOrderOption, index) in sortOrderOptions"
                 :key="index"
@@ -43,9 +58,7 @@
                 {{ sortOrderOption.label }}
               </option>
             </select>
-          </div>
-          <div v-else class="c-inspect-properties__value">
-            {{ sortOrderOptions[sortOrderIndex].label }}
+            <span v-else>{{ sortOrderOptions[sortOrderIndex].label }}</span>
           </div>
         </li>
         <event-properties
@@ -67,22 +80,14 @@
 </template>
 
 <script>
-import { SORT_ORDER_OPTIONS } from '../constants';
+import { SORT_ORDER_OPTIONS } from '../constants.js';
 import EventProperties from './EventProperties.vue';
 import Filtering from './FilteringComponent.vue';
 
 const EVENT_TYPES = [
   {
-    label: 'Future Events',
-    prefix: 'futureEvents'
-  },
-  {
     label: 'Current Events',
     prefix: 'currentEvents'
-  },
-  {
-    label: 'Past Events',
-    prefix: 'pastEvents'
   }
 ];
 
@@ -97,7 +102,8 @@ export default {
       sortOrderIndex: this.domainObject.configuration.sortOrderIndex,
       sortOrderOptions: SORT_ORDER_OPTIONS,
       eventTypes: EVENT_TYPES,
-      isEditing: this.openmct.editor.isEditing()
+      isEditing: this.openmct.editor.isEditing(),
+      isExpanded: this.domainObject.configuration.isExpanded || false
     };
   },
   computed: {
@@ -125,6 +131,9 @@ export default {
       const key = data.property;
       const value = data.value;
       this.updateProperty(key, value);
+    },
+    updateExpandedView() {
+      this.updateProperty('isExpanded', this.isExpanded);
     }
   }
 };

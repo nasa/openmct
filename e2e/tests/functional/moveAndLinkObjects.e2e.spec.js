@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,8 @@
 This test suite is dedicated to tests which verify the basic operations surrounding moving & linking objects.
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Move & link item tests', () => {
   test('Create a basic object and verify that it can be moved to another folder', async ({
@@ -149,7 +149,7 @@ test.describe('Move & link item tests', () => {
 
     // Finish editing and save Telemetry Table
     await page.locator('.c-button--menu.c-button--major.icon-save').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create New Folder Basic Domain Object
     let folder = 'Test Folder';

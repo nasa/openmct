@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -63,9 +63,9 @@
 </template>
 
 <script>
-import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
-import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
-import RemoveDialog from '../utils/removeDialog';
+import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants.js';
+import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container.js';
+import RemoveDialog from '../utils/removeDialog.js';
 import NotebookEmbed from './NotebookEmbed.vue';
 import PopupMenu from './PopupMenu.vue';
 

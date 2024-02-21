@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,7 +47,7 @@ export default function OverlayPlotViewProvider(openmct) {
       let component = null;
 
       return {
-        show: function (element) {
+        show: function (element, isEditing, { renderWhenVisible }) {
           let isCompact = isCompactView(objectPath);
           const { vNode, destroy } = mount(
             {
@@ -58,7 +58,8 @@ export default function OverlayPlotViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                path: objectPath
+                path: objectPath,
+                renderWhenVisible
               },
               data() {
                 return {

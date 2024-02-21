@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
-import RemoveDialog from '../utils/removeDialog';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code.js';
+import RemoveDialog from '../utils/removeDialog.js';
 import PopupMenu from './PopupMenu.vue';
 
 export default {

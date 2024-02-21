@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -112,8 +112,8 @@
 </template>
 
 <script>
-import { IS_OLD_KEY, IS_STALE_KEY, TRIGGER_CONJUNCTION } from '../utils/constants';
-import { INPUT_TYPES, OPERATIONS } from '../utils/operations';
+import { IS_OLD_KEY, IS_STALE_KEY, TRIGGER_CONJUNCTION } from '../utils/constants.js';
+import { INPUT_TYPES, OPERATIONS } from '../utils/operations.js';
 
 export default {
   inject: ['openmct'],

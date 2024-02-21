@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,7 +47,7 @@ export default class Tabs {
     let component = null;
 
     return {
-      show: function (element, editMode) {
+      show(element, editMode) {
         const { vNode, destroy } = mount(
           {
             el: element,
@@ -82,6 +82,7 @@ export default class Tabs {
         if (this.destroy) {
           this.destroy();
         }
+        component = null;
       }
     };
   }

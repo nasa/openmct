@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -69,20 +69,23 @@ export default class PreviewAction extends EventEmitter {
       }
     );
 
-    let overlay = this._openmct.overlays.overlay({
+    const overlay = this._openmct.overlays.overlay({
       element: vNode.el,
       size: 'large',
       autoHide: false,
       buttons: [
         {
           label: 'Done',
-          callback: () => overlay.dismiss()
+          callback: () => {
+            overlay.dismiss();
+          }
         }
       ],
       onDestroy: () => {
         PreviewAction.isVisible = false;
         destroy();
         this.emit('isVisible', false);
+        overlay.dismiss();
       }
     });
 

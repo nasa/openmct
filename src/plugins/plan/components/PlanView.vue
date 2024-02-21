@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -47,19 +47,20 @@
         :width="group.width"
         :is-nested="options.isChildObject"
         :status="status"
+        @activity-selected="selectActivity"
       />
     </div>
   </div>
 </template>
 
 <script>
-import * as d3Scale from 'd3-scale';
+import { scaleLinear, scaleUtc } from 'd3-scale';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
-import PlanViewConfiguration from '../PlanViewConfiguration';
-import { getContrastingColor, getValidatedData } from '../util';
+import PlanViewConfiguration from '../PlanViewConfiguration.js';
+import { getContrastingColor, getValidatedData, getValidatedGroups } from '../util.js';
 import ActivityTimeline from './ActivityTimeline.vue';
 
 const PADDING = 1;
@@ -133,8 +134,9 @@ export default {
     this.isNested = this.options.isChildObject;
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
+    // This view is used for both gantt-chart and plan domain objects
     if (this.domainObject.type === 'plan') {
-      this.planData = getValidatedData(this.domainObject);
+      this.setupPlan(this.domainObject);
     }
 
     const canvas = document.createElement('canvas');
@@ -142,18 +144,8 @@ export default {
     this.setDimensions();
     this.setTimeContext();
     this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
-    this.setStatus(this.openmct.status.get(this.domainObject.identifier));
-    this.removeStatusListener = this.openmct.status.observe(
-      this.domainObject.identifier,
-      this.setStatus
-    );
     this.handleConfigurationChange(this.configuration);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
-    this.stopObservingSelectFile = this.openmct.objects.observe(
-      this.domainObject,
-      '*',
-      this.handleSelectFileChange
-    );
     this.loadComposition();
   },
   beforeUnmount() {
@@ -173,10 +165,28 @@ export default {
     }
 
     this.planViewConfiguration.off('change', this.handleConfigurationChange);
-    this.stopObservingSelectFile();
+    if (this.stopObservingPlanChanges) {
+      this.stopObservingPlanChanges();
+    }
     this.planViewConfiguration.destroy();
   },
   methods: {
+    setupPlan(domainObject) {
+      this.planObject = domainObject;
+      this.applyChangesForPlanObject(domainObject);
+      this.stopObservingPlanChanges = this.openmct.objects.observe(
+        domainObject,
+        '*',
+        this.applyChangesForPlanObject
+      );
+      this.removeStatusListener = this.openmct.status.observe(
+        domainObject.identifier,
+        this.setPlanStatus
+      );
+    },
+    setPlanData(domainObject) {
+      this.planData = getValidatedData(domainObject);
+    },
     activityNameFitsRect(activityName, rectWidth) {
       return this.getTextWidth(activityName) + TEXT_LEFT_PADDING < rectWidth;
     },
@@ -214,10 +224,7 @@ export default {
             emphasis: true,
             callback: () => {
               this.removeFromComposition(this.planObject);
-              this.planObject = domainObject;
-              this.planData = getValidatedData(domainObject);
-              this.setStatus(this.openmct.status.get(domainObject.identifier));
-              this.setScaleAndGenerateActivities();
+              this.setupPlan(domainObject);
               dialog.dismiss();
             }
           },
@@ -235,11 +242,8 @@ export default {
       if (this.planObject) {
         this.showReplacePlanDialog(domainObject);
       } else {
-        this.planObject = domainObject;
         this.swimlaneVisibility = this.configuration.swimlaneVisibility;
-        this.planData = getValidatedData(domainObject);
-        this.setStatus(this.openmct.status.get(domainObject.identifier));
-        this.setScaleAndGenerateActivities();
+        this.setupPlan(domainObject);
       }
     },
     handleConfigurationChange(newConfiguration) {
@@ -259,8 +263,10 @@ export default {
 
       this.setScaleAndGenerateActivities();
     },
-    handleSelectFileChange() {
-      this.planData = getValidatedData(this.domainObject);
+    applyChangesForPlanObject(domainObject) {
+      const planDomainObject = domainObject || this.domainObject;
+      this.setPlanData(planDomainObject);
+      this.setPlanStatus(this.openmct.status.get(planDomainObject.identifier));
       this.setScaleAndGenerateActivities();
     },
     removeFromComposition(domainObject) {
@@ -342,10 +348,10 @@ export default {
       }
 
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
         this.xScale.domain([new Date(this.viewBounds.start), new Date(this.viewBounds.end)]);
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
         this.xScale.domain([this.viewBounds.start, this.viewBounds.end]);
       }
 
@@ -416,7 +422,7 @@ export default {
       return currentRow || SWIMLANE_PADDING;
     },
     generateActivities() {
-      const groupNames = Object.keys(this.planData);
+      const groupNames = getValidatedGroups(this.domainObject, this.planData);
 
       if (!groupNames.length) {
         return;
@@ -430,7 +436,11 @@ export default {
         let currentRow = 0;
 
         const rawActivities = this.planData[groupName];
-        rawActivities.forEach((rawActivity) => {
+        if (rawActivities === undefined) {
+          return;
+        }
+
+        rawActivities.forEach((rawActivity, index) => {
           if (!this.isActivityInBounds(rawActivity)) {
             return;
           }
@@ -477,13 +487,10 @@ export default {
           const activity = {
             color: color,
             textColor: textColor,
-            name: rawActivity.name,
             exceeds: {
               start: this.xScale(this.viewBounds.start) > this.xScale(rawActivity.start),
               end: this.xScale(this.viewBounds.end) < this.xScale(rawActivity.end)
             },
-            start: rawActivity.start,
-            end: rawActivity.end,
             row: currentRow,
             textLines: textLines,
             textStart: textStart,
@@ -492,7 +499,11 @@ export default {
             rectStart: rectX1,
             rectEnd: showTextInsideRect ? rectX2 : textStart + textWidth,
             rectWidth: rectWidth,
-            clipPathId: this.getClipPathId(groupName, rawActivity, currentRow)
+            clipPathId: this.getClipPathId(groupName, rawActivity, currentRow),
+            selection: {
+              groupName,
+              index
+            }
           };
           activitiesByRow[currentRow].push(activity);
         });
@@ -561,7 +572,7 @@ export default {
         swimlaneWidth
       };
     },
-    setStatus(status) {
+    setPlanStatus(status) {
       this.status = status;
     },
     getClipPathId(groupName, activity, row) {
@@ -569,6 +580,31 @@ export default {
       const activityName = activity.name.toLowerCase().replace(/ /g, '-');
 
       return `${groupName}-${activityName}-${activity.start}-${activity.end}-${row}`;
+    },
+    selectActivity({ event, selection }) {
+      const element = event.currentTarget;
+      const multiSelect = event.metaKey;
+      const { groupName, index } = selection;
+      const rawActivity = this.planData[groupName][index];
+      this.openmct.selection.select(
+        [
+          {
+            element: element,
+            context: {
+              type: 'activity',
+              activity: rawActivity
+            }
+          },
+          {
+            element: this.openmct.layout.$refs.browseObject.$el,
+            context: {
+              item: this.domainObject,
+              supportsMultiSelect: true
+            }
+          }
+        ],
+        multiSelect
+      );
     }
   }
 };

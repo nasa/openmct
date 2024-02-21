@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,6 +29,7 @@
             :key="headerItem.property"
             :direction="sortBy === headerItem.property ? ascending : headerItem.defaultDirection"
             :is-sortable="headerItem.isSortable"
+            :aria-label="headerItem.name"
             :title="headerItem.name"
             :property="headerItem.property"
             :current-sort="sortBy"
@@ -42,6 +43,7 @@
           :key="item.key"
           :item="item"
           :item-properties="itemProperties"
+          @click.stop="itemSelected(item, $event)"
         />
       </tbody>
     </table>
@@ -85,6 +87,7 @@ export default {
       }
     }
   },
+  emits: ['item-selection-changed'],
   data() {
     let sortBy = this.defaultSort.property;
     let ascending = this.defaultSort.defaultDirection;
@@ -155,6 +158,9 @@ export default {
           })
         );
       }
+    },
+    itemSelected(item, event) {
+      this.$emit('item-selection-changed', item, event.currentTarget);
     }
   }
 };

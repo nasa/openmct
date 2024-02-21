@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -26,11 +26,11 @@
 </template>
 
 <script>
-import * as d3Axis from 'd3-axis';
-import * as d3Scale from 'd3-scale';
-import * as d3Selection from 'd3-selection';
+import { axisTop } from 'd3-axis';
+import { scaleLinear, scaleUtc } from 'd3-scale';
+import { select } from 'd3-selection';
 
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
@@ -78,9 +78,9 @@ export default {
     }
   },
   mounted() {
-    let vis = d3Selection.select(this.$refs.axisHolder).append('svg:svg');
+    let vis = select(this.$refs.axisHolder).append('svg:svg');
 
-    this.xAxis = d3Axis.axisTop();
+    this.xAxis = axisTop();
     this.dragging = false;
 
     // draw x axis with labels. CSS is used to position them.
@@ -135,9 +135,9 @@ export default {
       //The D3 scale used depends on the type of time system as d3
       // supports UTC out of the box.
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
       }
 
       this.xAxis.scale(this.xScale);

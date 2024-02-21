@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,9 +24,9 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks with CouchDB.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const nbUtils = require('../../../../helper/notebookUtils');
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import * as nbUtils from '../../../../helper/notebookUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Notebook Tests with CouchDB @couchdb', () => {
   let testNotebook;
@@ -185,16 +185,20 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     //Partial match for "Science" should only return Science
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Sc');
-    await expect(page.locator('[aria-label="Search Result"]').first()).toContainText('Science');
-    await expect(page.locator('[aria-label="Search Result"]').first()).not.toContainText('Driving');
-    await expect(page.locator('[aria-label="Search Result"]').first()).not.toContainText(
+    await expect(page.locator('[aria-label="Annotation Search Result"]').first()).toContainText(
+      'Science'
+    );
+    await expect(page.locator('[aria-label="Annotation Search Result"]').first()).not.toContainText(
+      'Driving'
+    );
+    await expect(page.locator('[aria-label="Annotation Search Result"]').first()).not.toContainText(
       'Drilling'
     );
 
     //Searching for a tag which does not exist should return an empty result
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
-    await expect(page.locator('text=No results found')).toBeVisible();
+    await expect(page.getByText('No results found')).toBeVisible();
   });
 });
 

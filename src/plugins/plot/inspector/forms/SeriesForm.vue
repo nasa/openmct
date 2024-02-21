@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -127,8 +127,8 @@ import _ from 'lodash';
 
 import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 
-import { MARKER_SHAPES } from '../../draw/MarkerShapes';
-import { coerce, objectPath, validate } from './formUtil';
+import { MARKER_SHAPES } from '../../draw/MarkerShapes.js';
+import { coerce, objectPath, validate } from './formUtil.js';
 
 export default {
   components: {
@@ -157,7 +157,8 @@ export default {
       limitLines: this.series.get('limitLines'),
       markerSize: this.series.get('markerSize'),
       validation: {},
-      swatchActive: false
+      swatchActive: false,
+      status: null
     };
   },
   computed: {
@@ -190,7 +191,7 @@ export default {
       return this.series.get('color').asHexString();
     }
   },
-  mounted() {
+  created() {
     this.initialize();
 
     this.status = this.openmct.status.get(this.series.domainObject.identifier);
@@ -205,7 +206,7 @@ export default {
     }
   },
   methods: {
-    initialize: function () {
+    initialize() {
       this.fields = [
         {
           modelProp: 'yKey',

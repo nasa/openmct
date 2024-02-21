@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -33,13 +33,16 @@
         class="c-ellipse-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
+        role="application"
+        aria-roledescription="draggable ellipse"
+        aria-label="Ellipse"
       ></div>
     </template>
   </layout-frame>
 </template>
 
 <script>
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 export default {

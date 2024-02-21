@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,6 +29,7 @@
         v-if="isCollapsable"
         class="l-pane__collapse-button c-icon-button"
         :name="collapseTitle"
+        :aria-label="collapseTitle"
         :title="collapseTitle"
         @click="toggleCollapse"
       ></button>
@@ -36,6 +37,7 @@
     <button
       class="l-pane__expand-button"
       :name="expandTitle"
+      :aria-label="expandTitle"
       :title="expandTitle"
       @click="toggleCollapse"
     >
@@ -54,6 +56,10 @@ const LOCAL_STORAGE_KEY__PANE_POSITIONS = 'mct-pane-positions';
 export default {
   inject: ['openmct'],
   props: {
+    collapseType: {
+      type: String,
+      default: 'vertical'
+    },
     handle: {
       type: String,
       default: '',
@@ -105,6 +111,7 @@ export default {
         'l-pane--vertical-handle-before': this.type === 'vertical' && this.handle === 'before',
         'l-pane--vertical-handle-after': this.type === 'vertical' && this.handle === 'after',
         'l-pane--collapsed': this.collapsed,
+        'collapse-horizontal': this.collapseType === 'horizontal',
         'l-pane--reacts': !this.handle,
         'l-pane--resizing': this.resizing === true
       };
@@ -175,7 +182,9 @@ export default {
       this.collapsed = true;
     },
     handleExpand() {
-      this.$el.style[this.styleProp] = this.currentSize;
+      let size = this.currentSize ? this.currentSize : this.getSavedPosition();
+      this.$el.style[this.styleProp] = size;
+
       delete this.currentSize;
       delete this.dragCollapse;
       this.collapsed = false;

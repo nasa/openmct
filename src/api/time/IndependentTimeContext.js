@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants';
-import TimeContext from './TimeContext';
+import { MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants.js';
+import TimeContext from './TimeContext.js';
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.

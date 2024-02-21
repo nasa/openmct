@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,13 +23,13 @@
 import EventEmitter from 'EventEmitter';
 import utils from 'objectUtils';
 
-import ConflictError from './ConflictError';
-import InMemorySearchProvider from './InMemorySearchProvider';
-import InterceptorRegistry from './InterceptorRegistry';
-import MutableDomainObject from './MutableDomainObject';
-import RootObjectProvider from './RootObjectProvider';
-import RootRegistry from './RootRegistry';
-import Transaction from './Transaction';
+import ConflictError from './ConflictError.js';
+import InMemorySearchProvider from './InMemorySearchProvider.js';
+import InterceptorRegistry from './InterceptorRegistry.js';
+import MutableDomainObject from './MutableDomainObject.js';
+import RootObjectProvider from './RootObjectProvider.js';
+import RootRegistry from './RootRegistry.js';
+import Transaction from './Transaction.js';
 
 /**
  * Uniquely identifies a domain object.
@@ -99,7 +99,13 @@ export default class ObjectAPI {
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
-    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
+    this.SYNCHRONIZED_OBJECT_TYPES = [
+      'notebook',
+      'restricted-notebook',
+      'plan',
+      'annotation',
+      'activity-states'
+    ];
 
     this.errors = {
       Conflict: ConflictError
@@ -221,7 +227,7 @@ export default class ObjectAPI {
     const provider = this.getProvider(identifier);
 
     if (!provider) {
-      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}}"`);
+      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}"`);
     }
 
     if (!provider.get) {
@@ -232,6 +238,10 @@ export default class ObjectAPI {
       .get(identifier, abortSignal)
       .then((domainObject) => {
         delete this.cache[keystring];
+        if (!domainObject && abortSignal.aborted) {
+          // we've aborted the request
+          return;
+        }
         domainObject = this.applyGetInterceptors(identifier, domainObject);
 
         if (this.supportsMutation(identifier)) {
@@ -344,6 +354,9 @@ export default class ObjectAPI {
   isPersistable(idOrKeyString) {
     let identifier = utils.parseKeyString(idOrKeyString);
     let provider = this.getProvider(identifier);
+    if (provider?.isReadOnly) {
+      return !provider.isReadOnly();
+    }
 
     return provider !== undefined && provider.create !== undefined && provider.update !== undefined;
   }
@@ -683,10 +696,12 @@ export default class ObjectAPI {
   /**
    * Updates a domain object based on its latest persisted state. Note that this will mutate the provided object.
    * @param {module:openmct.DomainObject} domainObject an object to refresh from its persistence store
+   * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
+   *          dirty/in-transaction objects use and the provider.get method
    * @returns {Promise} the provided object, updated to reflect the latest persisted state of the object.
    */
-  async refresh(domainObject) {
-    const refreshedObject = await this.get(domainObject.identifier);
+  async refresh(domainObject, forceRemote = false) {
+    const refreshedObject = await this.get(domainObject.identifier, null, forceRemote);
 
     if (domainObject.isMutable) {
       domainObject.$refresh(refreshedObject);
@@ -786,16 +801,20 @@ export default class ObjectAPI {
    * Given an identifier, constructs the original path by walking up its parents
    * @param {module:openmct.ObjectAPI~Identifier} identifier
    * @param {Array<module:openmct.DomainObject>} path an array of path objects
+   * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
    * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifier, path = []) {
-    const domainObject = await this.get(identifier);
+  async getOriginalPath(identifier, path = [], abortSignal = null) {
+    const domainObject = await this.get(identifier, abortSignal);
+    if (!domainObject) {
+      return [];
+    }
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
       // if we have a location, and we don't already have this in our constructed path,
       // then keep walking up the path
-      return this.getOriginalPath(utils.parseKeyString(location), path);
+      return this.getOriginalPath(utils.parseKeyString(location), path, abortSignal);
     } else {
       return path;
     }

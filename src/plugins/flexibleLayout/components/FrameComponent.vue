@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -31,6 +31,8 @@
       ref="frame"
       class="c-frame c-fl-frame__drag-wrapper is-selectable u-inspectable is-moveable"
       :draggable="draggable"
+      :aria-label="frameLabel"
+      role="group"
       @dragstart="initDrag"
     >
       <object-frame
@@ -95,6 +97,9 @@ export default {
     },
     draggable() {
       return this.isEditing;
+    },
+    frameLabel() {
+      return `${this.domainObject?.name} Frame` || 'Frame';
     }
   },
   mounted() {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
-import { BAR_GRAPH_KEY } from './BarGraphConstants';
-import BarGraphViewProvider from './BarGraphViewProvider';
-import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
+import BarGraphCompositionPolicy from './BarGraphCompositionPolicy.js';
+import { BAR_GRAPH_KEY } from './BarGraphConstants.js';
+import BarGraphViewProvider from './BarGraphViewProvider.js';
+import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider.js';
 
 export default function () {
   return function install(openmct) {

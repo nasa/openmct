@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,7 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-gauge__wrapper js-gauge-wrapper" :class="gaugeClasses" :title="gaugeTitle">
+  <div
+    ref="gaugeWrapper"
+    class="c-gauge__wrapper js-gauge-wrapper"
+    :class="gaugeClasses"
+    :aria-label="gaugeTitle"
+    :title="gaugeTitle"
+  >
     <template v-if="typeDial">
       <svg
         ref="gauge"
@@ -331,15 +337,15 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import { DIAL_VALUE_DEG_OFFSET, getLimitDegree } from '../gauge-limit-util.js';
 
 const LIMIT_PADDING_IN_PERCENT = 10;
 const DEFAULT_CURRENT_VALUE = '--';
 
 export default {
   mixins: [stalenessMixin, tooltipHelpers],
-  inject: ['openmct', 'domainObject', 'composition'],
+  inject: ['openmct', 'domainObject', 'composition', 'renderWhenVisible'],
   data() {
     let gaugeController = this.domainObject.configuration.gaugeController;
 
@@ -402,10 +408,10 @@ export default {
       const CHAR_THRESHOLD = 3;
       const START_PERC = 8.5;
       const REDUCE_PERC = 0.8;
-      const RANGE_CHARS_MAX = Math.max(
-        this.rangeLow.toString().length,
-        this.rangeHigh.toString().length
-      );
+      const RANGE_CHARS_MAX =
+        this.rangeLow && this.rangeHigh
+          ? Math.max(this.rangeLow.toString().length, this.rangeHigh.toString().length)
+          : CHAR_THRESHOLD;
 
       return this.fontSizeFromChars(RANGE_CHARS_MAX, CHAR_THRESHOLD, START_PERC, REDUCE_PERC);
     },
@@ -728,8 +734,7 @@ export default {
         return;
       }
 
-      this.isRendering = true;
-      requestAnimationFrame(() => {
+      this.isRendering = this.renderWhenVisible(() => {
         this.isRendering = false;
 
         this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);

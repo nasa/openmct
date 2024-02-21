@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,15 +25,16 @@ import mount from 'utils/mount';
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import configStore from './configuration/ConfigStore';
-import PlotConfigurationModel from './configuration/PlotConfigurationModel';
+import configStore from './configuration/ConfigStore.js';
+import PlotConfigurationModel from './configuration/PlotConfigurationModel.js';
 import PlotOptions from './inspector/PlotOptions.vue';
-import PlotVuePlugin from './plugin';
+import PlotVuePlugin from './plugin.js';
 
 const TEST_KEY_ID = 'some-other-key';
 
@@ -372,7 +373,7 @@ describe('the plugin', function () {
       applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
       plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'plot-single');
       plotView = plotViewProvider.view(testTelemetryObject, []);
-      plotView.show(child, true);
+      plotView.show(child, true, { renderWhenVisible });
 
       return nextTick();
     });
@@ -400,6 +401,7 @@ describe('the plugin', function () {
       const clickEvent = createMouseEvent('click');
 
       legendControl.dispatchEvent(clickEvent);
+      await nextTick();
 
       let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
       expect(legend.length).toBe(6);
@@ -654,7 +656,7 @@ describe('the plugin', function () {
       plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'plot-single');
       plotView = plotViewProvider.view(testTelemetryObject, []);
 
-      plotView.show(child, true);
+      plotView.show(child, true, { renderWhenVisible });
 
       resizePromise = new Promise((resolve) => {
         resizePromiseResolve = resolve;
@@ -811,7 +813,8 @@ describe('the plugin', function () {
           provide: {
             openmct: openmct,
             domainObject: selection[0][0].context.item,
-            path: [selection[0][0].context.item, selection[0][1].context.item]
+            path: [selection[0][0].context.item, selection[0][1].context.item],
+            renderWhenVisible
           },
           template: '<plot-options ref="root"/>'
         },

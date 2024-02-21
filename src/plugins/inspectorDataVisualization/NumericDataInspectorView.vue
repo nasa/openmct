@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -35,6 +35,7 @@
 <script>
 import mount from 'utils/mount';
 
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 import Plot from '../plot/PlotView.vue';
 import TelemetryFrame from './TelemetryFrame.vue';
 
@@ -89,8 +90,9 @@ export default {
       this.clearPlots();
 
       this.unregisterTimeContextList = [];
-      this.elementsList = [];
       this.componentsList = [];
+      this.elementsList = [];
+      this.visibilityObservers = [];
 
       this.telemetryKeys.forEach(async (telemetryKey) => {
         const plotObject = await this.openmct.objects.get(telemetryKey);
@@ -109,7 +111,10 @@ export default {
       return this.openmct.time.addIndependentContext(keyString, this.bounds);
     },
     renderPlot(plotObject) {
-      const { vNode, destroy } = mount(
+      const wrapper = document.createElement('div');
+      const visibilityObserver = new VisibilityObserver(wrapper, this.openmct.element);
+
+      const { destroy } = mount(
         {
           components: {
             TelemetryFrame,
@@ -117,7 +122,8 @@ export default {
           },
           provide: {
             openmct: this.openmct,
-            path: [plotObject]
+            path: [plotObject],
+            renderWhenVisible: visibilityObserver.renderWhenVisible
           },
           data() {
             return {
@@ -133,13 +139,15 @@ export default {
                     </TelemetryFrame>`
         },
         {
-          app: this.openmct.app
+          app: this.openmct.app,
+          element: wrapper
         }
       );
 
       this.componentsList.push(destroy);
-      this.elementsList.push(vNode.el);
-      this.$refs.numericDataView.append(vNode.el);
+      this.elementsList.push(wrapper);
+      this.visibilityObservers.push(visibilityObserver);
+      this.$refs.numericDataView.append(wrapper);
     },
     clearPlots() {
       if (this.componentsList?.length) {
@@ -150,6 +158,11 @@ export default {
       if (this.elementsList?.length) {
         this.elementsList.forEach((element) => element.remove());
         delete this.elementsList;
+      }
+
+      if (this.visibilityObservers?.length) {
+        this.visibilityObservers.forEach((visibilityObserver) => visibilityObserver.destroy());
+        delete this.visibilityObservers;
       }
 
       if (this.plotObjects?.length) {

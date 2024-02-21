@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -114,9 +114,9 @@
 <script>
 import _ from 'lodash';
 
-import configStore from '../../configuration/ConfigStore';
-import eventHelpers from '../../lib/eventHelpers';
-import { objectPath } from './formUtil';
+import configStore from '../../configuration/ConfigStore.js';
+import eventHelpers from '../../lib/eventHelpers.js';
+import { objectPath } from './formUtil.js';
 
 export default {
   inject: ['openmct', 'domainObject'],

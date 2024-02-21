@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,9 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
-
-import ClearDataAction from './ClearDataAction';
+import ClearDataAction from './ClearDataAction.js';
 import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
 
 export default function plugin(appliesToObjects, options = { indicator: true }) {
@@ -31,27 +29,10 @@ export default function plugin(appliesToObjects, options = { indicator: true }) 
 
   return function install(openmct) {
     if (installIndicator) {
-      const { vNode, destroy } = mount(
-        {
-          components: {
-            GlobalClearIndicator
-          },
-          provide: {
-            openmct
-          },
-          template: '<GlobalClearIndicator></GlobalClearIndicator>'
-        },
-        {
-          app: openmct.app,
-          element: document.createElement('div')
-        }
-      );
-
       let indicator = {
-        element: vNode.el,
+        vueComponent: GlobalClearIndicator,
         key: 'global-clear-indicator',
-        priority: openmct.priority.DEFAULT,
-        destroy: destroy
+        priority: openmct.priority.DEFAULT
       };
 
       openmct.indicators.add(indicator);

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { BAR_GRAPH_KEY } from './BarGraphConstants';
+import { BAR_GRAPH_KEY } from './BarGraphConstants.js';
 
 export default function BarGraphCompositionPolicy(openmct) {
   function hasRange(metadata) {

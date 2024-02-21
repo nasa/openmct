@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,6 +22,7 @@
 <template>
   <div
     class="plot-legend-item"
+    :aria-label="`Plot Legend Item for ${domainObject?.name}`"
     :class="{
       'is-stale': isStale,
       'is-status--missing': isMissing
@@ -63,9 +64,9 @@
 import { getLimitClass } from '@/plugins/plot/chart/limitUtil';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 
 export default {
   mixins: [stalenessMixin, tooltipHelpers],
@@ -123,9 +124,14 @@ export default {
     this.seriesModels = [];
     eventHelpers.extend(this);
     this.config = this.getConfig();
-    this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
-    this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
-    this.config.series.forEach(this.onSeriesAdd, this);
+    if (this.domainObject.type === 'telemetry.plot.stacked') {
+      this.objectComposition = this.openmct.composition.get(this.domainObject);
+      this.objectComposition.on('add', this.addTelemetryObject);
+      this.objectComposition.on('remove', this.removeTelemetryObject);
+      this.objectComposition.load();
+    } else {
+      this.registerListeners(this.config);
+    }
     this.legend = this.config.legend;
     this.loaded = true;
     this.setupClockChangedEvent((domainObject) => {
@@ -135,6 +141,11 @@ export default {
   },
   beforeUnmount() {
     this.stopListening();
+
+    if (this.objectComposition) {
+      this.objectComposition.off('add', this.addTelemetryObject);
+      this.objectComposition.off('remove', this.removeTelemetryObject);
+    }
   },
   methods: {
     getConfig() {
@@ -142,28 +153,54 @@ export default {
 
       return configStore.get(configId);
     },
-    onSeriesAdd(series, index) {
-      this.seriesModels[index] = series;
-      if (series.keyString === this.seriesKeyString) {
-        this.listenTo(
-          series,
-          'change:color',
-          (newColor) => {
-            this.updateColor(newColor);
-          },
-          this
-        );
-        this.listenTo(
-          series,
-          'change:name',
-          () => {
-            this.updateName();
-          },
-          this
-        );
-        this.subscribeToStaleness(series.domainObject);
-        this.initialize();
+    registerListeners(config) {
+      //listen to any changes to the telemetry endpoints that are associated with the child
+      this.listenTo(config.series, 'add', this.onSeriesAdd, this);
+      this.listenTo(config.series, 'remove', this.onSeriesRemove, this);
+      config.series.forEach(this.onSeriesAdd, this);
+    },
+    addTelemetryObject(object) {
+      //get the config for each child
+      const configId = this.openmct.objects.makeKeyString(object.identifier);
+      const config = configStore.get(configId);
+      if (config) {
+        this.registerListeners(config);
       }
+    },
+    removeTelemetryObject(identifier) {
+      const configId = this.openmct.objects.makeKeyString(identifier);
+      const config = configStore.get(configId);
+      if (config) {
+        config.series.forEach(this.onSeriesRemove, this);
+      }
+    },
+    onSeriesAdd(series) {
+      if (series.keyString !== this.seriesKeyString) {
+        return;
+      }
+      const existingSeries = this.getSeries(series.keyString);
+      if (existingSeries) {
+        return;
+      }
+      this.seriesModels.push(series);
+      this.listenTo(
+        series,
+        'change:color',
+        (newColor) => {
+          this.updateColor(newColor);
+        },
+        this
+      );
+      this.listenTo(
+        series,
+        'change:name',
+        () => {
+          this.updateName();
+        },
+        this
+      );
+      this.subscribeToStaleness(series.domainObject);
+      this.initialize();
     },
     onSeriesRemove(seriesToRemove) {
       const seriesIndexToRemove = this.seriesModels.findIndex(

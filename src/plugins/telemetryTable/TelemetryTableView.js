@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,10 +22,10 @@
 import mount from 'utils/mount';
 
 import TableComponent from './components/TableComponent.vue';
-import TelemetryTable from './TelemetryTable';
+import TelemetryTable from './TelemetryTable.js';
 
 export default class TelemetryTableView {
-  constructor(openmct, domainObject, objectPath) {
+  constructor(openmct, domainObject, objectPath, options) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.objectPath = objectPath;
@@ -63,9 +63,10 @@ export default class TelemetryTableView {
     if (this._destroy) {
       this._destroy();
     }
+    this.component = null;
   }
 
-  show(element, editMode) {
+  show(element, editMode, { renderWhenVisible }) {
     const { vNode, destroy } = mount(
       {
         el: element,
@@ -76,7 +77,8 @@ export default class TelemetryTableView {
           openmct: this.openmct,
           objectPath: this.objectPath,
           table: this.table,
-          currentView: this
+          currentView: this,
+          renderWhenVisible
         },
         data() {
           return {

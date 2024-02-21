@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -33,10 +33,10 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
+import objectUtils from '../../api/objects/object-utils.js';
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
+
 export default {
-  components: {
-    // IndependentTimeConductor
-  },
   mixins: [stalenessMixin],
   inject: ['openmct'],
   props: {
@@ -116,6 +116,9 @@ export default {
       this.actionCollection.destroy();
       delete this.actionCollection;
     }
+    if (this.visibilityObserver) {
+      this.visibilityObserver.destroy();
+    }
     this.$refs.objectViewWrapper.removeEventListener('dragover', this.onDragOver, {
       capture: true
     });
@@ -128,6 +131,10 @@ export default {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
   },
   mounted() {
+    this.visibilityObserver = new VisibilityObserver(
+      this.$refs.objectViewWrapper,
+      this.openmct.element
+    );
     this.updateView();
     this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
       capture: true
@@ -181,7 +188,10 @@ export default {
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
-      this.openmct.objectViews.off('contextAction', this.performContextAction);
+      this.openmct.objectViews.off('reload', this.reload);
+      if (this.contextActionEvent) {
+        this.openmct.objectViews.off(this.contextActionEvent, this.performContextAction);
+      }
     },
     getStyleReceiver() {
       let styleReceiver;
@@ -213,6 +223,13 @@ export default {
       this.clear();
       this.updateView(true);
     },
+    reload(domainObjectToReload) {
+      if (objectUtils.equals(domainObjectToReload, this.domainObject)) {
+        this.updateView(true);
+        this.initObjectStyles();
+        this.triggerStalenessSubscribe(this.domainObject);
+      }
+    },
     triggerStalenessSubscribe(object) {
       if (this.openmct.telemetry.isTelemetryObject(object)) {
         this.subscribeToStaleness(object);
@@ -231,7 +248,11 @@ export default {
         if (elemToStyle) {
           if (typeof styleObj[key] === 'string' && styleObj[key].indexOf('__no_value') > -1) {
             if (elemToStyle.style[key]) {
-              elemToStyle.style[key] = '';
+              if (key === 'background-color') {
+                elemToStyle.style[key] = 'transparent';
+              } else {
+                elemToStyle.style[key] = '';
+              }
             }
           } else {
             if (
@@ -291,7 +312,9 @@ export default {
         }
       }
 
-      this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
+      this.currentView.show(this.viewContainer, this.openmct.editor.isEditing(), {
+        renderWhenVisible: this.visibilityObserver.renderWhenVisible
+      });
 
       if (immediatelySelect) {
         this.removeSelectable = this.openmct.selection.selectable(
@@ -301,8 +324,12 @@ export default {
         );
       }
 
+      this.contextActionEvent = `contextAction:${this.openmct.objects.makeKeyString(
+        this.domainObject.identifier
+      )}`;
       this.openmct.objectViews.on('clearData', this.clearData);
-      this.openmct.objectViews.on('contextAction', this.performContextAction);
+      this.openmct.objectViews.on('reload', this.reload);
+      this.openmct.objectViews.on(this.contextActionEvent, this.performContextAction);
 
       this.$nextTick(() => {
         this.updateStyle(this.styleRuleManager?.currentStyle);
@@ -473,9 +500,9 @@ export default {
         }
       }
     },
-    performContextAction() {
-      if (this.currentView.contextAction) {
-        this.currentView.contextAction(...arguments);
+    performContextAction(...args) {
+      if (this?.currentView?.contextAction) {
+        this.currentView.contextAction(...args);
       }
     },
     isEditingAllowed() {

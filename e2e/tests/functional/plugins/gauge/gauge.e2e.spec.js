@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,9 +24,13 @@
  * This test suite is dedicated to testing the Gauge component.
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const uuid = require('uuid').v4;
+import { v4 as uuid } from 'uuid';
+
+import {
+  createDomainObjectWithDefaults,
+  createExampleTelemetryObject
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Gauge', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,8 +41,6 @@ test.describe('Gauge', () => {
   test('Can add and remove telemetry sources @unstable', async ({ page }) => {
     // Create the gauge with defaults
     const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    const editButtonLocator = page.locator('button[title="Edit"]');
-    const saveButtonLocator = page.locator('button[title="Save"]');
 
     // Create a sine wave generator within the gauge
     const swg1 = await createDomainObjectWithDefaults(page, {
@@ -50,10 +52,10 @@ test.describe('Gauge', () => {
     // Navigate to the gauge and verify that
     // the SWG appears in the elements pool
     await page.goto(gauge.url);
-    await editButtonLocator.click();
+    await page.getByLabel('Edit Object').click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
-    await saveButtonLocator.click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create another sine wave generator within the gauge
     const swg2 = await createDomainObjectWithDefaults(page, {
@@ -75,10 +77,10 @@ test.describe('Gauge', () => {
     // Navigate to the gauge and verify that the new SWG
     // appears in the elements pool and the old one is gone
     await page.goto(gauge.url);
-    await editButtonLocator.click();
+    await page.getByLabel('Edit Object').click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
-    await saveButtonLocator.click();
+    await page.getByRole('button', { name: 'Save' }).click();
 
     // Right click on the new SWG in the elements pool and delete it
     await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({
@@ -105,7 +107,7 @@ test.describe('Gauge', () => {
       description: 'https://github.com/nasa/openmct/issues/5356'
     });
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
     await page.click(`li[role='menuitem']:text("Gauge")`);
@@ -124,7 +126,7 @@ test.describe('Gauge', () => {
 
     // Create the gauge with defaults
     await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    await page.click('button[title="More options"]');
+    await page.click('button[title="More actions"]');
     await page.click('li[role="menuitem"]:has-text("Edit Properties")');
     // FIXME: We need better selectors for these custom form controls
     const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
@@ -132,5 +134,55 @@ test.describe('Gauge', () => {
     await page.click('button[aria-label="Save"]');
 
     // TODO: Verify changes in the UI
+  });
+
+  test.fixme('Gauge does not display NaN when data not available', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7421'
+    });
+    // Create a Gauge
+    const gauge = await createDomainObjectWithDefaults(page, {
+      type: 'Gauge'
+    });
+
+    // Create a Sine Wave Generator in the Gauge with a loading delay
+    const swgWith5sDelay = await createExampleTelemetryObject(page, gauge.uuid);
+
+    await page.goto(swgWith5sDelay.url);
+    await page.getByTitle('More actions').click();
+    await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
+
+    //Edit Example Telemetry Object to include 5s loading Delay
+    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
+
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    // Wait until the URL is updated
+    await page.waitForURL(`**/${gauge.uuid}/*`);
+
+    // Nav to the Gauge
+    await page.goto(gauge.url);
+    const gaugeNoDataText = await page.locator('.js-dial-current-value tspan').textContent();
+    expect(gaugeNoDataText).toBe('--');
+  });
+
+  test('Gauge enforces composition policy', async ({ page }) => {
+    // Create a Gauge
+    await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Unnamed Gauge'
+    });
+
+    // Try to create a Folder into the Gauge. Should be disallowed.
+    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('menuitem', { name: /Folder/ }).click();
+    await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
+    await page.getByLabel('Cancel').click();
+
+    // Try to create a Display Layout into the Gauge. Should be disallowed.
+    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('menuitem', { name: /Display Layout/ }).click();
+    await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
   });
 });

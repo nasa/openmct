@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -31,15 +31,19 @@
         {{ options.label }}
       </div>
     </div>
-    <div v-if="open" class="c-menu">
+    <div v-if="open" class="c-menu" role="menu">
       <ul>
         <li
           v-for="(option, index) in options.options"
           :key="index"
           :class="option.class"
+          role="menuitem"
+          :aria-labelledby="`${option.name}-menuitem-label`"
           @click="onClick(option)"
         >
-          {{ option.name }}
+          <span :id="`${option.name}-menuitem-label`">
+            {{ option.name }}
+          </span>
         </li>
       </ul>
     </div>
@@ -47,7 +51,7 @@
 </template>
 
 <script>
-import toggle from '../../mixins/toggle-mixin';
+import toggle from '../../mixins/toggle-mixin.js';
 export default {
   mixins: [toggle],
   props: {
