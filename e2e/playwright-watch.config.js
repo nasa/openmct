@@ -1,6 +1,10 @@
 // playwright.config.js
 // @ts-check
 
+import { devices } from '@playwright/test';
+import { fileURLToPath } from 'url';
+
+
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 0, //Retries are not needed with watch mode
@@ -27,6 +31,28 @@ const config = {
       testMatch: '**/*.spec.js', // run all tests
       use: {
         browserName: 'chromium'
+      }
+    },
+    {
+      name: 'ipad',
+      grep: /@mobile/,
+      use: {
+        storageState: fileURLToPath(
+          new URL('./test-data/display_layout_with_child_layouts.json', import.meta.url)
+        ),
+        browserName: 'webkit',
+        ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
+      }
+    },
+    {
+      name: 'iphone',
+      grep: /@mobile/,
+      use: {
+        storageState: fileURLToPath(
+          new URL('./test-data/display_layout_with_child_layouts.json', import.meta.url)
+        ),
+        browserName: 'webkit',
+        ...devices['iPhone 14 Pro'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
       }
     }
   ],

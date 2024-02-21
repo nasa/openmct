@@ -1,7 +1,6 @@
 // playwright.config.js
 // @ts-check
 
-// eslint-disable-next-line no-unused-vars
 import { devices } from '@playwright/test';
 const MAX_FAILURES = 5;
 const NUM_WORKERS = 2;
