@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "3.3.0-next",
+  "version": "4.0.0-next",
   "description": "The Open MCT core platform",
   "type": "module",
   "main": "dist/openmct.js",

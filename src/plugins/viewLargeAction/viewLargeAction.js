@@ -99,7 +99,10 @@ export default class ViewLargeAction {
       }
     );
     this.preview = vNode.componentInstance;
-    this.destroy = destroy;
+    this.destroy = () => {
+      destroy();
+      this.preview = null;
+    };
 
     return this.preview.$el;
   }

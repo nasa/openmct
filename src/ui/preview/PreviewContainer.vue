@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
@@ -108,11 +110,6 @@ export default {
       this.addExistingViewBackToParent();
     }
   },
-  updated() {
-    // FIXME: fixes a problem where the some context menu items are not available when in Preview Mode
-    // see https://github.com/nasa/openmct/issues/7158
-    this.getActionsCollection(this.view);
-  },
   methods: {
     clear() {
       if (this.view) {
@@ -148,8 +145,6 @@ export default {
         this.view = this.currentViewProvider.view(this.domainObject, this.objectPath);
       }
 
-      this.getActionsCollection(this.view);
-
       if (isExistingView) {
         this.viewContainer.appendChild(this.existingViewElement);
       } else {
@@ -162,6 +157,10 @@ export default {
       }
 
       this.initObjectStyles();
+
+      nextTick(() => {
+        this.getActionsCollection(this.view);
+      });
     },
     addExistingViewBackToParent() {
       this.existingView.parentElement.appendChild(this.existingViewElement);
