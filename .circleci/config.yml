@@ -304,6 +304,8 @@ workflows:
           name: e2e-full-nightly
           suite: full
       - e2e-mobile
+      - perf-test
+      - mem-test
       - visual-a11y-tests:
           name: visual-a11y-test-nightly
           suite: full
