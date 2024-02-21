@@ -33,15 +33,15 @@ import {
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Overlay Plot', () => {
+  let overlayPlot;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+    overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot'
+    });
   });
 
   test('Plot legend color is in sync with plot series color', async ({ page }) => {
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
-    });
-
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: overlayPlot.uuid
@@ -67,9 +67,6 @@ test.describe('Overlay Plot', () => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7403'
-    });
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
     });
 
     await createDomainObjectWithDefaults(page, {
@@ -129,10 +126,6 @@ test.describe('Overlay Plot', () => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6338'
-    });
-    // Create an Overlay Plot with a default SWG
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
     });
 
     const swgA = await createDomainObjectWithDefaults(page, {
@@ -199,10 +192,6 @@ test.describe('Overlay Plot', () => {
   test('The elements pool supports dragging series into multiple y-axis buckets', async ({
     page
   }) => {
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
-    });
-
     const swgA = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: overlayPlot.uuid
@@ -292,10 +281,6 @@ test.describe('Overlay Plot', () => {
         description: 'https://github.com/nasa/openmct/issues/7421'
       });
 
-      const overlayPlot = await createDomainObjectWithDefaults(page, {
-        type: 'Overlay Plot'
-      });
-
       const swgA = await createDomainObjectWithDefaults(page, {
         type: 'Sine Wave Generator',
         parent: overlayPlot.uuid
@@ -309,7 +294,6 @@ test.describe('Overlay Plot', () => {
       await page.getByRole('tab', { name: 'Elements' }).click();
 
       await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
-
       const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
       const plotPixelSize = plotPixels.length;
       expect(plotPixelSize).toBeGreaterThan(0);
@@ -317,10 +301,6 @@ test.describe('Overlay Plot', () => {
   );
 
   test('Can remove an item via the elements pool action menu', async ({ page }) => {
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Overlay Plot'
-    });
-
     const swgA = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: overlayPlot.uuid
@@ -329,7 +309,7 @@ test.describe('Overlay Plot', () => {
     await page.goto(overlayPlot.url);
     // Wait for plot series data to load and be drawn
     await waitForPlotsToRender(page);
-    await page.getByTitle('Edit Object').click();
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
