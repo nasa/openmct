@@ -315,6 +315,31 @@ test.describe('Overlay Plot', () => {
       expect(plotPixelSize).toBeGreaterThan(0);
     }
   );
+
+  test('Can remove an item via the elements pool action menu', async ({ page }) => {
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot'
+    });
+
+    const swgA = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(overlayPlot.url);
+    // Wait for plot series data to load and be drawn
+    await waitForPlotsToRender(page);
+    await page.getByTitle('Edit Object').click();
+
+    await page.getByRole('tab', { name: 'Elements' }).click();
+
+    const swgAElementsPoolItem = page.getByLabel(`Preview ${swgA.name}`);
+    await expect(swgAElementsPoolItem).toBeVisible();
+    await swgAElementsPoolItem.click({ button: 'right' });
+    await page.getByRole('menuitem', { name: 'Remove' }).click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await expect(swgAElementsPoolItem).toBeHidden();
+  });
 });
 
 /**
