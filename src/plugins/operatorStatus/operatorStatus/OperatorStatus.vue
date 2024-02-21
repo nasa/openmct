@@ -129,7 +129,7 @@ export default {
       this.role = activeRole;
       const status = await this.openmct.user.status.getStatusForRole(activeRole);
       if (status !== undefined) {
-        this.setStatus({ status });
+        this.setStatus({ role: this.role, status });
       }
     },
     subscribeToMyStatus() {
@@ -141,7 +141,11 @@ export default {
     subscribeToRoleChange() {
       this.openmct.user.on('roleChanged', this.fetchMyStatus);
     },
-    setStatus({ status }) {
+    setStatus({ role, status }) {
+      if (role !== this.role) {
+        // not my role
+        return;
+      }
       status = this.applyStyling(status);
       this.selectedStatus = status.key;
       this.indicator.iconClass(status.iconClassPoll);

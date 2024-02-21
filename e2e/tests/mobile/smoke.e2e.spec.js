@@ -35,24 +35,25 @@ Make no assumptions about the order that elements appear in the DOM.
 
 import { expect, test } from '../../pluginFixtures.js';
 
-test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({
-  page
-}) => {
-  //Go to baseURL
-  await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-  //Click the Create button
-  await page.getByRole('button', { name: 'Create' }).click();
-
-  // Verify that Create Folder appears in the dropdown
-  await expect(page.locator(':nth-match(:text("Folder"), 2)')).toBeEnabled();
-});
-
-test('Verify that My Items Tree appears', async ({ page, openmctConfig }) => {
+test('Verify that My Items Tree appears @mobile', async ({ page, openmctConfig }) => {
   const { myItemsFolderName } = openmctConfig;
   //Go to baseURL
   await page.goto('./');
 
   //My Items to be visible
-  await expect(page.locator(`a:has-text("${myItemsFolderName}")`)).toBeEnabled();
+  await expect(page.getByRole('treeitem', { name: `${myItemsFolderName}` })).toBeVisible();
+});
+
+test('Verify that user can search @mobile', async ({ page }) => {
+  //For now, this test is going to be hardcoded against './test-data/display_layout_with_child_layouts.json'
+  await page.goto('./');
+
+  await page.getByRole('searchbox', { name: 'Search Input' }).click();
+  await page.getByRole('searchbox', { name: 'Search Input' }).fill('Parent Display Layout');
+  //Search Results appear in search modal
+  await expect(page.getByLabel('Object Results').getByText('Parent Display Layout')).toBeVisible();
+  //Clicking on the search result takes you to the object
+  await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
+  await page.getByTitle('Collapse Browse Pane').click();
+  await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
 });

@@ -229,7 +229,7 @@ Current list of test tags:
 
 |Test Tag|Description|
 |:-:|-|
-|`@ipad` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
+|`@mobile` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
 |`@a11y` | Test case or test suite to execute playwright-axe accessibility checks and generate a11y reports.|
 |`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
 |`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
@@ -329,9 +329,15 @@ In terms of operating system testing, we're only limited by what the CI provider
 
 #### **Mobile**
 
-We have the Mission-need to support iPad. To run our iPad suite, please see our `playwright-*.config.js` with the 'iPad' project.
+We have a Mission-need to support iPad and mobile devices. To run our test suites with mobile devices, please see our `playwright-mobile.config.js` projects.
 
-In general, our test suite is not designed to run against mobile devices as the mobile experience is a focused version of the application. Core functionality is missing (chiefly the 'Create' button) and so this will likely turn into a separate suite.
+In general, our test suite is not designed to run against mobile devices as the mobile experience is a focused version of the application. Core functionality is missing (chiefly the 'Create' button). To bypass the object creation, we leverage the `storageState` properties for starting the mobile tests with localstorage.
+
+For now, the mobile tests will exist in the /tests/mobile/ suites and be executed with the
+```sh
+npm run test:e2e:mobile
+```
+command.
 
 #### **Skipping or executing tests based on browser, os, and/os browser version:**
 
