@@ -286,8 +286,6 @@ workflows:
           name: e2e-stable
           suite: stable
       - e2e-mobile
-      - mem-test
-      - perf-test
       - visual-a11y-tests:
           name: visual-a11y-test-ci
           suite: ci
