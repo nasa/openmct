@@ -363,7 +363,7 @@ test.describe('Example Imagery in Display Layout', () => {
     await page.locator('li[title="View Large"]').click();
     await expect(pausePlayButton).toHaveClass(/is-paused/);
 
-    await page.locator('[aria-label="Close"]').click();
+    await page.getByRole('button', { name: 'Close' }).click();
     await expect.soft(pausePlayButton).not.toHaveClass(/is-paused/);
   });
 
