@@ -1,10 +1,6 @@
 // playwright.config.js
 // @ts-check
 
-// eslint-disable-next-line no-unused-vars
-import { devices } from '@playwright/test';
-import path from 'path';
-
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 0,
