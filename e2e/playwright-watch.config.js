@@ -4,7 +4,6 @@
 import { devices } from '@playwright/test';
 import { fileURLToPath } from 'url';
 
-
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 0, //Retries are not needed with watch mode
