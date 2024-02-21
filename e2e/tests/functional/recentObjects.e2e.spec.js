@@ -298,7 +298,7 @@ test.describe('Recent Objects', () => {
     // Assert that the list is empty
     expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
   });
-  test('Ensure clear recent objects button is active or inactive', async ({ page }) => {
+  test('Verify functionality of "clear" and "collapse pane" buttons', async ({ page }) => {
     // Assert that the list initially contains 3 objects (clock, folder, my items)
     expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
 
@@ -331,6 +331,24 @@ test.describe('Recent Objects', () => {
     expect(await page.getByRole('button', { name: 'Clear Recently Viewed' }).isEnabled()).toBe(
       true
     );
+
+    // Assert initial state of pane and collapse the Recent Objects panel
+    await expect(page.getByLabel('Expand Recently Viewed Pane')).toBeHidden();
+    await expect(page.getByLabel('Collapse Recently Viewed Pane')).toBeVisible();
+    await page.getByLabel('Collapse Recently Viewed Pane').click();
+
+    // Assert that the "Expand Recently Viewed Pane" button is visible
+    // and that the "Collapse Recently Viewed Pane" button is hidden
+    await expect(page.getByLabel('Expand Recently Viewed Pane')).toBeVisible();
+    await expect(page.getByLabel('Collapse Recently Viewed Pane')).toBeHidden();
+
+    // Expand the Recent Objects panel by clicking on the "Expand Recently Viewed Pane" button
+    await page.getByLabel('Expand Recently Viewed Pane').click();
+
+    // Assert that the "Expand Recently Viewed Pane" button is hidden
+    // and that the "Collapse Recently Viewed Pane" button is visible
+    await expect(page.getByLabel('Expand Recently Viewed Pane')).toBeHidden();
+    await expect(page.getByLabel('Collapse Recently Viewed Pane')).toBeVisible();
   });
 
   function assertInitialRecentObjectsListState() {
