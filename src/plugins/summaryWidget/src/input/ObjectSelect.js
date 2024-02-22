@@ -1,4 +1,4 @@
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
 import Select from './Select.js';
 
@@ -39,7 +39,7 @@ export default function ObjectSelect(config, manager, baseOptions) {
    * @private
    */
   function onCompositionAdd(obj) {
-    self.select.addOption(objectUtils.makeKeyString(obj.identifier), obj.name);
+    self.select.addOption(makeKeyString(obj.identifier), obj.name);
   }
 
   /**
@@ -77,7 +77,7 @@ export default function ObjectSelect(config, manager, baseOptions) {
  */
 ObjectSelect.prototype.generateOptions = function () {
   const items = Object.values(this.compositionObjs).map(function (obj) {
-    return [objectUtils.makeKeyString(obj.identifier), obj.name];
+    return [makeKeyString(obj.identifier), obj.name];
   });
   this.baseOptions.forEach(function (option, index) {
     items.splice(index, 0, option);

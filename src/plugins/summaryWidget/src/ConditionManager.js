@@ -1,6 +1,6 @@
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
 import ConditionEvaluator from './ConditionEvaluator.js';
 
@@ -119,7 +119,7 @@ ConditionManager.prototype.addGlobalPropertyType = function (key, type) {
  *                   has completed and types have been parsed
  */
 ConditionManager.prototype.parsePropertyTypes = function (object) {
-  const objectId = objectUtils.makeKeyString(object.identifier);
+  const objectId = makeKeyString(object.identifier);
 
   this.telemetryTypesById[objectId] = {};
   Object.values(this.telemetryMetadataById[objectId]).forEach(function (valueMetadata) {
@@ -182,7 +182,7 @@ ConditionManager.prototype.createNormalizedDatum = function (objId, telemetryDat
 ConditionManager.prototype.onCompositionAdd = function (obj) {
   let compositionKeys;
   const telemetryAPI = this.openmct.telemetry;
-  const objId = objectUtils.makeKeyString(obj.identifier);
+  const objId = makeKeyString(obj.identifier);
   let telemetryMetadata;
   const self = this;
 
@@ -191,7 +191,7 @@ ConditionManager.prototype.onCompositionAdd = function (obj) {
     self.telemetryMetadataById[objId] = {};
 
     // FIXME: this should just update based on listener.
-    compositionKeys = self.domainObject.composition.map(objectUtils.makeKeyString);
+    compositionKeys = self.domainObject.composition.map(makeKeyString);
     if (!compositionKeys.includes(objId)) {
       self.domainObject.composition.push(obj.identifier);
     }
@@ -245,7 +245,7 @@ ConditionManager.prototype.onCompositionAdd = function (obj) {
  * @private
  */
 ConditionManager.prototype.onCompositionRemove = function (identifier) {
-  const objectId = objectUtils.makeKeyString(identifier);
+  const objectId = makeKeyString(identifier);
   // FIXME: this should just update by listener.
   _.remove(this.domainObject.composition, function (id) {
     return id.key === identifier.key && id.namespace === identifier.namespace;

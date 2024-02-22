@@ -1,4 +1,4 @@
-import utils from 'objectUtils';
+import { makeKeyString, parseKeyString } from 'objectUtils';
 
 import Transaction from './Transaction.js';
 
@@ -9,7 +9,7 @@ let transaction;
 describe('Transaction Class', () => {
   beforeEach(() => {
     objectAPI = {
-      makeKeyString: (identifier) => utils.makeKeyString(identifier),
+      makeKeyString: (identifier) => makeKeyString(identifier),
       save: () => Promise.resolve(true),
       mutate: (object, prop, value) => {
         object[prop] = value;
@@ -18,7 +18,7 @@ describe('Transaction Class', () => {
       },
       refresh: (object) => Promise.resolve(object),
       areIdsEqual: (...identifiers) => {
-        return identifiers.map(utils.parseKeyString).every((identifier) => {
+        return identifiers.map(parseKeyString).every((identifier) => {
           return (
             identifier === identifiers[0] ||
             (identifier.namespace === identifiers[0].namespace &&
