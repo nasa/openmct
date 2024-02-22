@@ -82,6 +82,7 @@ export default class Tabs {
         if (this.destroy) {
           this.destroy();
         }
+        component = null;
       }
     };
   }

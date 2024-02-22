@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-grid-view" role="grid">
+  <div class="l-grid-view" role="grid" :aria-label="`${domainObject.name} Grid View`">
     <grid-item
       v-for="(item, index) in items"
       :key="index"
@@ -38,6 +38,6 @@ import GridItem from './GridItem.vue';
 export default {
   components: { GridItem },
   mixins: [compositionLoader],
-  inject: ['openmct']
+  inject: ['openmct', 'domainObject']
 };
 </script>

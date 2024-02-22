@@ -401,6 +401,7 @@ describe('the plugin', function () {
       const clickEvent = createMouseEvent('click');
 
       legendControl.dispatchEvent(clickEvent);
+      await nextTick();
 
       let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
       expect(legend.length).toBe(6);

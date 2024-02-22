@@ -146,7 +146,9 @@
       &:before {
         // '+' icon
         font-size: 0.8em;
-        margin-bottom: $interiorMarginSm;
+        margin-bottom: $interiorMarginSm; // margin-bottom is needed for Tree and Inspector
+        margin-right: $interiorMarginSm; // margin-right and margin-left are needed for Recent Objects
+        margin-left: $interiorMarginSm;
       }
 
       &:hover {
@@ -188,6 +190,36 @@
 
       [class*='expand-button'] {
         display: block;
+      }
+    }
+
+    &[class*='--collapsed'] { // For Recent Objects Button  
+      &.collapse-horizontal {
+        [class*='expand-button'] {
+          display: block;
+          position: absolute;
+          top: 0;
+          width: 100%;
+          border-top-right-radius: $controlCr;
+          border-top-left-radius: $controlCr;
+        }
+      }
+      [class*='expand-button'] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: auto;
+        width: 100%;
+        padding: $interiorMarginSm 1px;
+        font-size: 11px;
+
+        [class*='label'] {
+          text-orientation: mixed;
+          text-transform: uppercase;
+          writing-mode: horizontal-tb;
+        }
       }
     }
 
@@ -256,7 +288,7 @@
       }
 
       /************************** Horizontal Splitter After */
-      // Example: Tree pane
+      // Example: Tree pane and Recent Objects
       &[class*='-after'] {
         margin-right: nth($shellPanePad, 2);
         padding-right: nth($shellPanePad, 2);
@@ -292,7 +324,7 @@
       }
 
       /************************** Vertical Splitter Before */
-      // Pane collapses downward. Used by Elements pool in Inspector
+      // Pane collapses downward. Used by Recent Objects in Tree 
       &[class*='-before'] {
         $m: $interiorMarginLg;
         margin-top: $m;
@@ -303,7 +335,7 @@
         }
 
         .l-pane__collapse-button:before {
-          content: $glyph-icon-arrow-down;
+          content: $glyph-icon-line-horz;
         }
 
         &.l-pane--collapsed {

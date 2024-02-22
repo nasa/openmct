@@ -27,6 +27,11 @@
     aria-label="Search Results Dropdown"
     class="c-gsearch__dropdown"
   >
+    <button
+      aria-label="Close"
+      class="c-gsearch__results-close c-click-icon c-overlay__close-button icon-x"
+      @click="selectedResult"
+    ></button>
     <div class="c-gsearch__results" :class="{ 'search-finished': !searchLoading }">
       <div
         v-if="objectResults?.length"

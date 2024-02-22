@@ -61,6 +61,7 @@ class Overlay extends EventEmitter {
   dismiss() {
     this.emit('destroy');
     this.destroy();
+    this.container.remove();
   }
 
   //Ensures that any callers are notified that the overlay is dismissed
