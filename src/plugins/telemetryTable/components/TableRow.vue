@@ -180,9 +180,7 @@ export default {
       return this.row.fullDatum;
     },
     rowStyle(key) {
-      return this.columnWidths[key] === undefined
-        ? {}
-        : { width: this.columnWidths[key] + 'px', 'max-width': this.columnWidths[key] + 'px' };
+      return {};
     },
     showContextMenu: async function (event) {
       event.preventDefault();

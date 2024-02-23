@@ -51,11 +51,18 @@ const DEFAULT_RATE_MS = 1000;
  *
  * @memberof module:openmct.telemetry
  */
+// IE, I mean _Safari_, doesn't support requestIdleCallback. It's in a tech preview though, so it should be dropping soon.
+const requestIdleCallback =
+  // eslint-disable-next-line compat/compat
+  window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
+
 class BatchingWebSocket extends EventTarget {
   #worker;
   #openmct;
   #showingRateLimitNotification;
   #rate;
+  #maxBatchSize;
+  #applicationIsInitializing;
 
   constructor(openmct) {
     super();
@@ -67,6 +74,8 @@ class BatchingWebSocket extends EventTarget {
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
     this.#rate = DEFAULT_RATE_MS;
+    this.#maxBatchSize = Number.POSITIVE_INFINITY;
+    this.#applicationIsInitializing = true;
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
     this.#worker.addEventListener('message', routeMessageToHandler);
@@ -78,6 +87,18 @@ class BatchingWebSocket extends EventTarget {
       },
       { once: true }
     );
+
+    openmct.once('start', () => {
+      requestIdleCallback(
+        () => {
+          this.#applicationIsInitializing = false;
+          this.setMaxBatchSize(this.#maxBatchSize);
+        },
+        {
+          timeout: 5000
+        }
+      );
+    });
   }
 
   /**
@@ -151,10 +172,16 @@ class BatchingWebSocket extends EventTarget {
    * 15 would probably be a better batch size.
    */
   setMaxBatchSize(maxBatchSize) {
+    this.#maxBatchSize = maxBatchSize;
+    if (!this.#applicationIsInitializing) {
+        this.#sendMaxBatchSizeToWorker(this.#maxBatchSize);
+    }
+  }
+  #sendMaxBatchSizeToWorker(maxBatchSize) {
     this.#worker.postMessage({
       type: 'setMaxBatchSize',
       maxBatchSize
-    });
+    });  
   }
 
   /**
@@ -194,7 +221,6 @@ class BatchingWebSocket extends EventTarget {
   }
 
   #waitUntilIdleAndRequestNextBatch(batch) {
-    // eslint-disable-next-line compat/compat
     requestIdleCallback(
       (state) => {
         const now = Date.now();
@@ -207,7 +233,11 @@ class BatchingWebSocket extends EventTarget {
             console.debug('Inactive tab, assuming ready for next batch');
             // After ingesting a telemetry batch, wait until the event loop is idle again before
             // informing the worker we are ready for another batch.
-            console.debug(`${Date.now()} Sending ready signal to worker due to timeout for batch ${batch.number}`);
+            console.debug(
+              `${Date.now()} Sending ready signal to worker due to timeout for batch ${
+                batch.number
+              }`
+            );
             performance.mark('batch-processed');
             performance.measure('batch-processing-time', 'batch-received', 'batch-processed');
             this.#readyForNextBatch();
@@ -220,7 +250,11 @@ class BatchingWebSocket extends EventTarget {
           }
           // After ingesting a telemetry batch, wait until the event loop is idle again before
           // informing the worker we are ready for another batch.
-          console.debug(`${Date.now()} Sending ready signal to worker due to idle event loop for batch ${batch.number}`);
+          console.debug(
+            `${Date.now()} Sending ready signal to worker due to idle event loop for batch ${
+              batch.number
+            }`
+          );
           this.#readyForNextBatch();
         }
       },

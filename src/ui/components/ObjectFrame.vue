@@ -45,6 +45,8 @@
         <div
           ref="objectName"
           class="c-object-label__name"
+          aria-label="object name"
+          :title="domainObject && domainObject.name"
           @mouseover.ctrl="showToolTip"
           @mouseleave="hideToolTip"
         >

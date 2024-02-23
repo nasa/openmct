@@ -100,7 +100,7 @@ export default {
 
     this.setDimensions();
     this.drawAxis(this.bounds, this.timeSystem);
-    this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+    //this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
   },
   unmounted() {
     clearInterval(this.resizeTimer);

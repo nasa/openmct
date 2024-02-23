@@ -269,7 +269,8 @@ export default function installWorker() {
     #throttledSendNextBatch;
 
     constructor(worker) {
-      this.#maxBatchSize = 10;
+      // No dropping telemetry unless we're explicitly told to.
+      this.#maxBatchSize = Number.POSITIVE_INFINITY;
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();

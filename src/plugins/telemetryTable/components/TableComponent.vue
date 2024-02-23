@@ -255,8 +255,8 @@
           <template v-for="(title, key) in headers" :key="key">
             <th
               :style="{
-                width: configuredColumnWidths[key] + 'px',
-                'max-width': configuredColumnWidths[key] + 'px'
+                'width': '30%',
+                'max-width': '30%',
               }"
             >
               {{ title }}
@@ -757,7 +757,7 @@ export default {
 
       if (!this.sizingRows[sizingRow.objectKeyString]) {
         this.sizingRows[sizingRow.objectKeyString] = sizingRow;
-        this.$nextTick().then(this.calculateColumnWidths);
+        //this.$nextTick().then(this.calculateColumnWidths);
       }
 
       if (this.autoScroll) {
@@ -823,18 +823,18 @@ export default {
       this.addOrRemoveStaleObject(keyString, stalenessResponse);
     },
     calculateTableSize() {
-      this.$nextTick().then(this.calculateColumnWidths);
+      //this.$nextTick().then(this.calculateColumnWidths);
     },
     updateConfiguration(configuration) {
       this.isAutosizeEnabled = configuration.autosize;
       this.hideHeaders = configuration.hideHeaders;
 
       this.updateHeaders();
-      this.$nextTick().then(this.calculateColumnWidths);
+      //this.$nextTick().then(this.calculateColumnWidths);
     },
     addObject() {
       this.updateHeaders();
-      this.$nextTick().then(this.calculateColumnWidths);
+      //this.$nextTick().then(this.calculateColumnWidths);
     },
     removeObject(objectIdentifier) {
       let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
