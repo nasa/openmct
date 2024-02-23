@@ -244,7 +244,7 @@ export default class ViewRegistry extends EventEmitter {
  * Provide a view of this object.
  *
  * When called by Open MCT, the following arguments will be passed to it:
- * @param {object} domainObject - the domainObject that the view is provided for
+ * @param {Object} domainObject - the domainObject that the view is provided for
  * @param {array} objectPath - The current contextual object path of the view object
  *                             eg current domainObject is located under MyItems which is under Root
  *

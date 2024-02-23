@@ -241,7 +241,7 @@ ConditionManager.prototype.onCompositionAdd = function (obj) {
 /**
  * Invoked on a remove event in this Summary Widget's composition. Removes
  * the object from the local composition, and untracks it
- * @param {object} identifier The identifier of the object to be removed
+ * @param {Object} identifier The identifier of the object to be removed
  * @private
  */
 ConditionManager.prototype.onCompositionRemove = function (identifier) {

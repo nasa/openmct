@@ -77,7 +77,7 @@ export default class StatusAPI extends EventEmitter {
 
   /**
    * Set a poll question for operators to respond to. When presented with a status poll question, all operators will reply with their current status.
-   * @param {String} questionText - The text of the question
+   * @param {string} questionText - The text of the question
    * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
    */
   async setPollQuestion(questionText) {

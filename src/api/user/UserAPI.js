@@ -136,7 +136,7 @@ class UserAPI extends EventEmitter {
   /**
    * Will return if a role can provide a operator status response
    * @memberof module:openmct.UserApi#
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   canProvideStatusForRole() {
     if (!this.hasProvider()) {
@@ -205,7 +205,7 @@ class UserAPI extends EventEmitter {
 export default UserAPI;
 
 /**
- * @typedef {String} Role
+ * @typedef {string} Role
  */
 
 /**
@@ -218,11 +218,11 @@ export default UserAPI;
 
 /**
  * @typedef {Object} StatusStyleDefinition
- * @property {String} iconClass The icon class to apply to the status indicator when this status is active "icon-circle-slash",
- * @property {String} iconClassPoll The icon class to apply to the poll question indicator when this style is active eg. "icon-status-poll-question-mark"
- * @property {String} statusClass The class to apply to the indicator when this status is active eg. "s-status-error"
- * @property {String} statusBgColor The background color to apply in the status summary section of the poll question popup for this status eg."#9900cc"
- * @property {String} statusFgColor The foreground color to apply in the status summary section of the poll question popup for this status eg. "#fff"
+ * @property {string} iconClass The icon class to apply to the status indicator when this status is active "icon-circle-slash",
+ * @property {string} iconClassPoll The icon class to apply to the poll question indicator when this style is active eg. "icon-status-poll-question-mark"
+ * @property {string} statusClass The class to apply to the indicator when this status is active eg. "s-status-error"
+ * @property {string} statusBgColor The background color to apply in the status summary section of the poll question popup for this status eg."#9900cc"
+ * @property {string} statusFgColor The foreground color to apply in the status summary section of the poll question popup for this status eg. "#fff"
  */
 
 /**

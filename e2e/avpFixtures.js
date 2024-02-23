@@ -46,7 +46,7 @@ const TEST_RESULTS_DIR = './test-results';
  * Scans for accessibility violations on a page and writes a report to disk if violations are found.
  * Automatically asserts that no violations should be present.
  *
- * @typedef {object} GenerateReportOptions
+ * @typedef {Object} GenerateReportOptions
  * @property {string} [reportName] - The name for the report file.
  *
  * @param {import('playwright').Page} page - The page object from Playwright.

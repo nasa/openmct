@@ -45,7 +45,7 @@ export default function AutoflowTabularController(domainObject, data, openmct) {
 
 /**
  * Set the "Last Updated" value to be displayed.
- * @param {String} value the value to display
+ * @param {string} value the value to display
  * @private
  */
 AutoflowTabularController.prototype.trackLastUpdated = function (value) {

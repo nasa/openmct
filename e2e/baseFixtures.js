@@ -40,7 +40,7 @@ import { v4 as uuid } from 'uuid';
  * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
  * @private
  * @param {import('@playwright/test').ConsoleMessage} msg
- * @returns {String} formatted string with message type, text, url, and line and column numbers
+ * @returns {string} formatted string with message type, text, url, and line and column numbers
  */
 function _consoleMessageToString(msg) {
   const { url, lineNumber, columnNumber } = msg.location();
