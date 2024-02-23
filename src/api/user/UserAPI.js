@@ -28,6 +28,8 @@ import StoragePersistance from './StoragePersistance.js';
 import User from './User.js';
 
 class UserAPI extends EventEmitter {
+  /** @type {OpenMCT} */
+  #openmct;
   /**
    * @param {OpenMCT} openmct
    * @param {UserAPIConfiguration} config
@@ -35,7 +37,7 @@ class UserAPI extends EventEmitter {
   constructor(openmct, config) {
     super();
 
-    this._openmct = openmct;
+    this.#openmct = openmct;
     this._provider = undefined;
 
     this.User = User;
@@ -201,15 +203,19 @@ class UserAPI extends EventEmitter {
 }
 
 export default UserAPI;
+
 /**
  * @typedef {String} Role
  */
+
 /**
- * @typedef {Object} OpenMCT
+ * @typedef {import('../../../openmct.js').OpenMCT} OpenMCT
  */
+
 /**
  * @typedef {{statusStyles: Object.<string, StatusStyleDefinition>}} UserAPIConfiguration
  */
+
 /**
  * @typedef {Object} StatusStyleDefinition
  * @property {String} iconClass The icon class to apply to the status indicator when this status is active "icon-circle-slash",
@@ -217,4 +223,8 @@ export default UserAPI;
  * @property {String} statusClass The class to apply to the indicator when this status is active eg. "s-status-error"
  * @property {String} statusBgColor The background color to apply in the status summary section of the poll question popup for this status eg."#9900cc"
  * @property {String} statusFgColor The foreground color to apply in the status summary section of the poll question popup for this status eg. "#fff"
+ */
+
+/**
+ * @typedef {Object} UserProvider
  */
