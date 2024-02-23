@@ -168,7 +168,7 @@ class UserAPI extends EventEmitter {
    * 'hasRole' method
    *
    * @memberof module:openmct.UserAPI#
-   * @returns {Function|Boolean} user provider 'isLoggedIn' method
+   * @returns {Function|boolean} user provider 'isLoggedIn' method
    * @param {string} roleId id of role to check for
    * @throws Will throw an error if no user provider is set
    */
