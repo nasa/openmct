@@ -30,7 +30,7 @@ import { expect, test } from '../../baseFixtures.js';
 test.describe('Renaming objects', () => {
   test.beforeEach(async ({ page }) => {
     // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
   test('When renaming objects, the browse bar and various components all update', async ({

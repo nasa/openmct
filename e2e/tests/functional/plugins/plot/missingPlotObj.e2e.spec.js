@@ -69,8 +69,7 @@ test.describe('Handle missing object for plots', () => {
     }, jsonData);
 
     //Reloads page and clicks on stacked plot
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.goto(stackedPlot.url);
+    await Promise.all([page.reload(), page.waitForLoadState('domcontentloaded')]);
 
     //Verify Main section is there on load
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(stackedPlot.name);
@@ -81,3 +80,84 @@ test.describe('Handle missing object for plots', () => {
     expect(warningReceived).toBe(true);
   });
 });
+
+/**
+ * This is used the create a stacked plot object
+ * @private
+ */
+async function makeStackedPlot(page, myItemsFolderName) {
+  // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+  // create stacked plot
+  await page.locator('button.c-create-button').click();
+  await page.locator('li[role="menuitem"]:has-text("Stacked Plot")').click();
+
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.locator('button:has-text("OK")').click(),
+    //Wait for Save Banner to appear
+    page.waitForSelector('.c-message-banner__message')
+  ]);
+
+  // save the stacked plot
+  await saveStackedPlot(page);
+
+  // create a sinewave generator
+  await createSineWaveGenerator(page);
+
+  // click on stacked plot
+  await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+  await Promise.all([
+    page.waitForNavigation(),
+    page.locator('text=Unnamed Stacked Plot').first().click()
+  ]);
+
+  // create a second sinewave generator
+  await createSineWaveGenerator(page);
+
+  // click on stacked plot
+  await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
+  await Promise.all([
+    page.waitForNavigation(),
+    page.locator('text=Unnamed Stacked Plot').first().click()
+  ]);
+}
+
+/**
+ * This is used to save a stacked plot object
+ * @private
+ */
+async function saveStackedPlot(page) {
+  // save stacked plot
+  await page
+    .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
+    .nth(1)
+    .click();
+
+  await Promise.all([
+    page.locator('text=Save and Finish Editing').click(),
+    //Wait for Save Banner to appear
+    page.waitForSelector('.c-message-banner__message')
+  ]);
+  //Wait until Save Banner is gone
+  await page.locator('.c-message-banner__close-button').click();
+  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+}
+
+/**
+ * This is used to create a sine wave generator object
+ * @private
+ */
+async function createSineWaveGenerator(page) {
+  //Create sine wave generator
+  await page.locator('button.c-create-button').click();
+  await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
+
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.locator('button:has-text("OK")').click(),
+    //Wait for Save Banner to appear
+    page.waitForSelector('.c-message-banner__message')
+  ]);
+}

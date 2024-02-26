@@ -39,7 +39,7 @@ const filePath = 'test-data/PerformanceDisplayLayout.json';
 test.describe('Performance tests', () => {
   test.beforeEach(async ({ page, browser }, testInfo) => {
     // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Click a:has-text("My Items")
     await page.locator('a:has-text("My Items")').click({
@@ -129,12 +129,12 @@ test.describe('Performance tests', () => {
     ]);
 
     //Time to Example Imagery Frame loads within Display Layout
-    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
+    await page.locator('.c-imagery__main-image__bg').waitFor({ state: 'visible' });
     //Time to Example Imagery object loads
-    await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
+    await page.locator('.c-imagery__main-image__background-image').waitFor({ state: 'visible' });
 
     //Get background-image url from background-image css prop
-    const backgroundImage = await page.locator('.c-imagery__main-image__background-image');
+    const backgroundImage = page.locator('.c-imagery__main-image__background-image');
     let backgroundImageUrl = await backgroundImage.evaluate((el) => {
       return window
         .getComputedStyle(el)
@@ -156,15 +156,15 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('viewLarge.start.test')); //This is a mark only to compare evaluate timing
 
     //Time to Imagery Rendered in Large Frame
-    await page.waitForSelector('.c-imagery__main-image__bg', { state: 'visible' });
+    await page.locator('.c-imagery__main-image__bg').waitFor({ state: 'visible' });
     await page.evaluate(() => window.performance.mark('background-image-frame'));
 
     //Time to Example Imagery object loads
-    await page.waitForSelector('.c-imagery__main-image__background-image', { state: 'visible' });
+    await page.locator('.c-imagery__main-image__background-image').waitFor({ state: 'visible' });
     await page.evaluate(() => window.performance.mark('background-image-visible'));
 
     // Get Current number of images in thumbstrip
-    await page.waitForSelector('.c-imagery__thumb');
+    await page.locator('.c-imagery__thumb').waitFor({ state: 'visible' });
     const thumbCount = await page.locator('.c-imagery__thumb').count();
     console.log('number of thumbs rendered ' + thumbCount);
     await page.locator('.c-imagery__thumb').last().click();
