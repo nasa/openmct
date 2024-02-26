@@ -37,7 +37,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
 
     // Create Notebook
     testNotebook = await createDomainObjectWithDefaults(page, { type: 'Notebook' });
-    await page.goto(testNotebook.url, { waitUntil: 'networkidle' });
+    await page.goto(testNotebook.url, { waitUntil: 'domcontentloaded' });
   });
 
   test('Inspect Notebook Entry Network Requests', async ({ page }) => {
@@ -58,7 +58,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
       page.click('[aria-label="Add Page"]')
     ]);
     // Ensures that there are no other network requests
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Assert that only two requests are made
     // Network Requests are:
@@ -77,7 +77,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     // 2) The shared worker event from 👆 POST request
     notebookElementsRequests = [];
     await nbUtils.enterTextEntry(page, 'First Entry');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     expect(notebookElementsRequests.length).toBeLessThanOrEqual(2);
 
     // Add some tags
@@ -141,7 +141,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     // 4) The shared worker event from 👆 POST request
     notebookElementsRequests = [];
     await nbUtils.enterTextEntry(page, 'Fourth Entry');
-    page.waitForLoadState('networkidle');
+    page.waitForLoadState('domcontentloaded');
 
     expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
 
@@ -153,7 +153,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     // 4) The shared worker event from 👆 POST request
     notebookElementsRequests = [];
     await nbUtils.enterTextEntry(page, 'Fifth Entry');
-    page.waitForLoadState('networkidle');
+    page.waitForLoadState('domcontentloaded');
 
     expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
 
@@ -164,7 +164,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     // 4) The shared worker event from 👆 POST request
     notebookElementsRequests = [];
     await nbUtils.enterTextEntry(page, 'Sixth Entry');
-    page.waitForLoadState('networkidle');
+    page.waitForLoadState('domcontentloaded');
 
     expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
   });
@@ -227,7 +227,7 @@ async function addTagAndAwaitNetwork(page, tagName) {
     page.locator(`[aria-label="Autocomplete Options"] >> text=${tagName}`).click(),
     expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeVisible()
   ]);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }
 
 /**
@@ -246,5 +246,5 @@ async function removeTagAndAwaitNetwork(page, tagName) {
     )
   ]);
   await expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeHidden();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState('domcontentloaded');
 }

@@ -59,8 +59,8 @@ export async function navigateToFaultManagementWithoutExample(page) {
 /**
  * @param {import('@playwright/test').Page} page
  */
-export async function navigateToFaultItemInTree(page) {
-  await page.goto('./', { waitUntil: 'networkidle' });
+async function navigateToFaultItemInTree(page) {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
 
   const faultManagementTreeItem = page
     .getByRole('tree', {

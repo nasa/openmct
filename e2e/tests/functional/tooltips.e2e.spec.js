@@ -89,7 +89,7 @@ test.describe('Verify tooltips', () => {
     await expandEntireTree(page);
   });
 
-  test('display correct paths for LAD tables', async ({ page, openmctConfig }) => {
+  test('display correct paths for LAD tables', async ({ page }) => {
     // Create LAD table
     await createDomainObjectWithDefaults(page, {
       type: 'LAD Table',
@@ -109,8 +109,8 @@ test.describe('Verify tooltips', () => {
 
     async function getToolTip(object) {
       await page.locator('.c-create-button').hover();
-      await page.getByLabel('lad name').getByText(object.name).hover();
-      let tooltipText = await page.locator('.c-tooltip').textContent();
+      await page.getByRole('cell', { name: object.name }).hover();
+      let tooltipText = await page.locator('.c-tooltip').innerText();
       return tooltipText.replace('\n', '').trim();
     }
 
@@ -142,7 +142,7 @@ test.describe('Verify tooltips', () => {
       await page
         .locator('.plot-series-name', { has: page.locator(`text="${object.name} Hz"`) })
         .hover();
-      let tooltipText = await page.locator('.c-tooltip').textContent();
+      let tooltipText = await page.locator('.c-tooltip').innerText();
       return tooltipText.replace('\n', '').trim();
     }
 
@@ -151,7 +151,7 @@ test.describe('Verify tooltips', () => {
       await page
         .locator('.plot-series-name', { has: page.locator(`text="${object.name}"`) })
         .hover();
-      let tooltipText = await page.locator('.c-tooltip').textContent();
+      let tooltipText = await page.locator('.c-tooltip').innerText();
       return tooltipText.replace('\n', '').trim();
     }
 
@@ -181,7 +181,7 @@ test.describe('Verify tooltips', () => {
           has: page.locator(`text="${object.name}"`)
         })
         .hover();
-      const tooltipText = await page.locator('.c-tooltip').textContent();
+      const tooltipText = await page.locator('.c-tooltip').innerText();
       await page.keyboard.up('Control');
       return tooltipText.replace('\n', '').trim();
     }
@@ -236,7 +236,7 @@ test.describe('Verify tooltips', () => {
     await page.keyboard.down('Control');
 
     await page.getByText('Test Overlay Plot').nth(2).hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe('My Items / Test Overlay Plot');
 
@@ -244,17 +244,17 @@ test.describe('Verify tooltips', () => {
     await page.locator('.c-plot-legend__view-control >> nth=0').click();
     await page.keyboard.down('Control');
     await page.locator('.plot-wrapper-expanded-legend .plot-series-name').first().hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject1.path);
 
     await page.getByText('Test Stacked Plot').nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe('My Items / Test Stacked Plot');
 
     await page.getByText('SWG 3').nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(sineWaveObject3.path).toBe(tooltipText);
   });
@@ -273,12 +273,12 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject1.path);
 
     await page.getByText('SWG 3').nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
@@ -297,12 +297,12 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject1.path);
 
     await page.getByText('SWG 3').nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
@@ -310,12 +310,12 @@ test.describe('Verify tooltips', () => {
   test('display correct paths when hovering tree items', async ({ page }) => {
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(0).hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject1.path);
 
     await page.getByText('SWG 3').nth(0).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
@@ -326,7 +326,7 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.locator('.c-gsearch-result__title').hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
@@ -340,7 +340,7 @@ test.describe('Verify tooltips', () => {
     await page.keyboard.down('Control');
     // eslint-disable-next-line playwright/no-force-option
     await page.locator('.c-gauge.c-dial').hover({ position: { x: 0, y: 0 }, force: true });
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
@@ -354,7 +354,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-notebook__drag-area');
     await page.keyboard.down('Control');
     await page.locator('.c-ne__embed').hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
@@ -386,12 +386,12 @@ test.describe('Verify tooltips', () => {
     await page.keyboard.down('Control');
 
     await page.locator('.noselect > [title="SWG 3"]').first().hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
 
     await page.locator('.noselect > [title="SWG 1"]').first().hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject1.path);
   });
@@ -410,17 +410,17 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.getByLabel('Recent Objects').getByText(sineWaveObject3.name).hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
 
     await page.getByLabel('Recent Objects').getByText(sineWaveObject2.name).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject2.path);
 
     await page.getByLabel('Recent Objects').getByText(sineWaveObject1.name).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject1.path);
   });
@@ -450,17 +450,17 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.getByText(sineWaveObject1.name).nth(2).hover();
-    let tooltipText = await page.locator('.c-tooltip').textContent();
+    let tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject1.path);
 
     await page.getByText(sineWaveObject2.name).nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject2.path);
 
     await page.getByText(sineWaveObject3.name).nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = await page.locator('.c-tooltip').innerText();
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
