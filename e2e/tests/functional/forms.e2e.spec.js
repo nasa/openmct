@@ -188,8 +188,8 @@ test.describe('Persistence operations @couchdb', () => {
 
     // Both pages: Go to baseURL
     await Promise.all([
-      page.goto('./', { waitUntil: 'networkidle' }),
-      page2.goto('./', { waitUntil: 'networkidle' })
+      page.goto('./', { waitUntil: 'domcontentloaded' }),
+      page2.goto('./', { waitUntil: 'domcontentloaded' })
     ]);
 
     //Slow down the test a bit

@@ -59,7 +59,7 @@ test.describe('Handle missing object for plots', () => {
     await page.evaluate(`window.localStorage.setItem('mct', '${JSON.stringify(parsedData)}')`);
 
     //Reloads page and clicks on stacked plot
-    await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+    await Promise.all([page.reload(), page.waitForLoadState('domcontentloaded')]);
 
     //Verify Main section is there on load
     await expect
@@ -92,7 +92,7 @@ async function makeStackedPlot(page, myItemsFolderName) {
   await page.locator('li[role="menuitem"]:has-text("Stacked Plot")').click();
 
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
     page.locator('button:has-text("OK")').click(),
     //Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
@@ -153,7 +153,7 @@ async function createSineWaveGenerator(page) {
   await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
     page.locator('button:has-text("OK")').click(),
     //Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')

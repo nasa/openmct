@@ -228,9 +228,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({
-    page
-  }) => {
+  test('display layout with plots of swgs, alphanumerics, and condition sets', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'display-layout-simple-telemetry'

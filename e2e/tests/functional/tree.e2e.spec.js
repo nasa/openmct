@@ -48,7 +48,9 @@ test.describe('Main Tree', () => {
     });
 
     await expandTreePaneItemByName(page, folder.name);
-    await assertTreeItemIsVisible(page, clock.name);
+    await expect(
+      page.getByRole('tree', { name: 'Main Tree' }).getByRole('treeitem', { name: clock.name })
+    ).toBeVisible();
   });
 
   test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @2p', async ({
@@ -65,8 +67,8 @@ test.describe('Main Tree', () => {
 
     // Both pages: Go to baseURL
     await Promise.all([
-      page.goto('./', { waitUntil: 'networkidle' }),
-      page2.goto('./', { waitUntil: 'networkidle' })
+      page.goto('./', { waitUntil: 'domcontentloaded' }),
+      page2.goto('./', { waitUntil: 'domcontentloaded' })
     ]);
 
     const page1Folder = await createDomainObjectWithDefaults(page, {
@@ -74,7 +76,11 @@ test.describe('Main Tree', () => {
     });
 
     await expandTreePaneItemByName(page2, myItemsFolderName);
-    await assertTreeItemIsVisible(page2, page1Folder.name);
+    await expect(
+      page2
+        .getByRole('tree', { name: 'Main Tree' })
+        .getByRole('treeitem', { name: page1Folder.name })
+    ).toBeVisible();
   });
 
   test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @couchdb @2p', async ({
@@ -91,8 +97,8 @@ test.describe('Main Tree', () => {
 
     // Both pages: Go to baseURL
     await Promise.all([
-      page.goto('./', { waitUntil: 'networkidle' }),
-      page2.goto('./', { waitUntil: 'networkidle' })
+      page.goto('./', { waitUntil: 'domcontentloaded' }),
+      page2.goto('./', { waitUntil: 'domcontentloaded' })
     ]);
 
     const page1Folder = await createDomainObjectWithDefaults(page, {
@@ -100,7 +106,11 @@ test.describe('Main Tree', () => {
     });
 
     await expandTreePaneItemByName(page2, myItemsFolderName);
-    await assertTreeItemIsVisible(page2, page1Folder.name);
+    await expect(
+      page2
+        .getByRole('tree', { name: 'Main Tree' })
+        .getByRole('treeitem', { name: page1Folder.name })
+    ).toBeVisible();
   });
 
   test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
@@ -219,17 +229,6 @@ async function getAndAssertTreeItems(page, expected) {
   // Get rid of root folder ('My Items') as its position will not change
   allTexts.shift();
   expect(allTexts).toEqual(expected);
-}
-
-async function assertTreeItemIsVisible(page, name) {
-  const mainTree = page.getByRole('tree', {
-    name: 'Main Tree'
-  });
-  const treeItem = mainTree.getByRole('treeitem', {
-    name
-  });
-
-  await expect(treeItem).toBeVisible();
 }
 
 /**

@@ -75,7 +75,7 @@ test.describe('Visual - Header @a11y', () => {
     await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
       scope: header
     });
-    await expect(await page.getByLabel('Show Snapshots')).toBeVisible();
+    await expect(page.getByLabel('Show Snapshots')).toBeVisible();
   });
 });
 // Skipping for https://github.com/nasa/openmct/issues/7421

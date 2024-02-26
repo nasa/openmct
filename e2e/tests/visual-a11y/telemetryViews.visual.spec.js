@@ -57,7 +57,7 @@ test.describe('Visual - Telemetry Views', () => {
     await page.getByLabel('Telemetry Table').click();
 
     //Get Table View in place
-    expect(await page.getByLabel('Expand Columns')).toBeInViewport();
+    await expect(page.getByLabel('Expand Columns')).toBeInViewport();
 
     await percySnapshot(page, `Default Telemetry Table View (theme: ${theme})`);
 

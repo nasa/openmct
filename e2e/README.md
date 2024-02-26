@@ -382,7 +382,7 @@ By adhering to this principle, we can create tests that are both robust and refl
   1. Avoid creating locator aliases. This likely means that you're compensating for a bad locator. Improve the application instead.
   1. Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });` instead of `{ waitUntil: 'networkidle' }`. Tests run against deployments with websockets often have issues with the networkidle detection.
   
-#### How to make tests faster and more resilient
+#### How to make tests faster and more resilient to application changes
   1. Avoid app interaction when possible. The best way of doing this is to navigate directly by URL:
 
   ```js
@@ -397,6 +397,16 @@ By adhering to this principle, we can create tests that are both robust and refl
     - Initial navigation should _almost_ always use the `{ waitUntil: 'domcontentloaded' }` option.
   1.  Avoid repeated setup to test a single assertion. Write longer tests with multiple soft assertions.
   This ensures that your changes will be picked up with large refactors.
+  1. Use [user-facing locators](https://playwright.dev/docs/best-practices#use-locators) (Now a eslint rule!)
+  
+  ```js
+  page.getByRole('button', { name: 'Create' } )
+  ```
+  Instead of 
+  ```js
+  page.locator('.c-create-button')
+  ```
+  Note: `page.locator()` can be used in performance tests as xk6-browser does not yet support the new `page.getBy` pattern and css lookups can be [1.5x faster](https://serpapi.com/blog/css-selectors-faster-than-getbyrole-playwright/)
 
 ##### Utilizing LocalStorage
   1. In order to save test runtime in the case of tests that require a decent amount of initial setup (such as in the case of testing complex displays), you may use [Playwright's `storageState` feature](https://playwright.dev/docs/api/class-browsercontext#browser-context-storage-state) to generate and load localStorage states.
