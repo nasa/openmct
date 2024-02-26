@@ -693,13 +693,14 @@
         }
         @include phonePortrait(){ 
             .c-tc-input-popup__input-grid {
-                grid-template-columns: 37.5% 37.5% 25%;
-                margin-left: $interiorMarginLg;
+                grid-template-columns: repeat(2, max-content) 1fr;
                 grid-template-areas:
                     "sDate sTime ."
                     "sDateInput sTimeInput ."
                     "eDate eTime ."
                     "eDateInput eTimeInput buttons";
+                padding: 2px; 
+                overflow: hidden;
             }
         }
 
@@ -714,13 +715,14 @@
         }
         @include phonePortrait(){ 
             .c-tc-input-popup__input-grid {
-                grid-template-columns: 25% 25% 25% 25%;
-                margin-left: $interiorMarginLg;
+                grid-template-columns: repeat(3, max-content) 1fr;
                 grid-template-areas:
                     "labelMinusHrs labelMinusMins labelMinusSecs ."
                     "inputMinusHrs inputMinusMins inputMinusSecs ."
                     "labelPlusHrs labelPlusMins labelPlusSecs ."
                     "inputPlusHrs inputPlusMins inputPlusSecs buttons";
+                padding: 2px;
+                overflow: hidden;
             }
         }
     }
@@ -757,8 +759,7 @@
         } 
     }
     .pr-time-input--buttons{
-        margin-left: auto;
-        margin-right: $interiorMarginLg;
+        justify-content: flex-end;
     }
     .pr-time-input__start-end-sep{
         margin: auto;
