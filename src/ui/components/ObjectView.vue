@@ -33,7 +33,7 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import objectUtils from '../../api/objects/object-utils.js';
+import { objectEquals } from '../../api/objects/object-utils.js';
 import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 
 export default {
@@ -224,7 +224,7 @@ export default {
       this.updateView(true);
     },
     reload(domainObjectToReload) {
-      if (objectUtils.equals(domainObjectToReload, this.domainObject)) {
+      if (objectEquals(domainObjectToReload, this.domainObject)) {
         this.updateView(true);
         this.initObjectStyles();
         this.triggerStalenessSubscribe(this.domainObject);

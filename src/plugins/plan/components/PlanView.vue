@@ -134,8 +134,9 @@ export default {
     this.isNested = this.options.isChildObject;
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
+    // This view is used for both gantt-chart and plan domain objects
     if (this.domainObject.type === 'plan') {
-      this.setPlanData(this.domainObject);
+      this.setupPlan(this.domainObject);
     }
 
     const canvas = document.createElement('canvas');
@@ -143,18 +144,8 @@ export default {
     this.setDimensions();
     this.setTimeContext();
     this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
-    this.setStatus(this.openmct.status.get(this.domainObject.identifier));
-    this.removeStatusListener = this.openmct.status.observe(
-      this.domainObject.identifier,
-      this.setStatus
-    );
     this.handleConfigurationChange(this.configuration);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
-    this.stopObservingSelectFile = this.openmct.objects.observe(
-      this.domainObject,
-      '*',
-      this.handleSelectFileChange
-    );
     this.loadComposition();
   },
   beforeUnmount() {
@@ -174,10 +165,25 @@ export default {
     }
 
     this.planViewConfiguration.off('change', this.handleConfigurationChange);
-    this.stopObservingSelectFile();
+    if (this.stopObservingPlanChanges) {
+      this.stopObservingPlanChanges();
+    }
     this.planViewConfiguration.destroy();
   },
   methods: {
+    setupPlan(domainObject) {
+      this.planObject = domainObject;
+      this.applyChangesForPlanObject(domainObject);
+      this.stopObservingPlanChanges = this.openmct.objects.observe(
+        domainObject,
+        '*',
+        this.applyChangesForPlanObject
+      );
+      this.removeStatusListener = this.openmct.status.observe(
+        domainObject.identifier,
+        this.setPlanStatus
+      );
+    },
     setPlanData(domainObject) {
       this.planData = getValidatedData(domainObject);
     },
@@ -218,8 +224,7 @@ export default {
             emphasis: true,
             callback: () => {
               this.removeFromComposition(this.planObject);
-              this.planObject = domainObject;
-              this.handleSelectFileChange();
+              this.setupPlan(domainObject);
               dialog.dismiss();
             }
           },
@@ -237,9 +242,8 @@ export default {
       if (this.planObject) {
         this.showReplacePlanDialog(domainObject);
       } else {
-        this.planObject = domainObject;
         this.swimlaneVisibility = this.configuration.swimlaneVisibility;
-        this.handleSelectFileChange(domainObject);
+        this.setupPlan(domainObject);
       }
     },
     handleConfigurationChange(newConfiguration) {
@@ -259,10 +263,10 @@ export default {
 
       this.setScaleAndGenerateActivities();
     },
-    handleSelectFileChange(domainObject) {
+    applyChangesForPlanObject(domainObject) {
       const planDomainObject = domainObject || this.domainObject;
       this.setPlanData(planDomainObject);
-      this.setStatus(this.openmct.status.get(planDomainObject.identifier));
+      this.setPlanStatus(this.openmct.status.get(planDomainObject.identifier));
       this.setScaleAndGenerateActivities();
     },
     removeFromComposition(domainObject) {
@@ -568,7 +572,7 @@ export default {
         swimlaneWidth
       };
     },
-    setStatus(status) {
+    setPlanStatus(status) {
       this.status = status;
     },
     getClipPathId(groupName, activity, row) {

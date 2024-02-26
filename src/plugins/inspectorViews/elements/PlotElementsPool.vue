@@ -30,7 +30,7 @@
     />
     <div class="c-elements-pool__elements">
       <ul
-        v-if="hasElements"
+        v-show="hasElements"
         id="inspector-elements-tree"
         class="c-tree c-elements-pool__tree js-elements-pool__tree"
       >
@@ -63,7 +63,7 @@
           ></li>
         </element-item-group>
       </ul>
-      <div v-if="!hasElements">No contained elements</div>
+      <div v-show="!hasElements">No contained elements</div>
     </div>
   </div>
 </template>
@@ -169,7 +169,8 @@ export default {
     setYAxisIds() {
       const configId = this.openmct.objects.makeKeyString(this.parentObject.identifier);
       this.config = configStore.get(configId);
-      this.yAxes = [];
+      // Clear the yAxes array and repopulate it with the current YAxis elements
+      this.yAxes.splice(0);
       this.yAxes.push({
         id: this.config.yAxis.id,
         elements: this.parentObject.configuration.series.filter(
@@ -207,7 +208,7 @@ export default {
       }
 
       // Store the element in the cache and set its yAxisId
-      this.elementsCache[keyString] = JSON.parse(JSON.stringify(element));
+      this.elementsCache[keyString] = element;
       if (this.elementsCache[keyString].yAxisId !== yAxisId) {
         // Mutate the YAxisId on the domainObject itself
         this.updateCacheAndMutate(element, yAxisId);
@@ -276,7 +277,7 @@ export default {
           yAxisId
         });
         this.composition.add(domainObject);
-        this.elementsCache[keyString] = JSON.parse(JSON.stringify(domainObject));
+        this.elementsCache[keyString] = domainObject;
       }
 
       this.elementsCache[keyString].yAxisId = yAxisId;

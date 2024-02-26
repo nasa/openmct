@@ -2,20 +2,25 @@
 // @ts-check
 
 import { devices } from '@playwright/test';
+const MAX_FAILURES = 5;
+const NUM_WORKERS = 2;
+
 import { fileURLToPath } from 'url';
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  retries: 0, //Retries are not needed with watch mode
+  retries: 1, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
   testDir: 'tests',
-  timeout: 60 * 1000,
+  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
+  timeout: 30 * 1000,
   webServer: {
-    command: 'npm run start', //Start in dev mode for hot reloading
+    command: 'npm run start:coverage',
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
-  workers: '75%', //Limit to 75% of the CPU to support running with dev server
+  maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
+  workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
   use: {
     baseURL: 'http://localhost:8080/',
     headless: true,
@@ -25,13 +30,6 @@ const config = {
     video: 'off'
   },
   projects: [
-    {
-      name: 'chrome',
-      testMatch: '**/*.spec.js', // run all tests
-      use: {
-        browserName: 'chromium'
-      }
-    },
     {
       name: 'ipad',
       grep: /@mobile/,
