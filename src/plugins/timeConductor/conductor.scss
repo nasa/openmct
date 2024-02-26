@@ -693,22 +693,13 @@
         }
         @include phonePortrait(){ 
             .c-tc-input-popup__input-grid {
-                grid-template-columns: 45% 10% 45%;
+                grid-template-columns: 37.5% 37.5% 25%;
+                margin-left: $interiorMarginLg;
                 grid-template-areas:
-                    "sDate . sTime"
-                    "sDateInput . sTimeInput"
-                    ". arrowIcon ."
-                    "eDate . eTime"
-                    "eDateInput . eTimeInput"
-                    ". . buttons";
-
-                // grid-template-areas: 
-                //     "sDate . eDate"
-                //     "sDateInput . eDateInput"
-                //     ". arrowIcon ."
-                //     "sTime . eTime"
-                //     "sTimeInput . eTimeInput"
-                //     ". . buttons";
+                    "sDate sTime ."
+                    "sDateInput sTimeInput ."
+                    "eDate eTime ."
+                    "eDateInput eTimeInput buttons";
             }
         }
 
@@ -723,11 +714,13 @@
         }
         @include phonePortrait(){ 
             .c-tc-input-popup__input-grid {
-                grid-template-columns: 15%  15%  15%  7%  15%  15%  15%;
+                grid-template-columns: 25% 25% 25% 25%;
+                margin-left: $interiorMarginLg;
                 grid-template-areas:
-                    "labelMinusHrs labelMinusMins labelMinusSecs . labelPlusHrs labelPlusMins labelPlusSecs"
-                    "inputMinusHrs inputMinusMins inputMinusSecs arrowIcon inputPlusHrs inputPlusMins inputPlusSecs"
-                    ". . . . . . buttons";
+                    "labelMinusHrs labelMinusMins labelMinusSecs ."
+                    "inputMinusHrs inputMinusMins inputMinusSecs ."
+                    "labelPlusHrs labelPlusMins labelPlusSecs ."
+                    "inputPlusHrs inputPlusMins inputPlusSecs buttons";
             }
         }
     }
@@ -741,19 +734,39 @@
 }
 @include phonePortrait(){ // Additional styling for mobile portrait.
     .c-tc-input-popup{
-        width: calc(100vw - 20px);
+        width: 100%;
+        &__options{
+            > * {
+                overflow: hidden;
+                [class*= 'ctrl-wrapper']{
+                    [class*='--menu'] {
+                        width: 100%;
+                        [class*='__label'] {
+                            @include ellipsize();
+                        }
+
+                    } 
+                }
+            }
+        }
     }
+
     .pr-time-input-end-time, .pr-time-input-start-time{
         > * {
-            width: 100% !important;
             margin-right: $interiorMargin;
         } 
     }
     .pr-time-input--buttons{
         margin-left: auto;
-        margin-right: $interiorMargin;
+        margin-right: $interiorMarginLg;
     }
     .pr-time-input__start-end-sep{
         margin: auto;
+    }
+    .pr-time-input__start-end-sep{
+        display: none;
+    }
+    .pr-time-input-start-date, .pr-time-input-end-date{
+        width: max-content;
     }
 }
