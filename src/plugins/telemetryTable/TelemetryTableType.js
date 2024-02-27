@@ -32,12 +32,12 @@ export default function getTelemetryTableType(options = {}) {
     form: [
       {
         key: 'telemetryMode',
-        name: 'Telemetry Mode',
+        name: 'Data Mode',
         control: 'select',
         options: [
           {
             value: 'performance',
-            name: 'Performance Mode'
+            name: 'Limited (Performance) Mode'
           },
           {
             value: 'unlimited',
@@ -48,15 +48,15 @@ export default function getTelemetryTableType(options = {}) {
         property: ['configuration', 'telemetryMode']
       },
       {
-        name: 'Persist Telemetry Mode Changes',
+        name: 'Persist Data Mode Changes',
         control: 'toggleSwitch',
         cssClass: 'l-input',
         key: 'persistModeChanges',
         property: ['configuration', 'persistModeChanges']
       },
       {
-        name: 'Performance Mode Row Limit',
-        control: 'toggleSwitch',
+        name: 'Limited Data Mode Row Limit',
+        control: 'number',
         cssClass: 'l-input',
         key: 'rowLimit',
         property: ['configuration', 'rowLimit']
