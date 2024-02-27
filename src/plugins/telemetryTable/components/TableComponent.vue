@@ -398,7 +398,8 @@ export default {
       totalNumberOfRows: 0,
       rowContext: {},
       telemetryMode: configuration.telemetryMode,
-      persistModeChanges: configuration.persistModeChanges
+      persistModeChanges: configuration.persistModeChanges,
+      afterLoadActions: []
     };
   },
   computed: {
@@ -458,10 +459,8 @@ export default {
     },
     loading: {
       handler(isLoading) {
-        if (isLoading) {
-          this.setLoadingPromise();
-        } else {
-          this.loadFinishResolve();
+        if (!isLoading) {
+          this.runAfterLoadActions();
         }
 
         if (this.viewActionsCollection) {
@@ -581,11 +580,14 @@ export default {
     this.table.destroy();
   },
   methods: {
-    setLoadingPromise() {
-      this.loadFinishResolve = null;
-      this.isFinishedLoading = new Promise((resolve, reject) => {
-        this.loadFinishResolve = resolve;
-      });
+    addToAfterLoadActions(func) {
+      this.afterLoadActions.push(func);
+    },
+    runAfterLoadActions() {
+      if (this.afterLoadActions.length > 0) {
+        this.afterLoadActions.forEach((action) => action());
+        this.afterLoadActions = [];
+      }
     },
     updateVisibleRows() {
       if (!this.updatingView) {
@@ -1166,11 +1168,9 @@ export default {
           {
             label,
             emphasis: true,
-            callback: async () => {
+            callback: () => {
+              this.addToAfterLoadActions(callback);
               this.updateTelemetryMode();
-              await this.isFinishedLoading;
-
-              callback();
 
               dialog.dismiss();
             }
