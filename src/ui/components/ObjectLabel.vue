@@ -25,6 +25,7 @@
     class="c-tree__item__label c-object-label"
     :class="[statusClass]"
     draggable="true"
+    :aria-label="ariaLabel"
     @dragstart="dragStart"
     @click="navigateOrPreview"
   >
@@ -47,7 +48,10 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
+import { useIsEditing } from '../../ui/composables/edit.js';
 import ContextMenuGesture from '../mixins/context-menu-gesture.js';
 import ObjectLink from '../mixins/object-link.js';
 import PreviewAction from '../preview/PreviewAction.js';
@@ -76,6 +80,13 @@ export default {
       }
     }
   },
+  setup() {
+    const openmct = inject('openmct');
+    const { isEditing } = useIsEditing(openmct);
+    return {
+      isEditing
+    };
+  },
   data() {
     return {
       status: ''
@@ -92,6 +103,9 @@ export default {
     },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
+    },
+    ariaLabel() {
+      return `${this.isEditing ? 'Preview' : 'Navigate to'} ${this.domainObject.name} ${this.domainObject.type} Object`;
     }
   },
   mounted() {

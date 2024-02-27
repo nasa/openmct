@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from './object-utils.js';
+import { isIdentifier } from './object-utils.js';
 
 export default class RootRegistry {
   constructor(openmct) {
@@ -47,12 +47,12 @@ export default class RootRegistry {
   }
 
   _isValid(rootItem) {
-    if (utils.isIdentifier(rootItem) || typeof rootItem === 'function') {
+    if (isIdentifier(rootItem) || typeof rootItem === 'function') {
       return true;
     }
 
     if (Array.isArray(rootItem)) {
-      return rootItem.every(utils.isIdentifier);
+      return rootItem.every(isIdentifier);
     }
 
     return false;

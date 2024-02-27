@@ -160,6 +160,31 @@ jobs:
             equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
+  e2e-mobile:
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
+      - run: npm run test:e2e:mobile
+      - when:
+          condition:
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_e2e_code_cov_report:
+                suite: full
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
   e2e-couchdb:
     executor: ubuntu
     steps:
@@ -260,8 +285,9 @@ workflows:
       - e2e-test:
           name: e2e-stable
           suite: stable
+      - e2e-mobile
       - visual-a11y-tests:
-          name: visual-test-ci
+          name: visual-a11y-test-ci
           suite: ci
 
   the-nightly: #These jobs do not run on PRs, but against master at night
@@ -277,10 +303,11 @@ workflows:
       - e2e-test:
           name: e2e-full-nightly
           suite: full
-      - mem-test
+      - e2e-mobile
       - perf-test
+      - mem-test
       - visual-a11y-tests:
-          name: visual-test-nightly
+          name: visual-a11y-test-nightly
           suite: full
       - e2e-couchdb
     triggers:

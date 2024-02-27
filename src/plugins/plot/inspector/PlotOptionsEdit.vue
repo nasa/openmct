@@ -23,7 +23,7 @@
   <div v-if="loaded" class="js-plot-options-edit">
     <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
       <h2 class="--first" title="Display properties for this object">Plot Series</h2>
-      <li v-for="series in plotSeries" :key="series.key">
+      <li v-for="series in plotSeries" :key="series.keyString">
         <series-form :series="series" @series-updated="updateSeriesConfigForObject" />
       </li>
     </ul>

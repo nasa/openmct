@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
+import { parseKeyString } from 'objectUtils';
 
 import TelemetryAverager from './TelemetryAverager.js';
 
@@ -43,7 +43,7 @@ MeanTelemetryProvider.prototype.supportsRequest =
 MeanTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
   let wrappedUnsubscribe;
   let unsubscribeCalled = false;
-  const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+  const objectId = parseKeyString(domainObject.telemetryPoint);
   const samples = domainObject.samples;
 
   this.objectAPI
@@ -79,7 +79,7 @@ MeanTelemetryProvider.prototype.subscribeToAverage = function (domainObject, sam
 };
 
 MeanTelemetryProvider.prototype.request = function (domainObject, request) {
-  const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+  const objectId = parseKeyString(domainObject.telemetryPoint);
   const samples = domainObject.samples;
 
   return this.objectAPI.get(objectId).then(
@@ -119,7 +119,7 @@ MeanTelemetryProvider.prototype.requestAverageTelemetry = function (
  * @private
  */
 MeanTelemetryProvider.prototype.getLinkedObject = function (domainObject) {
-  const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+  const objectId = parseKeyString(domainObject.telemetryPoint);
 
   return this.objectAPI.get(objectId);
 };

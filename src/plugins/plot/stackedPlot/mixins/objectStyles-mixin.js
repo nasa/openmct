@@ -39,6 +39,10 @@ export default {
       this.stopListeningStyles();
     }
 
+    if (this.stopListeningFontStyles) {
+      this.stopListeningFontStyles();
+    }
+
     if (this.styleRuleManager) {
       this.styleRuleManager.destroy();
     }

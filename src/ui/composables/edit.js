@@ -19,15 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*
- * This test suite is dedicated to testing the preview plugin.
+
+import { ref } from 'vue';
+
+import { useEventEmitter } from './event.js';
+
+/**
+ * Provides a reactive `isEditing` property that reflects the current editing state of the
+ * application.
+ * @param {OpenMCT} openmct the Open MCT API
+ * @returns {{
+ *  isEditing: import('vue').Ref<boolean>
+ * }}
  */
+export function useIsEditing(openmct) {
+  const isEditing = ref(openmct.editor.isEditing());
 
-import { test } from '../../../../pluginFixtures.js';
-
-test.describe('Preview mode', () => {
-  test.fixme('all context menu items are available for a telemetry table', async ({ page }) => {
-    // compare the context menu options when viewing a telemetry table directly
-    // vs when it is presented in preview mode (e.g. edit mode is enabled and the table is clicked on from the tree)
+  useEventEmitter(openmct.editor, 'isEditing', (_isEditing) => {
+    isEditing.value = _isEditing;
   });
-});
+
+  return { isEditing };
+}

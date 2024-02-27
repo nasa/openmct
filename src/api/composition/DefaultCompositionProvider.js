@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { toRaw } from 'vue';
 
-import objectUtils from '../objects/object-utils.js';
+import { makeKeyString } from '../objects/object-utils.js';
 import CompositionProvider from './CompositionProvider.js';
 
 /**
@@ -91,7 +91,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
     this.establishTopicListener();
 
     /** @type {string} */
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let objectListeners = this.listeningTo[keyString];
 
     if (!objectListeners) {
@@ -120,7 +120,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    */
   off(domainObject, event, callback, context) {
     /** @type {string} */
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     const objectListeners = this.listeningTo[keyString];
 
     const index = objectListeners[event].findIndex((l) => {
@@ -228,7 +228,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
     this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
     /** @type {string} */
-    let id = objectUtils.makeKeyString(domainObject.identifier);
+    let id = makeKeyString(domainObject.identifier);
     const listeners = this.listeningTo[id];
 
     if (!listeners) {

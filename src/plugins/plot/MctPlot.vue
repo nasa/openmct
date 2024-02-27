@@ -53,13 +53,13 @@
             ></span>
           </div>
 
-          <mct-ticks
+          <MctTicks
             v-show="gridLines && !options.compact"
             :axis-type="'xAxis'"
             :position="'right'"
           />
 
-          <mct-ticks
+          <MctTicks
             v-for="(yAxis, index) in yAxesIds"
             v-show="gridLines"
             :key="`yAxis-gridlines-${index}`"
