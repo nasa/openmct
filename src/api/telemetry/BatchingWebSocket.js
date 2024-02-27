@@ -89,6 +89,8 @@ class BatchingWebSocket extends EventTarget {
     );
 
     openmct.once('start', () => {
+      // An idle callback is a pretty good indication that a complex display is done loading. At that point set the batch size more conservatively.
+      // Force it after 5 seconds if it hasn't happened yet.
       requestIdleCallback(
         () => {
           this.#applicationIsInitializing = false;
@@ -181,7 +183,7 @@ class BatchingWebSocket extends EventTarget {
     this.#worker.postMessage({
       type: 'setMaxBatchSize',
       maxBatchSize
-    });  
+    });
   }
 
   /**
