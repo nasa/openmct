@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 export default function getTelemetryTableType(options = {}) {
-  const { telemetryMode = 'performance', persistModeChanges = true, rowLimit = 50 } = options;
+  const { telemetryMode = 'performance', persistModeChange = true, rowLimit = 50 } = options;
 
   return {
     name: 'Telemetry Table',
@@ -51,12 +51,12 @@ export default function getTelemetryTableType(options = {}) {
         name: 'Persist Data Mode Changes',
         control: 'toggleSwitch',
         cssClass: 'l-input',
-        key: 'persistModeChanges',
-        property: ['configuration', 'persistModeChanges']
+        key: 'persistModeChange',
+        property: ['configuration', 'persistModeChange']
       },
       {
         name: 'Limited Data Mode Row Limit',
-        control: 'number',
+        control: 'numberfield',
         cssClass: 'l-input',
         key: 'rowLimit',
         property: ['configuration', 'rowLimit']
@@ -68,7 +68,7 @@ export default function getTelemetryTableType(options = {}) {
         columnWidths: {},
         hiddenColumns: {},
         telemetryMode,
-        persistModeChanges,
+        persistModeChange,
         rowLimit
       };
     }

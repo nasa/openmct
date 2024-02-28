@@ -398,7 +398,7 @@ export default {
       totalNumberOfRows: 0,
       rowContext: {},
       telemetryMode: configuration.telemetryMode,
-      persistModeChanges: configuration.persistModeChanges,
+      persistModeChange: configuration.persistModeChange,
       afterLoadActions: []
     };
   },
@@ -537,6 +537,8 @@ export default {
     this.table.on('outstanding-requests', this.outstandingRequests);
     this.table.on('telemetry-staleness', this.handleStaleness);
 
+    this.table.configuration.on('change', this.handleConfigurationChanges);
+
     this.table.tableRows.on('add', this.rowsAdded);
     this.table.tableRows.on('remove', this.rowsRemoved);
     this.table.tableRows.on('sort', this.throttledUpdateVisibleRows);
@@ -566,6 +568,8 @@ export default {
     this.table.off('outstanding-requests', this.outstandingRequests);
     this.table.off('telemetry-staleness', this.handleStaleness);
 
+    this.table.configuration.off('change', this.handleConfigurationChanges);
+
     this.table.tableRows.off('add', this.rowsAdded);
     this.table.tableRows.off('remove', this.rowsRemoved);
     this.table.tableRows.off('sort', this.throttledUpdateVisibleRows);
@@ -587,6 +591,26 @@ export default {
       if (this.afterLoadActions.length > 0) {
         this.afterLoadActions.forEach((action) => action());
         this.afterLoadActions = [];
+      }
+    },
+    handleConfigurationChanges(changes) {
+      const { rowLimit, telemetryMode, persistModeChange } = changes;
+
+      this.persistModeChange = persistModeChange;
+
+      if (this.rowLimit !== rowLimit) {
+        this.rowLimit = rowLimit;
+        this.table.updateRowLimit(rowLimit);
+
+        if (this.telemetryMode === telemetryMode) {
+          // need to clear and resubscribe, if different, handled below
+          this.table.clearAndResubscribe();
+        }
+      }
+
+      if (this.telemetryMode !== telemetryMode) {
+        this.telemetryMode = telemetryMode;
+        this.table.updateTelemetryMode(telemetryMode);
       }
     },
     updateVisibleRows() {
@@ -1187,7 +1211,7 @@ export default {
     updateTelemetryMode() {
       this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
 
-      if (this.persistModeChanges) {
+      if (this.persistModeChange) {
         this.table.configuration.setTelemetryMode(this.telemetryMode);
       }
 
