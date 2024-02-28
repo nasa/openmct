@@ -100,7 +100,7 @@ export default function installWorker() {
     }
 
     #connected() {
-      console.debug('Websocket connected.');
+      console.info('Websocket connected.');
       this.#isConnected = true;
       this.#isConnecting = false;
       this.#currentWaitIndex = 0;
@@ -318,7 +318,9 @@ export default function installWorker() {
         batch.push(message);
       }
       if (batch.length > this.#maxBatchSize) {
-        console.log(`Exceeded max batch size of ${this.#maxBatchSize} for ${batchId}. Dropping value.`);
+        console.warn(
+          `Exceeded max batch size of ${this.#maxBatchSize} for ${batchId}. Dropping value.`
+        );
         batch.shift();
         this.#batch.dropped = true;
       }
@@ -337,12 +339,6 @@ export default function installWorker() {
      * any new data is available.
      */
     readyForNextBatch() {
-      const now = Date.now();
-      const elapsed = now - this.sent;
-      console.debug(`${Date.now()} Ready for next batch after ${elapsed}ms`);
-      if (elapsed > 1000) {
-        //console.warn(`Warning, telemetry batch processing took ${elapsed}ms`);
-      }
       if (this.#hasBatch) {
         this.#throttledSendNextBatch();
       } else {
@@ -354,7 +350,6 @@ export default function installWorker() {
       batch.number = Math.round(Math.random() * 100000);
       this.#resetBatch();
       this.sent = Date.now();
-      console.debug(`${Date.now()} Sending batch ${batch.number}`);
       this.#worker.postMessage({
         type: 'batch',
         batch
