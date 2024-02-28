@@ -206,6 +206,9 @@ export default {
       const seriesIndexToRemove = this.seriesModels.findIndex(
         (series) => series.keyString === seriesToRemove.keyString
       );
+      if (seriesIndexToRemove === -1) {
+        return;
+      }
       this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     getSeries(keyStringToFind) {
