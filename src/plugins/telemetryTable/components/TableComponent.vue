@@ -287,7 +287,7 @@
 
 <script>
 import _ from 'lodash';
-import { toRaw } from 'vue';
+import { toRaw, ref, onMounted } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
@@ -295,6 +295,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import { useResizeObserver } from '../../../ui/composables/resize.js';
 import throttle from '../../../utils/throttle';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
@@ -354,6 +355,15 @@ export default {
     }
   },
   emits: ['marked-rows-updated', 'filter'],
+  setup() {
+    const root = ref(null);
+    const { size: containerSize, startObserving } = useResizeObserver();
+    onMounted(() => {
+      startObserving(root.value);
+    });
+
+    return { containerSize, root };
+  },
   data() {
     let configuration = this.table.configuration.getConfiguration();
 
@@ -441,6 +451,13 @@ export default {
     }
   },
   watch: {
+    //This should be refactored so that it doesn't require an explicit watch. Should be doable.
+    containerSize: {
+      handler() {
+        this.rescaleToContainer();
+      },
+      deep: true
+    },
     loading: {
       handler(isLoading) {
         if (isLoading) {
@@ -544,7 +561,6 @@ export default {
     this.table.configuration.on('change', this.updateConfiguration);
 
     this.calculateTableSize();
-    //this.pollForResize();
     this.calculateScrollbarWidth();
 
     this.table.initialize();
@@ -887,31 +903,23 @@ export default {
     dropTargetActive(isActive) {
       this.isDropTargetActive = isActive;
     },
-    pollForResize() {
-      let el = this.$refs.root;
-      let width = el.clientWidth;
-      let height = el.clientHeight;
+    rescaleToContainer() {
       let scrollTop = this.scrollable.scrollTop;
 
-      this.resizePollHandle = setInterval(() => {
-        this.renderWhenVisible(() => {
-          if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
-            this.calculateTableSize();
-            // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
-            // Need to preserve scroll position in this case.
-            if (this.autoScroll) {
-              this.initiateAutoScroll();
-            } else {
-              this.scrollable.scrollTop = scrollTop;
-            }
-
-            width = el.clientWidth;
-            height = el.clientHeight;
+      this.renderWhenVisible(() => {
+        if (this.isAutosizeEnabled) {
+          this.calculateTableSize();
+          // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
+          // Need to preserve scroll position in this case.
+          if (this.autoScroll) {
+            this.initiateAutoScroll();
+          } else {
+            this.scrollable.scrollTop = scrollTop;
           }
+        }
 
-          scrollTop = this.scrollable.scrollTop;
-        });
-      }, RESIZE_POLL_INTERVAL);
+        scrollTop = this.scrollable.scrollTop;
+      });
     },
     clearRowsAndRerender() {
       this.visibleRows = [];
