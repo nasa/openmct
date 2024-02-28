@@ -40,7 +40,7 @@ test.describe('Main Tree', () => {
       type: 'Folder'
     });
 
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     const clock = await createDomainObjectWithDefaults(page, {
       type: 'Clock',
