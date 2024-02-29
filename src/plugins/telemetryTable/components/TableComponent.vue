@@ -296,7 +296,6 @@ import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import { useResizeObserver } from '../../../ui/composables/resize.js';
-import throttle from '../../../utils/throttle';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -304,7 +303,6 @@ import TelemetryTableRow from './TableRow.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
-const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = ROW_HEIGHT * 3;
 
 export default {
@@ -454,7 +452,7 @@ export default {
     //This should be refactored so that it doesn't require an explicit watch. Should be doable.
     containerSize: {
       handler() {
-        this.rescaleToContainer();
+        this.debouncedRescaleToContainer();
       },
       deep: true
     },
@@ -518,6 +516,7 @@ export default {
   },
   mounted() {
     this.throttledUpdateVisibleRows = _.throttle(this.updateVisibleRows, 1000, { leading: true });
+    this.debouncedRescaleToContainer = _.debounce(this.rescaleToContainer, 300);
 
     this.csvExporter = new CSVExporter();
     this.scroll = _.throttle(this.scroll, 100);
