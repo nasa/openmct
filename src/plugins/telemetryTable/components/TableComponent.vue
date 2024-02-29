@@ -558,7 +558,7 @@ export default {
     this.calculateScrollbarWidth();
 
     this.table.initialize();
-    this.updateVisibleRows();
+    this.rescaleToContainer();
   },
   beforeUnmount() {
     this.table.off('object-added', this.addObject);
@@ -576,8 +576,6 @@ export default {
     this.table.configuration.off('change', this.updateConfiguration);
 
     this.openmct.time.off('bounds', this.boundsChanged);
-
-    clearInterval(this.resizePollHandle);
 
     this.table.configuration.destroy();
 
