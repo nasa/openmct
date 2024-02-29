@@ -54,6 +54,7 @@ import installWorker from './WebSocketWorker.js';
 const requestIdleCallback =
   // eslint-disable-next-line compat/compat
   window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
+const ONE_SECOND = 1000;
 
 class BatchingWebSocket extends EventTarget {
   #worker;
@@ -165,7 +166,7 @@ class BatchingWebSocket extends EventTarget {
   setMaxBatchSize(maxBatchSize) {
     this.#maxBatchSize = maxBatchSize;
     if (!this.#applicationIsInitializing) {
-        this.#sendMaxBatchSizeToWorker(this.#maxBatchSize);
+      this.#sendMaxBatchSizeToWorker(this.#maxBatchSize);
     }
   }
   #sendMaxBatchSizeToWorker(maxBatchSize) {
@@ -190,7 +191,6 @@ class BatchingWebSocket extends EventTarget {
       this.start = Date.now();
       performance.mark('batch-received');
       const batch = message.data.batch;
-      console.debug(`${Date.now()} received batch ${batch.number} from worker`);
       if (batch.dropped === true && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
           'Telemetry dropped due to client rate limiting.',
@@ -221,35 +221,18 @@ class BatchingWebSocket extends EventTarget {
             console.warn(`Event loop is too busy to process batch ${batch.number}.`);
             this.#waitUntilIdleAndRequestNextBatch(batch);
           } else {
-            console.debug('Inactive tab, assuming ready for next batch');
             // After ingesting a telemetry batch, wait until the event loop is idle again before
             // informing the worker we are ready for another batch.
-            console.debug(
-              `${Date.now()} Sending ready signal to worker due to timeout for batch ${
-                batch.number
-              }`
-            );
-            performance.mark('batch-processed');
-            performance.measure('batch-processing-time', 'batch-received', 'batch-processed');
             this.#readyForNextBatch();
           }
         } else {
-          performance.mark('batch-processed');
-          performance.measure('batch-processing-time', 'batch-received', 'batch-processed');
-          if (waitedFor > 1000) {
+          if (waitedFor > ONE_SECOND) {
             console.warn(`Warning, batch processing took ${waitedFor}ms for batch ${batch.number}`);
           }
-          // After ingesting a telemetry batch, wait until the event loop is idle again before
-          // informing the worker we are ready for another batch.
-          console.debug(
-            `${Date.now()} Sending ready signal to worker due to idle event loop for batch ${
-              batch.number
-            }`
-          );
           this.#readyForNextBatch();
         }
       },
-      { timeout: 1000 }
+      { timeout: ONE_SECOND }
     );
   }
 }
