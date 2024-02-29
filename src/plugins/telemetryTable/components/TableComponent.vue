@@ -287,7 +287,7 @@
 
 <script>
 import _ from 'lodash';
-import { toRaw, ref, onMounted } from 'vue';
+import { onMounted, ref, toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
@@ -515,16 +515,10 @@ export default {
   },
   created() {
     this.filterTelemetry = _.debounce(this.filterTelemetry, 500);
-    const throttledFunc = _.throttle(
-      () => {
-        this.updateVisibleRows(throttledFunc.cancel);
-      },
-      1000,
-      { leading: true, trailing: false }
-    );
-    this.throttledUpdateVisibleRows = throttledFunc;
   },
   mounted() {
+    this.throttledUpdateVisibleRows = _.throttle(this.updateVisibleRows, 1000, { leading: true });
+
     this.csvExporter = new CSVExporter();
     this.scroll = _.throttle(this.scroll, 100);
 
@@ -595,12 +589,13 @@ export default {
         this.loadFinishResolve = resolve;
       });
     },
-    updateVisibleRows(cancelOutstandingInvocations) {
+    updateVisibleRows() {
+      //console.log(`updateVisibleRows ${Date.now()}`);
       if (!this.updatingView) {
         this.updatingView = this.renderWhenVisible(() => {
           // Cancel any other pending updates to avoid unnecessary callbacks in 1s time.
           // Otherwise we get superfluous delayed updates that waste CPU cycles.
-          cancelOutstandingInvocations();
+          //this.throttledUpdateVisibleRows.cancel();
           let start = 0;
           let end = VISIBLE_ROW_COUNT;
           let tableRows = this.table.tableRows.getRows();
