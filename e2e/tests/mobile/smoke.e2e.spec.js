@@ -61,10 +61,10 @@ test('Remove Object and confirmation dialog @mobile', async ({ page }) => {
   //Clicking on the search result takes you to the object
   await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
   await page.getByTitle('Collapse Browse Pane').click();
-  expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
+  await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
   //Verify both objects are in view
-  expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
-  expect(await page.getByLabel('Child Layout 2 Layout')).toBeVisible();
+  await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
+  await expect(await page.getByLabel('Child Layout 2 Layout')).toBeVisible();
   //Remove First Object to bring up confirmation dialog
   await page.getByLabel('View menu items').nth(1).click();
   await page.getByLabel('Remove').click();
