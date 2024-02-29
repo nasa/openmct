@@ -63,6 +63,7 @@ export default class TelemetryTableView {
     if (this._destroy) {
       this._destroy();
     }
+    this.component = null;
   }
 
   show(element, editMode, { renderWhenVisible }) {

@@ -18,7 +18,8 @@ export default function vueWrapHtmlElement(element) {
       });
 
       // Render function returning the wrapper div
-      return () => h('div', { ref: wrapper });
+      // Use class 'u-contents' to set 'display: contents' of the parent div
+      return () => h('div', { ref: wrapper, class: 'u-contents' });
     }
   });
 }

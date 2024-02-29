@@ -184,7 +184,7 @@ export default {
       return this.series.get('color').asHexString();
     }
   },
-  mounted() {
+  created() {
     this.status = this.openmct.status.get(this.series.domainObject.identifier);
     this.removeStatusListener = this.openmct.status.observe(
       this.series.domainObject.identifier,

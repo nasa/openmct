@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
 import SummaryWidgetEvaluator from './SummaryWidgetEvaluator.js';
 
@@ -31,7 +31,7 @@ export default function EvaluatorPool(openmct) {
 }
 
 EvaluatorPool.prototype.get = function (domainObject) {
-  const objectId = objectUtils.makeKeyString(domainObject.identifier);
+  const objectId = makeKeyString(domainObject.identifier);
   let poolEntry = this.byObjectId[objectId];
   if (!poolEntry) {
     poolEntry = {

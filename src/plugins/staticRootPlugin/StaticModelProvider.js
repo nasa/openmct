@@ -26,7 +26,7 @@
  * rootIdentifier, and rewrites all child object identifiers so that they
  * exist in the same namespace as the rootIdentifier.
  */
-import objectUtils from 'objectUtils';
+import { makeKeyString, parseKeyString, toNewFormat } from 'objectUtils';
 
 class StaticModelProvider {
   constructor(importData, rootIdentifier) {
@@ -38,7 +38,7 @@ class StaticModelProvider {
    * Standard "Get".
    */
   get(identifier) {
-    const keyString = objectUtils.makeKeyString(identifier);
+    const keyString = makeKeyString(identifier);
     if (this.objectMap[keyString]) {
       return this.objectMap[keyString];
     }
@@ -49,7 +49,7 @@ class StaticModelProvider {
   parseObjectLeaf(objectLeaf, idMap, newRootNamespace, oldRootNamespace) {
     Object.keys(objectLeaf).forEach((nodeKey) => {
       if (idMap.get(nodeKey)) {
-        const newIdentifier = objectUtils.makeKeyString({
+        const newIdentifier = makeKeyString({
           namespace: newRootNamespace,
           key: idMap.get(nodeKey)
         });
@@ -104,7 +104,7 @@ class StaticModelProvider {
       let mappedLeafValue;
       if (oldRootNamespace) {
         mappedLeafValue = idMap.get(
-          objectUtils.makeKeyString({
+          makeKeyString({
             namespace: oldRootNamespace,
             key: leafValue
           })
@@ -125,7 +125,7 @@ class StaticModelProvider {
         return null;
       }
 
-      const newLocationIdentifier = objectUtils.makeKeyString({
+      const newLocationIdentifier = makeKeyString({
         namespace: newRootNamespace,
         key: mappedLeafValue
       });
@@ -134,7 +134,7 @@ class StaticModelProvider {
     } else {
       const mappedLeafValue = idMap.get(leafValue);
       if (mappedLeafValue) {
-        const newIdentifier = objectUtils.makeKeyString({
+        const newIdentifier = makeKeyString({
           namespace: newRootNamespace,
           key: mappedLeafValue
         });
@@ -147,7 +147,7 @@ class StaticModelProvider {
   }
 
   rewriteObjectIdentifiers(importData, rootIdentifier) {
-    const { namespace: oldRootNamespace } = objectUtils.parseKeyString(importData.rootId);
+    const { namespace: oldRootNamespace } = parseKeyString(importData.rootId);
     const { namespace: newRootNamespace } = rootIdentifier;
     const idMap = new Map();
     const objectTree = importData.openmct;
@@ -172,7 +172,7 @@ class StaticModelProvider {
    */
   convertToNewObjects(oldObjectMap) {
     return Object.keys(oldObjectMap).reduce(function (newObjectMap, key) {
-      newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
+      newObjectMap[key] = toNewFormat(oldObjectMap[key], key);
 
       return newObjectMap;
     }, {});
@@ -180,7 +180,7 @@ class StaticModelProvider {
 
   /* Set the root location correctly for a top-level object */
   setRootLocation(objectMap, rootIdentifier) {
-    objectMap[objectUtils.makeKeyString(rootIdentifier)].location = 'ROOT';
+    objectMap[makeKeyString(rootIdentifier)].location = 'ROOT';
 
     return objectMap;
   }
