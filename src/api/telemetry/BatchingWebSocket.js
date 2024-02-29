@@ -51,7 +51,7 @@ const DEFAULT_RATE_MS = 1000;
  *
  * @memberof module:openmct.telemetry
  */
-// IE, I mean _Safari_, doesn't support requestIdleCallback. It's in a tech preview though, so it should be dropping soon.
+// Shim for Internet Explorer, I mean Safari. It doesn't support requestIdleCallback, but it's in a tech preview, so it will be dropping soon.
 const requestIdleCallback =
   // eslint-disable-next-line compat/compat
   window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
