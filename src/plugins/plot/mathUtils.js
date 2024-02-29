@@ -8,11 +8,11 @@ Returns the logarithm of a number, using the given base or the natural number
 @param {number=} base log base, defaults to e
 */
 export function log(n, base = e) {
-    if (base === e) {
-        return Math.log(n);
-    }
+  if (base === e) {
+    return Math.log(n);
+  }
 
-    return Math.log(n) / Math.log(base);
+  return Math.log(n) / Math.log(base);
 }
 
 /**
@@ -22,7 +22,7 @@ natural number `e` as base if not specified.
 @param {number=} base log base, defaults to e
 */
 export function antilog(n, base = e) {
-    return Math.pow(base, n);
+  return Math.pow(base, n);
 }
 
 /**
@@ -31,7 +31,7 @@ A symmetric logarithm function. See https://github.com/nasa/openmct/issues/2297#
 @param {number=} base log base, defaults to e
 */
 export function symlog(n, base = e) {
-    return Math.sign(n) * log(Math.abs(n) + 1, base);
+  return Math.sign(n) * log(Math.abs(n) + 1, base);
 }
 
 /**
@@ -40,5 +40,5 @@ An inverse symmetric logarithm function. See https://github.com/nasa/openmct/iss
 @param {number=} base log base, defaults to e
 */
 export function antisymlog(n, base = e) {
-    return Math.sign(n) * (antilog(Math.abs(n), base) - 1);
+  return Math.sign(n) * (antilog(Math.abs(n), base) - 1);
 }

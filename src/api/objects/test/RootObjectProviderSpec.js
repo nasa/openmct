@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,33 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RootObjectProvider from '../RootObjectProvider';
+import RootObjectProvider from '../RootObjectProvider.js';
 
 describe('RootObjectProvider', function () {
-    const ROOT_NAME = 'Open MCT';
-    let rootObjectProvider;
-    let roots = ['some root'];
-    let rootRegistry = {
-        getRoots: () => {
-            return Promise.resolve(roots);
-        }
-    };
+  const ROOT_NAME = 'Open MCT';
+  let rootObjectProvider;
+  let roots = ['some root'];
+  let rootRegistry = {
+    getRoots: () => {
+      return Promise.resolve(roots);
+    }
+  };
 
-    beforeEach(function () {
-        rootObjectProvider = new RootObjectProvider(rootRegistry);
+  beforeEach(function () {
+    rootObjectProvider = new RootObjectProvider(rootRegistry);
+  });
+
+  it('supports fetching root', async () => {
+    let root = await rootObjectProvider.get();
+
+    expect(root).toEqual({
+      identifier: {
+        key: 'ROOT',
+        namespace: ''
+      },
+      name: ROOT_NAME,
+      type: 'root',
+      composition: ['some root']
     });
-
-    it('supports fetching root', async () => {
-        let root = await rootObjectProvider.get();
-
-        expect(root).toEqual({
-            identifier: {
-                key: "ROOT",
-                namespace: ""
-            },
-            name: ROOT_NAME,
-            type: 'root',
-            composition: ['some root']
-        });
-    });
+  });
 });

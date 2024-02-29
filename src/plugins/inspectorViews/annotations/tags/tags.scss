@@ -1,0 +1,183 @@
+@mixin tagHolder() {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+
+  > * {
+    $m: $interiorMarginSm;
+
+    margin: 0 $m $m 0;
+  }
+}
+
+/******************************* TAGS */
+.c-tag {
+  /* merge conflict in 5247
+    border-radius: 10px; //TODO: convert to theme constant
+    display: inline-flex;
+    padding: 1px 10px; //TODO: convert to theme constant
+
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
+    &__remove-btn {
+        color: inherit !important;
+        display: none;
+        opacity: 0;
+        overflow: hidden;
+        padding: 1px !important;
+        @include transition(opacity);
+        width: 0;
+ */
+  border-radius: $tagBorderRadius;
+  display: inline-flex;
+  overflow: hidden;
+  padding: 1px 6px; //TODO: convert to theme constant
+  transition: $transIn;
+
+  &__remove-btn {
+    color: inherit !important;
+    opacity: 0;
+    padding: 0; // Overrides default <button> padding
+    position: absolute;
+    right: 2px;
+    transition: $transIn;
+    width: 0;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  /* SEARCH RESULTS */
+  &.--is-not-search-match {
+    opacity: 0.5;
+  }
+}
+
+.c-tag-holder {
+  @include tagHolder;
+}
+
+.w-tag-wrapper {
+  $m: $interiorMarginSm;
+
+  margin: 0 $m $m 0;
+}
+
+/******************************* TAGS IN INSPECTOR / TAG SELECTION & APPLICATION */
+.c-tag-applier {
+  /* merge conflict in fix-repaint-5247
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
+    &__add-btn {
+        &:before {
+            font-size: 0.9em;
+        }
+    }
+
+    .c-tag {
+        flex-direction: row;
+        align-items: center;
+        padding-right: 3px !important;
+
+        &__remove-btn {
+            display: block;
+        }
+*/
+  $tagApplierPadding: 3px 6px;
+  @include tagHolder;
+  grid-column: 1 / 3;
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  &__add-btn {
+    border-radius: $tagBorderRadius;
+    padding: 3px 10px 3px 4px;
+
+    &:before {
+      font-size: 0.9em;
+    }
+  }
+
+  .c-tag {
+    flex-direction: row;
+    align-items: center;
+    padding: $tagApplierPadding;
+
+    > * + * {
+      margin-left: $interiorMarginSm;
+    }
+  }
+
+  .c-tag-selection {
+    .c-input--autocomplete__input {
+      min-height: auto !important;
+      padding: $tagApplierPadding;
+    }
+  }
+
+  .c-tag-btn__label {
+    overflow: visible !important;
+  }
+
+  /******************************* HOVERS */
+  .has-tag-applier {
+    /* merge conflict in fix-repaint-5247
+    $p: opacity, width;
+    // Apply this class to all components that should trigger tag removal btn on hover
+    .c-tag__remove-btn {
+        @include transition($prop: $p, $dur: $transOutTime);
+    }
+
+    &:hover {
+        .c-tag__remove-btn {
+            width: 1.1em;
+            opacity: 0.7;
+        }
+    }
+}
+*/
+    // Apply this class to all components that should trigger tag removal btn on hover
+    &:hover {
+      .c-tag {
+        @include userSelectNone();
+        transition: $transOut;
+      }
+      .c-tag__label {
+        opacity: 0.7;
+      }
+      .c-tag__remove-btn {
+        width: 1.3em;
+        opacity: 0.8;
+        padding: 2px !important;
+        transition: $transOut;
+        right: 5%;
+        text-align: center;
+        z-index: 2;
+
+        &:hover {
+          opacity: 1;
+
+          & ~ * {
+            // This sibling selector further dims the label
+            // to make the remove button stand out
+            opacity: 0.4;
+          }
+        }
+      }
+    }
+  }
+}

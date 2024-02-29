@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,32 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator';
-import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator';
+import OperatorStatusIndicator from './operatorStatus/OperatorStatusIndicator.js';
+import PollQuestionIndicator from './pollQuestion/PollQuestionIndicator.js';
 
 /**
  * @param {import('@/api/user/UserAPI').UserAPIConfiguration} configuration
  * @returns {function} The plugin install function
  */
 export default function operatorStatusPlugin(configuration) {
-    return function install(openmct) {
+  return function install(openmct) {
+    if (openmct.user.hasProvider()) {
+      const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
+      operatorStatusIndicator.install();
 
-        if (openmct.user.hasProvider()) {
-            openmct.user.status.canProvideStatusForCurrentUser().then(canProvideStatus => {
-                if (canProvideStatus) {
-                    const operatorStatusIndicator = new OperatorStatusIndicator(openmct, configuration);
+      openmct.user.status.canSetPollQuestion().then((canSetPollQuestion) => {
+        if (canSetPollQuestion) {
+          const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
 
-                    operatorStatusIndicator.install();
-                }
-            });
-
-            openmct.user.status.canSetPollQuestion().then(canSetPollQuestion => {
-                if (canSetPollQuestion) {
-                    const pollQuestionIndicator = new PollQuestionIndicator(openmct, configuration);
-
-                    pollQuestionIndicator.install();
-                }
-            });
+          pollQuestionIndicator.install();
         }
-    };
+      });
+    }
+  };
 }

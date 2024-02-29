@@ -75,9 +75,7 @@
           ],
           "attrs": [],
           "grid": 0,
-          "tags": [
-            "icon12-filter"
-          ]
+          "tags": ["icon12-filter"]
         },
         {
           "id": 11,
@@ -86,9 +84,7 @@
           ],
           "attrs": [],
           "grid": 0,
-          "tags": [
-            "icon12-filter-outline"
-          ]
+          "tags": ["icon12-filter-outline"]
         },
         {
           "id": 6,
@@ -100,9 +96,7 @@
           ],
           "attrs": [],
           "grid": 0,
-          "tags": [
-            "icon12-crosshair"
-          ]
+          "tags": ["icon12-crosshair"]
         },
         {
           "id": 8,
@@ -121,9 +115,7 @@
           "attrs": [],
           "width": 745,
           "grid": 0,
-          "tags": [
-            "icon12-grippy"
-          ]
+          "tags": ["icon12-grippy"]
         },
         {
           "id": 7,
@@ -134,9 +126,7 @@
           ],
           "attrs": [],
           "grid": 0,
-          "tags": [
-            "icon12-list-view"
-          ]
+          "tags": ["icon12-list-view"]
         },
         {
           "id": 3,
@@ -146,9 +136,7 @@
           ],
           "attrs": [],
           "grid": 0,
-          "tags": [
-            "icon12-folder"
-          ]
+          "tags": ["icon12-folder"]
         }
       ],
       "invisible": false,

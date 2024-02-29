@@ -1,11 +1,10 @@
-
-name: "CodeQL"
+name: 'CodeQL'
 
 on:
   push:
-    branches: [ master ]
+    branches: [master, 'release/*']
   pull_request:
-    branches: [ master ]
+    branches: [master, 'release/*']
     paths-ignore:
       - '**/*Spec.js'
       - '**/*.md'
@@ -27,17 +26,19 @@ jobs:
       security-events: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: javascript
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          config-file: ./.github/codeql/codeql-config.yml
+          languages: javascript
+          queries: security-and-quality
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

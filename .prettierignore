@@ -1,0 +1,27 @@
+# Docs
+*.md
+
+# Build output
+target
+dist
+
+# Mac OS X Finder
+.DS_Store
+
+# Node dependencies
+node_modules
+
+# npm-debug log
+npm-debug.log
+
+# karma reports
+report.*.json
+
+# e2e test artifacts
+test-results
+html-test-results
+
+# codecov artifacts
+.nyc_output
+coverage
+codecov

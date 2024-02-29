@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,27 +24,36 @@
 This test suite is dedicated to tests which verify persistability checks
 */
 
-const { test, expect } = require('../../baseFixtures.js');
+import { fileURLToPath } from 'url';
 
-const path = require('path');
+import { expect, test } from '../../baseFixtures.js';
 
 test.describe('Persistence operations @addInit', () => {
-    // add non persistable root item
-    test.beforeEach(async ({ page }) => {
-        // eslint-disable-next-line no-undef
-        await page.addInitScript({ path: path.join(__dirname, '../../helper', 'addNoneditableObject.js') });
+  // add non persistable root item
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript({
+      path: fileURLToPath(new URL('../../helper/addNoneditableObject.js', import.meta.url))
+    });
+  });
+
+  test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    await page.locator('text=Persistence Testing').first().click({
+      button: 'right'
     });
 
-    test('Non-persistable objects should not show persistence related actions', async ({ page }) => {
-        await page.goto('./', { waitUntil: 'networkidle' });
+    const menuOptions = page.locator('.c-menu li');
 
-        await page.locator('text=Persistence Testing').first().click({
-            button: 'right'
-        });
-
-        const menuOptions = page.locator('.c-menu li');
-
-        await expect.soft(menuOptions).toContainText(['Open In New Tab', 'View', 'Create Link']);
-        await expect(menuOptions).not.toContainText(['Move', 'Duplicate', 'Remove', 'Add New Folder', 'Edit Properties...', 'Export as JSON', 'Import from JSON']);
-    });
+    await expect.soft(menuOptions).toContainText(['Open In New Tab', 'View', 'Create Link']);
+    await expect(menuOptions).not.toContainText([
+      'Move',
+      'Duplicate',
+      'Remove',
+      'Add New Folder',
+      'Edit Properties...',
+      'Export as JSON',
+      'Import from JSON'
+    ]);
+  });
 });

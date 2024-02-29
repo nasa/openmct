@@ -1,2 +1,1 @@
-export default class ConflictError extends Error {
-}
+export default class ConflictError extends Error {}

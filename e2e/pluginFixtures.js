@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,9 +26,10 @@
  * and appActions. These fixtures should be generalized across all plugins.
  */
 
-const { test, expect } = require('./baseFixtures');
-// const { createDomainObjectWithDefaults } = require('./appActions');
-const path = require('path');
+// import { createDomainObjectWithDefaults } from './appActions.js';
+import { fileURLToPath } from 'url';
+
+import { expect, request, test } from './baseFixtures.js';
 
 /**
  * @typedef {Object} ObjectCreateOptions
@@ -45,8 +46,6 @@ const path = require('path');
 // const createdObjects = new Map();
 
 /**
- * **NOTE: This feature is a work-in-progress and should not currently be used.**
- *
  * This action will create a domain object for the test to reference and return the uuid. If an object
  * of a given name already exists, it will return the uuid of that object to the test instead of creating
  * a new file. The intent is to move object creation out of test suites which are not explicitly worried
@@ -65,10 +64,7 @@ const path = require('path');
 
 //     await createDomainObjectWithDefaults(page, type, name);
 
-//     // Once object is created, get the uuid from the url
-//     const uuid = await page.evaluate(() => {
-//         return window.location.href.match(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/)[0];
-//     });
+//     const uuid = getHashUrlToDomainObject(page);
 
 //     createdObjects.set(objectName, uuid);
 
@@ -120,42 +116,47 @@ const theme = 'espresso';
  *
  * @type {string}
  */
-const myItemsFolderName = "My Items";
+const myItemsFolderName = 'My Items';
 
-exports.test = test.extend({
-    // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
-    theme: [theme, { option: true }],
-    // eslint-disable-next-line no-shadow
-    page: async ({ page, theme }, use) => {
-        // eslint-disable-next-line playwright/no-conditional-in-test
-        if (theme === 'snow') {
-            //inject snow theme
-            await page.addInitScript({ path: path.join(__dirname, './helper', './useSnowTheme.js') });
-        }
-
-        await use(page);
-    },
-    myItemsFolderName: [myItemsFolderName, { option: true }],
-    // eslint-disable-next-line no-shadow
-    openmctConfig: async ({ myItemsFolderName }, use) => {
-        await use({ myItemsFolderName });
+const extendedTest = test.extend({
+  // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
+  theme: [theme, { option: true }],
+  // eslint-disable-next-line no-shadow
+  page: async ({ page, theme }, use, testInfo) => {
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    if (theme === 'snow') {
+      //inject snow theme
+      await page.addInitScript({
+        path: fileURLToPath(new URL('./helper/useSnowTheme.js', import.meta.url))
+      });
     }
-    // objectCreateOptions: [objectCreateOptions, {option: true}],
-    // eslint-disable-next-line no-shadow
-    // domainObject: [async ({ page, objectCreateOptions }, use) => {
-    //     // FIXME: This is a false-positive caused by a bug in the eslint-plugin-playwright rule.
-    //     // eslint-disable-next-line playwright/no-conditional-in-test
-    //     if (objectCreateOptions === null) {
-    //         await use(page);
 
-    //         return;
-    //     }
+    // Attach info about the currently running test and its project.
+    // This will be used by appActions to fill in the created
+    // domain object's notes.
+    page.testNotes = [`${testInfo.titlePath.join('\n')}`, `${testInfo.project.name}`].join('\n');
 
-    //     //Go to baseURL
-    //     await page.goto('./', { waitUntil: 'networkidle' });
-
-    //     const uuid = await getOrCreateDomainObject(page, objectCreateOptions);
-    //     await use({ uuid });
-    // }, { auto: true }]
+    await use(page);
+  },
+  myItemsFolderName: [myItemsFolderName, { option: true }],
+  // eslint-disable-next-line no-shadow
+  openmctConfig: async ({ myItemsFolderName }, use) => {
+    await use({ myItemsFolderName });
+  }
 });
-exports.expect = expect;
+
+export { expect, request, extendedTest as test };
+
+/**
+ * Takes a readable stream and returns a string.
+ * @param {ReadableStream} readable - the readable stream
+ * @return {Promise<String>} the stringified stream
+ */
+export async function streamToString(readable) {
+  let result = '';
+  for await (const chunk of readable) {
+    result += chunk;
+  }
+
+  return result;
+}

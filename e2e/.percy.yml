@@ -1,6 +1,0 @@
-version: 2
-snapshot:
-  widths: [1024, 2000]
-  min-height: 1440 # px
-discovery:
-  concurrency: 2 # https://github.com/percy/cli/discussions/1067

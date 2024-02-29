@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,26 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    './TelemetryTableColumn.js'
-], function (
-    TelemetryTableColumn
-) {
-    class TelemetryTableNameColumn extends TelemetryTableColumn {
-        constructor(openmct, telemetryObject, metadatum) {
-            super(openmct, metadatum);
 
-            this.telemetryObject = telemetryObject;
-        }
+import TelemetryTableColumn from './TelemetryTableColumn.js';
 
-        getRawValue() {
-            return this.telemetryObject.name;
-        }
+export default class TelemetryTableNameColumn extends TelemetryTableColumn {
+  constructor(openmct, telemetryObject, metadatum) {
+    super(openmct, metadatum);
 
-        getFormattedValue() {
-            return this.telemetryObject.name;
-        }
-    }
+    this.telemetryObject = telemetryObject;
+  }
 
-    return TelemetryTableNameColumn;
-});
+  getRawValue() {
+    return this.telemetryObject.name;
+  }
+
+  getFormattedValue() {
+    return this.telemetryObject.name;
+  }
+}
