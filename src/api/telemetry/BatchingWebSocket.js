@@ -62,6 +62,7 @@ class BatchingWebSocket extends EventTarget {
   #showingRateLimitNotification;
   #maxBatchSize;
   #applicationIsInitializing;
+  #maxBatchWait
 
   constructor(openmct) {
     super();
@@ -73,6 +74,7 @@ class BatchingWebSocket extends EventTarget {
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
     this.#maxBatchSize = Number.POSITIVE_INFINITY;
+    this.#maxBatchWait = ONE_SECOND;
     this.#applicationIsInitializing = true;
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
@@ -169,10 +171,21 @@ class BatchingWebSocket extends EventTarget {
       this.#sendMaxBatchSizeToWorker(this.#maxBatchSize);
     }
   }
+  setMaxBatchWait(wait) {
+    this.#maxBatchWait = wait;
+    this.#sendBatchWaitToWorker(this.#maxBatchWait);
+  }
   #sendMaxBatchSizeToWorker(maxBatchSize) {
     this.#worker.postMessage({
       type: 'setMaxBatchSize',
       maxBatchSize
+    });
+  }
+
+  #sendBatchWaitToWorker(maxBatchWait) {
+    this.#worker.postMessage({
+      type: 'setMaxBatchWait',
+      maxBatchWait
     });
   }
 

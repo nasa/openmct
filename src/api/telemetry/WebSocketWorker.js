@@ -21,6 +21,7 @@
  *****************************************************************************/
 /* eslint-disable max-classes-per-file */
 export default function installWorker() {
+  const ONE_SECOND = 1000;
   const FALLBACK_AND_WAIT_MS = [1000, 5000, 5000, 10000, 10000, 30000];
 
   /**
@@ -207,6 +208,9 @@ export default function installWorker() {
         case 'setMaxBatchSize':
           this.#messageBatcher.setMaxBatchSize(message.data.maxBatchSize);
           break;
+        case 'setMaxBatchWait':
+          this.#messageBatcher.setMaxBatchWait(message.data.maxBatchWait);
+          break;
         default:
           throw new Error(`Unknown message type: ${type}`);
       }
@@ -264,6 +268,7 @@ export default function installWorker() {
     #batchingStrategy;
     #hasBatch = false;
     #maxBatchSize;
+    #maxBatchWait;
     #readyForNextBatch;
     #worker;
     #throttledSendNextBatch;
@@ -274,7 +279,7 @@ export default function installWorker() {
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
-      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), 1000);
+      this.setMaxBatchWait(ONE_SECOND);
     }
     #resetBatch() {
       this.#batch = {};
@@ -331,6 +336,10 @@ export default function installWorker() {
     }
     setMaxBatchSize(maxBatchSize) {
       this.#maxBatchSize = maxBatchSize;
+    }
+    setMaxBatchWait(maxBatchWait) {
+      this.#maxBatchWait = maxBatchWait;
+      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), maxBatchWait);
     }
     /**
      * Indicates that client code is ready to receive the next batch of
