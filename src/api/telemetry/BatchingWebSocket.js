@@ -62,7 +62,7 @@ class BatchingWebSocket extends EventTarget {
   #showingRateLimitNotification;
   #maxBatchSize;
   #applicationIsInitializing;
-  #maxBatchWait
+  #maxBatchWait;
 
   constructor(openmct) {
     super();

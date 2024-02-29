@@ -35,7 +35,6 @@ import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
 const DEFAULT_DURATION_FORMATTER = 'duration';
-const RESIZE_POLL_INTERVAL = 200;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 
