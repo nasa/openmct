@@ -1,4 +1,4 @@
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
 const NOTEBOOK_LOCAL_STORAGE = 'notebook-storage';
 let currentNotebookObjectIdentifier = null;
@@ -22,8 +22,7 @@ function defaultNotebookObjectChanged(newDomainObject) {
 function observeDefaultNotebookObject(openmct, notebookStorage, domainObject) {
   if (
     currentNotebookObjectIdentifier &&
-    objectUtils.makeKeyString(currentNotebookObjectIdentifier) ===
-      objectUtils.makeKeyString(notebookStorage.identifier)
+    makeKeyString(currentNotebookObjectIdentifier) === makeKeyString(notebookStorage.identifier)
   ) {
     return;
   }

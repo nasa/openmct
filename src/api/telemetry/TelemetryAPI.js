@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
 import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter.js';
 import BatchingWebSocket from './BatchingWebSocket.js';
@@ -429,7 +429,7 @@ export default class TelemetryAPI {
       this.#subscribeCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     const supportedStrategy = supportsBatching ? requestedStrategy : SUBSCRIBE_STRATEGY.LATEST;
     // Override the requested strategy with the strategy supported by the provider
     const optionsWithSupportedStrategy = {
@@ -541,7 +541,7 @@ export default class TelemetryAPI {
       this.stalenessSubscriberCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let stalenessSubscriber = this.stalenessSubscriberCache[keyString];
 
     if (!stalenessSubscriber) {
@@ -600,7 +600,7 @@ export default class TelemetryAPI {
       this.limitsSubscribeCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let subscriber = this.limitsSubscribeCache[keyString];
 
     if (!subscriber) {

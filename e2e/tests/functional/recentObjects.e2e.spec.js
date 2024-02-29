@@ -191,7 +191,7 @@ test.describe('Recent Objects', () => {
 
     // Navigate to the clock and reveal it in the tree
     await page.goto(clock.url);
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     // Right click the clock and create an alias using the "link" context menu action
     const clockTreeItem = page
