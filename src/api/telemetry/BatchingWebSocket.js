@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import installWorker from './WebSocketWorker.js';
-const DEFAULT_RATE_MS = 1000;
 /**
  * Describes the strategy to be used when batching WebSocket messages
  *
@@ -60,7 +59,6 @@ class BatchingWebSocket extends EventTarget {
   #worker;
   #openmct;
   #showingRateLimitNotification;
-  #rate;
   #maxBatchSize;
   #applicationIsInitializing;
 
@@ -73,7 +71,6 @@ class BatchingWebSocket extends EventTarget {
     this.#worker = new Worker(workerUrl);
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
-    this.#rate = DEFAULT_RATE_MS;
     this.#maxBatchSize = Number.POSITIVE_INFINITY;
     this.#applicationIsInitializing = true;
 
@@ -150,14 +147,6 @@ class BatchingWebSocket extends EventTarget {
       type: 'setBatchingStrategy',
       serializedStrategy
     });
-  }
-
-  /**
-   * When using batching, sets the rate at which batches of messages are released.
-   * @param {Number} rate the amount of time to wait, in ms, between batches.
-   */
-  setRate(rate) {
-    this.#rate = rate;
   }
 
   /**
