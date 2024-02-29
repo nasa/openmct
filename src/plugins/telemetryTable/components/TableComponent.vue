@@ -589,12 +589,8 @@ export default {
       });
     },
     updateVisibleRows() {
-      //console.log(`updateVisibleRows ${Date.now()}`);
       if (!this.updatingView) {
         this.updatingView = this.renderWhenVisible(() => {
-          // Cancel any other pending updates to avoid unnecessary callbacks in 1s time.
-          // Otherwise we get superfluous delayed updates that waste CPU cycles.
-          //this.throttledUpdateVisibleRows.cancel();
           let start = 0;
           let end = VISIBLE_ROW_COUNT;
           let tableRows = this.table.tableRows.getRows();
