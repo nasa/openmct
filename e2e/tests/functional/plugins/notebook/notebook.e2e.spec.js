@@ -308,7 +308,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await page
       .getByRole('treeitem', { name: overlayPlot.name })
@@ -332,7 +332,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await nbUtils.enterTextEntry(page, 'Entry to drop into');
     await page
@@ -377,7 +377,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
 
@@ -404,7 +404,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
@@ -421,7 +421,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await nbUtils.enterTextEntry(page, `This should NOT be a link: ${TEST_LINK} is it?`);
 
@@ -438,7 +438,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await nbUtils.enterTextEntry(page, `This should be a link: ${INVALID_TEST_LINK} is it?`);
 
@@ -455,7 +455,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await nbUtils.enterTextEntry(page, `This should be a link: ${TEST_LINK} is it?`);
 
@@ -483,7 +483,7 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     // Reveal the notebook in the tree
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
 
     await nbUtils.enterTextEntry(
       page,
