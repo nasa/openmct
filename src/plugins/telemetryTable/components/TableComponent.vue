@@ -558,6 +558,7 @@ export default {
     this.calculateScrollbarWidth();
 
     this.table.initialize();
+    this.updateVisibleRows();
   },
   beforeUnmount() {
     this.table.off('object-added', this.addObject);
