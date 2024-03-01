@@ -24,22 +24,9 @@
  * Module defining url handling.
  */
 
-function getUrlParams(openmct) {
-  let urlParams = openmct.router.getParams();
-
-  if (urlParams['tc.mode'] === 'fixed') {
-    delete urlParams['tc.startDelta'];
-    delete urlParams['tc.endDelta'];
-  } else if (urlParams['tc.mode'] === 'local') {
-    delete urlParams['tc.startBound'];
-    delete urlParams['tc.endBound'];
-  }
-
-  return urlParams;
-}
-
 export function paramsToArray(openmct) {
-  const urlParams = getUrlParams(openmct);
+  const urlParams = openmct.router.getParams();
+
   // Filter out any parameters whose values are objects, then map the rest to the desired string format.
   const newTabParams = Object.entries(urlParams).reduce((acc, [key, value]) => {
     // Only process the parameter if its value is not an object (or is null, which is fine to include).
