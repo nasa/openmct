@@ -24,12 +24,8 @@
  * Module defining url handling.
  */
 
-function getUrlParams(openmct, customUrlParams = {}) {
+function getUrlParams(openmct) {
   let urlParams = openmct.router.getParams();
-  Object.entries(customUrlParams).forEach((urlParam) => {
-    const [key, value] = urlParam;
-    urlParams[key] = value;
-  });
 
   if (urlParams['tc.mode'] === 'fixed') {
     delete urlParams['tc.startDelta'];
@@ -42,16 +38,17 @@ function getUrlParams(openmct, customUrlParams = {}) {
   return urlParams;
 }
 
-export function paramsToArray(openmct, customUrlParams = {}) {
-  // parse urlParams from an object to an array.
-  let urlParams = getUrlParams(openmct, customUrlParams);
-  let newTabParams = [];
-  for (let key in urlParams) {
-    if ({}.hasOwnProperty.call(urlParams, key)) {
-      let param = `${key}=${urlParams[key]}`;
-      newTabParams.push(param);
+export function paramsToArray(openmct) {
+  const urlParams = getUrlParams(openmct);
+  // Filter out any parameters whose values are objects, then map the rest to the desired string format.
+  const newTabParams = Object.entries(urlParams).reduce((acc, [key, value]) => {
+    // Only process the parameter if its value is not an object (or is null, which is fine to include).
+    if (typeof value !== 'object' || value === null) {
+      const param = `${key}=${encodeURIComponent(value)}`;
+      acc.push(param);
     }
-  }
+    return acc;
+  }, []);
 
   return newTabParams;
 }
