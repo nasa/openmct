@@ -55,6 +55,7 @@ const requestIdleCallback =
   // eslint-disable-next-line compat/compat
   window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
 const ONE_SECOND = 1000;
+const FIVE_SECONDS = 5 * ONE_SECOND;
 
 class BatchingWebSocket extends EventTarget {
   #worker;
@@ -97,7 +98,7 @@ class BatchingWebSocket extends EventTarget {
           this.setMaxBatchSize(this.#maxBatchSize);
         },
         {
-          timeout: 5000
+          timeout: FIVE_SECONDS
         }
       );
     });
@@ -202,7 +203,6 @@ class BatchingWebSocket extends EventTarget {
   #routeMessageToHandler(message) {
     if (message.data.type === 'batch') {
       this.start = Date.now();
-      performance.mark('batch-received');
       const batch = message.data.batch;
       if (batch.dropped === true && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
