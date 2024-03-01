@@ -53,10 +53,14 @@
     overflow: auto;
     flex-direction: column;
     gap: $interiorMargin;
-    margin: $overlayInnerMargin;
 
     body.desktop & {
       overflow: hidden;
+    }
+
+    .l-overlay-fit &,
+    .l-overlay-dialog & {
+      margin: $overlayInnerMargin;
     }
   }
 
