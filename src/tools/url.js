@@ -24,20 +24,15 @@
  * Module defining url handling.
  */
 
+/**
+ * Convert the current URL parameters to an array of strings.
+ * @param {import('../../openmct').OpenMCT} openmct
+ * @returns {Array<string>} newTabParams
+ */
 export function paramsToArray(openmct) {
   const urlParams = openmct.router.getParams();
 
-  // Filter out any parameters whose values are objects, then map the rest to the desired string format.
-  const newTabParams = Object.entries(urlParams).reduce((acc, [key, value]) => {
-    // Only process the parameter if its value is not an object (or is null, which is fine to include).
-    if (typeof value !== 'object' || value === null) {
-      const param = `${key}=${encodeURIComponent(value)}`;
-      acc.push(param);
-    }
-    return acc;
-  }, []);
-
-  return newTabParams;
+  return Object.entries(urlParams).map(([key, value]) => `${key}=${value}`);
 }
 
 export function identifierToString(openmct, objectPath) {
