@@ -19,7 +19,9 @@
   z-index: 70;
 
   &__blocker {
-    display: none; // Mobile-first
+    // Mobile-first: use the blocker to create a full look to dialogs
+    @include abs();
+    background: $colorBodyBg;
   }
 
   &__outer {
@@ -27,11 +29,12 @@
     background: $colorBodyBg;
     display: flex;
     flex-direction: column;
-    padding: $overlayInnerMargin;
-    body.mobile & { // Centers the overlay dialog for mobile
-      position: relative;
-      height: 100vh;
-      width: 100vw;
+
+    body.mobile .l-overlay-fit & {
+      // Vertically center small dialogs in mobile
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
     }
   }
 
@@ -42,6 +45,19 @@
     top: $p;
     right: $p;
     z-index: 99;
+  }
+
+  &__content-wrapper {
+    display: flex;
+    height: 100%;
+    overflow: auto;
+    flex-direction: column;
+    gap: $interiorMargin;
+    margin: $overlayInnerMargin;
+
+    body.desktop & {
+      overflow: hidden;
+    }
   }
 
   &__contents {
