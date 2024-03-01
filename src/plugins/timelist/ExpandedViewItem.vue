@@ -225,6 +225,7 @@ export default {
     },
     followTimeContext() {
       this.timeContext.on(TIME_CONTEXT_EVENTS.tick, this.updateTimestamp);
+      this.updateTimestamp(this.timeContext.now());
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
