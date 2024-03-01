@@ -34,6 +34,7 @@
   .c-frame & {
     @include abs();
     border: 1px solid transparent;
+    overflow: hidden;
   }
 
   .is-status__indicator {
