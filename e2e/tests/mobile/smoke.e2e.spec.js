@@ -34,20 +34,16 @@ Make no assumptions about the order that elements appear in the DOM.
 */
 
 import { expect, test } from '../../pluginFixtures.js';
-
 test('Verify that My Items Tree appears @mobile', async ({ page, openmctConfig }) => {
   const { myItemsFolderName } = openmctConfig;
   //Go to baseURL
   await page.goto('./');
-
   //My Items to be visible
   await expect(page.getByRole('treeitem', { name: `${myItemsFolderName}` })).toBeVisible();
 });
-
 test('Verify that user can search @mobile', async ({ page }) => {
   //For now, this test is going to be hardcoded against './test-data/display_layout_with_child_layouts.json'
   await page.goto('./');
-
   await page.getByRole('searchbox', { name: 'Search Input' }).click();
   await page.getByRole('searchbox', { name: 'Search Input' }).fill('Parent Display Layout');
   //Search Results appear in search modal
@@ -56,4 +52,24 @@ test('Verify that user can search @mobile', async ({ page }) => {
   await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
   await page.getByTitle('Collapse Browse Pane').click();
   await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
+});
+test('Remove Object and confirmation dialog @mobile', async ({ page }) => {
+  await page.goto('./');
+  await page.getByRole('searchbox', { name: 'Search Input' }).click();
+  await page.getByRole('searchbox', { name: 'Search Input' }).fill('Parent Display Layout');
+  //Search Results appear in search modal
+  //Clicking on the search result takes you to the object
+  await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
+  await page.getByTitle('Collapse Browse Pane').click();
+  await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
+  //Verify both objects are in view
+  await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
+  await expect(await page.getByLabel('Child Layout 2 Layout')).toBeVisible();
+  //Remove First Object to bring up confirmation dialog
+  await page.getByLabel('View menu items').nth(1).click();
+  await page.getByLabel('Remove').click();
+  await page.getByRole('button', { name: 'OK' }).click();
+  //Verify that the object is removed
+  await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
+  expect(await page.getByLabel('Child Layout 2 Layout').count()).toBe(0);
 });
