@@ -38,8 +38,8 @@
             :key="action.name"
             role="menuitem"
             :aria-disabled="action.isDisabled"
+            aria-describedby="item-description"
             :class="action.cssClass"
-            :title="action.description"
             @click="action.onItemClicked"
             @mouseover="toggleItemDescription(action)"
             @mouseleave="toggleItemDescription()"
@@ -64,7 +64,7 @@
         role="menuitem"
         :class="action.cssClass"
         :aria-label="action.name"
-        :title="action.description"
+        aria-describedby="item-description"
         @click="action.onItemClicked"
         @mouseover="toggleItemDescription(action)"
         @mouseleave="toggleItemDescription()"
@@ -79,7 +79,7 @@
       <div class="l-item-description__name">
         {{ hoveredItem.name }}
       </div>
-      <div class="l-item-description__description">
+      <div id="item-description" class="l-item-description__description">
         {{ hoveredItem.description }}
       </div>
     </div>
@@ -90,7 +90,7 @@ import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
   inject: ['options'],
-  data: function () {
+  data() {
     return {
       hoveredItem: {}
     };
@@ -109,7 +109,7 @@ export default {
         cssClass: action.cssClass
       };
 
-      this.hoveredItem = Object.assign({}, this.hoveredItem, hoveredItem);
+      this.hoveredItem = hoveredItem;
     }
   }
 };
