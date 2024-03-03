@@ -93,4 +93,14 @@ test.describe('Visual - Display Layout', () => {
     await page.getByLabel('Parent Layout Layout', { exact: true }).click();
     await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`);
   });
+
+  test('Toolbar does not overflow into inspector', async ({ page, theme }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7036'
+    });
+    await page.getByLabel('Expand Inspect Pane').click();
+    await page.getByLabel('Resize Inspect Pane').dragTo(page.getByLabel('X:'));
+    await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`);
+  });
 });

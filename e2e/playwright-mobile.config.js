@@ -3,7 +3,6 @@
 
 import { devices } from '@playwright/test';
 const MAX_FAILURES = 5;
-const NUM_WORKERS = 2;
 
 import { fileURLToPath } from 'url';
 
@@ -20,7 +19,8 @@ const config = {
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
   maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
-  workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
+  workers: 1, //Limit to 1 due to resource constraints similar to https://github.com/percy/cli/discussions/1067
+
   use: {
     baseURL: 'http://localhost:8080/',
     headless: true,
