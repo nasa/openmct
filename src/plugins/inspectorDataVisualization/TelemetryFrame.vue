@@ -70,17 +70,27 @@ export default {
   inject: ['openmct'],
   provide() {
     return {
-      domainObject: this.telemetryObject
+      domainObject: this.telemetryObject,
+      path: this.path,
+      renderWhenVisible: this.renderWhenVisible
     };
   },
   props: {
     bounds: {
       type: Object,
-      default: () => {}
+      required: true
     },
     telemetryObject: {
       type: Object,
       default: () => {}
+    },
+    path: {
+      type: Array,
+      default: () => []
+    },
+    renderWhenVisible: {
+      type: Function,
+      required: true
     }
   },
   data() {
