@@ -231,7 +231,7 @@ class BatchingWebSocket extends EventTarget {
         const waitedFor = now - this.start;
         if (state.didTimeout === true) {
           if (document.visibilityState === 'visible') {
-            console.warn(`Event loop is too busy to process batch ${batch.number}.`);
+            console.warn(`Event loop is too busy to process batch.`);
             this.#waitUntilIdleAndRequestNextBatch(batch);
           } else {
             // After ingesting a telemetry batch, wait until the event loop is idle again before
@@ -240,7 +240,7 @@ class BatchingWebSocket extends EventTarget {
           }
         } else {
           if (waitedFor > ONE_SECOND) {
-            console.warn(`Warning, batch processing took ${waitedFor}ms for batch ${batch.number}`);
+            console.warn(`Warning, batch processing took ${waitedFor}ms`);
           }
           this.#readyForNextBatch();
         }

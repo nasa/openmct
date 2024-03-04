@@ -91,7 +91,6 @@ export default {
 
     //Respond to changes in conductor
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
-    //this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
   },
   beforeUnmount() {
     clearInterval(this.resizeTimer);

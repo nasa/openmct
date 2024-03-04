@@ -268,7 +268,6 @@ export default function installWorker() {
     #batchingStrategy;
     #hasBatch = false;
     #maxBatchSize;
-    #maxBatchWait;
     #readyForNextBatch;
     #worker;
     #throttledSendNextBatch;
@@ -338,7 +337,6 @@ export default function installWorker() {
       this.#maxBatchSize = maxBatchSize;
     }
     setMaxBatchWait(maxBatchWait) {
-      this.#maxBatchWait = maxBatchWait;
       this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), maxBatchWait);
     }
     /**
@@ -356,7 +354,6 @@ export default function installWorker() {
     }
     #sendNextBatch() {
       const batch = this.#batch;
-      batch.number = Math.round(Math.random() * 100000);
       this.#resetBatch();
       this.sent = Date.now();
       this.#worker.postMessage({
