@@ -106,8 +106,6 @@ export default function installWorker() {
       this.#isConnecting = false;
       this.#currentWaitIndex = 0;
 
-      this.dispatchEvent(new Event('connected'));
-
       this.#flushQueue();
     }
 
