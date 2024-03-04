@@ -19,7 +19,9 @@
   z-index: 70;
 
   &__blocker {
-    display: none; // Mobile-first
+    // Mobile-first: use the blocker to create a full look to dialogs
+    @include abs();
+    background: $colorBodyBg;
   }
 
   &__outer {
@@ -27,7 +29,13 @@
     background: $colorBodyBg;
     display: flex;
     flex-direction: column;
-    padding: $overlayInnerMargin;
+
+    body.mobile .l-overlay-fit & {
+      // Vertically center small dialogs in mobile
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
   }
 
   &__close-button {
@@ -39,12 +47,32 @@
     z-index: 99;
   }
 
+  &__content-wrapper {
+    display: flex;
+    height: 100%;
+    overflow: auto;
+    flex-direction: column;
+    gap: $interiorMargin;
+
+    body.desktop & {
+      overflow: hidden;
+    }
+
+    .l-overlay-fit &,
+    .l-overlay-dialog & {
+      margin: $overlayInnerMargin;
+    }
+  }
+
   &__contents {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     outline: none;
     overflow: auto;
+    body.mobile & {
+      flex: none;
+    }
   }
 
   &__top-bar {
@@ -78,6 +106,10 @@
     display: flex;
     justify-content: flex-end;
     margin-top: $interiorMargin;
+    body.mobile & {
+      justify-content: flex-end;
+      padding-right: $interiorMargin;
+    }
 
     > * + * {
       margin-left: $interiorMargin;
