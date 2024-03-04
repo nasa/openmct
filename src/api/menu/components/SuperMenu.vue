@@ -75,12 +75,12 @@
     </ul>
 
     <div aria-live="polite" class="c-super-menu__item-description">
-      <div :class="['l-item-description__icon', 'bg-' + hoveredItem.cssClass]"></div>
+      <div :class="itemDescriptionIconClass"></div>
       <div class="l-item-description__name">
-        {{ hoveredItem.name }}
+        {{ hoveredItemName }}
       </div>
       <div id="item-description" class="l-item-description__description">
-        {{ hoveredItem.description }}
+        {{ hoveredItemDescription }}
       </div>
     </div>
   </div>
@@ -92,21 +92,34 @@ export default {
   inject: ['options'],
   data() {
     return {
-      hoveredItem: {}
+      hoveredItem: null
     };
   },
   computed: {
     optionsLabel() {
       const label = this.options.label ? `${this.options.label} Super Menu` : 'Super Menu';
       return label;
+    },
+    itemDescriptionIconClass() {
+      const iconClass = ['l-item-description__icon'];
+      if (this.hoveredItem) {
+        iconClass.push('bg-' + this.hoveredItem.cssClass);
+      }
+      return iconClass;
+    },
+    hoveredItemName() {
+      return this.hoveredItem?.name ?? '';
+    },
+    hoveredItemDescription() {
+      return this.hoveredItem?.description ?? '';
     }
   },
   methods: {
-    toggleItemDescription(action = {}) {
+    toggleItemDescription(action = null) {
       const hoveredItem = {
-        name: action.name,
-        description: action.description,
-        cssClass: action.cssClass
+        name: action?.name,
+        description: action?.description,
+        cssClass: action?.cssClass
       };
 
       this.hoveredItem = hoveredItem;
