@@ -120,7 +120,9 @@ export default {
         'tc.mode': 'fixed'
       };
       const newTabAction = this.openmct.actions.getAction('newTab');
-      newTabAction.invoke([sourceTelemObject], urlParams);
+      // No view context needed, so pass undefined.
+      // The urlParams arg will override the global time bounds with the dataviz plot bounds.
+      newTabAction.invoke([sourceTelemObject], undefined, urlParams);
       this.showMenu = false;
     },
     previewTelemetry() {
