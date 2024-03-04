@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     optionsLabel() {
-      const label = this.options.label ? `${this.options.label} Menu` : 'Menu';
+      const label = this.options.label ? `${this.options.label} Context Menu` : 'Context Menu';
       return label;
     }
   },
