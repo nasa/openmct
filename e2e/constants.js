@@ -17,3 +17,9 @@ export const MISSION_TIME = 1732413600000; // Saturday, November 23, 2024 6:00:0
  */
 export const VISUAL_URL =
   './#/browse/mine?tc.mode=fixed&tc.startBound=1693592063607&tc.endBound=1693593893607&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true';
+
+/**
+ * Constant for the full circle path
+ */
+export const FULL_CIRCLE_PATH =
+  'M3.061616997868383e-15,-50A50,50,0,1,1,-3.061616997868383e-15,50A50,50,0,1,1,3.061616997868383e-15,-50Z';

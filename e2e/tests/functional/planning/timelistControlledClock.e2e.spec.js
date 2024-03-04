@@ -28,7 +28,12 @@ clockOptions plugin fixture.
 import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
-import { getEarliestStartTime, getFirstActivity } from '../../../helper/planningUtils';
+import {
+  getEarliestStartTime,
+  getFirstActivity,
+  createTimelistWithPlanAndSetActivityInProgress
+} from '../../../helper/planningUtils';
+import { FULL_CIRCLE_PATH } from '../../../constants.js';
 
 import { expect, test } from '../../../pluginFixtures.js';
 
@@ -41,9 +46,6 @@ const examplePlanSmall3 = JSON.parse(
 const TIME_TO_FROM_COLUMN = 2;
 const HEADER_ROW = 0;
 const NUM_COLUMNS = 5;
-
-const FULL_CIRCLE_PATH =
-  'M3.061616997868383e-15,-50A50,50,0,1,1,-3.061616997868383e-15,50A50,50,0,1,1,3.061616997868383e-15,-50Z';
 
 /**
  * The regular expression used to parse the countdown string.
@@ -230,51 +232,6 @@ test.describe('Activity progress when now is after end of the activity @clock', 
     );
   });
 });
-
-async function createTimelistWithPlanAndSetActivityInProgress(page) {
-  await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-  const timelist = await createDomainObjectWithDefaults(page, { type: 'Time List' });
-
-  await createPlanFromJSON(page, {
-    name: 'Test Plan',
-    json: examplePlanSmall1,
-    parent: timelist.uuid
-  });
-
-  // Ensure that all activities are shown in the expanded view
-  const groups = Object.keys(examplePlanSmall1);
-  const firstGroupKey = groups[0];
-  const firstGroupItems = examplePlanSmall1[firstGroupKey];
-  const firstActivityForPlan = firstGroupItems[0];
-  const lastActivity = firstGroupItems[firstGroupItems.length - 1];
-  const startBound = firstActivityForPlan.start;
-  const endBound = lastActivity.end;
-
-  // Switch to fixed time mode with all plan events within the bounds
-  await page.goto(
-    `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
-  );
-
-  // Change the object to edit mode
-  await page.getByRole('button', { name: 'Edit Object' }).click();
-
-  // Find the display properties section in the inspector
-  await page.getByRole('tab', { name: 'View Properties' }).click();
-  // Switch to expanded view and save the setting
-  await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
-
-  // Click on the "Save" button
-  await page.getByRole('button', { name: 'Save' }).click();
-  await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-  const anActivity = page.getByRole('row').nth(0);
-
-  // Set the activity to in progress
-  await anActivity.click();
-  await page.getByRole('tab', { name: 'Activity' }).click();
-  await page.getByLabel('Activity Status', { exact: true }).selectOption({ label: 'In progress' });
-}
 
 /**
  * Get the cell at the given row and column indices.
