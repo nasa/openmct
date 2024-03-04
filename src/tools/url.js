@@ -30,10 +30,33 @@
  * @returns {Array<string>} newTabParams
  */
 export function paramsToArray(openmct) {
-  const urlParams = openmct.router.getParams();
+  let urlParams = openmct.router.getParams();
 
-  return Object.entries(urlParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
+  if (urlParams['tc.mode'] === 'fixed') {
+    delete urlParams['tc.startDelta'];
+    delete urlParams['tc.endDelta'];
+  } else if (urlParams['tc.mode'] === 'local') {
+    delete urlParams['tc.startBound'];
+    delete urlParams['tc.endBound'];
+  }
+
+  return Object.entries(urlParams).map(([key, value]) => `${key}=${value}`);
 }
+
+// export function paramsToArray(openmct) {
+//   const urlParams = getUrlParams(openmct);
+//   // Filter out any parameters whose values are objects, then map the rest to the desired string format.
+//   const newTabParams = Object.entries(urlParams).reduce((acc, [key, value]) => {
+//     // Only process the parameter if its value is not an object (or is null, which is fine to include).
+//     if (typeof value !== 'object' || value === null) {
+//       const param = `${key}=${encodeURIComponent(value)}`;
+//       acc.push(param);
+//     }
+//     return acc;
+//   }, []);
+
+//   return newTabParams;
+// }
 
 export function identifierToString(openmct, objectPath) {
   return '#/browse/' + openmct.objects.getRelativePath(objectPath);
