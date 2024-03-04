@@ -85,8 +85,6 @@ import { getFilteredValues, getValidatedData, getValidatedGroups } from '../plan
 import { SORT_ORDER_OPTIONS } from './constants.js';
 import ExpandedViewItem from './ExpandedViewItem.vue';
 
-const SCROLL_TIMEOUT = 10000;
-
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const SAME_DAY_PRECISION_SECONDS = 'HH:mm:ss';
 
@@ -209,7 +207,6 @@ export default {
   },
   created() {
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
-    this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
 
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
@@ -237,8 +234,6 @@ export default {
     this.status = this.openmct.status.get(this.domainObject.identifier);
 
     this.openmct.editor.on('isEditing', this.setEditState);
-
-    this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
 
     if (this.composition) {
       this.composition.on('add', this.addToComposition);
@@ -271,11 +266,6 @@ export default {
 
     this.openmct.editor.off('isEditing', this.setEditState);
     this.stopFollowingTimeContext();
-
-    this.$el.parentElement?.removeEventListener('scroll', this.deferAutoScroll, true);
-    if (this.clearAutoScrollDisabledTimer) {
-      clearTimeout(this.clearAutoScrollDisabledTimer);
-    }
 
     if (this.composition) {
       this.composition.off('add', this.addToComposition);
@@ -429,8 +419,6 @@ export default {
       const filteredItems = this.planActivities.filter(this.filterActivities);
       const sortedItems = this.sortItems(filteredItems);
       this.sortedItems = this.applyStyles(sortedItems);
-      //We need to wait for the next tick since we need the height of the row from the DOM
-      this.$nextTick(this.setScrollTop);
     },
     updateTimeStampAndListActivities(time) {
       this.timestamp = time;
@@ -509,24 +497,13 @@ export default {
       });
     },
     // Add activity classes, increase activity counts by type,
-    // set indices of the first occurrences of current and future activities - used for scrolling
     styleActivity(activity, index) {
       if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
         activity.cssClass = CURRENT_CSS_SUFFIX;
-        if (this.firstCurrentActivityIndex < 0) {
-          this.firstCurrentActivityIndex = index;
-        }
-        this.currentActivitiesCount = this.currentActivitiesCount + 1;
       } else if (this.timestamp < activity.start) {
         activity.cssClass = FUTURE_CSS_SUFFIX;
-        //the index of the first activity that's greater than the current timestamp
-        if (this.firstFutureActivityIndex < 0) {
-          this.firstFutureActivityIndex = index;
-        }
-        this.futureActivitiesCount = this.futureActivitiesCount + 1;
       } else {
         activity.cssClass = PAST_CSS_SUFFIX;
-        this.pastActivitiesCount = this.pastActivitiesCount + 1;
       }
 
       if (!activity.key) {
@@ -545,111 +522,7 @@ export default {
       return activity;
     },
     applyStyles(activities) {
-      this.firstCurrentOrFutureActivityIndex = -1;
-      this.firstCurrentActivityIndex = -1;
-      this.firstFutureActivityIndex = -1;
-      this.currentActivitiesCount = 0;
-      this.pastActivitiesCount = 0;
-      this.futureActivitiesCount = 0;
-
-      const styledActivities = activities.map(this.styleActivity);
-
-      if (this.firstCurrentActivityIndex > -1) {
-        this.firstCurrentOrFutureActivityIndex = this.firstCurrentActivityIndex;
-      } else if (this.firstFutureActivityIndex > -1) {
-        this.firstCurrentOrFutureActivityIndex = this.firstFutureActivityIndex;
-      }
-
-      return styledActivities;
-    },
-    canAutoScroll() {
-      //this distinguishes between programmatic vs user-triggered scroll events
-      this.autoScrolled = this.dontAutoScroll !== true;
-
-      return this.autoScrolled;
-    },
-    resetScroll() {
-      if (this.canAutoScroll() === false) {
-        return;
-      }
-
-      this.firstCurrentOrFutureActivityIndex = -1;
-      this.pastActivitiesCount = 0;
-      this.currentActivitiesCount = 0;
-      this.futureActivitiesCount = 0;
-      this.$el.parentElement?.scrollTo({ top: 0 });
-      this.autoScrolled = false;
-    },
-    setScrollTop() {
-      //The view isn't ready yet
-      if (!this.$el.parentElement || this.isExpanded) {
-        return;
-      }
-
-      if (this.canAutoScroll() === false) {
-        return;
-      }
-
-      // See #7167 for scrolling algorithm
-      const scrollTop = this.calculateScrollOffset();
-
-      if (scrollTop === undefined) {
-        this.resetScroll();
-      } else {
-        this.$el.parentElement?.scrollTo({
-          top: scrollTop,
-          behavior: 'smooth'
-        });
-        this.autoScrolled = false;
-      }
-    },
-    calculateScrollOffset() {
-      let scrollTop;
-
-      //No scrolling necessary if no past events are present
-      if (this.pastActivitiesCount > 0) {
-        const row = this.$el.querySelector('.js-list-item');
-        const ROW_HEIGHT = row.getBoundingClientRect().height;
-
-        const maxViewableActivities =
-          Math.floor(this.$el.parentElement.getBoundingClientRect().height / ROW_HEIGHT) - 1;
-
-        const currentAndFutureActivities = this.currentActivitiesCount + this.futureActivitiesCount;
-
-        //If there is more viewable area than all current and future activities combined, then show some past events
-        const numberOfPastEventsToShow = maxViewableActivities - currentAndFutureActivities;
-        if (numberOfPastEventsToShow > 0) {
-          //some past events can be shown - get that scroll index
-          if (this.pastActivitiesCount > numberOfPastEventsToShow) {
-            scrollTop =
-              ROW_HEIGHT * (this.firstCurrentOrFutureActivityIndex + numberOfPastEventsToShow);
-          }
-        } else {
-          // only show current and future events
-          scrollTop = ROW_HEIGHT * this.firstCurrentOrFutureActivityIndex;
-        }
-      }
-
-      return scrollTop;
-    },
-    deferAutoScroll() {
-      //if this is not a user-triggered event, don't defer auto scrolling
-      if (this.autoScrolled) {
-        this.autoScrolled = false;
-
-        return;
-      }
-
-      this.dontAutoScroll = true;
-      const self = this;
-      if (this.clearAutoScrollDisabledTimer) {
-        clearTimeout(this.clearAutoScrollDisabledTimer);
-      }
-
-      this.clearAutoScrollDisabledTimer = setTimeout(() => {
-        self.dontAutoScroll = false;
-        self.setScrollTop();
-      }, SCROLL_TIMEOUT);
+      return activities.map(this.styleActivity);
     },
     setSort() {
       const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];

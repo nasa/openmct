@@ -24,7 +24,7 @@
  * Utility for checking if a thing is an Open MCT Identifier.
  * @private
  */
-function isIdentifier(thing) {
+export function isIdentifier(thing) {
   return (
     typeof thing === 'object' &&
     Object.prototype.hasOwnProperty.call(thing, 'key') &&
@@ -36,7 +36,7 @@ function isIdentifier(thing) {
  * Utility for checking if a thing is a key string.  Not perfect.
  * @private
  */
-function isKeyString(thing) {
+export function isKeyString(thing) {
   return typeof thing === 'string';
 }
 
@@ -49,7 +49,7 @@ function isKeyString(thing) {
  * @param keyString
  * @returns identifier
  */
-function parseKeyString(keyString) {
+export function parseKeyString(keyString) {
   if (isIdentifier(keyString)) {
     return keyString;
   }
@@ -86,7 +86,7 @@ function parseKeyString(keyString) {
  * @param identifier
  * @returns keyString
  */
-function makeKeyString(identifier) {
+export function makeKeyString(identifier) {
   if (!identifier) {
     throw new Error('Cannot make key string from null identifier');
   }
@@ -112,7 +112,7 @@ function makeKeyString(identifier) {
  * @param domainObject
  * @returns oldFormatModel
  */
-function toOldFormat(model) {
+export function toOldFormat(model) {
   model = JSON.parse(JSON.stringify(model));
   delete model.identifier;
   if (model.composition) {
@@ -131,7 +131,7 @@ function toOldFormat(model) {
  * @param keyString
  * @returns domainObject
  */
-function toNewFormat(model, keyString) {
+export function toNewFormat(model, keyString) {
   model = JSON.parse(JSON.stringify(model));
   model.identifier = parseKeyString(keyString);
   if (model.composition) {
@@ -148,7 +148,7 @@ function toNewFormat(model, keyString) {
  * @param otherIdentifier
  * @returns Boolean true if identifiers are equal.
  */
-function identifierEquals(a, b) {
+export function identifierEquals(a, b) {
   return a.key === b.key && a.namespace === b.namespace;
 }
 
@@ -160,23 +160,12 @@ function identifierEquals(a, b) {
  * @param otherDomainOBject
  * @returns Boolean true if objects are equal.
  */
-function objectEquals(a, b) {
+export function objectEquals(a, b) {
   return identifierEquals(a.identifier, b.identifier);
 }
 
-function refresh(oldObject, newObject) {
+export function refresh(oldObject, newObject) {
   let deleted = _.difference(Object.keys(oldObject), Object.keys(newObject));
   deleted.forEach((propertyName) => delete oldObject[propertyName]);
   Object.assign(oldObject, newObject);
 }
-
-export default {
-  isIdentifier: isIdentifier,
-  toOldFormat: toOldFormat,
-  toNewFormat: toNewFormat,
-  makeKeyString: makeKeyString,
-  parseKeyString: parseKeyString,
-  equals: objectEquals,
-  identifierEquals: identifierEquals,
-  refresh: refresh
-};

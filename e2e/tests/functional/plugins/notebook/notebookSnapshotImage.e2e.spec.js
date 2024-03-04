@@ -68,7 +68,7 @@ test.describe('Snapshot image tests', () => {
     // expect large image to be displayed
     await expect(page.getByRole('dialog').getByText('favicon-96x96.png')).toBeVisible();
 
-    await page.getByLabel('Close').click();
+    await page.getByRole('button', { name: 'Close' }).click();
 
     // drop another image onto the entry
     await page.dispatchEvent('.c-snapshots', 'drop', { dataTransfer: dropTransfer });

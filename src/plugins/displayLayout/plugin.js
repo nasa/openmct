@@ -99,7 +99,7 @@ class DisplayLayoutView {
   destroy() {
     if (this._destroy) {
       this._destroy();
-      this.component = undefined;
+      this.component = null;
     }
   }
 }
