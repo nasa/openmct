@@ -83,7 +83,7 @@
     "vue": "3.4.19",
     "vue-eslint-parser": "9.4.2",
     "vue-loader": "16.8.3",
-    "webpack": "5.89.0",
+    "webpack": "5.90.3",
     "webpack-cli": "5.1.1",
     "webpack-dev-server": "4.15.1",
     "webpack-merge": "5.10.0"
