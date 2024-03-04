@@ -74,7 +74,7 @@
       <li v-if="options.actions.length === 0">No actions defined.</li>
     </ul>
 
-    <div class="c-super-menu__item-description">
+    <div aria-live="polite" class="c-super-menu__item-description">
       <div :class="['l-item-description__icon', 'bg-' + hoveredItem.cssClass]"></div>
       <div class="l-item-description__name">
         {{ hoveredItem.name }}
