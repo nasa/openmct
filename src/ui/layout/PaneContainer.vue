@@ -21,7 +21,13 @@
 -->
 <template>
   <div class="l-pane" :class="paneClasses">
-    <div v-if="handle" class="l-pane__handle" @mousedown.prevent="startResizing"></div>
+    <div
+      v-if="handle"
+      class="l-pane__handle"
+      :aria-label="handleLabel"
+      :aria-grabbed="resizing"
+      @mousedown.prevent="startResizing"
+    ></div>
     <div class="l-pane__header">
       <span v-if="label" class="l-pane__label">{{ label }}</span>
       <slot name="controls"></slot>
@@ -88,6 +94,9 @@ export default {
     };
   },
   computed: {
+    handleLabel() {
+      return `Resize ${this.label} Pane`;
+    },
     isCollapsable() {
       return this.hideParam?.length > 0;
     },
