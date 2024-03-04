@@ -28,7 +28,7 @@ import { MISSION_TIME, VISUAL_URL } from '../../../constants.js';
 //Declare the scope of the visual test
 const inspectorPane = '.l-shell__pane-inspector';
 
-test.describe('Visual - Inspector @ally', () => {
+test.describe('Visual - Inspector @ally @clock', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });
