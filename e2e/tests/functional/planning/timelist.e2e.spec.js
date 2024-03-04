@@ -22,7 +22,7 @@
 import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
-import { getEarliestStartTime, getFirstActivity } from '../../../helper/planningUtils';
+import { getFirstActivity } from '../../../helper/planningUtils';
 import { expect, test } from '../../../pluginFixtures.js';
 
 const examplePlanSmall1 = JSON.parse(
@@ -34,11 +34,8 @@ const examplePlanSmall1 = JSON.parse(
 const START_TIME_COLUMN = 0;
 // eslint-disable-next-line no-unused-vars
 const END_TIME_COLUMN = 1;
-const TIME_TO_FROM_COLUMN = 2;
 // eslint-disable-next-line no-unused-vars
 const ACTIVITY_COLUMN = 3;
-const HEADER_ROW = 0;
-const NUM_COLUMNS = 5;
 const FULL_CIRCLE_PATH =
   'M3.061616997868383e-15,-50A50,50,0,1,1,-3.061616997868383e-15,50A50,50,0,1,1,3.061616997868383e-15,-50Z';
 test.describe('Time List', () => {
