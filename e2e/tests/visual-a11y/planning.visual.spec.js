@@ -28,11 +28,13 @@ import { test } from '../../avpFixtures.js';
 import { VISUAL_URL } from '../../constants.js';
 import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
 
-const examplePlanSmall = JSON.parse(
-  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
+const examplePlanSmall1 = JSON.parse(
+  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url))
 );
 
-const snapshotScope = '.l-shell__pane-main .l-pane__contents';
+const examplePlanSmall2 = JSON.parse(
+  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
+);
 
 test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
@@ -42,42 +44,41 @@ test.describe('Visual - Planning', () => {
   test('Plan View', async ({ page, theme }) => {
     const plan = await createPlanFromJSON(page, {
       name: 'Plan Visual Test',
-      json: examplePlanSmall
+      json: examplePlanSmall2
     });
 
-    await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
-    await percySnapshot(page, `Plan View (theme: ${theme})`, {
-      scope: snapshotScope
-    });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall2, plan.url);
+    await percySnapshot(page, `Plan View (theme: ${theme})`);
   });
 
   test('Plan View w/ draft status', async ({ page, theme }) => {
     const plan = await createPlanFromJSON(page, {
       name: 'Plan Visual Test (Draft)',
-      json: examplePlanSmall
+      json: examplePlanSmall2
     });
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
     await setDraftStatusForPlan(page, plan);
 
-    await setBoundsToSpanAllActivities(page, examplePlanSmall, plan.url);
-    await percySnapshot(page, `Plan View w/ draft status (theme: ${theme})`, {
-      scope: snapshotScope
-    });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall2, plan.url);
+    await percySnapshot(page, `Plan View w/ draft status (theme: ${theme})`);
   });
+});
 
+test.describe('Visual - Gantt Chart', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+  });
   test('Gantt Chart View', async ({ page, theme }) => {
     const ganttChart = await createDomainObjectWithDefaults(page, {
       type: 'Gantt Chart',
       name: 'Gantt Chart Visual Test'
     });
     await createPlanFromJSON(page, {
-      json: examplePlanSmall,
+      json: examplePlanSmall2,
       parent: ganttChart.uuid
     });
-    await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
-    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Clipped Activity Names`, {
-      scope: snapshotScope
-    });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall2, ganttChart.url);
+    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Clipped Activity Names`);
 
     // Expand the inspect pane and uncheck the 'Clip Activity Names' option
     await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
@@ -93,9 +94,7 @@ test.describe('Visual - Planning', () => {
     // Dismiss the notification
     await page.getByLabel('Dismiss').click();
 
-    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Unclipped Activity Names`, {
-      scope: snapshotScope
-    });
+    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Unclipped Activity Names`);
   });
 
   test('Gantt Chart View w/ draft status', async ({ page, theme }) => {
@@ -104,7 +103,7 @@ test.describe('Visual - Planning', () => {
       name: 'Gantt Chart Visual Test (Draft)'
     });
     const plan = await createPlanFromJSON(page, {
-      json: examplePlanSmall,
+      json: examplePlanSmall2,
       parent: ganttChart.uuid
     });
 
@@ -112,10 +111,8 @@ test.describe('Visual - Planning', () => {
 
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
 
-    await setBoundsToSpanAllActivities(page, examplePlanSmall, ganttChart.url);
-    await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`, {
-      scope: snapshotScope
-    });
+    await setBoundsToSpanAllActivities(page, examplePlanSmall2, ganttChart.url);
+    await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`);
 
     // Expand the inspect pane and uncheck the 'Clip Activity Names' option
     await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
@@ -133,14 +130,61 @@ test.describe('Visual - Planning', () => {
 
     await percySnapshot(
       page,
-      `Gantt Chart View w/ draft status (theme: ${theme}) - Unclipped Activity Names`,
-      {
-        scope: snapshotScope
-      }
+      `Gantt Chart View w/ draft status (theme: ${theme}) - Unclipped Activity Names`
     );
   });
-  // Skipping for https://github.com/nasa/openmct/issues/7421
-  // test.afterEach(async ({ page }, testInfo) => {
-  //   await scanForA11yViolations(page, testInfo.title);
-  // });
 });
+
+let timelist;
+test.describe('Visual - Timelist', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    timelist = await createDomainObjectWithDefaults(page, {
+      type: 'Time List',
+      name: 'Time List Visual Test'
+    });
+  });
+  test('View a timelist in expanded view', async ({ page }) => {
+    await createPlanFromJSON(page, {
+      name: 'Test Plan',
+      json: examplePlanSmall1,
+      parent: timelist.uuid
+    });
+
+    // Ensure that all activities are shown in the expanded view
+    const groups = Object.keys(examplePlanSmall1);
+    const firstGroupKey = groups[0];
+    const firstGroupItems = examplePlanSmall1[firstGroupKey];
+    const firstActivity = firstGroupItems[0];
+    const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+    const startBound = firstActivity.start;
+    const endBound = lastActivity.end;
+
+    // Switch to fixed time mode with all plan events within the bounds
+    await page.goto(
+      `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
+    );
+
+    // Change the object to edit mode
+    await page.getByRole('button', { name: 'Edit Object' }).click();
+
+    // Find the display properties section in the inspector
+    await page.getByRole('tab', { name: 'View Properties' }).click();
+    // Switch to expanded view and save the setting
+    await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
+
+    // Click on the "Save" button
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    await page.getByRole('row').nth(2).click();
+
+    // Find the activity state section in the inspector
+    await page.getByRole('tab', { name: 'Activity' }).click();
+  });
+});
+
+// Skipping for https://github.com/nasa/openmct/issues/7421
+// test.afterEach(async ({ page }, testInfo) => {
+//   await scanForA11yViolations(page, testInfo.title);
+// });
