@@ -25,7 +25,7 @@ import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
 import { test } from '../../avpFixtures.js';
-import { VISUAL_URL } from '../../constants.js';
+import { VISUAL_URL, FULL_CIRCLE_PATH } from '../../constants.js';
 import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
 
 const examplePlanSmall1 = JSON.parse(
@@ -135,52 +135,28 @@ test.describe('Visual - Gantt Chart', () => {
   });
 });
 
-let timelist;
-test.describe('Visual - Timelist', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-    timelist = await createDomainObjectWithDefaults(page, {
-      type: 'Time List',
-      name: 'Time List Visual Test'
-    });
+test.describe('Visual - Timelist progress bar @clock', () => {
+  const firstActivity = getFirstActivity(examplePlanSmall1);
+
+  test.use({
+    clockOptions: {
+      now: firstActivity.end + 10000,
+      shouldAdvanceTime: true
+    }
   });
-  test('View a timelist in expanded view', async ({ page }) => {
-    await createPlanFromJSON(page, {
-      name: 'Test Plan',
-      json: examplePlanSmall1,
-      parent: timelist.uuid
-    });
 
-    // Ensure that all activities are shown in the expanded view
-    const groups = Object.keys(examplePlanSmall1);
-    const firstGroupKey = groups[0];
-    const firstGroupItems = examplePlanSmall1[firstGroupKey];
-    const firstActivity = firstGroupItems[0];
-    const lastActivity = firstGroupItems[firstGroupItems.length - 1];
-    const startBound = firstActivity.start;
-    const endBound = lastActivity.end;
+  test.beforeEach(async ({ page }) => {
+    await createTimelistWithPlanAndSetActivityInProgress(page);
+  });
 
-    // Switch to fixed time mode with all plan events within the bounds
-    await page.goto(
-      `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
+  test('progress pie is full', async ({ page, theme }) => {
+    const anActivity = page.getByRole('row').nth(0);
+    // Progress pie is completely full and doesn't update if now is greater than the end time
+    await expect(anActivity.getByLabel('Activity in progress').locator('path')).toHaveAttribute(
+      'd',
+      FULL_CIRCLE_PATH
     );
-
-    // Change the object to edit mode
-    await page.getByRole('button', { name: 'Edit Object' }).click();
-
-    // Find the display properties section in the inspector
-    await page.getByRole('tab', { name: 'View Properties' }).click();
-    // Switch to expanded view and save the setting
-    await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
-
-    // Click on the "Save" button
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-    await page.getByRole('row').nth(2).click();
-
-    // Find the activity state section in the inspector
-    await page.getByRole('tab', { name: 'Activity' }).click();
+    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
   });
 });
 
