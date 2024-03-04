@@ -58,12 +58,23 @@ test.describe('Display Layout Sub-object Actions @localStorage @2p', () => {
       .getByLabel('Main Tree')
       .getByLabel('Navigate to Parent Display Layout layout Object')
       .click();
+    // Wait for the URL to change to the display layout
     await waitForMyItemsNavigation;
   });
   test('Open in New Tab action preserves time bounds', async ({ page }) => {
-    const TEST_FIXED_START_TIME = 1731352271000;
-    const TEST_FIXED_END_TIME = TEST_FIXED_START_TIME + 3600000;
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7524'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6982'
+    });
 
+    const TEST_FIXED_START_TIME = 1731352271000; // 2024-11-11 19:11:11.000Z
+    const TEST_FIXED_END_TIME = TEST_FIXED_START_TIME + 3600000; // 2024-11-11 20:11:11.000Z
+
+    // Verify the ITC has the expected initial bounds
     expect(
       await page
         .getByLabel('Child Overlay Plot 1 Frame Controls')
@@ -86,7 +97,7 @@ test.describe('Display Layout Sub-object Actions @localStorage @2p', () => {
       TEST_FIXED_END_TIME
     );
 
-    // ITC bounds should still match the original global bounds
+    // ITC bounds should still match the initial ITC bounds
     expect(
       await page
         .getByLabel('Child Overlay Plot 1 Frame Controls')
@@ -116,6 +127,7 @@ test.describe('Display Layout Sub-object Actions @localStorage @2p', () => {
       await newPage.getByLabel('Global Time Conductor').getByLabel('End bounds').textContent()
     ).toEqual(NEW_GLOBAL_END_BOUNDS);
 
+    // Verify that the ITC is enabled in the new page
     await expect(newPage.getByLabel('Disable Independent Time Conductor')).toBeVisible();
     // Verify that the ITC bounds in the new page match the original ITC bounds
     expect(
@@ -433,7 +445,7 @@ test.describe('Display Layout', () => {
 
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
-    await setIndependentTimeConductorBounds(page, startDate, endDate);
+    await setIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
