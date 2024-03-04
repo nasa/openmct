@@ -355,7 +355,6 @@ export default function installWorker() {
     #sendNextBatch() {
       const batch = this.#batch;
       this.#resetBatch();
-      this.sent = Date.now();
       this.#worker.postMessage({
         type: 'batch',
         batch
