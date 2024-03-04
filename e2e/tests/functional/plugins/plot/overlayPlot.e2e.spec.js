@@ -195,7 +195,7 @@ test.describe('Overlay Plot', () => {
       description: 'https://github.com/nasa/openmct/issues/6987'
     });
     // Create an Overlay Plot with a default SWG
-    const overlayPlot = await createDomainObjectWithDefaults(page, {
+    overlayPlot = await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot'
     });
 
@@ -211,7 +211,7 @@ test.describe('Overlay Plot', () => {
     expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
 
     // Enter edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
     await page.getByRole('tab', { name: 'Config' }).click();
@@ -233,7 +233,7 @@ test.describe('Overlay Plot', () => {
 
     const initialCoords = await assertLimitLinesExistAndAreVisible(page);
     // Resize the chart container by showing the snapshot pane.
-    await page.getByRole('button', { name: 'Show' }).click();
+    await page.getByLabel('Show Snapshots').click();
 
     const newCoords = await assertLimitLinesExistAndAreVisible(page);
     // We just need to know that the first limit line redrew somewhere lower than the initial y position.
