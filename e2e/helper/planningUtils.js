@@ -143,6 +143,18 @@ export function getLatestEndTime(planJson) {
 }
 
 /**
+ *
+ * @param {object} planJson
+ * @returns {object}
+ */
+export function getFirstActivity(planJson) {
+  const groups = Object.keys(planJson);
+  const firstGroupKey = groups[0];
+  const firstGroupItems = planJson[firstGroupKey];
+  return firstGroupItems[0];
+}
+
+/**
  * Uses the Open MCT API to set the status of a plan to 'draft'.
  * @param {import('@playwright/test').Page} page
  * @param {import('../../appActions').CreatedObjectInfo} plan

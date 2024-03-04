@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import utils from 'objectUtils';
+import { identifierEquals, makeKeyString, parseKeyString, refresh } from 'objectUtils';
 
 import ConflictError from './ConflictError.js';
 import InMemorySearchProvider from './InMemorySearchProvider.js';
@@ -82,8 +82,19 @@ import Transaction from './Transaction.js';
  * @memberof module:openmct
  */
 export default class ObjectAPI {
+  #makeKeyString;
+  #parseKeyString;
+  #identifierEquals;
+  #refresh;
+  #openmct;
+
   constructor(typeRegistry, openmct) {
-    this.openmct = openmct;
+    this.#makeKeyString = makeKeyString;
+    this.#parseKeyString = parseKeyString;
+    this.#identifierEquals = identifierEquals;
+    this.#refresh = refresh;
+    this.#openmct = openmct;
+
     this.typeRegistry = typeRegistry;
     this.SEARCH_TYPES = Object.freeze({
       OBJECTS: 'OBJECTS',
@@ -206,14 +217,14 @@ export default class ObjectAPI {
    *          has been saved, or be rejected if it cannot be saved
    */
   get(identifier, abortSignal, forceRemote = false) {
-    let keystring = this.makeKeyString(identifier);
+    let keystring = this.#makeKeyString(identifier);
 
     if (!forceRemote) {
       if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
       }
 
-      identifier = utils.parseKeyString(identifier);
+      identifier = parseKeyString(identifier);
 
       if (this.isTransactionActive()) {
         let dirtyObject = this.transaction.getDirtyObject(identifier);
@@ -227,7 +238,7 @@ export default class ObjectAPI {
     const provider = this.getProvider(identifier);
 
     if (!provider) {
-      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}"`);
+      throw new Error(`No Provider Matched for keyString "${this.#makeKeyString(identifier)}"`);
     }
 
     if (!provider.get) {
@@ -325,7 +336,7 @@ export default class ObjectAPI {
    */
   getMutable(identifier) {
     if (!this.supportsMutation(identifier)) {
-      throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
+      throw new Error(`Object "${this.#makeKeyString(identifier)}" does not support mutation.`);
     }
 
     return this.get(identifier).then((object) => {
@@ -352,7 +363,7 @@ export default class ObjectAPI {
   }
 
   isPersistable(idOrKeyString) {
-    let identifier = utils.parseKeyString(idOrKeyString);
+    let identifier = parseKeyString(idOrKeyString);
     let provider = this.getProvider(identifier);
     if (provider?.isReadOnly) {
       return !provider.isReadOnly();
@@ -362,7 +373,7 @@ export default class ObjectAPI {
   }
 
   isMissing(domainObject) {
-    let identifier = utils.makeKeyString(domainObject.identifier);
+    let identifier = makeKeyString(domainObject.identifier);
     let missingName = 'Missing: ' + identifier;
 
     return domainObject.name === missingName;
@@ -442,21 +453,21 @@ export default class ObjectAPI {
       if (error instanceof this.errors.Conflict) {
         // Synchronized objects will resolve their own conflicts
         if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
-          this.openmct.notifications.info(
-            `Conflict detected while saving "${this.makeKeyString(
+          this.#openmct.notifications.info(
+            `Conflict detected while saving "${this.#makeKeyString(
               domainObject.name
             )}", attempting to resolve`
           );
         } else {
-          this.openmct.notifications.error(
-            `Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`
+          this.#openmct.notifications.error(
+            `Conflict detected while saving ${this.#makeKeyString(domainObject.identifier)}`
           );
 
           if (this.isTransactionActive()) {
             this.endTransaction();
           }
 
-          await this.refresh(domainObject);
+          await this.#refresh(domainObject);
         }
       }
 
@@ -465,7 +476,7 @@ export default class ObjectAPI {
   }
 
   async #getCurrentUsername() {
-    const user = await this.openmct.user.getCurrentUser();
+    const user = await this.#openmct.user.getCurrentUser();
     let username;
 
     if (user !== undefined) {
@@ -554,7 +565,7 @@ export default class ObjectAPI {
    */
   getRelativePath(objectPath) {
     return objectPath
-      .map((p) => this.makeKeyString(p.identifier))
+      .map((p) => this.#makeKeyString(p.identifier))
       .reverse()
       .join('/');
   }
@@ -574,13 +585,13 @@ export default class ObjectAPI {
     }
 
     let sourceTelemetry = null;
-    if (telemetryIdentifier && utils.identifierEquals(identifier, telemetryIdentifier)) {
+    if (telemetryIdentifier && this.#identifierEquals(identifier, telemetryIdentifier)) {
       sourceTelemetry = identifier;
     } else if (objectDetails.composition) {
       sourceTelemetry = objectDetails.composition[0];
       if (telemetryIdentifier) {
         sourceTelemetry = objectDetails.composition.find((telemetrySource) =>
-          utils.identifierEquals(telemetrySource, telemetryIdentifier)
+          this.#identifierEquals(telemetrySource, telemetryIdentifier)
         );
       }
     }
@@ -666,7 +677,7 @@ export default class ObjectAPI {
       mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
 
       // Check if provider supports realtime updates
-      let identifier = utils.parseKeyString(mutableObject.identifier);
+      let identifier = parseKeyString(mutableObject.identifier);
       let provider = this.getProvider(identifier);
 
       if (
@@ -706,7 +717,7 @@ export default class ObjectAPI {
     if (domainObject.isMutable) {
       domainObject.$refresh(refreshedObject);
     } else {
-      utils.refresh(domainObject, refreshedObject);
+      refresh(domainObject, refreshedObject);
     }
 
     return domainObject;
@@ -745,7 +756,7 @@ export default class ObjectAPI {
    * @returns {string} A string representation of the given identifier, including namespace and key
    */
   makeKeyString(identifier) {
-    return utils.makeKeyString(identifier);
+    return makeKeyString(identifier);
   }
 
   /**
@@ -753,7 +764,7 @@ export default class ObjectAPI {
    * @returns {module:openmct.ObjectAPI~Identifier} An identifier object
    */
   parseKeyString(keyString) {
-    return utils.parseKeyString(keyString);
+    return parseKeyString(keyString);
   }
 
   /**
@@ -761,9 +772,9 @@ export default class ObjectAPI {
    * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
    */
   areIdsEqual(...identifiers) {
-    const firstIdentifier = utils.parseKeyString(identifiers[0]);
+    const firstIdentifier = this.#parseKeyString(identifiers[0]);
 
-    return identifiers.map(utils.parseKeyString).every((identifier) => {
+    return identifiers.map(this.#parseKeyString).every((identifier) => {
       return (
         identifier === firstIdentifier ||
         (identifier.namespace === firstIdentifier.namespace &&
@@ -791,7 +802,7 @@ export default class ObjectAPI {
     }
 
     return path.some((pathElement) => {
-      const identifierToCheck = utils.parseKeyString(keyStringToCheck);
+      const identifierToCheck = this.#parseKeyString(keyStringToCheck);
 
       return this.areIdsEqual(identifierToCheck, pathElement.identifier);
     });
@@ -814,7 +825,7 @@ export default class ObjectAPI {
     if (location && !this.#pathContainsDomainObject(location, path)) {
       // if we have a location, and we don't already have this in our constructed path,
       // then keep walking up the path
-      return this.getOriginalPath(utils.parseKeyString(location), path, abortSignal);
+      return this.getOriginalPath(this.#parseKeyString(location), path, abortSignal);
     } else {
       return path;
     }
@@ -853,8 +864,8 @@ export default class ObjectAPI {
       await Promise.all(
         keyStrings.map((keyString) =>
           this.supportsMutation(keyString)
-            ? this.getMutable(utils.parseKeyString(keyString))
-            : this.get(utils.parseKeyString(keyString))
+            ? this.getMutable(this.#parseKeyString(keyString))
+            : this.get(this.#parseKeyString(keyString))
         )
       )
     ).reverse();
@@ -866,7 +877,7 @@ export default class ObjectAPI {
     return (
       objectPath !== undefined &&
       objectPath.length > 1 &&
-      domainObject.location !== this.makeKeyString(objectPath[1].identifier)
+      domainObject.location !== this.#makeKeyString(objectPath[1].identifier)
     );
   }
 

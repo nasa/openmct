@@ -22,7 +22,7 @@
 import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
-import utils from './object-utils.js';
+import { makeKeyString, refresh } from './object-utils.js';
 
 const ANY_OBJECT_EVENT = 'mutation';
 
@@ -152,7 +152,7 @@ class MutableDomainObject {
 
     mutable.$observe('$_synchronize_model', (updatedObject) => {
       let clone = JSON.parse(JSON.stringify(updatedObject));
-      utils.refresh(mutable, clone);
+      refresh(mutable, clone);
     });
 
     return mutable;
@@ -168,7 +168,7 @@ class MutableDomainObject {
 }
 
 function qualifiedEventName(object, eventName) {
-  let keystring = utils.makeKeyString(object.identifier);
+  let keystring = makeKeyString(object.identifier);
 
   return [keystring, eventName].join(':');
 }

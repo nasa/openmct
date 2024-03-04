@@ -298,7 +298,7 @@ test.describe('Basic Condition Set Use', () => {
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
 
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
     await page.getByLabel('Edit Object').click();
@@ -377,5 +377,84 @@ test.describe('Basic Condition Set Use', () => {
     // underlying telemetry subscription is not active.
     await page.goto(conditionSet.url);
     await expect(outputValue).toHaveText('---');
+  });
+
+  test('ConditionSet has correct outputs when test data is enabled', async ({ page }) => {
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+
+    await page.getByLabel('Show selected item in tree').click();
+    await page.goto(conditionSet.url);
+    // Change the object to edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // Create two conditions
+    await page.locator('#addCondition').click();
+    await page.locator('#addCondition').click();
+    await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
+    await page.locator('#conditionCollection').getByRole('textbox').nth(1).fill('Second Condition');
+
+    // Add Telemetry to ConditionSet
+    const sineWaveGeneratorTreeItem = page
+      .getByRole('tree', {
+        name: 'Main Tree'
+      })
+      .getByRole('treeitem', {
+        name: exampleTelemetry.name
+      });
+    const conditionCollection = page.locator('#conditionCollection');
+    await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
+
+    // Modify First Criterion
+    const firstCriterionTelemetry = page.locator(
+      '[aria-label="Criterion Telemetry Selection"] >> nth=0'
+    );
+    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    const firstCriterionMetadata = page.locator(
+      '[aria-label="Criterion Metadata Selection"] >> nth=0'
+    );
+    firstCriterionMetadata.selectOption({ label: 'Sine' });
+    const firstCriterionComparison = page.locator(
+      '[aria-label="Criterion Comparison Selection"] >> nth=0'
+    );
+    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
+    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
+    await firstCriterionInput.fill('0');
+
+    // Modify Second Criterion
+    const secondCriterionTelemetry = page.locator(
+      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
+    );
+    await secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+
+    const secondCriterionMetadata = page.locator(
+      '[aria-label="Criterion Metadata Selection"] >> nth=1'
+    );
+    await secondCriterionMetadata.selectOption({ label: 'Sine' });
+
+    const secondCriterionComparison = page.locator(
+      '[aria-label="Criterion Comparison Selection"] >> nth=1'
+    );
+    await secondCriterionComparison.selectOption({ label: 'is less than' });
+
+    const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
+    await secondCriterionInput.fill('0');
+
+    // Enable test data
+    await page.getByLabel('Apply Test Data').nth(1).click();
+    const testDataTelemetry = page.locator('[aria-label="Test Data Telemetry Selection"] >> nth=0');
+    await testDataTelemetry.selectOption({ label: exampleTelemetry.name });
+
+    const testDataMetadata = page.locator('[aria-label="Test Data Metadata Selection"] >> nth=0');
+    await testDataMetadata.selectOption({ label: 'Sine' });
+
+    const testInput = page.locator('[aria-label="Test Data Input"] >> nth=0');
+    await testInput.fill('0');
+
+    // Validate that the condition set is evaluating and outputting
+    // the correct value when the underlying telemetry subscription is active.
+    let outputValue = page.locator('[aria-label="Current Output Value"]');
+    await expect(outputValue).toHaveText('false');
+
+    await page.goto(exampleTelemetry.url);
   });
 });

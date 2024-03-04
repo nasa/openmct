@@ -20,41 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { isIdentifier } from './object-utils.js';
+import { ref } from 'vue';
 
-export default class RootRegistry {
-  constructor(openmct) {
-    this._rootItems = [];
-    this._openmct = openmct;
-  }
+import { useEventEmitter } from './event.js';
 
-  getRoots() {
-    const sortedItems = this._rootItems.sort((a, b) => b.priority - a.priority);
-    const promises = sortedItems.map((rootItem) => rootItem.provider());
+/**
+ * Provides a reactive `isEditing` property that reflects the current editing state of the
+ * application.
+ * @param {OpenMCT} openmct the Open MCT API
+ * @returns {{
+ *  isEditing: import('vue').Ref<boolean>
+ * }}
+ */
+export function useIsEditing(openmct) {
+  const isEditing = ref(openmct.editor.isEditing());
 
-    return Promise.all(promises).then((rootItems) => rootItems.flat());
-  }
+  useEventEmitter(openmct.editor, 'isEditing', (_isEditing) => {
+    isEditing.value = _isEditing;
+  });
 
-  addRoot(rootItem, priority) {
-    if (!this._isValid(rootItem)) {
-      return;
-    }
-
-    this._rootItems.push({
-      priority: priority || this._openmct.priority.DEFAULT,
-      provider: typeof rootItem === 'function' ? rootItem : () => rootItem
-    });
-  }
-
-  _isValid(rootItem) {
-    if (isIdentifier(rootItem) || typeof rootItem === 'function') {
-      return true;
-    }
-
-    if (Array.isArray(rootItem)) {
-      return rootItem.every(isIdentifier);
-    }
-
-    return false;
-  }
+  return { isEditing };
 }
