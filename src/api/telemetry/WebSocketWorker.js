@@ -70,7 +70,7 @@ export default function installWorker() {
       this.#isConnecting = true;
 
       this.#webSocket = new WebSocket(url);
-      //Exposed to e2e tests so that the websocket can be manipulated during tests. Cannot find any other way to do this. 
+      //Exposed to e2e tests so that the websocket can be manipulated during tests. Cannot find any other way to do this.
       // Playwright does not support forcing websocket state changes.
       this.#worker.currentWebSocket = this.#webSocket;
 
