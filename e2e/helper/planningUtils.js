@@ -193,7 +193,10 @@ export async function addPlanGetInterceptor(page) {
 export async function createTimelistWithPlanAndSetActivityInProgress(page, planJson) {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-  const timelist = await createDomainObjectWithDefaults(page, { type: 'Time List' });
+  const timelist = await createDomainObjectWithDefaults(page, {
+    name: 'Time List',
+    type: 'Time List'
+  });
 
   await createPlanFromJSON(page, {
     name: 'Test Plan',
