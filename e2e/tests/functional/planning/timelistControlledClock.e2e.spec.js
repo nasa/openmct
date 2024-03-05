@@ -28,18 +28,23 @@ clockOptions plugin fixture.
 import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
-import {
-  getEarliestStartTime,
-  getFirstActivity,
-  createTimelistWithPlanAndSetActivityInProgress
-} from '../../../helper/planningUtils';
 import { FULL_CIRCLE_PATH } from '../../../constants.js';
-
+import {
+  createTimelistWithPlanAndSetActivityInProgress,
+  getEarliestStartTime,
+  getFirstActivity
+} from '../../../helper/planningUtils';
 import { expect, test } from '../../../pluginFixtures.js';
 
 const examplePlanSmall3 = JSON.parse(
   fs.readFileSync(
     new URL('../../../test-data/examplePlans/ExamplePlan_Small3.json', import.meta.url)
+  )
+);
+
+const examplePlanSmall1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
   )
 );
 
@@ -176,7 +181,7 @@ test.describe('Activity progress when activity is in the future @clock', () => {
   });
 
   test.beforeEach(async ({ page }) => {
-    await createTimelistWithPlanAndSetActivityInProgress(page);
+    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 
   test('progress pie is empty', async ({ page }) => {
@@ -191,7 +196,7 @@ test.describe('Activity progress when activity is in the future @clock', () => {
 test.describe('Activity progress when now is between start and end of the activity @clock', () => {
   const firstActivity = getFirstActivity(examplePlanSmall1);
   test.beforeEach(async ({ page }) => {
-    await createTimelistWithPlanAndSetActivityInProgress(page);
+    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 
   test.use({
@@ -220,7 +225,7 @@ test.describe('Activity progress when now is after end of the activity @clock', 
   });
 
   test.beforeEach(async ({ page }) => {
-    await createTimelistWithPlanAndSetActivityInProgress(page);
+    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 
   test('progress pie is full', async ({ page }) => {

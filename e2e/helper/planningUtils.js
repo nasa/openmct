@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { expect } from '../pluginFixtures.js';
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../appActions.js';
+import { expect } from '../pluginFixtures.js';
 
 /**
  * Asserts that the number of activities in the plan view matches the number of
@@ -190,21 +190,21 @@ export async function addPlanGetInterceptor(page) {
  * Create a Plan from JSON and add it to a Timelist and Navigate to the Plan view
  * @param {import('@playwright/test').Page} page
  */
-export async function createTimelistWithPlanAndSetActivityInProgress(page) {
+export async function createTimelistWithPlanAndSetActivityInProgress(page, planJson) {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
 
   const timelist = await createDomainObjectWithDefaults(page, { type: 'Time List' });
 
   await createPlanFromJSON(page, {
     name: 'Test Plan',
-    json: examplePlanSmall1,
+    json: planJson,
     parent: timelist.uuid
   });
 
   // Ensure that all activities are shown in the expanded view
-  const groups = Object.keys(examplePlanSmall1);
+  const groups = Object.keys(planJson);
   const firstGroupKey = groups[0];
-  const firstGroupItems = examplePlanSmall1[firstGroupKey];
+  const firstGroupItems = planJson[firstGroupKey];
   const firstActivityForPlan = firstGroupItems[0];
   const lastActivity = firstGroupItems[firstGroupItems.length - 1];
   const startBound = firstActivityForPlan.start;

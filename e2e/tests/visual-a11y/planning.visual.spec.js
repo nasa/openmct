@@ -25,8 +25,13 @@ import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
 import { test } from '../../avpFixtures.js';
-import { VISUAL_URL, FULL_CIRCLE_PATH } from '../../constants.js';
-import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
+import { FULL_CIRCLE_PATH, VISUAL_URL } from '../../constants.js';
+import {
+  createTimelistWithPlanAndSetActivityInProgress,
+  getFirstActivity,
+  setBoundsToSpanAllActivities,
+  setDraftStatusForPlan
+} from '../../helper/planningUtils.js';
 
 const examplePlanSmall1 = JSON.parse(
   fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url))
@@ -146,7 +151,7 @@ test.describe('Visual - Timelist progress bar @clock', () => {
   });
 
   test.beforeEach(async ({ page }) => {
-    await createTimelistWithPlanAndSetActivityInProgress(page);
+    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 
   test('progress pie is full', async ({ page, theme }) => {
