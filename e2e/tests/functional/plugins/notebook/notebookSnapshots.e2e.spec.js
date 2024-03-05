@@ -95,6 +95,10 @@ test.describe('Snapshot Container tests', () => {
   test('A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu', async ({
     page
   }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7552'
+    });
     await page.getByLabel('My Items Notebook Embed').getByLabel('More actions').click();
     await page.getByRole('menuitem', { name: 'View Snapshot' }).click();
     await expect(page.getByRole('dialog', { name: 'Modal Overlay' })).toBeVisible();
