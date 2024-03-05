@@ -189,6 +189,57 @@ test.describe('Overlay Plot', () => {
     await assertLimitLinesExistAndAreVisible(page);
   });
 
+  test('Limit lines adjust when series is resized', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6987'
+    });
+    // Create an Overlay Plot with a default SWG
+    overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot'
+    });
+
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(overlayPlot.url);
+
+    // Assert that no limit lines are shown by default
+    await page.waitForSelector('.js-limit-area', { state: 'attached' });
+    expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
+
+    // Enter edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // Expand the "Sine Wave Generator" plot series options and enable limit lines
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page
+      .getByRole('list', { name: 'Plot Series Properties' })
+      .locator('span')
+      .first()
+      .click();
+    await page
+      .getByRole('list', { name: 'Plot Series Properties' })
+      .getByRole('checkbox', { name: 'Limit lines' })
+      .check();
+
+    await assertLimitLinesExistAndAreVisible(page);
+
+    // Save (exit edit mode)
+    await page.locator('button[title="Save"]').click();
+    await page.locator('li[title="Save and Finish Editing"]').click();
+
+    const initialCoords = await assertLimitLinesExistAndAreVisible(page);
+    // Resize the chart container by showing the snapshot pane.
+    await page.getByLabel('Show Snapshots').click();
+
+    const newCoords = await assertLimitLinesExistAndAreVisible(page);
+    // We just need to know that the first limit line redrew somewhere lower than the initial y position.
+    expect(newCoords.y).toBeGreaterThan(initialCoords.y);
+  });
+
   test('The elements pool supports dragging series into multiple y-axis buckets', async ({
     page
   }) => {
@@ -305,6 +356,10 @@ test.describe('Overlay Plot', () => {
       type: 'Sine Wave Generator',
       parent: overlayPlot.uuid
     });
+    const swgB = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
 
     await page.goto(overlayPlot.url);
     // Wait for plot series data to load and be drawn
@@ -319,6 +374,23 @@ test.describe('Overlay Plot', () => {
     await page.getByRole('menuitem', { name: 'Remove' }).click();
     await page.getByRole('button', { name: 'OK', exact: true }).click();
     await expect(swgAElementsPoolItem).toBeHidden();
+
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7530'
+    });
+    await test.step('Verify that the legend is correct after removing a series', async () => {
+      await page.getByLabel('Plot Canvas').hover();
+      await page.mouse.move(50, 0, {
+        steps: 10
+      });
+      await expect(page.getByLabel('Plot Legend Item')).toHaveCount(1);
+      await expect(page.getByLabel(`Plot Legend Item for ${swgA.name}`)).toBeHidden();
+      await expect(page.getByLabel(`Plot Legend Item for ${swgB.name}`)).toBeVisible();
+    });
   });
 });
 
@@ -337,4 +409,7 @@ async function assertLimitLinesExistAndAreVisible(page) {
   for (let i = 0; i < limitLineCount; i++) {
     await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
   }
+
+  const firstLimitLineCoords = await page.locator('.c-plot-limit-line').first().boundingBox();
+  return firstLimitLineCoords;
 }

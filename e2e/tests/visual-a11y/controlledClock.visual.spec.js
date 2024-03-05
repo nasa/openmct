@@ -30,7 +30,7 @@ import percySnapshot from '@percy/playwright';
 import { MISSION_TIME, VISUAL_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
-test.describe('Visual - Controlled Clock', () => {
+test.describe('Visual - Controlled Clock @clock', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
   });

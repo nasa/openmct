@@ -1,15 +1,15 @@
 name: 'pr:e2e:flakefinder'
 
 on:
-  push:
-    branches: master
+#  push:
+#    branches: master
   workflow_dispatch:
-  pull_request:
-    types:
-      - labeled
-      - opened
-  schedule:
-    - cron: '0 0 * * *'
+#  pull_request:
+#    types:
+#      - labeled
+#      - opened
+#  schedule:
+#    - cron: '0 0 * * *'
 
 jobs:
   e2e-flakefinder:
