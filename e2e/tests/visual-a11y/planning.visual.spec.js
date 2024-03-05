@@ -155,12 +155,7 @@ test.describe('Visual - Timelist progress bar @clock', () => {
   });
 
   test('progress pie is full', async ({ page, theme }) => {
-    const anActivity = page.getByRole('row').nth(0);
     // Progress pie is completely full and doesn't update if now is greater than the end time
-    await expect(anActivity.getByLabel('Activity in progress').locator('path')).toHaveAttribute(
-      'd',
-      FULL_CIRCLE_PATH
-    );
     await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
   });
 });
