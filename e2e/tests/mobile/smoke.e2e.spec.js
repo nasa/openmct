@@ -57,3 +57,20 @@ test('Verify that user can search @mobile', async ({ page }) => {
   await page.getByTitle('Collapse Browse Pane').click();
   await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
 });
+
+test('Verify that user can change time conductor @mobile', async ({ page }) => {
+  //For now, this test is going to be hardcoded against './test-data/display_layout_with_child_layouts.json'
+  await page.goto('./');
+
+  //Collapse Browse Pane to get more Time Conductor space
+  await page.getByLabel('Collapse Browse Pane').click();
+  //Open Time Conductor and change to Real Time Mode and set offset hour by 1 hour
+  // Disabling line because we're intentionally obscuring the text
+  // eslint-disable-next-line playwright/no-force-option
+  await page.getByLabel('Time Conductor Mode').click({ force: true });
+  await page.getByLabel('Time Conductor Mode Menu').click();
+  await page.getByLabel('Real-Time').click();
+  await page.getByLabel('Start offset hours').fill('01');
+  await page.getByLabel('Submit time offsets').click();
+  await expect(page.getByLabel('Start offset: 01:30:00')).toBeVisible();
+});
