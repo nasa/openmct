@@ -37,7 +37,7 @@ test.describe('Mission Status Visual Tests @a11y', () => {
     // dismiss role confirmation popup
     await page.getByRole('button', { name: 'Dismiss' }).click();
     await page.getByLabel('Collapse Inspect Pane').click();
-    await page.getByLabel('Click to collapse items').click();
+    await page.getByLabel('Collapse Browse Pane').click();
   });
   test('Mission status panel', async ({ page, theme }) => {
     await page.getByLabel('Toggle Mission Status Panel').click();
