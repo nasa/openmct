@@ -2,14 +2,9 @@ FROM node:latest
 
 LABEL maintainer="haisam.ido@gmail.com"
 
-RUN mkdir openmct
+RUN git clone --recurse-submodules -j2 https://github.com/nasa/openmct.git
+
 WORKDIR /openmct
-
-# Mounting a volume would be better
-ADD . .
-
-RUN rm -rf dist
-RUN rm -rf node_modules
 
 RUN npm install
 

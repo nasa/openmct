@@ -2,7 +2,7 @@
 
 #------------------------------------------------------------------------------
 # Purpose:
-#   Makefile that allows one to docker build, install openmct and start openmct
+#   Makefile that allows one to build, install openmct and start openmct in docker or podman
 #
 # Dependencies:
 #   make, docker, docker-compose
@@ -21,8 +21,11 @@ endif
 export DIFF_PROGRAM     :=vimdiff
 
 export CONTAINER_BIN     =docker
-export CONTAINER_COMPOSE =docker-compose
-export CONTAINER_TAG     =openmct:latest
+export CONTAINER_COMPOSE =$(CONTAINER_BIN)-compose
+
+export CONTAINER_IMAGE         =openmct
+export CONTAINER_IMAGE_VERSION =latest
+export CONTAINER_TAG           =$(CONTAINER_IMAGE):$(CONTAINER_IMAGE_VERSION)
 
 openmct-build: ## Build openmct on a docker image. This uses ./Dockerfile
 	$(CONTAINER_BIN) build -t $(CONTAINER_TAG) .
@@ -37,7 +40,7 @@ openmct-stop: ## Stop openmct on docker conainter
 	$(CONTAINER_COMPOSE) down -v --remove-orphans
 
 openmct-shell: openmct-start ## Shell into running container
-	$(CONTAINER_COMPOSE) exec -it openmct bash
+	$(CONTAINER_COMPOSE) exec -it $(CONTAINER_IMAGE) bash
 
 print-%: ## print a variable and its value, e.g. print the value of variable PROVIDER: make print-PROVIDER
 	@echo $* = $($*)
@@ -45,7 +48,7 @@ print-%: ## print a variable and its value, e.g. print the value of variable PRO
 define print-help
 $(call print-target-header,"Makefile Help")
 	echo
-	printf "%s\n" "Illustrates how to use IaC tools by example. It will be different in operations"
+	printf "%s\n" "Illustrates how to use openmct"
 	echo
 $(call print-target-header,"target                         description")
 	grep -E '^([a-zA-Z_-]).+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS=":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' | grep $(or $1,".*")
