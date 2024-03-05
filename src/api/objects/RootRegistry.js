@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,39 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
+import { isIdentifier } from './object-utils.js';
 
-    function RootRegistry() {
-        this.providers = [];
+export default class RootRegistry {
+  constructor(openmct) {
+    this._rootItems = [];
+    this._openmct = openmct;
+  }
+
+  getRoots() {
+    const sortedItems = this._rootItems.sort((a, b) => b.priority - a.priority);
+    const promises = sortedItems.map((rootItem) => rootItem.provider());
+
+    return Promise.all(promises).then((rootItems) => rootItems.flat());
+  }
+
+  addRoot(rootItem, priority) {
+    if (!this._isValid(rootItem)) {
+      return;
     }
 
-    RootRegistry.prototype.getRoots = function () {
-        const promises = this.providers.map(function (provider) {
-            return provider();
-        });
+    this._rootItems.push({
+      priority: priority || this._openmct.priority.DEFAULT,
+      provider: typeof rootItem === 'function' ? rootItem : () => rootItem
+    });
+  }
 
-        return Promise.all(promises)
-            .then(_.flatten);
-    };
-
-    function isKey(key) {
-        return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
+  _isValid(rootItem) {
+    if (isIdentifier(rootItem) || typeof rootItem === 'function') {
+      return true;
     }
 
-    RootRegistry.prototype.addRoot = function (key) {
-        if (isKey(key) || (Array.isArray(key) && key.every(isKey))) {
-            this.providers.push(function () {
-                return key;
-            });
-        } else if (typeof key === "function") {
-            this.providers.push(key);
-        }
-    };
+    if (Array.isArray(rootItem)) {
+      return rootItem.every(isIdentifier);
+    }
 
-    return RootRegistry;
-
-});
+    return false;
+  }
+}

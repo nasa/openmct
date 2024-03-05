@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,13 +20,85 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-const NAMESPACE = '';
-const PERSISTENCE_SPACE = 'mct';
+import CouchObjectProvider from './CouchObjectProvider.js';
+import CouchSearchProvider from './CouchSearchProvider.js';
+import CouchStatusIndicator from './CouchStatusIndicator.js';
+
+const DEFAULT_NAMESPACE = '';
+const LEGACY_SPACE = 'mct';
 
 export default function CouchPlugin(options) {
-    return function install(openmct) {
-        install.couchProvider = new CouchObjectProvider(openmct, options, NAMESPACE);
-        openmct.objects.addProvider(PERSISTENCE_SPACE, install.couchProvider);
-    };
+  function normalizeOptions(unnormalizedOptions) {
+    const normalizedOptions = {};
+    if (typeof unnormalizedOptions === 'string') {
+      normalizedOptions.databases = [
+        {
+          url: options,
+          namespace: DEFAULT_NAMESPACE,
+          additionalNamespaces: [LEGACY_SPACE],
+          readOnly: false,
+          useDesignDocuments: false,
+          indicator: true
+        }
+      ];
+    } else if (!unnormalizedOptions.databases) {
+      normalizedOptions.databases = [
+        {
+          url: unnormalizedOptions.url,
+          namespace: DEFAULT_NAMESPACE,
+          additionalNamespaces: [LEGACY_SPACE],
+          readOnly: false,
+          useDesignDocuments: unnormalizedOptions.useDesignDocuments,
+          indicator: true
+        }
+      ];
+    } else {
+      normalizedOptions.databases = unnormalizedOptions.databases;
+    }
+
+    // final sanity check, ensure we have all options
+    normalizedOptions.databases.forEach((databaseConfiguration) => {
+      if (!databaseConfiguration.url) {
+        throw new Error(
+          `🛑 CouchDB plugin requires a url option. Please check the configuration for namespace ${databaseConfiguration.namespace}`
+        );
+      } else if (databaseConfiguration.namespace === undefined) {
+        // note we can't check for just !databaseConfiguration.namespace because it could be an empty string
+        throw new Error(
+          `🛑 CouchDB plugin requires a namespace option. Please check the configuration for url ${databaseConfiguration.url}`
+        );
+      }
+    });
+
+    return normalizedOptions;
+  }
+
+  return function install(openmct) {
+    const normalizedOptions = normalizeOptions(options);
+    normalizedOptions.databases.forEach((databaseConfiguration) => {
+      let couchStatusIndicator;
+      if (databaseConfiguration.indicator) {
+        const simpleIndicator = openmct.indicators.simpleIndicator();
+        openmct.indicators.add(simpleIndicator);
+        couchStatusIndicator = new CouchStatusIndicator(simpleIndicator);
+      }
+      // the provider is added to the install function to expose couchProvider to unit tests
+      install.couchProvider = new CouchObjectProvider({
+        openmct,
+        databaseConfiguration,
+        couchStatusIndicator
+      });
+      openmct.objects.addProvider(databaseConfiguration.namespace, install.couchProvider);
+      databaseConfiguration.additionalNamespaces?.forEach((additionalNamespace) => {
+        openmct.objects.addProvider(additionalNamespace, install.couchProvider);
+      });
+
+      // need one search provider for whole couch database
+      const searchOnlyNamespace = `COUCH_SEARCH_${databaseConfiguration.namespace}${Date.now()}`;
+      openmct.objects.addProvider(
+        searchOnlyNamespace,
+        new CouchSearchProvider(install.couchProvider)
+      );
+    });
+  };
 }

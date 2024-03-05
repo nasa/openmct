@@ -1,69 +1,319 @@
 version: 2.1
 executors:
-  linux:
+  pw-focal-development:
     docker:
-      - image: cimg/base:stable
-orbs:
-  node: circleci/node@4.5.1
-  browser-tools: circleci/browser-tools@1.1.3
-jobs:
-  test:
+      - image: mcr.microsoft.com/playwright:v1.39.0-focal
+    environment:
+      NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
+      PERCY_POSTINSTALL_BROWSER: "true" # Needed to store the percy browser in cache deps
+      PERCY_LOGLEVEL: "debug" # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
+  ubuntu:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+parameters:
+  BUST_CACHE:
+    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
+    default: false
+    type: boolean
+commands:
+  build_and_install:
+    description: "All steps used to build and install. Will use cache if found"
     parameters:
       node-version:
         type: string
-      browser:
-        type: string
-      always-pass:
-        type: boolean  
-    executor: linux
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+      - restore_cache_cmd:
+          node-version: << parameters.node-version >>
       - node/install:
           node-version: << parameters.node-version >>
-      - node/install-packages:
-          override-ci-command: npm install
-      - when: # Just to save time until caching saves the browser bin
+      - run: npm install --no-audit --progress=false
+  restore_cache_cmd:
+    description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
+    parameters:
+      node-version:
+        type: string
+    steps:
+      - when:
           condition:
-            equal: [ "FirefoxESR", <<parameters.browser>> ]
+            equal: [false, << pipeline.parameters.BUST_CACHE >>]
           steps:
-            - browser-tools/install-firefox:
-                version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
-      - when: # Just to save time until caching saves the browser bin
-          condition:
-            equal: [ "ChromeHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-chrome:
-                replace-existing: false
+            - restore_cache:
+                key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+  save_cache_cmd:
+    description: "Custom command for saving cache."
+    parameters:
+      node-version:
+        type: string
+    steps:
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - ~/.npm
-            - ~/.cache
             - node_modules
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
+  generate_and_store_version_and_filesystem_artifacts:
+    description: "Track important packages and files"
+    steps:
+      - run: |
+          [[ $EUID -ne 0 ]] && (sudo mkdir -p /tmp/artifacts && sudo chmod 777 /tmp/artifacts) || (mkdir -p /tmp/artifacts && chmod 777 /tmp/artifacts)
+          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt || true
+          npm -v >> /tmp/artifacts/npm-version.txt
+          node -v >> /tmp/artifacts/node-version.txt
+          ls -latR >> /tmp/artifacts/dir.txt
+      - store_artifacts:
+          path: /tmp/artifacts/
+  generate_e2e_code_cov_report:
+    description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
+    parameters:
+      suite:
+        type: string
+    steps:
+      - run: npm run cov:e2e:report || true
+      - run: npm run cov:e2e:<<parameters.suite>>:publish
+orbs:
+  node: circleci/node@5.1.0
+  browser-tools: circleci/browser-tools@1.3.0
+jobs:
+  npm-audit:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npm audit --audit-level=low
+      - generate_and_store_version_and_filesystem_artifacts
+  lint:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npm run lint
+      - generate_and_store_version_and_filesystem_artifacts
+  unit-test:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - browser-tools/install-chrome:
+          replace-existing: false
+      - run:
+          command: |
+            mkdir -p dist/reports/tests/
+            TESTFILES=$(circleci tests glob "src/**/*Spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test" --verbose
+      - run: npm run cov:unit:publish
+      - save_cache_cmd:
+          node-version: <<parameters.node-version>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
-          path: dist/reports/
+          path: coverage
+      - when:
+          condition:
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+  e2e-test:
+    parameters:
+      suite: #stable or full
+        type: string
+    executor: pw-focal-development
+    parallelism: 7
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
+      - when: #Only install chrome-beta when running the 'full' suite to save $$$
+          condition:
+            equal: ["full", <<parameters.suite>>]
+          steps:
+            - run: npx playwright install chrome-beta
+      - run:
+          command: |
+            mkdir test-results
+            TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:<<parameters.suite>>" --verbose --split-by=timings
+      - when:
+          condition:
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_e2e_code_cov_report:
+                suite: <<parameters.suite>>
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+  e2e-mobile:
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
+      - run: npm run test:e2e:mobile
+      - when:
+          condition:
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_e2e_code_cov_report:
+                suite: full
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+  e2e-couchdb:
+    executor: ubuntu
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
+      - run: npx playwright@1.39.0 install #Necessary for bare ubuntu machine
+      - run: |
+          export $(cat src/plugins/persistence/couch/.env.ci | xargs)
+          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          sleep 3
+          bash src/plugins/persistence/couch/setup-couchdb.sh
+      - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB
+      - run: npm run test:e2e:couchdb
+      - when:
+          condition:
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_e2e_code_cov_report:
+                suite: full #add to full suite
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: coverage
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+  mem-test:
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
+      - run: npm run test:perf:memory
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+  perf-test:
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
+      - run: npm run test:perf:localhost
+      - run: npm run test:perf:contract
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+  visual-a11y-tests:
+    parameters:
+      suite:
+        type: string # ci or full
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: lts/hydrogen
+      - run: npm run test:e2e:visual:<<parameters.suite>>
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - store_artifacts:
+          path: html-test-results
+      - when:
+          condition:
+            equal: [42, 42] # Always generate version artifacts regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
+          steps:
+            - generate_and_store_version_and_filesystem_artifacts
+
 workflows:
-  matrix-tests:
+  overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - test:
-          name: node10-chrome
-          node-version: lts/dubnium
-          browser: ChromeHeadless
-          always-pass: false
-      - test:
-          name: node12-firefoxESR
-          node-version: lts/erbium
-          browser: FirefoxESR
-          always-pass: true
-      - test:
-          name: node14-chrome
-          node-version: lts/fermium
-          browser: ChromeHeadless
-          always-pass: true
+      - lint:
+          name: node20-lint
+          node-version: lts/iron
+      - unit-test:
+          name: node18-chrome
+          node-version: lts/hydrogen
+      - e2e-test:
+          name: e2e-stable
+          suite: stable
+      - e2e-mobile
+      - visual-a11y-tests:
+          name: visual-a11y-test-ci
+          suite: ci
 
-
+  the-nightly: #These jobs do not run on PRs, but against master at night
+    jobs:
+      - unit-test:
+          name: node20-chrome-nightly
+          node-version: lts/iron
+      - unit-test:
+          name: node18-chrome
+          node-version: lts/hydrogen
+      - npm-audit:
+          node-version: lts/hydrogen
+      - e2e-test:
+          name: e2e-full-nightly
+          suite: full
+      - e2e-mobile
+      - perf-test
+      - mem-test
+      - visual-a11y-tests:
+          name: visual-a11y-test-nightly
+          suite: full
+      - e2e-couchdb
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master

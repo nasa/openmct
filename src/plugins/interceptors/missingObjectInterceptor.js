@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,20 +21,23 @@
  *****************************************************************************/
 
 export default function MissingObjectInterceptor(openmct) {
-    openmct.objects.addGetInterceptor({
-        appliesTo: (identifier, domainObject) => {
-            return identifier.key !== 'mine';
-        },
-        invoke: (identifier, object) => {
-            if (object === undefined) {
-                return {
-                    identifier,
-                    type: 'unknown',
-                    name: 'Missing: ' + openmct.objects.makeKeyString(identifier)
-                };
-            }
+  openmct.objects.addGetInterceptor({
+    appliesTo: (identifier, domainObject) => {
+      return true;
+    },
+    invoke: (identifier, object) => {
+      if (object === undefined) {
+        const keyString = openmct.objects.makeKeyString(identifier);
+        openmct.notifications.error(`Failed to retrieve object ${keyString}`, { minimized: true });
 
-            return object;
-        }
-    });
+        return {
+          identifier,
+          type: 'unknown',
+          name: 'Missing: ' + keyString
+        };
+      }
+
+      return object;
+    }
+  });
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,122 +20,162 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import * as NotebookStorage from './notebook-storage';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-const domainObject = {
-    name: 'notebook',
-    identifier: {
-        namespace: '',
-        key: 'test-notebook'
+import * as NotebookStorage from './notebook-storage.js';
+
+const notebookSection = {
+  id: 'temp-section',
+  isDefault: false,
+  isSelected: true,
+  name: 'section',
+  pages: [
+    {
+      id: 'temp-page',
+      isDefault: false,
+      isSelected: true,
+      name: 'page',
+      pageTitle: 'Page'
     }
+  ],
+  sectionTitle: 'Section'
+};
+
+const domainObject = {
+  name: 'notebook',
+  identifier: {
+    namespace: '',
+    key: 'test-notebook'
+  },
+  configuration: {
+    sections: [notebookSection]
+  }
 };
 
 const notebookStorage = {
-    notebookMeta: {
-        name: 'notebook',
-        identifier: {
-            namespace: '',
-            key: 'test-notebook'
-        }
-    },
-    section: {
-        id: 'temp-section',
-        isDefault: false,
-        isSelected: true,
-        name: 'section',
-        pages: [],
-        sectionTitle: 'Section'
-    },
-    page: {
-        id: 'temp-page',
-        isDefault: false,
-        isSelected: true,
-        name: 'page',
-        pageTitle: 'Page'
-    }
+  name: 'notebook',
+  identifier: {
+    namespace: '',
+    key: 'test-notebook'
+  },
+  defaultSectionId: 'temp-section',
+  defaultPageId: 'temp-page'
 };
 
 let openmct;
-let mockIdentifierService;
 
 describe('Notebook Storage:', () => {
+  beforeEach(() => {
+    openmct = createOpenMct();
+
+    window.localStorage.setItem('notebook-storage', null);
+    openmct.objects.addProvider(
+      '',
+      jasmine.createSpyObj('mockNotebookProvider', ['create', 'update'])
+    );
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('has empty local Storage', () => {
+    expect(window.localStorage).not.toBeNull();
+  });
+
+  it('has null notebookstorage on clearDefaultNotebook', () => {
+    window.localStorage.setItem('notebook-storage', notebookStorage);
+    NotebookStorage.clearDefaultNotebook();
+    const defaultNotebook = NotebookStorage.getDefaultNotebook();
+
+    expect(defaultNotebook).toBeNull();
+  });
+
+  it('has correct notebookstorage on setDefaultNotebook', () => {
+    NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
+    const defaultNotebook = NotebookStorage.getDefaultNotebook();
+
+    expect(JSON.stringify(defaultNotebook)).toBe(JSON.stringify(notebookStorage));
+  });
+
+  it('has correct section on setDefaultNotebookSectionId', () => {
+    const section = {
+      id: 'new-temp-section',
+      isDefault: true,
+      isSelected: true,
+      name: 'new section',
+      pages: [],
+      sectionTitle: 'Section'
+    };
+
+    NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
+    NotebookStorage.setDefaultNotebookSectionId(section.id);
+
+    const defaultNotebook = NotebookStorage.getDefaultNotebook();
+    const defaultSectionId = defaultNotebook.defaultSectionId;
+    expect(section.id).toBe(defaultSectionId);
+  });
+
+  it('has correct page on setDefaultNotebookPageId', () => {
+    const page = {
+      id: 'new-temp-page',
+      isDefault: true,
+      isSelected: true,
+      name: 'new page',
+      pageTitle: 'Page'
+    };
+
+    NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
+    NotebookStorage.setDefaultNotebookPageId(page.id);
+
+    const defaultNotebook = NotebookStorage.getDefaultNotebook();
+    const newPageId = defaultNotebook.defaultPageId;
+    expect(page.id).toBe(newPageId);
+  });
+
+  describe('is getNotebookSectionAndPage function searches and returns correct,', () => {
+    let section;
+    let page;
+
     beforeEach(() => {
-        openmct = createOpenMct();
-        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-        mockIdentifierService = jasmine.createSpyObj(
-            'identifierService',
-            ['parse']
-        );
-        mockIdentifierService.parse.and.returnValue({
-            getSpace: () => {
-                return '';
-            }
-        });
+      const sectionId = 'temp-section';
+      const pageId = 'temp-page';
 
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
-        window.localStorage.setItem('notebook-storage', null);
-        openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
-            'create',
-            'update'
-        ]));
+      const sectionAndpage = NotebookStorage.getNotebookSectionAndPage(
+        domainObject,
+        sectionId,
+        pageId
+      );
+      section = sectionAndpage.section;
+      page = sectionAndpage.page;
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    it('id for section from notebook domain object', () => {
+      expect(section.id).toEqual('temp-section');
     });
 
-    it('has empty local Storage', () => {
-        expect(window.localStorage).not.toBeNull();
+    it('name for section from notebook domain object', () => {
+      expect(section.name).toEqual('section');
     });
 
-    it('has null notebookstorage on clearDefaultNotebook', () => {
-        window.localStorage.setItem('notebook-storage', notebookStorage);
-        NotebookStorage.clearDefaultNotebook();
-        const defaultNotebook = NotebookStorage.getDefaultNotebook();
-
-        expect(defaultNotebook).toBeNull();
+    it('sectionTitle for section from notebook domain object', () => {
+      expect(section.sectionTitle).toEqual('Section');
     });
 
-    it('has correct notebookstorage on setDefaultNotebook', () => {
-        NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
-        const defaultNotebook = NotebookStorage.getDefaultNotebook();
-
-        expect(JSON.stringify(defaultNotebook)).toBe(JSON.stringify(notebookStorage));
+    it('number of pages for section from notebook domain object', () => {
+      expect(section.pages.length).toEqual(1);
     });
 
-    it('has correct section on setDefaultNotebookSection', () => {
-        const section = {
-            id: 'new-temp-section',
-            isDefault: true,
-            isSelected: true,
-            name: 'new section',
-            pages: [],
-            sectionTitle: 'Section'
-        };
-
-        NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
-        NotebookStorage.setDefaultNotebookSection(section);
-
-        const defaultNotebook = NotebookStorage.getDefaultNotebook();
-        const newSection = defaultNotebook.section;
-        expect(JSON.stringify(section)).toBe(JSON.stringify(newSection));
+    it('id for page from notebook domain object', () => {
+      expect(page.id).toEqual('temp-page');
     });
 
-    it('has correct page on setDefaultNotebookPage', () => {
-        const page = {
-            id: 'new-temp-page',
-            isDefault: true,
-            isSelected: true,
-            name: 'new page',
-            pageTitle: 'Page'
-        };
-
-        NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
-        NotebookStorage.setDefaultNotebookPage(page);
-
-        const defaultNotebook = NotebookStorage.getDefaultNotebook();
-        const newPage = defaultNotebook.page;
-        expect(JSON.stringify(page)).toBe(JSON.stringify(newPage));
+    it('name for page from notebook domain object', () => {
+      expect(page.name).toEqual('page');
     });
+
+    it('pageTitle for page from notebook domain object', () => {
+      expect(page.pageTitle).toEqual('Page');
+    });
+  });
 });

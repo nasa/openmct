@@ -1,0 +1,335 @@
+$meterNeedlePerc: 1%;
+$meterNeedleMinPx: 4px;
+$meterNeedleMaxPx: 20px;
+$meterNeedleBorderRadius: 5px;
+
+.is-object-type-gauge {
+  overflow: hidden;
+}
+
+.req-indicator {
+  width: 20px;
+
+  &.invalid,
+  &.invalid.req {
+    @include validationState($glyph-icon-x, $colorFormInvalid);
+  }
+  &.valid,
+  &.valid.req {
+    @include validationState($glyph-icon-check, $colorFormValid);
+  }
+  &.req {
+    @include validationState($glyph-icon-asterisk, $colorFormRequired);
+  }
+}
+
+.c-gauge {
+  // Both dial and meter types
+  overflow: hidden;
+
+  &__range,
+  &__units,
+  &__units text {
+    $c: $colorGaugeRange;
+    color: $c;
+    fill: $c;
+  }
+
+  &__wrapper {
+    @include abs();
+    overflow: hidden;
+
+    &.is-stale {
+      @include isStaleHolder();
+
+      [class*='__current-value-text'] {
+        fill: $colorTelemStale;
+        font-style: italic;
+      }
+    }
+  }
+
+  &__current-value-text-wrapper {
+    // SVG
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.c-dial__value-oor-indicator,
+.c-meter__value-oor-indicator {
+  fill: $colorGaugeRange;
+  opacity: 0.5;
+}
+
+/********************************************** DIAL GAUGE */
+.c-dial {
+  max-height: 100%;
+  max-width: 100%;
+  display: block;
+  margin: auto; // Centers SVG in container while allowing scaling
+
+  &__bg {
+    fill: $colorGaugeBg;
+  }
+  &__limit-high rect {
+    fill: $colorGaugeLimitHigh;
+  }
+  &__limit-low rect {
+    fill: $colorGaugeLimitLow;
+  }
+  &__filled-value,
+  &__range-msg-text {
+    fill: $colorGaugeValue;
+  }
+  &__needle-value {
+    fill: $colorGaugeValue;
+  }
+  &__current-value-text {
+    fill: $colorGaugeTextValue;
+    font-family: $heroFont;
+  }
+
+  &__units-text,
+  &__range-text {
+    fill: $colorGaugeRange;
+  }
+
+  &__graphics g {
+    transform-origin: center;
+  }
+}
+
+/********************************************** METER GAUGE */
+.c-meter {
+  // Common styles for c-meter
+  $meterOutOfRangeIndicatorMaxSize: 50%;
+  @include abs();
+  display: flex;
+
+  &__range {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: space-between;
+  }
+
+  &__bg {
+    background: $colorGaugeBg;
+    border-radius: $basicCr;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  &__value {
+    // Filled area
+    position: absolute;
+    background: $colorGaugeValue;
+    z-index: 1;
+  }
+
+  &__value-needle {
+    background: none !important;
+    &:before {
+      @include abs();
+      content: '';
+      display: block;
+      background: $colorGaugeValue;
+    }
+  }
+
+  &__value-oor-indicator {
+    $mxPx: 50px;
+    $wh: 50%;
+    position: absolute;
+    height: $wh;
+    width: $wh;
+    max-height: $mxPx;
+    max-width: $mxPx;
+
+    svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      max-width: 100%;
+    }
+  }
+
+  &__current-value-text {
+    fill: $colorGaugeTextValue;
+    font-family: $heroFont;
+  }
+
+  .c-gauge__curval {
+    fill: $colorGaugeMeterTextValue !important;
+  }
+
+  [class*='limit'] {
+    position: absolute;
+  }
+
+  &__limit-high {
+    background: $colorGaugeLimitHigh;
+  }
+
+  &__limit-low {
+    background: $colorGaugeLimitLow;
+  }
+}
+
+.c-meter {
+  .c-gauge--meter-vertical &,
+  .c-gauge--meter-vertical-inverted & {
+    &__range {
+      flex-direction: column;
+      min-width: min-content;
+      margin-right: $interiorMarginSm;
+      text-align: right;
+    }
+
+    &__value {
+      // Filled area
+      $lrM: $marginGaugeMeterValue;
+      left: $lrM;
+      right: $lrM;
+      top: 0;
+      bottom: 0;
+    }
+
+    &__value-needle {
+      right: 0;
+
+      &:before {
+        border-bottom-left-radius: $meterNeedleBorderRadius;
+        border-top-left-radius: $meterNeedleBorderRadius;
+        height: $meterNeedlePerc;
+        min-height: $meterNeedleMinPx;
+        max-height: $meterNeedleMaxPx;
+      }
+    }
+
+    [class*='limit'] {
+      left: 0;
+      right: 0;
+    }
+
+    .c-meter__value-oor-indicator {
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  .c-gauge--meter-vertical & {
+    &__limit-low {
+      bottom: 0;
+    }
+
+    &__limit-high {
+      top: 0;
+    }
+
+    &__value-needle {
+      &:before {
+        bottom: auto;
+        transform: translateY(-50%);
+      }
+    }
+  }
+
+  .c-gauge--meter-vertical-inverted & {
+    &__limit-low {
+      top: 0;
+    }
+
+    &__limit-high {
+      bottom: 0;
+    }
+
+    &__range__low {
+      order: 1;
+    }
+
+    &__range__high {
+      order: 2;
+    }
+
+    &__value-needle {
+      &:before {
+        top: auto;
+        transform: translateY(50%);
+      }
+    }
+  }
+
+  .c-gauge--meter-horizontal & {
+    flex-direction: column;
+
+    &__range {
+      flex-direction: row;
+      min-height: min-content;
+      margin-top: $interiorMarginSm;
+      order: 2;
+
+      &__high {
+        order: 2;
+      }
+
+      &__low {
+        order: 1;
+      }
+    }
+
+    &__bg {
+      order: 1;
+    }
+
+    &__value {
+      // Filled area
+      $m: $marginGaugeMeterValue;
+      top: $m;
+      bottom: $m;
+      left: 0;
+      right: 0;
+    }
+
+    &__value-needle {
+      top: 0;
+
+      &:before {
+        border-bottom-left-radius: $meterNeedleBorderRadius;
+        border-bottom-right-radius: $meterNeedleBorderRadius;
+        left: auto;
+        width: $meterNeedlePerc;
+        min-width: $meterNeedleMinPx;
+        max-width: $meterNeedleMaxPx;
+        transform: translateX(50%);
+      }
+    }
+
+    [class*='limit'] {
+      top: 0;
+      bottom: 0;
+    }
+
+    &__limit-low {
+      left: 0;
+    }
+
+    &__limit-high {
+      right: 0;
+    }
+
+    .c-meter__value-oor-indicator {
+      // Horizontal meter
+      left: 2%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+.svg-viewbox-debug {
+  fill: rgba(deeppink, 0.5);
+  display: none;
+}

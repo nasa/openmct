@@ -1,6 +1,5 @@
-
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,73 +23,66 @@
 import EventEmitter from 'EventEmitter';
 
 export default class Editor extends EventEmitter {
-    constructor(openmct) {
-        super();
-        this.editing = false;
-        this.openmct = openmct;
+  constructor(openmct) {
+    super();
+    this.editing = false;
+    this.openmct = openmct;
+  }
+
+  /**
+   * Initiate an editing session. This will start a transaction during
+   * which any persist operations will be deferred until either save()
+   * or finish() are called.
+   */
+  edit() {
+    if (this.editing === true) {
+      throw 'Already editing';
     }
 
-    /**
-     * Initiate an editing session. This will start a transaction during
-     * which any persist operations will be deferred until either save()
-     * or finish() are called.
-     * @private
-     */
-    edit() {
-        if (this.editing === true) {
-            throw "Already editing";
-        }
+    this.editing = true;
+    this.emit('isEditing', true);
+    this.openmct.objects.startTransaction();
+  }
 
-        this.editing = true;
-        this.getTransactionService().startTransaction();
-        this.emit('isEditing', true);
-    }
+  /**
+   * @returns {boolean} true if the application is in edit mode, false otherwise.
+   */
+  isEditing() {
+    return this.editing;
+  }
 
-    /**
-     * @returns true if the application is in edit mode, false otherwise.
-     */
-    isEditing() {
-        return this.editing;
-    }
+  /**
+   * Save any unsaved changes from this editing session. This will
+   * end the current transaction.
+   */
+  async save() {
+    const transaction = this.openmct.objects.getActiveTransaction();
+    await transaction.commit();
+    this.editing = false;
+    this.emit('isEditing', false);
+    this.openmct.objects.endTransaction();
+  }
 
-    /**
-     * Save any unsaved changes from this editing session. This will
-     * end the current transaction.
-     *
-     * @private
-     */
-    save() {
-        return this.getTransactionService().commit().then((result) => {
-            this.editing = false;
-            this.emit('isEditing', false);
+  /**
+   * End the currently active transaction and discard unsaved changes.
+   */
+  cancel() {
+    this.editing = false;
+    this.emit('isEditing', false);
 
-            return result;
-        }).catch((error) => {
-            throw error;
+    return new Promise((resolve, reject) => {
+      const transaction = this.openmct.objects.getActiveTransaction();
+      if (!transaction) {
+        return resolve();
+      }
+
+      transaction
+        .cancel()
+        .then(resolve)
+        .catch(reject)
+        .finally(() => {
+          this.openmct.objects.endTransaction();
         });
-    }
-
-    /**
-     * End the currently active transaction and discard unsaved changes.
-     *
-     * @private
-     */
-    cancel() {
-        let cancelPromise = this.getTransactionService().cancel();
-        this.editing = false;
-        this.emit('isEditing', false);
-
-        return cancelPromise;
-    }
-
-    /**
-     * @private
-     */
-    getTransactionService() {
-        if (!this.transactionService) {
-            this.transactionService = this.openmct.$injector.get('transactionService');
-        }
-
-        return this.transactionService;
-    }
+    });
+  }
 }

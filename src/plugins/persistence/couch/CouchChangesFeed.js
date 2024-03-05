@@ -1,106 +1,124 @@
 (function () {
-    const connections = [];
-    let connected = false;
-    const controller = new AbortController();
-    const signal = controller.signal;
+  const connections = [];
+  let connected = false;
+  let couchEventSource;
+  let changesFeedUrl;
+  const keepAliveTime = 20 * 1000;
+  let keepAliveTimer;
+  const controller = new AbortController();
 
-    self.onconnect = function (e) {
-        let port = e.ports[0];
-        connections.push(port);
+  self.onconnect = function (e) {
+    let port = e.ports[0];
+    connections.push(port);
 
-        port.postMessage({
-            type: 'connection',
-            connectionId: connections.length
-        });
+    port.postMessage({
+      type: 'connection',
+      connectionId: connections.length
+    });
 
-        port.onmessage = async function (event) {
-            if (event.data.request === 'close') {
-                connections.splice(event.data.connectionId - 1, 1);
-                if (connections.length <= 0) {
-                    // abort any outstanding requests if there's nobody listening to it.
-                    controller.abort();
-                }
+    port.onmessage = function (event) {
+      if (event.data.request === 'close') {
+        console.debug('🚪 Closing couch connection 🚪');
+        connections.splice(event.data.connectionId - 1, 1);
+        if (connections.length <= 0) {
+          // abort any outstanding requests if there's nobody listening to it.
+          controller.abort();
+        }
 
-                return;
-            }
+        connected = false;
+        // stop listening for events
+        couchEventSource.removeEventListener('message', self.onCouchMessage);
+        couchEventSource.close();
+        console.debug('🚪 Closed couch connection 🚪');
 
-            if (event.data.request === 'changes') {
-                if (connected === true) {
-                    return;
-                }
+        return;
+      }
 
-                connected = true;
+      if (event.data.request === 'changes') {
+        if (connected === true) {
+          return;
+        }
 
-                let url = event.data.url;
-                let body = event.data.body;
-                let error = false;
-                // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
-                // style=main_only returns only the current winning revision of the document
-
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": 'application/json'
-                    },
-                    signal,
-                    body
-                });
-
-                let reader;
-
-                if (response.body === undefined) {
-                    error = true;
-                } else {
-                    reader = response.body.getReader();
-                }
-
-                while (!error) {
-                    const {done, value} = await reader.read();
-                    //done is true when we lose connection with the provider
-                    if (done) {
-                        error = true;
-                    }
-
-                    if (value) {
-                        let chunk = new Uint8Array(value.length);
-                        chunk.set(value, 0);
-                        const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
-                        if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
-                            decodedChunk.forEach((doc, index) => {
-                                try {
-                                    if (doc) {
-                                        const objectChanges = JSON.parse(doc);
-                                        connections.forEach(function (connection) {
-                                            connection.postMessage({
-                                                objectChanges
-                                            });
-                                        });
-                                    }
-                                } catch (decodeError) {
-                                    //do nothing;
-                                    console.log(decodeError);
-                                }
-                            });
-                        }
-                    }
-
-                }
-
-                if (error) {
-                    port.postMessage({
-                        error
-                    });
-                }
-            }
-        };
-
-        port.start();
-
+        changesFeedUrl = event.data.url;
+        self.listenForChanges();
+      }
     };
 
-    self.onerror = function () {
-        //do nothing
-        console.log('Error on feed');
-    };
+    port.start();
+  };
 
-}());
+  self.onerror = function (error) {
+    self.updateCouchStateIndicator();
+    console.error('🚨 Error on CouchDB feed 🚨', error);
+  };
+
+  self.onopen = function () {
+    self.updateCouchStateIndicator();
+  };
+
+  self.onCouchMessage = function (event) {
+    self.updateCouchStateIndicator();
+    console.debug('📩 Received message from CouchDB 📩');
+
+    const objectChanges = JSON.parse(event.data);
+    connections.forEach(function (connection) {
+      connection.postMessage({
+        objectChanges
+      });
+    });
+  };
+
+  self.listenForChanges = function () {
+    if (keepAliveTimer) {
+      clearTimeout(keepAliveTimer);
+    }
+
+    /**
+     * Once the connection has been opened, poll every 20 seconds to see if the EventSource has closed unexpectedly.
+     * If it has, attempt to reconnect.
+     */
+    keepAliveTimer = setTimeout(self.listenForChanges, keepAliveTime);
+
+    if (!couchEventSource || couchEventSource.readyState === EventSource.CLOSED) {
+      console.debug(`⇿ Opening CouchDB change feed connection for ${changesFeedUrl} ⇿`);
+      couchEventSource = new EventSource(changesFeedUrl);
+      couchEventSource.onerror = self.onerror;
+      couchEventSource.onopen = self.onopen;
+
+      // start listening for events
+      couchEventSource.addEventListener('message', self.onCouchMessage);
+      connected = true;
+      console.debug(`⇿ Opened connection to ${changesFeedUrl} ⇿`);
+    }
+  };
+
+  self.updateCouchStateIndicator = function () {
+    const { readyState } = couchEventSource;
+    let message = {
+      type: 'state',
+      state: 'pending'
+    };
+    switch (readyState) {
+      case EventSource.CONNECTING:
+        message.state = 'pending';
+        break;
+      case EventSource.OPEN:
+        message.state = 'open';
+        break;
+      case EventSource.CLOSED:
+        message.state = 'close';
+        break;
+      default:
+        message.state = 'unknown';
+        console.error(
+          '🚨 Received unexpected readyState value from CouchDB EventSource feed: 🚨',
+          readyState
+        );
+        break;
+    }
+
+    connections.forEach(function (connection) {
+      connection.postMessage(message);
+    });
+  };
+})();

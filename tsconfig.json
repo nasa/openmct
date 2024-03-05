@@ -1,0 +1,27 @@
+/* Note: Open MCT does not intend to support the entire Typescript ecosystem at this time.
+ * This file is intended to add Intellisense for IDEs like VSCode. For more information
+ * about Typescript, please discuss in https://github.com/nasa/openmct/discussions/4693
+ */
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "allowJs": true,
+    "checkJs": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "noImplicitOverride": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "paths": {
+      // matches the alias in webpack config, so that types for those imports are visible.
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/api/**/*.js"],
+  "exclude": ["node_modules", "dist", "**/*Spec.js"]
+}

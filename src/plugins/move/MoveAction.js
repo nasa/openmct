@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,157 +20,199 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 export default class MoveAction {
-    constructor(openmct) {
-        this.name = 'Move';
-        this.key = 'move';
-        this.description = 'Move this object from its containing object to another object.';
-        this.cssClass = "icon-move";
-        this.group = "action";
-        this.priority = 7;
+  constructor(openmct) {
+    this.name = 'Move';
+    this.key = 'move';
+    this.description = 'Move this object from its containing object to another object.';
+    this.cssClass = 'icon-move';
+    this.group = 'action';
+    this.priority = 7;
 
-        this.openmct = openmct;
+    this.openmct = openmct;
+    this.transaction = null;
+  }
+
+  invoke(objectPath) {
+    this.object = objectPath[0];
+    this.oldParent = objectPath[1];
+
+    this.showForm(this.object, this.oldParent);
+  }
+
+  inNavigationPath() {
+    return this.openmct.router.path.some((objectInPath) =>
+      this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier)
+    );
+  }
+
+  navigateTo(objectPath) {
+    const urlPath = objectPath
+      .reverse()
+      .map((object) => this.openmct.objects.makeKeyString(object.identifier))
+      .join('/');
+
+    this.openmct.router.navigate('#/browse/' + urlPath);
+  }
+
+  addToNewParent(child, newParent) {
+    const newParentKeyString = this.openmct.objects.makeKeyString(newParent.identifier);
+    const compositionCollection = this.openmct.composition.get(newParent);
+
+    this.openmct.objects.mutate(child, 'location', newParentKeyString);
+    compositionCollection.add(child);
+  }
+
+  async onSave(changes) {
+    this.startTransaction();
+
+    const inNavigationPath = this.inNavigationPath(this.object);
+    const parentDomainObjectpath = changes.location || [this.parent];
+    const parent = parentDomainObjectpath[0];
+
+    if (this.openmct.objects.areIdsEqual(parent.identifier, this.oldParent.identifier)) {
+      this.openmct.notifications.error(`Error: new location cant not be same as old`);
+
+      return;
     }
 
-    async invoke(objectPath) {
-        let object = objectPath[0];
-        let inNavigationPath = this.inNavigationPath(object);
-        let oldParent = objectPath[1];
-        let dialogService = this.openmct.$injector.get('dialogService');
-        let dialogForm = this.getDialogForm(object, oldParent);
-        let userInput;
+    if (changes.name && changes.name !== this.object.name) {
+      this.object.name = changes.name;
+    }
 
-        try {
-            userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
-        } catch (err) {
-            // user canceled, most likely
-            return;
-        }
+    this.addToNewParent(this.object, parent);
+    this.removeFromOldParent(this.object);
 
-        // if we need to update name
-        if (object.name !== userInput.name) {
-            this.openmct.objects.mutate(object, 'name', userInput.name);
-        }
+    await this.saveTransaction();
 
-        let parentContext = userInput.location.getCapability('context');
-        let newParent = await this.openmct.objects.get(parentContext.domainObject.id);
+    if (!inNavigationPath) {
+      return;
+    }
 
-        if (inNavigationPath && this.openmct.editor.isEditing()) {
-            this.openmct.editor.save();
-        }
+    let newObjectPath;
 
-        this.addToNewParent(object, newParent);
-        this.removeFromOldParent(oldParent, object);
+    if (parentDomainObjectpath) {
+      newObjectPath = parentDomainObjectpath && [this.object].concat(parentDomainObjectpath);
+    } else {
+      const root = await this.openmct.objects.getRoot();
+      const rootCompositionCollection = this.openmct.composition.get(root);
+      const rootComposition = await rootCompositionCollection.load();
+      const rootChildCount = rootComposition.length;
+      newObjectPath = await this.openmct.objects.getOriginalPath(this.object.identifier);
 
-        if (inNavigationPath) {
-            let newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
-            let root = await this.openmct.objects.getRoot();
-            let rootChildCount = root.composition.length;
+      // if not multiple root children, remove root from path
+      if (rootChildCount < 2) {
+        newObjectPath.pop(); // remove ROOT
+      }
+    }
 
-            // if not multiple root children, remove root from path
-            if (rootChildCount < 2) {
-                newObjectPath.pop(); // remove ROOT
+    this.navigateTo(newObjectPath);
+  }
+
+  removeFromOldParent(child) {
+    const compositionCollection = this.openmct.composition.get(this.oldParent);
+    compositionCollection.remove(child);
+  }
+
+  showForm(domainObject, parentDomainObject) {
+    const formStructure = {
+      title: 'Move Item',
+      sections: [
+        {
+          rows: [
+            {
+              key: 'name',
+              control: 'textfield',
+              name: 'Title',
+              pattern: '\\S+',
+              required: true,
+              cssClass: 'l-input-lg',
+              value: domainObject.name
+            },
+            {
+              name: 'Location',
+              cssClass: 'grows',
+              control: 'locator',
+              parent: parentDomainObject,
+              required: true,
+              validate: this.validate(parentDomainObject),
+              key: 'location'
             }
-
-            this.navigateTo(newObjectPath);
+          ]
         }
+      ]
+    };
+
+    this.openmct.forms.showForm(formStructure).then(this.onSave.bind(this));
+  }
+
+  validate(currentParent) {
+    return (data) => {
+      const parentCandidatePath = data.value;
+      const parentCandidate = parentCandidatePath[0];
+
+      // check if moving to same place
+      if (this.openmct.objects.areIdsEqual(parentCandidate.identifier, currentParent.identifier)) {
+        return false;
+      }
+
+      // check if moving to a child
+      if (
+        parentCandidatePath.some((candidatePath) => {
+          return this.openmct.objects.areIdsEqual(candidatePath.identifier, this.object.identifier);
+        })
+      ) {
+        return false;
+      }
+
+      if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+        return false;
+      }
+
+      const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+      const parentCandidateComposition = parentCandidate.composition;
+
+      if (
+        parentCandidateComposition &&
+        parentCandidateComposition.indexOf(objectKeystring) !== -1
+      ) {
+        return false;
+      }
+
+      return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
+    };
+  }
+
+  appliesTo(objectPath) {
+    const parent = objectPath[1];
+    const parentType = parent && this.openmct.types.get(parent.type);
+    const child = objectPath[0];
+    const childType = child && this.openmct.types.get(child.type);
+    const isPersistable = this.openmct.objects.isPersistable(child.identifier);
+
+    if (parent?.locked || !isPersistable) {
+      return false;
     }
 
-    inNavigationPath(object) {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+    return (
+      parentType?.definition.creatable &&
+      childType?.definition.creatable &&
+      Array.isArray(parent.composition)
+    );
+  }
+
+  startTransaction() {
+    if (!this.openmct.objects.isTransactionActive()) {
+      this.transaction = this.openmct.objects.startTransaction();
+    }
+  }
+
+  async saveTransaction() {
+    if (!this.transaction) {
+      return;
     }
 
-    navigateTo(objectPath) {
-        let urlPath = objectPath.reverse()
-            .map(object => this.openmct.objects.makeKeyString(object.identifier))
-            .join("/");
-
-        window.location.href = '#/browse/' + urlPath;
-    }
-
-    addToNewParent(child, newParent) {
-        let newParentKeyString = this.openmct.objects.makeKeyString(newParent.identifier);
-        let compositionCollection = this.openmct.composition.get(newParent);
-
-        this.openmct.objects.mutate(child, 'location', newParentKeyString);
-        compositionCollection.add(child);
-    }
-
-    removeFromOldParent(parent, child) {
-        let compositionCollection = this.openmct.composition.get(parent);
-
-        compositionCollection.remove(child);
-    }
-
-    getDialogForm(object, parent) {
-        return {
-            name: "Move Item",
-            sections: [
-                {
-                    rows: [
-                        {
-                            key: "name",
-                            control: "textfield",
-                            name: "Name",
-                            pattern: "\\S+",
-                            required: true,
-                            cssClass: "l-input-lg"
-                        },
-                        {
-                            name: "Location",
-                            control: "locator",
-                            validate: this.validate(object, parent),
-                            key: 'location'
-                        }
-                    ]
-                }
-            ]
-        };
-    }
-
-    validate(object, currentParent) {
-        return (parentCandidate) => {
-            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.getId());
-            let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
-
-            if (!parentCandidateKeystring || !currentParentKeystring) {
-                return false;
-            }
-
-            if (parentCandidateKeystring === currentParentKeystring) {
-                return false;
-            }
-
-            if (parentCandidateKeystring === objectKeystring) {
-                return false;
-            }
-
-            if (parentCandidate.getModel().composition.indexOf(objectKeystring) !== -1) {
-                return false;
-            }
-
-            return this.openmct.composition.checkPolicy(
-                parentCandidate.useCapability('adapter'),
-                object
-            );
-        };
-    }
-
-    appliesTo(objectPath) {
-        let parent = objectPath[1];
-        let parentType = parent && this.openmct.types.get(parent.type);
-        let child = objectPath[0];
-        let childType = child && this.openmct.types.get(child.type);
-
-        if (child.locked || (parent && parent.locked)) {
-            return false;
-        }
-
-        return parentType
-            && parentType.definition.creatable
-            && childType
-            && childType.definition.creatable
-            && Array.isArray(parent.composition);
-    }
+    await this.transaction.commit();
+    this.openmct.objects.endTransaction();
+    this.transaction = null;
+  }
 }

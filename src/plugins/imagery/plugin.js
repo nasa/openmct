@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ImageryViewProvider from './ImageryViewProvider';
+import OpenImageInNewTabAction from './actions/OpenImageInNewTabAction.js';
+import SaveImageAsAction from './actions/SaveImageAsAction.js';
+import ImageryTimestripViewProvider from './ImageryTimestripViewProvider.js';
+import ImageryViewProvider from './ImageryViewProvider.js';
 
-export default function () {
-    return function install(openmct) {
-        openmct.objectViews.addProvider(new ImageryViewProvider(openmct));
-    };
+export default function (options) {
+  return function install(openmct) {
+    openmct.objectViews.addProvider(new ImageryViewProvider(openmct, options));
+    openmct.objectViews.addProvider(new ImageryTimestripViewProvider(openmct));
+    openmct.actions.register(new OpenImageInNewTabAction(openmct));
+    openmct.actions.register(new SaveImageAsAction(openmct));
+  };
 }
-

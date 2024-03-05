@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,21 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from '../timeline/TimelineViewProvider';
+import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
+import timelineInterceptor from './timelineInterceptor.js';
+import TimelineViewProvider from './TimelineViewProvider.js';
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType('time-strip', {
-            name: 'Time Strip',
-            key: 'time-strip',
-            description: 'An activity timeline',
-            creatable: true,
-            cssClass: 'icon-timeline',
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-            }
-        });
-        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-    };
-}
+  return function install(openmct) {
+    openmct.types.addType('time-strip', {
+      name: 'Time Strip',
+      key: 'time-strip',
+      description:
+        'Compose and display time-based telemetry and other object types in a timeline-like view.',
+      creatable: true,
+      cssClass: 'icon-timeline',
+      initialize: function (domainObject) {
+        domainObject.composition = [];
+        domainObject.configuration = {
+          useIndependentTime: false
+        };
+      }
+    });
+    timelineInterceptor(openmct);
+    openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
 
+    openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
+  };
+}

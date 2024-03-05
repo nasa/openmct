@@ -9,11 +9,11 @@ Any object tree in Open MCT can be exported as JSON after installing the
 
 ## Installation
 ``` js
-openmct.install(openmct.plugins.StaticRootPlugin('mission', 'data/static-objects.json'));
+openmct.install(openmct.plugins.StaticRootPlugin({ namespace: 'mission', exportUrl: 'data/static-objects.json' }));
 ```
 
 ## Parameters
 The StaticRootPlugin takes two parameters:
 1. __namespace__: This should be a name that uniquely identifies this collection of objects.
-2. __path__: The file that the static tree should be exposed from. This will need to be a path that is reachable by a web 
+2. __exportUrl__: The file that the static tree should be exposed from. This will need to be a path that is reachable by a web 
 browser, ie not a path on the local file system.

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,32 +20,79 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanViewProvider from './PlanViewProvider';
-import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
+import activityStatesInterceptor from '../activityStates/activityStatesInterceptor.js';
+import { createActivityStatesIdentifier } from '../activityStates/createActivityStatesIdentifier.js';
+import ganttChartCompositionPolicy from './GanttChartCompositionPolicy.js';
+import ActivityInspectorViewProvider from './inspector/ActivityInspectorViewProvider.js';
+import GanttChartInspectorViewProvider from './inspector/GanttChartInspectorViewProvider.js';
+import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration.js';
+import PlanViewProvider from './PlanViewProvider.js';
 
-export default function () {
-    return function install(openmct) {
-        openmct.types.addType('plan', {
-            name: 'Plan',
-            key: 'plan',
-            description: 'A plan',
-            creatable: true,
-            cssClass: 'icon-calendar',
-            form: [
-                {
-                    name: 'Upload Plan (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    required: true,
-                    text: 'Select File...',
-                    type: 'application/json'
-                }
-            ],
-            initialize: function (domainObject) {
-            }
-        });
-        openmct.objectViews.addProvider(new PlanViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
-    };
+const ACTIVITY_STATES_DEFAULT_NAME = 'Activity States';
+/**
+ * @typedef {object} PlanOptions
+ * @property {boolean} creatable true/false to allow creation of a plan via the Create menu.
+ * @property {string} name The name of the activity states model.
+ * @property {string} namespace the namespace to use for the activity states object.
+ * @property {Number} priority the priority of the interceptor. By default, it is low.
+ */
+
+/**
+ *
+ * @param {PlanOptions} options
+ * @returns {*} (any)
+ */
+export default function (options = {}) {
+  return function install(openmct) {
+    openmct.types.addType('plan', {
+      name: 'Plan',
+      key: 'plan',
+      description: 'A non-configurable timeline-like view for a compatible plan file.',
+      creatable: options.creatable ?? false,
+      cssClass: 'icon-plan',
+      form: [
+        {
+          name: 'Upload Plan (JSON File)',
+          key: 'selectFile',
+          control: 'file-input',
+          required: true,
+          text: 'Select File...',
+          type: 'application/json',
+          property: ['selectFile']
+        }
+      ],
+      initialize: function (domainObject) {
+        domainObject.configuration = {
+          clipActivityNames: DEFAULT_CONFIGURATION.clipActivityNames
+        };
+      }
+    });
+    // Name TBD and subject to change
+    openmct.types.addType('gantt-chart', {
+      name: 'Gantt Chart',
+      key: 'gantt-chart',
+      description: 'A configurable timeline-like view for a compatible plan file.',
+      creatable: true,
+      cssClass: 'icon-plan',
+      form: [],
+      initialize(domainObject) {
+        domainObject.configuration = {
+          clipActivityNames: true
+        };
+        domainObject.composition = [];
+      }
+    });
+    openmct.objectViews.addProvider(new PlanViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new ActivityInspectorViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new GanttChartInspectorViewProvider(openmct));
+    openmct.composition.addPolicy(ganttChartCompositionPolicy(openmct));
+
+    //add activity states get interceptor
+    const { name = ACTIVITY_STATES_DEFAULT_NAME, namespace = '', priority } = options;
+    const identifier = createActivityStatesIdentifier(namespace);
+
+    openmct.objects.addGetInterceptor(
+      activityStatesInterceptor(openmct, { identifier, name, priority })
+    );
+  };
 }
-

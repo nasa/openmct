@@ -1,9 +1,7 @@
-import missingObjectInterceptor from "./missingObjectInterceptor";
-import myItemsInterceptor from "./myItemsInterceptor";
+import missingObjectInterceptor from './missingObjectInterceptor.js';
 
 export default function plugin() {
-    return function install(openmct) {
-        myItemsInterceptor(openmct);
-        missingObjectInterceptor(openmct);
-    };
+  return function install(openmct) {
+    missingObjectInterceptor(openmct);
+  };
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,35 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TelemetryTableView from './TelemetryTableView';
+import TelemetryTableView from './TelemetryTableView.js';
 
-export default function TelemetryTableViewProvider(openmct) {
-    function hasTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0;
+export default function TelemetryTableViewProvider(openmct, options) {
+  function hasTelemetry(domainObject) {
+    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+      return false;
     }
 
-    return {
-        key: 'table',
-        name: 'Telemetry Table',
-        cssClass: 'icon-tabular-realtime',
-        canView(domainObject) {
-            return domainObject.type === 'table'
-                || hasTelemetry(domainObject);
-        },
-        canEdit(domainObject) {
-            return domainObject.type === 'table';
-        },
-        view(domainObject, objectPath) {
-            return new TelemetryTableView(openmct, domainObject, objectPath);
-        },
-        priority() {
-            return 1;
-        }
-    };
+    let metadata = openmct.telemetry.getMetadata(domainObject);
+
+    return metadata.values().length > 0;
+  }
+
+  return {
+    key: 'table',
+    name: 'Telemetry Table',
+    cssClass: 'icon-tabular-scrolling',
+    canView(domainObject) {
+      return domainObject.type === 'table' || hasTelemetry(domainObject);
+    },
+    canEdit(domainObject) {
+      return domainObject.type === 'table';
+    },
+    view(domainObject, objectPath) {
+      return new TelemetryTableView(openmct, domainObject, objectPath, options);
+    },
+    priority() {
+      return 1;
+    }
+  };
 }

@@ -1,4 +1,7 @@
 .c-timeline-holder {
-    @include abs();
-    overflow-x: hidden;
+  overflow: hidden;
+}
+
+.c-timeline__objects {
+  display: contents;
 }

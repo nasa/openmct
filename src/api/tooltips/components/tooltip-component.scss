@@ -1,0 +1,11 @@
+.c-tooltip-wrapper {
+  max-width: 200px;
+  height: auto;
+  width: auto;
+  padding: $interiorMargin;
+  overflow-wrap: break-word;
+}
+
+.c-tooltip {
+  font-style: italic;
+}

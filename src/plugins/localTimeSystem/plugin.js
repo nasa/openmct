@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,21 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./LocalTimeSystem",
-    "./LocalTimeFormat"
-], function (
-    LocalTimeSystem,
-    LocalTimeFormat
-) {
-    return function () {
-        return function (openmct) {
-            openmct.time.addTimeSystem(new LocalTimeSystem());
+import LocalTimeFormat from './LocalTimeFormat.js';
+import LocalTimeSystem from './LocalTimeSystem.js';
 
-            openmct.legacyExtension('formats', {
-                key: 'local-format',
-                implementation: LocalTimeFormat
-            });
-        };
-    };
-});
+export default function () {
+  return function (openmct) {
+    openmct.time.addTimeSystem(new LocalTimeSystem());
+    openmct.telemetry.addFormat(new LocalTimeFormat());
+  };
+}

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,71 +20,98 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import Plot from './PlotView.vue';
 
 export default function PlotViewProvider(openmct) {
-    function hasNumericTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasDomainAndNumericRange(metadata);
+  function hasNumericTelemetry(domainObject) {
+    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+      return false;
     }
 
-    function hasDomainAndNumericRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']);
-        const domains = metadata.valuesForHints(['domain']);
+    let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return domains.length > 0
-            && rangeValues.length > 0
-            && !rangeValues.every(value => value.format === 'string');
-    }
+    return metadata.values().length > 0 && hasDomainAndNumericRange(metadata);
+  }
 
-    function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
-    }
+  function hasDomainAndNumericRange(metadata) {
+    const rangeValues = metadata.valuesForHints(['range']);
+    const domains = metadata.valuesForHints(['domain']);
 
-    return {
-        key: 'plot-single',
-        name: 'Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return hasNumericTelemetry(domainObject);
+    return (
+      domains.length > 0 &&
+      rangeValues.length > 0 &&
+      !rangeValues.every((value) => value.format === 'string')
+    );
+  }
+
+  function isCompactView(objectPath) {
+    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
+
+    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  }
+
+  return {
+    key: 'plot-single',
+    name: 'Plot',
+    cssClass: 'icon-telemetry',
+    canView(domainObject, objectPath) {
+      return hasNumericTelemetry(domainObject);
+    },
+
+    view: function (domainObject, objectPath) {
+      let _destroy = null;
+      let component = null;
+
+      return {
+        show: function (element, isEditing, { renderWhenVisible }) {
+          let isCompact = isCompactView(objectPath);
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                Plot
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                renderWhenVisible
+              },
+              data() {
+                return {
+                  options: {
+                    compact: isCompact
+                  }
+                };
+              },
+              template: '<plot ref="plotComponent" :options="options"></plot>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          _destroy = destroy;
+          component = vNode.componentInstance;
         },
+        getViewContext() {
+          if (!component) {
+            return {};
+          }
 
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    let isCompact = isCompactView(objectPath);
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Plot
-                        },
-                        provide: {
-                            openmct,
-                            domainObject
-                        },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<plot :options="options"></plot>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+          return component.$refs.plotComponent.getViewContext();
+        },
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
+        },
+        getComponent() {
+          return component;
         }
-    };
+      };
+    }
+  };
 }
