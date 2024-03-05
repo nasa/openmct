@@ -18,15 +18,16 @@ ifeq ($(UNAME), Darwin)
 export OS=Darwin
 endif
 
-export DIFF_PROGRAM:=vimdiff
+export DIFF_PROGRAM     :=vimdiff
 
 export CONTAINER_BIN     =docker
 export CONTAINER_COMPOSE =docker-compose
+export CONTAINER_TAG     =openmct:latest
 
-openmct-install: ## Install openmct on a docker image. This uses ./Dockerfile
-	$(CONTAINER_BIN) build -t openmct:latest .
+openmct-build: ## Build openmct on a docker image. This uses ./Dockerfile
+	$(CONTAINER_BIN) build -t $(CONTAINER_TAG) .
 
-openmct-start: openmct-install openmct-stop ## Start openmct in docker container, in a detached state. This uses ./docker-compose.yml
+openmct-start: openmct-build ## Start openmct in docker container, in a detached state. This uses ./docker-compose.yml
 	$(CONTAINER_COMPOSE) up -d --remove-orphans
 	@echo
 	@echo "Connect via http://localhost:8080"
@@ -35,8 +36,8 @@ openmct-start: openmct-install openmct-stop ## Start openmct in docker container
 openmct-stop: ## Stop openmct on docker conainter
 	$(CONTAINER_COMPOSE) down -v --remove-orphans
 
-openmct-shell: ## Shell into running container
-	$(CONTAINER_BIN) exec -it openmct_openmct_1 bash
+openmct-shell: openmct-start ## Shell into running container
+	$(CONTAINER_COMPOSE) exec -it openmct bash
 
 print-%: ## print a variable and its value, e.g. print the value of variable PROVIDER: make print-PROVIDER
 	@echo $* = $($*)
