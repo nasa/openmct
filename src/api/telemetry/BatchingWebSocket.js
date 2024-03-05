@@ -219,6 +219,8 @@ class BatchingWebSocket extends EventTarget {
       this.#waitUntilIdleAndRequestNextBatch(batch);
     } else if (message.data.type === 'message') {
       this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
+    } else if (message.data.type === 'reconnected') {
+      this.dispatchEvent(new CustomEvent('reconnected'));
     } else {
       throw new Error(`Unknown message type: ${message.data.type}`);
     }

@@ -45,6 +45,13 @@ export default function installWorker() {
     #currentWaitIndex = 0;
     #messageCallbacks = [];
     #wsUrl;
+    #reconnecting = false;
+    #worker;
+
+    constructor(worker) {
+      super();
+      this.#worker = worker;
+    }
 
     /**
      * Establish a new WebSocket connection to the given URL
@@ -63,6 +70,9 @@ export default function installWorker() {
       this.#isConnecting = true;
 
       this.#webSocket = new WebSocket(url);
+      //Exposed to e2e tests so that the websocket can be manipulated during tests. Cannot find any other way to do this. 
+      // Playwright does not support forcing websocket state changes.
+      this.#worker.currentWebSocket = this.#webSocket;
 
       const boundConnected = this.#connected.bind(this);
       this.#webSocket.addEventListener('open', boundConnected);
@@ -106,6 +116,13 @@ export default function installWorker() {
       this.#isConnecting = false;
       this.#currentWaitIndex = 0;
 
+      if (this.#reconnecting) {
+        this.#worker.postMessage({
+          type: 'reconnected'
+        });
+        this.#reconnecting = false;
+      }
+
       this.#flushQueue();
     }
 
@@ -137,6 +154,7 @@ export default function installWorker() {
       if (this.#reconnectTimeoutHandle) {
         return;
       }
+      this.#reconnecting = true;
 
       this.#reconnectTimeoutHandle = setTimeout(() => {
         this.connect(this.#wsUrl);
@@ -389,7 +407,7 @@ export default function installWorker() {
     };
   }
 
-  const websocket = new ResilientWebSocket();
+  const websocket = new ResilientWebSocket(self);
   const messageBatcher = new MessageBatcher(self);
   const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBatcher);
   const websocketBroker = new WebSocketToWorkerMessageBroker(messageBatcher, self);
@@ -400,4 +418,6 @@ export default function installWorker() {
   websocket.registerMessageCallback((data) => {
     websocketBroker.routeMessageToHandler(data);
   });
+
+  self.websocketInstance = websocket;
 }
