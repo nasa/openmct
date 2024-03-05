@@ -201,9 +201,14 @@ export default {
 
       if (this.compositionCollection) {
         this.compositionCollection.on('add', this.subscribeToStaleness);
-        this.compositionCollection.on('remove', this.triggerUnsubscribeFromStaleness);
+        this.compositionCollection.on('remove', this.removeSubscription);
         this.compositionCollection.load();
       }
+    },
+    removeSubscription(identifier) {
+      this.triggerUnsubscribeFromStaleness({
+        identifier
+      });
     },
     loadingUpdated(loading) {
       this.loading = loading;
@@ -212,7 +217,7 @@ export default {
     destroy() {
       if (this.compositionCollection) {
         this.compositionCollection.off('add', this.subscribeToStaleness);
-        this.compositionCollection.off('remove', this.triggerUnsubscribeFromStaleness);
+        this.compositionCollection.off('remove', this.removeSubscription);
       }
 
       this.imageExporter = null;
