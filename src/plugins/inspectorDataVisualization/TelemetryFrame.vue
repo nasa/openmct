@@ -121,7 +121,8 @@ export default {
       };
       const newTabAction = this.openmct.actions.getAction('newTab');
       // No view context needed, so pass undefined.
-      // The urlParams arg will override the global time bounds with the dataviz plot bounds.
+      // The urlParams arg will override the global time bounds with the data visualization
+      // plot bounds.
       newTabAction.invoke([sourceTelemObject], undefined, urlParams);
       this.showMenu = false;
     },
