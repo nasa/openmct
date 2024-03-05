@@ -25,7 +25,7 @@ import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
 import { test } from '../../avpFixtures.js';
-import { FULL_CIRCLE_PATH, VISUAL_URL } from '../../constants.js';
+import { VISUAL_URL } from '../../constants.js';
 import {
   createTimelistWithPlanAndSetActivityInProgress,
   getFirstActivity,
@@ -40,6 +40,27 @@ const examplePlanSmall1 = JSON.parse(
 const examplePlanSmall2 = JSON.parse(
   fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
 );
+
+test.describe('Visual - Timelist progress bar @clock', () => {
+  const firstActivity = getFirstActivity(examplePlanSmall1);
+
+  test.use({
+    clockOptions: {
+      now: firstActivity.end + 10000,
+      shouldAdvanceTime: true
+    }
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
+    await page.getByLabel('Click to collapse items').click();
+  });
+
+  test('progress pie is full', async ({ page, theme }) => {
+    // Progress pie is completely full and doesn't update if now is greater than the end time
+    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
+  });
+});
 
 test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
@@ -137,26 +158,6 @@ test.describe('Visual - Gantt Chart', () => {
       page,
       `Gantt Chart View w/ draft status (theme: ${theme}) - Unclipped Activity Names`
     );
-  });
-});
-
-test.describe('Visual - Timelist progress bar @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.end + 10000,
-      shouldAdvanceTime: true
-    }
-  });
-
-  test.beforeEach(async ({ page }) => {
-    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-  });
-
-  test('progress pie is full', async ({ page, theme }) => {
-    // Progress pie is completely full and doesn't update if now is greater than the end time
-    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
   });
 });
 
