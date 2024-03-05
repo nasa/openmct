@@ -94,10 +94,10 @@ export default {
               },
               dataRanges: [
                 {
-                  bounds
+                  bounds: otherBounds
                 },
                 {
-                  bounds: otherBounds
+                  bounds
                 }
               ],
               loading: false

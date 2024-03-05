@@ -61,7 +61,7 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     // Wait for the URL to change to the display layout
     await waitForMyItemsNavigation;
   });
-  test('Open in New Tab action preserves time bounds  @2p', async ({ page }) => {
+  test('Open in New Tab action preserves time bounds @2p', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7524'
