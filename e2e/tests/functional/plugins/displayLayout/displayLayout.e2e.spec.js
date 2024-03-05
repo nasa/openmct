@@ -40,7 +40,7 @@ const CHILD_PLOT_STORAGE_STATE_PATH = fileURLToPath(
 const TINY_IMAGE_BASE64 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
 
-test.describe('Display Layout Sub-object Actions @localStorage @2p', () => {
+test.describe('Display Layout Sub-object Actions @localStorage', () => {
   const INIT_ITC_START_BOUNDS = '2024-11-12 19:11:11.000Z';
   const INIT_ITC_END_BOUNDS = '2024-11-12 20:11:11.000Z';
   const NEW_GLOBAL_START_BOUNDS = '2024-11-11 19:11:11.000Z';
@@ -61,7 +61,7 @@ test.describe('Display Layout Sub-object Actions @localStorage @2p', () => {
     // Wait for the URL to change to the display layout
     await waitForMyItemsNavigation;
   });
-  test('Open in New Tab action preserves time bounds', async ({ page }) => {
+  test('Open in New Tab action preserves time bounds  @2p', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7524'
