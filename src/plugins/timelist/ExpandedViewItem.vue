@@ -37,6 +37,18 @@
     </div>
     <div class="c-tli__graphic">
       <svg viewBox="0 0 100 100">
+        <g aria-label="Activity in progress" class="c-tli__graphic__pie">
+          <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
+          <path ref="progressElement" class="c-svg-progress__progress"></path>
+          <circle
+            class="c-svg-progress__ticks"
+            r="40"
+            cx="50"
+            cy="50"
+            stroke-dasharray="3 7.472"
+          ></circle>
+          <rect class="c-svg-progress__sweep-hand" x="48" y="18" width="4" height="27"></rect>
+        </g>
         <path
           aria-label="Activity complete"
           class="c-tli__graphic__check"
@@ -80,6 +92,7 @@ import _ from 'lodash';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import { CURRENT_CSS_SUFFIX, FUTURE_CSS_SUFFIX, PAST_CSS_SUFFIX } from './constants.js';
+import { updateProgress } from './svg-progress.js';
 
 const ITEM_COLORS = {
   [CURRENT_CSS_SUFFIX]: '#ffcc00',
@@ -212,6 +225,7 @@ export default {
     },
     followTimeContext() {
       this.timeContext.on(TIME_CONTEXT_EVENTS.tick, this.updateTimestamp);
+      this.updateTimestamp(this.timeContext.now());
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
@@ -220,6 +234,10 @@ export default {
     },
     updateTimestamp(time) {
       this.timestamp = time;
+      const progressElement = this.$refs.progressElement;
+      if (this.isInProgress && progressElement) {
+        updateProgress(this.start, this.end, this.timestamp, progressElement);
+      }
       this.formatItemLabel();
     },
     formatItemLabel() {

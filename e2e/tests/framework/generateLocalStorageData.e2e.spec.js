@@ -39,7 +39,7 @@ import { expect, test } from '../../pluginFixtures.js';
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
-test.describe('Generate Visual Test Data @localStorage @generatedata', () => {
+test.describe('Generate Visual Test Data @localStorage @generatedata @clock', () => {
   test.use({
     clockOptions: {
       now: MISSION_TIME,

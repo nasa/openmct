@@ -20,18 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import percySnapshot from '@percy/playwright';
-import { fileURLToPath } from 'url';
 
 import * as utils from '../../helper/faultUtils.js';
 import { expect, test } from '../../pluginFixtures.js';
 
-test.describe('Fault Management Visual Tests', () => {
-  test('icon test', async ({ page, theme }) => {
-    await page.addInitScript({
-      path: fileURLToPath(new URL('../../helper/addInitFaultManagementPlugin.js', import.meta.url))
-    });
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
+test.describe('Fault Management Visual Tests - without example', () => {
+  test.beforeEach(async ({ page }) => {
+    await utils.navigateToFaultManagementWithoutExample(page);
+    await page.getByLabel('Collapse Inspect Pane').click();
+    await page.getByLabel('Click to collapse items').click();
+  });
 
+  test('fault management icon appears in tree', async ({ page, theme }) => {
     // Wait for status bar to load
     await expect(
       page.getByRole('status', {
@@ -51,10 +51,16 @@ test.describe('Fault Management Visual Tests', () => {
 
     await percySnapshot(page, `Fault Management icon appears in tree (theme: '${theme}')`);
   });
+});
+
+test.describe('Fault Management Visual Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await utils.navigateToFaultManagementWithStaticExample(page);
+    await page.getByLabel('Collapse Inspect Pane').click();
+    await page.getByLabel('Click to collapse items').click();
+  });
 
   test('fault list and acknowledged faults', async ({ page, theme }) => {
-    await utils.navigateToFaultManagementWithStaticExample(page);
-
     await percySnapshot(page, `Shows a list of faults in the standard view (theme: '${theme}')`);
 
     await utils.acknowledgeFault(page, 1);
@@ -67,8 +73,6 @@ test.describe('Fault Management Visual Tests', () => {
   });
 
   test('shelved faults', async ({ page, theme }) => {
-    await utils.navigateToFaultManagementWithStaticExample(page);
-
     await utils.shelveFault(page, 1);
     await utils.changeViewTo(page, 'shelved');
 
@@ -83,8 +87,6 @@ test.describe('Fault Management Visual Tests', () => {
   });
 
   test('3-dot menu for fault', async ({ page, theme }) => {
-    await utils.navigateToFaultManagementWithStaticExample(page);
-
     await utils.openFaultRowMenu(page, 1);
 
     await percySnapshot(
@@ -94,8 +96,6 @@ test.describe('Fault Management Visual Tests', () => {
   });
 
   test('ability to acknowledge or shelve', async ({ page, theme }) => {
-    await utils.navigateToFaultManagementWithStaticExample(page);
-
     await utils.selectFaultItem(page, 1);
 
     await percySnapshot(
