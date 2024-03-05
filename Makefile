@@ -4,34 +4,58 @@
 # Purpose:
 #   Makefile that allows one to docker build, install openmct and start openmct
 #
-# Author of this Makefile: 
-#  Haisam Ido<haisam.ido@gmail.com>
-#
 # Dependencies:
 #   make, docker, docker-compose
 #------------------------------------------------------------------------------
 
-openmct-install: ## Install openmct on a docker image. This uses ./Dockerfile
-	docker build -t openmct:latest .
+.PHONY:
 
-openmct-up: openmct-install openmct-down ## Start openmct in docker container, in a detached state. This uses ./docker-compose.yml
-	docker-compose up -d --remove-orphans
+export SHELL :=/bin/bash
+export UNAME :=$(shell uname)
+export OS     =Linux
+
+ifeq ($(UNAME), Darwin)
+export OS=Darwin
+endif
+
+export DIFF_PROGRAM:=vimdiff
+
+export CONTAINER_BIN     =docker
+export CONTAINER_COMPOSE =docker-compose
+
+openmct-install: ## Install openmct on a docker image. This uses ./Dockerfile
+	$(CONTAINER_BIN) build -t openmct:latest .
+
+openmct-start: openmct-install openmct-stop ## Start openmct in docker container, in a detached state. This uses ./docker-compose.yml
+	$(CONTAINER_COMPOSE) up -d --remove-orphans
 	@echo
 	@echo "Connect via http://localhost:8080"
 	@echo
 
-openmct-down: ## Stop openmct on docker conainter
-	docker-compose down -v --remove-orphans
+openmct-stop: ## Stop openmct on docker conainter
+	$(CONTAINER_COMPOSE) down -v --remove-orphans
 
 openmct-shell: ## Shell into running container
-	docker exec -it openmct_openmct_1 bash
+	$(CONTAINER_BIN) exec -it openmct_openmct_1 bash
+
+print-%: ## print a variable and its value, e.g. print the value of variable PROVIDER: make print-PROVIDER
+	@echo $* = $($*)
+
+define print-help
+$(call print-target-header,"Makefile Help")
+	echo
+	printf "%s\n" "Illustrates how to use IaC tools by example. It will be different in operations"
+	echo
+$(call print-target-header,"target                         description")
+	grep -E '^([a-zA-Z_-]).+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS=":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' | grep $(or $1,".*")
+	echo
+endef
 
 help:
-	@printf "\033[37m%-30s\033[0m %s\n" "#----------------------------------------------------------------------------------"
-	@printf "\033[37m%-30s\033[0m %s\n" "# Makefile targets                                                                 |"
-	@printf "\033[37m%-30s\033[0m %s\n" "#----------------------------------------------------------------------------------"
-	@printf "\033[37m%-30s\033[0m %s\n" "#-target-----------------------description-----------------------------------------"
-	@grep -E '^[a-zA-Z_-].+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@$(call print-help)
+
+help-%: ## Filtered help, e.g.: make help-terraform
+	@$(call print-help,$*)
 
 print-%:
-	@echo $* = $($*)
+	@echo $*=$($*)
