@@ -356,6 +356,10 @@ test.describe('Overlay Plot', () => {
       type: 'Sine Wave Generator',
       parent: overlayPlot.uuid
     });
+    const swgB = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
 
     await page.goto(overlayPlot.url);
     // Wait for plot series data to load and be drawn
@@ -370,6 +374,23 @@ test.describe('Overlay Plot', () => {
     await page.getByRole('menuitem', { name: 'Remove' }).click();
     await page.getByRole('button', { name: 'OK', exact: true }).click();
     await expect(swgAElementsPoolItem).toBeHidden();
+
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7530'
+    });
+    await test.step('Verify that the legend is correct after removing a series', async () => {
+      await page.getByLabel('Plot Canvas').hover();
+      await page.mouse.move(50, 0, {
+        steps: 10
+      });
+      await expect(page.getByLabel('Plot Legend Item')).toHaveCount(1);
+      await expect(page.getByLabel(`Plot Legend Item for ${swgA.name}`)).toBeHidden();
+      await expect(page.getByLabel(`Plot Legend Item for ${swgB.name}`)).toBeVisible();
+    });
   });
 });
 

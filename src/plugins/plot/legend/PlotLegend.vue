@@ -165,7 +165,6 @@ export default {
       this.registerListeners(this.config);
     }
     this.listenTo(this.config.legend, 'change:expandByDefault', this.changeExpandDefault, this);
-    this.initialize();
   },
   mounted() {
     this.loaded = true;
@@ -182,16 +181,6 @@ export default {
     this.stopListening();
   },
   methods: {
-    initialize() {
-      if (this.domainObject.type === 'telemetry.plot.stacked') {
-        this.objectComposition = this.openmct.composition.get(this.domainObject);
-        this.objectComposition.on('add', this.addTelemetryObject);
-        this.objectComposition.on('remove', this.removeTelemetryObject);
-        this.objectComposition.load();
-      } else {
-        this.registerListeners(this.config);
-      }
-    },
     changeExpandDefault() {
       this.isLegendExpanded = this.config.legend.model.expandByDefault;
       this.legend.set('expanded', this.isLegendExpanded);
