@@ -38,39 +38,41 @@
       >
       </expanded-view-item>
     </template>
-    <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
-      <table class="c-table__body js-table__body">
-        <thead class="c-table__header">
-          <tr>
-            <list-header
-              v-for="headerItem in headerItems"
-              :key="headerItem.property"
-              :direction="
-                defaultSort.property === headerItem.property
-                  ? defaultSort.defaultDirection
-                  : headerItem.defaultDirection
-              "
-              :is-sortable="headerItem.isSortable"
-              :aria-label="headerItem.name"
-              :title="headerItem.name"
-              :property="headerItem.property"
-              :current-sort="defaultSort.property"
-              @sort="sort"
+    <template v-else>
+      <div class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
+        <table class="c-table__body js-table__body">
+          <thead class="c-table__header">
+            <tr>
+              <list-header
+                v-for="headerItem in headerItems"
+                :key="headerItem.property"
+                :direction="
+                  defaultSort.property === headerItem.property
+                    ? defaultSort.defaultDirection
+                    : headerItem.defaultDirection
+                "
+                :is-sortable="headerItem.isSortable"
+                :aria-label="headerItem.name"
+                :title="headerItem.name"
+                :property="headerItem.property"
+                :current-sort="defaultSort.property"
+                @sort="sort"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <list-item
+              v-for="item in sortedItems"
+              :key="item.key"
+              :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
+              :item="item"
+              :item-properties="itemProperties"
+              @click.stop="setSelectionForActivity(item, $event.currentTarget)"
             />
-          </tr>
-        </thead>
-        <tbody>
-          <list-item
-            v-for="item in sortedItems"
-            :key="item.key"
-            :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
-            :item="item"
-            :item-properties="itemProperties"
-            @click.stop="setSelectionForActivity(item, $event.currentTarget)"
-          />
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    </template>
   </div>
 </template>
 
