@@ -23,7 +23,7 @@
 <template>
   <div class="c-fault-mgmt__list data-selectable" :class="classesFromState">
     <div class="c-fault-mgmt-item c-fault-mgmt__list-checkbox">
-      <input type="checkbox" :checked="isSelected" @input="toggleSelected" />
+      <input type="checkbox" :checked="isSelected" @change="toggleSelected" />
     </div>
     <div class="c-fault-mgmt-item">
       <div
