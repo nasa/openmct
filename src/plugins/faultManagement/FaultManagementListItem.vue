@@ -60,6 +60,7 @@
       <button
         class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
         title="Disposition Actions"
+        aria-label="Disposition Actions"
         @click="showActionMenu"
       ></button>
     </div>
