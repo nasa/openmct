@@ -55,6 +55,7 @@
               @toggle-selected="toggleSelected"
               @acknowledge-selected="toggleAcknowledgeSelected"
               @shelve-selected="toggleShelveSelected"
+              @clear-all-selected="resetSelectedFaultMap"
             />
           </template>
         </div>
@@ -221,12 +222,12 @@ export default {
         false
       );
     },
-    async toggleAcknowledgeSelected() {
+    async toggleAcknowledgeSelected(faults = this.selectedFaults) {
       let title = '';
-      if (this.selectedFaults.length > 1) {
-        title = `Acknowledge ${this.selectedFaults.length} selected faults`;
-      } else {
-        title = `Acknowledge fault: ${this.selectedFaults[0].name}`;
+      if (faults.length > 1) {
+        title = `Acknowledge ${faults.length} selected faults`;
+      } else if (faults.length === 1) {
+        title = `Acknowledge fault: ${faults[0].name}`;
       }
 
       const formStructure = {
@@ -255,8 +256,8 @@ export default {
 
       try {
         const data = await this.openmct.forms.showForm(formStructure);
-        this.selectedFaults.forEach((selectedFault) => {
-          this.openmct.faults.acknowledgeFault(selectedFault, data);
+        faults.forEach((fault) => {
+          this.openmct.faults.acknowledgeFault(fault, data);
         });
       } catch (err) {
         console.error(err);
