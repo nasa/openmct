@@ -21,12 +21,20 @@
  *****************************************************************************/
 import percySnapshot from '@percy/playwright';
 
-import * as utils from '../../helper/faultUtils.js';
+import {
+  acknowledgeFault,
+  changeViewTo,
+  navigateToFaultManagementWithoutExample,
+  navigateToFaultManagementWithStaticExample,
+  openFaultRowMenu,
+  selectFaultItem,
+  shelveFault
+} from '../../helper/faultUtils.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Fault Management Visual Tests - without example', () => {
   test.beforeEach(async ({ page }) => {
-    await utils.navigateToFaultManagementWithoutExample(page);
+    await navigateToFaultManagementWithoutExample(page);
     await page.getByLabel('Collapse Inspect Pane').click();
     await page.getByLabel('Click to collapse items').click();
   });
@@ -55,7 +63,7 @@ test.describe('Fault Management Visual Tests - without example', () => {
 
 test.describe('Fault Management Visual Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await utils.navigateToFaultManagementWithStaticExample(page);
+    await navigateToFaultManagementWithStaticExample(page);
     await page.getByLabel('Collapse Inspect Pane').click();
     await page.getByLabel('Click to collapse items').click();
   });
@@ -63,8 +71,8 @@ test.describe('Fault Management Visual Tests', () => {
   test('fault list and acknowledged faults', async ({ page, theme }) => {
     await percySnapshot(page, `Shows a list of faults in the standard view (theme: '${theme}')`);
 
-    await utils.acknowledgeFault(page, 1);
-    await utils.changeViewTo(page, 'acknowledged');
+    await acknowledgeFault(page, 1);
+    await changeViewTo(page, 'acknowledged');
 
     await percySnapshot(
       page,
@@ -73,12 +81,12 @@ test.describe('Fault Management Visual Tests', () => {
   });
 
   test('shelved faults', async ({ page, theme }) => {
-    await utils.shelveFault(page, 1);
-    await utils.changeViewTo(page, 'shelved');
+    await shelveFault(page, 1);
+    await changeViewTo(page, 'shelved');
 
     await percySnapshot(page, `Shelved faults appear in the shelved view (theme: '${theme}')`);
 
-    await utils.openFaultRowMenu(page, 1);
+    await openFaultRowMenu(page, 1);
 
     await percySnapshot(
       page,
@@ -87,7 +95,7 @@ test.describe('Fault Management Visual Tests', () => {
   });
 
   test('3-dot menu for fault', async ({ page, theme }) => {
-    await utils.openFaultRowMenu(page, 1);
+    await openFaultRowMenu(page, 1);
 
     await percySnapshot(
       page,
@@ -96,7 +104,7 @@ test.describe('Fault Management Visual Tests', () => {
   });
 
   test('ability to acknowledge or shelve', async ({ page, theme }) => {
-    await utils.selectFaultItem(page, 1);
+    await selectFaultItem(page, 1);
 
     await percySnapshot(
       page,
