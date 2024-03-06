@@ -221,7 +221,7 @@ export default {
         false
       );
     },
-    toggleAcknowledgeSelected() {
+    async toggleAcknowledgeSelected() {
       let title = '';
       if (this.selectedFaults.length > 1) {
         title = `Acknowledge ${this.selectedFaults.length} selected faults`;
@@ -253,13 +253,16 @@ export default {
         }
       };
 
-      this.openmct.forms.showForm(formStructure).then((data) => {
+      try {
+        const data = await this.openmct.forms.showForm(formStructure);
         this.selectedFaults.forEach((selectedFault) => {
           this.openmct.faults.acknowledgeFault(selectedFault, data);
         });
-      });
-
-      this.resetSelectedFaultMap();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.resetSelectedFaultMap();
+      }
     },
     resetSelectedFaultMap() {
       Object.keys(this.selectedFaultMap).forEach((key) => {
