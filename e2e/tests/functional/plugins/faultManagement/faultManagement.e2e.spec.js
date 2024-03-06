@@ -49,14 +49,14 @@ test.describe('The Fault Management Plugin using example faults', () => {
     await navigateToFaultManagementWithExample(page);
   });
 
-  test('Shows a criticality icon for every fault @unstable', async ({ page }) => {
+  test('Shows a criticality icon for every fault', async ({ page }) => {
     const faultCount = await page.locator('c-fault-mgmt__list').count();
     const criticalityIconCount = await page.locator('c-fault-mgmt__list-severity').count();
 
     expect(faultCount).toEqual(criticalityIconCount);
   });
 
-  test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector @unstable', async ({
+  test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector', async ({
     page
   }) => {
     await selectFaultItem(page, 1);
@@ -75,7 +75,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     expect(inspectorFaultNameCount).toEqual(1);
   });
 
-  test('When selecting multiple faults, no specific fault information is shown in the inspector @unstable', async ({
+  test('When selecting multiple faults, no specific fault information is shown in the inspector', async ({
     page
   }) => {
     await selectFaultItem(page, 1);
@@ -100,7 +100,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     expect(secondNameInInspectorCount).toEqual(0);
   });
 
-  test('Allows you to shelve a fault @unstable', async ({ page }) => {
+  test('Allows you to shelve a fault', async ({ page }) => {
     const shelvedFaultName = await getFaultName(page, 2);
     const beforeShelvedFault = getFaultByName(page, shelvedFaultName);
 
@@ -119,7 +119,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     expect(await shelvedViewFault.count()).toBe(1);
   });
 
-  test('Allows you to acknowledge a fault @unstable', async ({ page }) => {
+  test('Allows you to acknowledge a fault', async ({ page }) => {
     const acknowledgedFaultName = await getFaultName(page, 3);
 
     await acknowledgeFault(page, 3);
@@ -133,7 +133,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     expect(acknowledgedFaultName).toEqual(acknowledgedViewFaultName);
   });
 
-  test('Allows you to shelve multiple faults @unstable', async ({ page }) => {
+  test('Allows you to shelve multiple faults', async ({ page }) => {
     const shelvedFaultNameOne = await getFaultName(page, 1);
     const shelvedFaultNameFour = await getFaultName(page, 4);
 
@@ -160,7 +160,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     await expect(shelvedViewFaultFour).toHaveCount(1);
   });
 
-  test('Allows you to acknowledge multiple faults @unstable', async ({ page }) => {
+  test('Allows you to acknowledge multiple faults', async ({ page }) => {
     const acknowledgedFaultNameTwo = await getFaultName(page, 2);
     const acknowledgedFaultNameFive = await getFaultName(page, 5);
 
@@ -182,7 +182,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     await expect(acknowledgedViewFaultFive).toHaveCount(1);
   });
 
-  test('Allows you to search faults @unstable', async ({ page }) => {
+  test('Allows you to search faults', async ({ page }) => {
     const faultThreeNamespace = await getFaultNamespace(page, 3);
     const faultTwoName = await getFaultName(page, 2);
     const faultFiveTriggerTime = await getFaultTriggerTime(page, 5);
@@ -223,7 +223,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     expect(await getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
   });
 
-  test('Allows you to sort faults @unstable', async ({ page }) => {
+  test('Allows you to sort faults', async ({ page }) => {
     const highestSeverity = await getHighestSeverity(page);
     const lowestSeverity = await getLowestSeverity(page);
     const faultOneName = 'Example Fault 1';
@@ -251,7 +251,7 @@ test.describe('The Fault Management Plugin without using example faults', () => 
     await navigateToFaultManagementWithoutExample(page);
   });
 
-  test('Shows no faults when no faults are provided @unstable', async ({ page }) => {
+  test('Shows no faults when no faults are provided', async ({ page }) => {
     const faultCount = await page.locator('c-fault-mgmt__list').count();
 
     expect(faultCount).toEqual(0);
@@ -265,7 +265,7 @@ test.describe('The Fault Management Plugin without using example faults', () => 
     expect(shelvedCount).toEqual(0);
   });
 
-  test('Will return no faults when searching @unstable', async ({ page }) => {
+  test('Will return no faults when searching', async ({ page }) => {
     await enterSearchTerm(page, 'fault');
 
     const faultCount = await page.locator('c-fault-mgmt__list').count();
