@@ -39,7 +39,7 @@
       <div class="c-faults-list-view-header-item-container">
         <FaultManagementListHeader
           class="header"
-          :selected-faults="Object.values(selectedFaults)"
+          :selected-faults="selectedFaults"
           :total-faults-count="filteredFaultsList.length"
           @select-all="selectAll"
           @sort-changed="sortChanged"
@@ -100,11 +100,14 @@ export default {
       faultsList: [],
       filterIndex: 0,
       searchTerm: '',
-      selectedFaults: {},
+      selectedFaultMap: {},
       sortBy: Object.values(SORT_ITEMS)[0].value
     };
   },
   computed: {
+    selectedFaults() {
+      return Object.values(this.selectedFaultMap);
+    },
     filteredFaultsList() {
       const filterName = FILTER_ITEMS[this.filterIndex];
       let list = this.faultsList;
@@ -179,7 +182,7 @@ export default {
       return match;
     },
     isSelected(fault) {
-      return Boolean(this.selectedFaults[fault.id]);
+      return Boolean(this.selectedFaultMap[fault.id]);
     },
     selectAll(toggle = false) {
       this.faultsList.forEach((fault) => {
@@ -195,12 +198,11 @@ export default {
     },
     toggleSelected({ fault, selected = false }) {
       if (selected) {
-        this.selectedFaults[fault.id] = fault;
+        this.selectedFaultMap[fault.id] = fault;
       } else {
-        delete this.selectedFaults[fault.id];
+        delete this.selectedFaultMap[fault.id];
       }
 
-      const selectedFaults = Object.values(this.selectedFaults);
       this.openmct.selection.select(
         [
           {
@@ -212,19 +214,19 @@ export default {
           {
             element: this.$el,
             context: {
-              selectedFaults
+              selectedFaults: this.selectedFaults
             }
           }
         ],
         false
       );
     },
-    toggleAcknowledgeSelected(faults = Object.values(this.selectedFaults)) {
+    toggleAcknowledgeSelected() {
       let title = '';
-      if (faults.length > 1) {
-        title = `Acknowledge ${faults.length} selected faults`;
+      if (this.selectedFaults.length > 1) {
+        title = `Acknowledge ${this.selectedFaults.length} selected faults`;
       } else {
-        title = `Acknowledge fault: ${faults[0].name}`;
+        title = `Acknowledge fault: ${this.selectedFaults[0].name}`;
       }
 
       const formStructure = {
@@ -252,14 +254,19 @@ export default {
       };
 
       this.openmct.forms.showForm(formStructure).then((data) => {
-        Object.values(faults).forEach((selectedFault) => {
+        this.selectedFaults.forEach((selectedFault) => {
           this.openmct.faults.acknowledgeFault(selectedFault, data);
         });
       });
 
-      this.selectedFaults = {};
+      this.resetSelectedFaultMap();
     },
-    async toggleShelveSelected(faults = Object.values(this.selectedFaults), shelveData = {}) {
+    resetSelectedFaultMap() {
+      Object.keys(this.selectedFaultMap).forEach((key) => {
+        delete this.selectedFaultMap[key];
+      });
+    },
+    async toggleShelveSelected(faults = this.selectedFaults, shelveData = {}) {
       const { shelved = true } = shelveData;
       if (shelved) {
         let title =
@@ -321,7 +328,7 @@ export default {
         this.openmct.faults.shelveFault(selectedFault, shelveData);
       });
 
-      this.selectedFaults = {};
+      this.selectedFaultMap = {};
     },
     updateFilter(filter) {
       this.selectAll();
