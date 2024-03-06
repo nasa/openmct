@@ -21,6 +21,8 @@
  *****************************************************************************/
 import { fileURLToPath } from 'url';
 
+import { expect } from '../pluginFixtures.js';
+
 /**
  * @param {import('@playwright/test').Page} page
  */
@@ -77,9 +79,8 @@ export async function navigateToFaultItemInTree(page) {
  */
 export async function acknowledgeFault(page, rowNumber) {
   await openFaultRowMenu(page, rowNumber);
-  await page.locator('.c-menu >> text="Acknowledge"').click();
-  // Click [aria-label="Save"]
-  await page.locator('[aria-label="Save"]').click();
+  await page.getByLabel('Acknowledge', { exact: true }).click();
+  await page.getByLabel('Save').click();
 }
 
 /**
@@ -91,8 +92,8 @@ export async function shelveMultipleFaults(page, ...nums) {
   });
   await Promise.all(selectRows);
 
-  await page.locator('button:has-text("Shelve")').click();
-  await page.locator('[aria-label="Save"]').click();
+  await page.getByLabel('Shelve selected faults').click();
+  await page.getByLabel('Save').click();
 }
 
 /**
@@ -105,7 +106,7 @@ export async function acknowledgeMultipleFaults(page, ...nums) {
   await Promise.all(selectRows);
 
   await page.locator('button:has-text("Acknowledge")').click();
-  await page.locator('[aria-label="Save"]').click();
+  await page.getByLabel('Save').click();
 }
 
 /**
@@ -115,7 +116,7 @@ export async function shelveFault(page, rowNumber) {
   await openFaultRowMenu(page, rowNumber);
   await page.locator('.c-menu >> text="Shelve"').click();
   // Click [aria-label="Save"]
-  await page.locator('[aria-label="Save"]').click();
+  await page.getByLabel('Save').click();
 }
 
 /**
@@ -150,7 +151,15 @@ export async function clearSearch(page) {
  * @param {import('@playwright/test').Page} page
  */
 export async function selectFaultItem(page, rowNumber) {
-  await page.locator(`.c-fault-mgmt-item > input >> nth=${rowNumber - 1}`).check();
+  await page
+    .getByLabel('Select fault')
+    .nth(rowNumber - 1)
+    .check({
+      // Need force here because checkbox state is changed by an event emitted by the checkbox
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+  await expect(page.getByLabel('Select fault').nth(rowNumber - 1)).toBeChecked();
 }
 
 /**
@@ -264,6 +273,7 @@ export async function getFaultTriggerTime(page, rowNumber) {
 export async function openFaultRowMenu(page, rowNumber) {
   // select
   await page
-    .locator(`.c-fault-mgmt-item > .c-fault-mgmt__list-action-button >> nth=${rowNumber - 1}`)
+    .getByLabel('Disposition actions')
+    .nth(rowNumber - 1)
     .click();
 }
