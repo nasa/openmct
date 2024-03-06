@@ -90,7 +90,8 @@ test.describe('Snapshot Container tests', () => {
   test('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({ page }) => {
     await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: 'Quick View' }).click();
-    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.getByLabel('Modal Overlay')).toBeVisible();
+    await expect(page.getByLabel('Preview Container')).toBeVisible();
   });
   test('A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu', async ({
     page
