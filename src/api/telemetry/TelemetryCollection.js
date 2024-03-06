@@ -442,8 +442,10 @@ export default class TelemetryCollection extends EventEmitter {
     } else {
       this.timeKey = undefined;
 
-      this._warn(TIMESYSTEM_KEY_WARNING);
-      this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
+      if (this.domainObject.type !== 'unknown' ) {
+        this._warn(TIMESYSTEM_KEY_WARNING);
+        this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
+      }
     }
 
     let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
