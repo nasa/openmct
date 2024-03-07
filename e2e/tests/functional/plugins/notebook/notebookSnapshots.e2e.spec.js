@@ -88,7 +88,7 @@ test.describe('Snapshot Container tests', () => {
     await page.getByLabel('Show Snapshots').click();
   });
   test('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({ page }) => {
-    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
+    await page.getByLabel('My Items Notebook Embed').getByLabel('More actions').click();
     await page.getByRole('menuitem', { name: 'Quick View' }).click();
     await expect(page.getByLabel('Modal Overlay')).toBeVisible();
     await expect(page.getByLabel('Preview Container')).toBeVisible();
@@ -103,21 +103,27 @@ test.describe('Snapshot Container tests', () => {
     await page.getByLabel('My Items Notebook Embed').getByLabel('More actions').click();
     await page.getByRole('menuitem', { name: 'View Snapshot' }).click();
     await expect(page.getByRole('dialog', { name: 'Modal Overlay' })).toBeVisible();
-    await page.getByTitle('Annotate').click();
+    await expect(page.locator('#snapshotDescriptor')).toHaveText(
+      /SNAPSHOT \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/
+    );
+    await page.getByLabel('Annotate this snapshot').click();
     await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
     // Clear the canvas
     await page.getByRole('button', { name: 'Put text [T]' }).click();
     // Click in the Painterro canvas to add a text annotation
     await page.locator('.ptro-crp-el').click();
     await page.keyboard.type('...is there life on mars?');
-    // Click save button with no a11y
-    await page.getByRole('button', { name: '' }).click();
-    // Painterro save dialog should be hidden now
-    await expect(page.getByRole('button', { name: '' })).toBeHidden();
+    // When working with Painterro, we need to check that the Apply button is hidden after clicking
+    await page.getByTitle('Apply').click();
+    await expect(page.getByTitle('Apply')).toBeHidden();
 
     // Save and exit annotation window
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('button', { name: 'Done' }).click();
+
+    // Open up annotation again
+    await page.getByRole('img', { name: 'My Items thumbnail' }).click();
+    await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
   });
   test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
   test.fixme(
