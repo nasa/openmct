@@ -21,7 +21,7 @@ endif
 export DIFF_PROGRAM     :=vimdiff
 
 export CONTAINER_BIN     =docker
-export CONTAINER_COMPOSE =$(CONTAINER_BIN)-compose
+export CONTAINER_COMPOSE =$(CONTAINER_BIN) compose
 
 export CONTAINER_IMAGE         =openmct
 export CONTAINER_IMAGE_VERSION =latest
