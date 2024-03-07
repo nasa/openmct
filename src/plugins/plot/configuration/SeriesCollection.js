@@ -48,7 +48,7 @@ export default class SeriesCollection extends Collection {
     const domainObject = this.plot.get('domainObject');
     if (domainObject.telemetry) {
       this.addTelemetryObject(domainObject);
-    } else {
+    } else if (!this.openmct.objects.isMissing(domainObject)) {
       this.watchTelemetryContainer(domainObject);
     }
   }

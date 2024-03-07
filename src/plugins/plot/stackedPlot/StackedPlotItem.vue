@@ -172,7 +172,7 @@ export default {
 
       if (this.openmct.telemetry.isTelemetryObject(plotObject)) {
         this.subscribeToStaleness(plotObject);
-      } else {
+      } else if (!this.openmct.objects.isMissing(plotObject)) {
         // possibly overlay or other composition based plot
         this.composition = this.openmct.composition.get(plotObject);
 
