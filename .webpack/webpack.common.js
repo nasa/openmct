@@ -15,6 +15,9 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
+
+const REV_PARSE_ERROR =
+  'Failed to retrieve Git revision. This might indicate that the script is not running within a Git repository, or there is an issue with the Git setup. Error details:';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
@@ -22,9 +25,14 @@ const packageDefinition = JSON.parse(fs.readFileSync(new URL('../package.json', 
 
 try {
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
+} catch (err) {
+  console.warn(REV_PARSE_ERROR, err);
+}
+
+try {
   gitBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 } catch (err) {
-  console.warn(err);
+  console.warn(REV_PARSE_ERROR, err);
 }
 
 const projectRootDir = fileURLToPath(new URL('../', import.meta.url));
