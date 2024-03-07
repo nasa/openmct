@@ -17,7 +17,7 @@ import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
 
 const REV_PARSE_ERROR =
-  'Failed to retrieve Git revision. This might indicate that the script is not running within a Git repository, or there is an issue with the Git setup. Error details:';
+  '[WARN]: Failed to retrieve Git commit metadata. This might indicate that the script is not running within a Git repository. Error details:';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
