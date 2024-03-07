@@ -219,6 +219,10 @@ export default {
     },
 
     addChild(child) {
+      if (!this.openmct.objects.isMissing(child)) {
+        return;
+      }
+
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
       this.tickWidthMap[id] = {

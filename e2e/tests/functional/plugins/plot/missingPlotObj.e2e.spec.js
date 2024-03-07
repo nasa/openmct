@@ -24,10 +24,11 @@
 Tests to verify log plot functionality when objects are missing
 */
 
+import { expandTreePaneItemByName } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Handle missing object for plots', () => {
-  test('Displays empty div for missing stacked plot item @unstable', async ({
+  test('Displays empty div for missing stacked plot item', async ({
     page,
     browserName,
     openmctConfig
@@ -66,12 +67,6 @@ test.describe('Handle missing object for plots', () => {
       .soft(page.locator('.l-browse-bar__object-name'))
       .toContainText('Unnamed Stacked Plot');
 
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-    await Promise.all([
-      page.waitForNavigation(),
-      page.locator('text=Unnamed Stacked Plot').first().click()
-    ]);
-
     //Check that there is only one stacked item plot with a plot, the missing one will be empty
     await expect(page.locator('.c-plot--stacked-container:has(.gl-plot)')).toHaveCount(1);
     //Verify that console.warn is thrown
@@ -101,25 +96,31 @@ async function makeStackedPlot(page, myItemsFolderName) {
   // save the stacked plot
   await saveStackedPlot(page);
 
+  // expand My Items
+  await expandTreePaneItemByName(page, myItemsFolderName);
+
+  const stackedPlotTreeItem = page
+    .getByRole('tree', {
+      name: 'Main Tree'
+    })
+    .getByRole('treeitem', {
+      name: 'Unnamed Stacked Plot'
+    });
+
+  // click on stacked plot
+  await stackedPlotTreeItem.click();
+
   // create a sinewave generator
   await createSineWaveGenerator(page);
 
   // click on stacked plot
-  await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator('text=Unnamed Stacked Plot').first().click()
-  ]);
+  await stackedPlotTreeItem.click();
 
   // create a second sinewave generator
   await createSineWaveGenerator(page);
 
   // click on stacked plot
-  await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator('text=Unnamed Stacked Plot').first().click()
-  ]);
+  await stackedPlotTreeItem.click();
 }
 
 /**
