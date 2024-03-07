@@ -112,7 +112,7 @@ test.describe('Snapshot Container tests', () => {
     await page.getByRole('button', { name: 'Put text [T]' }).click();
     // Click in the Painterro canvas to add a text annotation
     await page.locator('.ptro-crp-el').click();
-    await page.keyboard.type('...is there life on mars?');
+    await page.locator('.ptro-text-tool-input').fill('...is there life on mars?');
     // When working with Painterro, we need to check that the Apply button is hidden after clicking
     await page.getByTitle('Apply').click();
     await expect(page.getByTitle('Apply')).toBeHidden();
@@ -123,7 +123,7 @@ test.describe('Snapshot Container tests', () => {
 
     // Open up annotation again
     await page.getByRole('img', { name: 'My Items thumbnail' }).click();
-    await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
+    await expect(page.getByLabel('Modal Overlay').getByRole('img')).toBeVisible();
   });
   test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
   test.fixme(

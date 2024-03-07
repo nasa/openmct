@@ -23,7 +23,7 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
-import { test, expect } from '../../avpFixtures.js';
+import { expect, test } from '../../avpFixtures.js';
 import { VISUAL_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
@@ -41,7 +41,7 @@ test.describe('Visual - Restricted Notebook @a11y', () => {
 
 test.describe('Visual - Notebook Snapshot @a11y', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('./' + '?hideTree=true&hideInspector=true', { waitUntil: 'domcontentloaded' });
+    await page.goto('./?hideTree=true&hideInspector=true', { waitUntil: 'domcontentloaded' });
   });
   test('Visual check for Snapshot Annotation', async ({ page, theme }) => {
     await page.getByLabel('Take a Notebook Snapshot').click();
@@ -57,7 +57,7 @@ test.describe('Visual - Notebook Snapshot @a11y', () => {
     await page.getByRole('button', { name: 'Put text [T]' }).click();
     // Click in the Painterro canvas to add a text annotation
     await page.locator('.ptro-crp-el').click();
-    await page.keyboard.type('...is there life on mars?');
+    await page.locator('.ptro-text-tool-input').fill('...is there life on mars?');
     await percySnapshot(page, `Notebook Snapshot with text entry open (theme: '${theme}')`);
 
     // When working with Painterro, we need to check that the Apply button is hidden after clicking
@@ -70,7 +70,7 @@ test.describe('Visual - Notebook Snapshot @a11y', () => {
 
     // Open up annotation again
     await page.getByRole('img', { name: 'My Items thumbnail' }).click();
-    await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
+    await expect(page.getByLabel('Modal Overlay').getByRole('img')).toBeVisible();
 
     // Take a snapshot
     await percySnapshot(page, `Notebook Snapshot with annotation (theme: '${theme}')`);
