@@ -78,7 +78,7 @@ export default {
   props: {
     bounds: {
       type: Object,
-      required: true
+      default: () => {}
     },
     telemetryObject: {
       type: Object,
