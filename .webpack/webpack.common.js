@@ -25,14 +25,11 @@ const packageDefinition = JSON.parse(fs.readFileSync(new URL('../package.json', 
 
 try {
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
-} catch (err) {
-  console.warn(REV_PARSE_ERROR, err);
-}
-
-try {
   gitBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 } catch (err) {
-  console.warn(REV_PARSE_ERROR, err);
+  console.warn(`${REV_PARSE_ERROR}
+  "${err}"
+  Continuing...`);
 }
 
 const projectRootDir = fileURLToPath(new URL('../', import.meta.url));
