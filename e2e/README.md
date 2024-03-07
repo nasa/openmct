@@ -516,6 +516,30 @@ test.describe('foo test suite', () => {
 - Working with multiple pages
 There are instances where multiple browser pages will needed to verify multi-page or multi-tab application behavior. Make sure to use the `@2p` annotation as well as name each page appropriately: i.e. `page1` and `page2` or `tab1` and `tab2` depending on the intended use case. Generally pages should be used unless testing `sharedWorker` code, specifically.
 
+- Working with file downloads and JSON data
+Open MCT has the capability of exporting certain objects in the form of a JSON file handled by the chrome browser. The best example of this type of test can be found in the exportAsJson test.
+
+```js
+const [download] = await Promise.all([
+  page.waitForEvent('download'), // Waits for the download event
+  page.getByLabel('Export as JSON').click() // Triggers the download
+]);
+
+// Wait for the download process to complete
+const path = await download.path();
+
+// Read the contents of the downloaded file using readFile from fs/promises
+const fileContents = await fs.readFile(path, 'utf8');
+const jsonData = JSON.parse(fileContents);
+
+// Use the function to retrieve the key
+const key = getFirstKeyFromOpenMctJson(jsonData);
+
+// Verify the contents of the JSON file
+expect(jsonData.openmct[key]).toHaveProperty('name', 'e2e folder');
+```
+
+
 ### Reporting
 
 Test Reporting is done through official Playwright reporters and the CI Systems which execute them.
