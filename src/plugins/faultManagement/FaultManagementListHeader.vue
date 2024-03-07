@@ -23,7 +23,7 @@
 <template>
   <div class="c-fault-mgmt-item-header c-fault-mgmt__list-header c-fault-mgmt__list">
     <div class="c-fault-mgmt-item-header c-fault-mgmt__checkbox">
-      <input type="checkbox" :checked="isSelectAll" @input="selectAll" />
+      <input type="checkbox" :checked="isSelectAll" @change="selectAll" />
     </div>
     <div
       class="c-fault-mgmt-item-header c-fault-mgmt__list-header-results c-fault-mgmt__list-severity"
