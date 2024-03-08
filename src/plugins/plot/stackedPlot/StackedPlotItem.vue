@@ -170,9 +170,13 @@ export default {
       //If this object is not persistable, then package it with it's parent
       const plotObject = this.getPlotObject();
 
+      if (plotObject === null) {
+        return;
+      }
+
       if (this.openmct.telemetry.isTelemetryObject(plotObject)) {
         this.subscribeToStaleness(plotObject);
-      } else if (!this.openmct.objects.isMissing(plotObject)) {
+      } else {
         // possibly overlay or other composition based plot
         this.composition = this.openmct.composition.get(plotObject);
 
@@ -218,6 +222,8 @@ export default {
       // If object is missing, warn
       if (this.openmct.objects.isMissing(this.childObject)) {
         console.warn('Missing domain object for stacked plot', this.childObject);
+
+        return null;
       }
       return this.childObject;
     },
