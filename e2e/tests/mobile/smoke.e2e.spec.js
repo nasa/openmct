@@ -34,6 +34,20 @@ Make no assumptions about the order that elements appear in the DOM.
 */
 
 import { expect, test } from '../../pluginFixtures.js';
+import percySnapshot from '@percy/playwright';
+
+test.describe('Visual Smoke tests for @mobile', () => {
+  test.beforeEach(async ({ page }) => {
+    //For now, this test is going to be hardcoded against './test-data/display_layout_with_child_layouts.json'
+    await page.goto('./');
+  });
+
+  test.only('Verify that My Items Tree appears @mobile', async ({ page }) => {
+    //My Items to be visible
+    await expect(page.getByRole('treeitem', { name: 'My Items' })).toBeVisible();
+    await percySnapshot(page, `Visual Mobile Smoke Test`);
+  });
+});
 
 test.describe('Smoke tests for @mobile', () => {
   test.beforeEach(async ({ page }) => {
