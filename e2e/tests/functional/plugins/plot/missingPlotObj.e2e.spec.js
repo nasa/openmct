@@ -24,139 +24,60 @@
 Tests to verify log plot functionality when objects are missing
 */
 
-import { expandTreePaneItemByName } from '../../../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Handle missing object for plots', () => {
-  test('Displays empty div for missing stacked plot item', async ({
-    page,
-    browserName,
-    openmctConfig
-  }) => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+  test('Displays empty div for missing stacked plot item', async ({ page, browserName }) => {
     // eslint-disable-next-line playwright/no-skipped-test
     test.skip(browserName === 'firefox', 'Firefox failing due to console events being missed');
 
-    const { myItemsFolderName } = openmctConfig;
-    const errorLogs = [];
+    let warningReceived = false;
 
     page.on('console', (message) => {
       if (message.type() === 'warning' && message.text().includes('Missing domain object')) {
-        errorLogs.push(message.text());
+        warningReceived = true;
       }
     });
 
-    //Make stacked plot
-    await makeStackedPlot(page, myItemsFolderName);
-
-    //Gets local storage and deletes the last sine wave generator in the stacked plot
-    const localStorage = await page.evaluate(() => window.localStorage);
-    const parsedData = JSON.parse(localStorage.mct);
-    const keys = Object.keys(parsedData);
-    const lastKey = keys[keys.length - 1];
-
-    delete parsedData[lastKey];
-
-    //Sets local storage with missing object
-    await page.evaluate(`window.localStorage.setItem('mct', '${JSON.stringify(parsedData)}')`);
-
-    //Reloads page and clicks on stacked plot
-    await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
-
-    //Verify Main section is there on load
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Stacked Plot');
-
-    //Check that there is only one stacked item plot with a plot, the missing one will be empty
-    await expect(page.locator('.c-plot--stacked-container:has(.gl-plot)')).toHaveCount(1);
-    //Verify that console.warn is thrown
-    expect(errorLogs).toHaveLength(1);
-  });
-});
-
-/**
- * This is used the create a stacked plot object
- * @private
- */
-async function makeStackedPlot(page, myItemsFolderName) {
-  // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-  await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-  // create stacked plot
-  await page.locator('button.c-create-button').click();
-  await page.locator('li[role="menuitem"]:has-text("Stacked Plot")').click();
-
-  await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-
-  // save the stacked plot
-  await saveStackedPlot(page);
-
-  // expand My Items
-  await expandTreePaneItemByName(page, myItemsFolderName);
-
-  const stackedPlotTreeItem = page
-    .getByRole('tree', {
-      name: 'Main Tree'
-    })
-    .getByRole('treeitem', {
-      name: 'Unnamed Stacked Plot'
+    const stackedPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Stacked Plot'
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: stackedPlot.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: stackedPlot.uuid
     });
 
-  // click on stacked plot
-  await stackedPlotTreeItem.click();
+    //Gets local storage and deletes the last sine wave generator in the stacked plot
+    const mct = await page.evaluate(() => window.localStorage.getItem('mct'));
+    const parsedData = JSON.parse(mct);
+    const key = Object.entries(parsedData).find(([, value]) => value.type === 'generator')?.[0];
 
-  // create a sinewave generator
-  await createSineWaveGenerator(page);
+    delete parsedData[key];
 
-  // click on stacked plot
-  await stackedPlotTreeItem.click();
+    //Sets local storage with missing object
+    const jsonData = JSON.stringify(parsedData);
+    await page.evaluate((data) => {
+      window.localStorage.setItem('mct', data);
+    }, jsonData);
 
-  // create a second sinewave generator
-  await createSineWaveGenerator(page);
+    //Reloads page and clicks on stacked plot
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.goto(stackedPlot.url);
 
-  // click on stacked plot
-  await stackedPlotTreeItem.click();
-}
+    //Verify Main section is there on load
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(stackedPlot.name);
 
-/**
- * This is used to save a stacked plot object
- * @private
- */
-async function saveStackedPlot(page) {
-  // save stacked plot
-  await page
-    .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
-    .nth(1)
-    .click();
-
-  await Promise.all([
-    page.locator('text=Save and Finish Editing').click(),
-    //Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
-}
-
-/**
- * This is used to create a sine wave generator object
- * @private
- */
-async function createSineWaveGenerator(page) {
-  //Create sine wave generator
-  await page.locator('button.c-create-button').click();
-  await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
-
-  await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-}
+    //Check that there is only one stacked item plot with a plot, the missing one will be empty
+    await expect(page.getByLabel('Stacked Plot Item')).toHaveCount(1);
+    //Verify that console.warn was thrown
+    expect(warningReceived).toBe(true);
+  });
+});
