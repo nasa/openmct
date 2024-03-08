@@ -219,7 +219,7 @@ export default {
     },
 
     addChild(child) {
-      if (!this.openmct.objects.isMissing(child)) {
+      if (this.openmct.objects.isMissing(child)) {
         return;
       }
 

@@ -442,6 +442,8 @@ export default class TelemetryCollection extends EventEmitter {
     } else {
       this.timeKey = undefined;
 
+      // missing objects will never have a domain, if one happens to get through
+      // to this point this warning/notification does not apply
       if (!this.openmct.objects.isMissing(this.domainObject)) {
         this._warn(TIMESYSTEM_KEY_WARNING);
         this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
