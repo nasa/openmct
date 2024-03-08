@@ -93,7 +93,8 @@
   &__contents {
     flex: 1 1 100%;
     opacity: 1;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     pointer-events: inherit;
     transition: opacity 250ms ease 250ms;
 
