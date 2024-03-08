@@ -85,6 +85,7 @@ const SUBSCRIBE_STRATEGY = {
 export default class TelemetryAPI {
   #isGreedyLAD;
   #subscribeCache;
+  #hasReturnedFirstData;
 
   get SUBSCRIBE_STRATEGY() {
     return SUBSCRIBE_STRATEGY;
@@ -108,6 +109,7 @@ export default class TelemetryAPI {
     this.#isGreedyLAD = true;
     this.BatchingWebSocket = BatchingWebSocket;
     this.#subscribeCache = {};
+    this.#hasReturnedFirstData = false;
   }
 
   abortAllRequests() {
@@ -383,7 +385,10 @@ export default class TelemetryAPI {
     arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
     try {
       const telemetry = await provider.request(...arguments);
-
+      if (!this.#hasReturnedFirstData) {
+        this.#hasReturnedFirstData = true;
+        performance.mark('firstHistoricalDataReturned');
+      }
       return telemetry;
     } catch (error) {
       if (error.name !== 'AbortError') {

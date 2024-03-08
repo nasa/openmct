@@ -348,6 +348,7 @@ export class MCT extends EventEmitter {
       window.addEventListener('beforeunload', this.destroy);
 
       this.router.start();
+      performance.mark("openMctStart");
       this.emit('start');
     }
   }

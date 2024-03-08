@@ -64,6 +64,7 @@ class BatchingWebSocket extends EventTarget {
   #maxBatchSize;
   #applicationIsInitializing;
   #maxBatchWait;
+  #firstBatchReceived;
 
   constructor(openmct) {
     super();
@@ -77,6 +78,7 @@ class BatchingWebSocket extends EventTarget {
     this.#maxBatchSize = Number.POSITIVE_INFINITY;
     this.#maxBatchWait = ONE_SECOND;
     this.#applicationIsInitializing = true;
+    this.#firstBatchReceived = false;
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
     this.#worker.addEventListener('message', routeMessageToHandler);
@@ -229,6 +231,9 @@ class BatchingWebSocket extends EventTarget {
   #waitUntilIdleAndRequestNextBatch(batch) {
     requestIdleCallback(
       (state) => {
+        if (this.#firstBatchReceived === false) {
+          this.#firstBatchReceived = true;
+        }
         const now = Date.now();
         const waitedFor = now - this.start;
         if (state.didTimeout === true) {
