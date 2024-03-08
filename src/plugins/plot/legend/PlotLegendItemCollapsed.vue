@@ -22,7 +22,7 @@
 <template>
   <div
     class="plot-legend-item"
-    :aria-label="`Plot Legend Item for ${domainObject?.name}`"
+    :aria-label="`Plot Legend Item for ${seriesName}`"
     :class="{
       'is-stale': isStale,
       'is-status--missing': isMissing
@@ -36,9 +36,8 @@
       @mouseover.ctrl="showToolTip"
       @mouseleave="hideToolTip"
     >
-      <span class="plot-series-color-swatch" :style="{ 'background-color': colorAsHexString }">
-      </span>
-      <span class="is-status__indicator" title="This item is missing or suspect"></span>
+      <span class="plot-series-color-swatch" :style="{ 'background-color': colorAsHexString }" />
+      <span class="is-status__indicator" title="This item is missing or suspect" />
       <span class="plot-series-name">{{ nameWithUnit }}</span>
     </div>
     <div
@@ -89,6 +88,7 @@ export default {
       isMissing: false,
       colorAsHexString: '',
       nameWithUnit: '',
+      seriesName: '',
       formattedYValue: '',
       formattedXValue: '',
       mctLimitStateClass: '',
@@ -206,6 +206,9 @@ export default {
       const seriesIndexToRemove = this.seriesModels.findIndex(
         (series) => series.keyString === seriesToRemove.keyString
       );
+      if (seriesIndexToRemove === -1) {
+        return;
+      }
       this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     getSeries(keyStringToFind) {
@@ -220,6 +223,7 @@ export default {
 
       this.isMissing = seriesObject.domainObject.status === 'missing';
       this.colorAsHexString = seriesObject.get('color').asHexString();
+      this.seriesName = seriesObject.domainObject.name;
       this.nameWithUnit = seriesObject.nameWithUnit();
 
       const closest = seriesObject.closest;
