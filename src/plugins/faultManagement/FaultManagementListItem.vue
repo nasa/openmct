@@ -23,7 +23,12 @@
 <template>
   <div class="c-fault-mgmt__list data-selectable" :class="classesFromState">
     <div class="c-fault-mgmt-item c-fault-mgmt__list-checkbox">
-      <input type="checkbox" :checked="isSelected" @input="toggleSelected" />
+      <input
+        type="checkbox"
+        :aria-label="checkBoxAriaLabel"
+        :checked="isSelected"
+        @change="toggleSelected"
+      />
     </div>
     <div class="c-fault-mgmt-item">
       <div
@@ -60,6 +65,7 @@
       <button
         class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
         title="Disposition Actions"
+        aria-label="Disposition Actions"
         @click="showActionMenu"
       ></button>
     </div>
@@ -86,13 +92,14 @@ export default {
     },
     isSelected: {
       type: Boolean,
-      default: () => {
-        return false;
-      }
+      default: false
     }
   },
-  emits: ['acknowledge-selected', 'shelve-selected', 'toggle-selected'],
+  emits: ['acknowledge-selected', 'shelve-selected', 'toggle-selected', 'clear-all-selected'],
   computed: {
+    checkBoxAriaLabel() {
+      return `Select fault: ${this.fault.name}`;
+    },
     classesFromState() {
       const exclusiveStates = [
         {
@@ -171,6 +178,7 @@ export default {
           name: 'Acknowledge',
           description: '',
           onItemClicked: (e) => {
+            this.clearAllSelected();
             this.$emit('acknowledge-selected', [this.fault]);
           }
         },
@@ -179,6 +187,7 @@ export default {
           name: 'Shelve',
           description: '',
           onItemClicked: () => {
+            this.clearAllSelected();
             this.$emit('shelve-selected', [this.fault], { shelved: true });
           }
         },
@@ -188,6 +197,7 @@ export default {
           name: 'Unshelve',
           description: '',
           onItemClicked: () => {
+            this.clearAllSelected();
             this.$emit('shelve-selected', [this.fault], { shelved: false });
           }
         }
@@ -202,6 +212,9 @@ export default {
       };
 
       this.$emit('toggle-selected', faultData);
+    },
+    clearAllSelected() {
+      this.$emit('clear-all-selected');
     }
   }
 };

@@ -66,7 +66,7 @@ test.describe('Timer', () => {
   });
 });
 
-test.describe('Timer with target date', () => {
+test.describe('Timer with target date @clock', () => {
   let timer;
 
   test.beforeEach(async ({ page }) => {

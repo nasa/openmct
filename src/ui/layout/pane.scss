@@ -60,7 +60,7 @@
       transition: opacity 150ms ease;
       opacity: 0;
       pointer-events: none;
-      overflow: hidden;
+      overflow: hidden; // Prevents toolbar from extending into Inspector
 
       > * {
         min-width: 0 !important;
@@ -93,6 +93,7 @@
   &__contents {
     flex: 1 1 100%;
     opacity: 1;
+    overflow: hidden;
     pointer-events: inherit;
     transition: opacity 250ms ease 250ms;
 
