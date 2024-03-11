@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
-import { expect, test } from '../../baseFixtures.js';
+import { createDomainObjectWithDefaults } from '../../../appActions.js';
+import { expect, test } from '../../../baseFixtures.js';
 
 const loremIpsum = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Molestie at elementum eu facilisis sed. Feugiat pretium nibh ipsum consequat. Amet consectetur adipiscing elit duis tristique sollicitudin nibh sit amet. Eget nullam non nisi est sit amet. A pellentesque sit amet porttitor eget dolor morbi non arcu. Ullamcorper sit amet risus nullam eget felis eget nunc. In tellus integer feugiat scelerisque varius morbi enim nunc. Ac feugiat sed lectus vestibulum mattis ullamcorper. Nulla facilisi morbi tempus iaculis urna id volutpat. Massa vitae tortor condimentum lacinia quis vel eros donec. Ornare quam viverra orci sagittis eu. Vestibulum sed arcu non odio. In egestas erat imperdiet sed euismod nisi porta lorem. Vitae auctor eu augue ut lectus arcu bibendum at. Donec adipiscing tristique risus nec feugiat in fermentum posuere urna. Velit euismod in pellentesque massa placerat duis ultricies. Nulla facilisi nullam vehicula ipsum a arcu cursus vitae. Aliquam malesuada bibendum arcu vitae elementum curabitur.
 Vel eros donec ac odio tempor orci. Et netus et malesuada fames ac turpis egestas sed tempus. Turpis egestas pretium aenean pharetra magna ac placerat. Euismod elementum nisi quis eleifend. Vitae auctor eu augue ut lectus arcu. At imperdiet dui accumsan sit amet nulla facilisi. Est velit egestas dui id ornare arcu odio ut sem. Ornare arcu dui vivamus arcu felis. Luctus venenatis lectus magna fringilla. At elementum eu facilisis sed. Tristique et egestas quis ipsum suspendisse ultrices gravida dictum. Enim eu turpis egestas pretium aenean pharetra magna ac placerat. Lobortis scelerisque fermentum dui faucibus in. Tempor orci eu lobortis elementum nibh tellus molestie nunc non. Dignissim convallis aenean et tortor at risus. Enim tortor at auctor urna nunc id cursus. Libero volutpat sed cras ornare arcu dui vivamus. Scelerisque fermentum dui faucibus in ornare quam viverra.
@@ -34,7 +34,8 @@ test.describe('Inspector tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
-  test('Content in inspector can be scrolled to vertically', async ({ page, openmctConfig }) => {
+
+  test('Content in inspector can be scrolled to vertically', async ({ page }) => {
     const folderWithOverflowingTitle = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: loremIpsum
@@ -44,7 +45,7 @@ test.describe('Inspector tests', () => {
 
     const inspectorContentLocator = page.getByRole('tabpanel', { name: 'Inspector Views' });
 
-    await expect(inspectorContentLocator).toBeinViewport();
+    await expect(inspectorContentLocator).toBeInViewport();
     // but not all the way in viewport
     await expect(inspectorContentLocator).not.toBeInViewport({ ratio: 0.9 });
   });
