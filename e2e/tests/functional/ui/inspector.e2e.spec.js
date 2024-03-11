@@ -44,9 +44,27 @@ test.describe('Inspector tests', () => {
     await page.goto(folderWithOverflowingTitle.url);
 
     const inspectorContentLocator = page.getByRole('tabpanel', { name: 'Inspector Views' });
+    const inspectorPropertiesList = page.getByRole('list', {
+      name: 'Inspector Properties Details'
+    });
+    const firstInspectorPropertyValue = inspectorPropertiesList
+      .getByRole('listitem')
+      .first()
+      .getByLabel('value', { exact: false });
+    const lastInspectorPropertyValue = inspectorPropertiesList
+      .getByRole('listitem')
+      .last()
+      .getByLabel('value', { exact: false });
 
+    // inspector content partially in viewport, but not all the way in viewport
     await expect(inspectorContentLocator).toBeInViewport();
-    // but not all the way in viewport
     await expect(inspectorContentLocator).not.toBeInViewport({ ratio: 0.9 });
+
+    await expect(firstInspectorPropertyValue).toBeInViewport();
+    await expect(lastInspectorPropertyValue).not.toBeInViewport();
+
+    await lastInspectorPropertyValue.scrollIntoViewIfNeeded();
+
+    await expect(lastInspectorPropertyValue).toBeInViewport();
   });
 });
