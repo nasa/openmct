@@ -35,7 +35,7 @@
   &__handle,
   &__label {
     // __handle and __label don't appear in mobile
-    // display: none;
+    display: none;
   }
 
   &__header {
@@ -82,6 +82,9 @@
     padding-top: $interiorMargin;
     padding-bottom: $interiorMargin;
     min-height: 30px; // For Recents holder
+    body.mobile & {
+      max-height: 50vh;
+    }
 
     &.l-pane--collapsed {
       padding-top: 0 !important;
@@ -370,3 +373,17 @@
     }
   } // Ends .body.desktop
 } // Ends .l-pane
+
+body.mobile {
+  .l-pane__header{
+    > * {
+      display: block !important;
+      @include ellipsize();
+      @include userSelectNone();
+      text-transform: uppercase;
+    }
+    .l-pane__label{
+      margin-right: auto;
+    }
+  }
+}
