@@ -64,7 +64,7 @@
     "moment": "2.30.1",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.41",
-    "npm-run-all2": "6.1.1",
+    "npm-run-all2": "6.1.2",
     "nyc": "15.1.0",
     "painterro": "1.2.87",
     "plotly.js-basic-dist-min": "2.29.1",
