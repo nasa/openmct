@@ -29,27 +29,29 @@
         class="c-click-icon c-overlay__close-button icon-x"
         @click.stop="destroy"
       ></button>
-      <div
-        ref="element"
-        class="c-overlay__contents js-notebook-snapshot-item-wrapper"
-        tabindex="0"
-        aria-modal="true"
-        aria-label="Overlay"
-        role="dialog"
-      ></div>
-      <div v-if="buttons" class="c-overlay__button-bar">
-        <button
-          v-for="(button, index) in buttons"
-          ref="buttons"
-          :key="index"
-          class="c-button js-overlay__button"
+      <div class="c-overlay__content-wrapper">
+        <div
+          ref="element"
+          class="c-overlay__contents js-notebook-snapshot-item-wrapper"
           tabindex="0"
-          :class="{ 'c-button--major': focusIndex === index }"
-          @focus="focusIndex = index"
-          @click="buttonClickHandler(button.callback)"
-        >
-          {{ button.label }}
-        </button>
+          aria-modal="true"
+          aria-label="Overlay"
+          role="dialog"
+        ></div>
+        <div v-if="buttons" class="c-overlay__button-bar">
+          <button
+            v-for="(button, index) in buttons"
+            ref="buttons"
+            :key="index"
+            class="c-button js-overlay__button"
+            tabindex="0"
+            :class="{ 'c-button--major': focusIndex === index }"
+            @focus="focusIndex = index"
+            @click="buttonClickHandler(button.callback)"
+          >
+            {{ button.label }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

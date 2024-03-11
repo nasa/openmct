@@ -43,7 +43,7 @@ const getRandom = {
   }
 };
 
-function shelveFault(
+export function shelveFault(
   fault,
   opts = {
     shelved: true,
@@ -58,11 +58,11 @@ function shelveFault(
   }, opts.shelveDuration);
 }
 
-function acknowledgeFault(fault) {
+export function acknowledgeFault(fault) {
   fault.acknowledged = true;
 }
 
-function randomFaults(staticFaults, count = 5) {
+export function randomFaults(staticFaults, count = 5) {
   let faults = [];
 
   for (let x = 1, y = count + 1; x < y; x++) {
@@ -71,9 +71,3 @@ function randomFaults(staticFaults, count = 5) {
 
   return faults;
 }
-
-export default {
-  randomFaults,
-  shelveFault,
-  acknowledgeFault
-};
