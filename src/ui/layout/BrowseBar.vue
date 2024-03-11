@@ -166,7 +166,7 @@ export default {
       }
     }
   },
-  data: function () {
+  data() {
     return {
       notebookTypes: [],
       showViewMenu: false,
@@ -184,19 +184,21 @@ export default {
       return this.status ? `is-status--${this.status}` : '';
     },
     supportsIndependentTime() {
-      const viewKey = this.getViewKey();
-
       return (
-        this.domainObject &&
+        this.domainObject?.identifier &&
         !this.openmct.objects.isMissing(this.domainObject) &&
-        SupportedViewTypes.includes(viewKey)
+        SupportedViewTypes.includes(this.viewKey)
       );
     },
     currentView() {
       return this.views.filter((v) => v.key === this.viewKey)[0] || {};
     },
     views() {
-      if (!this.domainObject || (this.domainObject && this.openmct.router.started !== true)) {
+      if (this.domainObject && this.openmct.router.started === false) {
+        return [];
+      }
+
+      if (!this.domainObject) {
         return [];
       }
 
@@ -213,7 +215,7 @@ export default {
       return toRaw(this.domainObject) && this.parentUrl !== '/browse';
     },
     parentUrl() {
-      const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+      const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject?.identifier);
       const hash = this.openmct.router.getCurrentLocation().path;
 
       return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
@@ -282,7 +284,7 @@ export default {
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
   },
-  mounted: function () {
+  mounted() {
     document.addEventListener('click', this.closeViewAndSaveMenu);
     this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
     window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
@@ -291,7 +293,7 @@ export default {
       this.isEditing = isEditing;
     });
   },
-  beforeUnmount: function () {
+  beforeUnmount() {
     if (this.mutationObserver) {
       this.mutationObserver();
     }
@@ -331,9 +333,6 @@ export default {
     },
     edit() {
       this.openmct.editor.edit();
-    },
-    getViewKey() {
-      return this.viewKey;
     },
     promptUserandCancelEditing() {
       let dialog = this.openmct.overlays.dialog({

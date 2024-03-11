@@ -158,19 +158,13 @@ export default {
       complexContent,
       notebookEnabled: this.openmct.types.get('notebook'),
       statusBarItems: [],
-      status: ''
+      status: '',
+      supportsIndependentTime: false
     };
   },
   computed: {
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
-    },
-    supportsIndependentTime() {
-      return (
-        this.domainObject &&
-        !this.openmct.objects.isMissing(this.domainObject) &&
-        SupportedViewTypes.includes(this.getViewKey())
-      );
     }
   },
   mounted() {
@@ -188,6 +182,9 @@ export default {
       this.soViewResizeObserver = new ResizeObserver(this.resizeSoView);
       this.soViewResizeObserver.observe(this.$refs.soView);
     }
+
+    const viewKey = this.$refs.objectView?.viewKey;
+    this.supportsIndependentTime = this.domainObject && SupportedViewTypes.includes(viewKey);
   },
   beforeUnmount() {
     this.removeStatusListener();
@@ -252,9 +249,6 @@ export default {
       }
 
       this.widthClass = wClass.trimStart();
-    },
-    getViewKey() {
-      return this.$refs.objectView?.viewKey;
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
