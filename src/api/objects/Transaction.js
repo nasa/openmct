@@ -47,9 +47,9 @@ export default class Transaction {
     return Promise.all(promiseArray);
   }
 
-  createDirtyObjectPromise(object, action) {
+  createDirtyObjectPromise(object, action, ...args) {
     return new Promise((resolve, reject) => {
-      action(object)
+      action(object, ...args)
         .then((success) => {
           const key = this.objectAPI.makeKeyString(object.identifier);
 
@@ -75,10 +75,10 @@ export default class Transaction {
 
   _clear() {
     const promiseArray = [];
-    const refresh = this.objectAPI.refresh.bind(this.objectAPI);
+    const action = (obj) => this.objectAPI.refresh(obj, true);
 
     Object.values(this.dirtyObjects).forEach((object) => {
-      promiseArray.push(this.createDirtyObjectPromise(object, refresh));
+      promiseArray.push(this.createDirtyObjectPromise(object, action));
     });
 
     return Promise.all(promiseArray);

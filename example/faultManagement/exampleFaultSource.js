@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from './utils.js';
+import { acknowledgeFault, randomFaults, shelveFault } from './utils.js';
 
 export default function (staticFaults = false) {
   return function install(openmct) {
     openmct.install(openmct.plugins.FaultManagement());
 
-    const faultsData = utils.randomFaults(staticFaults);
+    const faultsData = randomFaults(staticFaults);
 
     openmct.faults.addProvider({
       request(domainObject, options) {
@@ -44,14 +44,14 @@ export default function (staticFaults = false) {
         return domainObject.type === 'faultManagement';
       },
       acknowledgeFault(fault, { comment = '' }) {
-        utils.acknowledgeFault(fault);
+        acknowledgeFault(fault);
 
         return Promise.resolve({
           success: true
         });
       },
       shelveFault(fault, duration) {
-        utils.shelveFault(fault, duration);
+        shelveFault(fault, duration);
 
         return Promise.resolve({
           success: true

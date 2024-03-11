@@ -12,6 +12,9 @@
   &:before {
     // Mag glass icon
     content: $glyph-icon-magnify;
+    body.mobile & { // Make search icon stand out in mobile
+      opacity: 1;
+    }
   }
 
   &__use-regex {
@@ -47,15 +50,26 @@
     display: none;
     order: 99;
     padding: 1px 0;
+    body.mobile & {
+      display: block;
+    }
+
   }
 
   &.is-active {
+    body.mobile & { // In mobile, persist the expanded search bar instead of collapsing upon clicking away
+      background-color: rgba($colorHeadFg, 0.2) !important; 
+      width: 50vw !important;
+    }
     .c-search__use-regex {
       margin-left: 0;
     }
 
     &:before {
       width: 0;
+      body.mobile & {
+        width: auto;
+      }
     }
 
     input[type='text'],

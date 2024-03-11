@@ -47,7 +47,7 @@ if (document.currentScript) {
  * @property {*} inspectorViews
  * @property {*} propertyEditors
  * @property {*} toolbars
- * @property {*} types
+ * @property {import('./src/api/types/TypeRegistry').default} types
  * @property {import('./src/api/objects/ObjectAPI').default} objects
  * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
  * @property {import('./src/api/indicators/IndicatorAPI').default} indicators
@@ -67,6 +67,7 @@ if (document.currentScript) {
  * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
  * @property {{(plugin: OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
+ * @property {{(assetPath: string) => void}} setAssetPath
  * @property {{(domElement: HTMLElement, isHeadlessMode: boolean) => void}} start
  * @property {{() => void}} startHeadless
  * @property {{() => void}} destroy

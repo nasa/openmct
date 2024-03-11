@@ -91,9 +91,16 @@
         </div>
       </li>
       <li class="grid-row">
-        <div class="grid-cell label" title="Display limit lines">Limit lines</div>
+        <div id="limit-lines-checkbox" class="grid-cell label" title="Display limit lines">
+          Limit lines
+        </div>
         <div class="grid-cell value">
-          <input v-model="limitLines" type="checkbox" @change="updateForm('limitLines')" />
+          <input
+            v-model="limitLines"
+            aria-labelledby="limit-lines-checkbox"
+            type="checkbox"
+            @change="updateForm('limitLines')"
+          />
         </div>
       </li>
       <li v-show="markers || alarmMarkers" class="grid-row">
@@ -191,7 +198,7 @@ export default {
       return this.series.get('color').asHexString();
     }
   },
-  mounted() {
+  created() {
     this.initialize();
 
     this.status = this.openmct.status.get(this.series.domainObject.identifier);
@@ -206,7 +213,7 @@ export default {
     }
   },
   methods: {
-    initialize: function () {
+    initialize() {
       this.fields = [
         {
           modelProp: 'yKey',

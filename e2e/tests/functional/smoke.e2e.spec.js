@@ -48,7 +48,7 @@ test('Verify that the create button appears and that the Folder Domain Object is
   await expect(page.locator(':nth-match(:text("Folder"), 2)')).toBeEnabled();
 });
 
-test('Verify that My Items Tree appears @ipad', async ({ page, openmctConfig }) => {
+test('Verify that My Items Tree appears', async ({ page, openmctConfig }) => {
   const { myItemsFolderName } = openmctConfig;
   //Go to baseURL
   await page.goto('./');

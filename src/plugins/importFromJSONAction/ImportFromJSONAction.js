@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
+import { parseKeyString } from 'objectUtils';
 import { filter__proto__ } from 'utils/sanitization';
 import { v4 as uuid } from 'uuid';
 
@@ -158,7 +158,7 @@ export default class ImportAsJSONAction {
         key: uuid()
       };
 
-      const oldId = objectUtils.parseKeyString(domainObjectId);
+      const oldId = parseKeyString(domainObjectId);
 
       tree = this._rewriteId(oldId, newId, tree);
     }, this);
