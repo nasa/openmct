@@ -219,12 +219,6 @@ export default {
     },
     getPlotObject() {
       this.checkPlotConfiguration();
-      // If object is missing, warn
-      if (this.openmct.objects.isMissing(this.childObject)) {
-        console.warn('Missing domain object for stacked plot', this.childObject);
-
-        return null;
-      }
       return this.childObject;
     },
     checkPlotConfiguration() {

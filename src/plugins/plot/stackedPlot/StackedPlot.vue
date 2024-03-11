@@ -220,6 +220,7 @@ export default {
 
     addChild(child) {
       if (this.openmct.objects.isMissing(child)) {
+        console.warn('Missing domain object for stacked plot: ', child);
         return;
       }
 
