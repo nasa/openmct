@@ -131,7 +131,10 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await setIndependentTimeConductorBounds(page, startBoundString, endBoundString);
+      await setIndependentTimeConductorBounds(page, {
+        start: startBoundString,
+        end: endBoundString
+      });
       expect(await activityBounds.count()).toEqual(1);
     });
 
@@ -160,7 +163,10 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await setIndependentTimeConductorBounds(page, startBoundString, endBoundString);
+      await setIndependentTimeConductorBounds(page, {
+        start: startBoundString,
+        end: endBoundString
+      });
 
       // Verify that two events are displayed
       expect(await activityBounds.count()).toEqual(2);

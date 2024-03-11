@@ -25,7 +25,18 @@
     <div class="c-inspect-properties">
       <div class="c-inspect-properties__header">Numeric Data</div>
     </div>
-    <div ref="numericDataView"></div>
+    <div ref="numericDataView">
+      <TelemetryFrame
+        v-for="plotObject of plotObjects"
+        :key="plotObject.identifier.key"
+        :bounds="bounds"
+        :telemetry-object="plotObject"
+        :path="[plotObject]"
+        :render-when-visible="plotObject.renderWhenVisible"
+      >
+        <Plot />
+      </TelemetryFrame>
+    </div>
 
     <div v-if="!hasNumericData">
       {{ noNumericDataText }}
@@ -33,13 +44,15 @@
   </div>
 </template>
 <script>
-import mount from 'utils/mount';
-
 import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 import Plot from '../plot/PlotView.vue';
 import TelemetryFrame from './TelemetryFrame.vue';
 
 export default {
+  components: {
+    TelemetryFrame,
+    Plot
+  },
   inject: ['openmct', 'domainObject', 'timeFormatter'],
   props: {
     bounds: {
@@ -90,16 +103,19 @@ export default {
       this.clearPlots();
 
       this.unregisterTimeContextList = [];
-      this.componentsList = [];
-      this.elementsList = [];
       this.visibilityObservers = [];
 
       this.telemetryKeys.forEach(async (telemetryKey) => {
         const plotObject = await this.openmct.objects.get(telemetryKey);
+        const visibilityObserver = new VisibilityObserver(
+          this.$refs.numericDataView,
+          this.openmct.element
+        );
+        plotObject.renderWhenVisible = visibilityObserver.renderWhenVisible;
 
+        this.visibilityObservers.push(visibilityObserver);
         this.plotObjects.push(plotObject);
         this.unregisterTimeContextList.push(this.setIndependentTimeContextForComponent(plotObject));
-        this.renderPlot(plotObject);
       });
     },
     setIndependentTimeContextForComponent(plotObject) {
@@ -110,63 +126,14 @@ export default {
       // set the time context of the object to the selected time range
       return this.openmct.time.addIndependentContext(keyString, this.bounds);
     },
-    renderPlot(plotObject) {
-      const wrapper = document.createElement('div');
-      const visibilityObserver = new VisibilityObserver(wrapper, this.openmct.element);
-
-      const { destroy } = mount(
-        {
-          components: {
-            TelemetryFrame,
-            Plot
-          },
-          provide: {
-            openmct: this.openmct,
-            path: [plotObject],
-            renderWhenVisible: visibilityObserver.renderWhenVisible
-          },
-          data() {
-            return {
-              plotObject,
-              bounds: this.bounds
-            };
-          },
-          template: `<TelemetryFrame
-                      :bounds="bounds"
-                      :telemetry-object="plotObject"
-                    >
-                      <Plot />
-                    </TelemetryFrame>`
-        },
-        {
-          app: this.openmct.app,
-          element: wrapper
-        }
-      );
-
-      this.componentsList.push(destroy);
-      this.elementsList.push(wrapper);
-      this.visibilityObservers.push(visibilityObserver);
-      this.$refs.numericDataView.append(wrapper);
-    },
     clearPlots() {
-      if (this.componentsList?.length) {
-        this.componentsList.forEach((destroy) => destroy());
-        delete this.componentsList;
-      }
-
-      if (this.elementsList?.length) {
-        this.elementsList.forEach((element) => element.remove());
-        delete this.elementsList;
-      }
-
       if (this.visibilityObservers?.length) {
         this.visibilityObservers.forEach((visibilityObserver) => visibilityObserver.destroy());
         delete this.visibilityObservers;
       }
 
       if (this.plotObjects?.length) {
-        this.plotObjects = [];
+        this.plotObjects.splice(0, this.plotObjects.length);
       }
 
       if (this.unregisterTimeContextList?.length) {

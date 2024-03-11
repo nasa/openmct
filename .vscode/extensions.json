@@ -5,7 +5,6 @@
   // List of extensions which should be recommended for users of this workspace.
   "recommendations": [
     "Vue.volar",
-    "Vue.vscode-typescript-vue-plugin",
     "dbaeumer.vscode-eslint",
     "rvest.vs-code-prettier-eslint"
   ],
