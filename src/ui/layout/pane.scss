@@ -149,7 +149,6 @@
         font-size: 0.8em;
         margin-bottom: $interiorMarginSm; // margin-bottom is needed for Tree and Inspector
         margin-right: $interiorMarginSm; // margin-right and margin-left are needed for Recent Objects
-        margin-left: $interiorMarginSm;
       }
 
       &:hover {
@@ -197,12 +196,20 @@
     &[class*='--collapsed'] { // For Recent Objects Button  
       &.collapse-horizontal {
         [class*='expand-button'] {
-          display: block;
+          display: flex;
+          align-items: center;
           position: absolute;
           top: 0;
           width: 100%;
           border-top-right-radius: $controlCr;
           border-top-left-radius: $controlCr;
+          border-bottom-right-radius: $controlCr;
+          border-bottom-left-radius: $controlCr;
+          padding: $interiorMarginSm $interiorMargin;
+          &:before{
+            font-size: 0.7em;
+            margin-bottom: 0px;
+          }
         }
       }
       [class*='expand-button'] {
