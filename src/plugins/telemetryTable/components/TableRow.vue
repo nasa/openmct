@@ -27,9 +27,6 @@
     :aria-label="ariaLabel"
     v-on="listeners"
   >
-    {{
-      rowIndex
-    }}
     <component
       :is="componentList[key]"
       v-for="(title, key) in headers"
