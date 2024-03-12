@@ -272,7 +272,7 @@ test.describe('Display Layout', () => {
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
 
     // ensure we can right click on the alpha-numeric widget and view historical data
-    await page.getByLabel('Sine', { exact: true }).click({
+    await page.getByLabel(/Alpha-numeric telemetry value of.*/).click({
       button: 'right'
     });
     await page.getByLabel('View Historical Data').click();
