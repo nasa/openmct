@@ -24,11 +24,13 @@
   <tr
     ref="tableRow"
     class="js-lad-table__body__row c-table__selectable-row"
+    aria-label="lad row"
     @click="clickedRow"
     @contextmenu.prevent="showContextMenu"
   >
     <td
       ref="tableCell"
+      aria-label="lad name"
       class="js-first-data"
       @mouseover.ctrl="showToolTip"
       @mouseleave="hideToolTip"
