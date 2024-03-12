@@ -55,6 +55,7 @@
 </template>
 
 <script>
+const ONE_HOUR = 60 * 60 * 1000;
 export default {
   inject: ['openmct', 'domainObject'],
   data() {
@@ -77,6 +78,10 @@ export default {
     selectItem(item, event) {
       event.stopPropagation();
       const bounds = this.openmct.time.getBounds();
+      const otherBounds = {
+        start: bounds.start - ONE_HOUR,
+        end: bounds.end + ONE_HOUR
+      };
       const selection = [
         {
           element: this.$el,
@@ -88,6 +93,9 @@ export default {
                 icon: item.type.cssClass
               },
               dataRanges: [
+                {
+                  bounds: otherBounds
+                },
                 {
                   bounds
                 }

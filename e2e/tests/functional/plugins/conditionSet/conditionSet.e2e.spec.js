@@ -286,7 +286,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    await page.click('button[title="Change the current view"]');
+    await page.getByLabel('Open the View Switcher Menu').click();
 
     await expect(page.getByRole('menuitem', { name: /Lad Table/ })).toBeHidden();
     await expect(page.getByRole('menuitem', { name: /Conditions View/ })).toBeVisible();

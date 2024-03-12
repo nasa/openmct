@@ -27,7 +27,8 @@
     <button
       class="c-icon-button c-button--menu"
       :class="currentView.cssClass"
-      title="Change the current view"
+      :title="viewSwitcherLabel"
+      :aria-label="viewSwitcherLabel"
       @click.prevent.stop="showMenu"
     >
       <span class="c-icon-button__label">
@@ -51,6 +52,11 @@ export default {
     }
   },
   emits: ['set-view'],
+  computed: {
+    viewSwitcherLabel() {
+      return 'Open the View Switcher Menu';
+    }
+  },
   methods: {
     setView(view) {
       this.$emit('set-view', view);
