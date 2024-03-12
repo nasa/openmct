@@ -70,7 +70,9 @@ export default {
   inject: ['openmct'],
   provide() {
     return {
-      domainObject: this.telemetryObject
+      domainObject: this.telemetryObject,
+      path: this.path,
+      renderWhenVisible: this.renderWhenVisible
     };
   },
   props: {
@@ -81,6 +83,14 @@ export default {
     telemetryObject: {
       type: Object,
       default: () => {}
+    },
+    path: {
+      type: Array,
+      default: () => []
+    },
+    renderWhenVisible: {
+      type: Function,
+      required: true
     }
   },
   data() {
@@ -110,7 +120,10 @@ export default {
         'tc.mode': 'fixed'
       };
       const newTabAction = this.openmct.actions.getAction('newTab');
-      newTabAction.invoke([sourceTelemObject], urlParams);
+      // No view context needed, so pass undefined.
+      // The urlParams arg will override the global time bounds with the data visualization
+      // plot bounds.
+      newTabAction.invoke([sourceTelemObject], undefined, urlParams);
       this.showMenu = false;
     },
     previewTelemetry() {

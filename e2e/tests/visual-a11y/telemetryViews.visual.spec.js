@@ -53,11 +53,11 @@ test.describe('Visual - Telemetry Views', () => {
     await page.goto(telemetry.url, { waitUntil: 'domcontentloaded' });
 
     //Click this button to see telemetry display options
-    await page.getByRole('button', { name: 'Plot' }).click();
+    await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Telemetry Table').click();
 
     //Get Table View in place
-    expect(await page.getByLabel('Expand Columns')).toBeInViewport();
+    await expect(page.getByLabel('Expand Columns')).toBeInViewport();
 
     await percySnapshot(page, `Default Telemetry Table View (theme: ${theme})`);
 

@@ -58,7 +58,7 @@
 const CONTEXT_MENU_ACTIONS = ['viewDatumAction', 'viewHistoricalData', 'remove'];
 const BLANK_VALUE = '---';
 
-import identifierToString from '/src/tools/url.js';
+import { objectPathToUrl } from '/src/tools/url.js';
 import PreviewAction from '@/ui/preview/PreviewAction.js';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
@@ -260,7 +260,7 @@ export default {
         event.preventDefault();
         this.preview(this.objectPath);
       } else {
-        const resultUrl = identifierToString(this.openmct, this.objectPath);
+        const resultUrl = objectPathToUrl(this.openmct, this.objectPath);
         this.openmct.router.navigate(resultUrl);
       }
     },
