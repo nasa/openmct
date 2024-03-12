@@ -24,9 +24,10 @@
     <button
       class="c-create-button c-button--menu c-button--major icon-plus"
       :aria-disabled="isEditing"
+      aria-labelledby="create-button-label"
       @click.prevent.stop="showCreateMenu"
     >
-      <span class="c-button__label">Create</span>
+      <span id="create-button-label" class="c-button__label">Create</span>
     </button>
   </div>
 </template>

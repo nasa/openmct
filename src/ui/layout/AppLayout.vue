@@ -145,7 +145,11 @@
           :show-edit-view="true"
           @change-action-collection="setActionCollection"
         />
-        <component :is="conductorComponent" class="l-shell__time-conductor" />
+        <component
+          :is="conductorComponent"
+          class="l-shell__time-conductor"
+          aria-label="Global Time Conductor"
+        />
       </pane>
       <pane
         class="l-shell__pane-inspector l-pane--holds-multipane"

@@ -32,6 +32,7 @@
         'has-complex-content': complexContent
       }
     ]"
+    :aria-label="ariaLabel"
   >
     <div class="c-so-view__header">
       <div class="c-object-label" :class="[statusClass]">
@@ -60,6 +61,7 @@
           'c-so-view__frame-controls--no-frame': !hasFrame,
           'has-complex-content': complexContent
         }"
+        :aria-label="`${ariaLabel} Controls`"
       >
         <div v-if="supportsIndependentTime" class="c-conductor-holder--compact">
           <independent-time-conductor :domain-object="domainObject" :object-path="objectPath" />
@@ -165,6 +167,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return `${this.domainObject.name} Frame`;
+    },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
     }
