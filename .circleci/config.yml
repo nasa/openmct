@@ -28,7 +28,7 @@ commands:
           node-version: << parameters.node-version >>
       - node/install:
           node-version: << parameters.node-version >>
-      - run: npm install --no-audit --progress=false
+      - run: npm ci --no-audit --progress=false
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
     parameters:
