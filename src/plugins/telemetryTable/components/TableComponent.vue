@@ -1068,7 +1068,7 @@ export default {
           let row = allRows[i];
           row.marked = true;
 
-          if (row !== baseRow) {
+          if (row !== baseRow && this.markedRows.indexOf(row) === -1) {
             this.markedRows.push(row);
           }
         }
