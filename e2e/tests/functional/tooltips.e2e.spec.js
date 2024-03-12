@@ -109,7 +109,7 @@ test.describe('Verify tooltips', () => {
 
     async function getToolTip(object) {
       await page.locator('.c-create-button').hover();
-      await page.getByRole('cell', { name: object.name }).hover();
+      await page.getByLabel('lad name').getByText(object.name).hover();
       let tooltipText = await page.locator('.c-tooltip').textContent();
       return tooltipText.replace('\n', '').trim();
     }
