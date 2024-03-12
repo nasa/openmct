@@ -392,7 +392,7 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
     await page.waitForURL(/tc\.mode=local/);
   }
-  await page.getByLabel('Submit time offsets').click();
+  await page.getByLabel('Submit time offsets').or(page.getByLabel('Submit time bounds')).click();
 }
 
 /**
