@@ -174,6 +174,6 @@ test.describe('AppActions', () => {
       type: 'Folder'
     });
     await openObjectTreeContextMenu(page, folder.url);
-    await expect(page.getByLabel('Menu')).toBeVisible();
+    await expect(page.getByLabel(`${folder.name} Context Menu`)).toBeVisible();
   });
 });

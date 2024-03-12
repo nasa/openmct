@@ -1,14 +1,14 @@
 <template>
   <form ref="fixedDeltaInput">
     <div class="c-tc-input-popup__input-grid">
-      <div class="pr-time-label"><em>Start</em> Date</div>
-      <div class="pr-time-label">Time</div>
-      <div class="pr-time-label"></div>
-      <div class="pr-time-label"><em>End</em> Date</div>
-      <div class="pr-time-label">Time</div>
-      <div class="pr-time-label"></div>
+      <div class="pr-time-label pr-time-label-start-date"><em>Start</em> Date</div>
+      <div class="pr-time-label pr-time-label-start-time">Time</div>
+      <div class="pr-time-label pr-time-label-end-date"><em>End</em> Date</div>
+      <div class="pr-time-label pr-time-label-end-time">Time</div>
 
-      <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+      <div
+        class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-start-date"
+      >
         <input
           ref="startDate"
           v-model="formattedBounds.start"
@@ -28,7 +28,7 @@
         />
       </div>
 
-      <div class="pr-time-input pr-time-input--time">
+      <div class="pr-time-input pr-time-input--time pr-time-input-start-time">
         <input
           ref="startTime"
           v-model="formattedBounds.startTime"
@@ -43,7 +43,9 @@
 
       <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-      <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+      <div
+        class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-end-date"
+      >
         <input
           ref="endDate"
           v-model="formattedBounds.end"
@@ -63,7 +65,7 @@
         />
       </div>
 
-      <div class="pr-time-input pr-time-input--time">
+      <div class="pr-time-input pr-time-input--time pr-time-input-end-time">
         <input
           ref="endTime"
           v-model="formattedBounds.endTime"

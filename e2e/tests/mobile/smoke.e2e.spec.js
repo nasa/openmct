@@ -34,42 +34,62 @@ Make no assumptions about the order that elements appear in the DOM.
 */
 
 import { expect, test } from '../../pluginFixtures.js';
-test('Verify that My Items Tree appears @mobile', async ({ page, openmctConfig }) => {
-  const { myItemsFolderName } = openmctConfig;
-  //Go to baseURL
-  await page.goto('./');
-  //My Items to be visible
-  await expect(page.getByRole('treeitem', { name: `${myItemsFolderName}` })).toBeVisible();
-});
-test('Verify that user can search @mobile', async ({ page }) => {
-  //For now, this test is going to be hardcoded against './test-data/display_layout_with_child_layouts.json'
-  await page.goto('./');
-  await page.getByRole('searchbox', { name: 'Search Input' }).click();
-  await page.getByRole('searchbox', { name: 'Search Input' }).fill('Parent Display Layout');
-  //Search Results appear in search modal
-  await expect(page.getByLabel('Object Results').getByText('Parent Display Layout')).toBeVisible();
-  //Clicking on the search result takes you to the object
-  await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
-  await page.getByTitle('Collapse Browse Pane').click();
-  await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
-});
-test('Remove Object and confirmation dialog @mobile', async ({ page }) => {
-  await page.goto('./');
-  await page.getByRole('searchbox', { name: 'Search Input' }).click();
-  await page.getByRole('searchbox', { name: 'Search Input' }).fill('Parent Display Layout');
-  //Search Results appear in search modal
-  //Clicking on the search result takes you to the object
-  await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
-  await page.getByTitle('Collapse Browse Pane').click();
-  await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
-  //Verify both objects are in view
-  await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
-  await expect(await page.getByLabel('Child Layout 2 Layout')).toBeVisible();
-  //Remove First Object to bring up confirmation dialog
-  await page.getByLabel('View menu items').nth(1).click();
-  await page.getByLabel('Remove').click();
-  await page.getByRole('button', { name: 'OK' }).click();
-  //Verify that the object is removed
-  await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
-  expect(await page.getByLabel('Child Layout 2 Layout').count()).toBe(0);
+
+test.describe('Smoke tests for @mobile', () => {
+  test.beforeEach(async ({ page }) => {
+    //For now, this test is going to be hardcoded against './test-data/display_layout_with_child_layouts.json'
+    await page.goto('./');
+  });
+
+  test('Verify that My Items Tree appears @mobile', async ({ page }) => {
+    //My Items to be visible
+    await expect(page.getByRole('treeitem', { name: 'My Items' })).toBeVisible();
+  });
+
+  test('Verify that user can search @mobile', async ({ page }) => {
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
+    await page.getByRole('searchbox', { name: 'Search Input' }).fill('Parent Display Layout');
+    //Search Results appear in search modal
+    await expect(
+      page.getByLabel('Object Results').getByText('Parent Display Layout')
+    ).toBeVisible();
+    //Clicking on the search result takes you to the object
+    await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
+    await page.getByTitle('Collapse Browse Pane').click();
+    await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
+  });
+
+  test('Verify that user can change time conductor @mobile', async ({ page }) => {
+    //Collapse Browse Pane to get more Time Conductor space
+    await page.getByLabel('Collapse Browse Pane').click();
+    //Open Time Conductor and change to Real Time Mode and set offset hour by 1 hour
+    // Disabling line because we're intentionally obscuring the text
+    // eslint-disable-next-line playwright/no-force-option
+    await page.getByLabel('Time Conductor Mode').click({ force: true });
+    await page.getByLabel('Time Conductor Mode Menu').click();
+    await page.getByLabel('Real-Time').click();
+    await page.getByLabel('Start offset hours').fill('01');
+    await page.getByLabel('Submit time offsets').click();
+    await expect(page.getByLabel('Start offset: 01:30:00')).toBeVisible();
+  });
+
+  test('Remove Object and confirmation dialog @mobile', async ({ page }) => {
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
+    await page.getByRole('searchbox', { name: 'Search Input' }).fill('Parent Display Layout');
+    //Search Results appear in search modal
+    //Clicking on the search result takes you to the object
+    await page.getByLabel('Object Results').getByText('Parent Display Layout').click();
+    await page.getByTitle('Collapse Browse Pane').click();
+    await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
+    //Verify both objects are in view
+    await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
+    await expect(await page.getByLabel('Child Layout 2 Layout')).toBeVisible();
+    //Remove First Object to bring up confirmation dialog
+    await page.getByLabel('View menu items').nth(1).click();
+    await page.getByLabel('Remove').click();
+    await page.getByRole('button', { name: 'OK' }).click();
+    //Verify that the object is removed
+    await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
+    expect(await page.getByLabel('Child Layout 2 Layout').count()).toBe(0);
+  });
 });
