@@ -41,7 +41,7 @@ test.describe('Telemetry Table', () => {
     });
     await page.goto(table.url);
     await setTimeConductorMode(page, false);
-    const rows = page.getByRole('row');
+    const rows = page.getByLabel('table content').getByLabel('Table Row');
     await expect(rows).toHaveCount(50);
   });
 
