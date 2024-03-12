@@ -67,7 +67,7 @@ test.describe('Style Inspector Options', () => {
     await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();
 
     // Select Stacked Layout Column
-    await page.getByLabel('Stacked Plot Frame').click();
+    await page.getByRole('group', { name: 'Stacked Plot Frame' }).click();
 
     // The overall Flex Layout or Stacked Plot itself MUST be style-able.
     await expect(page.getByRole('tab', { name: 'Styles' })).toBeVisible();

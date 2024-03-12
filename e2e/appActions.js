@@ -505,15 +505,14 @@ async function setTimeConductorBounds(page, startDate, endDate) {
  * @param {string} startDate
  * @param {string} endDate
  */
-async function setIndependentTimeConductorBounds(page, startDate, endDate) {
-  // Activate Independent Time Conductor in Fixed Time Mode
-  await page.getByRole('switch').click();
+async function setIndependentTimeConductorBounds(page, { start, end }) {
+  // Activate Independent Time Conductor
+  await page.getByLabel('Enable Independent Time Conductor').click();
 
   // Bring up the time conductor popup
-  await page.click('.c-conductor-holder--compact .c-compact-tc');
+  await page.getByLabel('Independent Time Conductor Settings').click();
   await expect(page.locator('.itc-popout')).toBeInViewport();
-
-  await setTimeBounds(page, startDate, endDate);
+  await setTimeBounds(page, start, end);
 
   await page.keyboard.press('Enter');
 }
