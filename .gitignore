@@ -47,6 +47,3 @@ index.html.bak
 .nyc_output
 coverage
 codecov
-
-# :(
-package-lock.json
