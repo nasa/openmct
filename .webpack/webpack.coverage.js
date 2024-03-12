@@ -8,7 +8,7 @@ import config from './webpack.dev.js';
 // eslint-disable-next-line no-undef
 const CI = process.env.CI === 'true';
 
-config.devtool = CI ? false : undefined;
+config.devtool = 'source-map';
 
 config.devServer.hot = false;
 
