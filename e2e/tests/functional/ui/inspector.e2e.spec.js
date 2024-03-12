@@ -63,7 +63,7 @@ test.describe('Inspector tests', () => {
     await expect(firstInspectorPropertyValue).toBeInViewport();
     await expect(lastInspectorPropertyValue).not.toBeInViewport();
 
-    await lastInspectorPropertyValue.scrollIntoViewIfNeeded();
+    await lastInspectorPropertyValue.click();
 
     await expect(lastInspectorPropertyValue).toBeInViewport();
   });
