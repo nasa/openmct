@@ -602,7 +602,7 @@ export default {
         this.rowLimit = rowLimit;
         this.table.updateRowLimit(rowLimit);
 
-        if (this.telemetryMode === telemetryMode) {
+        if (this.telemetryMode !== telemetryMode) {
           // need to clear and resubscribe, if different, handled below
           this.table.clearAndResubscribe();
         }
