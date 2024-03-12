@@ -5,11 +5,8 @@ information to pull requests.
 */
 
 import config from './webpack.dev.js';
-// eslint-disable-next-line no-undef
-const CI = process.env.CI === 'true';
 
 config.devtool = 'source-map';
-
 config.devServer.hot = false;
 
 config.module.rules.push({
