@@ -1,14 +1,20 @@
 /* eslint-disable no-undef */
 module.exports = {
-  extends: ['plugin:playwright/playwright-test'],
+  extends: ['plugin:playwright/recommended'],
   rules: {
     'playwright/max-nested-describe': ['error', { max: 1 }]
   },
   overrides: [
     {
-      files: ['tests/visual/*.spec.js'],
+      files: ['**/*.visual.spec.js'],
       rules: {
-        'playwright/no-wait-for-timeout': 'off'
+        'playwright/expect-expect': 'off'
+      }
+    },
+    {
+      files: ['**/*.perf.spec.js'],
+      rules: {
+        'playwright/expect-expect': 'off'
       }
     }
   ]

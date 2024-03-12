@@ -78,7 +78,7 @@ test.describe('Tabs View', () => {
     await page.getByLabel(`${sineWaveGenerator.name} tab`, { exact: true }).click();
 
     // ensure sine wave generator visible
-    expect(await page.locator('.c-plot').isVisible()).toBe(true);
+    await expect(page.locator('.c-plot')).toBeVisible();
 
     // now select notebook and clear animation calls
     await page.getByLabel(`${notebook.name} tab`, { exact: true }).click();

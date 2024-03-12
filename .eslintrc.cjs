@@ -4,7 +4,8 @@ module.exports = {
     browser: true,
     es6: true,
     jasmine: true,
-    amd: true
+    amd: true,
+    node: true
   },
   globals: {
     _: 'readonly'

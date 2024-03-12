@@ -152,7 +152,7 @@ test.describe('ExportAsJSON Disabled Actions', () => {
 test.describe('ExportAsJSON ProgressBar @couchdb', () => {
   let folder;
   test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Perform actions to create the domain object
     folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder'

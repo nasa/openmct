@@ -20,7 +20,13 @@ this source code distribution or the Licensing information page available
 at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="tooltip-wrapper" class="c-menu c-tooltip-wrapper" :style="toolTipLocationStyle">
+  <div
+    ref="tooltip-wrapper"
+    class="c-menu c-tooltip-wrapper"
+    :style="toolTipLocationStyle"
+    role="tooltip"
+    aria-live="polite"
+  >
     <div class="c-tooltip">
       {{ toolTipText }}
     </div>

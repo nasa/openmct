@@ -76,7 +76,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
         description: 'https://github.com/nasa/openmct/issues/7421'
       });
       //Navigate to baseURL with injected localStorage
-      await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+      await page.goto(conditionSetUrl, { waitUntil: 'domcontentloaded' });
 
       //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
       await expect
@@ -87,7 +87,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
       expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
 
       //Reload Page
-      await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+      await Promise.all([page.reload(), page.waitForLoadState('domcontentloaded')]);
 
       //Re-verify after reload
       await expect
@@ -100,7 +100,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
   test('condition set object can be modified on @localStorage', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
-    await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+    await page.goto(conditionSetUrl, { waitUntil: 'domcontentloaded' });
 
     //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
     await expect
@@ -151,7 +151,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
 
     //Reload Page
-    await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+    await Promise.all([page.reload(), page.waitForLoadState('domcontentloaded')]);
 
     //Verify Main section reflects updated Name Property
     await expect
@@ -213,7 +213,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
 
     //Feature?
     //Domain Object is still available by direct URL after delete
-    await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+    await page.goto(conditionSetUrl, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
   });
 });
