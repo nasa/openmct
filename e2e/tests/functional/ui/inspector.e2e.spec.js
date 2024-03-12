@@ -63,7 +63,11 @@ test.describe('Inspector tests', () => {
     await expect(firstInspectorPropertyValue).toBeInViewport();
     await expect(lastInspectorPropertyValue).not.toBeInViewport();
 
-    await lastInspectorPropertyValue.click();
+    // using page.mouse.wheel to scroll the inspector content by the height of the content
+    // because click and scrollIntoView will scroll even if scrollbar not available
+    await inspectorContentLocator.hover();
+    const offset = await inspectorContentLocator.evaluate((el) => el.offsetHeight);
+    await page.mouse.wheel(0, offset);
 
     await expect(lastInspectorPropertyValue).toBeInViewport();
   });
