@@ -75,8 +75,6 @@ test.describe('Visual - Example Imagery', () => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
 
     await setRealTimeMode(page, true);
-    //Temporary to close the dialog
-    await page.getByLabel('Submit time offsets').click();
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();
 
