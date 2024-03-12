@@ -44,7 +44,7 @@ test.describe('Visual - Notebook Snapshot @a11y', () => {
     await page.goto('./?hideTree=true&hideInspector=true', { waitUntil: 'domcontentloaded' });
   });
   test('Visual check for Snapshot Annotation', async ({ page, theme }) => {
-    await page.getByLabel('Take a Notebook Snapshot').click();
+    await page.getByLabel('Open the Notebook Snapshot Menu').click();
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
     await page.getByLabel('Show Snapshots').click();
 
