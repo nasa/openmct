@@ -35,7 +35,6 @@ import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
 const DEFAULT_DURATION_FORMATTER = 'duration';
-const RESIZE_POLL_INTERVAL = 200;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 
@@ -92,7 +91,6 @@ export default {
 
     //Respond to changes in conductor
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
-    this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
   },
   beforeUnmount() {
     clearInterval(this.resizeTimer);
