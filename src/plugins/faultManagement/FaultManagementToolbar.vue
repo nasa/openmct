@@ -24,20 +24,22 @@
   <div class="c-fault-mgmt__toolbar">
     <button
       class="c-icon-button icon-check"
-      title="Acknowledge selected faults"
+      :title="acknowledgeButtonLabel"
+      :aria-label="acknowledgeButtonLabel"
       :disabled="disableAcknowledge"
       @click="acknowledgeSelected"
     >
-      <div title="Acknowledge selected faults" class="c-icon-button__label">Acknowledge</div>
+      <div class="c-icon-button__label">Acknowledge</div>
     </button>
 
     <button
       class="c-icon-button icon-timer"
-      title="Shelve selected faults"
+      :title="shelveButtonLabel"
+      :aria-label="shelveButtonLabel"
       :disabled="disableShelve"
       @click="shelveSelected"
     >
-      <div title="Shelve selected items" class="c-icon-button__label">Shelve</div>
+      <div class="c-icon-button__label">Shelve</div>
     </button>
   </div>
 </template>
@@ -59,6 +61,14 @@ export default {
       disableAcknowledge: true,
       disableShelve: true
     };
+  },
+  computed: {
+    acknowledgeButtonLabel() {
+      return 'Acknowledge selected faults';
+    },
+    shelveButtonLabel() {
+      return 'Shelve selected faults';
+    }
   },
   watch: {
     selectedFaults(newSelectedFaults) {

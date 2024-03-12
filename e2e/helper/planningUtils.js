@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../appActions.js';
 import { expect } from '../pluginFixtures.js';
 
 /**
@@ -143,6 +144,18 @@ export function getLatestEndTime(planJson) {
 }
 
 /**
+ *
+ * @param {object} planJson
+ * @returns {object}
+ */
+export function getFirstActivity(planJson) {
+  const groups = Object.keys(planJson);
+  const firstGroupKey = groups[0];
+  const firstGroupItems = planJson[firstGroupKey];
+  return firstGroupItems[0];
+}
+
+/**
  * Uses the Open MCT API to set the status of a plan to 'draft'.
  * @param {import('@playwright/test').Page} page
  * @param {import('../../appActions').CreatedObjectInfo} plan
@@ -171,4 +184,56 @@ export async function addPlanGetInterceptor(page) {
       }
     });
   });
+}
+
+/**
+ * Create a Plan from JSON and add it to a Timelist and Navigate to the Plan view
+ * @param {import('@playwright/test').Page} page
+ */
+export async function createTimelistWithPlanAndSetActivityInProgress(page, planJson) {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+  const timelist = await createDomainObjectWithDefaults(page, {
+    name: 'Time List',
+    type: 'Time List'
+  });
+
+  await createPlanFromJSON(page, {
+    name: 'Test Plan',
+    json: planJson,
+    parent: timelist.uuid
+  });
+
+  // Ensure that all activities are shown in the expanded view
+  const groups = Object.keys(planJson);
+  const firstGroupKey = groups[0];
+  const firstGroupItems = planJson[firstGroupKey];
+  const firstActivityForPlan = firstGroupItems[0];
+  const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+  const startBound = firstActivityForPlan.start;
+  const endBound = lastActivity.end;
+
+  // Switch to fixed time mode with all plan events within the bounds
+  await page.goto(
+    `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
+  );
+
+  // Change the object to edit mode
+  await page.getByRole('button', { name: 'Edit Object' }).click();
+
+  // Find the display properties section in the inspector
+  await page.getByRole('tab', { name: 'View Properties' }).click();
+  // Switch to expanded view and save the setting
+  await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
+
+  // Click on the "Save" button
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+  const anActivity = page.getByRole('row').nth(0);
+
+  // Set the activity to in progress
+  await anActivity.click();
+  await page.getByRole('tab', { name: 'Activity' }).click();
+  await page.getByLabel('Activity Status', { exact: true }).selectOption({ label: 'In progress' });
 }
