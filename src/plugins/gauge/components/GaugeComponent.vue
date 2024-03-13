@@ -220,6 +220,7 @@
             lengthAdjust="spacing"
             text-anchor="middle"
             dominant-baseline="middle"
+            :aria-label="`gauge value of ${curVal}`"
             x="50%"
             y="50%"
           >

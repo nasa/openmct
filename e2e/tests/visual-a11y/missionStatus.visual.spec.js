@@ -32,12 +32,12 @@ test.describe('Mission Status Visual Tests @a11y', () => {
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Select Role')).toBeVisible();
-    // Description should be empty https://github.com/nasa/openmct/issues/6978
-    await expect(page.locator('c-message__action-text')).toBeHidden();
     // set role
     await page.getByRole('button', { name: 'Select', exact: true }).click();
     // dismiss role confirmation popup
     await page.getByRole('button', { name: 'Dismiss' }).click();
+    await page.getByLabel('Collapse Inspect Pane').click();
+    await page.getByLabel('Collapse Browse Pane').click();
   });
   test('Mission status panel', async ({ page, theme }) => {
     await page.getByLabel('Toggle Mission Status Panel').click();

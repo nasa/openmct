@@ -52,7 +52,7 @@
 import Moment from 'moment';
 import mount from 'utils/mount';
 
-import objectPathToUrl from '@/tools/url';
+import { objectPathToUrl } from '@/tools/url';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import ImageExporter from '../../../exporters/ImageExporter.js';

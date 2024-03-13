@@ -21,6 +21,7 @@
  *****************************************************************************/
 /* eslint-disable max-classes-per-file */
 export default function installWorker() {
+  const ONE_SECOND = 1000;
   const FALLBACK_AND_WAIT_MS = [1000, 5000, 5000, 10000, 10000, 30000];
 
   /**
@@ -44,6 +45,13 @@ export default function installWorker() {
     #currentWaitIndex = 0;
     #messageCallbacks = [];
     #wsUrl;
+    #reconnecting = false;
+    #worker;
+
+    constructor(worker) {
+      super();
+      this.#worker = worker;
+    }
 
     /**
      * Establish a new WebSocket connection to the given URL
@@ -62,6 +70,9 @@ export default function installWorker() {
       this.#isConnecting = true;
 
       this.#webSocket = new WebSocket(url);
+      //Exposed to e2e tests so that the websocket can be manipulated during tests. Cannot find any other way to do this.
+      // Playwright does not support forcing websocket state changes.
+      this.#worker.currentWebSocket = this.#webSocket;
 
       const boundConnected = this.#connected.bind(this);
       this.#webSocket.addEventListener('open', boundConnected);
@@ -100,12 +111,17 @@ export default function installWorker() {
     }
 
     #connected() {
-      console.debug('Websocket connected.');
+      console.info('Websocket connected.');
       this.#isConnected = true;
       this.#isConnecting = false;
       this.#currentWaitIndex = 0;
 
-      this.dispatchEvent(new Event('connected'));
+      if (this.#reconnecting) {
+        this.#worker.postMessage({
+          type: 'reconnected'
+        });
+        this.#reconnecting = false;
+      }
 
       this.#flushQueue();
     }
@@ -138,6 +154,7 @@ export default function installWorker() {
       if (this.#reconnectTimeoutHandle) {
         return;
       }
+      this.#reconnecting = true;
 
       this.#reconnectTimeoutHandle = setTimeout(() => {
         this.connect(this.#wsUrl);
@@ -207,6 +224,9 @@ export default function installWorker() {
         case 'setMaxBatchSize':
           this.#messageBatcher.setMaxBatchSize(message.data.maxBatchSize);
           break;
+        case 'setMaxBatchWait':
+          this.#messageBatcher.setMaxBatchWait(message.data.maxBatchWait);
+          break;
         default:
           throw new Error(`Unknown message type: ${type}`);
       }
@@ -245,7 +265,6 @@ export default function installWorker() {
     }
 
     routeMessageToHandler(data) {
-      //Implement batching here
       if (this.#messageBatcher.shouldBatchMessage(data)) {
         this.#messageBatcher.addMessageToBatch(data);
       } else {
@@ -267,12 +286,15 @@ export default function installWorker() {
     #maxBatchSize;
     #readyForNextBatch;
     #worker;
+    #throttledSendNextBatch;
 
     constructor(worker) {
-      this.#maxBatchSize = 10;
+      // No dropping telemetry unless we're explicitly told to.
+      this.#maxBatchSize = Number.POSITIVE_INFINITY;
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
+      this.setMaxBatchWait(ONE_SECOND);
     }
     #resetBatch() {
       this.#batch = {};
@@ -310,22 +332,28 @@ export default function installWorker() {
       const batchId = this.#batchingStrategy.getBatchIdFromMessage(message);
       let batch = this.#batch[batchId];
       if (batch === undefined) {
+        this.#hasBatch = true;
         batch = this.#batch[batchId] = [message];
       } else {
         batch.push(message);
       }
       if (batch.length > this.#maxBatchSize) {
+        console.warn(
+          `Exceeded max batch size of ${this.#maxBatchSize} for ${batchId}. Dropping value.`
+        );
         batch.shift();
-        this.#batch.dropped = this.#batch.dropped || true;
+        this.#batch.dropped = true;
       }
+
       if (this.#readyForNextBatch) {
-        this.#sendNextBatch();
-      } else {
-        this.#hasBatch = true;
+        this.#throttledSendNextBatch();
       }
     }
     setMaxBatchSize(maxBatchSize) {
       this.#maxBatchSize = maxBatchSize;
+    }
+    setMaxBatchWait(maxBatchWait) {
+      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), maxBatchWait);
     }
     /**
      * Indicates that client code is ready to receive the next batch of
@@ -335,7 +363,7 @@ export default function installWorker() {
      */
     readyForNextBatch() {
       if (this.#hasBatch) {
-        this.#sendNextBatch();
+        this.#throttledSendNextBatch();
       } else {
         this.#readyForNextBatch = true;
       }
@@ -352,7 +380,34 @@ export default function installWorker() {
     }
   }
 
-  const websocket = new ResilientWebSocket();
+  function throttle(callback, wait) {
+    let last = 0;
+    let throttling = false;
+
+    return function (...args) {
+      if (throttling) {
+        return;
+      }
+
+      const now = performance.now();
+      const timeSinceLast = now - last;
+
+      if (timeSinceLast >= wait) {
+        last = now;
+        callback(...args);
+      } else if (!throttling) {
+        throttling = true;
+
+        setTimeout(() => {
+          last = performance.now();
+          throttling = false;
+          callback(...args);
+        }, wait - timeSinceLast);
+      }
+    };
+  }
+
+  const websocket = new ResilientWebSocket(self);
   const messageBatcher = new MessageBatcher(self);
   const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBatcher);
   const websocketBroker = new WebSocketToWorkerMessageBroker(messageBatcher, self);
@@ -363,4 +418,6 @@ export default function installWorker() {
   websocket.registerMessageCallback((data) => {
     websocketBroker.routeMessageToHandler(data);
   });
+
+  self.websocketInstance = websocket;
 }

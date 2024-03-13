@@ -248,11 +248,10 @@ test.describe('Flexible Layout', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // flip on independent time conductor
-    await setIndependentTimeConductorBounds(
-      page,
-      '2021-12-30 01:01:00.000Z',
-      '2021-12-30 01:11:00.000Z'
-    );
+    await setIndependentTimeConductorBounds(page, {
+      start: '2021-12-30 01:01:00.000Z',
+      end: '2021-12-30 01:11:00.000Z'
+    });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();

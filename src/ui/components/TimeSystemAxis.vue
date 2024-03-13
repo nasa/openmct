@@ -29,12 +29,14 @@
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
+import { onMounted, ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
+import { useResizeObserver } from '../composables/resize';
+
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
-const RESIZE_POLL_INTERVAL = 200;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 //This offset needs to be re-considered
@@ -73,6 +75,16 @@ export default {
       }
     }
   },
+  setup() {
+    const axisHolder = ref(null);
+    const { size, startObserving } = useResizeObserver();
+    onMounted(() => {
+      startObserving(axisHolder.value);
+    });
+    return {
+      containerSize: size
+    };
+  },
   watch: {
     bounds(newBounds) {
       this.drawAxis(newBounds, this.timeSystem);
@@ -82,6 +94,9 @@ export default {
     },
     contentHeight() {
       this.updateNowMarker();
+    },
+    containerSize() {
+      this.resize();
     }
   },
   mounted() {
@@ -100,7 +115,7 @@ export default {
 
     this.setDimensions();
     this.drawAxis(this.bounds, this.timeSystem);
-    this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+    this.resize();
   },
   unmounted() {
     clearInterval(this.resizeTimer);

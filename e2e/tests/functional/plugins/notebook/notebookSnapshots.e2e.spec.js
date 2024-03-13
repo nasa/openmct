@@ -83,7 +83,7 @@ test.describe('Snapshot Container tests', () => {
     //     name: "Dropped Overlay Plot"
     // });
 
-    await page.getByLabel('Take a Notebook Snapshot').click();
+    await page.getByLabel('Open the Notebook Snapshot Menu').click();
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
     await page.getByLabel('Show Snapshots').click();
   });

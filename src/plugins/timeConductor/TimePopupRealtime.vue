@@ -1,16 +1,14 @@
 <template>
   <form ref="deltaInput">
     <div class="c-tc-input-popup__input-grid">
-      <div class="pr-time-label icon-minus">Hrs</div>
-      <div class="pr-time-label">Mins</div>
-      <div class="pr-time-label">Secs</div>
-      <div class="pr-time-label"></div>
-      <div class="pr-time-label icon-plus">Hrs</div>
-      <div class="pr-time-label">Mins</div>
-      <div class="pr-time-label">Secs</div>
-      <div class="pr-time-label"></div>
+      <div class="pr-time-label icon-minus pr-time-label-minus-hrs">Hrs</div>
+      <div class="pr-time-label pr-time-label-minus-mins">Mins</div>
+      <div class="pr-time-label pr-time-label-minus-secs">Secs</div>
+      <div class="pr-time-label icon-plus pr-time-label-plus-hrs">Hrs</div>
+      <div class="pr-time-label pr-time-label-plus-mins">Mins</div>
+      <div class="pr-time-label pr-time-label-plus-secs">Secs</div>
 
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-minus-hrs">
         <input
           ref="startInputHrs"
           v-model="startInputHrs"
@@ -29,7 +27,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-minus-mins">
         <input
           ref="startInputMins"
           v-model="startInputMins"
@@ -48,7 +46,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-minus-secs">
         <input
           ref="startInputSecs"
           v-model="startInputSecs"
@@ -69,7 +67,7 @@
 
       <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-plus-hrs">
         <input
           ref="endInputHrs"
           v-model="endInputHrs"
@@ -88,7 +86,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-plus-mins">
         <input
           ref="endInputMins"
           v-model="endInputMins"
@@ -106,7 +104,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-plus-secs">
         <input
           ref="endInputSecs"
           v-model="endInputSecs"

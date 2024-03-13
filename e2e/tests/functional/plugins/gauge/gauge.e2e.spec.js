@@ -175,13 +175,13 @@ test.describe('Gauge', () => {
     });
 
     // Try to create a Folder into the Gauge. Should be disallowed.
-    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: /Folder/ }).click();
     await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
     await page.getByLabel('Cancel').click();
 
     // Try to create a Display Layout into the Gauge. Should be disallowed.
-    await page.getByRole('button', { name: /Create/ }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: /Display Layout/ }).click();
     await expect(page.locator('[aria-label="Save"]')).toBeDisabled();
   });

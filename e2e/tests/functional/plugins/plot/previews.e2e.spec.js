@@ -54,7 +54,9 @@ test.describe('Plots work in Previews', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // right click on the plot and select view large
-    await page.getByLabel('Sine', { exact: true }).click({ button: 'right' });
+    await page.getByLabel(/Alpha-numeric telemetry value of.*/).click({
+      button: 'right'
+    });
     await page.getByLabel('View Historical Data').click();
     await expect(page.getByLabel('Preview Container').getByLabel('Plot Canvas')).toBeVisible();
     await page.getByRole('button', { name: 'Close' }).click();

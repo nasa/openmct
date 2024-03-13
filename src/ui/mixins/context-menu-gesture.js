@@ -61,7 +61,8 @@ export default {
       let sortedActions = this.openmct.actions._groupAndSortActions(actions);
 
       const menuOptions = {
-        onDestroy: this.onContextMenuDestroyed
+        onDestroy: this.onContextMenuDestroyed,
+        label: this.objectPath[0].name
       };
 
       const menuItems = this.openmct.menus.actionsToMenuItems(

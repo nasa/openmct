@@ -29,7 +29,15 @@
     }
 
     .c-list-item {
-        /* Time Lists */
+        /* Compact Time Lists; is a <tr> element */
+
+        @mixin sSelected($bgColor, $fgColor) {
+            &[s-selected] {
+                background: $bgColor !important;
+                border: 1px solid $colorSelectedFg !important;
+                color: $fgColor !important;
+            }
+        }
 
         td {
             $p: $interiorMarginSm;
@@ -37,19 +45,26 @@
             padding-bottom: $p;
         }
 
+        &.--is-past {
+            @include sSelected(transparent, $colorPastFgEm);
+        }
+
         &.--is-current {
+            @include sSelected($colorCurrentBg, $colorCurrentFgEm);
             background-color: $colorCurrentBg;
             border-top: 1px solid $colorCurrentBorder !important;
             color: $colorCurrentFgEm;
         }
 
         &.--is-future {
+            @include sSelected($colorFutureBg, $colorFutureFgEm);
             background-color: $colorFutureBg;
             border-top-color: $colorFutureBorder !important;
             color: $colorFutureFgEm;
         }
 
         &.--is-in-progress {
+            @include sSelected($colorInProgressBg, $colorInProgressFgEm);
             background-color: $colorInProgressBg;
         }
 
@@ -105,9 +120,10 @@
         grid-column-gap: $interiorMargin;
 
         &[s-selected] {
-            background: $colorSelectedBg !important;
-            box-shadow: inset rgba($colorSelectedFg, 0.1) 0 0 0 1px;
+            box-shadow: inset rgba($colorSelectedFg, 0.8) 0 0 0 1px;
             color: $colorSelectedFg !important;
+
+            @include styleTliEm($colorSelectedFg);
         }
 
         @include styleTliEm($baseFgEm);
@@ -308,6 +324,7 @@
 
     &__progress {
         fill: $colorInProgressFgEm;
+        transform: translateX(50%) translateY(50%);
     }
 
     &__sweep-hand {

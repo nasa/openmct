@@ -32,6 +32,7 @@
         'has-complex-content': complexContent
       }
     ]"
+    :aria-label="ariaLabel"
   >
     <div class="c-so-view__header">
       <div class="c-object-label" :class="[statusClass]">
@@ -45,6 +46,8 @@
         <div
           ref="objectName"
           class="c-object-label__name"
+          aria-label="object name"
+          :title="domainObject && domainObject.name"
           @mouseover.ctrl="showToolTip"
           @mouseleave="hideToolTip"
         >
@@ -58,6 +61,7 @@
           'c-so-view__frame-controls--no-frame': !hasFrame,
           'has-complex-content': complexContent
         }"
+        :aria-label="`${ariaLabel} Controls`"
       >
         <div v-if="supportsIndependentTime" class="c-conductor-holder--compact">
           <independent-time-conductor :domain-object="domainObject" :object-path="objectPath" />
@@ -163,6 +167,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return `${this.domainObject.name} Frame`;
+    },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
     }
