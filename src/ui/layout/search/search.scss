@@ -81,7 +81,7 @@
     }
     body.mobile & {
       // Add a margin to results so we have room for the close button
-      width: 93%;
+      margin-right: 20px;
     }
   }
 
@@ -93,7 +93,6 @@
 
   &__results-section-title {
     @include propertiesHeader();
-    width: 95%;
   }
 
   &__result-pane-msg {
