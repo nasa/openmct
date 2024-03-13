@@ -154,6 +154,7 @@ const config = {
       'error',
       {
         cases: {
+          camelCase: true,
           pascalCase: true
         },
         ignore: ['^.*\\.(js|cjs|mjs)$']
