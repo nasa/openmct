@@ -24,8 +24,13 @@
     ref="gaugeWrapper"
     class="c-gauge__wrapper js-gauge-wrapper"
     :class="gaugeClasses"
-    :aria-label="gaugeTitle"
     :title="gaugeTitle"
+    :aria-label="`${domainObject.name}`"
+    role="meter"
+    :aria-valuemin="rangeLow"
+    :aria-valuemax="rangeHigh"
+    :aria-valuenow="curVal"
+    :aria-valuetext="`Current value: ${curVal}`"
   >
     <template v-if="typeDial">
       <svg
