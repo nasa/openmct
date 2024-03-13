@@ -114,7 +114,11 @@ export default class TelemetryTable extends EventEmitter {
     this.clearAndResubscribe();
   }
 
-  updateRowLimit() {
+  updateRowLimit(rowLimit) {
+    if (rowLimit) {
+      this.rowLimit = rowLimit;
+    }
+
     if (this.telemetryMode === 'performance') {
       this.tableRows.setLimit(this.rowLimit);
     } else {
