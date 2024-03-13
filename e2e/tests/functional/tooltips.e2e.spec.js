@@ -107,17 +107,20 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
 
-    async function getToolTipFromCell(object) {
-      //I'm not exactly sure why this create hover is necessary
-      await page.getByRole('button', { name: 'Create' }).hover();
-      await page.getByRole('cell', { name: object.name }).hover();
-      let tooltipText = await page.getByRole().innerText();
-      return tooltipText.replace('\n', '').trim();
-    }
+    //I'm not sure why this is necessary to hover over Create
+    await page.getByRole('button', { name: 'Create' }).hover();
+    await page.getByRole('cell', { name: sineWaveObject1.name }).hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
-    expect(await getToolTipFromCell(sineWaveObject1)).toBe(sineWaveObject1.path);
-    expect(await getToolTipFromCell(sineWaveObject2)).toBe(sineWaveObject2.path);
-    expect(await getToolTipFromCell(sineWaveObject3)).toBe(sineWaveObject3.path);
+    //I'm not sure why this is necessary to hover over Create
+    await page.getByRole('button', { name: 'Create' }).hover();
+    await page.getByRole('cell', { name: sineWaveObject2.name }).hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject2.path);
+
+    //I'm not sure why this is necessary to hover over Create
+    await page.getByRole('button', { name: 'Create' }).hover();
+    await page.getByRole('cell', { name: sineWaveObject3.name }).hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths for expanded and collapsed plot legend items', async ({ page }) => {
@@ -139,7 +142,7 @@ test.describe('Verify tooltips', () => {
     await page.keyboard.down('Control');
 
     async function getCollapsedLegendToolTip(object) {
-      await page.locator('.c-create-button').hover();
+      await page.getByRole('button', { name: 'create' }).hover();
       await page
         .locator('.plot-series-name', { has: page.locator(`text="${object.name} Hz"`) })
         .hover();
@@ -148,7 +151,7 @@ test.describe('Verify tooltips', () => {
     }
 
     async function getExpandedLegendToolTip(object) {
-      await page.locator('.c-create-button').hover();
+      await page.getByRole('button', { name: 'create' }).hover();
       await page
         .locator('.plot-series-name', { has: page.locator(`text="${object.name}"`) })
         .hover();
@@ -274,14 +277,10 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject1.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
     await page.getByText('SWG 3').nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering over tab view labels', async ({ page }) => {
@@ -299,23 +298,19 @@ test.describe('Verify tooltips', () => {
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
 
-    expect(page.locator('.c-tooltip')).toHaveText(sineWaveObject1.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
     await page.getByText('SWG 3').nth(2).hover();
-    expect(page.locator('.c-tooltip')).toHaveText(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering tree items', async ({ page }) => {
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(0).hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject1.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
     await page.getByText('SWG 3').nth(0).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering search items', async ({ page }) => {
@@ -324,9 +319,7 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.locator('.c-gsearch-result__title').hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display path for source telemetry when hovering over gauge', async ({ page }) => {
@@ -336,11 +329,8 @@ test.describe('Verify tooltips', () => {
     });
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-gauge__wrapper');
     await page.keyboard.down('Control');
-    // eslint-disable-next-line playwright/no-force-option
-    await page.locator('.c-gauge.c-dial').hover({ position: { x: 0, y: 0 }, force: true });
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await page.getByRole('meter', { name: 'Test Gauge' }).hover({ position: { x: 0, y: 0 } });
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display tooltip path for notebook embeds', async ({ page }) => {
