@@ -151,6 +151,7 @@ module.exports = {
       'error',
       {
         cases: {
+          camelCase: true,
           pascalCase: true
         },
         ignore: ['^.*\\.js$']
