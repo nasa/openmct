@@ -287,7 +287,7 @@
 
 <script>
 import _ from 'lodash';
-import { toRaw } from 'vue';
+import { onMounted, ref, toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
@@ -295,7 +295,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
-import throttle from '../../../utils/throttle';
+import { useResizeObserver } from '../../../ui/composables/resize.js';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -303,7 +303,6 @@ import TelemetryTableRow from './TableRow.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
-const RESIZE_POLL_INTERVAL = 200;
 const AUTO_SCROLL_TRIGGER_HEIGHT = ROW_HEIGHT * 3;
 
 export default {
@@ -354,6 +353,15 @@ export default {
     }
   },
   emits: ['marked-rows-updated', 'filter'],
+  setup() {
+    const root = ref(null);
+    const { size: containerSize, startObserving } = useResizeObserver();
+    onMounted(() => {
+      startObserving(root.value);
+    });
+
+    return { containerSize, root };
+  },
   data() {
     let configuration = this.table.configuration.getConfiguration();
 
@@ -390,7 +398,8 @@ export default {
       totalNumberOfRows: 0,
       rowContext: {},
       telemetryMode: configuration.telemetryMode,
-      persistModeChanges: configuration.persistModeChanges
+      persistModeChange: configuration.persistModeChange,
+      afterLoadActions: []
     };
   },
   computed: {
@@ -441,12 +450,17 @@ export default {
     }
   },
   watch: {
+    //This should be refactored so that it doesn't require an explicit watch. Should be doable.
+    containerSize: {
+      handler() {
+        this.debouncedRescaleToContainer();
+      },
+      deep: true
+    },
     loading: {
       handler(isLoading) {
-        if (isLoading) {
-          this.setLoadingPromise();
-        } else {
-          this.loadFinishResolve();
+        if (!isLoading) {
+          this.runAfterLoadActions();
         }
 
         if (this.viewActionsCollection) {
@@ -500,9 +514,10 @@ export default {
     this.filterTelemetry = _.debounce(this.filterTelemetry, 500);
   },
   mounted() {
+    this.throttledUpdateVisibleRows = _.throttle(this.updateVisibleRows, 1000, { leading: true });
+    this.debouncedRescaleToContainer = _.debounce(this.rescaleToContainer, 300);
+
     this.csvExporter = new CSVExporter();
-    this.rowsAdded = _.throttle(this.rowsAdded, 200);
-    this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
     this.scroll = _.throttle(this.scroll, 100);
 
     if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
@@ -515,8 +530,6 @@ export default {
       });
     }
 
-    this.updateVisibleRows = throttle(this.updateVisibleRows, 1000);
-
     this.table.on('object-added', this.addObject);
     this.table.on('object-removed', this.removeObject);
     this.table.on('refresh', this.clearRowsAndRerender);
@@ -524,10 +537,12 @@ export default {
     this.table.on('outstanding-requests', this.outstandingRequests);
     this.table.on('telemetry-staleness', this.handleStaleness);
 
+    this.table.configuration.on('change', this.handleConfigurationChanges);
+
     this.table.tableRows.on('add', this.rowsAdded);
     this.table.tableRows.on('remove', this.rowsRemoved);
-    this.table.tableRows.on('sort', this.updateVisibleRows);
-    this.table.tableRows.on('filter', this.updateVisibleRows);
+    this.table.tableRows.on('sort', this.throttledUpdateVisibleRows);
+    this.table.tableRows.on('filter', this.throttledUpdateVisibleRows);
 
     this.openmct.time.on('bounds', this.boundsChanged);
 
@@ -540,10 +555,10 @@ export default {
     this.table.configuration.on('change', this.updateConfiguration);
 
     this.calculateTableSize();
-    this.pollForResize();
     this.calculateScrollbarWidth();
 
     this.table.initialize();
+    this.rescaleToContainer();
   },
   beforeUnmount() {
     this.table.off('object-added', this.addObject);
@@ -553,27 +568,50 @@ export default {
     this.table.off('outstanding-requests', this.outstandingRequests);
     this.table.off('telemetry-staleness', this.handleStaleness);
 
+    this.table.configuration.off('change', this.handleConfigurationChanges);
+
     this.table.tableRows.off('add', this.rowsAdded);
     this.table.tableRows.off('remove', this.rowsRemoved);
-    this.table.tableRows.off('sort', this.updateVisibleRows);
-    this.table.tableRows.off('filter', this.updateVisibleRows);
+    this.table.tableRows.off('sort', this.throttledUpdateVisibleRows);
+    this.table.tableRows.off('filter', this.throttledUpdateVisibleRows);
 
     this.table.configuration.off('change', this.updateConfiguration);
 
     this.openmct.time.off('bounds', this.boundsChanged);
-
-    clearInterval(this.resizePollHandle);
 
     this.table.configuration.destroy();
 
     this.table.destroy();
   },
   methods: {
-    setLoadingPromise() {
-      this.loadFinishResolve = null;
-      this.isFinishedLoading = new Promise((resolve, reject) => {
-        this.loadFinishResolve = resolve;
-      });
+    addToAfterLoadActions(func) {
+      this.afterLoadActions.push(func);
+    },
+    runAfterLoadActions() {
+      if (this.afterLoadActions.length > 0) {
+        this.afterLoadActions.forEach((action) => action());
+        this.afterLoadActions = [];
+      }
+    },
+    handleConfigurationChanges(changes) {
+      const { rowLimit, telemetryMode, persistModeChange } = changes;
+
+      this.persistModeChange = persistModeChange;
+
+      if (this.rowLimit !== rowLimit) {
+        this.rowLimit = rowLimit;
+        this.table.updateRowLimit(rowLimit);
+
+        if (this.telemetryMode !== telemetryMode) {
+          // need to clear and resubscribe, if different, handled below
+          this.table.clearAndResubscribe();
+        }
+      }
+
+      if (this.telemetryMode !== telemetryMode) {
+        this.telemetryMode = telemetryMode;
+        this.table.updateTelemetryMode(telemetryMode);
+      }
     },
     updateVisibleRows() {
       if (!this.updatingView) {
@@ -684,7 +722,7 @@ export default {
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-      this.updateVisibleRows();
+      this.throttledUpdateVisibleRows();
       this.synchronizeScrollX();
 
       if (this.shouldAutoScroll()) {
@@ -757,11 +795,11 @@ export default {
         this.initiateAutoScroll();
       }
 
-      this.updateVisibleRows();
+      this.throttledUpdateVisibleRows();
     },
     rowsRemoved(rows) {
       this.setHeight();
-      this.updateVisibleRows();
+      this.throttledUpdateVisibleRows();
     },
     /**
      * Calculates height based on total number of rows, and sets table height.
@@ -880,35 +918,27 @@ export default {
     dropTargetActive(isActive) {
       this.isDropTargetActive = isActive;
     },
-    pollForResize() {
-      let el = this.$refs.root;
-      let width = el.clientWidth;
-      let height = el.clientHeight;
+    rescaleToContainer() {
       let scrollTop = this.scrollable.scrollTop;
 
-      this.resizePollHandle = setInterval(() => {
-        this.renderWhenVisible(() => {
-          if ((el.clientWidth !== width || el.clientHeight !== height) && this.isAutosizeEnabled) {
-            this.calculateTableSize();
-            // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
-            // Need to preserve scroll position in this case.
-            if (this.autoScroll) {
-              this.initiateAutoScroll();
-            } else {
-              this.scrollable.scrollTop = scrollTop;
-            }
-
-            width = el.clientWidth;
-            height = el.clientHeight;
+      this.renderWhenVisible(() => {
+        if (this.isAutosizeEnabled) {
+          this.calculateTableSize();
+          // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
+          // Need to preserve scroll position in this case.
+          if (this.autoScroll) {
+            this.initiateAutoScroll();
+          } else {
+            this.scrollable.scrollTop = scrollTop;
           }
+        }
 
-          scrollTop = this.scrollable.scrollTop;
-        });
-      }, RESIZE_POLL_INTERVAL);
+        scrollTop = this.scrollable.scrollTop;
+      });
     },
     clearRowsAndRerender() {
       this.visibleRows = [];
-      this.$nextTick().then(this.updateVisibleRows);
+      this.$nextTick().then(this.throttledUpdateVisibleRows);
     },
     pause(byButton) {
       if (byButton) {
@@ -1038,7 +1068,7 @@ export default {
           let row = allRows[i];
           row.marked = true;
 
-          if (row !== baseRow) {
+          if (row !== baseRow && this.markedRows.indexOf(row) === -1) {
             this.markedRows.push(row);
           }
         }
@@ -1162,11 +1192,9 @@ export default {
           {
             label,
             emphasis: true,
-            callback: async () => {
+            callback: () => {
+              this.addToAfterLoadActions(callback);
               this.updateTelemetryMode();
-              await this.isFinishedLoading;
-
-              callback();
 
               dialog.dismiss();
             }
@@ -1183,7 +1211,7 @@ export default {
     updateTelemetryMode() {
       this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
 
-      if (this.persistModeChanges) {
+      if (this.persistModeChange) {
         this.table.configuration.setTelemetryMode(this.telemetryMode);
       }
 

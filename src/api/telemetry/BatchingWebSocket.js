@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import installWorker from './WebSocketWorker.js';
-const DEFAULT_RATE_MS = 1000;
 /**
  * Describes the strategy to be used when batching WebSocket messages
  *
@@ -51,11 +50,21 @@ const DEFAULT_RATE_MS = 1000;
  *
  * @memberof module:openmct.telemetry
  */
+// Shim for Internet Explorer, I mean Safari. It doesn't support requestIdleCallback, but it's in a tech preview, so it will be dropping soon.
+const requestIdleCallback =
+  // eslint-disable-next-line compat/compat
+  window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
+const ONE_SECOND = 1000;
+const FIVE_SECONDS = 5 * ONE_SECOND;
+
 class BatchingWebSocket extends EventTarget {
   #worker;
   #openmct;
   #showingRateLimitNotification;
-  #rate;
+  #maxBatchSize;
+  #applicationIsInitializing;
+  #maxBatchWait;
+  #firstBatchReceived;
 
   constructor(openmct) {
     super();
@@ -66,7 +75,10 @@ class BatchingWebSocket extends EventTarget {
     this.#worker = new Worker(workerUrl);
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
-    this.#rate = DEFAULT_RATE_MS;
+    this.#maxBatchSize = Number.POSITIVE_INFINITY;
+    this.#maxBatchWait = ONE_SECOND;
+    this.#applicationIsInitializing = true;
+    this.#firstBatchReceived = false;
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
     this.#worker.addEventListener('message', routeMessageToHandler);
@@ -78,6 +90,20 @@ class BatchingWebSocket extends EventTarget {
       },
       { once: true }
     );
+
+    openmct.once('start', () => {
+      // An idle callback is a pretty good indication that a complex display is done loading. At that point set the batch size more conservatively.
+      // Force it after 5 seconds if it hasn't happened yet.
+      requestIdleCallback(
+        () => {
+          this.#applicationIsInitializing = false;
+          this.setMaxBatchSize(this.#maxBatchSize);
+        },
+        {
+          timeout: FIVE_SECONDS
+        }
+      );
+    });
   }
 
   /**
@@ -130,14 +156,6 @@ class BatchingWebSocket extends EventTarget {
   }
 
   /**
-   * When using batching, sets the rate at which batches of messages are released.
-   * @param {Number} rate the amount of time to wait, in ms, between batches.
-   */
-  setRate(rate) {
-    this.#rate = rate;
-  }
-
-  /**
    * @param {Number} maxBatchSize the maximum length of a batch of messages. For example,
    * the maximum number of telemetry values to batch before dropping them
    * Note that this is a fail-safe that is only invoked if performance drops to the
@@ -151,9 +169,26 @@ class BatchingWebSocket extends EventTarget {
    * 15 would probably be a better batch size.
    */
   setMaxBatchSize(maxBatchSize) {
+    this.#maxBatchSize = maxBatchSize;
+    if (!this.#applicationIsInitializing) {
+      this.#sendMaxBatchSizeToWorker(this.#maxBatchSize);
+    }
+  }
+  setMaxBatchWait(wait) {
+    this.#maxBatchWait = wait;
+    this.#sendBatchWaitToWorker(this.#maxBatchWait);
+  }
+  #sendMaxBatchSizeToWorker(maxBatchSize) {
     this.#worker.postMessage({
       type: 'setMaxBatchSize',
       maxBatchSize
+    });
+  }
+
+  #sendBatchWaitToWorker(maxBatchWait) {
+    this.#worker.postMessage({
+      type: 'setMaxBatchWait',
+      maxBatchWait
     });
   }
 
@@ -169,7 +204,9 @@ class BatchingWebSocket extends EventTarget {
 
   #routeMessageToHandler(message) {
     if (message.data.type === 'batch') {
-      if (message.data.batch.dropped === true && !this.#showingRateLimitNotification) {
+      this.start = Date.now();
+      const batch = message.data.batch;
+      if (batch.dropped === true && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
           'Telemetry dropped due to client rate limiting.',
           { hint: 'Refresh individual telemetry views to retrieve dropped telemetry if needed.' }
@@ -179,15 +216,44 @@ class BatchingWebSocket extends EventTarget {
           this.#showingRateLimitNotification = false;
         });
       }
-      this.dispatchEvent(new CustomEvent('batch', { detail: message.data.batch }));
-      setTimeout(() => {
-        this.#readyForNextBatch();
-      }, this.#rate);
+
+      this.dispatchEvent(new CustomEvent('batch', { detail: batch }));
+      this.#waitUntilIdleAndRequestNextBatch(batch);
     } else if (message.data.type === 'message') {
       this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
+    } else if (message.data.type === 'reconnected') {
+      this.dispatchEvent(new CustomEvent('reconnected'));
     } else {
       throw new Error(`Unknown message type: ${message.data.type}`);
     }
+  }
+
+  #waitUntilIdleAndRequestNextBatch(batch) {
+    requestIdleCallback(
+      (state) => {
+        if (this.#firstBatchReceived === false) {
+          this.#firstBatchReceived = true;
+        }
+        const now = Date.now();
+        const waitedFor = now - this.start;
+        if (state.didTimeout === true) {
+          if (document.visibilityState === 'visible') {
+            console.warn(`Event loop is too busy to process batch.`);
+            this.#waitUntilIdleAndRequestNextBatch(batch);
+          } else {
+            // After ingesting a telemetry batch, wait until the event loop is idle again before
+            // informing the worker we are ready for another batch.
+            this.#readyForNextBatch();
+          }
+        } else {
+          if (waitedFor > ONE_SECOND) {
+            console.warn(`Warning, batch processing took ${waitedFor}ms`);
+          }
+          this.#readyForNextBatch();
+        }
+      },
+      { timeout: ONE_SECOND }
+    );
   }
 }
 

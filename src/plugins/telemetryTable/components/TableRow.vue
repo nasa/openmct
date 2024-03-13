@@ -24,6 +24,7 @@
     :style="{ top: rowTop }"
     class="noselect"
     :class="[rowClass, { 'is-selected': marked }]"
+    :aria-label="ariaLabel"
     v-on="listeners"
   >
     <component
@@ -99,6 +100,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return this.marked ? 'Selected Table Row' : 'Table Row';
+    },
     listeners() {
       let listenersObject = {
         click: this.markRow

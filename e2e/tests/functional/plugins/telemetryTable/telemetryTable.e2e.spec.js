@@ -20,10 +20,31 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults, setTimeConductorBounds } from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  setTimeConductorBounds,
+  setTimeConductorMode
+} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Telemetry Table', () => {
+  let table;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
+  });
+
+  test('Limits to 50 rows by default', async ({ page }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: table.uuid
+    });
+    await page.goto(table.url);
+    await setTimeConductorMode(page, false);
+    const rows = page.getByLabel('table content').getByLabel('Table Row');
+    await expect(rows).toHaveCount(50);
+  });
+
   test('unpauses and filters data when paused by button and user changes bounds', async ({
     page
   }) => {
@@ -34,7 +55,6 @@ test.describe('Telemetry Table', () => {
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: table.uuid
@@ -78,7 +98,6 @@ test.describe('Telemetry Table', () => {
   test('Supports filtering telemetry by regular text search', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
     await createDomainObjectWithDefaults(page, {
       type: 'Event Message Generator',
       parent: table.uuid
@@ -121,7 +140,6 @@ test.describe('Telemetry Table', () => {
   test('Supports filtering using Regex', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
     await createDomainObjectWithDefaults(page, {
       type: 'Event Message Generator',
       parent: table.uuid
