@@ -27,10 +27,7 @@
       aria-label="Inspector Properties Details"
     >
       <div class="c-inspect-properties__header">Details</div>
-      <ul
-        v-if="hasDetails"
-        class="c-inspect-properties__section"
-      >
+      <ul v-if="hasDetails" class="c-inspect-properties__section">
         <Component
           :is="getComponent(detail)"
           v-for="detail in details"
