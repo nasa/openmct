@@ -44,10 +44,10 @@ test.describe('Inspector tests', () => {
 
     await page.goto(folderWithOverflowingTitle.url);
 
-    const inspectorContentLocator = page.getByRole('tabpanel', { name: 'Inspector Views' });
-    const inspectorPropertiesList = page.getByRole('list', {
-      name: 'Inspector Properties Details'
-    });
+    const inspectorPropertiesLocator = page
+      .getByRole('tabpanel', { name: 'Inspector Views' })
+      .getByLabel('Inspector Properties Details');
+    const inspectorPropertiesList = inspectorPropertiesLocator.getByRole('list');
     const firstInspectorPropertyValue = inspectorPropertiesList
       .getByRole('listitem')
       .first()
@@ -58,16 +58,16 @@ test.describe('Inspector tests', () => {
       .getByLabel('value', { exact: false });
 
     // inspector content partially in viewport, but not all the way in viewport
-    await expect(inspectorContentLocator).toBeInViewport();
-    await expect(inspectorContentLocator).not.toBeInViewport({ ratio: 0.9 });
+    await expect(inspectorPropertiesLocator).toBeInViewport();
+    await expect(inspectorPropertiesLocator).not.toBeInViewport({ ratio: 0.9 });
 
     await expect(firstInspectorPropertyValue).toBeInViewport();
     await expect(lastInspectorPropertyValue).not.toBeInViewport();
 
     // using page.mouse.wheel to scroll the inspector content by the height of the content
     // because click and scrollIntoView will scroll even if scrollbar not available
-    await inspectorContentLocator.hover();
-    const offset = await inspectorContentLocator.evaluate((el) => el.offsetHeight);
+    await inspectorPropertiesLocator.hover();
+    const offset = await inspectorPropertiesLocator.evaluate((el) => el.offsetHeight);
     await page.mouse.wheel(0, offset);
 
     await expect(lastInspectorPropertyValue).toBeInViewport();
