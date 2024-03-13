@@ -85,6 +85,7 @@
             v-for="(treeItem, index) in visibleItems"
             :key="`${treeItem.navigationPath}-${index}-${treeItem.object.name}`"
             :node="treeItem"
+            draggable="true"
             :is-selector-tree="isSelectorTree"
             :selected-item="selectedItem"
             :active-search="activeSearch"
