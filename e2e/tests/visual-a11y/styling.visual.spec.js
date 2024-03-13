@@ -91,7 +91,7 @@ test.describe('Flexible Layout styling @a11y', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('StackedPlot1 Frame')
+      page.getByRole('group', { name: 'StackedPlot1 Frame' })
     );
 
     await percySnapshot(

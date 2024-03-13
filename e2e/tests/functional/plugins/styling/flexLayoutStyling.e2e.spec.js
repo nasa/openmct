@@ -114,7 +114,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultFrameBorderColor),
       NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Check styles on StackedPlot2. Note: https://github.com/nasa/openmct/issues/7337
@@ -122,7 +124,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultFrameBorderColor),
       NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
   });
 
@@ -143,7 +147,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Check styles on StackedPlot2
@@ -151,7 +157,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Set styles using setStyles function on StackedPlot1 but not StackedPlot2
@@ -160,7 +168,7 @@ test.describe('Flexible Layout styling', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('StackedPlot1 Frame')
+      page.getByRole('group', { name: 'StackedPlot1 Frame' })
     );
 
     // Check styles on StackedPlot1
@@ -168,7 +176,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Check styles on StackedPlot2
@@ -176,7 +186,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Save Flexible Layout
@@ -191,7 +203,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Check styles on StackedPlot2
@@ -199,7 +213,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
   });
 
@@ -241,7 +257,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Check styles on StackedPlot2 to verify they are the default
@@ -249,7 +267,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Set styles using setStyles function on StackedPlot2
@@ -258,7 +278,7 @@ test.describe('Flexible Layout styling', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('StackedPlot2 Frame')
+      page.getByRole('group', { name: 'StackedPlot2 Frame' })
     );
 
     // Check styles on StackedPlot2
@@ -266,7 +286,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Save Flexible Layout
@@ -281,7 +303,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Check styles on StackedPlot2
@@ -289,7 +313,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Directly navigate to the flexible layout
@@ -326,7 +352,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Check styles on StackedPlot2 matches previous set colors
@@ -334,7 +362,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot2 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot2 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
   });
 
@@ -356,7 +386,7 @@ test.describe('Flexible Layout styling', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('StackedPlot1 Frame')
+      page.getByRole('group', { name: 'StackedPlot1 Frame' })
     );
 
     // Check styles using checkStyles function
@@ -364,7 +394,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(setBorderColor),
       hexToRGB(setBackgroundColor),
       hexToRGB(setTextColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
 
     // Save Flexible Layout
@@ -386,7 +418,7 @@ test.describe('Flexible Layout styling', () => {
       'No Style',
       'No Style',
       'No Style',
-      page.getByLabel('StackedPlot1 Frame')
+      page.getByRole('group', { name: 'StackedPlot1 Frame' })
     );
 
     // Check styles using checkStyles function
@@ -394,7 +426,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(inheritedColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
     // Save Flexible Layout
     await page.getByRole('button', { name: 'Save' }).click();
@@ -408,7 +442,9 @@ test.describe('Flexible Layout styling', () => {
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,
       hexToRGB(inheritedColor),
-      page.getByLabel('StackedPlot1 Frame').getByLabel('Stacked Plot Style Target')
+      page
+        .getByRole('group', { name: 'StackedPlot1 Frame' })
+        .getByLabel('Stacked Plot Style Target')
     );
   });
 
