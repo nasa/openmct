@@ -37,24 +37,24 @@
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
+        aria-label="Alpha-numeric telemetry"
         @contextmenu.prevent="showContextMenu"
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
-        <div
-          class="is-status__indicator"
-          :aria-label="`This item is ${status}`"
-          :title="`This item is ${status}`"
-        ></div>
+        <div class="is-status__indicator"></div>
         <div v-if="showLabel" class="c-telemetry-view__label">
-          <div class="c-telemetry-view__label-text">
+          <div
+            class="c-telemetry-view__label-text"
+            :aria-label="`Alpha-numeric telemetry name for ${domainObject.name}`"
+          >
             {{ domainObject.name }}
           </div>
         </div>
 
         <div
           v-if="showValue"
-          :aria-label="fieldName"
+          :aria-label="`Alpha-numeric telemetry value of ${telemetryValue}`"
           :title="fieldName"
           class="c-telemetry-view__value"
           :class="[telemetryClass]"

@@ -105,7 +105,9 @@ export default {
       return this.status ? `is-status--${this.status}` : '';
     },
     ariaLabel() {
-      return `${this.isEditing ? 'Preview' : 'Navigate to'} ${this.domainObject.name} ${this.domainObject.type} Object`;
+      return `${this.isEditing ? 'Preview' : 'Navigate to'} ${this.domainObject.name} ${
+        this.domainObject.type
+      } Object`;
     }
   },
   mounted() {
