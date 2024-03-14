@@ -22,7 +22,6 @@
   &__tree {
     flex: 1 1 auto;
     height: 0; // Chrome 73 overflow bug fix
-    padding-right: $interiorMarginSm;
   }
 
   .c-tree {
@@ -97,7 +96,6 @@
 
     @include hover {
       background: $colorItemTreeHoverBg;
-      //filter: $filterHov; // FILTER REMOVAL, CONVERT TO THEME CONSTANT
     }
 
     &.is-navigated-object,
@@ -142,8 +140,6 @@
 }
 
 .c-tree {
-  padding-right: $interiorMarginSm;
-
   .c-tree {
     margin-left: 15px;
   }

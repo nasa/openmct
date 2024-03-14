@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-lad-table-wrapper u-style-receiver js-style-receiver" :class="staleClass">
-    <table class="c-table c-lad-table" :class="applyLayoutClass">
+    <table aria-label="lad table" class="c-table c-lad-table" :class="applyLayoutClass">
       <thead>
         <tr>
           <th>Name</th>

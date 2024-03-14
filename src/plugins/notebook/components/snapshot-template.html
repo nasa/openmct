@@ -1,36 +1,32 @@
 <div class="c-notebook-snapshot">
-  <!-- parent container sets up this for flex column layout -->
   <div class="c-notebook-snapshot__header l-browse-bar">
     <div class="l-browse-bar__start">
       <div class="l-browse-bar__object-name--w">
         <span class="c-object-label l-browse-bar__object-name">
-          <span class="c-object-label__type-icon" v-bind:class="cssClass"></span>
+          <span class="c-object-label__type-icon" :class="cssClass"></span>
           <span class="c-object-label__name">{{ name }}</span>
         </span>
       </div>
     </div>
-
+    <div id="snapshotDescriptor" class="l-browse-bar__snapshot-datetime">
+      SNAPSHOT {{ createdOn }}
+    </div>
+    <div class="c-button-set c-button-set--strip-h" role="toolbar">
+      <button class="c-button icon-download" aria-label="Export as PNG" @click="exportImage('png')">
+        <span class="c-button__label">PNG</span>
+      </button>
+      <button class="c-button icon-download" aria-label="Export as JPG" @click="exportImage('jpg')">
+        <span class="c-button__label">JPG</span>
+      </button>
+    </div>
     <div class="l-browse-bar__end">
-      <div class="l-browse-bar__snapshot-datetime">SNAPSHOT {{ createdOn }}</div>
-      <span class="c-button-set c-button-set--strip-h">
-        <button
-          class="c-button icon-download"
-          title="Export This View's Data as PNG"
-          @click="exportImage('png')"
-        >
-          <span class="c-button__label">PNG</span>
-        </button>
-        <button class="c-button" title="Export This View's Data as JPG" @click="exportImage('jpg')">
-          <span class="c-button__label">JPG</span>
-        </button>
-      </span>
-      <a
+      <button
         class="l-browse-bar__annotate-button c-button icon-pencil"
-        title="Annotate"
+        aria-label="Annotate this snapshot"
         @click="annotateSnapshot"
       >
         <span class="title-label">Annotate</span>
-      </a>
+      </button>
     </div>
   </div>
 
@@ -38,5 +34,7 @@
     ref="snapshot-image"
     class="c-notebook-snapshot__image"
     :style="{ backgroundImage: 'url(' + src + ')' }"
+    role="img"
+    alt="Annotatable Snapshot"
   ></div>
 </div>

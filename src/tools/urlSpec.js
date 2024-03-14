@@ -1,5 +1,5 @@
 import { createOpenMct, resetApplicationState } from '../utils/testing.js';
-import { default as objectPathToUrl, identifierToString, paramsToArray } from './url.js';
+import { identifierToString, objectPathToUrl, paramsToArray } from './url.js';
 
 describe('the url tool', function () {
   let openmct;

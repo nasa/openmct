@@ -29,10 +29,13 @@
             :key="action.name"
             role="menuitem"
             :aria-disabled="action.isDisabled"
-            :class="action.cssClass"
             :aria-label="action.name"
+            aria-describedby="item-description"
+            :class="action.cssClass"
             :title="action.description"
             @click="action.onItemClicked"
+            @mouseover="toggleItem(action)"
+            @mouseleave="toggleItem()"
           >
             {{ action.name }}
           </li>
@@ -52,16 +55,23 @@
         v-for="action in options.actions"
         :key="action.name"
         role="menuitem"
+        aria-describedby="item-description"
         :aria-disabled="action.isDisabled"
         :class="action.cssClass"
         :aria-label="action.name"
         :title="action.description"
         @click="action.onItemClicked"
+        @mouseover="toggleItem(action)"
+        @mouseleave="toggleItem()"
       >
         {{ action.name }}
       </li>
       <li v-if="options.actions.length === 0">No actions defined.</li>
     </ul>
+    <div v-if="hoveredItem" id="item-description" class="visually-hidden" aria-live="polite">
+      <span v-if="hoveredItem.name">{{ hoveredItem.name }}</span>
+      <span v-if="hoveredItem.description">: {{ hoveredItem.description }}</span>
+    </div>
   </div>
 </template>
 
@@ -70,10 +80,20 @@ import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
   inject: ['options'],
+  data() {
+    return {
+      hoveredItem: null
+    };
+  },
   computed: {
     optionsLabel() {
-      const label = this.options.label ? `${this.options.label} Menu` : 'Menu';
+      const label = this.options.label ? `${this.options.label} Context Menu` : 'Context Menu';
       return label;
+    }
+  },
+  methods: {
+    toggleItem(action) {
+      this.hoveredItem = action ?? null;
     }
   }
 };

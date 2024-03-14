@@ -22,6 +22,7 @@
 
 <template>
   <div
+    aria-label="sub object frame"
     class="l-layout__frame c-frame"
     :class="{
       'no-frame': !item.hasFrame,

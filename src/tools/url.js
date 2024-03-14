@@ -24,10 +24,17 @@
  * Module defining url handling.
  */
 
-function getUrlParams(openmct, customUrlParams = {}) {
+/**
+ * Convert the current URL parameters to an array of strings.
+ * @param {import('../../openmct').OpenMCT} openmct
+ * @returns {Array<string>} newTabParams
+ */
+export function paramsToArray(openmct, customUrlParams = {}) {
   let urlParams = openmct.router.getParams();
-  Object.entries(customUrlParams).forEach((urlParam) => {
-    const [key, value] = urlParam;
+
+  // Merge the custom URL parameters with the current URL parameters.
+  Object.entries(customUrlParams).forEach((param) => {
+    const [key, value] = param;
     urlParams[key] = value;
   });
 
@@ -39,21 +46,7 @@ function getUrlParams(openmct, customUrlParams = {}) {
     delete urlParams['tc.endBound'];
   }
 
-  return urlParams;
-}
-
-export function paramsToArray(openmct, customUrlParams = {}) {
-  // parse urlParams from an object to an array.
-  let urlParams = getUrlParams(openmct, customUrlParams);
-  let newTabParams = [];
-  for (let key in urlParams) {
-    if ({}.hasOwnProperty.call(urlParams, key)) {
-      let param = `${key}=${urlParams[key]}`;
-      newTabParams.push(param);
-    }
-  }
-
-  return newTabParams;
+  return Object.entries(urlParams).map(([key, value]) => `${key}=${value}`);
 }
 
 export function identifierToString(openmct, objectPath) {
@@ -66,7 +59,7 @@ export function identifierToString(openmct, objectPath) {
  * @param {any} customUrlParams
  * @returns {string} url
  */
-export default function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
+export function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
   let url = identifierToString(openmct, objectPath);
 
   let urlParams = paramsToArray(openmct, customUrlParams);

@@ -27,6 +27,7 @@
       isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
       { 'is-expanded': independentTCEnabled }
     ]"
+    aria-label="Independent Time Conductor Panel"
   >
     <ToggleSwitch
       id="independentTCToggle"

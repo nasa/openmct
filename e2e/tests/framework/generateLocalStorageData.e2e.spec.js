@@ -33,7 +33,12 @@
 
 import { fileURLToPath } from 'url';
 
-import { createDomainObjectWithDefaults, createExampleTelemetryObject } from '../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createExampleTelemetryObject,
+  setIndependentTimeConductorBounds,
+  setTimeConductorBounds
+} from '../../appActions.js';
 import { MISSION_TIME } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
@@ -85,6 +90,53 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
     await context.storageState({
       path: fileURLToPath(
         new URL('../../../e2e/test-data/display_layout_with_child_layouts.json', import.meta.url)
+      )
+    });
+  });
+
+  test('Generate display layout with 1 child overlay plot', async ({ page, context }) => {
+    const parent = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Parent Display Layout'
+    });
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Child Overlay Plot 1',
+      parent: parent.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'Child SWG 1',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
+
+    await setIndependentTimeConductorBounds(page, {
+      start: '2024-11-12 19:11:11.000Z',
+      end: '2024-11-12 20:11:11.000Z'
+    });
+
+    const NEW_GLOBAL_START_BOUNDS = '2024-11-11 19:11:11.000Z';
+    const NEW_GLOBAL_END_BOUNDS = '2024-11-11 20:11:11.000Z';
+
+    await setTimeConductorBounds(page, NEW_GLOBAL_START_BOUNDS, NEW_GLOBAL_END_BOUNDS);
+
+    // Verify that the global time conductor bounds have been updated
+    expect(
+      await page.getByLabel('Global Time Conductor').getByLabel('Start bounds').textContent()
+    ).toEqual(NEW_GLOBAL_START_BOUNDS);
+    expect(
+      await page.getByLabel('Global Time Conductor').getByLabel('End bounds').textContent()
+    ).toEqual(NEW_GLOBAL_END_BOUNDS);
+
+    //Save localStorage for future test execution
+    await context.storageState({
+      path: fileURLToPath(
+        new URL(
+          '../../../e2e/test-data/display_layout_with_child_overlay_plot.json',
+          import.meta.url
+        )
       )
     });
   });

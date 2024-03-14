@@ -499,7 +499,9 @@ select {
   color: $colorSelectFg;
   box-shadow: $shdwSelect;
   background-repeat: no-repeat, no-repeat;
-  background-position: right 0.4em top 80%, 0 0;
+  background-position:
+    right 0.4em top 80%,
+    0 0;
   border: none;
   border-radius: $controlCr;
   padding: 2px 20px 2px $interiorMargin;
@@ -718,15 +720,15 @@ select {
   .c-super-menu__item-description {
     flex: 1 1 70%;
 
-    [class*="__icon"] {
+    [class*='__icon'] {
       display: none !important;
     }
 
-    [class*="__name"] {
+    [class*='__name'] {
       margin-top: 0 !important;
     }
 
-    [class*="__item-description"] {
+    [class*='__item-description'] {
       min-width: 200px;
     }
   }
@@ -1133,7 +1135,7 @@ input[type='range'] {
     // Hidden by default; requires a hover 1 - 3 levels above to display
     @include transition(opacity, $transOutTime);
     opacity: 0;
-    pointer-events: none;
+    pointer-events: auto;
   }
 }
 

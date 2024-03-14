@@ -68,6 +68,18 @@ div {
   flex: 1 1 auto;
 }
 
+.visually-hidden {
+  // Provides a way to add accessible text to elements
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
   ::-webkit-scrollbar {
@@ -361,7 +373,7 @@ body.desktop .has-local-controls {
   }
 }
 
-[aria-disabled = 'true'],
+[aria-disabled='true'],
 *[disabled],
 .disabled {
   opacity: $controlDisabledOpacity;
@@ -397,7 +409,7 @@ body.desktop .has-local-controls {
     position: absolute;
     top: 0;
     bottom: 0;
-    content: "";
+    content: '';
     right: 0;
     width: $fadeTruncateW * 1.5;
     z-index: 2;
