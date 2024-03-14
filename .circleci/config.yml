@@ -1,4 +1,7 @@
 version: 2.1
+orbs:
+  node: circleci/node@5.2.0
+  browser-tools: circleci/browser-tools@1.3.0
 executors:
   pw-focal-development:
     docker:
@@ -11,47 +14,17 @@ executors:
     machine:
       image: ubuntu-2204:current
       docker_layer_caching: true
-parameters:
-  BUST_CACHE:
-    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
-    default: false
-    type: boolean
 commands:
   build_and_install:
-    description: "All steps used to build and install. Will use cache if found"
+    description: "All steps used to build and install."
     parameters:
       node-version:
         type: string
     steps:
       - checkout
-      - restore_cache_cmd:
-          node-version: << parameters.node-version >>
       - node/install:
           node-version: << parameters.node-version >>
-      - run: npm install --no-audit --progress=false
-  restore_cache_cmd:
-    description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
-    parameters:
-      node-version:
-        type: string
-    steps:
-      - when:
-          condition:
-            equal: [false, << pipeline.parameters.BUST_CACHE >>]
-          steps:
-            - restore_cache:
-                key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
-  save_cache_cmd:
-    description: "Custom command for saving cache."
-    parameters:
-      node-version:
-        type: string
-    steps:
-      - save_cache:
-          key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
-          paths:
-            - ~/.npm
-            - node_modules
+      - node/install-packages
   generate_and_store_version_and_filesystem_artifacts:
     description: "Track important packages and files"
     steps:
@@ -71,9 +44,6 @@ commands:
     steps:
       - run: npm run cov:e2e:report || true
       - run: npm run cov:e2e:<<parameters.suite>>:publish
-orbs:
-  node: circleci/node@5.1.0
-  browser-tools: circleci/browser-tools@1.3.0
 jobs:
   npm-audit:
     parameters:
@@ -111,8 +81,6 @@ jobs:
             TESTFILES=$(circleci tests glob "src/**/*Spec.js")
             echo "$TESTFILES" | circleci tests run --command="xargs npm run test" --verbose
       - run: npm run cov:unit:publish
-      - save_cache_cmd:
-          node-version: <<parameters.node-version>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:

@@ -28,7 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm install --cache ~/.npm --no-audit --progress=false
+      - run: npm ci --no-audit --progress=false
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
