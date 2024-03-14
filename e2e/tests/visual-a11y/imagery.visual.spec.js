@@ -23,6 +23,7 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../appActions.js';
+import { waitForAnimations } from '../../baseFixtures.js';
 import { VISUAL_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
@@ -75,11 +76,10 @@ test.describe('Visual - Example Imagery', () => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
 
     await setRealTimeMode(page, true);
-    //Temporary to close the dialog
-    await page.getByLabel('Submit time offsets').click();
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();
 
+    await waitForAnimations(page.locator('.animate-scroll'));
     await percySnapshot(page, `Example Imagery in Real Time (theme: ${theme})`);
   });
 

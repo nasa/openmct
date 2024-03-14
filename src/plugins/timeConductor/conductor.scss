@@ -604,23 +604,170 @@
             padding: cButtonPadding($compact: true);
         }
     }
+    .pr-time{
+        // FIXED TIME MODE
+        &-label-start-date{
+            grid-area: sDate;
+        }
+        &-label-start-time{
+            grid-area: sTime;
+        }
+        &-input-start-date{
+            grid-area: sDateInput;
+        }
+        &-input-start-time{
+            grid-area: sTimeInput;
+        }
+        &-label-end-date{
+            grid-area: eDate;
+        }
+        &-label-end-time{
+            grid-area: eTime;
+
+        }
+        &-input-end-date{
+            grid-area: eDateInput;
+        }
+        &-input-end-time{
+            grid-area: eTimeInput;
+        }
+        &-label-blank-grid{
+            grid-area: blank;
+        }
+
+        //REAL TIME MODE
+        &-label-minus-hrs{
+            grid-area: labelMinusHrs;
+        }
+        &-label-minus-mins{
+            grid-area: labelMinusMins;
+        }
+        &-label-minus-secs{
+            grid-area: labelMinusSecs;
+        }
+        &-label-plus-hrs{
+            grid-area: labelPlusHrs;
+        }
+        &-label-plus-mins{
+            grid-area: labelPlusMins;
+        }
+        &-label-plus-secs{
+            grid-area: labelPlusSecs;
+        }
+        &-input-minus-hrs{
+            grid-area: inputMinusHrs;
+        }
+        &-input-minus-mins{
+            grid-area: inputMinusMins;
+        }
+        &-input-minus-secs{
+            grid-area: inputMinusSecs;
+        }
+        &-input-plus-hrs{
+            grid-area: inputPlusHrs;
+        }
+        &-input-plus-mins{
+            grid-area: inputPlusMins;
+        }
+        &-input-plus-secs{
+            grid-area: inputPlusSecs;
+        }
+        // USED FOR BOTH 
+        &-label-blank-grid{
+            grid-area: empty;
+        }
+        &-input__start-end-sep{
+            grid-area: arrowIcon;
+        }
+        &-input--buttons{
+            grid-area: buttons;
+        }
+    }
 
     &--fixed-mode {
         .c-tc-input-popup__input-grid {
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
+            grid-template-areas: 
+               "sDate sTime . eDate eTime ."
+               "sDateInput sTimeInput arrowIcon eDateInput eTimeInput buttons";
         }
+        @include phonePortrait(){ 
+            .c-tc-input-popup__input-grid {
+                grid-template-columns: repeat(2, max-content) 1fr;
+                grid-template-areas:
+                    "sDate sTime ."
+                    "sDateInput sTimeInput ."
+                    "eDate eTime ."
+                    "eDateInput eTimeInput buttons";
+                padding: 2px; 
+                overflow: hidden;
+            }
+        }
+
     }
 
     &--realtime-mode {
         .c-tc-input-popup__input-grid {
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
+            grid-template-areas:
+                "labelMinusHrs labelMinusMins labelMinusSecs . labelPlusHrs labelPlusMins labelPlusSecs ."
+                "inputMinusHrs inputMinusMins inputMinusSecs arrowIcon inputPlusHrs inputPlusMins inputPlusSecs buttons";
+        }
+        @include phonePortrait(){ 
+            .c-tc-input-popup__input-grid {
+                grid-template-columns: repeat(3, max-content) 1fr;
+                grid-template-areas:
+                    "labelMinusHrs labelMinusMins labelMinusSecs ."
+                    "inputMinusHrs inputMinusMins inputMinusSecs ."
+                    "labelPlusHrs labelPlusMins labelPlusSecs ."
+                    "inputPlusHrs inputPlusMins inputPlusSecs buttons";
+                padding: 2px;
+                overflow: hidden;
+            }
         }
     }
 
     &__input-grid {
         display: grid;
-        grid-column-gap: 3px;
         grid-row-gap: $interiorMargin;
+        grid-column-gap: $interiorMarginSm;
         align-items: start;
+    }
+}
+@include phonePortrait(){ // Additional styling for mobile portrait.
+    .c-tc-input-popup{
+        width: 100%;
+        &__options{
+            > * {
+                overflow: hidden;
+                [class*= 'ctrl-wrapper']{
+                    [class*='--menu'] {
+                        width: 100%;
+                        [class*='__label'] {
+                            @include ellipsize();
+                        }
+
+                    } 
+                }
+            }
+        }
+    }
+
+    .pr-time-input-end-time, .pr-time-input-start-time{
+        > * {
+            margin-right: $interiorMargin;
+        } 
+    }
+    .pr-time-input--buttons{
+        justify-content: flex-end;
+    }
+    .pr-time-input__start-end-sep{
+        margin: auto;
+    }
+    .pr-time-input__start-end-sep{
+        display: none;
+    }
+    .pr-time-input-start-date, .pr-time-input-end-date{
+        width: max-content;
     }
 }
