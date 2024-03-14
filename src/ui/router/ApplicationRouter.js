@@ -54,9 +54,8 @@ class ApplicationRouter extends EventEmitter {
 
     this.setHash = _.debounce(this.setHash.bind(this), 300);
 
-    const agent = new Agent(window);
-
-    this.isMobile = agent.isMobile();
+    this.agent = new Agent(window);
+    this.isMobile = this.agent.isMobile();
 
     openmct.once('destroy', () => {
       this.destroy();
@@ -145,7 +144,7 @@ class ApplicationRouter extends EventEmitter {
   navigate(hash) {
     this.handleLocationChange(hash.substring(1));
 
-    if (this.isMobile) {
+    if (this.isMobile && this.agent.isPortrait()) {
       this.setSearchParam(HIDE_TREE_PARAM, 'true');
     }
   }
