@@ -1,12 +1,9 @@
 .c-inspector {
   display: flex;
   flex: 1 1 auto;
+  gap: $interiorMarginSm;
   flex-direction: column;
-
-  > * {
-    // This is on purpose: want extra margin on top object-name element
-    margin-top: $interiorMargin;
-  }
+  overflow: hidden;
 
   &__selected,
   &__multiple-selected {
@@ -79,6 +76,7 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    overflow: auto;
   }
 
   &__elements {
