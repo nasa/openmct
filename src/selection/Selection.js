@@ -24,26 +24,45 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 /**
+ * @typedef {Object} Selectable
+ * @property {HTMLElement} element The HTML element that is selectable
+ * @property {Object} context The context of the selectable, which may include a DomainObject
+ */
+
+/**
+ * @typedef {import('../../openmct').OpenMCT} OpenMCT
+ */
+
+/**
  * Manages selection state for Open MCT
  * @private
  */
 export default class Selection extends EventEmitter {
+  /**
+   * @param {OpenMCT} openmct The Open MCT instance
+   */
   constructor(openmct) {
     super();
 
+    /** @type {OpenMCT} */
     this.openmct = openmct;
+    /** @type {Selectable[]} */
     this.selected = [];
   }
+
   /**
    * Gets the selected object.
+   * @returns {Selectable[]} The currently selected objects
    * @public
    */
   get() {
     return this.selected;
   }
+
   /**
    * Selects the selectable object and emits the 'change' event.
    *
+   * @param {Selectable|Selectable[]} selectable An object or array of objects with element and context properties
    * @param {object} selectable an object with element and context properties
    * @param {Boolean} isMultiSelectEvent flag indication shift key is pressed or not
    * @private

@@ -135,7 +135,7 @@ export default {
     this.openmct.editor.off('isEditing', this.setEditState);
     if (this.composition) {
       this.composition.off('add', this.subscribeToStaleness);
-      this.composition.off('remove', this.triggerUnsubscribeFromStaleness);
+      this.composition.off('remove', this.removeSubscription);
     }
 
     if (this.removeSelectable) {
@@ -161,9 +161,18 @@ export default {
         }
       }
     },
+    removeSubscription(identifier) {
+      this.triggerUnsubscribeFromStaleness({
+        identifier
+      });
+    },
     updateView() {
       //If this object is not persistable, then package it with it's parent
       const plotObject = this.getPlotObject();
+
+      if (plotObject === null) {
+        return;
+      }
 
       if (this.openmct.telemetry.isTelemetryObject(plotObject)) {
         this.subscribeToStaleness(plotObject);
@@ -172,7 +181,7 @@ export default {
         this.composition = this.openmct.composition.get(plotObject);
 
         this.composition.on('add', this.subscribeToStaleness);
-        this.composition.on('remove', this.triggerUnsubscribeFromStaleness);
+        this.composition.on('remove', this.removeSubscription);
         this.composition.load();
       }
 
@@ -210,10 +219,6 @@ export default {
     },
     getPlotObject() {
       this.checkPlotConfiguration();
-      // If object is missing, warn
-      if (this.openmct.objects.isMissing(this.childObject)) {
-        console.warn('Missing domain object for stacked plot', this.childObject);
-      }
       return this.childObject;
     },
     checkPlotConfiguration() {

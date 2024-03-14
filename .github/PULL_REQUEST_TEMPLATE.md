@@ -8,7 +8,7 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 
 * [ ] Have you followed the guidelines in our [Contributing document](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md)?
 * [ ] Have you checked to ensure there aren't other open [Pull Requests](https://github.com/nasa/openmct/pulls) for the same update/change?
-* [ ] Is this a notable change that will require a special callout in the release notes [Notable Change](../docs/src/process/release.md) ? For example, will this break compatibility with existing APIs or projects which source these plugins?
+* [ ] Is this a [notable change](../docs/src/process/release.md) that will require a special callout in the release notes? For example, will this break compatibility with existing APIs or projects that consume these plugins?
 
 ### Author Checklist
 
@@ -17,7 +17,6 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 * [ ] Has this been smoke tested?
 * [ ] Have you associated this PR with a `type:` label? Note: this is not necessarily the same as the original issue.
 * [ ] Have you associated a milestone with this PR? Note: leave blank if unsure.
-* [ ] Is this a breaking change to be called out in the release notes?
 * [ ] Testing instructions included in associated issue OR is this a dependency/testcase change?
 
 ### Reviewer Checklist

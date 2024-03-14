@@ -23,11 +23,11 @@
   <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
     <button
       class="c-icon-button c-button--menu icon-camera"
-      aria-label="Take a Notebook Snapshot"
-      title="Take a Notebook Snapshot"
+      :aria-label="snapshotMenuLabel"
+      :title="snapshotMenuLabel"
       @click.stop.prevent="showMenu"
     >
-      <span title="Take Notebook Snapshot" class="c-icon-button__label"> Snapshot </span>
+      <span class="c-icon-button__label">Snapshot</span>
     </button>
   </div>
 </template>
@@ -71,6 +71,11 @@ export default {
       notebookSnapshot: undefined,
       notebookTypes: []
     };
+  },
+  computed: {
+    snapshotMenuLabel() {
+      return 'Open the Notebook Snapshot Menu';
+    }
   },
   mounted() {
     validateNotebookStorageObject();

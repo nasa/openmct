@@ -91,12 +91,14 @@ There are a few reasons that your GitHub PR could be failing beyond simple faile
 ### Local=Pass and CI=Fail
 Although rare, it is possible that your test can pass locally but fail in CI.
 
-#### Busting Cache
-In certain circumstances, the CircleCI cache can become stale. In order to bust the cache, we've implemented a runtime boolean parameter in Circle CI creatively name BUST_CACHE. To execute:
-1. Navigate to the branch in Circle CI believed to have stale cache.
-1. Click on the 'Trigger Pipeline' button.
-1. Add Parameter -> Parameter Type = boolean , Name = BUST_CACHE ,Value = true
-1. Click 'Trigger Pipeline'
+### Reset your workspace
+It's possible that you're running with dependencies or a local environment which is out of sync with the branch you're working on. Make sure to execute the following:
+
+```sh
+nvm use
+npm run clean
+npm install
+```
 
 #### Run tests in the same container as CI
 
