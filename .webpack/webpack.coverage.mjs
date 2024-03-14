@@ -4,7 +4,7 @@ OpenMCT Continuous Integration servers use this configuration to add code covera
 information to pull requests.
 */
 
-import config from './webpack.dev.js';
+import config from './webpack.dev.mjs';
 
 config.devtool = 'source-map';
 config.devServer.hot = false;
