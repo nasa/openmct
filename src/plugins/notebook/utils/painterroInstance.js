@@ -46,7 +46,7 @@ export default class PainterroInstance {
     this.config.id = this.elementId;
     this.config.saveHandler = this.saveHandler.bind(this);
 
-    this.painterro = Painterro(this.config);
+    this.painterro = Painterro.default(this.config);
   }
 
   save(callback) {

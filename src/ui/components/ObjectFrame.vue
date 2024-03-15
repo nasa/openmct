@@ -190,7 +190,7 @@ export default {
       this.soViewResizeObserver.observe(this.$refs.soView);
     }
 
-    const viewKey = this.getViewKey();
+    const viewKey = this.$refs.objectView?.viewKey;
     this.supportsIndependentTime = this.domainObject && SupportedViewTypes.includes(viewKey);
   },
   beforeUnmount() {
@@ -256,9 +256,6 @@ export default {
       }
 
       this.widthClass = wClass.trimStart();
-    },
-    getViewKey() {
-      return this.$refs.objectView?.viewKey;
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
