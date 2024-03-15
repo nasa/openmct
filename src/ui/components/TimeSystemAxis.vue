@@ -29,7 +29,7 @@
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
@@ -77,12 +77,8 @@ export default {
   },
   setup() {
     const axisHolder = ref(null);
-    const { size, startObserving } = useResizeObserver();
-    onMounted(() => {
-      startObserving(axisHolder.value);
-    });
     return {
-      containerSize: size
+      axisHolder
     };
   },
   watch: {
@@ -104,7 +100,11 @@ export default {
       this.useSVG = true;
     }
 
-    this.container = select(this.$refs.axisHolder);
+    const { size, startObserving } = useResizeObserver();
+    this.containerSize = size;
+    startObserving(this.axisHolder);
+
+    this.container = select(this.axisHolder);
     this.svgElement = this.container.append('svg:svg');
     // draw x axis with labels. CSS is used to position them.
     this.axisElement = this.svgElement
@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     resize() {
-      if (this.$refs.axisHolder.clientWidth !== this.width) {
+      if (this.axisHolder.clientWidth !== this.width) {
         this.setDimensions();
         this.drawAxis(this.bounds, this.timeSystem);
         this.updateNowMarker();
@@ -139,7 +139,7 @@ export default {
       }
     },
     setDimensions() {
-      const axisHolder = this.$refs.axisHolder;
+      const axisHolder = this.axisHolder;
       this.width = axisHolder.clientWidth;
       this.offsetWidth = this.width - this.offset;
 
