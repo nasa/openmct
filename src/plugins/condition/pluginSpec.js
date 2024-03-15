@@ -897,6 +897,12 @@ describe('the plugin', function () {
     it('should stop evaluating conditions when a condition evaluates to true', () => {
       const date = Date.now();
       let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
+
+      openmct.telemetry.getMetadata = jasmine.createSpy('getMetadata');
+      openmct.telemetry.getMetadata.and.returnValue({
+        ...testTelemetryObject.telemetry,
+        valueMetadatas: []
+      });
       conditionMgr.on('conditionSetResultUpdated', mockListener);
       conditionMgr.telemetryObjects = {
         'test-object': testTelemetryObject
