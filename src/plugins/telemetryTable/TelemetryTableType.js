@@ -21,6 +21,8 @@
  *****************************************************************************/
 
 export default function getTelemetryTableType(options) {
+  let { telemetryMode, persistModeChange, rowLimit } = options;
+
   return {
     name: 'Telemetry Table',
     description:
