@@ -717,6 +717,17 @@ describe('the plugin', function () {
           key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
         }
       };
+
+      openmct.telemetry = jasmine.createSpyObj('telemetry', [
+        'subscribe',
+        'getMetadata',
+        'request'
+      ]);
+      openmct.telemetry.getMetadata.and.returnValue({
+        ...testTelemetryObject.telemetry,
+        valueMetadatas: []
+      });
+      openmct.telemetry.request.and.returnValue(Promise.resolve([]));
     });
 
     it('should evaluate as old when telemetry is not received in the allotted time', (done) => {
