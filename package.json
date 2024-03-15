@@ -99,7 +99,6 @@
     "webpack-merge": "5.10.0"
   },
   "scripts": {
-    "install": "npm install --prefix e2e",
     "clean": "rm -rf ./dist ./node_modules ./coverage ./html-test-results ./test-results ./.nyc_output",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.mjs",
     "start:prod": "npx webpack serve --config ./.webpack/webpack.prod.mjs",
