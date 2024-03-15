@@ -7,7 +7,7 @@
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/openmct.js",
+      "import": "./dist/openmct.js",
       "require": "./dist/openmct.js"
     }
   },
