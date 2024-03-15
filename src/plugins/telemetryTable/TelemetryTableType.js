@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function getTelemetryTableType(options = {}) {
-  const { telemetryMode = 'performance', persistModeChange = true, rowLimit = 50 } = options;
-
+export default function getTelemetryTableType(options) {
   return {
     name: 'Telemetry Table',
     description:

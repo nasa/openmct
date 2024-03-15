@@ -25,7 +25,9 @@ import getTelemetryTableType from './TelemetryTableType.js';
 import TelemetryTableViewProvider from './TelemetryTableViewProvider.js';
 import TelemetryTableViewActions from './ViewActions.js';
 
-export default function plugin(options) {
+export default function plugin(
+  options = { telemetryMode: 'performance', persistModeChange: true, rowLimit: 50 }
+) {
   return function install(openmct) {
     openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct, options));
     openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct, options));
