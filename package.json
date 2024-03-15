@@ -99,6 +99,7 @@
   },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./coverage ./html-test-results ./test-results ./.nyc_output",
+    "start": "npx webpack serve --config ./.webpack/webpack.dev.mjs",
     "start:prod": "npx webpack serve --config ./.webpack/webpack.prod.mjs",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.mjs",
     "lint:js": "eslint \"example/**/*.js\" \"src/**/*.js\" \"e2e/**/*.js\" \"openmct.js\" --max-warnings=0",
