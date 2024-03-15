@@ -727,7 +727,7 @@ describe('the plugin', function () {
       ]);
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
-        valueMetadatas: []
+        valueMetadatas: [testTelemetryObject.telemetry.values]
       });
       openmct.telemetry.request.and.returnValue(Promise.resolve([]));
       let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
@@ -754,7 +754,7 @@ describe('the plugin', function () {
       openmct.telemetry.getMetadata = jasmine.createSpy('getMetadata');
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
-        valueMetadatas: []
+        valueMetadatas: testTelemetryObject.telemetry.values
       });
       openmct.telemetry.request = jasmine.createSpy('request');
       openmct.telemetry.request.and.returnValue(Promise.resolve([]));
