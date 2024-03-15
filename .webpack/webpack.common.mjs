@@ -15,6 +15,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
+import { merge } from 'webpack-merge';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
@@ -54,9 +55,11 @@ const config = {
     globalObject: 'this',
     filename: '[name].js',
     path: path.resolve(projectRootDir, 'dist'),
-    library: 'openmct',
-    libraryExport: 'default',
-    libraryTarget: 'umd',
+    library: {
+      name: 'openmct',
+      type: 'umd',
+      export: 'default'
+    },
     publicPath: '',
     hashFunction: 'xxhash64',
     clean: true
