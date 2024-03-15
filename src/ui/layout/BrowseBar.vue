@@ -274,6 +274,11 @@ export default {
         this.domainObject.identifier,
         this.setStatus
       );
+      this.stopObservingNameChanges = this.openmct.objects.observe(
+        this.domainObject,
+        '*',
+        this.updateDomainObject
+      );
     },
     actionCollection(actionCollection) {
       if (this.actionCollection) {
@@ -294,16 +299,16 @@ export default {
     });
   },
   beforeUnmount() {
-    if (this.mutationObserver) {
-      this.mutationObserver();
-    }
-
     if (this.actionCollection) {
       this.unlistenToActionCollection();
     }
 
     if (this.removeStatusListener) {
       this.removeStatusListener();
+    }
+
+    if (this.stopObservingNameChanges) {
+      this.stopObservingNameChanges();
     }
 
     document.removeEventListener('click', this.closeViewAndSaveMenu);
@@ -324,6 +329,9 @@ export default {
     },
     updateNameOnEnterKeyPress(event) {
       event.target.blur();
+    },
+    updateDomainObject(newDomainObject) {
+      this.domainObject = newDomainObject;
     },
     setView(view) {
       this.viewKey = view.key;
