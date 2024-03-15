@@ -53,6 +53,7 @@ test.describe('Datepicker operations', () => {
     });
     // Open ITC
     await page.getByLabel('Start bounds').nth(0).click();
+    // Click on the datepicker icon
     await page.locator('form a').first().click();
     await expect(page.getByRole('dialog')).toBeVisible();
     // Click on the first cell
