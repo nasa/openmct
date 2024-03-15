@@ -66,7 +66,8 @@ describe('the plugin', function () {
             format: 'utc',
             hints: {
               domain: 1
-            }
+            },
+            source: 'utc'
           },
           {
             key: 'testSource',
@@ -723,13 +724,19 @@ describe('the plugin', function () {
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'subscribe',
         'getMetadata',
-        'request'
+        'request',
+        'getValueFormatter'
       ]);
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
-        valueMetadatas: [testTelemetryObject.telemetry.values]
+        valueMetadatas: []
       });
       openmct.telemetry.request.and.returnValue(Promise.resolve([]));
+      openmct.telemetry.getValueFormatter.and.returnValue({
+        parse: function (value) {
+          return value;
+        }
+      });
       let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
       conditionMgr.on('conditionSetResultUpdated', mockListener);
       conditionMgr.telemetryObjects = {
@@ -750,14 +757,21 @@ describe('the plugin', function () {
       }, 400);
     });
 
-    fit('should not evaluate as old when telemetry is received in the allotted time', (done) => {
+    it('should not evaluate as old when telemetry is received in the allotted time', (done) => {
       openmct.telemetry.getMetadata = jasmine.createSpy('getMetadata');
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
         valueMetadatas: testTelemetryObject.telemetry.values
       });
+      const testDatum = {
+        'some-key2': '',
+        utc: 1,
+        testSource: '',
+        'some-key': null,
+        id: 'test-object'
+      };
       openmct.telemetry.request = jasmine.createSpy('request');
-      openmct.telemetry.request.and.returnValue(Promise.resolve([]));
+      openmct.telemetry.request.and.returnValue(Promise.resolve([testDatum]));
       const date = 1;
       conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input =
         ['0.4'];
@@ -767,9 +781,7 @@ describe('the plugin', function () {
         'test-object': testTelemetryObject
       };
       conditionMgr.updateConditionTelemetryObjects();
-      conditionMgr.telemetryReceived(testTelemetryObject, {
-        utc: date
-      });
+      conditionMgr.telemetryReceived(testTelemetryObject, testDatum);
       setTimeout(() => {
         expect(mockListener).toHaveBeenCalledWith({
           output: 'Default',
