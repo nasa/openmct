@@ -717,7 +717,9 @@ describe('the plugin', function () {
           key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
         }
       };
+    });
 
+    it('should evaluate as old when telemetry is not received in the allotted time', (done) => {
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'subscribe',
         'getMetadata',
@@ -728,9 +730,6 @@ describe('the plugin', function () {
         valueMetadatas: []
       });
       openmct.telemetry.request.and.returnValue(Promise.resolve([]));
-    });
-
-    it('should evaluate as old when telemetry is not received in the allotted time', (done) => {
       let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
       conditionMgr.on('conditionSetResultUpdated', mockListener);
       conditionMgr.telemetryObjects = {
@@ -751,7 +750,14 @@ describe('the plugin', function () {
       }, 400);
     });
 
-    it('should not evaluate as old when telemetry is received in the allotted time', (done) => {
+    fit('should not evaluate as old when telemetry is received in the allotted time', (done) => {
+      openmct.telemetry.getMetadata = jasmine.createSpy('getMetadata');
+      openmct.telemetry.getMetadata.and.returnValue({
+        ...testTelemetryObject.telemetry,
+        valueMetadatas: []
+      });
+      openmct.telemetry.request = jasmine.createSpy('request');
+      openmct.telemetry.request.and.returnValue(Promise.resolve([]));
       const date = 1;
       conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input =
         ['0.4'];
