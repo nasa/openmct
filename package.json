@@ -5,8 +5,10 @@
   "module": "dist/openmct.js",
   "main": "dist/openmct.js",
   "exports": {
-    "import": "./dist/openmct.js",
+    ".": {
+      "import": "./dist/esm/openmct.js",
     "require": "./dist/openmct.js"
+    }
   },
   "devDependencies": {
     "@axe-core/playwright": "4.8.5",
