@@ -725,7 +725,8 @@ describe('the plugin', function () {
         'subscribe',
         'getMetadata',
         'request',
-        'getValueFormatter'
+        'getValueFormatter',
+        'abortAllRequests'
       ]);
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
