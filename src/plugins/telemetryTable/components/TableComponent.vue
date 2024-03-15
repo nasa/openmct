@@ -399,7 +399,8 @@ export default {
       rowContext: {},
       telemetryMode: configuration.telemetryMode,
       persistModeChange: configuration.persistModeChange,
-      afterLoadActions: []
+      afterLoadActions: [],
+      existingConfiguration: configuration
     };
   },
   computed: {
@@ -595,23 +596,33 @@ export default {
     },
     handleConfigurationChanges(changes) {
       const { rowLimit, telemetryMode, persistModeChange } = changes;
+      const telemetryModeChanged = this.existingConfiguration.telemetryMode !== telemetryMode;
+      let rowLimitChanged = false;
 
       this.persistModeChange = persistModeChange;
 
+      // both rowLimit changes and telemetryMode changes
+      // require a rerequest of telemetry
+
       if (this.rowLimit !== rowLimit) {
+        rowLimitChanged = true;
         this.rowLimit = rowLimit;
         this.table.updateRowLimit(rowLimit);
-
-        if (this.telemetryMode !== telemetryMode) {
-          // need to clear and resubscribe, if different, handled below
-          this.table.clearAndResubscribe();
-        }
       }
 
-      if (this.telemetryMode !== telemetryMode) {
+      // check for telemetry mode change, because you could technically have a 
+      if (telemetryModeChanged && this.telemetryMode !== telemetryMode) {
         this.telemetryMode = telemetryMode;
+
+        // this method also rerequests telemetry
         this.table.updateTelemetryMode(telemetryMode);
       }
+
+      if (rowLimitChanged && !telemetryModeChanged) {
+        this.table.clearAndResubscribe();
+      }
+
+      this.existingConfiguration = changes;
     },
     updateVisibleRows() {
       if (!this.updatingView) {
