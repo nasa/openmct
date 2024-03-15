@@ -29,7 +29,7 @@
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
@@ -77,8 +77,13 @@ export default {
   },
   setup() {
     const axisHolder = ref(null);
+    const { size: containerSize, startObserving } = useResizeObserver();
+    onMounted(() => {
+      startObserving(axisHolder.value);
+    });
     return {
-      axisHolder
+      axisHolder,
+      containerSize
     };
   },
   watch: {
@@ -91,18 +96,17 @@ export default {
     contentHeight() {
       this.updateNowMarker();
     },
-    containerSize() {
-      this.resize();
+    containerSize: {
+      handler() {
+        this.resize();
+      },
+      deep: true
     }
   },
   mounted() {
     if (this.renderingEngine === 'svg') {
       this.useSVG = true;
     }
-
-    const { size, startObserving } = useResizeObserver();
-    this.containerSize = size;
-    startObserving(this.axisHolder);
 
     this.container = select(this.axisHolder);
     this.svgElement = this.container.append('svg:svg');
