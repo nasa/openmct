@@ -1,0 +1,21 @@
+{
+  "name": "openmct-e2e",
+  "version": "4.0.0-next",
+  "description": "The Open MCT e2e framework and tests",
+  "directories": {
+    "test": "tests"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:visual:ci": "percy exec --config .percy.ci.yml --partial -- npx playwright test --config=playwright-visual-a11y.config.js --project=chrome --grep-invert @unstable",
+    "test:visual:full": "percy exec --config .percy.nightly.yml -- npx playwright test -- --config=playwright-visual-a11y.config.js --grep-invert @unstable"
+  },
+  "devDependencies": {
+    "@percy/cli": "1.27.4",
+    "@percy/playwright": "1.0.4",
+    "@playwright/test": "1.42.1"
+  },
+  "author": "NASA Ames Research Center",
+  "license": "Apache-2.0"
+}
