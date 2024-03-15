@@ -35,7 +35,7 @@ jobs:
 
       - run: npx playwright@1.39.0 install
       - run: npx playwright install chrome-beta
-      - run: npm install --cache ~/.npm --no-audit --progress=false
+      - run: npm ci --no-audit --progress=false
       - run: npm run test:e2e:full -- --max-failures=40
       - run: npm run cov:e2e:report || true
       - shell: bash
