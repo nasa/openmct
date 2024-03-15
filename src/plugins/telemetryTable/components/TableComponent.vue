@@ -602,7 +602,7 @@ export default {
       this.persistModeChange = persistModeChange;
 
       // both rowLimit changes and telemetryMode changes
-      // require a rerequest of telemetry
+      // require a re-request of telemetry
 
       if (this.rowLimit !== rowLimit) {
         rowLimitChanged = true;
@@ -610,13 +610,13 @@ export default {
         this.table.updateRowLimit(rowLimit);
       }
 
-      // check for telemetry mode change, because you could technically have persiste modde changes
-      // set to false, which could create a state where the configuration saved telemtry mode is
+      // check for telemetry mode change, because you could technically have persist mode changes
+      // set to false, which could create a state where the configuration saved telemetry mode is
       // different from the currently set telemetry mode
       if (telemetryModeChanged && this.telemetryMode !== telemetryMode) {
         this.telemetryMode = telemetryMode;
 
-        // this method also rerequests telemetry
+        // this method also re-requests telemetry
         this.table.updateTelemetryMode(telemetryMode);
       }
 
