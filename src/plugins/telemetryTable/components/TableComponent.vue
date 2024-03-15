@@ -610,7 +610,9 @@ export default {
         this.table.updateRowLimit(rowLimit);
       }
 
-      // check for telemetry mode change, because you could technically have a 
+      // check for telemetry mode change, because you could technically have persiste modde changes
+      // set to false, which could create a state where the configuration saved telemtry mode is
+      // different from the currently set telemetry mode
       if (telemetryModeChanged && this.telemetryMode !== telemetryMode) {
         this.telemetryMode = telemetryMode;
 
