@@ -25,7 +25,7 @@ import mount from 'utils/mount';
 import TableConfigurationComponent from './components/TableConfiguration.vue';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration.js';
 
-export default function TableConfigurationViewProvider(openmct) {
+export default function TableConfigurationViewProvider(openmct, options) {
   return {
     key: 'table-configuration',
     name: 'Config',
@@ -45,7 +45,7 @@ export default function TableConfigurationViewProvider(openmct) {
 
       return {
         show: function (element) {
-          tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+          tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct, options);
           const { destroy } = mount(
             {
               el: element,

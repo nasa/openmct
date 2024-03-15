@@ -28,7 +28,7 @@ import TelemetryTableViewActions from './ViewActions.js';
 export default function plugin(options) {
   return function install(openmct) {
     openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct, options));
-    openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct, options));
     openmct.types.addType('table', getTelemetryTableType(options));
     openmct.composition.addPolicy((parent, child) => {
       if (parent.type === 'table') {
