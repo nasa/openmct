@@ -49,7 +49,8 @@ export default class TelemetryTableConfiguration extends EventEmitter {
     configuration.columnOrder = configuration.columnOrder || [];
     configuration.cellFormat = configuration.cellFormat || {};
     configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
-    // anything that doesn't have a telemetryMode existed before the change and should stay as it was for consistency
+    // anything that doesn't have a telemetryMode existed before the change and should
+    // take the properites of any passed in defaults or the defaults from the plugin
     configuration.telemetryMode = configuration.telemetryMode ?? this.defaultOptions.telemetryMode;
     configuration.persistModeChange = configuration.persistModeChange ?? this.defaultOptions.persistModeChange;
     configuration.rowLimit = configuration.rowLimit ?? this.defaultOptions.rowLimit;
