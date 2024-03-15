@@ -8,9 +8,9 @@
   "type": "module",
   "scripts": {
     "pretest": "npm install",
+    "pretest:visual": "npm install",
     "test": "npx playwright test",
-    "test:visual:ci": "percy exec --config .percy.ci.yml --partial -- npx playwright test --config=playwright-visual-a11y.config.js --project=chrome --grep-invert @unstable",
-    "test:visual:full": "percy exec --config .percy.nightly.yml -- npx playwright test -- --config=playwright-visual-a11y.config.js --grep-invert @unstable"
+    "test:visual": "percy exec"
   },
   "devDependencies": {
     "@percy/cli": "1.27.4",
