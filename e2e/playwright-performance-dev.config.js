@@ -10,6 +10,7 @@ const config = {
   workers: 1, //Only run in serial with 1 worker
   webServer: {
     command: 'npm run start', //need development mode for performance.marks and others
+    cwd: '../', // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: false
