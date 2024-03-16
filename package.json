@@ -11,6 +11,9 @@
       "require": "./dist/openmct.js"
     }
   },
+  "workspaces": [
+    "e2e"
+  ],
   "devDependencies": {
     "@babel/eslint-parser": "7.23.3",
     "@braintree/sanitize-url": "6.0.4",
