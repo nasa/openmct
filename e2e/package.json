@@ -10,7 +10,6 @@
     }
   },
   "scripts": {
-    "pretest": "npm install",
     "pretest:visual": "npm install",
     "test": "npx playwright test",
     "test:visual": "percy exec"
