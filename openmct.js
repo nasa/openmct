@@ -20,6 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const matcher = /\/openmct.js$/;
+if (document.currentScript) {
+  let src = document.currentScript.src;
+  if (src && matcher.test(src)) {
+    // eslint-disable-next-line no-undef
+    __webpack_public_path__ = src.replace(matcher, '') + '/';
+  }
+}
+
 /**
  * @typedef {Object} BuildInfo
  * @property {string} version
