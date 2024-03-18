@@ -340,7 +340,7 @@ export default class PlotSeries extends Model {
   }
 
   async loadLimits() {
-    const limitsResponse = await this.limitDefinition.limits();
+    const limitsResponse = await this.limitDefinition.limits(this.domainObject);
     this.limits = {};
     if (!this.unsubscribeLimits) {
       this.unsubscribeLimits = this.openmct.telemetry.subscribeToLimits(
