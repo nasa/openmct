@@ -76,7 +76,7 @@ test.describe('Visual - Planning', () => {
     await percySnapshot(page, `Plan View (theme: ${theme})`);
   });
 
-  test.only('Resize Plan View @2p', async ({ browser, theme }) => {
+  test('Resize Plan View @2p', async ({ browser, theme }) => {
     // need to set viewport to null to allow for resizing
     const newContext = await browser.newContext({
       viewport: null
