@@ -87,7 +87,7 @@
         ></button>
         <button
           class="c-button icon-x"
-          aria-label="Discard time bounds"
+          aria-label="Discard changes and close time popup"
           @click.prevent="hide"
         ></button>
       </div>
