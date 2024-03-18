@@ -199,7 +199,53 @@ export default {
     }
   },
   created() {
-    this.initialize();
+    this.fields = [
+      {
+        modelProp: 'yKey',
+        objectPath: this.dynamicPathForKey('yKey')
+      },
+      {
+        modelProp: 'interpolate',
+        objectPath: this.dynamicPathForKey('interpolate')
+      },
+      {
+        modelProp: 'markers',
+        objectPath: this.dynamicPathForKey('markers')
+      },
+      {
+        modelProp: 'markerShape',
+        objectPath: this.dynamicPathForKey('markerShape')
+      },
+      {
+        modelProp: 'markerSize',
+        coerce: Number,
+        objectPath: this.dynamicPathForKey('markerSize')
+      },
+      {
+        modelProp: 'alarmMarkers',
+        coerce: Boolean,
+        objectPath: this.dynamicPathForKey('alarmMarkers')
+      },
+      {
+        modelProp: 'limitLines',
+        coerce: Boolean,
+        objectPath: this.dynamicPathForKey('limitLines')
+      }
+    ];
+
+    const metadata = this.series.metadata;
+    this.yKeyOptions = metadata.valuesForHints(['range']).map(function (o) {
+      return {
+        name: o.key,
+        value: o.key
+      };
+    });
+    this.markerShapeOptions = Object.entries(MARKER_SHAPES).map(([key, obj]) => {
+      return {
+        name: obj.label,
+        value: key
+      };
+    });
 
     this.status = this.openmct.status.get(this.series.domainObject.identifier);
     this.removeStatusListener = this.openmct.status.observe(
@@ -213,55 +259,6 @@ export default {
     }
   },
   methods: {
-    initialize() {
-      this.fields = [
-        {
-          modelProp: 'yKey',
-          objectPath: this.dynamicPathForKey('yKey')
-        },
-        {
-          modelProp: 'interpolate',
-          objectPath: this.dynamicPathForKey('interpolate')
-        },
-        {
-          modelProp: 'markers',
-          objectPath: this.dynamicPathForKey('markers')
-        },
-        {
-          modelProp: 'markerShape',
-          objectPath: this.dynamicPathForKey('markerShape')
-        },
-        {
-          modelProp: 'markerSize',
-          coerce: Number,
-          objectPath: this.dynamicPathForKey('markerSize')
-        },
-        {
-          modelProp: 'alarmMarkers',
-          coerce: Boolean,
-          objectPath: this.dynamicPathForKey('alarmMarkers')
-        },
-        {
-          modelProp: 'limitLines',
-          coerce: Boolean,
-          objectPath: this.dynamicPathForKey('limitLines')
-        }
-      ];
-
-      const metadata = this.series.metadata;
-      this.yKeyOptions = metadata.valuesForHints(['range']).map(function (o) {
-        return {
-          name: o.key,
-          value: o.key
-        };
-      });
-      this.markerShapeOptions = Object.entries(MARKER_SHAPES).map(([key, obj]) => {
-        return {
-          name: obj.label,
-          value: key
-        };
-      });
-    },
     dynamicPathForKey(key) {
       return function (object, model) {
         const modelIdentifier = model.get('identifier');
