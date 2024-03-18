@@ -406,8 +406,8 @@ export default {
   computed: {
     dropTargetStyle() {
       return {
-        top: this.$refs.headersHolderEl.offsetTop + 'px',
-        height: this.totalHeight + this.$refs.headersHolderEl.offsetHeight + 'px',
+        top: this.$refs.headersTable.offsetTop + 'px',
+        height: this.totalHeight + this.$refs.headersTable.offsetHeight + 'px',
         left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
       };
     },
