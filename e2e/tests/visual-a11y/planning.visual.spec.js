@@ -76,15 +76,23 @@ test.describe('Visual - Planning', () => {
     await percySnapshot(page, `Plan View (theme: ${theme})`);
   });
 
-  test('Resize Plan View', async ({ page, theme }) => {
-    const plan = await createPlanFromJSON(page, {
+  test.only('Resize Plan View @2p', async ({ browser, theme }) => {
+    // need to set viewport to null to allow for resizing
+    const newContext = await browser.newContext({
+      viewport: null
+    });
+    const newPage = await newContext.newPage();
+
+    await newPage.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    const plan = await createPlanFromJSON(newPage, {
       name: 'Plan Visual Test',
       json: examplePlanSmall2
     });
 
-    await setBoundsToSpanAllActivities(page, examplePlanSmall2, plan.url);
-    await page.setViewportSize({ width: 800, height: 600 });
-    await percySnapshot(page, `Plan View resized (theme: ${theme})`);
+    await setBoundsToSpanAllActivities(newPage, examplePlanSmall2, plan.url);
+    // resize the window
+    await newPage.setViewportSize({ width: 800, height: 600 });
+    await percySnapshot(newPage, `Plan View resized (theme: ${theme})`);
   });
 
   test('Plan View w/ draft status', async ({ page, theme }) => {
