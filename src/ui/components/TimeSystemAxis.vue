@@ -143,11 +143,10 @@ export default {
       }
     },
     setDimensions() {
-      const axisHolder = this.axisHolder;
-      this.width = axisHolder.clientWidth;
+      this.width = this.axisHolder.clientWidth;
       this.offsetWidth = this.width - this.offset;
 
-      this.height = Math.round(axisHolder.getBoundingClientRect().height);
+      this.height = Math.round(this.axisHolder.getBoundingClientRect().height);
 
       if (this.useSVG) {
         this.svgElement.attr('width', this.width);
