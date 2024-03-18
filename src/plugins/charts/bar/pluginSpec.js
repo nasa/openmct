@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,10 +23,10 @@
 // import BarGraph from './BarGraphPlot.vue';
 import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
-import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
-import BarGraphPlugin from './plugin';
+import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants.js';
+import BarGraphPlugin from './plugin.js';
 
 describe('the plugin', function () {
   let element;
@@ -153,7 +153,7 @@ describe('the plugin', function () {
 
       spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     it('provides a bar graph view', () => {
@@ -217,7 +217,6 @@ describe('the plugin', function () {
           'someNamespace:~OpenMCT~outer.test-object.foo.bar'
         ].name
       ).toEqual('A Dotful Object');
-      barGraphView.destroy();
     });
   });
 
@@ -254,7 +253,7 @@ describe('the plugin', function () {
 
       spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     it('Renders spectral plots', async () => {
@@ -305,12 +304,11 @@ describe('the plugin', function () {
       barGraphView.show(child, true);
       mockComposition.emit('add', dotFullTelemetryObject);
 
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
 
       const plotElement = element.querySelector('.cartesianlayer .scatterlayer .trace .lines');
       expect(plotElement).not.toBeNull();
-      barGraphView.destroy();
     });
   });
 
@@ -578,12 +576,10 @@ describe('the plugin', function () {
       child.append(viewContainer);
 
       const applicableViews = openmct.inspectorViews.get(selection);
-      plotInspectorView = applicableViews.filter(
-        (view) => view.name === 'Bar Graph Configuration'
-      )[0];
+      plotInspectorView = applicableViews.filter((view) => view.key === BAR_GRAPH_INSPECTOR_KEY)[0];
       plotInspectorView.show(viewContainer);
 
-      await Vue.nextTick();
+      await nextTick();
       optionsElement = element.querySelector('.c-bar-graph-options');
     });
 

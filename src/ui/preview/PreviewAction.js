@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 import EventEmitter from 'EventEmitter';
 import mount from 'utils/mount';
 
-import Preview from './Preview.vue';
+import PreviewContainer from './PreviewContainer.vue';
 
 export default class PreviewAction extends EventEmitter {
   constructor(openmct) {
@@ -51,7 +51,7 @@ export default class PreviewAction extends EventEmitter {
     const { vNode, destroy } = mount(
       {
         components: {
-          Preview
+          PreviewContainer
         },
         provide: {
           openmct: this._openmct,
@@ -62,27 +62,30 @@ export default class PreviewAction extends EventEmitter {
             viewOptions
           };
         },
-        template: '<Preview :view-options="viewOptions"></Preview>'
+        template: '<preview-container :view-options="viewOptions"></preview-container>'
       },
       {
         app: this._openmct.app
       }
     );
 
-    let overlay = this._openmct.overlays.overlay({
+    const overlay = this._openmct.overlays.overlay({
       element: vNode.el,
       size: 'large',
       autoHide: false,
       buttons: [
         {
           label: 'Done',
-          callback: () => overlay.dismiss()
+          callback: () => {
+            overlay.dismiss();
+          }
         }
       ],
       onDestroy: () => {
         PreviewAction.isVisible = false;
         destroy();
         this.emit('isVisible', false);
+        overlay.dismiss();
       }
     });
 

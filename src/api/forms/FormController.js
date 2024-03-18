@@ -3,9 +3,9 @@ import mount from 'utils/mount';
 import AutoCompleteField from './components/controls/AutoCompleteField.vue';
 import CheckBoxField from './components/controls/CheckBoxField.vue';
 import ClockDisplayFormatField from './components/controls/ClockDisplayFormatField.vue';
-import Datetime from './components/controls/Datetime.vue';
+import Datetime from './components/controls/DatetimeField.vue';
 import FileInput from './components/controls/FileInput.vue';
-import Locator from './components/controls/Locator.vue';
+import Locator from './components/controls/LocatorField.vue';
 import NumberField from './components/controls/NumberField.vue';
 import SelectField from './components/controls/SelectField.vue';
 import TextAreaField from './components/controls/TextAreaField.vue';
@@ -87,7 +87,7 @@ export default class FormControl {
                 onChange
               };
             },
-            template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
+            template: `<FormControlComponent :model="model" @on-change="onChange"></FormControlComponent>`
           },
           {
             element,

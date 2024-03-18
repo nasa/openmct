@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module*/
 
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {
@@ -48,7 +47,7 @@ if (document.currentScript) {
  * @property {*} inspectorViews
  * @property {*} propertyEditors
  * @property {*} toolbars
- * @property {*} types
+ * @property {import('./src/api/types/TypeRegistry').default} types
  * @property {import('./src/api/objects/ObjectAPI').default} objects
  * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
  * @property {import('./src/api/indicators/IndicatorAPI').default} indicators
@@ -68,6 +67,7 @@ if (document.currentScript) {
  * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
  * @property {{(plugin: OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
+ * @property {{(assetPath: string) => void}} setAssetPath
  * @property {{(domElement: HTMLElement, isHeadlessMode: boolean) => void}} start
  * @property {{() => void}} startHeadless
  * @property {{() => void}} destroy
@@ -75,9 +75,9 @@ if (document.currentScript) {
  * @property {OpenMCTComponent[]} components
  */
 
-const MCT = require('./src/MCT');
+import { MCT } from './src/MCT.js';
 
 /** @type {OpenMCT} */
 const openmct = new MCT();
 
-module.exports = openmct;
+export default openmct;

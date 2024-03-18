@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -43,7 +43,7 @@
           edit-title="Manually set the color for this bar graph series."
           view-title="The color for this bar graph series."
           short-label="Color"
-          @colorSet="setColor"
+          @color-set="setColor"
         />
       </li>
     </ul>

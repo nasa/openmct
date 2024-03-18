@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,11 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div
-    :style="position"
-    class="c-status-poll-panel c-status-poll-panel--operator"
-    @click.stop="noop"
-  >
+  <div :style="position" class="c-status-poll-panel c-status-poll-panel--operator" @click.stop>
     <div class="c-status-poll-panel__section c-status-poll-panel__top">
       <div class="c-status-poll-panel__title">Status Poll</div>
       <div class="c-status-poll-panel__user-role icon-person">{{ role }}</div>
@@ -133,7 +129,7 @@ export default {
       this.role = activeRole;
       const status = await this.openmct.user.status.getStatusForRole(activeRole);
       if (status !== undefined) {
-        this.setStatus({ status });
+        this.setStatus({ role: this.role, status });
       }
     },
     subscribeToMyStatus() {
@@ -145,7 +141,11 @@ export default {
     subscribeToRoleChange() {
       this.openmct.user.on('roleChanged', this.fetchMyStatus);
     },
-    setStatus({ status }) {
+    setStatus({ role, status }) {
+      if (role !== this.role) {
+        // not my role
+        return;
+      }
       status = this.applyStyling(status);
       this.selectedStatus = status.key;
       this.indicator.iconClass(status.iconClassPoll);
@@ -191,8 +191,7 @@ export default {
       } else {
         return status;
       }
-    },
-    noop() {}
+    }
   }
 };
 </script>

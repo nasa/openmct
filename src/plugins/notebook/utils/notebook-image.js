@@ -54,13 +54,23 @@ export async function saveNotebookImageDomainObject(openmct, object) {
   await openmct.objects.save(object);
 }
 
-export function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage) {
-  openmct.objects.get(identifier).then((domainObject) => {
-    const configuration = domainObject.configuration;
-    configuration.fullSizeImageURL = fullSizeImage.src;
-
+export async function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage) {
+  const domainObject = await openmct.objects.get(identifier);
+  const configuration = domainObject.configuration;
+  configuration.fullSizeImageURL = fullSizeImage.src;
+  try {
+    // making a transactions as we can't catch errors on mutations
+    if (!openmct.objects.isTransactionActive()) {
+      openmct.objects.startTransaction();
+    }
     openmct.objects.mutate(domainObject, 'configuration', configuration);
-  });
+    const transaction = openmct.objects.getActiveTransaction();
+    await transaction.commit();
+    openmct.objects.endTransaction();
+  } catch (error) {
+    console.error(`${error.message} -- unable to save image`, error);
+    openmct.notifications.error(`${error.message} -- unable to save image`);
+  }
 }
 
 export function updateNamespaceOfDomainObject(object, namespace) {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@ import mount from 'utils/mount';
 
 import Agent from '@/utils/agent/Agent';
 
-import Notebook from './components/Notebook.vue';
+import Notebook from './components/NotebookComponent.vue';
 
 export default class NotebookViewProvider {
   constructor(openmct, name, key, type, cssClass, snapshotContainer, entryUrlWhitelist) {

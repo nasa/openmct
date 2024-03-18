@@ -1,17 +1,12 @@
-/* global module */
-
 /*
 This file extends the webpack.dev.js config to add babel istanbul coverage.
 OpenMCT Continuous Integration servers use this configuration to add code coverage
 information to pull requests.
 */
 
-const config = require('./webpack.dev');
-// eslint-disable-next-line no-undef
-const CI = process.env.CI === 'true';
+import config from './webpack.dev.js';
 
-config.devtool = CI ? false : undefined;
-
+config.devtool = 'source-map';
 config.devServer.hot = false;
 
 config.module.rules.push({
@@ -34,4 +29,4 @@ config.module.rules.push({
   }
 });
 
-module.exports = config;
+export default config;

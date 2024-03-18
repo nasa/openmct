@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -32,15 +32,22 @@
         'has-complex-content': complexContent
       }
     ]"
+    :aria-label="ariaLabel"
   >
     <div class="c-so-view__header">
       <div class="c-object-label" :class="[statusClass]">
         <div class="c-object-label__type-icon" :class="cssClass">
-          <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+          <span
+            class="is-status__indicator"
+            :aria-label="`This item is ${status}`"
+            :title="`This item is ${status}`"
+          ></span>
         </div>
         <div
           ref="objectName"
           class="c-object-label__name"
+          aria-label="object name"
+          :title="domainObject && domainObject.name"
           @mouseover.ctrl="showToolTip"
           @mouseleave="hideToolTip"
         >
@@ -54,6 +61,7 @@
           'c-so-view__frame-controls--no-frame': !hasFrame,
           'has-complex-content': complexContent
         }"
+        :aria-label="`${ariaLabel} Controls`"
       >
         <div v-if="supportsIndependentTime" class="c-conductor-holder--compact">
           <independent-time-conductor :domain-object="domainObject" :object-path="objectPath" />
@@ -71,6 +79,7 @@
             class="c-icon-button"
             :class="item.cssClass"
             :title="item.name"
+            :aria-label="item.name"
             @click="item.onItemClicked"
           >
             <span class="c-icon-button__label">{{ item.name }}</span>
@@ -78,6 +87,7 @@
         </div>
         <button
           class="c-icon-button icon-3-dots c-so-view__frame-controls__more"
+          aria-label="View menu items"
           title="View menu items"
           @click.prevent.stop="showMenuItems($event)"
         ></button>
@@ -100,19 +110,12 @@
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
+import { SupportedViewTypes } from '../../utils/constants.js';
 import ObjectView from './ObjectView.vue';
 
 const SIMPLE_CONTENT_TYPES = ['clock', 'timer', 'summary-widget', 'hyperlink', 'conditionWidget'];
 const CSS_WIDTH_LESS_STR = '--width-less-than-';
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'scatter-plot.view',
-  'time-strip.view',
-  'example.imagery'
-];
 
 export default {
   components: {
@@ -164,6 +167,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return `${this.domainObject.name} Frame`;
+    },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
     }
@@ -184,7 +190,7 @@ export default {
       this.soViewResizeObserver.observe(this.$refs.soView);
     }
 
-    const viewKey = this.getViewKey();
+    const viewKey = this.$refs.objectView?.viewKey;
     this.supportsIndependentTime = this.domainObject && SupportedViewTypes.includes(viewKey);
   },
   beforeUnmount() {
@@ -250,9 +256,6 @@ export default {
       }
 
       this.widthClass = wClass.trimStart();
-    },
-    getViewKey() {
-      return this.$refs.objectView?.viewKey;
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;

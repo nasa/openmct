@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,19 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * The SourceMap allows mapping specific implementations of plan domain objects to those expected by Open MCT.
+ * @typedef {object} SourceMapOption
+ * @property {string} orderedGroups the property of the plan that lists groups/swim lanes specifying what order they will be displayed in Open MCT.
+ * @property {string} activities the property of the plan that has the list of activities to be displayed.
+ * @property {string} groupId the property of the activity that maps to the group/swim lane it should be displayed in.
+ * @property {string} start The start time property of the activity
+ * @property {string} end The end time property of the activity
+ * @property {string} id The unique id of the activity. This is required to allow setting activity states
+ * @property {object} displayProperties a list of key: value pairs that specifies which properties of the activity should be displayed when it is selected. Ex. {'location': 'Location', 'metadata.length_in_meters', 'Length (meters)'}
+ * @property {object} filterMetadata a list of strings that specifies which properties of the activity be included for filtering. Ex. {'description','properties.length_in_meters'}
+ */
+
+import _ from 'lodash';
 export function getValidatedData(domainObject) {
   const sourceMap = domainObject.sourceMap;
-  const body = domainObject.selectFile?.body;
-  let json = {};
-  if (typeof body === 'string') {
-    try {
-      json = JSON.parse(body);
-    } catch (e) {
-      return json;
-    }
-  } else if (body !== undefined) {
-    json = body;
-  }
+  const json = getObjectJson(domainObject);
 
   if (
     sourceMap !== undefined &&
@@ -55,6 +59,24 @@ export function getValidatedData(domainObject) {
           groupActivity.end = activity[sourceMap.end];
         }
 
+        if (Array.isArray(sourceMap.filterMetadata)) {
+          groupActivity.filterMetadataValues = [];
+          sourceMap.filterMetadata.forEach((property) => {
+            const value = _.get(activity, property);
+            if (value !== undefined && value !== null) {
+              groupActivity.filterMetadataValues.push(value);
+            }
+          });
+        }
+
+        if (sourceMap.id) {
+          groupActivity.id = activity[sourceMap.id];
+        }
+
+        if (sourceMap.displayProperties) {
+          groupActivity.displayProperties = sourceMap.displayProperties;
+        }
+
         if (!mappedJson[groupIdKey]) {
           mappedJson[groupIdKey] = [];
         }
@@ -67,6 +89,77 @@ export function getValidatedData(domainObject) {
   } else {
     return json;
   }
+}
+
+function getObjectJson(domainObject) {
+  const body = domainObject.selectFile?.body;
+  let json = {};
+  if (typeof body === 'string') {
+    try {
+      json = JSON.parse(body);
+    } catch (e) {
+      return json;
+    }
+  } else if (body !== undefined) {
+    json = body;
+  }
+
+  return json;
+}
+
+export function getValidatedGroups(domainObject, planData) {
+  let orderedGroupNames;
+  const sourceMap = domainObject.sourceMap;
+  const json = getObjectJson(domainObject);
+  if (sourceMap?.orderedGroups) {
+    const groups = json[sourceMap.orderedGroups];
+    if (groups.length && typeof groups[0] === 'object') {
+      //if groups is a list of objects, then get the name property from each group object.
+      const groupsWithNames = groups.filter(
+        (groupObj) => groupObj.name !== undefined && groupObj.name !== ''
+      );
+      orderedGroupNames = groupsWithNames.map((groupObj) => groupObj.name);
+    } else {
+      // Otherwise, groups is likely a list of names, so use that.
+      orderedGroupNames = groups;
+    }
+  }
+  if (orderedGroupNames === undefined) {
+    orderedGroupNames = Object.keys(planData);
+  }
+
+  return orderedGroupNames;
+}
+
+export function getDisplayProperties(activity) {
+  let displayProperties = {};
+  function extractProperties(properties, useKeyAsLabel = false) {
+    Object.keys(properties).forEach((key) => {
+      const label = useKeyAsLabel ? key : properties[key];
+      const value = _.get(activity, key);
+      if (value) {
+        displayProperties[key] = { label, value };
+      }
+    });
+  }
+
+  if (activity?.displayProperties) {
+    extractProperties(activity.displayProperties);
+  } else if (activity?.properties) {
+    extractProperties(activity.properties, true);
+  }
+  return displayProperties;
+}
+
+export function getFilteredValues(activity) {
+  let values = [];
+  if (Array.isArray(activity.filterMetadataValues)) {
+    values = activity.filterMetadataValues;
+  } else if (activity?.properties) {
+    values = Object.values(activity.properties);
+  }
+
+  return values;
 }
 
 export function getContrastingColor(hexColor) {

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,14 +27,14 @@
 </template>
 
 <script>
-import * as d3Scale from 'd3-scale';
+import { scaleLinear, scaleUtc } from 'd3-scale';
 import _ from 'lodash';
 import mount from 'utils/mount';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import PreviewAction from '@/ui/preview/PreviewAction';
 
-import imageryData from '../../imagery/mixins/imageryData';
+import imageryData from '../../imagery/mixins/imageryData.js';
 
 const PADDING = 1;
 const ROW_HEIGHT = 100;
@@ -220,10 +220,10 @@ export default {
       }
 
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
         this.xScale.domain([new Date(this.viewBounds.start), new Date(this.viewBounds.end)]);
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
         this.xScale.domain([this.viewBounds.start, this.viewBounds.end]);
       }
 

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,6 +22,7 @@
 
 <template>
   <div
+    aria-label="sub object frame"
     class="l-layout__frame c-frame"
     :class="{
       'no-frame': !item.hasFrame,
@@ -30,14 +31,19 @@
     :style="style"
   >
     <slot name="content"></slot>
-    <div class="c-frame__move-bar" @mousedown.left="startMove($event)"></div>
+    <div
+      class="c-frame__move-bar"
+      :aria-label="`Move ${typeName} Frame`"
+      @mousedown.left="startMove($event)"
+    ></div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash';
 
-import LayoutDrag from './../LayoutDrag';
+import DRAWING_OBJECT_TYPES from '../DrawingObjectTypes.js';
+import LayoutDrag from './../LayoutDrag.js';
 
 export default {
   inject: ['openmct'],
@@ -56,7 +62,15 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
+    typeName() {
+      const { type } = this.item;
+      if (DRAWING_OBJECT_TYPES[type]) {
+        return DRAWING_OBJECT_TYPES[type].name;
+      }
+      return 'Sub-object';
+    },
     size() {
       let { width, height } = this.item;
 
@@ -119,7 +133,7 @@ export default {
       document.body.removeEventListener('mousemove', this.continueMove);
       document.body.removeEventListener('mouseup', this.endMove);
       this.continueMove(event);
-      this.$emit('endMove');
+      this.$emit('end-move');
       this.dragPosition = undefined;
       this.initialPosition = undefined;
       this.delta = undefined;

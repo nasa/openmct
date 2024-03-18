@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,6 +27,7 @@
       isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
       { 'is-expanded': independentTCEnabled }
     ]"
+    aria-label="Independent Time Conductor Panel"
   >
     <ToggleSwitch
       id="independentTCToggle"
@@ -70,11 +71,11 @@
       :bottom="true"
       :position-x="positionX"
       :position-y="positionY"
-      @popupLoaded="initializePopup"
-      @independentModeUpdated="saveMode"
-      @independentClockUpdated="saveClock"
-      @fixedBoundsUpdated="saveFixedBounds"
-      @clockOffsetsUpdated="saveClockOffsets"
+      @popup-loaded="initializePopup"
+      @independent-mode-updated="saveMode"
+      @independent-clock-updated="saveClock"
+      @fixed-bounds-updated="saveFixedBounds"
+      @clock-offsets-updated="saveClockOffsets"
       @dismiss="clearPopup"
     />
   </div>
@@ -83,12 +84,12 @@
 <script>
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
 
-import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
 import ConductorPopUp from '../ConductorPopUp.vue';
-import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager';
+import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager.js';
 
 export default {
   components: {
@@ -116,6 +117,7 @@ export default {
       required: true
     }
   },
+  emits: ['updated'],
   data() {
     const fixedOffsets = this.openmct.time.getBounds();
     const clockOffsets = this.openmct.time.getClockOffsets();

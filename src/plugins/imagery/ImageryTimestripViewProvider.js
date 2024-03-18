@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -65,7 +65,7 @@ export default function ImageryTimestripViewProvider(openmct) {
                 domainObject: domainObject,
                 objectPath: objectPath
               },
-              template: '<imagery-time-view></imagery-time-view>'
+              template: '<imagery-time-view ref="root"></imagery-time-view>'
             },
             {
               app: openmct.app,

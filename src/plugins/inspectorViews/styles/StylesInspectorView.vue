@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -36,8 +36,8 @@
 <script>
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 
-import Multipane from '../../../ui/layout/Multipane.vue';
-import Pane from '../../../ui/layout/Pane.vue';
+import Multipane from '../../../ui/layout/MultipaneContainer.vue';
+import Pane from '../../../ui/layout/PaneContainer.vue';
 import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
 
 export default {

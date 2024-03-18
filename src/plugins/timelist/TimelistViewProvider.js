@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,8 +22,8 @@
 
 import mount from 'utils/mount';
 
-import { TIMELIST_TYPE } from './constants';
-import Timelist from './Timelist.vue';
+import { TIMELIST_TYPE } from './constants.js';
+import Timelist from './TimelistComponent.vue';
 
 export default function TimelistViewProvider(openmct) {
   return {

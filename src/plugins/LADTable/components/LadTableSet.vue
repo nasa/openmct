@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -192,11 +192,7 @@ export default {
     reorderLadTables(reorderPlan) {
       let oldComposition = this.ladTableObjects.slice();
       reorderPlan.forEach((reorderEvent) => {
-        this.$set(
-          this.ladTableObjects,
-          reorderEvent.newIndex,
-          oldComposition[reorderEvent.oldIndex]
-        );
+        this.ladTableObjects[reorderEvent.newIndex] = oldComposition[reorderEvent.oldIndex];
       });
     },
     addTelemetryObject(ladTable) {

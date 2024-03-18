@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,7 +27,8 @@
     <button
       class="c-icon-button c-button--menu"
       :class="currentView.cssClass"
-      title="Change the current view"
+      :title="viewSwitcherLabel"
+      :aria-label="viewSwitcherLabel"
       @click.prevent.stop="showMenu"
     >
       <span class="c-icon-button__label">
@@ -50,9 +51,15 @@ export default {
       required: true
     }
   },
+  emits: ['set-view'],
+  computed: {
+    viewSwitcherLabel() {
+      return 'Open the View Switcher Menu';
+    }
+  },
   methods: {
     setView(view) {
-      this.$emit('setView', view);
+      this.$emit('set-view', view);
     },
     showMenu() {
       const elementBoundingClientRect = this.$el.getBoundingClientRect();

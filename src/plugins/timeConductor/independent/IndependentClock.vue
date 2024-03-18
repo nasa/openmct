@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
-import toggleMixin from '../../../ui/mixins/toggle-mixin';
-import clockMixin from '../clock-mixin';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
+import toggleMixin from '../../../ui/mixins/toggle-mixin.js';
+import clockMixin from '../clock-mixin.js';
 
 export default {
   mixins: [toggleMixin, clockMixin],
@@ -57,6 +57,7 @@ export default {
       }
     }
   },
+  emits: ['independent-clock-updated'],
   data() {
     const activeClock = this.getActiveClock();
 
@@ -114,7 +115,7 @@ export default {
     setClock(clockKey) {
       this.setViewFromClock(clockKey);
 
-      this.$emit('independentClockUpdated', clockKey);
+      this.$emit('independent-clock-updated', clockKey);
     },
     setViewFromClock(clockOrKey) {
       let clock = clockOrKey;

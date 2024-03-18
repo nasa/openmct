@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -44,10 +44,10 @@
         :filter-field="metadatum"
         :persisted-filters="updatedFilters[metadatum.key]"
         label="Global Filter"
-        @filterSelected="updateFiltersWithSelectedValue"
-        @filterTextValueChanged="updateFiltersWithTextValue"
-        @filterSingleSelected="updateSingleSelection"
-        @clearFilters="clearFilters"
+        @filter-selected="updateFiltersWithSelectedValue"
+        @filter-text-value-changed="updateFiltersWithTextValue"
+        @filter-single-selected="updateSingleSelection"
+        @clear-filters="clearFilters"
       />
     </ul>
   </li>
@@ -73,6 +73,7 @@ export default {
       }
     }
   },
+  emits: ['persist-global-filters'],
   data() {
     return {
       expanded: false,
@@ -102,7 +103,7 @@ export default {
     },
     clearFilters(key) {
       this.updatedFilters[key] = {};
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     },
     updateFiltersWithSelectedValue(key, comparator, valueName, value) {
       let filterValue = this.updatedFilters[key];
@@ -121,11 +122,11 @@ export default {
         this.updatedFilters[key][comparator] = [valueName];
       }
 
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     },
     updateSingleSelection(key, comparator, value) {
       this.updatedFilters[key][comparator] = [value];
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     },
     updateFiltersWithTextValue(key, comparator, value) {
       if (value.trim() === '') {
@@ -134,7 +135,7 @@ export default {
         this.updatedFilters[key][comparator] = value;
       }
 
-      this.$emit('persistGlobalFilters', key, this.updatedFilters);
+      this.$emit('persist-global-filters', key, this.updatedFilters);
     }
   }
 };

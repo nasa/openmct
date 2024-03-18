@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -33,16 +33,16 @@
       class="c-fault-mgmt-viewButton"
       title="View Filter"
       :model="model"
-      @onChange="onChange"
+      @on-change="onChange"
     />
   </div>
 </template>
 
 <script>
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
-import Search from '@/ui/components/Search.vue';
+import Search from '@/ui/components/SearchComponent.vue';
 
-import { FILTER_ITEMS } from './constants';
+import { FILTER_ITEMS } from './constants.js';
 
 export default {
   components: {
@@ -56,6 +56,7 @@ export default {
       default: ''
     }
   },
+  emits: ['filter-changed', 'update-search-term'],
   data() {
     return {
       items: []
@@ -79,10 +80,10 @@ export default {
   },
   methods: {
     onChange(data) {
-      this.$emit('filterChanged', data);
+      this.$emit('filter-changed', data);
     },
     updateSearchTerm(searchTerm) {
-      this.$emit('updateSearchTerm', searchTerm);
+      this.$emit('update-search-term', searchTerm);
     }
   }
 };

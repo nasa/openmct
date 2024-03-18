@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -70,6 +70,7 @@ export default {
       required: false
     }
   },
+  emits: ['handle-reset-image', 'toggle-zoom-lock', 'zoom-in', 'zoom-out'],
   data() {
     return {};
   },
@@ -86,16 +87,16 @@ export default {
       }
     },
     handleResetImage() {
-      this.$emit('handleResetImage');
+      this.$emit('handle-reset-image');
     },
     toggleZoomLock() {
-      this.$emit('toggleZoomLock');
+      this.$emit('toggle-zoom-lock');
     },
     zoomIn() {
-      this.$emit('zoomIn');
+      this.$emit('zoom-in');
     },
     zoomOut() {
-      this.$emit('zoomOut');
+      this.$emit('zoom-out');
     }
   }
 };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
-import { FIXED_MODE_KEY } from '../../api/time/constants';
-import { getPreciseDuration, millisecondsToDHMS } from '../../utils/duration';
-import ConductorPlugin from './plugin';
+import { FIXED_MODE_KEY } from '../../api/time/constants.js';
+import { getPreciseDuration, millisecondsToDHMS } from '../../utils/duration.js';
+import ConductorPlugin from './plugin.js';
 
 const THIRTY_SECONDS = 30 * 1000;
 const ONE_MINUTE = THIRTY_SECONDS * 2;
@@ -80,7 +80,7 @@ describe('time conductor', () => {
         start: config.menuOptions[0].bounds.start,
         end: config.menuOptions[0].bounds.end
       });
-      Vue.nextTick(() => {
+      nextTick(() => {
         done();
       });
     });
@@ -118,18 +118,18 @@ describe('time conductor', () => {
       const switcher = appHolder.querySelector('.is-fixed-mode');
       const clickEvent = createMouseEvent('click');
       switcher.dispatchEvent(clickEvent);
-      await Vue.nextTick();
+      await nextTick();
       const modeButton = switcher.querySelector('.c-tc-input-popup .c-button--menu');
       const clickEvent1 = createMouseEvent('click');
       modeButton.dispatchEvent(clickEvent1);
-      await Vue.nextTick();
+      await nextTick();
       const clockItem = document.querySelectorAll(
         '.c-conductor__mode-menu .c-super-menu__menu li'
       )[1];
       const clickEvent2 = createMouseEvent('click');
       clockItem.dispatchEvent(clickEvent2);
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
     });
 
     it('shows delta inputs', () => {

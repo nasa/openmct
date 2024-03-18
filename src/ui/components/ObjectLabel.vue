@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -25,11 +25,16 @@
     class="c-tree__item__label c-object-label"
     :class="[statusClass]"
     draggable="true"
+    :aria-label="ariaLabel"
     @dragstart="dragStart"
     @click="navigateOrPreview"
   >
     <div class="c-tree__item__type-icon c-object-label__type-icon" :class="typeClass">
-      <span class="is-status__indicator" :title="`This item is ${status}`"></span>
+      <span
+        class="is-status__indicator"
+        :aria-label="`This item is ${status}`"
+        :title="`This item is ${status}`"
+      ></span>
     </div>
     <div
       ref="objectLabel"
@@ -43,9 +48,12 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
-import ContextMenuGesture from '../mixins/context-menu-gesture';
-import ObjectLink from '../mixins/object-link';
+import { inject } from 'vue';
+
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
+import { useIsEditing } from '../../ui/composables/edit.js';
+import ContextMenuGesture from '../mixins/context-menu-gesture.js';
+import ObjectLink from '../mixins/object-link.js';
 import PreviewAction from '../preview/PreviewAction.js';
 
 export default {
@@ -72,6 +80,13 @@ export default {
       }
     }
   },
+  setup() {
+    const openmct = inject('openmct');
+    const { isEditing } = useIsEditing(openmct);
+    return {
+      isEditing
+    };
+  },
   data() {
     return {
       status: ''
@@ -88,6 +103,11 @@ export default {
     },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
+    },
+    ariaLabel() {
+      return `${this.isEditing ? 'Preview' : 'Navigate to'} ${this.domainObject.name} ${
+        this.domainObject.type
+      } Object`;
     }
   },
   mounted() {

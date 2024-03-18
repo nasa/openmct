@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -54,9 +54,9 @@
  * @property {import('../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
  */
 
-const Buffer = require('buffer').Buffer;
-const genUuid = require('uuid').v4;
-const { expect } = require('@playwright/test');
+import { expect } from '@playwright/test';
+import { Buffer } from 'buffer';
+import { v4 as genUuid } from 'uuid';
 
 /**
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
@@ -81,7 +81,7 @@ async function createDomainObjectWithDefaults(
   await page.goto(`${parentUrl}`);
 
   //Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click the object specified by 'type'
   await page.click(`li[role='menuitem']:text("${type}")`);
@@ -108,7 +108,7 @@ async function createDomainObjectWithDefaults(
   // Click OK button and wait for Navigate event
   await Promise.all([
     page.waitForLoadState(),
-    page.click('[aria-label="Save"]'),
+    await page.getByRole('button', { name: 'Save' }).click(),
     // Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
@@ -120,8 +120,8 @@ async function createDomainObjectWithDefaults(
 
   if (await _isInEditMode(page, uuid)) {
     // Save (exit edit mode)
-    await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   }
 
   return {
@@ -182,7 +182,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.goto(`${parentUrl}`);
 
   // Click the Create button
-  await page.click('button:has-text("Create")');
+  await page.getByRole('button', { name: 'Create' }).click();
 
   // Click 'Plan' menu option
   await page.click(`li:text("Plan")`);
@@ -231,7 +231,7 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 
   await page.goto(`${parentUrl}`);
 
-  await page.locator('button:has-text("Create")').click();
+  await page.getByRole('button', { name: 'Create' }).click();
 
   await page.locator('li:has-text("Sine Wave Generator")').click();
 
@@ -284,7 +284,7 @@ async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
  */
 async function openObjectTreeContextMenu(page, url) {
   await page.goto(url);
-  await page.click('button[title="Show selected item in tree"]');
+  await page.getByLabel('Show selected item in tree').click();
   await page.locator('.is-navigated-object').click({
     button: 'right'
   });
@@ -392,6 +392,7 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
     await page.waitForURL(/tc\.mode=local/);
   }
+  await page.getByLabel('Submit time offsets').or(page.getByLabel('Submit time bounds')).click();
 }
 
 /**
@@ -505,15 +506,14 @@ async function setTimeConductorBounds(page, startDate, endDate) {
  * @param {string} startDate
  * @param {string} endDate
  */
-async function setIndependentTimeConductorBounds(page, startDate, endDate) {
-  // Activate Independent Time Conductor in Fixed Time Mode
-  await page.getByRole('switch').click();
+async function setIndependentTimeConductorBounds(page, { start, end }) {
+  // Activate Independent Time Conductor
+  await page.getByLabel('Enable Independent Time Conductor').click();
 
   // Bring up the time conductor popup
-  await page.click('.c-conductor-holder--compact .c-compact-tc');
+  await page.getByLabel('Independent Time Conductor Settings').click();
   await expect(page.locator('.itc-popout')).toBeInViewport();
-
-  await setTimeBounds(page, startDate, endDate);
+  await setTimeBounds(page, start, end);
 
   await page.keyboard.press('Enter');
 }
@@ -644,8 +644,7 @@ async function renameObjectFromContextMenu(page, url, newName) {
   await page.click('[aria-label="Save"]');
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
+export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
@@ -653,16 +652,17 @@ module.exports = {
   expandEntireTree,
   expandTreePaneItemByName,
   getCanvasPixels,
-  getHashUrlToDomainObject,
   getFocusedObjectUuid,
+  getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
   openObjectTreeContextMenu,
+  renameObjectFromContextMenu,
+  setEndOffset,
   setFixedTimeMode,
+  setIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset,
-  setEndOffset,
   setTimeConductorBounds,
-  setIndependentTimeConductorBounds,
-  waitForPlotsToRender,
-  renameObjectFromContextMenu
+  setTimeConductorMode,
+  waitForPlotsToRender
 };

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -31,6 +31,7 @@
     <div
       v-if="!compact"
       class="c-compact-tc__setting-value icon-minus u-fade-truncate--lg --no-sep"
+      :aria-label="`Start offset: ${offsets.start}`"
       :title="`Start offset: ${offsets.start}`"
     >
       {{ offsets.start }}
@@ -40,12 +41,14 @@
       v-if="!compact"
       class="c-compact-tc__setting-value icon-plus u-fade-truncate--lg"
       :class="{ '--no-sep': compact }"
+      :aria-label="`End offset: ${offsets.end}`"
       :title="`End offset: ${offsets.end}`"
     >
       {{ offsets.end }}
     </div>
     <div
       class="c-compact-tc__setting-value icon-clock c-compact-tc__current-update u-fade-truncate--lg --no-sep"
+      aria-label="Last update"
       title="Last update"
     >
       {{ formattedCurrentValue }}
@@ -57,7 +60,7 @@
 <script>
 import _ from 'lodash';
 
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import TimePopupRealtime from './TimePopupRealtime.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
@@ -93,6 +96,7 @@ export default {
       }
     }
   },
+  emits: ['offsets-updated', 'dismiss-inputs-realtime'],
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
     const durationFormatter = this.getFormatter(
@@ -144,7 +148,10 @@ export default {
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+    this.handleNewBounds = _.throttle(this.handleNewBounds, 300, {
+      leading: true,
+      trailing: false
+    });
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();
@@ -208,7 +215,7 @@ export default {
       this.formattedBounds.end = this.timeFormatter.format(bounds.end);
     },
     updateCurrentValue() {
-      const currentValue = this.openmct.time.getClock()?.currentValue();
+      const currentValue = this.timeContext.getClock().currentValue();
 
       if (currentValue !== undefined) {
         this.setCurrentValue(currentValue);
@@ -240,13 +247,13 @@ export default {
       let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
       let endOffset = this.durationFormatter.parse(this.offsets.end);
 
-      this.$emit('offsetsUpdated', {
+      this.$emit('offsets-updated', {
         start: startOffset,
         end: endOffset
       });
     },
     dismiss() {
-      this.$emit('dismissInputsRealtime');
+      this.$emit('dismiss-inputs-realtime');
     },
     copy(object) {
       return JSON.parse(JSON.stringify(object));

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -68,26 +68,30 @@
     </div>
 
     <template v-if="selectedBounds !== undefined">
-      <NumericData
+      <NumericDataInspectorView
         :bounds="selectedBounds"
         :telemetry-keys="plotTelemetryKeys"
         :no-numeric-data-text="noNumericDataText"
       />
-      <Imagery v-if="hasImagery" :bounds="selectedBounds" :telemetry-keys="imageryTelemetryKeys" />
+      <ImageryInspectorView
+        v-if="hasImagery"
+        :bounds="selectedBounds"
+        :telemetry-keys="imageryTelemetryKeys"
+      />
     </template>
   </div>
 </template>
 <script>
-import Imagery from './Imagery.vue';
-import NumericData from './NumericData.vue';
+import ImageryInspectorView from './ImageryInspectorView.vue';
+import NumericDataInspectorView from './NumericDataInspectorView.vue';
 
 const TIMESTAMP_VIEW_BUFFER = 30 * 1000;
 const timestampBufferText = `${TIMESTAMP_VIEW_BUFFER / 1000} seconds`;
 
 export default {
   components: {
-    NumericData,
-    Imagery
+    NumericDataInspectorView,
+    ImageryInspectorView
   },
   inject: ['timeFormatter', 'placeholderText', 'plotOptions', 'imageryOptions'],
   props: {

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -60,19 +60,19 @@
       </option>
     </select>
 
-    <mct-ticks
+    <MctTicks
       :axis-id="id"
       :axis-type="'yAxis'"
       class="gl-plot-ticks"
       :position="'top'"
-      @plotTickWidth="onTickWidthChange"
+      @plot-tick-width="onTickWidthChange"
     />
   </div>
 </template>
 
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import MctTicks from '../MctTicks.vue';
 
 const AXIS_PADDING = 20;
@@ -120,6 +120,7 @@ export default {
       }
     }
   },
+  emits: ['plot-y-tick-width', 'toggle-axis-visibility', 'y-key-changed'],
   data() {
     return {
       yAxisLabel: 'none',
@@ -259,19 +260,19 @@ export default {
       let yAxisObject = this.yKeyOptions.filter((o) => o.name === this.yAxisLabel)[0];
 
       if (yAxisObject) {
-        this.$emit('yKeyChanged', yAxisObject.key, this.id);
+        this.$emit('y-key-changed', yAxisObject.key, this.id);
         this.yAxis.set('label', this.yAxisLabel);
       }
     },
     onTickWidthChange(data) {
-      this.$emit('plotYTickWidth', {
+      this.$emit('plot-y-tick-width', {
         width: data.width,
         yAxisId: this.id
       });
     },
     toggleSeriesVisibility() {
       this.visible = !this.visible;
-      this.$emit('toggleAxisVisibility', {
+      this.$emit('toggle-axis-visibility', {
         id: this.id,
         visible: this.visible
       });

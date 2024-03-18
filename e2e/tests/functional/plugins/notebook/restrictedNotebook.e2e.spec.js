@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect, streamToString } = require('../../../../pluginFixtures');
-const { openObjectTreeContextMenu } = require('../../../../appActions');
-const {
-  lockPage,
+import { openObjectTreeContextMenu } from '../../../../appActions.js';
+import {
   dragAndDropEmbed,
   enterTextEntry,
+  lockPage,
   startAndAddRestrictedNotebookObject
-} = require('../../../../helper/notebookUtils');
+} from '../../../../helper/notebookUtils.js';
+import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
 const TEST_TEXT = 'Testing text for entries.';
 const TEST_TEXT_NAME = 'Test Page';
@@ -152,18 +152,18 @@ test.describe('Restricted Notebook with a page locked and with an embed @addInit
 
   test('Allows embeds to be deleted if page unlocked @addInit', async ({ page }) => {
     // Click embed popup menu
-    await page.locator('.c-ne__embed__name .c-icon-button').click();
+    await page.getByLabel('Notebook Entry').getByLabel('More actions').click();
 
-    const embedMenu = page.locator('body >> .c-menu');
+    const embedMenu = page.getByLabel('Super Menu');
     await expect(embedMenu).toContainText('Remove This Embed');
   });
 
   test('Disallows embeds to be deleted if page locked @addInit', async ({ page }) => {
     await lockPage(page);
     // Click embed popup menu
-    await page.locator('.c-ne__embed__name .c-icon-button').click();
+    await page.getByLabel('Notebook Entry').getByLabel('More actions').click();
 
-    const embedMenu = page.locator('body >> .c-menu');
+    const embedMenu = page.getByLabel('Super Menu');
     await expect(embedMenu).not.toContainText('Remove This Embed');
   });
 });
@@ -176,7 +176,7 @@ test.describe('can export restricted notebook as text', () => {
   test('basic functionality ', async ({ page }) => {
     await enterTextEntry(page, `Foo bar entry`);
     // Click on 3 Dot Menu
-    await page.locator('button[title="More options"]').click();
+    await page.locator('button[title="More actions"]').click();
     const downloadPromise = page.waitForEvent('download');
 
     await page.getByRole('menuitem', { name: /Export Notebook as Text/ }).click();

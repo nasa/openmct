@@ -1,4 +1,5 @@
 export default {
+  emits: ['on-change'],
   data() {
     return {
       isChecked: false
@@ -13,7 +14,7 @@ export default {
         value: this.isChecked
       };
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

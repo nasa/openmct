@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import GeneratorMetadataProvider from './GeneratorMetadataProvider';
-import GeneratorProvider from './GeneratorProvider';
-import SinewaveLimitProvider from './SinewaveLimitProvider';
-import SinewaveStalenessProvider from './SinewaveStalenessProvider';
-import StateGeneratorProvider from './StateGeneratorProvider';
+import GeneratorMetadataProvider from './GeneratorMetadataProvider.js';
+import GeneratorProvider from './GeneratorProvider.js';
+import SinewaveLimitProvider from './SinewaveLimitProvider.js';
+import SinewaveStalenessProvider from './SinewaveStalenessProvider.js';
+import StateGeneratorProvider from './StateGeneratorProvider.js';
 
 export default function (openmct) {
   openmct.types.addType('example.state-generator', {
@@ -123,6 +123,13 @@ export default function (openmct) {
         property: ['telemetry', 'infinityValues']
       },
       {
+        name: 'Exceed Float32 Limits',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'exceedFloat32',
+        property: ['telemetry', 'exceedFloat32']
+      },
+      {
         name: 'Provide Staleness Updates',
         control: 'toggleSwitch',
         cssClass: 'l-input',
@@ -140,6 +147,7 @@ export default function (openmct) {
         randomness: 0,
         loadDelay: 0,
         infinityValues: false,
+        exceedFloat32: false,
         staleness: false
       };
     }

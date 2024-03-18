@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,7 @@
 <template>
   <div class="grid-row grid-row--pad-label-for-button">
     <template v-if="canEdit">
-      <div class="grid-cell label" :title="editTitle">{{ shortLabel }}</div>
+      <div class="grid-cell label" :aria-label="editTitle" :title="editTitle">{{ shortLabel }}</div>
       <div class="grid-cell value">
         <div class="c-click-swatch c-click-swatch--menu" @click="toggleSwatch()">
           <span class="c-color-swatch" :style="{ background: currentColor }"> </span>
@@ -44,7 +44,7 @@
       </div>
     </template>
     <template v-else>
-      <div class="grid-cell label" :title="viewTitle">{{ shortLabel }}</div>
+      <div class="grid-cell label" :aria-label="viewTitle" :title="viewTitle">{{ shortLabel }}</div>
       <div class="grid-cell value">
         <span
           class="c-color-swatch"
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import ColorPalette from './ColorPalette';
+import ColorPalette from './ColorPalette.js';
 
 export default {
   inject: ['openmct', 'domainObject'],
@@ -89,6 +89,7 @@ export default {
       }
     }
   },
+  emits: ['color-set'],
   data() {
     return {
       swatchActive: false,
@@ -127,7 +128,7 @@ export default {
       this.isEditing = isEditing;
     },
     setColor(chosenColor) {
-      this.$emit('colorSet', chosenColor);
+      this.$emit('color-set', chosenColor);
     },
     toggleSwatch() {
       this.swatchActive = !this.swatchActive;

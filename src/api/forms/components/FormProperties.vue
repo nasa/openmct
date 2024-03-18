@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -44,7 +44,7 @@
           :css-class="row.cssClass"
           :first="index < 1"
           :row="row"
-          @onChange="onChange"
+          @on-change="onChange"
         />
       </div>
     </form>
@@ -94,6 +94,7 @@ export default {
       }
     }
   },
+  emits: ['on-change', 'on-save', 'on-cancel'],
   data() {
     return {
       invalidProperties: {},
@@ -144,13 +145,13 @@ export default {
     onChange(data) {
       this.invalidProperties[data.model.key] = data.invalid;
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     onCancel() {
-      this.$emit('onCancel');
+      this.$emit('on-cancel');
     },
     onSave() {
-      this.$emit('onSave');
+      this.$emit('on-save');
     }
   }
 };

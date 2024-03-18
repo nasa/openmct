@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
-import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
+import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator.js';
 import CouchPlugin from './plugin.js';
 
 describe('the plugin', () => {
@@ -478,7 +478,7 @@ describe('the view', () => {
         namespace: '',
         key: 'object-1'
       });
-      await Vue.nextTick();
+      await nextTick();
 
       assertCouchIndicatorStatus(CONNECTED);
     });
@@ -490,7 +490,7 @@ describe('the view', () => {
         namespace: '',
         key: 'object-1'
       });
-      await Vue.nextTick();
+      await nextTick();
 
       assertCouchIndicatorStatus(DISCONNECTED);
     });
@@ -523,7 +523,7 @@ describe('the view', () => {
 
       // Simulate 'pending' state from worker message
       provider.onSharedWorkerMessage(workerMessage);
-      await Vue.nextTick();
+      await nextTick();
 
       assertCouchIndicatorStatus(PENDING);
     });
@@ -556,7 +556,7 @@ describe('the view', () => {
 
       // Simulate 'pending' state from worker message
       provider.onSharedWorkerMessage(workerMessage);
-      await Vue.nextTick();
+      await nextTick();
 
       assertCouchIndicatorStatus(UNKNOWN);
     });

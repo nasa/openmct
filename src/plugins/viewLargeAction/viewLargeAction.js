@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 
 import mount from 'utils/mount';
 
-import Preview from '@/ui/preview/Preview.vue';
+import PreviewContainer from '@/ui/preview/PreviewContainer.vue';
 
 export default class ViewLargeAction {
   constructor(openmct) {
@@ -81,7 +81,7 @@ export default class ViewLargeAction {
     const { vNode, destroy } = mount(
       {
         components: {
-          Preview
+          PreviewContainer
         },
         provide: {
           openmct: this.openmct,
@@ -92,14 +92,17 @@ export default class ViewLargeAction {
             view
           };
         },
-        template: '<Preview :existing-view="view"></Preview>'
+        template: '<preview-container :existing-view="view"></preview-container>'
       },
       {
         app: this.openmct.app
       }
     );
     this.preview = vNode.componentInstance;
-    this.destroy = destroy;
+    this.destroy = () => {
+      destroy();
+      this.preview = null;
+    };
 
     return this.preview.$el;
   }

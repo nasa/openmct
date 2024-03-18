@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -63,6 +63,7 @@
 <script>
 export default {
   inject: ['openmct'],
+  emits: ['filter-changed'],
   data() {
     return {
       filters: {
@@ -79,7 +80,7 @@ export default {
       }
     },
     notifyFiltersChanged() {
-      this.$emit('filterChanged', this.filters);
+      this.$emit('filter-changed', this.filters);
     },
     resetFilters() {
       this.filters = {

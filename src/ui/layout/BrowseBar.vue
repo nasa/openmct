@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,7 +29,7 @@
         @click="goToParent"
       ></button>
       <div class="l-browse-bar__object-name--w c-object-label" :class="[statusClass]">
-        <div class="c-object-label__type-icon" :class="type.cssClass">
+        <div class="c-object-label__type-icon" :class="cssClass">
           <span class="is-status__indicator" :title="`This item is ${status}`"></span>
         </div>
         <span
@@ -43,7 +43,7 @@
           @mouseover.ctrl="showToolTip"
           @mouseleave="hideToolTip"
         >
-          {{ domainObject.name }}
+          {{ domainObjectName }}
         </span>
       </div>
     </div>
@@ -71,6 +71,7 @@
           v-for="(item, index) in statusBarItems"
           :key="index"
           class="c-button"
+          :aria-label="item.name"
           :title="item.name"
           :class="item.cssClass"
           @click="item.onItemClicked"
@@ -78,6 +79,7 @@
 
         <button
           v-if="isViewEditable & !isEditing"
+          :aria-label="lockedOrUnlockedTitle"
           :title="lockedOrUnlockedTitle"
           :class="{
             'c-button icon-lock': domainObject.locked,
@@ -89,8 +91,8 @@
         <button
           v-if="isViewEditable && !isEditing && !domainObject.locked"
           class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
-          title="Edit"
-          aria-label="Edit"
+          title="Edit Object"
+          aria-label="Edit Object"
           @click="edit()"
         ></button>
 
@@ -123,12 +125,14 @@
         <button
           v-if="isEditing"
           class="l-browse-bar__actions c-button icon-x"
+          aria-label="Cancel Editing"
           title="Cancel Editing"
           @click="promptUserandCancelEditing()"
         ></button>
         <button
           class="l-browse-bar__actions c-icon-button icon-3-dots"
-          title="More options"
+          title="More actions"
+          aria-label="More actions"
           @click.prevent.stop="showMenuItems($event)"
         ></button>
       </div>
@@ -142,17 +146,9 @@ import { toRaw } from 'vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
+import { SupportedViewTypes } from '../../utils/constants.js';
 import ViewSwitcher from './ViewSwitcher.vue';
-
-const SupportedViewTypes = [
-  'plot-stacked',
-  'plot-overlay',
-  'bar-graph.view',
-  'time-strip.view',
-  'example.imagery'
-];
-const PLACEHOLDER_OBJECT = {};
 
 export default {
   components: {
@@ -170,12 +166,12 @@ export default {
       }
     }
   },
-  data: function () {
+  data() {
     return {
       notebookTypes: [],
       showViewMenu: false,
       showSaveMenu: false,
-      domainObject: PLACEHOLDER_OBJECT,
+      domainObject: undefined,
       viewKey: undefined,
       isEditing: this.openmct.editor.isEditing(),
       notebookEnabled: this.openmct.types.get('notebook'),
@@ -187,11 +183,22 @@ export default {
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
     },
+    supportsIndependentTime() {
+      return (
+        this.domainObject?.identifier &&
+        !this.openmct.objects.isMissing(this.domainObject) &&
+        SupportedViewTypes.includes(this.viewKey)
+      );
+    },
     currentView() {
       return this.views.filter((v) => v.key === this.viewKey)[0] || {};
     },
     views() {
-      if (this.domainObject && this.openmct.router.started !== true) {
+      if (this.domainObject && this.openmct.router.started === false) {
+        return [];
+      }
+
+      if (!this.domainObject) {
         return [];
       }
 
@@ -205,25 +212,29 @@ export default {
       });
     },
     hasParent() {
-      return toRaw(this.domainObject) !== PLACEHOLDER_OBJECT && this.parentUrl !== '/browse';
+      return toRaw(this.domainObject) && this.parentUrl !== '/browse';
     },
     parentUrl() {
-      const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+      const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject?.identifier);
       const hash = this.openmct.router.getCurrentLocation().path;
 
       return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
     },
-    type() {
-      const objectType = this.openmct.types.get(this.domainObject.type);
-      if (!objectType) {
-        return {};
+    cssClass() {
+      if (!this.domainObject) {
+        return '';
       }
 
-      return objectType.definition;
+      const objectType = this.openmct.types.get(this.domainObject.type);
+      if (!objectType) {
+        return '';
+      }
+
+      return objectType?.definition?.cssClass ?? '';
     },
     isPersistable() {
-      let persistable =
-        this.domainObject.identifier &&
+      const persistable =
+        this.domainObject?.identifier &&
         this.openmct.objects.isPersistable(this.domainObject.identifier);
 
       return persistable;
@@ -248,10 +259,8 @@ export default {
         return 'Unlocked for editing - click to lock.';
       }
     },
-    supportsIndependentTime() {
-      const viewKey = this.getViewKey();
-
-      return this.domainObject && SupportedViewTypes.includes(viewKey);
+    domainObjectName() {
+      return this.domainObject?.name ?? '';
     }
   },
   watch: {
@@ -275,7 +284,7 @@ export default {
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
   },
-  mounted: function () {
+  mounted() {
     document.addEventListener('click', this.closeViewAndSaveMenu);
     this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
     window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
@@ -284,7 +293,7 @@ export default {
       this.isEditing = isEditing;
     });
   },
-  beforeUnmount: function () {
+  beforeUnmount() {
     if (this.mutationObserver) {
       this.mutationObserver();
     }
@@ -325,9 +334,6 @@ export default {
     edit() {
       this.openmct.editor.edit();
     },
-    getViewKey() {
-      return this.viewKey;
-    },
     promptUserandCancelEditing() {
       let dialog = this.openmct.overlays.dialog({
         iconClass: 'alert',
@@ -367,6 +373,10 @@ export default {
         iconClass: 'info',
         title: 'Saving'
       });
+
+      const currentSelection = this.openmct.selection.selected[0];
+      const parentObject = currentSelection[currentSelection.length - 1];
+      this.openmct.selection.select(parentObject);
 
       return this.openmct.editor
         .save()

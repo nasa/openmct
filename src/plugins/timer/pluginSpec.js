@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState, spyOnBuiltins } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
-import timerPlugin from './plugin';
+import timerPlugin from './plugin.js';
 
 xdescribe('Timer plugin:', () => {
   let openmct;
@@ -108,7 +108,7 @@ xdescribe('Timer plugin:', () => {
       timerView = timerViewProvider.view(mutableTimerObject, timerObjectPath);
       timerView.show(child);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     afterEach(() => {
@@ -168,7 +168,7 @@ xdescribe('Timer plugin:', () => {
       timerView = timerViewProvider.view(mutableTimerObject, timerObjectPath);
       timerView.show(child);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     afterEach(() => {
@@ -211,7 +211,7 @@ xdescribe('Timer plugin:', () => {
     });
 
     it('gets errors from actions if configuration is not passed', async () => {
-      await Vue.nextTick();
+      await nextTick();
       const objectPath = _.cloneDeep(timerObjectPath);
       delete objectPath[0].configuration;
 
@@ -265,7 +265,7 @@ xdescribe('Timer plugin:', () => {
       openmct.objects.mutate(timerViewObject, 'configuration.timestamp', newBaseTime);
 
       jasmine.clock().tick(5000);
-      await Vue.nextTick();
+      await nextTick();
 
       const timerElement = element.querySelector('.c-timer');
       const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
@@ -282,7 +282,7 @@ xdescribe('Timer plugin:', () => {
       openmct.objects.mutate(timerViewObject, 'configuration.timestamp', newBaseTime);
 
       jasmine.clock().tick(5000);
-      await Vue.nextTick();
+      await nextTick();
 
       const timerElement = element.querySelector('.c-timer');
       const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
@@ -296,14 +296,14 @@ xdescribe('Timer plugin:', () => {
 
     it('displays a paused timer correctly in the DOM', async () => {
       jasmine.clock().tick(5000);
-      await Vue.nextTick();
+      await nextTick();
 
       let action = openmct.actions.getAction('timer.pause');
       if (action) {
         action.invoke(timerObjectPath, timerView);
       }
 
-      await Vue.nextTick();
+      await nextTick();
       const timerElement = element.querySelector('.c-timer');
       const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
       let timerValue = timerElement.querySelector('.c-timer__value').innerText;
@@ -312,7 +312,7 @@ xdescribe('Timer plugin:', () => {
       expect(timerValue).toBe('0D 23:59:55');
 
       jasmine.clock().tick(5000);
-      await Vue.nextTick();
+      await nextTick();
       expect(timerValue).toBe('0D 23:59:55');
 
       action = openmct.actions.getAction('timer.start');
@@ -320,13 +320,13 @@ xdescribe('Timer plugin:', () => {
         action.invoke(timerObjectPath, timerView);
       }
 
-      await Vue.nextTick();
+      await nextTick();
       action = openmct.actions.getAction('timer.pause');
       if (action) {
         action.invoke(timerObjectPath, timerView);
       }
 
-      await Vue.nextTick();
+      await nextTick();
       timerValue = timerElement.querySelector('.c-timer__value').innerText;
       expect(timerValue).toBe('1D 00:00:00');
     });
@@ -337,7 +337,7 @@ xdescribe('Timer plugin:', () => {
         action.invoke(timerObjectPath, timerView);
       }
 
-      await Vue.nextTick();
+      await nextTick();
       const timerElement = element.querySelector('.c-timer');
       const timerValue = timerElement.querySelector('.c-timer__value').innerText;
       const timerResetButton = timerElement.querySelector('.c-timer__ctrl-reset');
@@ -355,7 +355,7 @@ xdescribe('Timer plugin:', () => {
       }
 
       jasmine.clock().tick(5000);
-      await Vue.nextTick();
+      await nextTick();
       const timerElement = element.querySelector('.c-timer');
       const timerValue = timerElement.querySelector('.c-timer__value').innerText;
       const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');

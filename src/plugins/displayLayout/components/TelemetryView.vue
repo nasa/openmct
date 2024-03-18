@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -26,7 +26,7 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="move"
-    @endMove="endMove"
+    @end-move="endMove"
   >
     <template #content>
       <div
@@ -37,19 +37,24 @@
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
+        aria-label="Alpha-numeric telemetry"
         @contextmenu.prevent="showContextMenu"
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
-        <div class="is-status__indicator" :title="`This item is ${status}`"></div>
+        <div class="is-status__indicator"></div>
         <div v-if="showLabel" class="c-telemetry-view__label">
-          <div class="c-telemetry-view__label-text">
+          <div
+            class="c-telemetry-view__label-text"
+            :aria-label="`Alpha-numeric telemetry name for ${domainObject.name}`"
+          >
             {{ domainObject.name }}
           </div>
         </div>
 
         <div
           v-if="showValue"
+          :aria-label="`Alpha-numeric telemetry value of ${telemetryValue}`"
           :title="fieldName"
           class="c-telemetry-view__value"
           :class="[telemetryClass]"
@@ -73,8 +78,8 @@ import {
 } from '@/plugins/notebook/utils/notebook-storage.js';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
@@ -105,7 +110,7 @@ export default {
     LayoutFrame
   },
   mixins: [conditionalStylesMixin, stalenessMixin, tooltipHelpers],
-  inject: ['openmct', 'objectPath', 'currentView'],
+  inject: ['openmct', 'objectPath', 'currentView', 'renderWhenVisible'],
   props: {
     item: {
       type: Object,
@@ -126,6 +131,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move', 'format-changed', 'context-click'],
   data() {
     return {
       currentObjectPath: undefined,
@@ -230,13 +236,7 @@ export default {
     }
   },
   mounted() {
-    if (this.openmct.objects.supportsMutation(this.item.identifier)) {
-      this.mutablePromise = this.openmct.objects
-        .getMutable(this.item.identifier)
-        .then(this.setObject);
-    } else {
-      this.openmct.objects.get(this.item.identifier).then(this.setObject);
-    }
+    this.getAndSetObject();
 
     this.status = this.openmct.status.get(this.item.identifier);
     this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
@@ -246,7 +246,7 @@ export default {
       this.subscribeToStaleness(domainObject);
     });
   },
-  beforeUnmount() {
+  async beforeUnmount() {
     this.removeStatusListener();
 
     if (this.removeSelectable) {
@@ -261,14 +261,24 @@ export default {
     }
 
     if (this.mutablePromise) {
-      this.mutablePromise.then(() => {
-        this.openmct.objects.destroyMutable(this.domainObject);
-      });
+      await this.mutablePromise();
+      this.openmct.objects.destroyMutable(this.domainObject);
     } else if (this?.domainObject?.isMutable) {
       this.openmct.objects.destroyMutable(this.domainObject);
     }
   },
   methods: {
+    async getAndSetObject() {
+      let foundObject = null;
+      if (this.openmct.objects.supportsMutation(this.item.identifier)) {
+        this.mutablePromise = this.openmct.objects.getMutable(this.item.identifier);
+        foundObject = await this.mutablePromise;
+      } else {
+        foundObject = await this.openmct.objects.get(this.item.identifier);
+      }
+      this.setObject(foundObject);
+      await this.$nextTick();
+    },
     formattedValueForCopy() {
       const timeFormatterKey = this.openmct.time.timeSystem().key;
       const timeFormatter = this.formats[timeFormatterKey];
@@ -284,8 +294,7 @@ export default {
     },
     updateView() {
       if (!this.updatingView) {
-        this.updatingView = true;
-        requestAnimationFrame(() => {
+        this.updatingView = this.renderWhenVisible(() => {
           this.datum = this.latestDatum;
           this.updatingView = false;
         });
@@ -344,10 +353,10 @@ export default {
     updateTelemetryFormat(format) {
       this.customStringformatter.setFormat(format);
 
-      this.$emit('formatChanged', this.item, format);
+      this.$emit('format-changed', this.item, format);
     },
     updateViewContext() {
-      this.$emit('contextClick', {
+      this.$emit('context-click', {
         viewHistoricalData: true,
         formattedValueForCopy: this.formattedValueForCopy
       });
@@ -400,7 +409,7 @@ export default {
       this.$emit('move', gridDelta);
     },
     endMove() {
-      this.$emit('endMove');
+      this.$emit('end-move');
     }
   }
 };

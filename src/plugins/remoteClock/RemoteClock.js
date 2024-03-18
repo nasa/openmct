@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2023, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DefaultClock from '../../utils/clock/DefaultClock';
-import remoteClockRequestInterceptor from './requestInterceptor';
+import DefaultClock from '../../utils/clock/DefaultClock.js';
+import remoteClockRequestInterceptor from './requestInterceptor.js';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
@@ -59,26 +59,21 @@ export default class RemoteClock extends DefaultClock {
   }
 
   start() {
-    this.openmct.objects
-      .get(this.identifier)
-      .then((domainObject) => {
-        // The start method is called when at least one listener registers with the clock.
-        // When the clock is changed, listeners are unregistered from the clock and the stop method is called.
-        // Sometimes, the objects.get call above does not resolve before the stop method is called.
-        // So when we proceed with the clock subscription below, we first need to ensure that there is at least one listener for our clock.
-        if (this.eventNames().length === 0) {
-          return;
-        }
-        this.openmct.time.on('timeSystem', this._timeSystemChange);
-        this.timeTelemetryObject = domainObject;
-        this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-        this._timeSystemChange();
-        this._requestLatest();
-        this._subscribe();
-      })
-      .catch((error) => {
-        throw new Error(error);
-      });
+    this.openmct.objects.get(this.identifier).then((domainObject) => {
+      // The start method is called when at least one listener registers with the clock.
+      // When the clock is changed, listeners are unregistered from the clock and the stop method is called.
+      // Sometimes, the objects.get call above does not resolve before the stop method is called.
+      // So when we proceed with the clock subscription below, we first need to ensure that there is at least one listener for our clock.
+      if (this.eventNames().length === 0) {
+        return;
+      }
+      this.openmct.time.on('timeSystem', this._timeSystemChange);
+      this.timeTelemetryObject = domainObject;
+      this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+      this._timeSystemChange();
+      this._requestLatest();
+      this._subscribe();
+    });
   }
 
   stop() {

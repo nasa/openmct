@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,21 +23,23 @@
 <template>
   <div
     v-if="loaded"
-    class="c-plot c-plot--stacked holder holder-plot has-control-bar"
+    class="c-plot c-plot--stacked holder holder-plot has-control-bar u-style-receiver js-style-receiver"
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+    aria-label="Stacked Plot Style Target"
   >
     <plot-legend
       v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
       class="js-stacked-plot-legend"
-      @legendHoverChanged="legendHoverChanged"
+      @legend-hover-changed="legendHoverChanged"
       @expanded="updateExpanded"
       @position="updatePosition"
     />
     <div class="l-view-section">
       <stacked-plot-item
         v-for="objectWrapper in compositionObjects"
+        ref="stackedPlotItems"
         :key="objectWrapper.keyString"
         class="c-plot--stacked-container"
         :child-object="objectWrapper.object"
@@ -48,13 +50,13 @@
         :show-limit-line-labels="showLimitLineLabels"
         :parent-y-tick-width="maxTickWidth"
         :hide-legend="showLegendsForChildren === false"
-        @plotYTickWidth="onYTickWidthChange"
-        @loadingUpdated="loadingUpdated"
-        @cursorGuide="onCursorGuideChange"
-        @gridLines="onGridLinesChange"
-        @lockHighlightPoint="lockHighlightPointUpdated"
+        @plot-y-tick-width="onYTickWidthChange"
+        @loading-updated="loadingUpdated"
+        @cursor-guide="onCursorGuideChange"
+        @grid-lines="onGridLinesChange"
+        @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @configLoaded="configLoadedForObject(objectWrapper.keyString)"
+        @config-loaded="configLoadedForObject(objectWrapper.keyString)"
       />
     </div>
   </div>
@@ -63,11 +65,11 @@
 <script>
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import ImageExporter from '../../../exporters/ImageExporter';
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import ImageExporter from '../../../exporters/ImageExporter.js';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotLegend from '../legend/PlotLegend.vue';
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 import StackedPlotItem from './StackedPlotItem.vue';
 
 export default {
@@ -75,7 +77,7 @@ export default {
     StackedPlotItem,
     PlotLegend
   },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,
@@ -217,6 +219,11 @@ export default {
     },
 
     addChild(child) {
+      if (this.openmct.objects.isMissing(child)) {
+        console.warn('Missing domain object for stacked plot: ', child);
+        return;
+      }
+
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
       this.tickWidthMap[id] = {

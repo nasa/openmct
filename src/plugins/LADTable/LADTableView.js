@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 import mount from 'utils/mount';
 
 import LadTable from './components/LadTable.vue';
-import LADTableConfiguration from './LADTableConfiguration';
+import LADTableConfiguration from './LADTableConfiguration.js';
 
 export default class LADTableView {
   constructor(openmct, domainObject, objectPath) {
@@ -34,7 +34,7 @@ export default class LADTableView {
     this._destroy = null;
   }
 
-  show(element) {
+  show(element, isEditing, { renderWhenVisible }) {
     let ladTableConfiguration = new LADTableConfiguration(this.domainObject, this.openmct);
 
     const { vNode, destroy } = mount(
@@ -46,7 +46,8 @@ export default class LADTableView {
         provide: {
           openmct: this.openmct,
           currentView: this,
-          ladTableConfiguration
+          ladTableConfiguration,
+          renderWhenVisible
         },
         data: () => {
           return {
@@ -78,5 +79,6 @@ export default class LADTableView {
     if (this._destroy) {
       this._destroy();
     }
+    this.component = null;
   }
 }

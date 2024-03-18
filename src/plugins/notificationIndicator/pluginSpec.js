@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import NotificationIndicatorPlugin from './plugin.js';
 
@@ -58,7 +58,7 @@ describe('the plugin', () => {
     beforeEach(() => {
       parentElement.append(indicatorElement);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('notifies the user of the number of notifications', () => {

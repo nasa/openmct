@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,11 +23,11 @@
 import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
 
-import AllTelemetryCriterion from './criterion/AllTelemetryCriterion';
-import TelemetryCriterion from './criterion/TelemetryCriterion';
-import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from './utils/constants';
-import { evaluateResults } from './utils/evaluator';
-import { getLatestTimestamp } from './utils/time';
+import AllTelemetryCriterion from './criterion/AllTelemetryCriterion.js';
+import TelemetryCriterion from './criterion/TelemetryCriterion.js';
+import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from './utils/constants.js';
+import { evaluateResults } from './utils/evaluator.js';
+import { getLatestTimestamp } from './utils/time.js';
 
 /*
  * conditionConfiguration = {

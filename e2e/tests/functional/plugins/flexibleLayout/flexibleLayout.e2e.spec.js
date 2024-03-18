@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import { fileURLToPath } from 'url';
+
+import {
   createDomainObjectWithDefaults,
   setIndependentTimeConductorBounds
-} = require('../../../../appActions');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
+
+const LOCALSTORAGE_PATH = fileURLToPath(
+  new URL('../../../../test-data/flexible_layout_with_child_layouts.json', import.meta.url)
+);
 
 test.describe('Flexible Layout', () => {
   let sineWaveObject;
@@ -67,7 +73,7 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
@@ -81,7 +87,7 @@ test.describe('Flexible Layout', () => {
     await expect(dragWrapper).toHaveAttribute('draggable', 'true');
     // Save Flexible Layout
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // Check that panes are not draggable while Flexible Layout is in Browse mode
     dragWrapper = page.locator('.c-fl-container__frames-holder .c-fl-frame__drag-wrapper').first();
     await expect(dragWrapper).toHaveAttribute('draggable', 'false');
@@ -160,14 +166,14 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
     await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.c-fl-container__frame').count()).toEqual(1);
 
@@ -191,14 +197,14 @@ test.describe('Flexible Layout', () => {
     });
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
     await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.c-fl-container__frame').count()).toEqual(1);
 
@@ -228,7 +234,7 @@ test.describe('Flexible Layout', () => {
 
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -239,14 +245,13 @@ test.describe('Flexible Layout', () => {
     await exampleImageryTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // flip on independent time conductor
-    await setIndependentTimeConductorBounds(
-      page,
-      '2021-12-30 01:01:00.000Z',
-      '2021-12-30 01:11:00.000Z'
-    );
+    await setIndependentTimeConductorBounds(page, {
+      start: '2021-12-30 01:01:00.000Z',
+      end: '2021-12-30 01:11:00.000Z'
+    });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -255,5 +260,58 @@ test.describe('Flexible Layout', () => {
     await page.getByRole('switch').click();
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
+  });
+});
+
+test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
+  test.use({
+    storageState: LOCALSTORAGE_PATH
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page
+      .locator('a')
+      .filter({ hasText: 'Parent Flexible Layout Flexible Layout' })
+      .first()
+      .click();
+    await page.getByLabel('Edit Object').click();
+  });
+  test('Add/Remove Container', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7234'
+    });
+
+    const containerHandles = page.getByRole('columnheader', { name: 'Handle' });
+    expect(await containerHandles.count()).toEqual(2);
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    await page.getByTitle('Add Container').click();
+    expect(await containerHandles.count()).toEqual(3);
+    await page.getByTitle('Remove Container').click();
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
+      'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
+    );
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    expect(await containerHandles.count()).toEqual(2);
+  });
+  test('Remove Frame', async ({ page }) => {
+    expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(2);
+    await page.getByRole('group', { name: 'Child Layout 1' }).click();
+    await page.getByTitle('Remove Frame').click();
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
+      'This action will remove this frame from this Flexible Layout. Do you want to continue?'
+    );
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
+  });
+  test('Columns/Rows Layout Toggle', async ({ page }) => {
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    const flexRows = page.getByLabel('Flexible Layout Row');
+    expect(await flexRows.count()).toEqual(0);
+    await page.getByTitle('Columns layout').click();
+    expect(await flexRows.count()).toEqual(1);
+    await page.getByTitle('Rows layout').click();
+    expect(await flexRows.count()).toEqual(0);
   });
 });

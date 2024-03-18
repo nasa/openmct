@@ -1,4 +1,4 @@
-@mixin displayMarquee($c) {
+@mixin displayMarquee() {
   > .c-frame-edit {
     // All other frames
     //@include test($c, 0.4);
@@ -11,11 +11,28 @@
   }
 }
 
+@mixin displayGrid() {
+  background: $editUIGridColorBg;
+
+  > [class*='__dimensions'] {
+    display: block;
+  }
+
+  > [class*='grid-holder'] {
+    display: block;
+  }
+}
+
 .l-layout {
   @include abs();
   display: flex;
   flex-direction: column;
   overflow: auto;
+
+  &__grid-holder,
+  &__dimensions {
+    display: none;
+  }
 
   &__dimensions {
     $b: 1px dashed $editDimensionsColor;
@@ -45,35 +62,20 @@
   .l-shell__main-container {
     [s-selected],
     [s-selected-parent] {
-      // Display grid and allow edit marquee to display in main layout holder when editing
+      // Display grid in main layout holder when editing
       > .l-layout {
-        background: $editUIGridColorBg;
-
-        > [class*='__dimensions'] {
-          display: block;
-        }
-
-        > [class*='__grid-holder'] {
-          display: block;
-        }
+        @include displayGrid();
       }
     }
   }
 
   .l-layout__frame {
-    &[s-selected]:not([multi-select='true']),
     &[s-selected-parent] {
-      // Display grid and allow edit marquee to display in nested layouts when editing
-      > * > * > .l-layout.allow-editing {
+      // Display grid in nested layouts when editing
+      > * > * > * > .l-layout.allow-editing {
         box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
-
-        > [class*='__dimensions'] {
-          display: block;
-        }
-
-        > [class*='grid-holder'] {
-          display: block;
-        }
+      
+        @include displayGrid();
       }
     }
   }
@@ -82,11 +84,11 @@
   *[s-selected-parent] {
     > .l-layout {
       // When main shell layout is the parent
-      @include displayMarquee(deeppink); // TEMP
+      @include displayMarquee();
     }
-    > * > * > * {
+    > * > * > * > * {
       // When a sub-layout is the parent
-      @include displayMarquee(blue);
+      @include displayMarquee();
     }
   }
 }

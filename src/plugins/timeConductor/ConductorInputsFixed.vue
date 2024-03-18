@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -50,7 +50,7 @@
 <script>
 import _ from 'lodash';
 
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import TimePopupFixed from './TimePopupFixed.vue';
 
 export default {
@@ -84,6 +84,7 @@ export default {
       }
     }
   },
+  emits: ['bounds-updated', 'dismiss-inputs-fixed'],
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
     const timeFormatter = this.getFormatter(timeSystem.timeFormat);
@@ -166,13 +167,13 @@ export default {
       }).formatter;
     },
     setBoundsFromView(bounds) {
-      this.$emit('boundsUpdated', {
+      this.$emit('bounds-updated', {
         start: bounds.start,
         end: bounds.end
       });
     },
     dismiss() {
-      this.$emit('dismissInputsFixed');
+      this.$emit('dismiss-inputs-fixed');
     }
   }
 };

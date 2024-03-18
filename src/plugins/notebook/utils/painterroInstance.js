@@ -1,6 +1,6 @@
 import Painterro from 'painterro';
 
-import { getThumbnailURLFromImageUrl } from './notebook-image';
+import { getThumbnailURLFromImageUrl } from './notebook-image.js';
 
 const DEFAULT_CONFIG = {
   activeColor: '#ff0000',
@@ -46,7 +46,7 @@ export default class PainterroInstance {
     this.config.id = this.elementId;
     this.config.saveHandler = this.saveHandler.bind(this);
 
-    this.painterro = Painterro(this.config);
+    this.painterro = Painterro.default(this.config);
   }
 
   save(callback) {

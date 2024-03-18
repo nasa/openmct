@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import toggleMixin from '../../../ui/mixins/toggle-mixin';
-import modeMixin from '../mode-mixin';
+import toggleMixin from '../../../ui/mixins/toggle-mixin.js';
+import modeMixin from '../mode-mixin.js';
 
 export default {
   mixins: [toggleMixin, modeMixin],
@@ -55,6 +55,7 @@ export default {
       }
     }
   },
+  emits: ['independent-mode-updated'],
   data: function () {
     return {
       selectedMode: this.getModeMetadata(this.mode),
@@ -94,7 +95,7 @@ export default {
     setMode(mode) {
       this.setViewFromMode(mode);
 
-      this.$emit('independentModeUpdated', mode);
+      this.$emit('independent-mode-updated', mode);
     }
   }
 };

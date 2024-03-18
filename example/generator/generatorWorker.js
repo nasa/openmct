@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -85,7 +85,8 @@
                 data.offset,
                 data.phase,
                 data.randomness,
-                data.infinityValues
+                data.infinityValues,
+                data.exceedFloat32
               ),
               wavelengths: wavelengths(),
               intensities: intensities(),
@@ -96,7 +97,8 @@
                 data.offset,
                 data.phase,
                 data.randomness,
-                data.infinityValues
+                data.infinityValues,
+                data.exceedFloat32
               )
             }
           });
@@ -128,29 +130,37 @@
     var now = Date.now();
     var start = request.start;
     var end = request.end > now ? now : request.end;
-    var amplitude = request.amplitude;
     var period = request.period;
-    var offset = request.offset;
     var dataRateInHz = request.dataRateInHz;
-    var phase = request.phase;
-    var randomness = request.randomness;
     var loadDelay = Math.max(request.loadDelay, 0);
-    var infinityValues = request.infinityValues;
-
+    var size = request.size;
+    var duration = end - start;
     var step = 1000 / dataRateInHz;
+    var maxPoints = Math.floor(duration / step);
     var nextStep = start - (start % step) + step;
 
     var data = [];
 
-    for (; nextStep < end && data.length < 5000; nextStep += step) {
-      data.push({
-        utc: nextStep,
-        yesterday: nextStep - 60 * 60 * 24 * 1000,
-        sin: sin(nextStep, period, amplitude, offset, phase, randomness, infinityValues),
-        wavelengths: wavelengths(),
-        intensities: intensities(),
-        cos: cos(nextStep, period, amplitude, offset, phase, randomness, infinityValues)
-      });
+    if (request.strategy === 'minmax' && size) {
+      // Calculate the number of cycles to include based on size (2 points per cycle)
+      var totalCycles = Math.min(Math.floor(size / 2), Math.floor(duration / period));
+
+      for (let cycle = 0; cycle < totalCycles; cycle++) {
+        // Distribute cycles evenly across the time range
+        let cycleStart = start + (duration / totalCycles) * cycle;
+        let minPointTime = cycleStart; // Assuming min at the start of the cycle
+        let maxPointTime = cycleStart + period / 2; // Assuming max at the halfway of the cycle
+
+        data.push(createDataPoint(minPointTime, request), createDataPoint(maxPointTime, request));
+      }
+    } else {
+      for (let i = 0; i < maxPoints && nextStep < end; i++, nextStep += step) {
+        data.push(createDataPoint(nextStep, request));
+      }
+    }
+
+    if (request.strategy !== 'minmax' && size) {
+      data = data.slice(-size);
     }
 
     if (loadDelay === 0) {
@@ -158,6 +168,35 @@
     } else {
       setTimeout(() => postOnRequest(message, request, data), loadDelay);
     }
+  }
+
+  function createDataPoint(time, request) {
+    return {
+      utc: time,
+      yesterday: time - 60 * 60 * 24 * 1000,
+      sin: sin(
+        time,
+        request.period,
+        request.amplitude,
+        request.offset,
+        request.phase,
+        request.randomness,
+        request.infinityValues,
+        request.exceedFloat32
+      ),
+      wavelengths: wavelengths(),
+      intensities: intensities(),
+      cos: cos(
+        time,
+        request.period,
+        request.amplitude,
+        request.offset,
+        request.phase,
+        request.randomness,
+        request.infinityValues,
+        request.exceedFloat32
+      )
+    };
   }
 
   function postOnRequest(message, request, data) {
@@ -176,9 +215,26 @@
     });
   }
 
-  function cos(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
-    if (infinityValues && Math.random() > 0.5) {
+  function cos(
+    timestamp,
+    period,
+    amplitude,
+    offset,
+    phase,
+    randomness,
+    infinityValues,
+    exceedFloat32
+  ) {
+    if (infinityValues && exceedFloat32) {
+      if (Math.random() > 0.5) {
+        return Number.POSITIVE_INFINITY;
+      } else if (Math.random() < 0.01) {
+        return getRandomFloat32OverflowValue();
+      }
+    } else if (infinityValues && Math.random() > 0.5) {
       return Number.POSITIVE_INFINITY;
+    } else if (exceedFloat32 && Math.random() < 0.01) {
+      return getRandomFloat32OverflowValue();
     }
 
     return (
@@ -188,9 +244,26 @@
     );
   }
 
-  function sin(timestamp, period, amplitude, offset, phase, randomness, infinityValues) {
-    if (infinityValues && Math.random() > 0.5) {
+  function sin(
+    timestamp,
+    period,
+    amplitude,
+    offset,
+    phase,
+    randomness,
+    infinityValues,
+    exceedFloat32
+  ) {
+    if (infinityValues && exceedFloat32) {
+      if (Math.random() > 0.5) {
+        return Number.POSITIVE_INFINITY;
+      } else if (Math.random() < 0.01) {
+        return getRandomFloat32OverflowValue();
+      }
+    } else if (infinityValues && Math.random() > 0.5) {
       return Number.POSITIVE_INFINITY;
+    } else if (exceedFloat32 && Math.random() < 0.01) {
+      return getRandomFloat32OverflowValue();
     }
 
     return (
@@ -198,6 +271,13 @@
       amplitude * Math.random() * randomness +
       offset
     );
+  }
+
+  // Values exceeding float32 range (Positive: 3.4+38, Negative: -3.4+38)
+  function getRandomFloat32OverflowValue() {
+    const sign = Math.random() > 0.5 ? 1 : -1;
+
+    return sign * 3.4e39;
   }
 
   function wavelengths() {

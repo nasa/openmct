@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,8 @@
 Testsuite for plot autoscale.
 */
 
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const { test, expect } = require('../../../../pluginFixtures');
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 test.use({
   viewport: {
     width: 1280,
@@ -58,7 +58,7 @@ test.describe('Autoscale', () => {
     await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
 
     // enter edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
     await turnOffAutoscale(page);
@@ -68,7 +68,7 @@ test.describe('Autoscale', () => {
     // save
     await page.click('button[title="Save"]');
     await Promise.all([
-      page.locator('li[title = "Save and Finish Editing"]').click(),
+      page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
       //Wait for Save Banner to appear
       page.waitForSelector('.c-message-banner__message')
     ]);

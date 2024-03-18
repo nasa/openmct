@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,8 @@ import _ from 'lodash';
 import Color from '@/ui/color/Color';
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import Collection from './Collection';
-import PlotSeries from './PlotSeries';
+import Collection from './Collection.js';
+import PlotSeries from './PlotSeries.js';
 
 /**
  * @extends {Collection<SeriesCollectionModelType, SeriesCollectionOptions>}
@@ -46,6 +46,11 @@ export default class SeriesCollection extends Collection {
     this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
 
     const domainObject = this.plot.get('domainObject');
+
+    if (this.openmct.objects.isMissing(domainObject)) {
+      return;
+    }
+
     if (domainObject.telemetry) {
       this.addTelemetryObject(domainObject);
     } else {

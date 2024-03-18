@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
-import { NotebookPlugin } from './plugin';
+import { NotebookPlugin } from './plugin.js';
 
 describe('Notebook plugin:', () => {
   let openmct;
@@ -189,7 +189,7 @@ describe('Notebook plugin:', () => {
       notebookView = notebookViewProvider.view(mutableNotebookObject, [mutableNotebookObject]);
       notebookView.show(child);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     afterEach(() => {
@@ -237,7 +237,7 @@ describe('Notebook plugin:', () => {
           'Modified entry text';
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(getEntryText(0).innerText.trim()).toBe('Modified entry text');
         });
       });
@@ -252,7 +252,7 @@ describe('Notebook plugin:', () => {
         });
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookEntryElements().length).toBe(3);
         });
       });
@@ -263,7 +263,7 @@ describe('Notebook plugin:', () => {
           entries.splice(0, 1);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookEntryElements().length).toBe(1);
         });
       });
@@ -281,7 +281,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections[0].pages.push(newPage);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        await Vue.nextTick();
+        await nextTick();
         expect(allNotebookPageElements().length).toBe(3);
       });
 
@@ -290,7 +290,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections[0].pages.splice(0, 1);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        await Vue.nextTick();
+        await nextTick();
         expect(allNotebookPageElements().length).toBe(1);
       });
 
@@ -315,7 +315,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections.push(newSection);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookSectionElements().length).toBe(3);
         });
       });
@@ -325,7 +325,7 @@ describe('Notebook plugin:', () => {
         objectCloneToSyncFrom.configuration.sections.splice(0, 1);
         objectProviderObserver(objectCloneToSyncFrom);
 
-        return Vue.nextTick().then(() => {
+        return nextTick().then(() => {
           expect(allNotebookSectionElements().length).toBe(1);
         });
       });
@@ -336,24 +336,23 @@ describe('Notebook plugin:', () => {
     let snapshotIndicator;
     let drawerElement;
 
-    function clickSnapshotIndicator() {
-      const indicator = element.querySelector('.icon-camera');
-      const button = indicator.querySelector('button');
+    async function clickSnapshotIndicator() {
+      const button =
+        appHolder.querySelector('[aria-label="Show Snapshots"]') ??
+        appHolder.querySelector('[aria-label="Hide Snapshots"]');
       const clickEvent = createMouseEvent('click');
 
       button.dispatchEvent(clickEvent);
+      await nextTick();
     }
 
-    beforeEach(() => {
+    beforeEach(async () => {
       snapshotIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'notebook-snapshot-indicator'
-      ).element;
+      ).vueComponent;
 
-      element.append(snapshotIndicator);
-
-      return Vue.nextTick().then(() => {
-        drawerElement = document.querySelector('.l-shell__drawer');
-      });
+      await nextTick();
+      drawerElement = document.querySelector('.l-shell__drawer');
     });
 
     afterEach(() => {
@@ -361,7 +360,6 @@ describe('Notebook plugin:', () => {
         drawerElement.classList.remove('is-expanded');
       }
 
-      snapshotIndicator.remove();
       snapshotIndicator = undefined;
 
       if (drawerElement) {
@@ -375,11 +373,11 @@ describe('Notebook plugin:', () => {
       expect(hasSnapshotIndicator).toBe(true);
     });
 
-    it('snapshots container has class isExpanded', () => {
+    it('snapshots container has class isExpanded', async () => {
       let classes = drawerElement.classList;
       const isExpandedBefore = classes.contains('is-expanded');
 
-      clickSnapshotIndicator();
+      await clickSnapshotIndicator();
       classes = drawerElement.classList;
       const isExpandedAfterFirstClick = classes.contains('is-expanded');
 
@@ -387,15 +385,15 @@ describe('Notebook plugin:', () => {
       expect(isExpandedAfterFirstClick).toBeTrue();
     });
 
-    it('snapshots container does not have class isExpanded', () => {
+    it('snapshots container does not have class isExpanded', async () => {
       let classes = drawerElement.classList;
       const isExpandedBefore = classes.contains('is-expanded');
 
-      clickSnapshotIndicator();
+      await clickSnapshotIndicator();
       classes = drawerElement.classList;
       const isExpandedAfterFirstClick = classes.contains('is-expanded');
 
-      clickSnapshotIndicator();
+      await clickSnapshotIndicator();
       classes = drawerElement.classList;
       const isExpandedAfterSecondClick = classes.contains('is-expanded');
 
@@ -404,8 +402,8 @@ describe('Notebook plugin:', () => {
       expect(isExpandedAfterSecondClick).toBeFalse();
     });
 
-    it('show notebook snapshots container text', () => {
-      clickSnapshotIndicator();
+    it('show notebook snapshots container text', async () => {
+      await clickSnapshotIndicator();
 
       const notebookSnapshots = drawerElement.querySelector('.l-browse-bar__object-name');
       const snapshotsText = notebookSnapshots.textContent.trim();

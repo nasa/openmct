@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,15 +25,16 @@ import mount from 'utils/mount';
 import {
   createMouseEvent,
   createOpenMct,
+  renderWhenVisible,
   resetApplicationState,
   spyOnBuiltins
 } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick, ref } from 'vue';
 
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotOptions from '../inspector/PlotOptions.vue';
-import PlotVuePlugin from '../plugin';
+import PlotVuePlugin from '../plugin.js';
 import StackedPlot from './StackedPlot.vue';
 
 describe('the plugin', function () {
@@ -329,7 +330,8 @@ describe('the plugin', function () {
           provide: {
             openmct,
             domainObject: stackedPlotObject,
-            path: [stackedPlotObject]
+            path: [stackedPlotObject],
+            renderWhenVisible
           },
           template: '<stacked-plot ref="stackedPlotRef"></stacked-plot>'
         },
@@ -342,7 +344,7 @@ describe('the plugin', function () {
       destroyStackedPlot = destroy;
 
       await telemetryPromise;
-      await Vue.nextTick();
+      await nextTick();
       plotViewComponentObject = component.$refs.stackedPlotRef;
       const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
       config = configStore.get(configId);
@@ -358,13 +360,15 @@ describe('the plugin', function () {
       expect(legend[0].innerHTML).toEqual('Test Object');
     });
 
-    it('Renders an expanded legend for every telemetry', () => {
+    it('Renders an expanded legend for every telemetry', async () => {
       let legendControl = element.querySelector(
         '.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle'
       );
       const clickEvent = createMouseEvent('click');
 
       legendControl.dispatchEvent(clickEvent);
+
+      await nextTick();
 
       let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
       expect(legend.length).toBe(6);
@@ -390,7 +394,7 @@ describe('the plugin', function () {
         min: 10,
         max: 20
       });
-      await Vue.nextTick();
+      await nextTick();
       let yAxisElement = element.querySelectorAll(
         '.gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper'
       );
@@ -411,10 +415,10 @@ describe('the plugin', function () {
     });
 
     it('turns on cursor Guides all telemetry objects', async () => {
-      let cursorGuide = Vue.ref(plotViewComponentObject.cursorGuide);
+      let cursorGuide = ref(plotViewComponentObject.cursorGuide);
       expect(cursorGuide.value).toBeFalse();
       cursorGuide.value = true;
-      await Vue.nextTick();
+      await nextTick();
       let childCursorGuides = element.querySelectorAll('.c-cursor-guide--v');
       expect(childCursorGuides.length).toBe(1);
     });
@@ -432,10 +436,10 @@ describe('the plugin', function () {
     });
 
     it('hides grid lines for all telemetry objects', async () => {
-      let gridLines = Vue.ref(plotViewComponentObject.gridLines);
+      let gridLines = ref(plotViewComponentObject.gridLines);
       expect(gridLines.value).toBeTrue();
       gridLines.value = false;
-      await Vue.nextTick();
+      await nextTick();
       expect(gridLines.value).toBeFalse();
       let gridLinesContainer = element.querySelectorAll('.gl-plot-display-area .js-ticks');
       let visible = 0;
@@ -488,7 +492,7 @@ describe('the plugin', function () {
         max: 10
       });
       expect(
-        plotViewComponentObject.$children[0].component.$children[0].$children[1].xScale.domain()
+        plotViewComponentObject.$refs.stackedPlotItems[0].$refs.plotComponent.$refs.mctPlot.xScale.domain()
       ).toEqual({
         min: 0,
         max: 10
@@ -505,7 +509,7 @@ describe('the plugin', function () {
       });
 
       const yAxesScales =
-        plotViewComponentObject.$children[0].component.$children[0].$children[1].yScale;
+        plotViewComponentObject.$refs.stackedPlotItems[0].$refs.plotComponent.$refs.mctPlot.yScale;
       yAxesScales.forEach((yAxisScale) => {
         expect(yAxisScale.scale.domain()).toEqual({
           min: 10,
@@ -520,7 +524,7 @@ describe('the plugin', function () {
       );
       let hasStyles = 0;
       conditionalStylesContainer.forEach((el) => {
-        if (el.style.backgroundColor !== '') {
+        if (el.style.backgroundColor) {
           hasStyles++;
         }
       });
@@ -618,7 +622,8 @@ describe('the plugin', function () {
           provide: {
             openmct: openmct,
             domainObject: selection[0][0].context.item,
-            path: [selection[0][0].context.item]
+            path: [selection[0][0].context.item],
+            renderWhenVisible
           },
           template: '<plot-options/>'
         },
@@ -628,7 +633,7 @@ describe('the plugin', function () {
       );
       destroyPlotOptions = destroy;
 
-      await Vue.nextTick();
+      await nextTick();
       viewComponentObject = vNode.componentInstance;
     });
 
@@ -773,7 +778,8 @@ describe('the plugin', function () {
           provide: {
             openmct: openmct,
             domainObject: selection[0][0].context.item,
-            path: [selection[0][0].context.item, selection[0][1].context.item]
+            path: [selection[0][0].context.item, selection[0][1].context.item],
+            renderWhenVisible
           },
           template: '<plot-options />'
         },
@@ -783,7 +789,7 @@ describe('the plugin', function () {
       );
       destroyPlotOptions = destroy;
 
-      await Vue.nextTick();
+      await nextTick();
       viewComponentObject = vNode.componentInstance;
     });
 

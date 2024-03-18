@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-lad-table-wrapper u-style-receiver js-style-receiver" :class="staleClass">
-    <table class="c-table c-lad-table" :class="applyLayoutClass">
+    <table aria-label="lad table" class="c-table c-lad-table" :class="applyLayoutClass">
       <thead>
         <tr>
           <th>Name</th>
@@ -30,6 +30,9 @@
           <th>Value</th>
           <th v-if="hasUnits">Units</th>
           <th v-if="showType">Type</th>
+          <th v-for="limitColumn in limitColumnNames" :key="limitColumn.key">
+            {{ limitColumn.label }}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -37,11 +40,13 @@
           v-for="ladRow in items"
           :key="ladRow.key"
           :domain-object="ladRow.domainObject"
+          :limit-definition="ladRow.limitDefinition"
+          :limit-column-names="limitColumnNames"
           :path-to-table="objectPath"
           :has-units="hasUnits"
           :is-stale="staleObjects.includes(ladRow.key)"
           :configuration="configuration"
-          @rowContextClick="updateViewContext"
+          @row-context-click="updateViewContext"
         />
       </tbody>
     </table>
@@ -49,9 +54,11 @@
 </template>
 
 <script>
-import Vue, { toRaw } from 'vue';
-import LadRow from './LadRow.vue';
+import { nextTick, toRaw } from 'vue';
+
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
+import LadRow from './LadRow.vue';
 
 export default {
   components: {
@@ -86,6 +93,23 @@ export default {
       });
 
       return itemsWithUnits.length !== 0 && !this.configuration?.hiddenColumns?.units;
+    },
+    limitColumnNames() {
+      const limitDefinitions = [];
+
+      this.items.forEach((item) => {
+        if (item.limitDefinition) {
+          const limits = Object.keys(item.limitDefinition);
+          limits.forEach((limit) => {
+            const limitAlreadyAdded = limitDefinitions.some((limitDef) => limitDef.key === limit);
+            const limitHidden = this.configuration?.hiddenColumns?.[limit];
+            if (!limitAlreadyAdded && !limitHidden) {
+              limitDefinitions.push({ label: `Limit ${limit}`, key: limit });
+            }
+          });
+        }
+      });
+      return limitDefinitions;
     },
     showTimestamp() {
       return !this.configuration?.hiddenColumns?.timestamp;
@@ -127,7 +151,7 @@ export default {
     this.composition.on('remove', this.removeItem);
     this.composition.on('reorder', this.reorder);
     this.composition.load();
-    await Vue.nextTick();
+    await nextTick();
     this.viewActionsCollection = this.openmct.actions.getActionsCollection(
       this.objectPath,
       this.currentView
@@ -147,10 +171,11 @@ export default {
     this.composition.off('reorder', this.reorder);
   },
   methods: {
-    addItem(domainObject) {
+    async addItem(domainObject) {
       let item = {};
       item.domainObject = domainObject;
       item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+      item.limitDefinition = await this.openmct.telemetry.limitDefinition(domainObject).limits();
 
       this.items.push(item);
       this.subscribeToStaleness(domainObject);

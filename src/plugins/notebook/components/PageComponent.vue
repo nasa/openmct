@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
-import RemoveDialog from '../utils/removeDialog';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code.js';
+import RemoveDialog from '../utils/removeDialog.js';
 import PopupMenu from './PopupMenu.vue';
 
 export default {
@@ -90,6 +90,7 @@ export default {
       }
     }
   },
+  emits: ['delete-page', 'select-page', 'rename-page'],
   data() {
     return {
       popupMenuItems: [],
@@ -122,7 +123,7 @@ export default {
         return;
       }
 
-      this.$emit('deletePage', this.page.id);
+      this.$emit('delete-page', this.page.id);
     },
     getRemoveDialog() {
       const message =
@@ -146,7 +147,7 @@ export default {
         return;
       }
 
-      this.$emit('selectPage', id);
+      this.$emit('select-page', id);
     },
     renamePage(target) {
       if (!target) {
@@ -161,7 +162,7 @@ export default {
         return;
       }
 
-      this.$emit('renamePage', Object.assign(this.page, { name: target.textContent }));
+      this.$emit('rename-page', Object.assign(this.page, { name: target.textContent }));
     },
     updateName(event) {
       const { target, keyCode, type } = event;

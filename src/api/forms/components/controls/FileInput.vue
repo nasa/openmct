@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -52,6 +52,7 @@ export default {
       required: true
     }
   },
+  emits: ['on-change'],
   data() {
     return {
       fileInfo: undefined
@@ -101,7 +102,7 @@ export default {
           model: self.model,
           value: fileInfo
         };
-        self.$emit('onChange', data);
+        self.$emit('on-change', data);
       };
 
       fileReader.onerror = function (error) {
@@ -123,7 +124,7 @@ export default {
         value: fileInfo
       };
 
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     },
     selectFile() {
       this.$refs.fileInput.click();
@@ -135,7 +136,7 @@ export default {
         model: this.model,
         value: undefined
       };
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

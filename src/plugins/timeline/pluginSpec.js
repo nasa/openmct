@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
 import { createOpenMct, resetApplicationState } from '@/utils/testing';
 
-import TimelinePlugin from './plugin';
+import TimelinePlugin from './plugin.js';
 
 describe('the plugin', function () {
   let objectDef;
@@ -184,11 +184,11 @@ describe('the plugin', function () {
       let view = timelineView.view(testViewObject, mockObjectPath);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     it('provides a view', async () => {
-      await Vue.nextTick();
+      await nextTick();
       expect(timelineView).toBeDefined();
     });
 
@@ -240,12 +240,12 @@ describe('the plugin', function () {
       let view = timelineView.view(timelineDomainObject, [timelineDomainObject]);
       view.show(child, true);
 
-      return Vue.nextTick();
+      return nextTick();
     });
 
     xit('loads the plan from composition', async () => {
-      await Vue.nextTick();
-      await Vue.nextTick();
+      await nextTick();
+      await nextTick();
       const items = element.querySelectorAll('.js-timeline__content');
       expect(items.length).toEqual(1);
     });
@@ -267,11 +267,11 @@ describe('the plugin', function () {
       let view = timelineView.view(testViewObject, mockObjectPath);
       view.show(child, true);
 
-      Vue.nextTick(done);
+      nextTick(done);
     });
 
     xit('displays an independent time conductor with saved options - local clock', () => {
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const independentTimeConductorEl = element.querySelector(
           '.c-timeline-holder > .c-conductor__controls'
         );
@@ -308,11 +308,11 @@ describe('the plugin', function () {
       let view = timelineView.view(testViewObject2, mockObjectPath);
       view.show(child, true);
 
-      Vue.nextTick(done);
+      nextTick(done);
     });
 
     xit('displays an independent time conductor with saved options - fixed timespan', () => {
-      return Vue.nextTick(() => {
+      return nextTick(() => {
         const independentTimeConductorEl = element.querySelector(
           '.c-timeline-holder > .c-conductor__controls'
         );

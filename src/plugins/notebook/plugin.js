@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import mount from 'utils/mount';
-
-import { notebookImageMigration } from '../notebook/utils/notebook-migration';
-import CopyToNotebookAction from './actions/CopyToNotebookAction';
-import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction';
+import { notebookImageMigration } from '../notebook/utils/notebook-migration.js';
+import CopyToNotebookAction from './actions/CopyToNotebookAction.js';
+import ExportNotebookAsTextAction from './actions/ExportNotebookAsTextAction.js';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 import {
@@ -33,13 +31,13 @@ import {
   NOTEBOOK_VIEW_TYPE,
   RESTRICTED_NOTEBOOK_TYPE,
   RESTRICTED_NOTEBOOK_VIEW_TYPE
-} from './notebook-constants';
-import NotebookType from './NotebookType';
-import NotebookViewProvider from './NotebookViewProvider';
-import SnapshotContainer from './snapshot-container';
+} from './notebook-constants.js';
+import NotebookType from './NotebookType.js';
+import NotebookViewProvider from './NotebookViewProvider.js';
+import SnapshotContainer from './snapshot-container.js';
 
 let notebookSnapshotContainer;
-function getSnapshotContainer(openmct) {
+export function getSnapshotContainer(openmct) {
   if (!notebookSnapshotContainer) {
     notebookSnapshotContainer = new SnapshotContainer(openmct);
   }
@@ -66,7 +64,6 @@ function installBaseNotebookFunctionality(openmct) {
     return;
   }
 
-  const snapshotContainer = getSnapshotContainer(openmct);
   const notebookSnapshotImageType = {
     name: 'Notebook Snapshot Image Storage',
     description: 'Notebook Snapshot Image Storage object',
@@ -82,27 +79,10 @@ function installBaseNotebookFunctionality(openmct) {
   openmct.actions.register(new CopyToNotebookAction(openmct));
   openmct.actions.register(new ExportNotebookAsTextAction(openmct));
 
-  const { vNode, destroy } = mount(
-    {
-      components: {
-        NotebookSnapshotIndicator
-      },
-      provide: {
-        openmct,
-        snapshotContainer
-      },
-      template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
-    },
-    {
-      app: openmct.app
-    }
-  );
-
   const indicator = {
-    element: vNode.el,
+    vueComponent: NotebookSnapshotIndicator,
     key: 'notebook-snapshot-indicator',
-    priority: openmct.priority.DEFAULT,
-    destroy: destroy
+    priority: openmct.priority.DEFAULT
   };
 
   openmct.indicators.add(indicator);

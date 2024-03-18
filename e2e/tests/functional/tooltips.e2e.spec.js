@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,8 +33,8 @@ comfortable running this test during a live mission?" Avoid creating or deleting
 Make no assumptions about the order that elements appear in the DOM.
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults, expandEntireTree } = require('../../appActions');
+import { createDomainObjectWithDefaults, expandEntireTree } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Verify tooltips', () => {
   let folder1;
@@ -89,20 +89,6 @@ test.describe('Verify tooltips', () => {
     await expandEntireTree(page);
   });
 
-  // LAD Tables - DONE
-  // Expanded collapsed plot legend - DONE
-  // Object Labels - DONE
-  // Display Layout headers - DONE
-  // Flexible Layout headers - DONE
-  // Tab View layout headers - DONE
-  // Search - DONE
-  // Gauge -
-  // Notebook Embed - DONE
-  // Telemetry Table -
-  // Timeline Objects
-  // Tree - DONE
-  // Recent Objects
-
   test('display correct paths for LAD tables', async ({ page, openmctConfig }) => {
     // Create LAD table
     await createDomainObjectWithDefaults(page, {
@@ -110,20 +96,20 @@ test.describe('Verify tooltips', () => {
       name: 'Test LAD Table'
     });
     // Edit LAD table
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Add the Sine Wave Generator to the LAD table and save changes
     await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-lad-table-wrapper');
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-lad-table-wrapper');
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-lad-table-wrapper');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
 
     async function getToolTip(object) {
       await page.locator('.c-create-button').hover();
-      await page.getByRole('cell', { name: object.name }).hover();
+      await page.getByLabel('lad name').getByText(object.name).hover();
       let tooltipText = await page.locator('.c-tooltip').textContent();
       return tooltipText.replace('\n', '').trim();
     }
@@ -140,14 +126,14 @@ test.describe('Verify tooltips', () => {
       name: 'Test Overlay Plots'
     });
     // Edit Overlay Plot
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Add the Sine Wave Generator to the LAD table and save changes
     await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.gl-plot');
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.gl-plot');
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.gl-plot');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
 
@@ -211,10 +197,10 @@ test.describe('Verify tooltips', () => {
       name: 'Test Overlay Plot'
     });
     // Edit Overlay Plot
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.gl-plot');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create Stacked Plot
     await createDomainObjectWithDefaults(page, {
@@ -222,10 +208,10 @@ test.describe('Verify tooltips', () => {
       name: 'Test Stacked Plot'
     });
     // Edit Stacked Plot
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-plot--stacked.holder');
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create Display Layout
     await createDomainObjectWithDefaults(page, {
@@ -233,7 +219,7 @@ test.describe('Verify tooltips', () => {
       name: 'Test Display Layout'
     });
     // Edit Display Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     await page.dragAndDrop("text='Test Overlay Plot'", '.l-layout__grid-holder', {
       targetPosition: { x: 0, y: 0 }
@@ -245,7 +231,7 @@ test.describe('Verify tooltips', () => {
       targetPosition: { x: 500, y: 200 }
     });
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
 
@@ -254,13 +240,13 @@ test.describe('Verify tooltips', () => {
     tooltipText = tooltipText.replace('\n', '').trim();
     expect(tooltipText).toBe('My Items / Test Overlay Plot');
 
-    // await page.keyboard.up('Control');
-    // await page.locator('.c-plot-legend__view-control >> nth=0').click();
-    // await page.keyboard.down('Control');
-    // await page.locator('.plot-wrapper-expanded-legend .plot-series-name').first().hover();
-    // tooltipText = await page.locator('.c-tooltip').textContent();
-    // tooltipText = tooltipText.replace('\n', '').trim();
-    // expect(tooltipText).toBe(sineWaveObject1.path);
+    await page.keyboard.up('Control');
+    await page.locator('.c-plot-legend__view-control >> nth=0').click();
+    await page.keyboard.down('Control');
+    await page.locator('.plot-wrapper-expanded-legend .plot-series-name').first().hover();
+    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject1.path);
 
     await page.getByText('Test Stacked Plot').nth(2).hover();
     tooltipText = await page.locator('.c-tooltip').textContent();
@@ -283,7 +269,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-fl__container >> nth=1');
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
@@ -307,7 +293,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-tabs-view__tabs-holder');
 
     await page.locator('button[title="Save"]').click();
-    await page.locator('text=Save and Finish Editing').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
     await page.getByText('SWG 1').nth(2).hover();
@@ -345,18 +331,18 @@ test.describe('Verify tooltips', () => {
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
 
-  test('display path for source telemetry when hovering over gauge', ({ page }) => {
-    expect(true).toBe(true);
-    // await createDomainObjectWithDefaults(page, {
-    //   type: 'Gauge',
-    //   name: 'Test Gauge'
-    // });
-    // await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-gauge__wrapper');
-    // await page.keyboard.down('Control');
-    // await page.locator('.c-gauge__current-value-text-wrapper').hover();
-    // let tooltipText = await page.locator('.c-tooltip').textContent();
-    // tooltipText = tooltipText.replace('\n', '').trim();
-    // expect(tooltipText).toBe(sineWaveObject3.path);
+  test('display path for source telemetry when hovering over gauge', async ({ page }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Test Gauge'
+    });
+    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-gauge__wrapper');
+    await page.keyboard.down('Control');
+    // eslint-disable-next-line playwright/no-force-option
+    await page.locator('.c-gauge.c-dial').hover({ position: { x: 0, y: 0 }, force: true });
+    let tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject3.path);
   });
 
   test('display tooltip path for notebook embeds', async ({ page }) => {
@@ -373,26 +359,109 @@ test.describe('Verify tooltips', () => {
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
 
-  // test('display tooltip path for telemetry table names', async ({ page }) => {
-  //   await setEndOffset(page, { secs: '10' });
-  //   await createDomainObjectWithDefaults(page, {
-  //     type: 'Telemetry Table',
-  //     name: 'Test Telemetry Table'
-  //   });
+  test.fixme('display tooltip path for telemetry table names', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7421'
+    });
+    // set endBound to 10 seconds after start bound
+    const url = await page.url();
+    const parsedUrl = new URL(url.replace('#', '!'));
+    const startBound = Number(parsedUrl.searchParams.get('tc.startBound'));
+    const tenSecondsInMilliseconds = 10 * 1000;
+    const endBound = startBound + tenSecondsInMilliseconds;
+    parsedUrl.searchParams.set('tc.endBound', endBound);
+    await page.goto(parsedUrl.href.replace('!', '#'));
 
-  //   await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-telemetry-table');
-  //   await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-telemetry-table');
+    await createDomainObjectWithDefaults(page, {
+      type: 'Telemetry Table',
+      name: 'Test Telemetry Table'
+    });
 
-  //   await page.locator('button[title="Save"]').click();
-  //   await page.locator('text=Save and Finish Editing').click();
+    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-telemetry-table');
+    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-telemetry-table');
 
-  //   // .c-telemetry-table__body
+    await page.locator('button[title="Save"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await page.keyboard.down('Control');
 
-  //   await page.keyboard.down('Control');
+    await page.locator('.noselect > [title="SWG 3"]').first().hover();
+    let tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject3.path);
 
-  //   await page.locator('.noselect > [title="SWG 3"]').first().hover();
-  //   let tooltipText = await page.locator('.c-tooltip').textContent();
-  //   tooltipText = tooltipText.replace('\n', '').trim();
-  //   expect(tooltipText).toBe(sineWaveObject3.path);
-  // });
+    await page.locator('.noselect > [title="SWG 1"]').first().hover();
+    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject1.path);
+  });
+
+  test('display tooltip path for recently viewed items', async ({ page }) => {
+    // drag up Recently Viewed pane
+    await page
+      .locator('.l-pane.l-pane--vertical-handle-before', {
+        hasText: 'Recently Viewed'
+      })
+      .locator('.l-pane__handle')
+      .hover();
+    await page.mouse.down();
+    await page.mouse.move(0, 300);
+    await page.mouse.up();
+
+    await page.keyboard.down('Control');
+    await page.getByLabel('Recent Objects').getByText(sineWaveObject3.name).hover();
+    let tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject3.path);
+
+    await page.getByLabel('Recent Objects').getByText(sineWaveObject2.name).hover();
+    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject2.path);
+
+    await page.getByLabel('Recent Objects').getByText(sineWaveObject1.name).hover();
+    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject1.path);
+  });
+
+  test('display tooltip path for time strips', async ({ page }) => {
+    // Create Time Strip
+    await createDomainObjectWithDefaults(page, {
+      type: 'Time Strip',
+      name: 'Test Time Strip'
+    });
+    // Edit Overlay Plot
+    await page.getByLabel('Edit Object').click();
+    await page.dragAndDrop(
+      `text=${sineWaveObject1.name}`,
+      '.c-object-view.is-object-type-time-strip'
+    );
+    await page.dragAndDrop(
+      `text=${sineWaveObject2.name}`,
+      '.c-object-view.is-object-type-time-strip'
+    );
+    await page.dragAndDrop(
+      `text=${sineWaveObject3.name}`,
+      '.c-object-view.is-object-type-time-strip'
+    );
+    await page.locator('button[title="Save"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    await page.keyboard.down('Control');
+    await page.getByText(sineWaveObject1.name).nth(2).hover();
+    let tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject1.path);
+
+    await page.getByText(sineWaveObject2.name).nth(2).hover();
+    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject2.path);
+
+    await page.getByText(sineWaveObject3.name).nth(2).hover();
+    tooltipText = await page.locator('.c-tooltip').textContent();
+    tooltipText = tooltipText.replace('\n', '').trim();
+    expect(tooltipText).toBe(sineWaveObject3.path);
+  });
 });

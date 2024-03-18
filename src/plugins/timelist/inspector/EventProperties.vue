@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,8 +22,8 @@
 <template>
   <li class="c-inspect-properties__row">
     <div class="c-inspect-properties__label" title="Options for future events.">{{ label }}</div>
-    <div v-if="canEdit" class="c-inspect-properties__value">
-      <select v-model="index" @change="updateForm('index')">
+    <div class="c-inspect-properties__value">
+      <select v-if="canEdit" v-model="index" @change="updateForm('index')">
         <option
           v-for="(activityOption, activityKey) in activitiesOptions"
           :key="activityKey"
@@ -32,34 +32,13 @@
           {{ activityOption }}
         </option>
       </select>
-      <input
-        v-if="index === 2"
-        v-model="duration"
-        class="c-input c-input--sm"
-        type="text"
-        @change="updateForm('duration')"
-      />
-      <select v-if="index === 2" v-model="durationIndex" @change="updateForm('durationIndex')">
-        <option
-          v-for="(durationOption, durationKey) in durationOptions"
-          :key="durationKey"
-          :value="durationKey"
-        >
-          {{ durationOption }}
-        </option>
-      </select>
-    </div>
-    <div v-else class="c-inspect-properties__value">
-      {{ activitiesOptions[index] }}
-      <span v-if="index > 1">{{ duration }} {{ durationOptions[durationIndex] }}</span>
+      <span v-else>{{ activitiesOptions[index] }}</span>
     </div>
   </li>
 </template>
 
 <script>
-const ACTIVITIES_OPTIONS = ["Don't show", 'Show all', 'Show starts within', 'Show after end for'];
-
-const DURATION_OPTIONS = ['seconds', 'minutes', 'hours'];
+const ACTIVITIES_OPTIONS = ["Don't show", 'Show all'];
 
 export default {
   inject: ['openmct', 'domainObject'],
@@ -73,13 +52,11 @@ export default {
       required: true
     }
   },
+  emits: ['updated'],
   data() {
     return {
-      index: this.domainObject.configuration[`${this.prefix}Index`],
-      durationIndex: this.domainObject.configuration[`${this.prefix}DurationIndex`],
-      duration: this.domainObject.configuration[`${this.prefix}Duration`],
+      index: this.domainObject.configuration[`${this.prefix}Index`] % 2, //this is modulo since we previously had more options and index could have been > 1
       activitiesOptions: ACTIVITIES_OPTIONS,
-      durationOptions: DURATION_OPTIONS,
       isEditing: this.openmct.editor.isEditing()
     };
   },
@@ -115,7 +92,7 @@ export default {
       });
     },
     isValid() {
-      return this.index < 2 || (this.durationIndex >= 0 && this.duration > 0);
+      return this.index <= 1;
     },
     setEditState(isEditing) {
       this.isEditing = isEditing;

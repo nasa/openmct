@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import LayoutDrag from './../LayoutDrag';
+import LayoutDrag from './../LayoutDrag.js';
 
 export default {
   inject: ['openmct'],
@@ -58,6 +58,7 @@ export default {
       validator: (arr) => arr && arr.length === 2 && arr.every((el) => typeof el === 'number')
     }
   },
+  emits: ['end-resize'],
   data() {
     return {
       dragPosition: undefined
@@ -182,7 +183,7 @@ export default {
         y: marqueeEnd.y - marqueeStart.y
       };
 
-      this.$emit('endResize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
+      this.$emit('end-resize', scaleWidth, scaleHeight, marqueeStart, marqueeOffset);
       this.dragPosition = undefined;
       this.initialPosition = undefined;
       this.marqueeStartPosition = undefined;

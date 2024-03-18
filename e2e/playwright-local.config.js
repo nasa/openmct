@@ -1,14 +1,11 @@
-/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
-
-// eslint-disable-next-line no-unused-vars
-const { devices } = require('@playwright/test');
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 0,
   testDir: 'tests',
+  testMatch: '**/*.e2e.spec.js', // only run e2e tests
   testIgnore: '**/*.perf.spec.js',
   timeout: 30 * 1000,
   webServer: {
@@ -36,7 +33,6 @@ const config = {
     },
     {
       name: 'MMOC',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
       grepInvert: /@snapshot/,
       use: {
         browserName: 'chromium',
@@ -48,8 +44,6 @@ const config = {
     },
     {
       name: 'safari',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
-      grep: /@ipad/, // only run ipad tests due to this bug https://github.com/microsoft/playwright/issues/8340
       grepInvert: /@snapshot/,
       use: {
         browserName: 'webkit'
@@ -57,7 +51,6 @@ const config = {
     },
     {
       name: 'firefox',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
       grepInvert: /@snapshot/,
       use: {
         browserName: 'firefox'
@@ -65,7 +58,6 @@ const config = {
     },
     {
       name: 'canary',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
       grepInvert: /@snapshot/,
       use: {
         browserName: 'chromium',
@@ -74,21 +66,10 @@ const config = {
     },
     {
       name: 'chrome-beta',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
       grepInvert: /@snapshot/,
       use: {
         browserName: 'chromium',
         channel: 'chrome-beta'
-      }
-    },
-    {
-      name: 'ipad',
-      testMatch: '**/*.e2e.spec.js', // only run e2e tests
-      grep: /@ipad/,
-      grepInvert: /@snapshot/,
-      use: {
-        browserName: 'webkit',
-        ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
       }
     }
   ],
@@ -104,4 +85,4 @@ const config = {
   ]
 };
 
-module.exports = config;
+export default config;

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code';
-import RemoveDialog from '../utils/removeDialog';
+import { KEY_ENTER, KEY_ESCAPE } from '../utils/notebook-key-code.js';
+import RemoveDialog from '../utils/removeDialog.js';
 import PopupMenu from './PopupMenu.vue';
 
 export default {
@@ -72,6 +72,7 @@ export default {
       }
     }
   },
+  emits: ['delete-section', 'rename-section', 'select-section'],
   data() {
     return {
       popupMenuItems: [],
@@ -104,7 +105,7 @@ export default {
         return;
       }
 
-      this.$emit('deleteSection', this.section.id);
+      this.$emit('delete-section', this.section.id);
     },
     getRemoveDialog() {
       const message =
@@ -129,7 +130,7 @@ export default {
         return;
       }
 
-      this.$emit('selectSection', id);
+      this.$emit('select-section', id);
     },
     renameSection(target) {
       if (!target) {
@@ -144,7 +145,7 @@ export default {
         return;
       }
 
-      this.$emit('renameSection', Object.assign(this.section, { name: target.textContent }));
+      this.$emit('rename-section', Object.assign(this.section, { name: target.textContent }));
     },
     updateName(event) {
       const { target, keyCode, type } = event;

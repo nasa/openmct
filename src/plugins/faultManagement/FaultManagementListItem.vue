@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,11 +23,17 @@
 <template>
   <div class="c-fault-mgmt__list data-selectable" :class="classesFromState">
     <div class="c-fault-mgmt-item c-fault-mgmt__list-checkbox">
-      <input type="checkbox" :checked="isSelected" @input="toggleSelected" />
+      <input
+        type="checkbox"
+        :aria-label="checkBoxAriaLabel"
+        :checked="isSelected"
+        @change="toggleSelected"
+      />
     </div>
     <div class="c-fault-mgmt-item">
       <div
         class="c-fault-mgmt__list-severity"
+        :aria-label="fault.severity"
         :title="fault.severity"
         :class="['is-severity-' + severity]"
       ></div>
@@ -59,6 +65,7 @@
       <button
         class="c-fault-mgmt__list-action-button l-browse-bar__actions c-icon-button icon-3-dots"
         title="Disposition Actions"
+        aria-label="Disposition Actions"
         @click="showActionMenu"
       ></button>
     </div>
@@ -85,12 +92,14 @@ export default {
     },
     isSelected: {
       type: Boolean,
-      default: () => {
-        return false;
-      }
+      default: false
     }
   },
+  emits: ['acknowledge-selected', 'shelve-selected', 'toggle-selected', 'clear-all-selected'],
   computed: {
+    checkBoxAriaLabel() {
+      return `Select fault: ${this.fault.name}`;
+    },
     classesFromState() {
       const exclusiveStates = [
         {
@@ -169,7 +178,8 @@ export default {
           name: 'Acknowledge',
           description: '',
           onItemClicked: (e) => {
-            this.$emit('acknowledgeSelected', [this.fault]);
+            this.clearAllSelected();
+            this.$emit('acknowledge-selected', [this.fault]);
           }
         },
         {
@@ -177,7 +187,8 @@ export default {
           name: 'Shelve',
           description: '',
           onItemClicked: () => {
-            this.$emit('shelveSelected', [this.fault], { shelved: true });
+            this.clearAllSelected();
+            this.$emit('shelve-selected', [this.fault], { shelved: true });
           }
         },
         {
@@ -186,7 +197,8 @@ export default {
           name: 'Unshelve',
           description: '',
           onItemClicked: () => {
-            this.$emit('shelveSelected', [this.fault], { shelved: false });
+            this.clearAllSelected();
+            this.$emit('shelve-selected', [this.fault], { shelved: false });
           }
         }
       ];
@@ -199,7 +211,10 @@ export default {
         selected: event.target.checked
       };
 
-      this.$emit('toggleSelected', faultData);
+      this.$emit('toggle-selected', faultData);
+    },
+    clearAllSelected() {
+      this.$emit('clear-all-selected');
     }
   }
 };

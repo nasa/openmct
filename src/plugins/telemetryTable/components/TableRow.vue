@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,6 +24,7 @@
     :style="{ top: rowTop }"
     class="noselect"
     :class="[rowClass, { 'is-selected': marked }]"
+    :aria-label="ariaLabel"
     v-on="listeners"
   >
     <component
@@ -31,11 +32,7 @@
       v-for="(title, key) in headers"
       :key="key"
       :column-key="key"
-      :style="
-        columnWidths[key] === undefined
-          ? {}
-          : { width: columnWidths[key] + 'px', 'max-width': columnWidths[key] + 'px' }
-      "
+      :style="rowStyle(key)"
       :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
       :object-path="objectPath"
       :row="row"
@@ -89,6 +86,7 @@ export default {
       default: false
     }
   },
+  emits: ['mark-multiple-concurrent', 'unmark', 'mark', 'row-context-click'],
   data: function () {
     return {
       rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
@@ -102,6 +100,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return this.marked ? 'Selected Table Row' : 'Table Row';
+    },
     listeners() {
       let listenersObject = {
         click: this.markRow
@@ -145,7 +146,7 @@ export default {
       }
 
       if (event.shiftKey) {
-        this.$emit('markMultipleConcurrent', this.rowIndex);
+        this.$emit('mark-multiple-concurrent', this.rowIndex);
       } else {
         if (this.marked) {
           this.$emit('unmark', this.rowIndex, keyCtrlModifier);
@@ -182,6 +183,11 @@ export default {
     getDatum() {
       return this.row.fullDatum;
     },
+    rowStyle(key) {
+      return this.columnWidths[key] === undefined
+        ? {}
+        : { width: this.columnWidths[key] + 'px', 'max-width': this.columnWidths[key] + 'px' };
+    },
     showContextMenu: async function (event) {
       event.preventDefault();
 
@@ -212,7 +218,7 @@ export default {
       }
     },
     updateViewContext() {
-      this.$emit('rowContextClick', {
+      this.$emit('row-context-click', {
         viewHistoricalData: true,
         viewDatumAction: true,
         getDatum: this.getDatum

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -28,17 +28,17 @@
         :selected-section-id="selectedSectionId"
         :section="section"
         :section-title="sectionTitle"
-        @deleteSection="deleteSection"
-        @renameSection="updateSection"
-        @selectSection="selectSection"
+        @delete-section="deleteSection"
+        @rename-section="updateSection"
+        @select-section="selectSection"
       />
     </li>
   </ul>
 </template>
 
 <script>
-import { deleteNotebookEntries } from '../utils/notebook-entries';
-import { getDefaultNotebook } from '../utils/notebook-storage';
+import { deleteNotebookEntries } from '../utils/notebook-entries.js';
+import { getDefaultNotebook } from '../utils/notebook-storage.js';
 import SectionComponent from './SectionComponent.vue';
 
 export default {
@@ -77,6 +77,7 @@ export default {
       }
     }
   },
+  emits: ['select-section', 'default-section-deleted', 'update-section'],
   watch: {
     sections: {
       handler(val, oldVal) {
@@ -112,25 +113,25 @@ export default {
       }
 
       if (isSectionDefault) {
-        this.$emit('defaultSectionDeleted');
+        this.$emit('default-section-deleted');
       }
 
       if (sections.length && isSectionSelected && (!defaultSectionId || isSectionDefault)) {
         sections[0].isSelected = true;
       }
 
-      this.$emit('updateSection', {
+      this.$emit('update-section', {
         sections,
         id
       });
     },
     selectSection(id) {
-      this.$emit('selectSection', id);
+      this.$emit('select-section', id);
     },
     updateSection(newSection) {
       const id = newSection.id;
       const sections = this.sections.map((section) => (section.id === id ? newSection : section));
-      this.$emit('updateSection', {
+      this.$emit('update-section', {
         sections,
         id
       });

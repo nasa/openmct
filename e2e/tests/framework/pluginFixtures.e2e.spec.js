@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,7 @@ This test suite is dedicated to testing our use of our custom fixtures to verify
 that they are working as expected.
 */
 
-const { test } = require('../../pluginFixtures.js');
+import { test } from '../../pluginFixtures.js';
 
 // eslint-disable-next-line playwright/no-skipped-test
 test.describe.skip('pluginFixtures tests', () => {

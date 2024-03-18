@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -26,20 +26,23 @@
     :grid-size="gridSize"
     :is-editing="isEditing"
     @move="move"
-    @endMove="endMove"
+    @end-move="endMove"
   >
     <template #content>
       <div
         class="c-box-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
+        role="application"
+        aria-roledescription="draggable box"
+        aria-label="Box"
       ></div>
     </template>
   </layout-frame>
 </template>
 
 <script>
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 export default {
@@ -78,6 +81,7 @@ export default {
       required: true
     }
   },
+  emits: ['move', 'end-move'],
   computed: {
     style() {
       if (this.itemStyle) {
@@ -127,7 +131,7 @@ export default {
       this.$emit('move', gridDelta);
     },
     endMove() {
-      this.$emit('endMove');
+      this.$emit('end-move');
     }
   }
 };

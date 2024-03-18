@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,10 @@
 <template>
   <div class="c-ctrl-wrapper">
     <div
+      ref="button"
       class="c-icon-button"
+      role="menuitem"
+      :aria-label="options.title"
       :title="options.title"
       :class="{
         [options.icon]: true,
@@ -47,6 +50,7 @@ export default {
       required: true
     }
   },
+  emits: ['change', 'click'],
   computed: {
     nonSpecific() {
       return this.options.nonSpecific === true;

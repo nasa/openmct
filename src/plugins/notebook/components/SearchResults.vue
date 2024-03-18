@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -34,10 +34,10 @@
         :selected-page="result.page"
         :selected-section="result.section"
         :is-locked="result.page.isLocked"
-        @editingEntry="editingEntry"
-        @cancelEdit="cancelEdit"
-        @changeSectionPage="changeSectionPage"
-        @updateEntries="updateEntries"
+        @editing-entry="editingEntry"
+        @cancel-edit="cancelEdit"
+        @change-section-page="changeSectionPage"
+        @update-entries="updateEntries"
       />
     </div>
   </div>
@@ -65,18 +65,19 @@ export default {
       }
     }
   },
+  emits: ['editing-entry', 'cancel-edit', 'change-section-page', 'update-entries'],
   methods: {
     editingEntry() {
-      this.$emit('editingEntry');
+      this.$emit('editing-entry');
     },
     cancelEdit() {
-      this.$emit('cancelEdit');
+      this.$emit('cancel-edit');
     },
     changeSectionPage(data) {
-      this.$emit('changeSectionPage', data);
+      this.$emit('change-section-page', data);
     },
     updateEntries(entries) {
-      this.$emit('updateEntries', entries);
+      this.$emit('update-entries', entries);
     }
   }
 };

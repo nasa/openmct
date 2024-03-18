@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,16 +29,19 @@
       :selected-tag="addedTag.newTag ? null : addedTag"
       :new-tag="addedTag.newTag"
       :added-tags="addedTags"
-      @tagRemoved="tagRemoved"
-      @tagAdded="tagAdded"
+      @tag-removed="tagRemoved"
+      @tag-added="tagAdded"
     />
     <button
       v-show="!userAddingTag && !maxTagsAdded"
       class="c-tag-applier__add-btn c-icon-button c-icon-button--major icon-plus"
+      :class="TagEditorClassNames.ADD_TAG_BUTTON"
       title="Add new tag"
       @click="addTag"
     >
-      <div class="c-icon-button__label c-tag-btn__label">Add Tag</div>
+      <div class="c-icon-button__label c-tag-btn__label" :class="TagEditorClassNames.ADD_TAG_LABEL">
+        Add Tag
+      </div>
     </button>
   </div>
 </template>
@@ -46,6 +49,7 @@
 <script>
 import { toRaw } from 'vue';
 
+import TagEditorClassNames from './TagEditorClassNames.js';
 import TagSelection from './TagSelection.vue';
 
 export default {
@@ -84,10 +88,12 @@ export default {
       default: null
     }
   },
+  emits: ['tags-updated'],
   data() {
     return {
       addedTags: [],
-      userAddingTag: false
+      userAddingTag: false,
+      TagEditorClassNames: TagEditorClassNames
     };
   },
   computed: {

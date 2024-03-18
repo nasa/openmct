@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,7 +31,7 @@ TODO:
 
 */
 
-const { test, expect } = require('@playwright/test');
+import { expect, test } from '@playwright/test';
 
 const notebookFilePath = 'e2e/test-data/PerformanceNotebook.json';
 
@@ -131,7 +131,6 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('new-notebook-entry-created'));
 
     // Enter Notebook Entry text
-    await page.getByLabel('Notebook Entry').last().click();
     await page.getByLabel('Notebook Entry Input').last().fill('New Entry');
     await page.locator('.c-ne__save-button').click();
     await page.evaluate(() => window.performance.mark('new-notebook-entry-filled'));

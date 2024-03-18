@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -39,25 +39,33 @@
         :zoom-factor="zoomFactor"
         :image-url="imageUrl"
         :layers="layers"
-        @resetImage="resetImage"
-        @panZoomUpdated="handlePanZoomUpdate"
-        @filtersUpdated="setFilters"
-        @cursorsUpdated="setCursorStates"
-        @startPan="startPan"
-        @toggleLayerVisibility="toggleLayerVisibility"
+        @reset-image="resetImage"
+        @pan-zoom-updated="handlePanZoomUpdate"
+        @filters-updated="setFilters"
+        @cursors-updated="setCursorStates"
+        @start-pan="startPan"
+        @toggle-layer-visibility="toggleLayerVisibility"
       />
-      <div ref="imageBG" class="c-imagery__main-image__bg" @click="expand">
+      <div
+        ref="imageBG"
+        class="c-imagery__main-image__bg"
+        aria-label="Background Image"
+        role="button"
+      >
         <div v-if="zoomFactor > 1" class="c-imagery__hints">
           {{ formatImageAltText }}
         </div>
         <div
           ref="focusedImageWrapper"
+          role="button"
           class="image-wrapper"
+          aria-label="Image Wrapper"
           :style="{
             width: `${sizedImageWidth}px`,
             height: `${sizedImageHeight}px`
           }"
           @mousedown="handlePanZoomClick"
+          @dblclick="expand"
         >
           <div
             v-for="(layer, index) in visibleLayers"
@@ -67,6 +75,7 @@
           ></div>
           <img
             ref="focusedImage"
+            aria-label="Focused Image"
             class="c-imagery__main-image__image js-imageryView-image"
             :src="imageUrl"
             :draggable="!isSelectable"
@@ -136,7 +145,7 @@
             v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
             class="c-imagery__age icon-check c-imagery--new no-animation"
           >
-            POS
+            ROV
           </div>
 
           <!-- camera position fresh -->
@@ -202,16 +211,16 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
-import imageryData from '../../imagery/mixins/imageryData';
-import eventHelpers from '../lib/eventHelpers';
+import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
+import imageryData from '../../imagery/mixins/imageryData.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
-import Compass from './Compass/Compass.vue';
+import Compass from './Compass/CompassComponent.vue';
 import ImageControls from './ImageControls.vue';
 import ImageThumbnail from './ImageThumbnail.vue';
-import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
+import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry.js';
 
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
@@ -264,6 +273,7 @@ export default {
       }
     }
   },
+  emits: ['update:focused-image-timestamp'],
   data() {
     let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -1081,7 +1091,7 @@ export default {
         return;
       }
 
-      await Vue.nextTick();
+      await nextTick();
       if (this.$refs.thumbsWrapper) {
         this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
       }
@@ -1105,7 +1115,7 @@ export default {
       this.setPreviousFocusedImage(index);
     },
     setPreviousFocusedImage(index) {
-      this.$emit('update:focusedImageTimestamp', undefined);
+      this.$emit('update:focused-image-timestamp', undefined);
       this.previousFocusedImage = this.imageHistory[index]
         ? JSON.parse(JSON.stringify(this.imageHistory[index]))
         : undefined;

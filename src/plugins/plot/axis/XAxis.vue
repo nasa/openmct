@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,7 @@
 
 <template>
   <div v-if="loaded" class="gl-plot-axis-area gl-plot-x has-local-controls">
-    <mct-ticks :axis-type="'xAxis'" :position="'left'" @plotTickWidth="onTickWidthChange" />
+    <MctTicks :axis-type="'xAxis'" :position="'left'" />
 
     <div class="gl-plot-label gl-plot-x-label" :class="{ 'icon-gear': isEnabledXKeyToggle() }">
       {{ xAxisLabel }}
@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import MctTicks from '../MctTicks.vue';
 
 export default {
@@ -136,9 +136,6 @@ export default {
       this.xAxisLabel = this.xAxis.get('label');
       this.selectedXKeyOptionKey =
         this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
-    },
-    onTickWidthChange(width) {
-      this.$emit('plotXTickWidth', width);
     }
   }
 };

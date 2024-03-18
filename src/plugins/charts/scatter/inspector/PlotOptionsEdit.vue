@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -59,14 +59,14 @@
         edit-title="Manually set the line and marker color for this plot."
         view-title="The line and marker color for this plot."
         short-label="Color"
-        @colorSet="setColor"
+        @color-set="setColor"
       />
     </ul>
   </div>
 </template>
 <script>
-import Color from '../../../../ui/color/Color';
-import ColorPalette from '../../../../ui/color/ColorPalette';
+import Color from '../../../../ui/color/Color.js';
+import ColorPalette from '../../../../ui/color/ColorPalette.js';
 import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
 
 export default {

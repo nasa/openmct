@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,10 +22,10 @@
 
 import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import Vue from 'vue';
+import { nextTick } from 'vue';
 
-import ScatterPlotPlugin from './plugin';
-import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './scatterPlotConstants';
+import ScatterPlotPlugin from './plugin.js';
+import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './scatterPlotConstants.js';
 
 describe('the plugin', function () {
   let element;
@@ -178,7 +178,7 @@ describe('the plugin', function () {
 
       spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
-      await Vue.nextTick();
+      await nextTick();
     });
 
     it('provides a scatter plot view', () => {
@@ -406,7 +406,7 @@ describe('the plugin', function () {
       plotInspectorView = applicableViews[0];
       plotInspectorView.show(viewContainer);
 
-      await Vue.nextTick();
+      await nextTick();
       optionsElement = element.querySelector('.c-scatter-plot-options');
     });
 

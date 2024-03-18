@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,18 +23,19 @@
 import mount from 'utils/mount';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { mockLocalStorage } from 'utils/testing/mockLocalStorage';
+import { nextTick } from 'vue';
 
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 
 import SavedStylesView from '../../plugins/inspectorViews/styles/SavedStylesView.vue';
-import stylesManager from '../../plugins/inspectorViews/styles/StylesManager';
+import stylesManager from '../../plugins/inspectorViews/styles/StylesManager.js';
 import {
   mockMultiSelectionMixedStyles,
   mockMultiSelectionNonSpecificStyles,
   mockMultiSelectionSameStyles,
   mockStyle,
   mockTelemetryTableSelection
-} from './InspectorStylesSpecMocks';
+} from './InspectorStylesSpecMocks.js';
 
 describe('the inspector', () => {
   let openmct;
@@ -60,24 +61,23 @@ describe('the inspector', () => {
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(0);
 
-    stylesViewComponent.$children[0].saveStyle(mockStyle);
+    stylesViewComponent.$refs.root.saveStyle(mockStyle);
 
-    expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(1);
   });
 
-  it('should display all saved styles', () => {
+  it('should display all saved styles', async () => {
     selection = mockTelemetryTableSelection;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    expect(savedStylesViewComponent.$children[0].$children.length).toBe(0);
-    stylesViewComponent.$children[0].saveStyle(mockStyle);
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(0);
+    stylesViewComponent.$refs.root.saveStyle(mockStyle);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      expect(savedStylesViewComponent.$children[0].$children.length).toBe(1);
-    });
+    await nextTick();
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(1);
   });
 
   xit('should allow a saved style to be applied', () => {
@@ -87,17 +87,15 @@ describe('the inspector', () => {
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    stylesViewComponent.$children[0].saveStyle(mockStyle);
+    stylesViewComponent.$refs.root.saveStyle(mockStyle);
 
     return stylesViewComponent.$nextTick().then(() => {
-      const styleSelectorComponent = savedStylesViewComponent.$children[0].$children[0];
+      const styleSelectorComponent = savedStylesViewComponent.$refs.root.$refs.root;
 
       styleSelectorComponent.selectStyle();
 
       return savedStylesViewComponent.$nextTick().then(() => {
-        const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
-        const styleEditorComponent =
-          stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
+        const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
         const styles = styleEditorComponent.$children.filter(
           (component) => component.options.value === mockStyle.color
         );
@@ -112,13 +110,13 @@ describe('the inspector', () => {
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    stylesViewComponent.$children[0].saveStyle(mockStyle);
+    stylesViewComponent.$refs.root.saveStyle(mockStyle);
 
-    expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(1);
 
-    savedStylesViewComponent.$children[0].deleteStyle(0);
+    savedStylesViewComponent.$refs.root.deleteStyle(0);
 
-    expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(0);
   });
 
   it('should prevent a style from being saved when the number of saved styles is at the limit', () => {
@@ -129,74 +127,64 @@ describe('the inspector', () => {
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
     for (let i = 1; i <= 20; i++) {
-      stylesViewComponent.$children[0].saveStyle(mockStyle);
+      stylesViewComponent.$refs.root.saveStyle(mockStyle);
     }
 
     expect(SavedStylesView.methods.showLimitReachedDialog).not.toHaveBeenCalled();
-    expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(20);
 
-    stylesViewComponent.$children[0].saveStyle(mockStyle);
+    stylesViewComponent.$refs.root.saveStyle(mockStyle);
 
     expect(SavedStylesView.methods.showLimitReachedDialog).toHaveBeenCalled();
-    expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
+    expect(savedStylesViewComponent.$refs.root.savedStyles.length).toBe(20);
   });
 
-  it('should allow styles from multi-selections to be saved', () => {
+  it('should allow styles from multi-selections to be saved', async () => {
     spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
     selection = mockMultiSelectionSameStyles;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
-      const styleEditorComponent =
-        stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
-      const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
-      const saveStyleButton = styleEditorComponent.$children[saveStyleButtonIndex];
+    await nextTick();
+    const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
+    const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
 
-      expect(saveStyleButton.$listeners.click).not.toBe(undefined);
+    expect(saveStyleButton).not.toBe(undefined);
 
-      saveStyleButton.$listeners.click();
+    saveStyleButton.$refs.button.click();
 
-      expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
-    });
+    expect(savedStylesViewComponent.$refs.root.$data.savedStyles.length).toBe(1);
   });
 
-  it('should prevent mixed styles from being saved', () => {
+  it('should prevent mixed styles from being saved', async () => {
     spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
     selection = mockMultiSelectionMixedStyles;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
-      const styleEditorComponent =
-        stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
-      const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
-      const saveStyleButton = styleEditorComponent.$children[saveStyleButtonIndex];
+    await nextTick();
+    const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
+    const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
 
-      expect(saveStyleButton.$listeners.click).toBe(undefined);
-    });
+    // Saving should not be enabled, thus the button ref should be undefined
+    expect(saveStyleButton).toBe(undefined);
   });
 
-  it('should prevent non-specific styles from being saved', () => {
+  it('should prevent non-specific styles from being saved', async () => {
     spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
     selection = mockMultiSelectionNonSpecificStyles;
     stylesViewComponent = createViewComponent(StylesView, selection, openmct);
     savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-    return stylesViewComponent.$nextTick().then(() => {
-      const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
-      const styleEditorComponent =
-        stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
-      const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
-      const saveStyleButton = styleEditorComponent.$children[saveStyleButtonIndex];
+    await nextTick();
+    const styleEditorComponent = stylesViewComponent.$refs.root.$refs.styleEditor;
+    const saveStyleButton = styleEditorComponent.$refs.saveStyleButton;
 
-      expect(saveStyleButton.$listeners.click).toBe(undefined);
-    });
+    // Saving should not be enabled, thus the button ref should be undefined
+    expect(saveStyleButton).toBe(undefined);
   });
 
   function createViewComponent(component) {
@@ -211,7 +199,7 @@ describe('the inspector', () => {
         stylesManager
       },
       components: {},
-      template: `<${component.name} />`
+      template: `<${component.name} ref="root"/>`
     };
 
     config.components[component.name] = component;

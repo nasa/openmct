@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,7 @@
 
 <template>
   <div :class="compositeCssClass">
-    <FormRow :css-class="item.cssClass" :first="first" :row="row" @onChange="onChange" />
+    <FormRow :css-class="item.cssClass" :first="first" :row="row" @on-change="onChange" />
     <span class="composite-control-label">
       {{ item.name }}
     </span>
@@ -50,6 +50,7 @@ export default {
       }
     }
   },
+  emits: ['on-change'],
   computed: {
     compositeCssClass() {
       return `l-composite-control l-${this.item.control}`;
@@ -63,7 +64,7 @@ export default {
   },
   methods: {
     onChange(data) {
-      this.$emit('onChange', data);
+      this.$emit('on-change', data);
     }
   }
 };

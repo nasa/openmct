@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,9 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <dialog-component>
-    <progress-component :model="model" />
-  </dialog-component>
+  <DialogComponent>
+    <ProgressComponent :progress-perc="progressPerc" :progress-text="progressText" />
+  </DialogComponent>
 </template>
 
 <script>
@@ -31,14 +31,18 @@ import DialogComponent from './DialogComponent.vue';
 
 export default {
   components: {
-    DialogComponent: DialogComponent,
-    ProgressComponent: ProgressComponent
+    DialogComponent,
+    ProgressComponent
   },
   inject: ['iconClass', 'title', 'hint', 'timestamp', 'message'],
   props: {
-    model: {
-      type: Object,
-      required: true
+    progressPerc: {
+      type: Number,
+      default: 0
+    },
+    progressText: {
+      type: String,
+      default: ''
     }
   }
 };
