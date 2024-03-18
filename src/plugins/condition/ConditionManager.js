@@ -62,6 +62,13 @@ export default class ConditionManager extends EventEmitter {
       strategy: 'latest'
     };
     const latestData = await this.openmct.telemetry.request(endpoint, options);
+
+    if (!latestData) {
+      throw new Error('Telemetry request failed by returning a falsy response');
+    }
+    if (latestData.length === 0) {
+      return;
+    }
     this.telemetryReceived(endpoint, latestData[0]);
   }
 
