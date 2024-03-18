@@ -268,7 +268,6 @@ export default {
       annotatedPointsBySeries: {},
       highlights: [],
       annotationSelectionsBySeries: {},
-      annotationsEverLoaded: false,
       lockHighlightPoint: false,
       yKeyOptions: [],
       yAxisLabel: '',
@@ -276,17 +275,14 @@ export default {
       plotHistory: [],
       selectedXKeyOption: {},
       xKeyOptions: [],
-      pending: 0,
       isRealTime: this.openmct.time.isRealTime(),
       loaded: false,
       isTimeOutOfSync: false,
-      isFrozenOnMouseDown: false,
       cursorGuide: this.initCursorGuide,
       gridLines: this.initGridLines,
       yAxes: [],
       hiddenYAxisIds: [],
-      yAxisListWithRange: [],
-      config: {}
+      yAxisListWithRange: []
     };
   },
   computed: {
@@ -362,21 +358,19 @@ export default {
   },
   created() {
     this.abortController = new AbortController();
-  },
-  mounted() {
+    this.annotationsEverLoaded = false;
+    this.isFrozenOnMouseDown = false;
+    this.pending = 0;
     this.seriesModels = [];
-    this.config = {};
-    this.yAxisIdVisibility = {};
-    this.offsetWidth = 0;
-
-    document.addEventListener('keydown', this.handleKeyDown);
-    document.addEventListener('keyup', this.handleKeyUp);
-    eventHelpers.extend(this);
+    this.config = this.getConfig() || {};
     this.updateMode = this.updateMode.bind(this);
     this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
     this.setTimeContext = this.setTimeContext.bind(this);
-
-    this.config = this.getConfig();
+    this.yAxisIdVisibility = {};
+    this.offsetWidth = 0;
+    document.addEventListener('keydown', this.handleKeyDown);
+    document.addEventListener('keyup', this.handleKeyUp);
+    eventHelpers.extend(this);
     this.yAxes = [
       {
         id: this.config.yAxis.id,
@@ -417,11 +411,10 @@ export default {
     this.EventBus.$on('loading-complete', this.loadAnnotationsIfAllowed);
     this.openmct.selection.on('change', this.updateSelection);
     this.yAxisListWithRange = [this.config.yAxis, ...this.config.additionalYAxes];
-
-    this.$nextTick(() => {
-      this.setTimeContext();
-      this.loaded = true;
-    });
+  },
+  mounted() {
+    this.setTimeContext();
+    this.loaded = true;
   },
   beforeUnmount() {
     this.abortController.abort();
