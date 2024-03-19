@@ -24,11 +24,12 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 export default class TelemetryTableConfiguration extends EventEmitter {
-  constructor(domainObject, openmct) {
+  constructor(domainObject, openmct, options) {
     super();
 
     this.domainObject = domainObject;
     this.openmct = openmct;
+    this.defaultOptions = options;
     this.columns = {};
 
     this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
@@ -48,10 +49,12 @@ export default class TelemetryTableConfiguration extends EventEmitter {
     configuration.columnOrder = configuration.columnOrder || [];
     configuration.cellFormat = configuration.cellFormat || {};
     configuration.autosize = configuration.autosize === undefined ? true : configuration.autosize;
-    // anything that doesn't have a telemetryMode existed before the change and should stay as it was for consistency
-    configuration.telemetryMode = configuration.telemetryMode ?? 'unlimited';
-    configuration.persistModeChange = configuration.persistModeChange ?? true;
-    configuration.rowLimit = configuration.rowLimit ?? 50;
+    // anything that doesn't have a telemetryMode existed before the change and should
+    // take the properties of any passed in defaults or the defaults from the plugin
+    configuration.telemetryMode = configuration.telemetryMode ?? this.defaultOptions.telemetryMode;
+    configuration.persistModeChange =
+      configuration.persistModeChange ?? this.defaultOptions.persistModeChange;
+    configuration.rowLimit = configuration.rowLimit ?? this.defaultOptions.rowLimit;
 
     return configuration;
   }
