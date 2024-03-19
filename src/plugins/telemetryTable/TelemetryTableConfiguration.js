@@ -40,6 +40,8 @@ export default class TelemetryTableConfiguration extends EventEmitter {
       'configuration',
       this.objectMutated
     );
+
+    this.notPersistable = !this.openmct.objects.isPersistable(this.domainObject);
   }
 
   getConfiguration() {
@@ -60,6 +62,10 @@ export default class TelemetryTableConfiguration extends EventEmitter {
   }
 
   updateConfiguration(configuration) {
+    if (this.notPersistable) {
+      return;
+    }
+
     this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
   }
 
