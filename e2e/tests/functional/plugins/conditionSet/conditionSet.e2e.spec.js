@@ -457,4 +457,11 @@ test.describe('Basic Condition Set Use', () => {
 
     await page.goto(exampleTelemetry.url);
   });
+
+  test.fixme('Ensure condition sets work with telemetry like operator status', ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7484'
+    });
+  });
 });
