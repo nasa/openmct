@@ -14,6 +14,9 @@
   &--vertical,
   > .l-pane {
     flex-flow: column nowrap;
+    body.mobile & {
+      padding-bottom: $interiorMarginLg;
+    }
   }
 
   &--vertical {
@@ -84,6 +87,7 @@
     min-height: 30px; // For Recents holder
     body.mobile & {
       max-height: 50vh;
+      border-top: 2px solid $colorInteriorBorder; // Adds non-resizable splitter
     }
 
     &.l-pane--collapsed {

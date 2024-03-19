@@ -24,7 +24,7 @@
   display: flex;
   padding: $interiorMargin $interiorMarginSm;
   align-items: flex-start;
-
+  
   > * + * {
     margin-left: $interiorMarginSm;
   }
@@ -43,12 +43,23 @@
     }
   }
 
+  &__outerwrapper{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  &__wrapper{
+    display: flex;
+  }
+
   &__object-path {
-    padding: 0 $interiorMarginSm;
+    padding: 0 $interiorMarginLg;
   }
 
   &__target-button {
     opacity: 0;
+    margin-left: auto;
   }
 
   &__type-icon,
@@ -59,6 +70,7 @@
   &__type-icon {
     color: $colorItemTreeIcon;
     font-size: 1.25em;
+    height: 50%;
 
     // TEMP: uses object-label component, hide label part
     .c-object-label__name {
@@ -116,4 +128,19 @@
 
 .c-recentobjects-listitem:hover .c-recentobjects-listitem__target-button {
   opacity: 100;
+}
+
+body.mobile {
+  .c-recentobjects-listitem__target-button{
+    display: none;
+  }
+  .c-recentobjects-listitem__wrapper{
+    height: $mobileTreeItemH;
+    margin-bottom: $interiorMarginSm;
+    background: rgba(172, 172, 172, 0.1);
+    border-radius: $interiorMarginSm;
+  }
+  .c-recentobjects-listitem{
+    border-top: none;
+  }
 }
