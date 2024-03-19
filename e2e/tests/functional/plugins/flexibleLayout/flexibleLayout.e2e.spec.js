@@ -248,11 +248,10 @@ test.describe('Flexible Layout', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // flip on independent time conductor
-    await setIndependentTimeConductorBounds(
-      page,
-      '2021-12-30 01:01:00.000Z',
-      '2021-12-30 01:11:00.000Z'
-    );
+    await setIndependentTimeConductorBounds(page, {
+      start: '2021-12-30 01:01:00.000Z',
+      end: '2021-12-30 01:11:00.000Z'
+    });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -290,7 +289,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await page.getByTitle('Add Container').click();
     expect(await containerHandles.count()).toEqual(3);
     await page.getByTitle('Remove Container').click();
-    await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
     );
     await page.getByRole('button', { name: 'OK', exact: true }).click();
@@ -300,7 +299,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(2);
     await page.getByRole('group', { name: 'Child Layout 1' }).click();
     await page.getByTitle('Remove Frame').click();
-    await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will remove this frame from this Flexible Layout. Do you want to continue?'
     );
     await page.getByRole('button', { name: 'OK', exact: true }).click();

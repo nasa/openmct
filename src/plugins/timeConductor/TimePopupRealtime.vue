@@ -132,7 +132,7 @@
         ></button>
         <button
           class="c-button icon-x"
-          aria-label="Discard time offsets"
+          aria-label="Discard changes and close time popup"
           @click.prevent="hide"
         ></button>
       </div>

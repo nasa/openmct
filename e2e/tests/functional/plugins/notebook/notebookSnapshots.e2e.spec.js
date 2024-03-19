@@ -71,42 +71,89 @@ test.describe('Snapshot Container tests', () => {
   test.beforeEach(async ({ page }) => {
     //Navigate to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-    // Create Notebook
-    // const notebook = await createDomainObjectWithDefaults(page, {
-    //     type: 'Notebook',
-    //     name: "Test Notebook"
-    // });
-    // // Create Overlay Plot
-    // const snapShotObject = await createDomainObjectWithDefaults(page, {
-    //     type: 'Overlay Plot',
-    //     name: "Dropped Overlay Plot"
-    // });
-
-    await page.getByLabel('Take a Notebook Snapshot').click();
+    await page.getByLabel('Open the Notebook Snapshot Menu').click();
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
     await page.getByLabel('Show Snapshots').click();
   });
   test('A snapshot can be Quick Viewed from Container with 3 dot action menu', async ({ page }) => {
-    await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
+    await page.getByLabel('My Items Notebook Embed').getByLabel('More actions').click();
     await page.getByRole('menuitem', { name: 'Quick View' }).click();
-    await expect(page.locator('.c-overlay__outer')).toBeVisible();
+    await expect(page.getByLabel('Modal Overlay')).toBeVisible();
+    await expect(page.getByLabel('Preview Container')).toBeVisible();
   });
-  test.fixme(
-    'A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu',
-    async ({ page }) => {
-      await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
-      await page.getByRole('menuitem', { name: ' View Snapshot' }).click();
-      await expect(page.locator('.c-overlay__outer')).toBeVisible();
-      await page.getByTitle('Annotate').click();
-      await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
-      await page.getByRole('button', { name: '' }).click();
-      // await expect(page.locator('#snap-annotation-canvas')).not.toBeVisible();
-      await page.getByRole('button', { name: 'Save' }).click();
-      await page.getByRole('button', { name: 'Done' }).click();
-      //await expect(await page.locator)
-    }
-  );
+  test('A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7552'
+    });
+    //Open Snapshot Object View
+    await page.getByLabel('My Items Notebook Embed').getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: 'View Snapshot' }).click();
+    await expect(page.getByRole('dialog', { name: 'Modal Overlay' })).toBeVisible();
+    await expect(page.locator('#snapshotDescriptor')).toHaveText(
+      /SNAPSHOT \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/
+    );
+    // Open Annotation Editor with Painterro
+    await page.getByLabel('Annotate this snapshot').click();
+    await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
+    // Clear the canvas
+    await page.getByRole('button', { name: 'Put text [T]' }).click();
+    // Click in the Painterro canvas to add a text annotation
+    await page.locator('.ptro-crp-el').click();
+    await page.locator('.ptro-text-tool-input').fill('...is there life on mars?');
+    // When working with Painterro, we need to check that the Apply button is hidden after clicking
+    await page.getByTitle('Apply').click();
+    await expect(page.getByTitle('Apply')).toBeHidden();
+
+    // Save and exit annotation window
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Done' }).click();
+
+    // Open up annotation again
+    await page.getByRole('img', { name: 'My Items thumbnail' }).click();
+    await expect(page.getByLabel('Modal Overlay').getByRole('img')).toBeVisible();
+  });
+  test('A snapshot can be Annotated and saved as a JPG and PNG', async ({ page }) => {
+    //Open Snapshot Object View
+    await page.getByLabel('My Items Notebook Embed').getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: 'View Snapshot' }).click();
+    await expect(page.getByRole('dialog', { name: 'Modal Overlay' })).toBeVisible();
+
+    // Open Annotation Editor with Painterro
+    await page.getByLabel('Annotate this snapshot').click();
+    await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
+    // Clear the canvas
+    await page.getByRole('button', { name: 'Put text [T]' }).click();
+    // Click in the Painterro canvas to add a text annotation
+    await page.locator('.ptro-crp-el').click();
+    await page.locator('.ptro-text-tool-input').fill('...is there life on mars?');
+    // When working with Painterro, we need to check that the Apply button is hidden after clicking
+    await page.getByTitle('Apply').click();
+    await expect(page.getByTitle('Apply')).toBeHidden();
+
+    // Save and exit annotation window
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Done' }).click();
+
+    // Open up annotation again
+    await page.getByRole('img', { name: 'My Items thumbnail' }).click();
+    await expect(page.getByLabel('Modal Overlay').getByRole('img')).toBeVisible();
+
+    // Save as JPG
+    await Promise.all([
+      page.waitForEvent('download'), // Waits for the download event
+      page.getByLabel('Export as JPG').click() // Triggers the download
+    ]);
+
+    // Save as PNG
+    await expect(page.getByLabel('Modal Overlay').getByRole('img')).toBeVisible();
+    await Promise.all([
+      page.waitForEvent('download'), // Waits for the download event
+      page.getByLabel('Export as PNG').click() // Triggers the download
+    ]);
+  });
   test.fixme('5 Snapshots can be added to a container', async ({ page }) => {});
   test.fixme(
     '5 Snapshots can be added to a container and Deleted with Delete All action',
@@ -114,10 +161,6 @@ test.describe('Snapshot Container tests', () => {
   );
   test.fixme(
     'A snapshot can be Deleted from Container with 3 dot action menu',
-    async ({ page }) => {}
-  );
-  test.fixme(
-    'A snapshot can be Navigated To from Container with 3 dot action menu',
     async ({ page }) => {}
   );
   test.fixme(
@@ -149,13 +192,6 @@ test.describe('Snapshot Container tests', () => {
       //Drag and Drop into exiting entry
       //Existing Entry updated with given snapshot
       //Snapshot removed from container?
-    }
-  );
-  test.fixme(
-    'Verify Embedded options for PNG, JPG, and Annotate work correctly',
-    async ({ page }) => {
-      //Add snapshot to container
-      //Verify PNG, JPG, and Annotate buttons work correctly
     }
   );
 });

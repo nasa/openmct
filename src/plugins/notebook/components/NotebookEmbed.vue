@@ -23,6 +23,7 @@
   <div
     ref="notebookEmbed"
     class="c-snapshot c-ne__embed"
+    :aria-label="`${embed.name} Notebook Embed`"
     @mouseover.ctrl="showToolTip"
     @mouseleave="hideToolTip"
   >
@@ -52,7 +53,7 @@
 import Moment from 'moment';
 import mount from 'utils/mount';
 
-import objectPathToUrl from '@/tools/url';
+import { objectPathToUrl } from '@/tools/url';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import ImageExporter from '../../../exporters/ImageExporter.js';

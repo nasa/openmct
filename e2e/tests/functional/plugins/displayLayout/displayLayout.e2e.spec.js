@@ -23,6 +23,7 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
+  navigateToObjectWithFixedTimeBounds,
   setFixedTimeMode,
   setIndependentTimeConductorBounds,
   setRealTimeMode,
@@ -30,11 +31,119 @@ import {
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
-const LOCALSTORAGE_PATH = fileURLToPath(
+const CHILD_LAYOUT_STORAGE_STATE_PATH = fileURLToPath(
   new URL('../../../../test-data/display_layout_with_child_layouts.json', import.meta.url)
+);
+const CHILD_PLOT_STORAGE_STATE_PATH = fileURLToPath(
+  new URL('../../../../test-data/display_layout_with_child_overlay_plot.json', import.meta.url)
 );
 const TINY_IMAGE_BASE64 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
+
+test.describe('Display Layout Sub-object Actions @localStorage', () => {
+  const INIT_ITC_START_BOUNDS = '2024-11-12 19:11:11.000Z';
+  const INIT_ITC_END_BOUNDS = '2024-11-12 20:11:11.000Z';
+  const NEW_GLOBAL_START_BOUNDS = '2024-11-11 19:11:11.000Z';
+  const NEW_GLOBAL_END_BOUNDS = '2024-11-11 20:11:11.000Z';
+
+  test.use({
+    storageState: CHILD_PLOT_STORAGE_STATE_PATH
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.getByLabel('Expand My Items folder').click();
+    const waitForMyItemsNavigation = page.waitForURL(`**/mine/?*`);
+    await page
+      .getByLabel('Main Tree')
+      .getByLabel('Navigate to Parent Display Layout layout Object')
+      .click();
+    // Wait for the URL to change to the display layout
+    await waitForMyItemsNavigation;
+  });
+  test('Open in New Tab action preserves time bounds @2p', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7524'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6982'
+    });
+
+    const TEST_FIXED_START_TIME = 1731352271000; // 2024-11-11 19:11:11.000Z
+    const TEST_FIXED_END_TIME = TEST_FIXED_START_TIME + 3600000; // 2024-11-11 20:11:11.000Z
+
+    // Verify the ITC has the expected initial bounds
+    expect(
+      await page
+        .getByLabel('Child Overlay Plot 1 Frame Controls')
+        .getByLabel('Start bounds')
+        .textContent()
+    ).toEqual(INIT_ITC_START_BOUNDS);
+    expect(
+      await page
+        .getByLabel('Child Overlay Plot 1 Frame Controls')
+        .getByLabel('End bounds')
+        .textContent()
+    ).toEqual(INIT_ITC_END_BOUNDS);
+
+    // Update the global fixed bounds to 2024-11-11 19:11:11.000Z / 2024-11-11 20:11:11.000Z
+    const url = page.url().split('?')[0];
+    await navigateToObjectWithFixedTimeBounds(
+      page,
+      url,
+      TEST_FIXED_START_TIME,
+      TEST_FIXED_END_TIME
+    );
+
+    // ITC bounds should still match the initial ITC bounds
+    expect(
+      await page
+        .getByLabel('Child Overlay Plot 1 Frame Controls')
+        .getByLabel('Start bounds')
+        .textContent()
+    ).toEqual(INIT_ITC_START_BOUNDS);
+    expect(
+      await page
+        .getByLabel('Child Overlay Plot 1 Frame Controls')
+        .getByLabel('End bounds')
+        .textContent()
+    ).toEqual(INIT_ITC_END_BOUNDS);
+
+    // Open the Child Overlay Plot 1 in a new tab
+    await page.getByLabel('View menu items').click();
+    const pagePromise = page.context().waitForEvent('page');
+    await page.getByLabel('Open In New Tab').click();
+
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState('domcontentloaded');
+
+    // Verify that the global time conductor bounds in the new page match the updated global bounds
+    expect(
+      await newPage.getByLabel('Global Time Conductor').getByLabel('Start bounds').textContent()
+    ).toEqual(NEW_GLOBAL_START_BOUNDS);
+    expect(
+      await newPage.getByLabel('Global Time Conductor').getByLabel('End bounds').textContent()
+    ).toEqual(NEW_GLOBAL_END_BOUNDS);
+
+    // Verify that the ITC is enabled in the new page
+    await expect(newPage.getByLabel('Disable Independent Time Conductor')).toBeVisible();
+    // Verify that the ITC bounds in the new page match the original ITC bounds
+    expect(
+      await newPage
+        .getByLabel('Independent Time Conductor Panel')
+        .getByLabel('Start bounds')
+        .textContent()
+    ).toEqual(INIT_ITC_START_BOUNDS);
+    expect(
+      await newPage
+        .getByLabel('Independent Time Conductor Panel')
+        .getByLabel('End bounds')
+        .textContent()
+    ).toEqual(INIT_ITC_END_BOUNDS);
+  });
+});
 
 test.describe('Display Layout Toolbar Actions @localStorage', () => {
   const PARENT_DISPLAY_LAYOUT_NAME = 'Parent Display Layout';
@@ -50,7 +159,7 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
     await page.getByLabel('Edit Object').click();
   });
   test.use({
-    storageState: LOCALSTORAGE_PATH
+    storageState: CHILD_LAYOUT_STORAGE_STATE_PATH
   });
 
   test('can add/remove Text element to a single layout', async ({ page }) => {
@@ -163,7 +272,7 @@ test.describe('Display Layout', () => {
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
 
     // ensure we can right click on the alpha-numeric widget and view historical data
-    await page.getByLabel('Sine', { exact: true }).click({
+    await page.getByLabel(/Alpha-numeric telemetry value of.*/).click({
       button: 'right'
     });
     await page.getByLabel('View Historical Data').click();
@@ -336,7 +445,7 @@ test.describe('Display Layout', () => {
 
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
-    await setIndependentTimeConductorBounds(page, startDate, endDate);
+    await setIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();

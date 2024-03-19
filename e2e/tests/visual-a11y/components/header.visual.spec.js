@@ -69,14 +69,14 @@ test.describe('Visual - Header @a11y', () => {
   });
 
   test('show snapshot button', async ({ page, theme }) => {
-    await page.getByLabel('Take a Notebook Snapshot').click();
+    await page.getByLabel('Open the Notebook Snapshot Menu').click();
 
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
 
     await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
       scope: header
     });
-    await expect(await page.getByLabel('Show Snapshots')).toBeVisible();
+    await expect(page.getByLabel('Show Snapshots')).toBeVisible();
   });
 });
 

@@ -32,14 +32,14 @@ import TelemetryTableRow from './TelemetryTableRow.js';
 import TelemetryTableUnitColumn from './TelemetryTableUnitColumn.js';
 
 export default class TelemetryTable extends EventEmitter {
-  constructor(domainObject, openmct) {
+  constructor(domainObject, openmct, options) {
     super();
 
     this.domainObject = domainObject;
     this.openmct = openmct;
     this.tableComposition = undefined;
     this.datumCache = [];
-    this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
+    this.configuration = new TelemetryTableConfiguration(domainObject, openmct, options);
     this.telemetryMode = this.configuration.getTelemetryMode();
     this.rowLimit = this.configuration.getRowLimit();
     this.paused = false;
@@ -114,7 +114,11 @@ export default class TelemetryTable extends EventEmitter {
     this.clearAndResubscribe();
   }
 
-  updateRowLimit() {
+  updateRowLimit(rowLimit) {
+    if (rowLimit) {
+      this.rowLimit = rowLimit;
+    }
+
     if (this.telemetryMode === 'performance') {
       this.tableRows.setLimit(this.rowLimit);
     } else {
