@@ -158,18 +158,23 @@ export default class PlotSeries extends Model {
   }
 
   /**
-   * Set defaults for telemetry series.
-   * @override
-   * @param {import('./Model').ModelOptions<PlotSeriesModelType, PlotSeriesModelOptions>} options
+   * Initializes the telemetry series with default settings.
+   * This method sets up the necessary properties and subscriptions for telemetry data handling.
+   *
+   * @param {Object} options - The options for initializing the telemetry series.
+   * @param {import('openmct.js').OpenMCT} options.openmct - The Open MCT instance.
+   * @param {import('../../../api/objects/ObjectAPI.js').DomainObject} options.domainObject - The domain object for which telemetry data is being observed.
+   * @param {import('./SeriesCollection.js').default} options.collection - The collection of series data.
+   * @param {import('./PlotConfigurationModel.js').default} options.collection.plot - The plot object associated with the series collection.
    */
-  initialize(options) {
-    this.openmct = options.openmct;
-    this.domainObject = options.domainObject;
+  initialize({ openmct, domainObject, collection: seriesCollection }) {
+    this.openmct = openmct;
+    this.domainObject = domainObject;
     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-    this.dataStoreId = `data-${options.collection.plot.id}-${this.keyString}`;
+    this.dataStoreId = `data-${seriesCollection.plot.id}-${this.keyString}`;
     this.updateSeriesData([]);
-    this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
-    this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
+    this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
+    this.limitDefinition = this.openmct.telemetry.limitDefinition(this.domainObject);
     this.limits = [];
     this.openmct.time.on('bounds', this.updateLimits);
     this.removeMutationListener = this.openmct.objects.observe(
@@ -340,7 +345,7 @@ export default class PlotSeries extends Model {
   }
 
   async loadLimits() {
-    const limitsResponse = await this.limitDefinition.getLimits(this.domainObject).limits();
+    const limitsResponse = await this.limitDefinition.limits();
     this.limits = {};
     if (!this.unsubscribeLimits) {
       this.unsubscribeLimits = this.openmct.telemetry.subscribeToLimits(
