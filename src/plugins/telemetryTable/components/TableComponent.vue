@@ -600,7 +600,11 @@ export default {
       const telemetryModeChanged = this.existingConfiguration.telemetryMode !== telemetryMode;
       let rowLimitChanged = false;
 
-      this.persistModeChange = persistModeChange;
+      if (!this.openmct.objects.isPersistable(this.domainObject)) {
+        this.persistModeChange = false;
+      } else {
+        this.persistModeChange = persistModeChange;
+      }
 
       // both rowLimit changes and telemetryMode changes
       // require a re-request of telemetry
