@@ -135,11 +135,75 @@ describe('The import JSON action', function () {
         selectFile: {
           name: 'imported object',
           // eslint-disable-next-line prettier/prettier
-          body: "{\"openmct\":{\"c28d230d-e909-4a3e-9840-d9ef469dda70\":{\"identifier\":{\"key\":\"c28d230d-e909-4a3e-9840-d9ef469dda70\",\"namespace\":\"\"},\"name\":\"Unnamed Overlay Plot\",\"type\":\"telemetry.plot.overlay\",\"composition\":[],\"configuration\":{\"series\":[]},\"modified\":1695837546833,\"location\":\"mine\",\"created\":1695837546833,\"persisted\":1695837546833,\"__proto__\":{\"toString\":\"foobar\"}}},\"rootId\":\"c28d230d-e909-4a3e-9840-d9ef469dda70\"}"
+          body: '{"openmct":{"c28d230d-e909-4a3e-9840-d9ef469dda70":{"identifier":{"key":"c28d230d-e909-4a3e-9840-d9ef469dda70","namespace":""},"name":"Unnamed Overlay Plot","type":"telemetry.plot.overlay","composition":[],"configuration":{"series":[]},"modified":1695837546833,"location":"mine","created":1695837546833,"persisted":1695837546833,"__proto__":{"toString":"foobar"}}},"rootId":"c28d230d-e909-4a3e-9840-d9ef469dda70"}'
         }
       };
 
       return Promise.resolve(pollutedResponse);
+    }
+  });
+  it('preserves the integrity of the namespace and key during import', async () => {
+    const incomingObject = {
+      openmct: {
+        '7323f02a-06ac-438d-bd58-6d6e33b8741e': {
+          name: 'Some Folder',
+          type: 'folder',
+          composition: [
+            {
+              key: '9f6c2d21-5ec8-434c-9fe8-31614ae6d7e6',
+              namespace: ''
+            }
+          ],
+          modified: 1710843256162,
+          location: 'mine',
+          created: 1710843243471,
+          persisted: 1710843256162,
+          identifier: {
+            namespace: '',
+            key: '7323f02a-06ac-438d-bd58-6d6e33b8741e'
+          }
+        },
+        '9f6c2d21-5ec8-434c-9fe8-31614ae6d7e6': {
+          name: 'Some Clock',
+          type: 'clock',
+          configuration: {
+            baseFormat: 'YYYY/MM/DD hh:mm:ss',
+            use24: 'clock12',
+            timezone: 'UTC'
+          },
+          modified: 1710843256152,
+          location: '7323f02a-06ac-438d-bd58-6d6e33b8741e',
+          created: 1710843256152,
+          persisted: 1710843256152,
+          identifier: {
+            namespace: '',
+            key: '9f6c2d21-5ec8-434c-9fe8-31614ae6d7e6'
+          }
+        }
+      },
+      rootId: '7323f02a-06ac-438d-bd58-6d6e33b8741e'
+    };
+
+    const targetDomainObject = {
+      identifier: {
+        namespace: 'starJones',
+        key: '84438cda-a071-48d1-b9bf-d77bd53e59ba'
+      },
+      type: 'folder'
+    };
+    spyOn(openmct.objects, 'save').and.callFake((model) => Promise.resolve(model));
+    try {
+      await importFromJSONAction.onSave(targetDomainObject, {
+        selectFile: { body: JSON.stringify(incomingObject) }
+      });
+
+      for (let callArgs of openmct.objects.save.calls.allArgs()) {
+        let savedObject = callArgs[0]; // Assuming the first argument is the object being saved.
+        expect(savedObject.identifier.key.includes(':')).toBeFalse(); // Ensure no colon in the key.
+        expect(savedObject.identifier.namespace).toBe(targetDomainObject.identifier.namespace);
+      }
+    } catch (error) {
+      fail(error);
     }
   });
 });
