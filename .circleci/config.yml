@@ -229,7 +229,11 @@ jobs:
     steps:
       - build_and_install:
           node-version: lts/iron
-      - run: npm run test:e2e:visual:<<parameters.suite>>
+      - run:
+          command: |
+            mkdir test-results
+            TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:visual:<<parameters.suite>>" --verbose --split-by=timings
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
