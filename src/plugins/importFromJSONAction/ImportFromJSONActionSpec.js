@@ -197,8 +197,8 @@ describe('The import JSON action', function () {
         selectFile: { body: JSON.stringify(incomingObject) }
       });
 
-      for (let callArgs of openmct.objects.save.calls.allArgs()) {
-        let savedObject = callArgs[0]; // Assuming the first argument is the object being saved.
+      for (const callArgs of openmct.objects.save.calls.allArgs()) {
+        const savedObject = callArgs[0]; // Assuming the first argument is the object being saved.
         expect(savedObject.identifier.key.includes(':')).toBeFalse(); // Ensure no colon in the key.
         expect(savedObject.identifier.namespace).toBe(targetDomainObject.identifier.namespace);
       }
