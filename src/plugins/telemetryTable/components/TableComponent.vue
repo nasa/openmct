@@ -398,6 +398,7 @@ export default {
       totalNumberOfRows: 0,
       rowContext: {},
       telemetryMode: configuration.telemetryMode,
+      rowLimit: configuration.rowLimit,
       persistModeChange: configuration.persistModeChange,
       afterLoadActions: [],
       existingConfiguration: configuration
