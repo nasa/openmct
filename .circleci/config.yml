@@ -220,14 +220,15 @@ jobs:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
-  visual-a11y-tests:
+  visual-a11y:
     parameters:
       suite:
         type: string # ci or full
     executor: pw-focal-development
+    parallelism: 2
     steps:
       - build_and_install:
-          node-version: lts/hydrogen
+          node-version: lts/iron
       - run: npm run test:e2e:visual:<<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
@@ -254,8 +255,8 @@ workflows:
           name: e2e-stable
           suite: stable
       - e2e-mobile
-      - visual-a11y-tests:
-          name: visual-a11y-test-ci
+      - visual-a11y:
+          name: visual-a11y-ci
           suite: ci
 
   the-nightly: #These jobs do not run on PRs, but against master at night
@@ -274,8 +275,8 @@ workflows:
       - e2e-mobile
       - perf-test
       - mem-test
-      - visual-a11y-tests:
-          name: visual-a11y-test-nightly
+      - visual-a11y:
+          name: visual-a11y-nightly
           suite: full
       - e2e-couchdb
     triggers:
