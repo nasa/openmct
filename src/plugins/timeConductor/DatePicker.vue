@@ -29,7 +29,7 @@
     }"
   >
     <a class="c-icon-button icon-calendar" @click="toggle"></a>
-    <div v-if="open" class="c-menu c-menu--mobile-modal c-datetime-picker">
+    <div v-if="open" role="dialog" class="c-menu c-menu--mobile-modal c-datetime-picker">
       <div class="c-datetime-picker__close-button">
         <button class="c-click-icon icon-x-in-circle" @click="toggle"></button>
       </div>
