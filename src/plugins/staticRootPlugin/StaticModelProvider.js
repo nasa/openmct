@@ -46,6 +46,10 @@ class StaticModelProvider {
     throw new Error(keyString + ' not found in import models.');
   }
 
+  isReadOnly() {
+    return true;
+  }
+
   parseObjectLeaf(objectLeaf, idMap, newRootNamespace, oldRootNamespace) {
     Object.keys(objectLeaf).forEach((nodeKey) => {
       if (idMap.get(nodeKey)) {
