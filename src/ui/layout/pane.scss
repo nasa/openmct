@@ -78,6 +78,11 @@
     &.l-pane--collapsed {
       padding-left: 0 !important;
       padding-right: 0 !important;
+      body.mobile & {
+        .l-shell__sync-tree-button .l-shell__reset-tree-button{
+          display: none !important;
+        }
+      }
     }
   }
 

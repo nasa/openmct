@@ -115,6 +115,7 @@
     color: $colorItemTreeFg;
     cursor: pointer;
     padding: $interiorMarginSm;
+    margin-left: $interiorMarginSm;
 
     &:hover {
       background-color: $colorItemTreeHoverBg;
@@ -136,11 +137,15 @@ body.mobile {
   }
   .c-recentobjects-listitem__wrapper{
     height: $mobileTreeItemH;
+    align-items: center;
     margin-bottom: $interiorMarginSm;
     background: rgba(172, 172, 172, 0.1);
     border-radius: $interiorMarginSm;
   }
   .c-recentobjects-listitem{
     border-top: none;
+  }
+  .c-recentobjects-listitem__type-icon{
+    margin-left: $interiorMargin;
   }
 }
