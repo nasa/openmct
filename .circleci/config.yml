@@ -10,6 +10,7 @@ executors:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: "true" # Needed to store the percy browser in cache deps
       PERCY_LOGLEVEL: "debug" # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
+      PERCY_PARALLEL_TOTAL: 2
   ubuntu:
     machine:
       image: ubuntu-2204:current
@@ -220,15 +221,20 @@ jobs:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
-  visual-a11y-tests:
+  visual-a11y:
     parameters:
       suite:
         type: string # ci or full
     executor: pw-focal-development
+    parallelism: 2
     steps:
       - build_and_install:
-          node-version: lts/hydrogen
-      - run: npm run test:e2e:visual:<<parameters.suite>>
+          node-version: lts/iron
+      - run:
+          command: |
+            mkdir test-results
+            TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
+            echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:visual:<<parameters.suite>>" --verbose --split-by=timings
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -254,8 +260,8 @@ workflows:
           name: e2e-stable
           suite: stable
       - e2e-mobile
-      - visual-a11y-tests:
-          name: visual-a11y-test-ci
+      - visual-a11y:
+          name: visual-a11y-ci
           suite: ci
 
   the-nightly: #These jobs do not run on PRs, but against master at night
@@ -274,8 +280,8 @@ workflows:
       - e2e-mobile
       - perf-test
       - mem-test
-      - visual-a11y-tests:
-          name: visual-a11y-test-nightly
+      - visual-a11y:
+          name: visual-a11y-nightly
           suite: full
       - e2e-couchdb
     triggers:
