@@ -29,7 +29,9 @@
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
+import { onMounted, ref } from 'vue';
 
+import { useResizeObserver } from '../../../src/ui/composables/resize.js';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
@@ -55,6 +57,19 @@ export default {
     }
   },
   emits: ['pan-axis', 'end-pan', 'zoom-axis', 'end-zoom'],
+  setup() {
+    const axisHolder = ref(null);
+    const { size: containerSize, startObserving } = useResizeObserver();
+
+    onMounted(() => {
+      startObserving(axisHolder.value);
+    });
+
+    return {
+      axisHolder,
+      containerSize
+    };
+  },
   data() {
     return {
       inPanMode: false,
@@ -69,6 +84,12 @@ export default {
     }
   },
   watch: {
+    containerSize: {
+      handler() {
+        this.resize();
+      },
+      deep: true
+    },
     viewBounds: {
       handler() {
         this.setScale();
@@ -77,7 +98,7 @@ export default {
     }
   },
   mounted() {
-    let vis = select(this.$refs.axisHolder).append('svg:svg');
+    let vis = select(this.axisHolder).append('svg:svg');
 
     this.xAxis = axisTop();
     this.dragging = false;
@@ -97,11 +118,10 @@ export default {
   },
   methods: {
     setAxisDimensions() {
-      const axisHolder = this.$refs.axisHolder;
-      const rect = axisHolder.getBoundingClientRect();
+      const rect = this.axisHolder.getBoundingClientRect();
 
       this.left = Math.round(rect.left);
-      this.width = axisHolder.clientWidth;
+      this.width = this.axisHolder.clientWidth;
     },
     setScale() {
       if (!this.width) {
@@ -287,7 +307,7 @@ export default {
       return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
     },
     resize() {
-      if (this.$refs.axisHolder.clientWidth !== this.width) {
+      if (this.axisHolder.clientWidth !== this.width) {
         this.setAxisDimensions();
         this.setScale();
       }
