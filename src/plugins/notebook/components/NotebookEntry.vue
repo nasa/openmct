@@ -409,7 +409,9 @@ export default {
         })
       );
       this.manageEmbedLayout();
-      this.timestampAndUpdate();
+      // the pasted clipboard data also include text (or text only and no images).
+      // So we will also update the text here
+      this.updateEntryValue(event);
     },
     convertMarkDownToHtml(text = '') {
       let markDownHtml = this.marked.parse(text, {
