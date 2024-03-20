@@ -31,7 +31,7 @@
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
     @click="selectAndEmitEntry($event, entry)"
-    @paste="addImageFromPaste"
+    @paste="addImageOrTextFromPaste"
   >
     <div class="c-ne__time-and-content">
       <div class="c-ne__time-and-creator-and-delete">
@@ -384,7 +384,7 @@ export default {
 
       this.manageEmbedLayout();
     },
-    async addImageFromPaste(event) {
+    async addImageOrTextFromPaste(event) {
       const clipboardItems = Array.from(
         (event.clipboardData || event.originalEvent.clipboardData).items
       );
