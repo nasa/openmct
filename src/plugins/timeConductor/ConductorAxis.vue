@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="axisHolder" class="c-conductor-axis" @mousedown="dragStart($event)">
+  <div
+    ref="axisHolder"
+    aria-label="Time Conductor Axis"
+    class="c-conductor-axis"
+    @mousedown="dragStart($event)"
+  >
     <div class="c-conductor-axis__zoom-indicator" :style="zoomStyle"></div>
   </div>
 </template>
