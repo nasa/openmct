@@ -29,7 +29,7 @@
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import { useResizeObserver } from '../../../src/ui/composables/resize.js';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
@@ -63,11 +63,6 @@ export default {
 
     onMounted(() => {
       startObserving(axisHolder.value);
-    });
-
-    onBeforeUnmount(() => {
-      // Remove the listener in case the component is unmounted while dragging
-      document.removeEventListener('mousemove', this.drag);
     });
 
     return {
@@ -147,6 +142,10 @@ export default {
 
     //Respond to changes in conductor
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
+  },
+  beforeUnmount() {
+    // Remove the listener in case the component is unmounted while dragging
+    document.removeEventListener('mousemove', this.drag);
   },
   methods: {
     setAxisDimensions() {
