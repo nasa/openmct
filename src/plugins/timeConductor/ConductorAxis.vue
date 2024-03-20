@@ -81,7 +81,7 @@ export default {
       dragStartX: undefined,
       dragX: undefined,
       zoomStyle: {},
-      rect: undefined
+      rect: null
     };
   },
   computed: {
