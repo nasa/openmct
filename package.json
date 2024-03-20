@@ -17,7 +17,7 @@
     "@types/d3-selection": "3.0.10",
     "@types/eventemitter3": "1.2.0",
     "@types/jasmine": "5.1.2",
-    "@types/lodash": "4.14.192",
+    "@types/lodash": "4.17.0",
     "@vue/compiler-sfc": "3.4.3",
     "babel-loader": "9.1.0",
     "babel-plugin-istanbul": "6.1.1",
