@@ -364,7 +364,7 @@ export default class ConditionManager extends EventEmitter {
     let nextLegOptions = { ...options };
     delete nextLegOptions.onPartialResponse;
 
-    const results = Promise.all(
+    const results = await Promise.all(
       this.conditions.map((condition) => condition.requestLADConditionResult(nextLegOptions))
     );
 
