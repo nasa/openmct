@@ -29,7 +29,7 @@
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 import { useResizeObserver } from '../../../src/ui/composables/resize.js';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
@@ -65,6 +65,11 @@ export default {
       startObserving(axisHolder.value);
     });
 
+    onBeforeUnmount(() => {
+      // Remove the listener in case the component is unmounted while dragging
+      document.removeEventListener('mousemove', this.drag);
+    });
+
     return {
       axisHolder,
       containerSize
@@ -75,12 +80,42 @@ export default {
       inPanMode: false,
       dragStartX: undefined,
       dragX: undefined,
-      zoomStyle: {}
+      zoomStyle: {},
+      rect: undefined
     };
   },
   computed: {
     inZoomMode() {
       return !this.inPanMode;
+    },
+    left() {
+      return this.rect.left;
+    },
+    panBounds() {
+      const bounds = this.openmct.time.getBounds();
+      const deltaTime = bounds.end - bounds.start;
+      const deltaX = this.dragX - this.dragStartX;
+      const percX = deltaX / this.width;
+      const panStart = bounds.start - percX * deltaTime;
+
+      return {
+        start: parseInt(panStart, 10),
+        end: parseInt(panStart + deltaTime, 10)
+      };
+    },
+    zoomRange() {
+      const leftBound = this.left;
+      const rightBound = this.left + this.width;
+      const zoomStart = this.dragX < leftBound ? leftBound : Math.min(this.dragX, this.dragStartX);
+      const zoomEnd = this.dragX > rightBound ? rightBound : Math.max(this.dragX, this.dragStartX);
+
+      return {
+        start: zoomStart,
+        end: zoomEnd
+      };
+    },
+    isChangingViewBounds() {
+      return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
     }
   },
   watch: {
@@ -98,7 +133,7 @@ export default {
     }
   },
   mounted() {
-    let vis = select(this.axisHolder).append('svg:svg');
+    const vis = select(this.axisHolder).append('svg:svg');
 
     this.xAxis = axisTop();
     this.dragging = false;
@@ -113,14 +148,9 @@ export default {
     //Respond to changes in conductor
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
   },
-  beforeUnmount() {
-    clearInterval(this.resizeTimer);
-  },
   methods: {
     setAxisDimensions() {
-      const rect = this.axisHolder.getBoundingClientRect();
-
-      this.left = Math.round(rect.left);
+      this.rect = this.axisHolder.getBoundingClientRect();
       this.width = this.axisHolder.clientWidth;
     },
     setScale() {
@@ -224,25 +254,13 @@ export default {
       this.dragX = undefined;
     },
     pan() {
-      const panBounds = this.getPanBounds();
+      const panBounds = this.panBounds;
       this.$emit('pan-axis', panBounds);
     },
     endPan() {
-      const panBounds = this.isChangingViewBounds() ? this.getPanBounds() : undefined;
+      const panBounds = this.isChangingViewBounds ? this.panBounds : undefined;
       this.$emit('end-pan', panBounds);
       this.inPanMode = false;
-    },
-    getPanBounds() {
-      const bounds = this.openmct.time.getBounds();
-      const deltaTime = bounds.end - bounds.start;
-      const deltaX = this.dragX - this.dragStartX;
-      const percX = deltaX / this.width;
-      const panStart = bounds.start - percX * deltaTime;
-
-      return {
-        start: parseInt(panStart, 10),
-        end: parseInt(panStart + deltaTime, 10)
-      };
     },
     startZoom() {
       const x = this.scaleToBounds(this.dragStartX);
@@ -257,7 +275,7 @@ export default {
       });
     },
     zoom() {
-      const zoomRange = this.getZoomRange();
+      const zoomRange = this.zoomRange;
 
       this.zoomStyle = {
         left: `${zoomRange.start - this.left}px`,
@@ -271,8 +289,8 @@ export default {
     },
     endZoom() {
       let zoomBounds;
-      if (this.isChangingViewBounds()) {
-        const zoomRange = this.getZoomRange();
+      if (this.isChangingViewBounds) {
+        const zoomRange = this.zoomRange;
         zoomBounds = {
           start: this.scaleToBounds(zoomRange.start),
           end: this.scaleToBounds(zoomRange.end)
@@ -282,19 +300,6 @@ export default {
       this.zoomStyle = {};
       this.$emit('end-zoom', zoomBounds);
     },
-    getZoomRange() {
-      const leftBound = this.left;
-      const rightBound = this.left + this.width;
-
-      const zoomStart = this.dragX < leftBound ? leftBound : Math.min(this.dragX, this.dragStartX);
-
-      const zoomEnd = this.dragX > rightBound ? rightBound : Math.max(this.dragX, this.dragStartX);
-
-      return {
-        start: zoomStart,
-        end: zoomEnd
-      };
-    },
     scaleToBounds(value) {
       const bounds = this.openmct.time.getBounds();
       const timeDelta = bounds.end - bounds.start;
@@ -302,9 +307,6 @@ export default {
       const offset = (valueDelta / this.width) * timeDelta;
 
       return parseInt(bounds.start + offset, 10);
-    },
-    isChangingViewBounds() {
-      return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
     },
     resize() {
       if (this.axisHolder.clientWidth !== this.width) {
