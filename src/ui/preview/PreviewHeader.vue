@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { toRaw } from 'vue';
+
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 import ViewSwitcher from '../layout/ViewSwitcher.vue';
@@ -94,12 +96,6 @@ export default {
       default: () => {
         return [];
       }
-    },
-    actionCollection: {
-      type: Object,
-      default: () => {
-        return undefined;
-      }
     }
   },
   emits: ['set-view'],
@@ -111,17 +107,16 @@ export default {
     };
   },
   watch: {
-    actionCollection(actionCollection) {
+    currentView() {
       if (this.actionCollection) {
         this.unlistenToActionCollection();
       }
 
-      this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.getActionsObject());
-    }
-  },
-  mounted() {
-    if (this.actionCollection) {
+      this.actionCollection = this.openmct.actions.getActionsCollection(
+        toRaw(this.objectPath),
+        toRaw(this.currentView)
+      );
+
       this.actionCollection.on('update', this.updateActionItems);
       this.updateActionItems(this.actionCollection.getActionsObject());
     }
