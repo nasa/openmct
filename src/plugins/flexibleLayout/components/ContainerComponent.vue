@@ -45,7 +45,11 @@
       @object-drop-to="moveOrCreateNewFrame"
     />
 
-    <div role="row" class="c-fl-container__frames-holder">
+    <div
+      role="row"
+      class="c-fl-container__frames-holder"
+      :class="[rowsLayout ? '--layout-rows' : '--layout-cols']"
+    >
       <template v-for="(frame, i) in frames" :key="frame.id">
         <frame-component
           class="c-fl-container__frame"
