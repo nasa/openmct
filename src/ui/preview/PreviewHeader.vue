@@ -108,17 +108,20 @@ export default {
   },
   watch: {
     currentView() {
-      if (this.actionCollection) {
-        this.unlistenToActionCollection();
-      }
+      // wait for view to render with next tick
+      this.$nextTick(() => {
+        if (this.actionCollection) {
+          this.unlistenToActionCollection();
+        }
 
-      this.actionCollection = this.openmct.actions.getActionsCollection(
-        toRaw(this.objectPath),
-        toRaw(this.currentView)
-      );
+        this.actionCollection = this.openmct.actions.getActionsCollection(
+          toRaw(this.objectPath),
+          toRaw(this.currentView)
+        );
 
-      this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.getActionsObject());
+        this.actionCollection.on('update', this.updateActionItems);
+        this.updateActionItems(this.actionCollection.getActionsObject());
+      });
     }
   },
   unmounted() {
