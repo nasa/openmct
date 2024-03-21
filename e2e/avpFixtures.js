@@ -41,6 +41,26 @@ import { expect, test } from './pluginFixtures.js';
 
 // Constants for repeated values
 const TEST_RESULTS_DIR = './test-results';
+const extendedTest = test.extend({
+  page: async ({ page }, use) => {
+    const playwrightScreenshot = page.screenshot;
+
+    // Override the screenshot function to always mask a given set of locators which will always
+    // show variance across screenshots.
+    page.screenshot = async function (...args) {
+      const result = await playwrightScreenshot.call(this, {
+        mask: [
+          this.getByLabel('Clock Indicator') // Mask the clock indicator
+        ],
+        ...args
+      });
+      return result;
+    };
+
+    // Proceed with the test using the customized page.
+    await use(page);
+  }
+});
 
 /**
  * Scans for accessibility violations on a page and writes a report to disk if violations are found.
