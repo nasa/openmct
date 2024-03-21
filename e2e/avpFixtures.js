@@ -41,6 +41,8 @@ import { expect, test } from './pluginFixtures.js';
 
 // Constants for repeated values
 const TEST_RESULTS_DIR = './test-results';
+
+/** @type {AVPTest} */
 const extendedTest = test.extend({
   page: async ({ page }, use) => {
     const playwrightScreenshot = page.screenshot;
@@ -113,4 +115,18 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
   }
 }
 
-export { expect, test };
+export { expect, extendedTest as test };
+
+/**
+ * @typedef {import('./pluginFixtures.js').PluginTest} PluginTest
+ */
+
+/**
+ * Extends the default Playwright test fixture by customizing the `page` fixture.
+ * This customization overrides the default screenshot behavior to mask specific elements
+ * which will always show variance across screenshots.
+ * @typedef {Object} AVPTest
+ * @property {(options: import('@playwright/test').PageScreenshotOptions) => Promise<Buffer>} screenshot
+ * Take a screenshot of the page, masking elements which will always show variance across screenshots.
+ * @extends PluginTest
+ */
