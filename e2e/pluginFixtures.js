@@ -118,7 +118,6 @@ const theme = 'espresso';
  */
 const myItemsFolderName = 'My Items';
 
-/** @type {PluginTest} */
 const extendedTest = test.extend({
   // This should follow in the Project's configuration. Can be set to 'snow' in playwright config.js
   theme: [theme, { option: true }],
@@ -161,16 +160,3 @@ export async function streamToString(readable) {
 
   return result;
 }
-
-/**
- * @typedef {import('./baseFixtures.js').ExtendedTest} ExtendedTest
- */
-
-/**
- * @typedef {Object} PluginTest
- * @property {'snow' | 'espresso'} theme the theme to use for the test
- * @property {Object} openmctConfig
- * @property {string} openmctConfig.myItemsFolderName the name of the "My Items" folder in the domain object tree
- * @property {string} testNotes a string containing the test title path and the project name
- * @extends ExtendedTest
- */
