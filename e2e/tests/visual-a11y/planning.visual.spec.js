@@ -25,7 +25,7 @@ import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
 import { test } from '../../avpFixtures.js';
-import { VISUAL_URL } from '../../constants.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
 import {
   createTimelistWithPlanAndSetActivityInProgress,
   getFirstActivity,
@@ -64,7 +64,7 @@ test.describe('Visual - Timelist progress bar @clock', () => {
 
 test.describe('Visual - Planning', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Plan View', async ({ page, theme }) => {
@@ -83,7 +83,7 @@ test.describe('Visual - Planning', () => {
     });
     const newPage = await newContext.newPage();
 
-    await newPage.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await newPage.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     const plan = await createPlanFromJSON(newPage, {
       name: 'Plan Visual Test',
       json: examplePlanSmall2
@@ -100,7 +100,7 @@ test.describe('Visual - Planning', () => {
       name: 'Plan Visual Test (Draft)',
       json: examplePlanSmall2
     });
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     await setDraftStatusForPlan(page, plan);
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall2, plan.url);
@@ -110,7 +110,7 @@ test.describe('Visual - Planning', () => {
 
 test.describe('Visual - Gantt Chart', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test('Gantt Chart View', async ({ page, theme }) => {
     const ganttChart = await createDomainObjectWithDefaults(page, {
@@ -153,7 +153,7 @@ test.describe('Visual - Gantt Chart', () => {
 
     await setDraftStatusForPlan(page, plan);
 
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall2, ganttChart.url);
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`);

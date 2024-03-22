@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 import { test } from '../../avpFixtures.js';
-import { VISUAL_URL } from '../../constants.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
 
 test.describe('a11y - Default', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test('main view', async ({ page }, testInfo) => {
     await page.goto('./');

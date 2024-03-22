@@ -23,12 +23,12 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults } from '../../appActions.js';
-import { VISUAL_URL } from '../../constants.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
 
 test.describe('Visual - Display Layout', () => {
   test.beforeEach(async ({ page, theme }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     const parentLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
