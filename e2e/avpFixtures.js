@@ -36,30 +36,53 @@
 import AxeBuilder from '@axe-core/playwright';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { expect, test } from './pluginFixtures.js';
-
 // Constants for repeated values
-const TEST_RESULTS_DIR = './test-results';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TEST_RESULTS_DIR = path.join(__dirname, './test-results');
 
-/** @type {AVPTest} */
 const extendedTest = test.extend({
+  /**
+   * Overrides the default screenshot function to apply default options that should apply to all
+   * screenshots taken in the AVP tests.
+   *
+   * @param {import('@playwright/test').PlaywrightTestArgs} args - The Playwright test arguments.
+   * @param {Function} use - The function to use the page object.
+   * Defaults:
+   * - Disables animations
+   * - Masks the clock indicator
+   * - Masks the time conductor last update time in realtime mode
+   * - Masks the time conductor start bounds in fixed mode
+   * - Masks the time conductor end bounds in fixed mode
+   */
   page: async ({ page }, use) => {
     const playwrightScreenshot = page.screenshot;
 
-    // Override the screenshot function to always mask a given set of locators which will always
-    // show variance across screenshots.
-    page.screenshot = async function (...args) {
+    /**
+     * Override the screenshot function to always mask a given set of locators which will always
+     * show variance across screenshots. Defaults may be overridden by passing in options to the
+     * screenshot function.
+     * @param {import('@playwright/test').PageScreenshotOptions} options - The options for the screenshot.
+     * @returns {Promise<Buffer>} Returns the screenshot as a buffer.
+     */
+    page.screenshot = async function (options = {}) {
+      const mask = [
+        this.getByLabel('Clock Indicator'), // Mask the clock indicator
+        this.getByLabel('Last update'), // Mask the time conductor last update time in realtime mode
+        this.getByLabel('Start bounds'), // Mask the time conductor start bounds in fixed mode
+        this.getByLabel('End bounds') // Mask the time conductor end bounds in fixed mode
+      ];
+
       const result = await playwrightScreenshot.call(this, {
-        mask: [
-          this.getByLabel('Clock Indicator') // Mask the clock indicator
-        ],
-        ...args
+        animations: 'disabled',
+        mask,
+        ...options // Pass through or override any options
       });
       return result;
     };
 
-    // Proceed with the test using the customized page.
     await use(page);
   }
 });
@@ -68,15 +91,10 @@ const extendedTest = test.extend({
  * Scans for accessibility violations on a page and writes a report to disk if violations are found.
  * Automatically asserts that no violations should be present.
  *
- * @typedef {Object} GenerateReportOptions
- * @property {string} [reportName] - The name for the report file.
- *
  * @param {import('playwright').Page} page - The page object from Playwright.
  * @param {string} testCaseName - The name of the test case.
- * @param {GenerateReportOptions} [options={}] - The options for the report generation.
- *
- * @returns {Promise<object|null>} Returns the accessibility scan results if violations are found,
- *                                  otherwise returns null.
+ * @param {{ reportName?: string }} [options={}] - The options for the report generation.
+ * @returns {Promise<Object|null>} Returns the accessibility scan results if violations are found, otherwise returns null.
  */
 /* eslint-disable no-undef */
 export async function scanForA11yViolations(page, testCaseName, options = {}) {
@@ -116,17 +134,3 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
 }
 
 export { expect, extendedTest as test };
-
-/**
- * @typedef {import('./pluginFixtures.js').PluginTest} PluginTest
- */
-
-/**
- * Extends the default Playwright test fixture by customizing the `page` fixture.
- * This customization overrides the default screenshot behavior to mask specific elements
- * which will always show variance across screenshots.
- * @typedef {Object} AVPTest
- * @property {(options: import('@playwright/test').PageScreenshotOptions) => Promise<Buffer>} screenshot
- * Take a screenshot of the page, masking elements which will always show variance across screenshots.
- * @extends PluginTest
- */
