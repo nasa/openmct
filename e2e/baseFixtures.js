@@ -68,7 +68,6 @@ function waitForAnimations(locator) {
  */
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
 
-/** @type {ExtendedTest} */
 const extendedTest = test.extend({
   /**
    * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
@@ -199,16 +198,3 @@ const extendedTest = test.extend({
 });
 
 export { expect, request, extendedTest as test, waitForAnimations };
-
-/**
- * @typedef {import('@playwright/test').test} TestFixture
- */
-
-/**
- * @typedef {Object} ExtendedTest
- * @property {import('@types/sinonjs__fake-timers').FakeTimerInstallOpts} clockOptions
- * Options for the fake clock.
- * @property {boolean} [failOnConsoleError=true]
- * If true, will assert against any `console.error` calls that occur during the test. Assertions occur during test teardown (after the test has completed).
- * @extends TestFixture
- */
