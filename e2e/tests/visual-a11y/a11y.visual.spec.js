@@ -28,7 +28,6 @@ test.describe('a11y - Default', () => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test('main view', async ({ page }, testInfo) => {
-    await page.goto('./');
     //Skipping for https://github.com/nasa/openmct/issues/7421
     //await scanForA11yViolations(page, testInfo.title);
   });
