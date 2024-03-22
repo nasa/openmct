@@ -149,8 +149,9 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
   },
   beforeUnmount() {
-    // Remove the listener in case the component is unmounted while dragging
+    // Remove the listeners in case the component is unmounted while dragging
     document.removeEventListener('mousemove', this.drag);
+    document.removeEventListener('mouseup', this.dragEnd);
   },
   methods: {
     setAxisDimensions() {
