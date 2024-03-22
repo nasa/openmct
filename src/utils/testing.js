@@ -89,7 +89,6 @@ export function resetApplicationState(openmct) {
     openmct.destroy();
   }
 
-  // Reset window location hash directly if it's safe and sufficient
   if (window.location.hash !== '#' && window.location.hash !== '') {
     window.location.hash = '#';
     // Optionally wait for hashchange if necessary
