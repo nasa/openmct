@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /**
  * Constants which may be used across all e2e tests.
  */

@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding imagery,
 but only assume that example imagery is present.
 */
-/* globals process */
+
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
 import { waitForAnimations } from '../../../../baseFixtures.js';
 import { expect, test } from '../../../../pluginFixtures.js';

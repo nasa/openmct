@@ -96,7 +96,7 @@ const extendedTest = test.extend({
  * @param {{ reportName?: string }} [options={}] - The options for the report generation.
  * @returns {Promise<Object|null>} Returns the accessibility scan results if violations are found, otherwise returns null.
  */
-/* eslint-disable no-undef */
+
 export async function scanForA11yViolations(page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
   builder.withTags(['wcag2aa']);
