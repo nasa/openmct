@@ -24,41 +24,61 @@
   Tests the visual appearance of the Time Conductor component
 */
 
-import percySnapshot from '@percy/playwright';
+import { expect, test } from '../../../avpFixtures.js';
+import {
+  MISSION_TIME,
+  MISSION_TIME_FIXED_END,
+  MISSION_TIME_FIXED_START,
+  VISUAL_REALTIME_URL
+} from '../../../constants.js';
 
-import { test } from '../../../avpFixtures.js';
-import { VISUAL_URL } from '../../../constants.js';
-
-test.describe('Visual - Branding @a11y', () => {
+test.describe('Visual - Time Conductor', () => {
+  test.use({
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: false
+    }
+  });
   test.beforeEach(async ({ page }) => {
-    //Go to baseURL in Realtime mode
-    await page.goto(
-      './#/browse/mine?tc.mode=local&tc.timeSystem=utc&view=grid&tc.startDelta=1800000&tc.endDelta=30000',
-      { waitUntil: 'domcontentloaded' }
-    );
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Visual - Time Conductor (Fixed time)', async ({ page, theme }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7623'
-    });
-    // Switch to fixed time at consistent bounds
-    await page.goto(VISUAL_URL);
-    // Take a snapshot of the Time Conductor
-    await percySnapshot(page, `Time Conductor (Fixed time) (theme: '${theme}')`, {
-      scope: '[aria-label="Global Time Conductor"]'
-    });
+  test(
+    'Visual - Time Conductor (Fixed time) @a11y @clock @snapshot',
+    { annotation: [{ type: 'issue', description: 'https://github.com/nasa/openmct/issues/7623' }] },
+    async ({ page }) => {
+      // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
+      await page.goto(
+        `./#/browse/mine?tc.mode=fixed&tc.startBound=${MISSION_TIME_FIXED_START}&tc.endBound=${MISSION_TIME_FIXED_END}&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true`,
+        {
+          waitUntil: 'domcontentloaded'
+        }
+      );
 
-    // Simulate window resize by changing viewport size
-    await page.setViewportSize({
-      width: 2048,
-      height: 768
-    });
+      // Take a snapshot for comparison
+      const snapshot = await page.screenshot({
+        mask: []
+      });
+      expect(snapshot).toMatchSnapshot('time-conductor-fixed-time.png');
+    }
+  );
 
-    // Take a snapshot of the Time Conductor after resize
-    await percySnapshot(page, `Time Conductor after resize (Fixed time) (theme: '${theme}')`, {
-      scope: '[aria-label="Global Time Conductor"]'
-    });
-  });
+  test(
+    'Visual - Time Conductor (Realtime) @a11y @clock @snapshot',
+    { annotation: [{ type: 'issue', description: 'https://github.com/nasa/openmct/issues/7623' }] },
+    async ({ page }) => {
+      // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
+      await page.goto(VISUAL_REALTIME_URL, {
+        waitUntil: 'domcontentloaded'
+      });
+
+      const mask = [];
+
+      // Take a snapshot for comparison
+      const snapshot = await page.screenshot({
+        mask
+      });
+      expect(snapshot).toMatchSnapshot('time-conductor-realtime.png');
+    }
+  );
 });
