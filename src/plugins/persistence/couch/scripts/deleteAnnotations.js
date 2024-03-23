@@ -37,6 +37,11 @@ async function main() {
       username,
       password
     });
+    if (!docsToDelete.length) {
+      console.info('🤷‍♂️ No annotations found to delete on server');
+      return;
+    }
+
     const deletedDocumentCount = await performBulkDelete({
       docsToDelete,
       serverUrl,
@@ -44,8 +49,8 @@ async function main() {
       username,
       password
     });
-    console.log(
-      `Deleted ${deletedDocumentCount} document${deletedDocumentCount === 1 ? '' : 's'}.`
+    console.info(
+      `🎉 Deleted ${deletedDocumentCount} document${deletedDocumentCount === 1 ? '' : 's'}.`
     );
   } catch (error) {
     console.error(`Error: ${error.message}`);
@@ -66,14 +71,15 @@ function processArguments() {
   let databaseName = 'openmct'; // default db name to "openmct"
   let serverUrl = new URL('http://127.0.0.1:5984'); // default db name to "openmct"
   let helpRequested = false;
+  console.debug = () => {};
 
   args.forEach((val, index) => {
     switch (val) {
       case '--help':
-        console.log(
-          'Usage: deleteAnnotations.js [--annotationType type] [--dbName name] <CouchDB URL> \nFor authentication, set the environment variables COUCHDB_USERNAME and COUCHDB_PASSWORD. \n'
+        console.info(
+          'Usage: deleteAnnotations.js [--annotationType type] [--dbName name] [--serverUrl url] [--debug] <CouchDB URL> \nFor authentication, set the environment variables COUCHDB_USERNAME and COUCHDB_PASSWORD. \n'
         );
-        console.log('Annotation types: ', Object.keys(ANNOTATION_TYPES).join(', '));
+        console.info('Annotation types: ', Object.keys(ANNOTATION_TYPES).join(', '));
         helpRequested = true;
         break;
       case '--annotationType':
@@ -87,6 +93,9 @@ function processArguments() {
         break;
       case '--serverUrl':
         serverUrl = new URL(args[index + 1]);
+        break;
+      case '--debug':
+        console.debug = console.log;
         break;
     }
   });
@@ -141,9 +150,14 @@ async function gatherDocumentsForDeletion({
     findOptions.headers.Authorization = `Basic ${btoa(`${username}:${password}`)}`;
   }
 
+  console.info(`🛜 Contacting ${baseUrl} to find annotations to delete`);
   while (hasMoreDocs) {
     if (bookmark) {
-      body.bookmark = bookmark;
+      console.debug(`Server has more documents to process, fetching more...`);
+      findOptions.body = JSON.stringify({
+        ...body,
+        bookmark
+      });
     }
 
     const res = await fetch(baseUrl, findOptions);
@@ -159,7 +173,11 @@ async function gatherDocumentsForDeletion({
 
     // check if we got less than limit, set hasMoreDocs to false
     hasMoreDocs = findResult.docs.length === body.limit;
+    console.debug(
+      `Fetched ${docsToDelete.length} documents so far, and find result has ${findResult.docs.length} documents`
+    );
   }
+  console.debug(`Found ${docsToDelete.length} existing annotations on ${baseUrl}`);
 
   return docsToDelete;
 }
@@ -179,7 +197,10 @@ async function performBulkDelete({ docsToDelete, serverUrl, databaseName, userna
     deleteOptions.headers.Authorization = `Basic ${btoa(`${username}:${password}`)}`;
   }
 
-  const response = await fetch(`${serverUrl.href}${databaseName}/_bulk_docs`, deleteOptions);
+  const baseUrl = `${serverUrl.href}${databaseName}/_bulk_docs`;
+
+  console.info(`🛜 Contacting ${baseUrl} to delete ${docsToDelete.length} annotations`);
+  const response = await fetch(baseUrl, deleteOptions);
   if (!response.ok) {
     throw new Error('Failed with status code: ' + response.status);
   }
