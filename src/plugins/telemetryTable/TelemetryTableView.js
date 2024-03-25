@@ -33,7 +33,7 @@ export default class TelemetryTableView {
     this.component = null;
 
     Object.defineProperty(this, 'table', {
-      value: new TelemetryTable(domainObject, openmct),
+      value: new TelemetryTable(domainObject, openmct, options),
       enumerable: false,
       configurable: false
     });

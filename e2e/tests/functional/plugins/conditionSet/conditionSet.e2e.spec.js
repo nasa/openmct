@@ -292,6 +292,16 @@ test.describe('Basic Condition Set Use', () => {
     await expect(page.getByRole('menuitem', { name: /Conditions View/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
+    await page.getByLabel('Plot').click();
+    await expect(
+      page.getByLabel('Plot Legend Collapsed').getByText('Test Condition Set')
+    ).toBeVisible();
+    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel('Telemetry Table').click();
+    await expect(page.getByRole('searchbox', { name: 'output filter input' })).toBeVisible();
+    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel('Conditions View').click();
+    await expect(page.getByText('Current Output')).toBeVisible();
   });
   test('ConditionSet has correct outputs when telemetry is and is not available', async ({
     page
@@ -456,5 +466,12 @@ test.describe('Basic Condition Set Use', () => {
     await expect(outputValue).toHaveText('false');
 
     await page.goto(exampleTelemetry.url);
+  });
+
+  test.fixme('Ensure condition sets work with telemetry like operator status', ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7484'
+    });
   });
 });

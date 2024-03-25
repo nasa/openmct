@@ -711,6 +711,20 @@
     }
   }
 
+  &[class*='--menus-down'] {
+    .c-menu {
+      top: auto;
+      bottom: 100%;
+    }
+  }
+
+  &[class*='--menus-right'] {
+    .c-menu {
+      left: 0;
+      right: auto;
+    }
+  }
+
   &[class*='--menus-left'],
   &[class*='menus-to-left'] {
     .c-menu {

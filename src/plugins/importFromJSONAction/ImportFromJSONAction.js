@@ -150,16 +150,15 @@ export default class ImportAsJSONAction {
    * @param {string} namespace
    * @returns {object}
    */
-  _generateNewIdentifiers(tree, namespace) {
+  _generateNewIdentifiers(tree, newNamespace) {
     // For each domain object in the file, generate new ID, replace in tree
     Object.keys(tree.openmct).forEach((domainObjectId) => {
-      const newId = {
-        namespace,
-        key: uuid()
-      };
-
       const oldId = parseKeyString(domainObjectId);
 
+      const newId = {
+        namespace: newNamespace,
+        key: uuid()
+      };
       tree = this._rewriteId(oldId, newId, tree);
     }, this);
 
@@ -228,22 +227,32 @@ export default class ImportAsJSONAction {
   _rewriteId(oldId, newId, tree) {
     let newIdKeyString = this.openmct.objects.makeKeyString(newId);
     let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
-    tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
-
-    return JSON.parse(tree, (key, value) => {
+    const newTreeString = JSON.stringify(tree).replace(
+      new RegExp(oldIdKeyString, 'g'),
+      newIdKeyString
+    );
+    const newTree = JSON.parse(newTreeString, (key, value) => {
       if (
         value !== undefined &&
         value !== null &&
         Object.prototype.hasOwnProperty.call(value, 'key') &&
-        Object.prototype.hasOwnProperty.call(value, 'namespace') &&
-        value.key === oldId.key &&
-        value.namespace === oldId.namespace
+        Object.prototype.hasOwnProperty.call(value, 'namespace')
       ) {
-        return newId;
-      } else {
-        return value;
+        // first check if key is messed up from regex and contains a colon
+        // if it does, repair it
+        if (value.key.includes(':')) {
+          const splitKey = value.key.split(':');
+          value.key = splitKey[1];
+          value.namespace = splitKey[0];
+        }
+        // now check if we need to replace the id
+        if (value.key === oldId.key && value.namespace === oldId.namespace) {
+          return newId;
+        }
       }
+      return value;
     });
+    return newTree;
   }
   /**
    * @private

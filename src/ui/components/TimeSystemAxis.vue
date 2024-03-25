@@ -77,12 +77,13 @@ export default {
   },
   setup() {
     const axisHolder = ref(null);
-    const { size, startObserving } = useResizeObserver();
+    const { size: containerSize, startObserving } = useResizeObserver();
     onMounted(() => {
       startObserving(axisHolder.value);
     });
     return {
-      containerSize: size
+      axisHolder,
+      containerSize
     };
   },
   watch: {
@@ -95,8 +96,11 @@ export default {
     contentHeight() {
       this.updateNowMarker();
     },
-    containerSize() {
-      this.resize();
+    containerSize: {
+      handler() {
+        this.resize();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -104,7 +108,7 @@ export default {
       this.useSVG = true;
     }
 
-    this.container = select(this.$refs.axisHolder);
+    this.container = select(this.axisHolder);
     this.svgElement = this.container.append('svg:svg');
     // draw x axis with labels. CSS is used to position them.
     this.axisElement = this.svgElement
@@ -122,7 +126,7 @@ export default {
   },
   methods: {
     resize() {
-      if (this.$refs.axisHolder.clientWidth !== this.width) {
+      if (this.axisHolder.clientWidth !== this.width) {
         this.setDimensions();
         this.drawAxis(this.bounds, this.timeSystem);
         this.updateNowMarker();
@@ -139,11 +143,10 @@ export default {
       }
     },
     setDimensions() {
-      const axisHolder = this.$refs.axisHolder;
-      this.width = axisHolder.clientWidth;
+      this.width = this.axisHolder.clientWidth;
       this.offsetWidth = this.width - this.offset;
 
-      this.height = Math.round(axisHolder.getBoundingClientRect().height);
+      this.height = Math.round(this.axisHolder.getBoundingClientRect().height);
 
       if (this.useSVG) {
         this.svgElement.attr('width', this.width);
