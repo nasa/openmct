@@ -24,11 +24,13 @@
   Tests the visual appearance of the Time Conductor component
 */
 
+import { setFixedTimeMode } from '../../../appActions.js';
 import { expect, test } from '../../../avpFixtures.js';
 import {
   MISSION_TIME,
   MISSION_TIME_FIXED_END,
   MISSION_TIME_FIXED_START,
+  VISUAL_FIXED_URL,
   VISUAL_REALTIME_URL
 } from '../../../constants.js';
 
@@ -43,34 +45,58 @@ test.describe('Visual - Time Conductor', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
+  test('Visual - Time Conductor (Fixed time) @a11y @clock @snapshot', async ({ page }) => {
+    // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
+    await page.goto(
+      `./#/browse/mine?tc.mode=fixed&tc.startBound=${MISSION_TIME_FIXED_START}&tc.endBound=${MISSION_TIME_FIXED_END}&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true`,
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
+
+    // Take a snapshot for comparison
+    const snapshot = await page.screenshot({
+      mask: []
+    });
+    expect(snapshot).toMatchSnapshot('time-conductor-fixed-time.png');
+  });
+
+  test('Visual - Time Conductor (Realtime) @a11y @clock @snapshot', async ({ page }) => {
+    // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
+    await page.goto(VISUAL_REALTIME_URL, {
+      waitUntil: 'domcontentloaded'
+    });
+
+    const mask = [];
+
+    // Take a snapshot for comparison
+    const snapshot = await page.screenshot({
+      mask
+    });
+    expect(snapshot).toMatchSnapshot('time-conductor-realtime.png');
+  });
   test(
-    'Visual - Time Conductor (Fixed time) @a11y @clock @snapshot',
+    'Visual - Time Conductor Axis Resized @a11y @clock @snapshot',
     { annotation: [{ type: 'issue', description: 'https://github.com/nasa/openmct/issues/7623' }] },
     async ({ page }) => {
-      // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
-      await page.goto(
-        `./#/browse/mine?tc.mode=fixed&tc.startBound=${MISSION_TIME_FIXED_START}&tc.endBound=${MISSION_TIME_FIXED_END}&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true`,
-        {
-          waitUntil: 'domcontentloaded'
-        }
-      );
-
-      // Take a snapshot for comparison
-      const snapshot = await page.screenshot({
-        mask: []
-      });
-      expect(snapshot).toMatchSnapshot('time-conductor-fixed-time.png');
-    }
-  );
-
-  test(
-    'Visual - Time Conductor (Realtime) @a11y @clock @snapshot',
-    { annotation: [{ type: 'issue', description: 'https://github.com/nasa/openmct/issues/7623' }] },
-    async ({ page }) => {
-      // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
-      await page.goto(VISUAL_REALTIME_URL, {
+      const VISUAL_REALTIME_WITH_PANES = VISUAL_REALTIME_URL.replace(
+        'hideTree=true',
+        'hideTree=false'
+      ).replace('hideInspector=true', 'hideInspector=false');
+      // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect
+      await page.goto(VISUAL_REALTIME_WITH_PANES, {
         waitUntil: 'domcontentloaded'
       });
+
+      // Set the time conductor to fixed time mode
+      await page.getByLabel('Time Conductor Mode').click();
+      await page.getByLabel('Time Conductor Mode Menu').click();
+      await page.getByLabel('Fixed Timespan').click();
+      await page.getByLabel('Submit time bounds').click();
+
+      // Collapse the inspect and browse panes to trigger a resize of the conductor axis
+      await page.getByLabel('Collapse Inspect Pane').click();
+      await page.getByLabel('Collapse Browse Pane').click();
 
       const mask = [];
 
@@ -78,7 +104,7 @@ test.describe('Visual - Time Conductor', () => {
       const snapshot = await page.screenshot({
         mask
       });
-      expect(snapshot).toMatchSnapshot('time-conductor-realtime.png');
+      expect(snapshot).toMatchSnapshot('time-conductor-axis-resized.png');
     }
   );
 });
