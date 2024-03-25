@@ -71,6 +71,9 @@
     color: $colorItemTreeIcon;
     font-size: 1.25em;
     height: 50%;
+    body.mobile &{
+      height: auto;
+    }
 
     // TEMP: uses object-label component, hide label part
     .c-object-label__name {
