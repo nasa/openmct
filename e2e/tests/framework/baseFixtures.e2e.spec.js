@@ -30,7 +30,7 @@ import { test } from '../../baseFixtures.js';
 
 test.describe('baseFixtures tests', () => {
   //Skip this test for now https://github.com/nasa/openmct/issues/6785
-  test.fixme('Verify that tests fail if console.error is thrown', async ({ page }) => {
+  test('Verify that tests fail if console.error is thrown', async ({ page }) => {
     test.fail();
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
