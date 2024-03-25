@@ -24,13 +24,11 @@
   Tests the visual appearance of the Time Conductor component
 */
 
-import { setFixedTimeMode } from '../../../appActions.js';
 import { expect, test } from '../../../avpFixtures.js';
 import {
   MISSION_TIME,
   MISSION_TIME_FIXED_END,
   MISSION_TIME_FIXED_START,
-  VISUAL_FIXED_URL,
   VISUAL_REALTIME_URL
 } from '../../../constants.js';
 
