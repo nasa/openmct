@@ -111,6 +111,40 @@ const extendedTest = test.extend({
     }
   ],
   /**
+   * Exposes a function to manually tick the clock. This is useful when overriding the clock to not
+   * tick (`shouldAdvanceTime: false`) for visual tests, as events such as re-renders and router params
+   * updates are clock-driven and must be manually ticked.
+   *
+   * Usage:
+   * ```js
+   * test.describe('Manual Clock Tick', () => {
+   *  test.use({
+   *   clockOptions: {
+   *     now: MISSION_TIME, // Set to the desired time
+   *     shouldAdvanceTime: false // Clock overridden to no longer tick
+   *   }
+   *  });
+   *  test('Visual - Manual Clock Tick', async ({ page, tick }) => {
+   *   // Tick the clock 2 seconds in the future
+   *   await tick(2000);
+   *  });
+   * });
+   * ```
+   *
+   * @param {Object} param0
+   * @param {import('@playwright/test').Page} param0.page
+   * @param {import('@playwright/test').Use} param0.use
+   */
+  tick: async ({ page }, use) => {
+    // eslint-disable-next-line func-style
+    const tick = async (milliseconds) => {
+      await page.evaluate((_milliseconds) => {
+        window.__clock.tick(_milliseconds);
+      }, milliseconds);
+    };
+    await use(tick);
+  },
+  /**
    * Extends the base context class to add codecoverage shim.
    * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Project}
    */

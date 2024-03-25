@@ -76,7 +76,7 @@ test.describe('Visual - Time Conductor', () => {
   test(
     'Visual - Time Conductor Axis Resized @a11y @clock @snapshot',
     { annotation: [{ type: 'issue', description: 'https://github.com/nasa/openmct/issues/7623' }] },
-    async ({ page }) => {
+    async ({ page, tick }) => {
       const VISUAL_REALTIME_WITH_PANES = VISUAL_REALTIME_URL.replace(
         'hideTree=true',
         'hideTree=false'
@@ -95,6 +95,9 @@ test.describe('Visual - Time Conductor', () => {
       // Collapse the inspect and browse panes to trigger a resize of the conductor axis
       await page.getByLabel('Collapse Inspect Pane').click();
       await page.getByLabel('Collapse Browse Pane').click();
+
+      // manually tick the clock to trigger the resize / re-render
+      await tick(1000 * 2);
 
       const mask = [];
 
