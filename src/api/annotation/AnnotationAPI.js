@@ -26,12 +26,12 @@ import { v4 as uuid } from 'uuid';
 
 /**
  * @readonly
- * @enum {String} AnnotationType
- * @property {String} NOTEBOOK The notebook annotation type
- * @property {String} GEOSPATIAL The geospatial annotation type
- * @property {String} PIXEL_SPATIAL The pixel-spatial annotation type
- * @property {String} TEMPORAL The temporal annotation type
- * @property {String} PLOT_SPATIAL The plot-spatial annotation type
+ * @enum {string} AnnotationType
+ * @property {string} NOTEBOOK The notebook annotation type
+ * @property {string} GEOSPATIAL The geospatial annotation type
+ * @property {string} PIXEL_SPATIAL The pixel-spatial annotation type
+ * @property {string} TEMPORAL The temporal annotation type
+ * @property {string} PLOT_SPATIAL The plot-spatial annotation type
  */
 const ANNOTATION_TYPES = Object.freeze({
   NOTEBOOK: 'NOTEBOOK',
@@ -47,9 +47,9 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
 
 /**
  * @typedef {Object} Tag
- * @property {String} key a unique identifier for the tag
- * @property {String} backgroundColor eg. "#cc0000"
- * @property {String} foregroundColor eg. "#ffffff"
+ * @property {string} key a unique identifier for the tag
+ * @property {string} backgroundColor eg. "#cc0000"
+ * @property {string} foregroundColor eg. "#ffffff"
  */
 
 /**
@@ -112,11 +112,11 @@ export default class AnnotationAPI extends EventEmitter {
   /**
    * Creates an annotation on a given domain object (e.g., a plot) and a set of targets (e.g., telemetry objects)
    * @typedef {Object} CreateAnnotationOptions
-   * @property {String} name a name for the new annotation (e.g., "Plot annnotation")
+   * @property {string} name a name for the new annotation (e.g., "Plot annnotation")
    * @property {DomainObject} domainObject the domain object this annotation was created with
    * @property {ANNOTATION_TYPES} annotationType the type of annotation to create (e.g., PLOT_SPATIAL)
    * @property {Tag[]} tags tags to add to the annotation, e.g., SCIENCE for science related annotations
-   * @property {String} contentText Some text to add to the annotation, e.g. ("This annotation is about science")
+   * @property {string} contentText Some text to add to the annotation, e.g. ("This annotation is about science")
    * @property {Array<Object>} targets The targets ID keystrings and their specific properties.
    * For plots, this will be a bounding box, e.g.: {keyString: "d8385009-789d-457b-acc7-d50ba2fd55ea", maxY: 100, minY: 0, maxX: 100, minX: 0}
    * For notebooks, this will be an entry ID, e.g.: {entryId: "entry-ecb158f5-d23c-45e1-a704-649b382622ba"}
@@ -208,7 +208,7 @@ export default class AnnotationAPI extends EventEmitter {
 
   /**
    * @method defineTag
-   * @param {String} key a unique identifier for the tag
+   * @param {string} key a unique identifier for the tag
    * @param {Tag} tagsDefinition the definition of the tag to add
    */
   defineTag(tagKey, tagsDefinition) {
@@ -217,7 +217,7 @@ export default class AnnotationAPI extends EventEmitter {
 
   /**
    * @method setNamespaceToSaveAnnotations
-   * @param {String} namespace the namespace to save new annotations to
+   * @param {string} namespace the namespace to save new annotations to
    */
   setNamespaceToSaveAnnotations(namespace) {
     this.namespaceToSaveAnnotations = namespace;
@@ -226,7 +226,7 @@ export default class AnnotationAPI extends EventEmitter {
   /**
    * @method isAnnotation
    * @param {DomainObject} domainObject the domainObject in question
-   * @returns {Boolean} Returns true if the domain object is an annotation
+   * @returns {boolean} Returns true if the domain object is an annotation
    */
   isAnnotation(domainObject) {
     return domainObject && domainObject.type === ANNOTATION_TYPE;
@@ -442,7 +442,7 @@ export default class AnnotationAPI extends EventEmitter {
 
   /**
    * @method searchForTags
-   * @param {String} query A query to match against tags. E.g., "dr" will match the tags "drilling" and "driving"
+   * @param {string} query A query to match against tags. E.g., "dr" will match the tags "drilling" and "driving"
    * @param {Object} [abortController] An optional abort method to stop the query
    * @returns {Promise} returns a model of matching tags with their target domain objects attached
    */

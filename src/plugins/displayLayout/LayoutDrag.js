@@ -39,7 +39,7 @@
  * with the mouse while the horizontal dimensions shrink in
  * kind (and vertical properties remain unmodified.)
  *
- * @param {object} rawPosition the initial position/dimensions
+ * @param {Object} rawPosition the initial position/dimensions
  *                 of the frame being interacted with
  * @param {number[]} posFactor the position factor
  * @param {number[]} dimFactor the dimensions factor
