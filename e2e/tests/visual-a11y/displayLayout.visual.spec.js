@@ -26,8 +26,6 @@ import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
 
-const percyCSS = '[aria-label="Clock Indicator"] { opacity: 0 !important; }';
-
 test.describe('Visual - Display Layout @clock', () => {
   test.use({
     clockOptions: {
@@ -82,19 +80,13 @@ test.describe('Visual - Display Layout @clock', () => {
 
   test('Resize Marquee surrounds selection', async ({ page, theme }) => {
     //This is where the beforeEach leaves off.
-    await percySnapshot(page, `Last modified object selected (theme: '${theme}')`, {
-      percyCSS
-    });
+    await percySnapshot(page, `Last modified object selected (theme: '${theme}')`);
 
     await page.getByLabel('Child Left Layout Layout', { exact: true }).click();
-    await percySnapshot(page, `Only Left Child Layout has Marque selection (theme: '${theme}')`, {
-      percyCSS
-    });
+    await percySnapshot(page, `Only Left Child Layout has Marque selection (theme: '${theme}')`);
 
     await page.getByLabel('Child Right Layout Layout', { exact: true }).click();
-    await percySnapshot(page, `Only Right Child Layout has Marque selection (theme: '${theme}')`, {
-      percyCSS
-    });
+    await percySnapshot(page, `Only Right Child Layout has Marque selection (theme: '${theme}')`);
 
     //Only the sub-object in the Right Layout should be highlighted with a marquee
     await page
@@ -104,14 +96,11 @@ test.describe('Visual - Display Layout @clock', () => {
 
     await percySnapshot(
       page,
-      `Selecting a sub-object from Right Layout selected (theme: '${theme}')`,
-      { percyCSS }
+      `Selecting a sub-object from Right Layout selected (theme: '${theme}')`
     );
 
     await page.getByLabel('Parent Layout Layout', { exact: true }).click();
-    await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`, {
-      percyCSS
-    });
+    await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`);
   });
 
   test('Toolbar does not overflow into inspector', async ({ page, theme }) => {
@@ -121,8 +110,6 @@ test.describe('Visual - Display Layout @clock', () => {
     });
     await page.getByLabel('Expand Inspect Pane').click();
     await page.getByLabel('Resize Inspect Pane').dragTo(page.getByLabel('X:'));
-    await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`, {
-      percyCSS
-    });
+    await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`);
   });
 });
