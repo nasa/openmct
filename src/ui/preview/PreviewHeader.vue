@@ -64,7 +64,7 @@ import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwit
 
 import ViewSwitcher from '../layout/ViewSwitcher.vue';
 
-const HIDDEN_ACTIONS = ['remove', 'move', 'preview', 'large.view'];
+const HIDDEN_ACTIONS = ['remove', 'move', 'preview', 'large.view', 'reload'];
 
 export default {
   components: {
