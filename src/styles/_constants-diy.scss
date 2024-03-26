@@ -84,14 +84,13 @@ $colorBodyFgSubtle: #9c9c9c;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
 // $colorHeadBg: #262626;
-$colorHeadBg: rgba($colorBodyBg, .4);
+$colorHeadBg: rgba($colorBodyBg, 0);
 $colorHeadFg: $colorBodyFg;
-$colorKey: #0099cc;
+$colorKey: #288BFF;
 $colorKeyFg: #fff;
-$colorKeyBg: #007fad; // Darker version of colorKey for use in major buttons
+$colorKeyBg: #015fca; // Darker version of colorKey for use in major buttons
 $colorKeyHov: lighten($colorKey, 10%);
-$colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%)
-  contrast(101%);
+$colorKeyFilter: invert(36%) sepia(16%) saturate(2512%) hue-rotate(170deg) brightness(100%) contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
   contrast(100%);
 $colorKeySelectedBg: $colorKey;
@@ -223,7 +222,7 @@ $browseFrameCornerColor:  rgb(0,150,215) 4px; //Color used for the corners of fr
   background-repeat: no-repeat;
   background-size: 35px 35px;
   border-radius: $controlCr;
-  box-shadow: 0px 0px 20px 2px rgb(148, 148, 148, .2);
+  box-shadow: 0px 0px 20px 2px rgb(148, 148, 148, .4);
 }
   
 
@@ -461,14 +460,14 @@ $legendTableHeadBg: $colorTabHeaderBg;
 $colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 
 // Gauges
-$colorGaugeBase:  rgba(0, 95, 136);
-$colorGaugeBg: rgba($colorGaugeBase, .4); // Gauge radial area background, meter background
-$colorGaugeValue: rgba(0, 107, 153); // Gauge value graphic (radial sweep, bar) color
+$colorGaugeBase: $colorKeyBg;
+$colorGaugeBg: rgba($colorGaugeBase, .15); // Gauge radial area background, meter background
+$colorGaugeValue: $colorKeyBg; // Gauge value graphic (radial sweep, bar) color
 $colorGaugeValueShadow: rgba(255, 255, 255, .4);
 $colorGaugeTextValue: #fff; // Radial gauge text value
 $colorGaugeMeterTextValue: #fff; // Meter text value, overlaid on value bar
 $colorGaugeRange: $colorBodyFgEm; // Range text color
-$colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.4);
+$colorGaugeLimitHigh: rgba($colorLimitRedBg, .5);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
