@@ -72,6 +72,7 @@ import SummaryWidget from './summaryWidget/plugin.js';
 import Tabs from './tabs/plugin.js';
 import TelemetryMean from './telemetryMean/plugin.js';
 import TelemetryTablePlugin from './telemetryTable/plugin.js';
+import DIY from './themes/diy.js';
 import Espresso from './themes/espresso.js';
 import Snow from './themes/snow.js';
 import TimeConductorPlugin from './timeConductor/plugin.js';
@@ -85,140 +86,6 @@ import UTCTimeSystem from './utcTimeSystem/plugin.js';
 import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
-define([
-  'lodash',
-  './utcTimeSystem/plugin',
-  './remoteClock/plugin',
-  './localTimeSystem/plugin',
-  './ISOTimeFormat/plugin',
-  './myItems/plugin',
-  '../../example/generator/plugin',
-  '../../example/eventGenerator/plugin',
-  './autoflow/AutoflowTabularPlugin',
-  './timeConductor/plugin',
-  '../../example/imagery/plugin',
-  '../../example/faultManagement/exampleFaultSource',
-  './imagery/plugin',
-  './summaryWidget/plugin',
-  './URLIndicatorPlugin/URLIndicatorPlugin',
-  './telemetryMean/plugin',
-  './plot/plugin',
-  './charts/bar/plugin',
-  './charts/scatter/plugin',
-  './telemetryTable/plugin',
-  './staticRootPlugin/plugin',
-  './notebook/plugin',
-  './displayLayout/plugin',
-  './formActions/plugin',
-  './folderView/plugin',
-  './flexibleLayout/plugin',
-  './tabs/plugin',
-  './LADTable/plugin',
-  './filters/plugin',
-  './objectMigration/plugin',
-  './goToOriginalAction/plugin',
-  './openInNewTabAction/plugin',
-  './clearData/plugin',
-  './webPage/plugin',
-  './condition/plugin',
-  './conditionWidget/plugin',
-  './themes/espresso',
-  './themes/snow',
-  './themes/diy',
-  './URLTimeSettingsSynchronizer/plugin',
-  './notificationIndicator/plugin',
-  './newFolderAction/plugin',
-  './persistence/couch/plugin',
-  './defaultRootName/plugin',
-  './plan/plugin',
-  './viewDatumAction/plugin',
-  './viewLargeAction/plugin',
-  './interceptors/plugin',
-  './performanceIndicator/plugin',
-  './CouchDBSearchFolder/plugin',
-  './timeline/plugin',
-  './hyperlink/plugin',
-  './clock/plugin',
-  './DeviceClassifier/plugin',
-  './timer/plugin',
-  './userIndicator/plugin',
-  '../../example/exampleUser/plugin',
-  './localStorage/plugin',
-  './operatorStatus/plugin',
-  './gauge/GaugePlugin',
-  './timelist/plugin',
-  './faultManagement/FaultManagementPlugin',
-  '../../example/exampleTags/plugin',
-  './inspectorViews/plugin',
-  './inspectorDataVisualization/plugin'
-], function (
-  _,
-  UTCTimeSystem,
-  RemoteClock,
-  LocalTimeSystem,
-  ISOTimeFormat,
-  MyItems,
-  GeneratorPlugin,
-  EventGeneratorPlugin,
-  AutoflowPlugin,
-  TimeConductorPlugin,
-  ExampleImagery,
-  ExampleFaultSource,
-  ImageryPlugin,
-  SummaryWidget,
-  URLIndicatorPlugin,
-  TelemetryMean,
-  PlotPlugin,
-  BarChartPlugin,
-  ScatterPlotPlugin,
-  TelemetryTablePlugin,
-  StaticRootPlugin,
-  Notebook,
-  DisplayLayoutPlugin,
-  FormActions,
-  FolderView,
-  FlexibleLayout,
-  Tabs,
-  LADTable,
-  Filters,
-  ObjectMigration,
-  GoToOriginalAction,
-  OpenInNewTabAction,
-  ClearData,
-  WebPagePlugin,
-  ConditionPlugin,
-  ConditionWidgetPlugin,
-  Espresso,
-  Snow,
-  DIY,
-  URLTimeSettingsSynchronizer,
-  NotificationIndicator,
-  NewFolderAction,
-  CouchDBPlugin,
-  DefaultRootName,
-  PlanLayout,
-  ViewDatumAction,
-  ViewLargeAction,
-  ObjectInterceptors,
-  PerformanceIndicator,
-  CouchDBSearchFolder,
-  Timeline,
-  Hyperlink,
-  Clock,
-  DeviceClassifier,
-  Timer,
-  UserIndicator,
-  ExampleUser,
-  LocalStorage,
-  OperatorStatus,
-  GaugePlugin,
-  TimeList,
-  FaultManagementPlugin,
-  ExampleTags,
-  InspectorViews,
-  InspectorDataVisualization
-) {
-  const plugins = {};
 
 const plugins = {};
 
@@ -259,53 +126,6 @@ plugins.Plot = PlotPlugin;
 plugins.BarChart = BarChartPlugin;
 plugins.ScatterPlot = ScatterPlotPlugin;
 plugins.TelemetryTable = TelemetryTablePlugin;
-  plugins.SummaryWidget = SummaryWidget;
-  plugins.TelemetryMean = TelemetryMean;
-  plugins.URLIndicator = URLIndicatorPlugin;
-  plugins.Notebook = Notebook.NotebookPlugin;
-  plugins.RestrictedNotebook = Notebook.RestrictedNotebookPlugin;
-  plugins.DisplayLayout = DisplayLayoutPlugin.default;
-  plugins.FaultManagement = FaultManagementPlugin.default;
-  plugins.FormActions = FormActions;
-  plugins.FolderView = FolderView.default;
-  plugins.Tabs = Tabs;
-  plugins.FlexibleLayout = FlexibleLayout;
-  plugins.LADTable = LADTable.default;
-  plugins.Filters = Filters;
-  plugins.ObjectMigration = ObjectMigration.default;
-  plugins.GoToOriginalAction = GoToOriginalAction.default;
-  plugins.OpenInNewTabAction = OpenInNewTabAction.default;
-  plugins.ClearData = ClearData.default;
-  plugins.WebPage = WebPagePlugin.default;
-  plugins.Espresso = Espresso.default;
-  plugins.Snow = Snow.default;
-  plugins.Diy = DIY.default;
-  plugins.Condition = ConditionPlugin.default;
-  plugins.ConditionWidget = ConditionWidgetPlugin.default;
-  plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
-  plugins.NotificationIndicator = NotificationIndicator.default;
-  plugins.NewFolderAction = NewFolderAction.default;
-  plugins.ISOTimeFormat = ISOTimeFormat.default;
-  plugins.DefaultRootName = DefaultRootName.default;
-  plugins.PlanLayout = PlanLayout.default;
-  plugins.ViewDatumAction = ViewDatumAction.default;
-  plugins.ViewLargeAction = ViewLargeAction.default;
-  plugins.ObjectInterceptors = ObjectInterceptors.default;
-  plugins.PerformanceIndicator = PerformanceIndicator.default;
-  plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
-  plugins.Timeline = Timeline.default;
-  plugins.Hyperlink = Hyperlink.default;
-  plugins.Clock = Clock.default;
-  plugins.Timer = Timer.default;
-  plugins.DeviceClassifier = DeviceClassifier.default;
-  plugins.UserIndicator = UserIndicator.default;
-  plugins.LocalStorage = LocalStorage.default;
-  plugins.OperatorStatus = OperatorStatus.default;
-  plugins.Gauge = GaugePlugin.default;
-  plugins.Timelist = TimeList.default;
-  plugins.InspectorViews = InspectorViews.default;
-  plugins.InspectorDataVisualization = InspectorDataVisualization.default;
-
 plugins.SummaryWidget = SummaryWidget;
 plugins.TelemetryMean = TelemetryMean;
 plugins.URLIndicator = URLIndicatorPlugin;
@@ -325,6 +145,7 @@ plugins.OpenInNewTabAction = OpenInNewTabAction;
 plugins.ReloadAction = ReloadAction;
 plugins.ClearData = ClearData;
 plugins.WebPage = WebPagePlugin;
+plugins.Diy = DIY;
 plugins.Espresso = Espresso;
 plugins.Snow = Snow;
 plugins.Condition = ConditionPlugin;

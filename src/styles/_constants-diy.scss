@@ -80,6 +80,7 @@ $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 // Base colors
 $colorBodyBg: rgba(57, 57, 57, 1);
 $colorBodyFg: #aaaaaa;
+$colorBodyFgSubtle: #9c9c9c;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
 // $colorHeadBg: #262626;
@@ -87,6 +88,7 @@ $colorHeadBg: rgba($colorBodyBg, .4);
 $colorHeadFg: $colorBodyFg;
 $colorKey: #0099cc;
 $colorKeyFg: #fff;
+$colorKeyBg: #007fad; // Darker version of colorKey for use in major buttons
 $colorKeyHov: lighten($colorKey, 10%);
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%)
   contrast(101%);
@@ -341,6 +343,7 @@ $colorFormLines: rgba(#000, 0.2);
 $colorFormSectionHeaderBg: rgba(#000, 0.1);
 $colorFormSectionHeaderFg: rgba($colorBodyFg, 0.8);
 $colorInputBg: rgba(black, 0.2);
+$colorInputBgHov: rgba(black, 0.1);
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
@@ -408,10 +411,14 @@ $colorLimitCyanFg: #d3faff;
 $colorLimitCyanIc: #6bedff;
 
 // Events
-$colorEventPurpleFg: #6433ff;
-$colorEventRedFg: #cc0000;
-$colorEventOrangeFg: orange;
-$colorEventYellowFg: #ffcc00;
+$colorEventPurpleFg: #aB8fff;
+$colorEventRedFg: #ff9999;
+$colorEventOrangeFg: #ff8800;
+$colorEventYellowFg: #ffdb63;
+$colorEventPurpleBg: #31204a;
+$colorEventRedBg: #3c1616;
+$colorEventOrangeBg: #3e2a13;
+$colorEventYellowBg: #3e3316;
 
 // Bubble colors
 $colorInfoBubbleBg: #dddddd;
@@ -468,12 +475,20 @@ $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge 
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 
 // Time Strip and Lists
-$colorCurrentBg: rgba($colorStatusAlert, 0.3);
-$colorCurrentFg: pullForward($colorBodyFg, 20%);
+$colorPastBg: #444;
+$colorPastFg: pushBack($colorBodyFg, 10%);
+$colorPastFgEm: $colorBodyFg;
+$colorCurrentBg: #666;
+$colorCurrentFg: $colorBodyFg;
+$colorCurrentFgEm: $colorBodyFgEm;
 $colorCurrentBorder: $colorBodyBg;
-$colorFutureBg: rgba($colorKey, 0.2);
+$colorFutureBg: $colorPastBg;
 $colorFutureFg: $colorCurrentFg;
+$colorFutureFgEm: $colorCurrentFgEm;
 $colorFutureBorder: $colorCurrentBorder;
+$colorInProgressBg: $colorTimeRealtimeBg;
+$colorInProgressFg: $colorTimeRealtimeFgSubtle;
+$colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
 
 // Tree
@@ -556,6 +571,7 @@ $transInBounceBig: all 300ms cubic-bezier(0.2, 1.6, 0.6, 3);
 // Discrete items, like Notebook entries, Widget rules
 $createBtnTextTransform: uppercase;
 $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
+$colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: $colorBodyBg;
 
