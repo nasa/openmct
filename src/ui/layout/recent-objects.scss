@@ -70,7 +70,7 @@
   &__type-icon {
     color: $colorItemTreeIcon;
     font-size: 1.25em;
-    height: 100%;
+    height: 100%; // When pane is small, this avoids the alias icons from wrapping down
     min-width: $treeTypeIconW;
     body.mobile &{
       height: auto;
