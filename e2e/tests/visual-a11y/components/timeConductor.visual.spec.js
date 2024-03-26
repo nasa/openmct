@@ -43,6 +43,11 @@ test.describe('Visual - Time Conductor', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
+  // FIXME: checking for a11y violations times out. Might have something to do with the frozen clock.
+  // test.afterEach(async ({ page }, testInfo) => {
+  //   await scanForA11yViolations(page, testInfo.title);
+  // });
+
   test('Visual - Time Conductor (Fixed time) @a11y @clock @snapshot', async ({ page }) => {
     // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
     await page.goto(
