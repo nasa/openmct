@@ -23,8 +23,7 @@
   <div role="dialog" aria-label="Preview Container" class="l-preview-window js-preview-window">
     <PreviewHeader
       ref="previewHeader"
-      :current-view="currentViewProvider"
-      :action-collection="actionCollection"
+      :current-view="view"
       :domain-object="domainObject"
       :views="viewProviders"
     />
@@ -35,8 +34,6 @@
 </template>
 
 <script>
-import { nextTick } from 'vue';
-
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
@@ -66,10 +63,10 @@ export default {
 
     return {
       domainObject: domainObject,
-      viewKey: undefined,
+      viewKey: null,
+      view: null,
       viewProviders: [],
       currentViewProvider: {},
-      actionCollection: undefined,
       existingViewIndex: 0
     };
   },
@@ -95,10 +92,6 @@ export default {
     if (this.styleRuleManager) {
       this.styleRuleManager.destroy();
       delete this.styleRuleManager;
-    }
-
-    if (this.actionCollection) {
-      this.actionCollection.destroy();
     }
   },
   unmounted() {
@@ -157,10 +150,6 @@ export default {
       }
 
       this.initObjectStyles();
-
-      nextTick(() => {
-        this.getActionsCollection(this.view);
-      });
     },
     addExistingViewBackToParent() {
       this.existingView.parentElement.appendChild(this.existingViewElement);
@@ -168,13 +157,6 @@ export default {
     },
     initializeViewContainer() {
       this.viewContainer = this.$refs.objectView;
-    },
-    getActionsCollection(view) {
-      if (this.actionCollection) {
-        this.actionCollection.destroy();
-      }
-
-      this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, view);
     },
     initObjectStyles() {
       if (!this.styleRuleManager) {
