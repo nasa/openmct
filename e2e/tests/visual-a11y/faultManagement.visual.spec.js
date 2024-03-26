@@ -84,6 +84,7 @@ test.describe('Fault Management Visual Tests', () => {
     await shelveFault(page, 1);
     await changeViewTo(page, 'shelved');
 
+    /* cspell:disable-next-line */
     // Since fault management is heavily dependent on events (bleh), we need to wait for the correct
     // element counts
     await expect(page.getByLabel('Select fault:')).toHaveCount(1);
