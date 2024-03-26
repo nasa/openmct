@@ -67,6 +67,7 @@
     }
   }
 
+
   &__pane-tree,
   &__pane-inspector {
     .l-pane__contents {
@@ -154,7 +155,7 @@
 
   body.phone.portrait & {
     &__pane-tree {
-      width: calc(100% - #{$mobileMenuIconD + (2 * nth($shellPanePad, 2))});
+      width: calc(100% - #{$mobileMenuIconD + (2 * nth($shellPanePad, 2))}) !important;
 
       + .l-pane {
         // Hide pane-main when this pane is expanded
@@ -168,6 +169,11 @@
         pointer-events: inherit;
         transition: opacity 250ms ease 250ms;
       }
+    }
+  }
+  body.phone.landscape & {
+    &__pane-tree{
+      width: 40% !important;
     }
   }
 
