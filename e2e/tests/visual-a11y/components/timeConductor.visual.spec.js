@@ -48,7 +48,7 @@ test.describe('Visual - Time Conductor', () => {
   //   await scanForA11yViolations(page, testInfo.title);
   // });
 
-  test('Visual - Time Conductor (Fixed time) @a11y @clock @snapshot', async ({ page }) => {
+  test('Visual - Time Conductor (Fixed time) @clock @snapshot', async ({ page }) => {
     // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
     await page.goto(
       `./#/browse/mine?tc.mode=fixed&tc.startBound=${MISSION_TIME_FIXED_START}&tc.endBound=${MISSION_TIME_FIXED_END}&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true`,
@@ -64,7 +64,7 @@ test.describe('Visual - Time Conductor', () => {
     expect(snapshot).toMatchSnapshot('time-conductor-fixed-time.png');
   });
 
-  test('Visual - Time Conductor (Realtime) @a11y @clock @snapshot', async ({ page }) => {
+  test('Visual - Time Conductor (Realtime) @clock @snapshot', async ({ page }) => {
     // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
     await page.goto(VISUAL_REALTIME_URL, {
       waitUntil: 'domcontentloaded'
@@ -79,7 +79,7 @@ test.describe('Visual - Time Conductor', () => {
     expect(snapshot).toMatchSnapshot('time-conductor-realtime.png');
   });
   test(
-    'Visual - Time Conductor Axis Resized @a11y @clock @snapshot',
+    'Visual - Time Conductor Axis Resized @clock @snapshot',
     { annotation: [{ type: 'issue', description: 'https://github.com/nasa/openmct/issues/7623' }] },
     async ({ page, tick }) => {
       const VISUAL_REALTIME_WITH_PANES = VISUAL_REALTIME_URL.replace(
