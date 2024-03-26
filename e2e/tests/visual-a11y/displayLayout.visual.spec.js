@@ -23,11 +23,19 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults } from '../../appActions.js';
-import { VISUAL_FIXED_URL } from '../../constants.js';
+import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
 
-test.describe('Visual - Display Layout', () => {
-  test.beforeEach(async ({ page, theme }) => {
+const percyCSS = '[aria-label="Clock Indicator"] { opacity: 0 !important; }';
+
+test.describe('Visual - Display Layout @clock', () => {
+  test.use({
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
+    }
+  });
+  test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     const parentLayout = await createDomainObjectWithDefaults(page, {
@@ -59,25 +67,34 @@ test.describe('Visual - Display Layout', () => {
     await page.goto(parentLayout.url, { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: 'Edit Object' }).click();
 
-    //Move the Child Right Layout to the Right. It should be on top of the Left Layout at this point.
+    // Select the child right layout
     await page
       .getByLabel('Child Right Layout Layout', { exact: true })
       .getByLabel('Move Sub-object Frame')
       .click();
-    await page.getByLabel('Move Sub-object Frame').nth(3).click(); //I'm not sure why this step is necessary
+    // FIXME: Click to select the parent object (layout)
+    await page.getByLabel('Move Sub-object Frame').nth(3).click();
+
+    // Move the second layout element to the right
     await page.getByLabel('X:').click();
     await page.getByLabel('X:').fill('35');
   });
 
   test('Resize Marquee surrounds selection', async ({ page, theme }) => {
     //This is where the beforeEach leaves off.
-    await percySnapshot(page, `Last modified object selected (theme: '${theme}')`);
+    await percySnapshot(page, `Last modified object selected (theme: '${theme}')`, {
+      percyCSS
+    });
 
     await page.getByLabel('Child Left Layout Layout', { exact: true }).click();
-    await percySnapshot(page, `Only Left Child Layout has Marque selection (theme: '${theme}')`);
+    await percySnapshot(page, `Only Left Child Layout has Marque selection (theme: '${theme}')`, {
+      percyCSS
+    });
 
     await page.getByLabel('Child Right Layout Layout', { exact: true }).click();
-    await percySnapshot(page, `Only Right Child Layout has Marque selection (theme: '${theme}')`);
+    await percySnapshot(page, `Only Right Child Layout has Marque selection (theme: '${theme}')`, {
+      percyCSS
+    });
 
     //Only the sub-object in the Right Layout should be highlighted with a marquee
     await page
@@ -87,11 +104,14 @@ test.describe('Visual - Display Layout', () => {
 
     await percySnapshot(
       page,
-      `Selecting a sub-object from Right Layout selected (theme: '${theme}')`
+      `Selecting a sub-object from Right Layout selected (theme: '${theme}')`,
+      { percyCSS }
     );
 
     await page.getByLabel('Parent Layout Layout', { exact: true }).click();
-    await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`);
+    await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`, {
+      percyCSS
+    });
   });
 
   test('Toolbar does not overflow into inspector', async ({ page, theme }) => {
@@ -101,6 +121,8 @@ test.describe('Visual - Display Layout', () => {
     });
     await page.getByLabel('Expand Inspect Pane').click();
     await page.getByLabel('Resize Inspect Pane').dragTo(page.getByLabel('X:'));
-    await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`);
+    await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`, {
+      percyCSS
+    });
   });
 });
