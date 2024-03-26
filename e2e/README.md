@@ -120,14 +120,6 @@ When the `@snapshot` tests fail, they will need to be evaluated to determine if 
 
 To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
 
-MacOS
-
-```sh
-npm run test:e2e:updatesnapshots
-```
-
-Linux/CI
-
 ```sh
 // Replace {X.X.X} with the current Playwright version 
 // from our package.json or circleCI configuration file
