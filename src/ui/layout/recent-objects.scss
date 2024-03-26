@@ -70,7 +70,8 @@
   &__type-icon {
     color: $colorItemTreeIcon;
     font-size: 1.25em;
-    height: 50%;
+    height: 100%;
+    min-width: $treeTypeIconW;
     body.mobile &{
       height: auto;
     }
@@ -117,7 +118,7 @@
     border-radius: $basicCr;
     color: $colorItemTreeFg;
     cursor: pointer;
-    padding: $interiorMarginSm;
+    padding: 2px $interiorMarginSm;
     margin-left: $interiorMarginSm;
 
     &:hover {
