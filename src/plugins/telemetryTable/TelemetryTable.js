@@ -172,7 +172,8 @@ export default class TelemetryTable extends EventEmitter {
     this.removeTelemetryCollection(keyString);
 
     let sortOptions = this.configuration.getConfiguration().sortOptions;
-    requestOptions.order = sortOptions.direction;
+    requestOptions.order =
+      sortOptions?.direction ?? (this.telemetryMode === 'performance' ? 'desc' : 'asc');
 
     if (this.telemetryMode === 'performance') {
       requestOptions.size = this.rowLimit;
