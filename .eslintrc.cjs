@@ -1,10 +1,13 @@
 const LEGACY_FILES = ['example/**'];
-module.exports = {
+/** @type {import('eslint').Linter.Config} */
+const config = {
   env: {
     browser: true,
-    es6: true,
+    es2024: true,
     jasmine: true,
-    amd: true
+    node: true,
+    worker: true,
+    serviceworker: true
   },
   globals: {
     _: 'readonly'
@@ -23,10 +26,11 @@ module.exports = {
     parser: '@babel/eslint-parser',
     requireConfigFile: false,
     allowImportExportEverywhere: true,
-    ecmaVersion: 2015,
+    ecmaVersion: 'latest',
     ecmaFeatures: {
       impliedStrict: true
-    }
+    },
+    sourceType: 'module'
   },
   rules: {
     'simple-import-sort/imports': 'warn',
@@ -152,7 +156,7 @@ module.exports = {
         cases: {
           pascalCase: true
         },
-        ignore: ['^.*\\.js$']
+        ignore: ['^.*\\.(js|cjs|mjs)$']
       }
     ],
     'vue/first-attribute-linebreak': 'error',
@@ -179,3 +183,5 @@ module.exports = {
     }
   ]
 };
+
+module.exports = config;

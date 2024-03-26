@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -123,7 +122,6 @@ const extendedTest = test.extend({
   theme: [theme, { option: true }],
   // eslint-disable-next-line no-shadow
   page: async ({ page, theme }, use, testInfo) => {
-    // eslint-disable-next-line playwright/no-conditional-in-test
     if (theme === 'snow') {
       //inject snow theme
       await page.addInitScript({

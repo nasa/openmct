@@ -61,7 +61,6 @@ describe('DeviceClassifier', function () {
           mockAgent[m].and.returnValue(true);
         });
 
-        // eslint-disable-next-line no-new
         DeviceClassifier(mockAgent, mockDocument);
       });
 
