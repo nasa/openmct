@@ -30,7 +30,7 @@
 
     <div
       class="c-fl__container-holder u-style-receiver js-style-receiver"
-      :class="[rowsLayout ? 'c-fl--rows' : 'c-fl--cols']"
+      :class="flexLayoutCssClass"
       :aria-label="`Flexible Layout ${rowsLayout ? 'Rows' : 'Columns'}`"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
@@ -147,6 +147,9 @@ export default {
   computed: {
     allContainersAreEmpty() {
       return this.containers.every((container) => container.frames.length === 0);
+    },
+    flexLayoutCssClass() {
+      return this.rowsLayout ? 'c-fl--rows' : 'c-fl--cols';
     }
   },
   created() {

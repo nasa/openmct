@@ -309,9 +309,9 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
     const flexRows = page.getByLabel('Flexible Layout Row');
     expect(await flexRows.count()).toEqual(0);
-    await page.getByTitle('Columns layout').click();
+    await page.getByTitle('Switch to rows layout').click();
     expect(await flexRows.count()).toEqual(1);
-    await page.getByTitle('Rows layout').click();
+    await page.getByTitle('Switch to columns layout').click();
     expect(await flexRows.count()).toEqual(0);
   });
 });
