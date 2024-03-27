@@ -7,7 +7,6 @@
   $majorOffset: 35%;
   content: '';
   display: block;
-  position: absolute;
   @include grippy($c: $editFrameSelectedMovebarColorFg, $dir: $dir);
   @if $dir == 'x' {
     top: $minorOffset;
@@ -35,18 +34,15 @@
     flex: 1 1 100%; // Must be 100% to work
     overflow: auto;
 
-    // Columns by default
-    flex-direction: row;
-    > * + * {
-      margin-left: 1px;
+    // Controls layout of c-fl__container(s)
+    &[class*='--cols'] {
+      flex-direction: row;
+      column-gap: 1px;
     }
 
     &[class*='--rows'] {
       flex-direction: column;
-      > * + * {
-        margin-left: 0;
-        margin-top: 1px;
-      }
+      row-gap: 1px;
     }
   }
 
@@ -119,10 +115,18 @@
   &__frames-holder {
     display: flex;
     flex: 1 1 100%; // Must be 100% to work
-    flex-direction: column; // Default
+    flex-direction: row; // Default
     align-content: stretch;
     align-items: stretch;
     overflow: hidden; // This sucks, but doing in the short-term
+
+    &.--layout-cols {
+      flex-direction: column !important;
+    }
+
+    &.--layout-rows {
+      flex-direction: row !important;
+    }
   }
 
   .is-editing & {

@@ -61,13 +61,13 @@ function ToolbarProvider(openmct) {
         options: [
           {
             value: true,
-            icon: 'icon-columns',
-            title: 'Columns layout'
+            icon: 'icon-rows',
+            title: 'Switch to rows layout'
           },
           {
             value: false,
-            icon: 'icon-rows',
-            title: 'Rows layout'
+            icon: 'icon-columns',
+            title: 'Switch to columns layout'
           }
         ]
       };
