@@ -106,7 +106,6 @@ export default function ColorPalette(cssClass, container, colors) {
   domElement.querySelector('.c-palette').classList.add('c-palette--color');
 
   domElement.querySelectorAll('.c-palette__item').forEach((item) => {
-    // eslint-disable-next-line no-invalid-this
     item.style.backgroundColor = item.dataset.item;
   });
 

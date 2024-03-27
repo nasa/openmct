@@ -27,12 +27,12 @@ Tests the branding associated with the default deployment. At least the about mo
 import percySnapshot from '@percy/playwright';
 
 import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
-import { VISUAL_URL } from '../../../constants.js';
+import { VISUAL_FIXED_URL } from '../../../constants.js';
 
 test.describe('Visual - Branding @a11y', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Visual - About Modal', async ({ page, theme }) => {

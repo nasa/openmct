@@ -24,7 +24,7 @@ import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
 import { expect, test } from '../../avpFixtures.js';
-import { VISUAL_URL } from '../../constants.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
 test.describe('Visual - Restricted Notebook @a11y', () => {
@@ -80,7 +80,7 @@ test.describe('Visual - Notebook Snapshot @a11y', () => {
 test.describe('Visual - Notebook @a11y', () => {
   let notebook;
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     notebook = await createDomainObjectWithDefaults(page, {
       type: 'Notebook',
       name: 'Test Notebook'
