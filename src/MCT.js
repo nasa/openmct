@@ -95,6 +95,7 @@ export class MCT extends EventEmitter {
 
     /**
      * Tracks current selection state of the application.
+     * 
      * @private
      */
     this.selection = new Selection(this);
@@ -102,6 +103,7 @@ export class MCT extends EventEmitter {
     /**
      * MCT's time conductor, which may be used to synchronize view contents
      * for telemetry- or time-based views.
+     * 
      * @type {module:openmct.TimeConductor}
      * @memberof module:openmct.MCT#
      * @name conductor
@@ -206,6 +208,7 @@ export class MCT extends EventEmitter {
     /**
      * MCT's user awareness management, to enable user and
      * role specific functionality.
+     * 
      * @type {module:openmct.UserAPI}
      * @memberof module:openmct.MCT#
      * @name user
@@ -228,6 +231,7 @@ export class MCT extends EventEmitter {
     /**
      * MCT's annotation API that enables
      * human-created comments and categorization linked to data products
+     * 
      * @type {module:openmct.AnnotationAPI}
      * @memberof module:openmct.MCT#
      * @name annotation
@@ -269,6 +273,7 @@ export class MCT extends EventEmitter {
   }
   /**
    * Set path to where assets are hosted.  This should be the path to main.js.
+   * 
    * @memberof module:openmct.MCT#
    * @method setAssetPath
    */
@@ -277,6 +282,7 @@ export class MCT extends EventEmitter {
   }
   /**
    * Get path to where assets are hosted.
+   * 
    * @memberof module:openmct.MCT#
    * @method getAssetPath
    */
@@ -295,6 +301,7 @@ export class MCT extends EventEmitter {
   /**
    * Start running Open MCT. This should be called only after any plugins
    * have been installed.
+   * 
    * @fires module:openmct.MCT~start
    * @memberof module:openmct.MCT#
    * @method start
@@ -330,6 +337,7 @@ export class MCT extends EventEmitter {
     /**
      * Fired by [MCT]{@link module:openmct.MCT} when the application
      * is started.
+     * 
      * @event start
      * @memberof module:openmct.MCT~
      */
