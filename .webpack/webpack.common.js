@@ -15,6 +15,9 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
+
+const REV_PARSE_ERROR =
+  '[WARN]: Failed to retrieve Git commit metadata. This might indicate that the script is not running within a Git repository. Error details:';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
@@ -24,7 +27,9 @@ try {
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
   gitBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 } catch (err) {
-  console.warn(err);
+  console.warn(`${REV_PARSE_ERROR}
+  "${err}"
+  Continuing...`);
 }
 
 const projectRootDir = fileURLToPath(new URL('../', import.meta.url));
