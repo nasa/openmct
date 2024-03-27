@@ -360,4 +360,9 @@
       }
     }
   } // Ends .body.desktop
+  body.mobile & {
+    .l-pane__expand-button {
+      display: none;
+    }
+  }
 } // Ends .l-pane
