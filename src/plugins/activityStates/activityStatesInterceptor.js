@@ -23,7 +23,7 @@
 import { ACTIVITY_STATES_KEY } from './createActivityStatesIdentifier.js';
 
 /**
- * @typedef {object} ActivityStatesInterceptorOptions
+ * @typedef {Object} ActivityStatesInterceptorOptions
  * @property {import('../../api/objects/ObjectAPI').Identifier} identifier the {namespace, key} to use for the activity states object.
  * @property {string} name The name of the activity states model.
  * @property {number} priority the priority of the interceptor. By default, it is low.
@@ -34,7 +34,7 @@ import { ACTIVITY_STATES_KEY } from './createActivityStatesIdentifier.js';
  * This will only get invoked when an attempt is made to save the state for an activity and no activity states object exists in the store.
  * @param {import('../../../openmct').OpenMCT} openmct
  * @param {ActivityStatesInterceptorOptions} options
- * @returns {object}
+ * @returns {Object}
  */
 const ACTIVITY_STATES_TYPE = 'activity-states';
 

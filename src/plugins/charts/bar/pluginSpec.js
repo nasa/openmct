@@ -125,7 +125,7 @@ describe('the plugin', function () {
 
   describe('The bar graph view', () => {
     let barGraphObject;
-    // eslint-disable-next-line no-unused-vars
+
     let mockComposition;
 
     beforeEach(async () => {
@@ -222,7 +222,7 @@ describe('the plugin', function () {
 
   describe('The spectral plot view for telemetry objects with array values', () => {
     let barGraphObject;
-    // eslint-disable-next-line no-unused-vars
+
     let mockComposition;
 
     beforeEach(async () => {

@@ -23,7 +23,7 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../../appActions.js';
-import { VISUAL_URL } from '../../../constants.js';
+import { VISUAL_FIXED_URL } from '../../../constants.js';
 import { test } from '../../../pluginFixtures.js';
 
 //Declare the scope of the visual test
@@ -32,7 +32,7 @@ const treePane = "[role=tree][aria-label='Main Tree']";
 test.describe('Visual - Tree Pane', () => {
   test('Tree pane in various states', async ({ page, theme, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     //Open Tree
     await page.getByRole('button', { name: 'Browse' }).click();

@@ -48,7 +48,7 @@ test.describe('Time conductor operations', () => {
     await setTimeConductorBounds(page, startDate);
 
     // Bring up the time conductor popup
-    const timeConductorMode = await page.locator('.c-compact-tc');
+    const timeConductorMode = page.locator('.c-compact-tc');
     await timeConductorMode.click();
     const startDateLocator = page.locator('input[type="text"]').first();
     const endDateLocator = page.locator('input[type="text"]').nth(2);
