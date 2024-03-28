@@ -1,8 +1,8 @@
 /*
 This is the OpenMCT common webpack file. It is imported by the other three webpack configurations:
- - webpack.prod.js - the production configuration for OpenMCT (default)
- - webpack.dev.js - the development configuration for OpenMCT
- - webpack.coverage.js - imports webpack.dev.js and adds code coverage
+ - webpack.prod.mjs - the production configuration for OpenMCT (default)
+ - webpack.dev.mjs - the development configuration for OpenMCT
+ - webpack.coverage.mjs - imports webpack.dev.js and adds code coverage
 There are separate npm scripts to use these configurations, though simply running `npm install`
 will use the default production configuration.
 */
