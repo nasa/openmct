@@ -14,14 +14,14 @@
     &--vertical,
     > .l-pane {
         flex-flow: column nowrap;
-
-        body.mobile & {
-            padding-bottom: $interiorMarginLg;
-        }
     }
 
     &--vertical {
         height: 100%;
+
+        body.mobile & {
+            gap: $interiorMargin;
+        }
 
         > .l-pane .l-pane__contents {
             padding-right: $interiorMarginSm; // Fend off scrollbar
