@@ -24,13 +24,13 @@
 const loadWebpackConfig = async () => {
   if (process.env.KARMA_DEBUG) {
     return {
-      config: (await import('./.webpack/webpack.dev.js')).default,
+      config: (await import('./.webpack/webpack.dev.mjs')).default,
       browsers: ['ChromeDebugging'],
       singleRun: false
     };
   } else {
     return {
-      config: (await import('./.webpack/webpack.coverage.js')).default,
+      config: (await import('./.webpack/webpack.coverage.mjs')).default,
       browsers: ['ChromeHeadless'],
       singleRun: true
     };

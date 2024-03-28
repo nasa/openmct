@@ -33,7 +33,7 @@ test.describe('Visual - Inspector @ally @clock', () => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test.use({
-    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    storageState: 'test-data/overlay_plot_with_delay_storage.json',
     clockOptions: {
       now: MISSION_TIME,
       shouldAdvanceTime: true

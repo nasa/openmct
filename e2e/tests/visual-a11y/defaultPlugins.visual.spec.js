@@ -23,7 +23,7 @@
 /*
 Collection of Visual Tests set to run in a default context with default Plugins. The tests within this suite
 are only meant to run against openmct's app.js started by `npm run start` within the
-`./e2e/playwright-visual.config.js` file.
+`playwright-visual.config.js` file.
 */
 
 import percySnapshot from '@percy/playwright';
