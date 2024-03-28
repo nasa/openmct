@@ -107,8 +107,8 @@
     flex-flow: column nowrap;
     flex: 1 1 auto;
 
-    body.mobile &{
-      width: 50%;
+    body.mobile & {
+      width: 0;
     }
   }
 
