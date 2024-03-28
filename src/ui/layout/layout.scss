@@ -114,7 +114,8 @@
 
       @include phonePortrait() {
         .l-shell__main-container {
-          bottom: $shellTimeConductorMobileH + $interiorMargin;
+          // bottom: $shellTimeConductorMobileH + $interiorMargin;
+          bottom: 10px;
         }
       }
 
