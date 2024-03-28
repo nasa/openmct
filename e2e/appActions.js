@@ -392,6 +392,8 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
     await page.waitForURL(/tc\.mode=local/);
   }
+  //dismiss the time conductor popup
+  await page.getByLabel('Discard changes and close time popup').click();
 }
 
 /**
@@ -662,5 +664,6 @@ export {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
+  setTimeConductorMode,
   waitForPlotsToRender
 };

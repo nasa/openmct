@@ -43,7 +43,7 @@ class ImageExporter {
    * Converts an HTML element into a PNG or JPG Blob.
    * @private
    * @param {node} element that will be converted to an image
-   * @param {object} options Image options.
+   * @param {Object} options Image options.
    * @returns {promise}
    */
   renderElement(element, { imageType, className, thumbnailSize }) {

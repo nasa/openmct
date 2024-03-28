@@ -30,97 +30,93 @@ const DEFAULT_VIEW_PRIORITY = 100;
  * @interface ViewRegistry
  * @memberof module:openmct
  */
-export default function ViewRegistry() {
-  EventEmitter.apply(this);
-  this.providers = {};
-}
-
-ViewRegistry.prototype = Object.create(EventEmitter.prototype);
-
-/**
- * @private for platform-internal use
- * @param {*} item the object to be viewed
- * @param {array} objectPath - The current contextual object path of the view object
- *                             eg current domainObject is located under MyItems which is under Root
- * @returns {module:openmct.ViewProvider[]} any providers
- *          which can provide views of this object
- */
-ViewRegistry.prototype.get = function (item, objectPath) {
-  if (objectPath === undefined) {
-    throw 'objectPath must be provided to get applicable views for an object';
+export default class ViewRegistry extends EventEmitter {
+  constructor() {
+    super();
+    EventEmitter.apply(this);
+    this.providers = {};
   }
+  /**
+   * @private for platform-internal use
+   * @param {*} item the object to be viewed
+   * @param {array} objectPath - The current contextual object path of the view object
+   *                             eg current domainObject is located under MyItems which is under Root
+   * @returns {module:openmct.ViewProvider[]} any providers
+   *          which can provide views of this object
+   */
+  get(item, objectPath) {
+    if (objectPath === undefined) {
+      throw 'objectPath must be provided to get applicable views for an object';
+    }
 
-  function byPriority(providerA, providerB) {
-    let priorityA = providerA.priority ? providerA.priority(item) : DEFAULT_VIEW_PRIORITY;
-    let priorityB = providerB.priority ? providerB.priority(item) : DEFAULT_VIEW_PRIORITY;
+    function byPriority(providerA, providerB) {
+      let priorityA = providerA.priority ? providerA.priority(item) : DEFAULT_VIEW_PRIORITY;
+      let priorityB = providerB.priority ? providerB.priority(item) : DEFAULT_VIEW_PRIORITY;
 
-    return priorityB - priorityA;
+      return priorityB - priorityA;
+    }
+
+    return this.getAllProviders()
+      .filter(function (provider) {
+        return provider.canView(item, objectPath);
+      })
+      .sort(byPriority);
   }
-
-  return this.getAllProviders()
-    .filter(function (provider) {
-      return provider.canView(item, objectPath);
-    })
-    .sort(byPriority);
-};
-
-/**
- * @private
- */
-ViewRegistry.prototype.getAllProviders = function () {
-  return Object.values(this.providers);
-};
-
-/**
- * Register a new type of view.
- *
- * @param {module:openmct.ViewProvider} provider the provider for this view
- * @method addProvider
- * @memberof module:openmct.ViewRegistry#
- */
-ViewRegistry.prototype.addProvider = function (provider) {
-  const key = provider.key;
-  if (key === undefined) {
-    throw "View providers must have a unique 'key' property defined";
+  /**
+   * @private
+   */
+  getAllProviders() {
+    return Object.values(this.providers);
   }
+  /**
+   * Register a new type of view.
+   *
+   * @param {module:openmct.ViewProvider} provider the provider for this view
+   * @method addProvider
+   * @memberof module:openmct.ViewRegistry#
+   */
+  addProvider(provider) {
+    const key = provider.key;
+    if (key === undefined) {
+      throw "View providers must have a unique 'key' property defined";
+    }
 
-  if (this.providers[key] !== undefined) {
-    console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
-  }
+    if (this.providers[key] !== undefined) {
+      console.warn(`Provider already defined for key '${key}'. Provider keys must be unique.`);
+    }
 
-  const wrappedView = provider.view.bind(provider);
-  provider.view = (domainObject, objectPath) => {
-    const viewObject = wrappedView(domainObject, objectPath);
-    const wrappedShow = viewObject.show.bind(viewObject);
-    viewObject.key = key; // provide access to provider key on view object
-    viewObject.show = (element, isEditing, viewOptions) => {
-      viewObject.parentElement = element.parentElement;
-      wrappedShow(element, isEditing, viewOptions);
+    const wrappedView = provider.view.bind(provider);
+    provider.view = (domainObject, objectPath) => {
+      const viewObject = wrappedView(domainObject, objectPath);
+      const wrappedShow = viewObject.show.bind(viewObject);
+      viewObject.key = key; // provide access to provider key on view object
+      viewObject.show = (element, isEditing, viewOptions) => {
+        viewObject.parentElement = element.parentElement;
+        wrappedShow(element, isEditing, viewOptions);
+      };
+
+      return viewObject;
     };
 
-    return viewObject;
-  };
-
-  this.providers[key] = provider;
-};
-
-/**
- * @private
- */
-ViewRegistry.prototype.getByProviderKey = function (key) {
-  return this.providers[key];
-};
-
-/**
- * Used internally to support seamless usage of new views with old
- * views.
- * @private
- */
-ViewRegistry.prototype.getByVPID = function (vpid) {
-  return this.providers.filter(function (p) {
-    return p.vpid === vpid;
-  })[0];
-};
+    this.providers[key] = provider;
+  }
+  /**
+   * @private
+   */
+  getByProviderKey(key) {
+    return this.providers[key];
+  }
+  /**
+   * Used internally to support seamless usage of new views with old
+   * views.
+   * @private
+   */
+  getByVPID(vpid) {
+    return this.providers.filter(function (p) {
+      return p.vpid === vpid;
+    })[0];
+  }
+}
 
 /**
  * A View is used to provide displayable content, and to react to
@@ -248,7 +244,7 @@ ViewRegistry.prototype.getByVPID = function (vpid) {
  * Provide a view of this object.
  *
  * When called by Open MCT, the following arguments will be passed to it:
- * @param {object} domainObject - the domainObject that the view is provided for
+ * @param {Object} domainObject - the domainObject that the view is provided for
  * @param {array} objectPath - The current contextual object path of the view object
  *                             eg current domainObject is located under MyItems which is under Root
  *

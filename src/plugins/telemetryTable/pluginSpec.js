@@ -195,7 +195,10 @@ describe('the plugin', () => {
             utc: false,
             'some-key': false,
             'some-other-key': false
-          }
+          },
+          persistModeChange: true,
+          rowLimit: 50,
+          telemetryMode: 'performance'
         }
       };
       const testTelemetry = [

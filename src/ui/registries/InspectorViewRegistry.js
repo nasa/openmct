@@ -36,7 +36,7 @@ export default class InspectorViewRegistry {
 
   /**
    *
-   * @param {object} selection the object to be viewed
+   * @param {Object} selection the object to be viewed
    * @returns {module:openmct.InspectorViewRegistry[]} any providers
    *          which can provide views of this object
    * @private for platform-internal use

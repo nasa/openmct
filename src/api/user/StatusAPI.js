@@ -21,10 +21,23 @@
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
 
+/**
+ * The StatusAPI is used to get and set various statuses linked to the current logged in user.
+ * This includes the ability to set the status of the current user as a response to a poll question,
+ * set the poll question itself, and the ability to set the status of mission actions.
+ *
+ * @augments EventEmitter
+ */
 export default class StatusAPI extends EventEmitter {
+  /** @type {UserAPI} */
   #userAPI;
+  /** @type {OpenMCT} */
   #openmct;
 
+  /**
+   * @param {UserAPI} userAPI
+   * @param {OpenMCT} openmct
+   */
   constructor(userAPI, openmct) {
     super();
     this.#userAPI = userAPI;
@@ -64,7 +77,7 @@ export default class StatusAPI extends EventEmitter {
 
   /**
    * Set a poll question for operators to respond to. When presented with a status poll question, all operators will reply with their current status.
-   * @param {String} questionText - The text of the question
+   * @param {string} questionText - The text of the question
    * @returns {Promise<Boolean>} true if operation was successful, otherwise false.
    */
   async setPollQuestion(questionText) {
@@ -316,7 +329,7 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
-   * Private internal function that cannot be made #private because it needs to be registered as a callback to the user provider
+   * Listen to status events from the UserProvider
    * @private
    */
   listenToStatusEvents(provider) {
@@ -328,6 +341,7 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
+   * Emit a status change event
    * @private
    */
   onProviderStatusChange(newStatus) {
@@ -335,6 +349,7 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
+   * Emit a poll question change event
    * @private
    */
   onProviderPollQuestionChange(pollQuestion) {
@@ -342,12 +357,21 @@ export default class StatusAPI extends EventEmitter {
   }
 
   /**
+   * Emit a mission action status change event
    * @private
    */
   onMissionActionStatusChange({ action, status }) {
     this.emit('missionActionStatusChange', { action, status });
   }
 }
+
+/**
+ * @typedef {import('./UserAPI').default} UserAPI
+ */
+
+/**
+ * @typedef {import('../../../openmct').OpenMCT} OpenMCT
+ */
 
 /**
  * @typedef {import('./UserProvider')} UserProvider
@@ -360,27 +384,29 @@ export default class StatusAPI extends EventEmitter {
 /**
  * The PollQuestion type
  * @typedef {Object} PollQuestion
- * @property {String} question - The question to be presented to users
- * @property {Number} timestamp - The time that the poll question was set.
- */
-
-/**
- * The MissionStatus type
- * @typedef {Object} MissionStatusOption
- * @extends {Status}
- * @property {String} color A color to be used when displaying the mission status
+ * @property {string} question - The question to be presented to users
+ * @property {number} timestamp - The time that the poll question was set.
  */
 
 /**
  * @typedef {Object} MissionAction
- * @property {String} key A unique identifier for this action
- * @property {String} label A human readable label for this action
+ * @property {string} key A unique identifier for this action
+ * @property {string} label A human readable label for this action
+ */
+
+/**
+ * The MissionStatusOption type, extends Status.
+ * @typedef {Object} MissionStatusOption
+ * @property {string} key - A unique identifier for this status.
+ * @property {string} label - A human-readable label for this status.
+ * @property {number} timestamp - The time that the status was set.
+ * @property {string} color - A color to be used when displaying the mission status.
  */
 
 /**
  * The Status type
  * @typedef {Object} Status
- * @property {String} key - A unique identifier for this status
- * @property {String} label - A human readable label for this status
- * @property {Number} timestamp - The time that the status was set.
+ * @property {string} key - A unique identifier for this status
+ * @property {string} label - A human readable label for this status
+ * @property {number} timestamp - The time that the status was set.
  */

@@ -89,7 +89,7 @@ class ApplicationRouter extends EventEmitter {
    * @property {URL} url current url location
    * @property {string} path current url location pathname
    * @property {string} getQueryString a function which returns url search query
-   * @property {object} params object representing url searchParams
+   * @property {Object} params object representing url searchParams
    */
 
   /**
@@ -113,7 +113,7 @@ class ApplicationRouter extends EventEmitter {
   /**
    * Get current location URL Object searchParams
    *
-   * @returns {object} object representing current url searchParams
+   * @returns {Object} object representing current url searchParams
    */
   getParams() {
     return this.currentLocation.params;
@@ -143,7 +143,7 @@ class ApplicationRouter extends EventEmitter {
    *
    * @param {Array<Object>} objectPath Object path of a given Domain Object
    *
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   isNavigatedObject(objectPath) {
     let targetObject = objectPath[0];
@@ -329,8 +329,8 @@ class ApplicationRouter extends EventEmitter {
    * @private
    * Compare new and old params and on change emit event 'change:params'
    *
-   * @param {object} newParams new params of url
-   * @param {object} oldParams old params of url
+   * @param {Object} newParams new params of url
+   * @param {Object} oldParams old params of url
    * @returns {boolean} true if params changed, false otherwise
    */
   doParamsChange(newParams, oldParams) {

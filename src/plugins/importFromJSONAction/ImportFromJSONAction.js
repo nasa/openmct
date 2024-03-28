@@ -39,7 +39,7 @@ export default class ImportAsJSONAction {
   // Public
   /**
    *
-   * @param {object} objectPath
+   * @param {Object} objectPath
    * @returns {boolean}
    */
   appliesTo(objectPath) {
@@ -58,15 +58,15 @@ export default class ImportAsJSONAction {
   }
   /**
    *
-   * @param {object} objectPath
+   * @param {Object} objectPath
    */
   invoke(objectPath) {
     this._showForm(objectPath[0]);
   }
   /**
    *
-   * @param {object} object
-   * @param {object} changes
+   * @param {Object} object
+   * @param {Object} changes
    */
 
   onSave(object, changes) {
@@ -79,9 +79,9 @@ export default class ImportAsJSONAction {
 
   /**
    * @private
-   * @param {object} parent
-   * @param {object} tree
-   * @param {object} seen
+   * @param {Object} parent
+   * @param {Object} tree
+   * @param {Object} seen
    * @param {Array} objectsToCreate tracks objects from import json that will need to be created
    */
   _deepInstantiate(parent, tree, seen, objectsToCreate) {
@@ -112,7 +112,7 @@ export default class ImportAsJSONAction {
 
   /**
    * @private
-   * @param {object} parent
+   * @param {Object} parent
    * @returns [identifiers]
    */
   _getObjectReferenceIds(parent) {
@@ -146,20 +146,19 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} tree
+   * @param {Object} tree
    * @param {string} namespace
-   * @returns {object}
+   * @returns {Object}
    */
-  _generateNewIdentifiers(tree, namespace) {
+  _generateNewIdentifiers(tree, newNamespace) {
     // For each domain object in the file, generate new ID, replace in tree
     Object.keys(tree.openmct).forEach((domainObjectId) => {
-      const newId = {
-        namespace,
-        key: uuid()
-      };
-
       const oldId = parseKeyString(domainObjectId);
 
+      const newId = {
+        namespace: newNamespace,
+        key: uuid()
+      };
       tree = this._rewriteId(oldId, newId, tree);
     }, this);
 
@@ -167,8 +166,8 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} domainObject
-   * @param {object} objTree
+   * @param {Object} domainObject
+   * @param {Object} objTree
    */
   async _importObjectTree(domainObject, objTree) {
     const objectsToCreate = [];
@@ -212,42 +211,52 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} model
-   * @returns {object}
+   * @param {Object} model
+   * @returns {Object}
    */
   _instantiate(model) {
     return this.openmct.objects.save(model);
   }
   /**
    * @private
-   * @param {object} oldId
-   * @param {object} newId
-   * @param {object} tree
-   * @returns {object}
+   * @param {Object} oldId
+   * @param {Object} newId
+   * @param {Object} tree
+   * @returns {Object}
    */
   _rewriteId(oldId, newId, tree) {
     let newIdKeyString = this.openmct.objects.makeKeyString(newId);
     let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
-    tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
-
-    return JSON.parse(tree, (key, value) => {
+    const newTreeString = JSON.stringify(tree).replace(
+      new RegExp(oldIdKeyString, 'g'),
+      newIdKeyString
+    );
+    const newTree = JSON.parse(newTreeString, (key, value) => {
       if (
         value !== undefined &&
         value !== null &&
         Object.prototype.hasOwnProperty.call(value, 'key') &&
-        Object.prototype.hasOwnProperty.call(value, 'namespace') &&
-        value.key === oldId.key &&
-        value.namespace === oldId.namespace
+        Object.prototype.hasOwnProperty.call(value, 'namespace')
       ) {
-        return newId;
-      } else {
-        return value;
+        // first check if key is messed up from regex and contains a colon
+        // if it does, repair it
+        if (value.key.includes(':')) {
+          const splitKey = value.key.split(':');
+          value.key = splitKey[1];
+          value.namespace = splitKey[0];
+        }
+        // now check if we need to replace the id
+        if (value.key === oldId.key && value.namespace === oldId.namespace) {
+          return newId;
+        }
       }
+      return value;
     });
+    return newTree;
   }
   /**
    * @private
-   * @param {object} domainObject
+   * @param {Object} domainObject
    */
   _showForm(domainObject) {
     const formStructure = {
@@ -276,7 +285,7 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} data
+   * @param {Object} data
    * @returns {boolean}
    */
   _validateJSON(data) {

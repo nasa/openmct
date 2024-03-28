@@ -13,10 +13,12 @@
     "strict": true,
     "esModuleInterop": true,
     "noImplicitOverride": true,
+    "noImplicitAny": false,
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "dist",
     "skipLibCheck": true,
+    "target": "ES2015",
     "paths": {
       // matches the alias in webpack config, so that types for those imports are visible.
       "@/*": ["src/*"]

@@ -30,11 +30,11 @@ import PlanViewProvider from './PlanViewProvider.js';
 
 const ACTIVITY_STATES_DEFAULT_NAME = 'Activity States';
 /**
- * @typedef {object} PlanOptions
+ * @typedef {Object} PlanOptions
  * @property {boolean} creatable true/false to allow creation of a plan via the Create menu.
  * @property {string} name The name of the activity states model.
  * @property {string} namespace the namespace to use for the activity states object.
- * @property {Number} priority the priority of the interceptor. By default, it is low.
+ * @property {number} priority the priority of the interceptor. By default, it is low.
  */
 
 /**

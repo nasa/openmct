@@ -302,7 +302,7 @@ export default class YAxisModel extends Model {
    * For a given series collection, get the metadata of the current yKey for each series.
    * Then return first available value of the given property from the metadata.
    * @param {import('./SeriesCollection').default} series
-   * @param {String} property
+   * @param {string} property
    */
   getMetadataValueByProperty(series, property) {
     return series

@@ -19,18 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+/**
+ * A user provider is responsible for providing information about the currently
+ * logged in user. This includes information about the user's roles, and whether
+ * the user is currently logged in.
+ */
 export default class UserProvider {
   /**
    * @returns {Promise<User>} A promise that resolves with the currently logged in user
    */
   getCurrentUser() {}
   /**
-   * @returns {Boolean} true if a user is currently logged in, otherwise false
+   * @returns {boolean} true if a user is currently logged in, otherwise false
    */
   isLoggedIn() {}
   /**
-   * @param {String} role
-   * @returns {Promise<Boolean>} true if the current user has the given role
+   * @param {string} role
+   * @returns {Promise<boolean>} true if the current user has the given role
    */
   hasRole(role) {}
 }

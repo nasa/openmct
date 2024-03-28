@@ -22,8 +22,8 @@
 import Model from './Model.js';
 
 /**
- * @template {object} T
- * @template {object} O
+ * @template {Object} T
+ * @template {Object} O
  * @extends {Model<T, O>}
  */
 export default class Collection extends Model {

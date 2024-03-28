@@ -170,6 +170,10 @@ export default {
       //If this object is not persistable, then package it with it's parent
       const plotObject = this.getPlotObject();
 
+      if (plotObject === null) {
+        return;
+      }
+
       if (this.openmct.telemetry.isTelemetryObject(plotObject)) {
         this.subscribeToStaleness(plotObject);
       } else {
@@ -215,10 +219,6 @@ export default {
     },
     getPlotObject() {
       this.checkPlotConfiguration();
-      // If object is missing, warn
-      if (this.openmct.objects.isMissing(this.childObject)) {
-        console.warn('Missing domain object for stacked plot', this.childObject);
-      }
       return this.childObject;
     },
     checkPlotConfiguration() {

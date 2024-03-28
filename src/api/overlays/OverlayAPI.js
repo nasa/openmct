@@ -107,7 +107,7 @@ class OverlayAPI {
    * displaying messages that require the user's
    * immediate attention.
    * @param {model} options defines options for the dialog
-   * @returns {object} with an object with a dismiss function that can be called from the calling code
+   * @returns {Object} with an object with a dismiss function that can be called from the calling code
    * to dismiss/destroy the dialog
    *
    * A description of the model options that may be passed to the
@@ -134,7 +134,7 @@ class OverlayAPI {
    * Displays a blocking (modal) progress dialog. This dialog can be used for
    * displaying messages that require the user's attention, and show progress
    * @param {model} options defines options for the dialog
-   * @returns {object} with an object with a dismiss function that can be called from the calling code
+   * @returns {Object} with an object with a dismiss function that can be called from the calling code
    * to dismiss/destroy the dialog and an updateProgress function that takes progressPercentage(Number 0-100)
    * and progressText (string)
    *

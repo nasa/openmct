@@ -422,7 +422,7 @@ export default class PlotSeries extends Model {
    *
    * @private
    * @param {Object} newData a telemetry datum.
-   * @param {Boolean} [sorted] default false, if true will append
+   * @param {boolean} [sorted] default false, if true will append
    *                  a point to the end without dupe checking.
    */
   add(newData, sorted = false) {

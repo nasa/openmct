@@ -51,6 +51,6 @@ export default class OpenInNewTab {
    */
   invoke(objectPath, _view, customUrlParams) {
     const url = objectPathToUrl(this._openmct, objectPath, customUrlParams);
-    window.open(url);
+    window.open(url, undefined, 'noopener');
   }
 }
