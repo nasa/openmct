@@ -464,7 +464,7 @@ ConditionEvaluator.prototype.getInputTypeById = function (dataType) {
 
 /**
  * Set the test data cache used by this rule evaluator
- * @param {object} testCache A mock cache following the format of the real
+ * @param {Object} testCache A mock cache following the format of the real
  *                           subscription cache
  */
 ConditionEvaluator.prototype.setTestDataCache = function (testCache) {

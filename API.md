@@ -1305,6 +1305,16 @@ View provider Example:
 }
 ```
 
+## User API
+
+Open MCT provides a User API which can be used to define providers for user information. The API
+can be used to manage user information and roles.
+
+### Example
+
+Open MCT provides an example [user](example/exampleUser/exampleUserCreator.js) and [user provider](example/exampleUser/ExampleUserProvider.js) which 
+can be used as a starting point for creating a custom user provider.
+
 ## Visibility-Based Rendering in View Providers
 
 To enhance performance and resource efficiency in OpenMCT, a visibility-based rendering feature has been added. This feature is designed to defer the execution of rendering logic for views that are not currently visible. It ensures that views are only updated when they are in the viewport, similar to how modern browsers handle rendering of inactive tabs but optimized for the OpenMCT tabbed display. It also works when views are scrolled outside the viewport (e.g., in a Display Layout).

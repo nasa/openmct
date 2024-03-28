@@ -38,8 +38,8 @@
             :key="action.name"
             role="menuitem"
             :aria-disabled="action.isDisabled"
+            aria-describedby="item-description"
             :class="action.cssClass"
-            :title="action.description"
             @click="action.onItemClicked"
             @mouseover="toggleItemDescription(action)"
             @mouseleave="toggleItemDescription()"
@@ -64,7 +64,7 @@
         role="menuitem"
         :class="action.cssClass"
         :aria-label="action.name"
-        :title="action.description"
+        aria-describedby="item-description"
         @click="action.onItemClicked"
         @mouseover="toggleItemDescription(action)"
         @mouseleave="toggleItemDescription()"
@@ -74,13 +74,13 @@
       <li v-if="options.actions.length === 0">No actions defined.</li>
     </ul>
 
-    <div class="c-super-menu__item-description">
-      <div :class="['l-item-description__icon', 'bg-' + hoveredItem.cssClass]"></div>
+    <div aria-live="polite" class="c-super-menu__item-description">
+      <div :class="itemDescriptionIconClass"></div>
       <div class="l-item-description__name">
-        {{ hoveredItem.name }}
+        {{ hoveredItemName }}
       </div>
-      <div class="l-item-description__description">
-        {{ hoveredItem.description }}
+      <div id="item-description" class="l-item-description__description">
+        {{ hoveredItemDescription }}
       </div>
     </div>
   </div>
@@ -90,26 +90,39 @@ import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
   inject: ['options'],
-  data: function () {
+  data() {
     return {
-      hoveredItem: {}
+      hoveredItem: null
     };
   },
   computed: {
     optionsLabel() {
       const label = this.options.label ? `${this.options.label} Super Menu` : 'Super Menu';
       return label;
+    },
+    itemDescriptionIconClass() {
+      const iconClass = ['l-item-description__icon'];
+      if (this.hoveredItem) {
+        iconClass.push('bg-' + this.hoveredItem.cssClass);
+      }
+      return iconClass;
+    },
+    hoveredItemName() {
+      return this.hoveredItem?.name ?? '';
+    },
+    hoveredItemDescription() {
+      return this.hoveredItem?.description ?? '';
     }
   },
   methods: {
-    toggleItemDescription(action = {}) {
+    toggleItemDescription(action = null) {
       const hoveredItem = {
-        name: action.name,
-        description: action.description,
-        cssClass: action.cssClass
+        name: action?.name,
+        description: action?.description,
+        cssClass: action?.cssClass
       };
 
-      this.hoveredItem = Object.assign({}, this.hoveredItem, hoveredItem);
+      this.hoveredItem = hoveredItem;
     }
   }
 };

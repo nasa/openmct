@@ -8,7 +8,7 @@ import ObjectSelect from './input/ObjectSelect.js';
 
 /**
  * An object representing a single mock telemetry value
- * @param {object} itemConfig the configuration for this item, consisting of
+ * @param {Object} itemConfig the configuration for this item, consisting of
  *                            object, key, and value fields
  * @param {number} index the index of this TestDataItem object in the data
  *                 model of its parent {TestDataManager} o be injected into callbacks

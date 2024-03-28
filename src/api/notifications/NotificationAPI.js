@@ -34,7 +34,7 @@ import EventEmitter from 'eventemitter3';
 import moment from 'moment';
 
 /**
- * @typedef {object} NotificationProperties
+ * @typedef {Object} NotificationProperties
  * @property {function} dismiss Dismiss the notification
  * @property {NotificationModel} model The Notification model
  * @property {(progressPerc: number, progressText: string) => void} [progress] Update the progress of the notification
@@ -45,14 +45,14 @@ import moment from 'moment';
  */
 
 /**
- * @typedef {object} NotificationLink
+ * @typedef {Object} NotificationLink
  * @property {function} onClick The function to be called when the link is clicked
  * @property {string} cssClass A CSS class name to style the link
  * @property {string} text The text to be displayed for the link
  */
 
 /**
- * @typedef {object} NotificationOptions
+ * @typedef {Object} NotificationOptions
  * @property {number} [autoDismissTimeout] Milliseconds to wait before automatically dismissing the notification
  * @property {boolean} [minimized] Allows for a notification to be minimized into the indicator by default
  * @property {NotificationLink} [link] A link for the notification
@@ -66,7 +66,7 @@ import moment from 'moment';
  * and then minimized to a banner notification if needed, or vice-versa.
  *
  * @see DialogModel
- * @typedef {object} NotificationModel
+ * @typedef {Object} NotificationModel
  * @property {string} message The message to be displayed by the notification
  * @property {number | 'unknown'} [progress] The progress of some ongoing task. Should be a number between 0 and 100, or
  * with the string literal 'unknown'.

@@ -17,7 +17,6 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 * [ ] Has this been smoke tested?
 * [ ] Have you associated this PR with a `type:` label? Note: this is not necessarily the same as the original issue.
 * [ ] Have you associated a milestone with this PR? Note: leave blank if unsure.
-* [ ] Is this a breaking change to be called out in the release notes?
 * [ ] Testing instructions included in associated issue OR is this a dependency/testcase change?
 
 ### Reviewer Checklist

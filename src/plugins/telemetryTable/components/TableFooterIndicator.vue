@@ -40,7 +40,7 @@
         :title="rowCountTitle"
         class="c-table-indicator__elem c-table-indicator__row-count"
       >
-        {{ rowCount }} Rows
+        {{ rowCount }}
       </span>
 
       <span
@@ -113,7 +113,7 @@ export default {
       }
     },
     rowCount() {
-      return this.isUnlimitedMode ? this.totalRows : 'LATEST 50';
+      return this.isUnlimitedMode ? `${this.totalRows} ROWS` : `LATEST ${this.totalRows} ROWS`;
     },
     rowCountTitle() {
       return this.isUnlimitedMode
@@ -121,12 +121,12 @@ export default {
         : 'performance mode limited to 50 rows';
     },
     telemetryModeButtonLabel() {
-      return this.isUnlimitedMode ? 'SHOW LATEST 50' : 'SHOW ALL';
+      return this.isUnlimitedMode ? 'SHOW LIMITED' : 'SHOW UNLIMITED';
     },
     telemetryModeButtonTitle() {
       return this.isUnlimitedMode
-        ? 'Change to Performance mode (latest 50 values)'
-        : 'Change to show all values';
+        ? 'Change to Limited (Performance) Mode'
+        : 'Change to Unlimited Mode';
     },
     title() {
       if (this.hasMixedFilters) {

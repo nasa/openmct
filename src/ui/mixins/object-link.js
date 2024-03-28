@@ -1,4 +1,4 @@
-import objectPathToUrl from '../../tools/url.js';
+import { objectPathToUrl } from '../../tools/url.js';
 
 export default {
   inject: ['openmct'],

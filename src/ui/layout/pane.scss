@@ -98,13 +98,14 @@
         }
     }
 
-    /************************ CONTENTS */
-    &__contents {
-        flex: 1 1 100%;
-        opacity: 1;
-        overflow: hidden;
-        pointer-events: inherit;
-        transition: opacity 250ms ease 250ms;
+  /************************ CONTENTS */
+  &__contents {
+    flex: 1 1 100%;
+    opacity: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    pointer-events: inherit;
+    transition: opacity 250ms ease 250ms;
 
         .l-pane__contents {
             // Don't pad all nested __contents
