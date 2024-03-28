@@ -97,7 +97,7 @@
           ></button>
         </template>
         <multipane type="vertical">
-          <pane>
+          <pane class="l-pane__browse-tree">
             <mct-tree
               ref="mctTree"
               :sync-tree-navigation="triggerSync"
@@ -107,6 +107,7 @@
           </pane>
           <pane
             handle="before"
+            class="l-pane__recently-viewed"
             label="Recently Viewed"
             :persist-position="true"
             collapse-type="horizontal"

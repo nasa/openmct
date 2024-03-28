@@ -26,30 +26,33 @@
     :class="isAlias"
     :aria-label="`${domainObject.name}`"
   >
-    <div
-      class="c-recentobjects-listitem__type-icon recent-object-icon"
-      :class="resultTypeIcon"
-    ></div>
-    <div class="c-recentobjects-listitem__body">
-      <span
-        ref="recentObjectName"
-        class="c-recentobjects-listitem__title"
-        :name="domainObject.name"
-        draggable="true"
-        @dragstart="dragStart"
-        @click.prevent="clickedRecent"
-        @mouseover.ctrl="showToolTip"
-        @mouseleave="hideToolTip"
-      >
-        {{ domainObject.name }}
-      </span>
-
-      <ObjectPath
-        class="c-recentobjects-listitem__object-path"
-        :read-only="false"
-        :domain-object="domainObject"
-        :object-path="objectPath"
-      />
+    <div class="c-recentobjects-listitem__outerwrapper">
+      <div class="c-recentobjects-listitem__wrapper">
+        <div
+          class="c-recentobjects-listitem__type-icon recent-object-icon"
+          :class="resultTypeIcon"
+        ></div>
+        <span
+          ref="recentObjectName"
+          class="c-recentobjects-listitem__title"
+          :name="domainObject.name"
+          draggable="true"
+          @dragstart="dragStart"
+          @click.prevent="clickedRecent"
+          @mouseover.ctrl="showToolTip"
+          @mouseleave="hideToolTip"
+        >
+          {{ domainObject.name }}
+        </span>
+      </div>
+      <div class="c-recentobjects-listitem__object-path">
+        <ObjectPath
+          class="c-recentobjects-listitem__object-path"
+          :read-only="false"
+          :domain-object="domainObject"
+          :object-path="objectPath"
+        />
+      </div>
     </div>
     <div class="c-recentobjects-listitem__target-button">
       <button
