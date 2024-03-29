@@ -313,7 +313,7 @@ export default class ImportAsJSONAction {
       this.openmct.objects.mutate(rootObj, 'location', domainObjectKeyString);
       compositionCollection.add(rootObj);
     } else {
-      this.importDialog.dismiss();
+      importDialog.dismiss();
       const cannotImportDialog = this.openmct.overlays.dialog({
         iconClass: 'alert',
         message: "We're sorry, but you cannot import that object type into this object.",

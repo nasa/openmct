@@ -192,6 +192,12 @@ describe('The import JSON action', function () {
       type: 'folder'
     };
     spyOn(openmct.objects, 'save').and.callFake((model) => Promise.resolve(model));
+    spyOn(openmct.overlays, 'progressDialog').and.callFake(() => {
+      return {
+        updateProgress: () => {},
+        dismiss: () => {}
+      };
+    });
     try {
       await importFromJSONAction.onSave(targetDomainObject, {
         selectFile: { body: JSON.stringify(incomingObject) }
