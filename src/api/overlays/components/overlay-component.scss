@@ -71,7 +71,7 @@
     outline: none;
     overflow: auto;
     body.mobile & {
-      flex: none;
+      display: flex;
     }
   }
 

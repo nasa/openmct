@@ -91,6 +91,10 @@
       border-top: 1px solid $colorInteriorBorder;
       margin-top: 1em;
     }
+    body.mobile & {
+      padding-left: $interiorMarginLg;
+      padding-right: $interiorMarginLg;
+    }
   }
 
   &--licenses {
