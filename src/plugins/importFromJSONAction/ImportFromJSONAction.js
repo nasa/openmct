@@ -147,21 +147,29 @@ export default class ImportAsJSONAction {
   /**
    * @private
    * @param {Object} tree
-   * @param {string} namespace
-   * @returns {Object}
+   * @param {Object} importDialog
+   * @returns {Promise}
    */
-  _generateNewIdentifiers(tree, newNamespace) {
-    // For each domain object in the file, generate new ID, replace in tree
-    Object.keys(tree.openmct).forEach((domainObjectId) => {
-      const oldId = parseKeyString(domainObjectId);
+  async _generateNewIdentifiers(tree, newNamespace, importDialog) {
+    const keys = Object.keys(tree.openmct);
+    const numberOfObjects = keys.length;
+    for (let i = 0; i < numberOfObjects; i++) {
+      const domainObjectId = keys[i];
+      const percentRewritten = Math.ceil(80 * ((i + 1) / numberOfObjects));
+      const message = `Rewriting ${i + 1} of ${numberOfObjects} object IDs`;
 
+      // Artificially introduce asynchrony
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      importDialog.updateProgress(percentRewritten, message);
+
+      const oldId = parseKeyString(domainObjectId);
       const newId = {
         namespace: newNamespace,
         key: uuid()
       };
       tree = this._rewriteId(oldId, newId, tree);
-    }, this);
-
+    }
     return tree;
   }
   /**
@@ -170,9 +178,16 @@ export default class ImportAsJSONAction {
    * @param {Object} objTree
    */
   async _importObjectTree(domainObject, objTree) {
+    // make rewriting objects IDs 80% of the progress bar
+    const importDialog = this.openmct.overlays.progressDialog({
+      progressPerc: 0,
+      message: `Importing ${Object.keys(objTree.openmct).length} objects`,
+      iconClass: 'info',
+      title: 'Importing'
+    });
     const objectsToCreate = [];
     const namespace = domainObject.identifier.namespace;
-    const tree = this._generateNewIdentifiers(objTree, namespace);
+    const tree = await this._generateNewIdentifiers(objTree, namespace, importDialog);
     const rootId = tree.rootId;
 
     const rootObj = tree.openmct[rootId];
@@ -182,11 +197,24 @@ export default class ImportAsJSONAction {
       this._deepInstantiate(rootObj, tree.openmct, [], objectsToCreate);
 
       try {
-        await Promise.all(objectsToCreate.map(this._instantiate, this));
+        let persistedObjects = 0;
+        // make saving objects objects 70% of the progress bar
+        await Promise.all(
+          objectsToCreate.map(async (objectToCreate) => {
+            persistedObjects++;
+            const percentPersisted = Math.ceil(20 * (persistedObjects / objectsToCreate.length));
+            const message = `Saving imported ${persistedObjects} of ${objectsToCreate.length} objects.`;
+
+            importDialog.updateProgress(percentPersisted, message);
+            await this._instantiate(objectToCreate);
+          })
+        );
       } catch (error) {
         this.openmct.notifications.error('Error saving objects');
 
         throw error;
+      } finally {
+        importDialog.dismiss();
       }
 
       const compositionCollection = this.openmct.composition.get(domainObject);
@@ -194,7 +222,8 @@ export default class ImportAsJSONAction {
       this.openmct.objects.mutate(rootObj, 'location', domainObjectKeyString);
       compositionCollection.add(rootObj);
     } else {
-      const dialog = this.openmct.overlays.dialog({
+      this.importDialog.dismiss();
+      const cannotImportDialog = this.openmct.overlays.dialog({
         iconClass: 'alert',
         message: "We're sorry, but you cannot import that object type into this object.",
         buttons: [
@@ -202,7 +231,7 @@ export default class ImportAsJSONAction {
             label: 'Ok',
             emphasis: true,
             callback: function () {
-              dialog.dismiss();
+              cannotImportDialog.dismiss();
             }
           }
         ]
@@ -254,6 +283,7 @@ export default class ImportAsJSONAction {
     });
     return newTree;
   }
+
   /**
    * @private
    * @param {Object} domainObject
