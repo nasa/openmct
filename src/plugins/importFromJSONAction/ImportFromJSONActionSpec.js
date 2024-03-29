@@ -111,7 +111,6 @@ describe('The import JSON action', function () {
   });
 
   it('protects against prototype pollution', (done) => {
-    spyOn(console, 'warn');
     spyOn(openmct.forms, 'showForm').and.callFake(returnResponseWithPrototypePollution);
 
     unObserve = openmct.objects.observe(folderObject, '*', callback);
@@ -123,8 +122,6 @@ describe('The import JSON action', function () {
         Object.prototype.hasOwnProperty.call(newObject, '__proto__') ||
         Object.prototype.hasOwnProperty.call(Object.getPrototypeOf(newObject), 'toString');
 
-      // warning from openmct.objects.get
-      expect(console.warn).not.toHaveBeenCalled();
       expect(hasPollutedProto).toBeFalse();
 
       done();

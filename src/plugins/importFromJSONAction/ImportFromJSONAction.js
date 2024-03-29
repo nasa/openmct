@@ -208,8 +208,15 @@ export default class ImportAsJSONAction {
 
       if (possibleId) {
         const newIdParts = possibleId.split(':');
-        obj.namespace = newIdParts[0];
-        obj.key = newIdParts[1];
+        if (newIdParts.length >= 2) {
+          // new ID is namespaced, so update both the namespace and key
+          obj.namespace = newIdParts[0];
+          obj.key = newIdParts[1];
+        } else {
+          // old ID was not namespaced, so update the key only
+          obj.namespace = '';
+          obj.key = newIdParts[0];
+        }
       }
       return obj;
     }
