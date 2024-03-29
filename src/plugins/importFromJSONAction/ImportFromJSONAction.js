@@ -337,43 +337,6 @@ export default class ImportAsJSONAction {
   _instantiate(model) {
     return this.openmct.objects.save(model);
   }
-  /**
-   * @private
-   * @param {Object} oldId
-   * @param {Object} newId
-   * @param {Object} tree
-   * @returns {Object}
-   */
-  _rewriteId(oldId, newId, tree) {
-    let newIdKeyString = this.openmct.objects.makeKeyString(newId);
-    let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
-    const newTreeString = JSON.stringify(tree).replace(
-      new RegExp(oldIdKeyString, 'g'),
-      newIdKeyString
-    );
-    const newTree = JSON.parse(newTreeString, (key, value) => {
-      if (
-        value !== undefined &&
-        value !== null &&
-        Object.prototype.hasOwnProperty.call(value, 'key') &&
-        Object.prototype.hasOwnProperty.call(value, 'namespace')
-      ) {
-        // first check if key is messed up from regex and contains a colon
-        // if it does, repair it
-        if (value.key.includes(':')) {
-          const splitKey = value.key.split(':');
-          value.key = splitKey[1];
-          value.namespace = splitKey[0];
-        }
-        // now check if we need to replace the id
-        if (value.key === oldId.key && value.namespace === oldId.namespace) {
-          return newId;
-        }
-      }
-      return value;
-    });
-    return newTree;
-  }
 
   /**
    * @private
