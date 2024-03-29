@@ -53,7 +53,6 @@ export default {
     formattedItemValues() {
       let values = [];
       this.itemProperties.forEach((property) => {
-        // eslint-disable-next-line you-dont-need-lodash-underscore/get
         let value = _.get(this.item, property.key);
         if (property.format) {
           value = property.format(value, this.item, property.key, this.openmct);

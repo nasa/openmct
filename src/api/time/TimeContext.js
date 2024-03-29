@@ -122,7 +122,7 @@ class TimeContext extends EventEmitter {
    * Clock offsets are used to calculate temporal bounds when the system is
    * ticking on a clock source.
    *
-   * @typedef {object} ValidationResult
+   * @typedef {Object} ValidationResult
    * @property {boolean} valid Result of the validation - true or false.
    * @property {string} message An error message if valid is false.
    */
@@ -241,7 +241,7 @@ class TimeContext extends EventEmitter {
    * Clock offsets are used to calculate temporal bounds when the system is
    * ticking on a clock source.
    *
-   * @typedef {object} ClockOffsets
+   * @typedef {Object} ClockOffsets
    * @property {number} start A time span relative to the current value of the
    * ticking clock, from which start bounds will be calculated. This value must
    * be < 0. When a clock is active, bounds will be calculated automatically

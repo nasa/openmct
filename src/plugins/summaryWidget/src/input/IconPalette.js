@@ -51,7 +51,6 @@ export default function IconPalette(cssClass, container, icons) {
   domElement.querySelector('.c-palette').classList.add('c-palette--icon');
 
   domElement.querySelectorAll('.c-palette-item').forEach((item) => {
-    // eslint-disable-next-line no-invalid-this
     item.classList.add(item.dataset.item);
   });
 

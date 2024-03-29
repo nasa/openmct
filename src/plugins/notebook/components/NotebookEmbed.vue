@@ -23,6 +23,7 @@
   <div
     ref="notebookEmbed"
     class="c-snapshot c-ne__embed"
+    :aria-label="`${embed.name} Notebook Embed`"
     @mouseover.ctrl="showToolTip"
     @mouseleave="hideToolTip"
   >

@@ -20,6 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * The example User class.
+ */
 export default class User {
   constructor(id, name) {
     this.id = id;

@@ -27,15 +27,15 @@ clockOptions plugin fixture.
 
 import percySnapshot from '@percy/playwright';
 
-import { MISSION_TIME, VISUAL_URL } from '../../constants.js';
+import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - Controlled Clock @clock', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test.use({
-    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
+    storageState: 'test-data/overlay_plot_with_delay_storage.json',
     clockOptions: {
       now: MISSION_TIME,
       shouldAdvanceTime: false //Don't advance the clock
@@ -43,7 +43,7 @@ test.describe('Visual - Controlled Clock @clock', () => {
   });
 
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     await page
       .getByRole('gridcell', { hasText: 'Overlay Plot with 5s Delay Overlay Plot' })
       .click();

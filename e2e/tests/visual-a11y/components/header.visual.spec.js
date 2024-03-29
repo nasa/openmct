@@ -28,7 +28,7 @@ import percySnapshot from '@percy/playwright';
 import { fileURLToPath } from 'url';
 
 import { expect, test } from '../../../avpFixtures.js';
-import { VISUAL_URL } from '../../../constants.js';
+import { VISUAL_FIXED_URL } from '../../../constants.js';
 
 //Declare the component scope of the visual test for Percy
 const header = '.l-shell__head';
@@ -36,7 +36,7 @@ const header = '.l-shell__head';
 test.describe('Visual - Header @a11y', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL and Hide Tree
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     // Wait for status bar to load
     await expect(
       page.getByRole('status', {

@@ -10,6 +10,7 @@ const config = {
   timeout: 30 * 1000,
   webServer: {
     command: 'npm run start:coverage',
+    cwd: '../', // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 120 * 1000,
     reuseExistingServer: true

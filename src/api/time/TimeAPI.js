@@ -62,7 +62,7 @@ class TimeAPI extends GlobalTimeContext {
    * another time system might be "sols" for a Martian mission. TimeSystems do
    * not address the issue of converting between time systems.
    *
-   * @typedef {object} TimeSystem
+   * @typedef {Object} TimeSystem
    * @property {string} key A unique identifier
    * @property {string} name A human-readable descriptor
    * @property {string} [cssClass] Specify a css class defining an icon for
@@ -95,7 +95,7 @@ class TimeAPI extends GlobalTimeContext {
    * Clocks provide a timing source that is used to
    * automatically update the time bounds of the data displayed in Open MCT.
    *
-   * @typedef {object} Clock
+   * @typedef {Object} Clock
    * @memberof openmct.timeAPI
    * @property {string} key A unique identifier
    * @property {string} name A human-readable name. The name will be used to

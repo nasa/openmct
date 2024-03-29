@@ -169,6 +169,8 @@ describe('Notebook plugin:', () => {
 
       openmct.editor = {};
       openmct.editor.isEditing = () => false;
+      openmct.editor.on = () => {};
+      openmct.editor.off = () => {};
 
       const applicableViews = openmct.objectViews.get(notebookViewObject, [notebookViewObject]);
       notebookViewProvider = applicableViews.find(

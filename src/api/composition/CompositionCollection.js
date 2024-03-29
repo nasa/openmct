@@ -33,7 +33,7 @@
  */
 
 /**
- * @typedef {object} ListenerMap
+ * @typedef {Object} ListenerMap
  * @property {Array.<any>} add
  * @property {Array.<any>} remove
  * @property {Array.<any>} load
@@ -271,7 +271,7 @@ export default class CompositionCollection {
   /**
    * Handle reorder from provider.
    * @private
-   * @param {object} reorderMap
+   * @param {Object} reorderMap
    */
   #onProviderReorder(reorderMap) {
     this.#emit('reorder', reorderMap);

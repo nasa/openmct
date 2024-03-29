@@ -30,23 +30,22 @@ if (document.currentScript) {
 }
 
 /**
- * @typedef {object} BuildInfo
+ * @typedef {Object} BuildInfo
  * @property {string} version
  * @property {string} buildDate
  * @property {string} revision
  * @property {string} branch
  */
-
 /**
- * @typedef {object} OpenMCT
+ * @typedef {Object} OpenMCT
  * @property {BuildInfo} buildInfo
- * @property {*} selection
+ * @property {import('./src/selection/Selection').default} selection
  * @property {import('./src/api/time/TimeAPI').default} time
  * @property {import('./src/api/composition/CompositionAPI').default} composition
- * @property {*} objectViews
- * @property {*} inspectorViews
- * @property {*} propertyEditors
- * @property {*} toolbars
+ * @property {import('./src/ui/registries/ViewRegistry').default} objectViews
+ * @property {import('./src/ui/registries/InspectorViewRegistry').default} inspectorViews
+ * @property {import('./src/ui/registries/ViewRegistry').default} propertyEditors
+ * @property {import('./src/ui/registries/ToolbarRegistry').default} toolbars
  * @property {import('./src/api/types/TypeRegistry').default} types
  * @property {import('./src/api/objects/ObjectAPI').default} objects
  * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
@@ -59,7 +58,7 @@ if (document.currentScript) {
  * @property {import('./src/api/menu/MenuAPI').default} menus
  * @property {import('./src/api/actions/ActionsAPI').default} actions
  * @property {import('./src/api/status/StatusAPI').default} status
- * @property {*} priority
+ * @property {import('./src/api/priority/PriorityAPI').default} priority
  * @property {import('./src/ui/router/ApplicationRouter')} router
  * @property {import('./src/api/faultmanagement/FaultManagementAPI').default} faults
  * @property {import('./src/api/forms/FormsAPI').default} forms
@@ -74,7 +73,6 @@ if (document.currentScript) {
  * @property {OpenMCTPlugin[]} plugins
  * @property {OpenMCTComponent[]} components
  */
-
 import { MCT } from './src/MCT.js';
 
 /** @type {OpenMCT} */

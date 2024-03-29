@@ -68,7 +68,6 @@ async function commitEntry(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function startAndAddRestrictedNotebookObject(page) {
-  // eslint-disable-next-line no-undef
   await page.addInitScript({
     path: fileURLToPath(new URL('./addInitRestrictedNotebook.js', import.meta.url))
   });
