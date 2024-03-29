@@ -144,32 +144,123 @@ export default class ImportAsJSONAction {
 
     return Array.from(new Set([...objectIdentifiers, ...itemObjectReferences]));
   }
+
   /**
-   * @private
-   * @param {Object} tree
-   * @param {Object} importDialog
-   * @returns {Promise}
+   * Generates a map of old IDs to new IDs for efficient lookup during tree walking.
+   * This function considers cases where original namespaces are blank and updates those IDs as well.
+   *
+   * @param {Object} tree - The object tree containing the old IDs.
+   * @param {String} newNamespace - The namespace for the new IDs.
+   * @returns {Object} A map of old IDs to new IDs.
    */
-  async _generateNewIdentifiers(tree, newNamespace, importDialog) {
+  _generateIdMap(tree, newNamespace) {
+    const idMap = {};
     const keys = Object.keys(tree.openmct);
-    const numberOfObjects = keys.length;
-    for (let i = 0; i < numberOfObjects; i++) {
-      const domainObjectId = keys[i];
-      const percentRewritten = Math.ceil(80 * ((i + 1) / numberOfObjects));
-      const message = `Rewriting ${i + 1} of ${numberOfObjects} object IDs`;
 
-      // Artificially introduce asynchrony
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      importDialog.updateProgress(percentRewritten, message);
-
-      const oldId = parseKeyString(domainObjectId);
+    for (const oldIdKey of keys) {
+      const oldId = parseKeyString(oldIdKey);
       const newId = {
         namespace: newNamespace,
         key: uuid()
       };
-      tree = this._rewriteId(oldId, newId, tree);
+      const newIdKeyString = this.openmct.objects.makeKeyString(newId);
+
+      // Update the map with the old and new ID key strings.
+      idMap[oldIdKey] = newIdKeyString;
+
+      // If the old namespace is blank, also map the non-namespaced ID.
+      if (!oldId.namespace) {
+        const nonNamespacedOldIdKey = oldId.key;
+        idMap[nonNamespacedOldIdKey] = newIdKeyString;
+      }
     }
+
+    return idMap;
+  }
+
+  /**
+   * Walks through the object tree and updates IDs according to the provided ID map.
+   * @param {Object} obj - The current object being visited in the tree.
+   * @param {Object} idMap - A map of old IDs to new IDs for rewriting.
+   * @param {Object} importDialog - Optional progress dialog for import.
+   * @returns {Promise<Object>} The object with updated IDs.
+   */
+  async _walkAndRewriteIds(obj, idMap, importDialog) {
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+
+    if (typeof obj === 'string') {
+      const possibleId = idMap[obj];
+      if (possibleId) {
+        return possibleId;
+      } else {
+        return obj;
+      }
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(obj, 'key') &&
+      Object.prototype.hasOwnProperty.call(obj, 'namespace')
+    ) {
+      const oldId = this.openmct.objects.makeKeyString(obj);
+      const possibleId = idMap[oldId];
+
+      if (possibleId) {
+        const newIdParts = possibleId.split(':');
+        obj.namespace = newIdParts[0];
+        obj.key = newIdParts[1];
+      }
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      for (let i = 0; i < obj.length; i++) {
+        obj[i] = await this._walkAndRewriteIds(obj[i], idMap); // Process each item in the array
+      }
+      return obj;
+    }
+
+    if (typeof obj === 'object') {
+      const newObj = {};
+
+      const keys = Object.keys(obj);
+      let processedCount = 0;
+      for (const key of keys) {
+        const value = obj[key];
+        const possibleId = idMap[key];
+        const newKey = possibleId || key;
+
+        newObj[newKey] = await this._walkAndRewriteIds(value, idMap);
+
+        // Optionally update the importDialog here, after each property has been processed
+        if (importDialog) {
+          processedCount++;
+          if (processedCount % 300 === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const percentPersisted = Math.ceil(80 * (processedCount / keys.length));
+            const message = `Rewriting ${processedCount} of ${keys.length} imported objects.`;
+            importDialog.updateProgress(percentPersisted, message);
+          }
+        }
+      }
+
+      return newObj;
+    }
+
+    // Return the input as-is for types that are not objects, strings, or arrays
+    return obj;
+  }
+
+  /**
+   * @private
+   * @param {Object} tree
+   * @returns {Promise}
+   */
+  async _generateNewIdentifiers(tree, newNamespace, importDialog) {
+    const idMap = this._generateIdMap(tree, newNamespace);
+    tree.rootId = idMap[tree.rootId];
+    tree.openmct = await this._walkAndRewriteIds(tree.openmct, idMap, importDialog);
     return tree;
   }
   /**
@@ -198,13 +289,13 @@ export default class ImportAsJSONAction {
 
       try {
         let persistedObjects = 0;
-        // make saving objects objects 70% of the progress bar
+        // make saving objects objects 20% of the progress bar
         await Promise.all(
           objectsToCreate.map(async (objectToCreate) => {
             persistedObjects++;
-            const percentPersisted = Math.ceil(20 * (persistedObjects / objectsToCreate.length));
-            const message = `Saving imported ${persistedObjects} of ${objectsToCreate.length} objects.`;
-
+            const percentPersisted =
+              Math.ceil(20 * (persistedObjects / objectsToCreate.length)) + 80;
+            const message = `Saving ${persistedObjects} of ${objectsToCreate.length} imported objects.`;
             importDialog.updateProgress(percentPersisted, message);
             await this._instantiate(objectToCreate);
           })
