@@ -28,11 +28,13 @@
 // $bodyFont: $heroFont;
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap'); // Header font, Roboto Condensed. This is an alternative to the DIN Alt font, which is not available on Google Fonts. 
-@import url('https://fonts.googleapis.com/css2?family=Blinker&display=swap'); // Body Font, Blinker
+// @import url('https://fonts.googleapis.com/css2?family=Blinker&display=swap'); // Body Font, Blinker
+@import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap'); // Body Font, Exo
+//@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap'); //Body Font, Public Sans
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch&family=Roboto+Condensed&display=swap');// Temporary numeric font, Chakra Petch (need to import local font instead).
 $heroFont: 'Teko', sans-serif;
 $headerFont: 'Cabin Condensed', sans-serif;
-$bodyFont: 'Blinker', sans-serif;
+$bodyFont: 'Exo', sans-serif;
 $numericFont: 'Chakra Petch', sans-serif;
 
 @mixin heroFont($size: 1em) {
@@ -78,7 +80,7 @@ $shdwBtns: rgba(black, 0.2) 0 1px 2px;
 $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 
 // Base colors
-$colorBodyBg: rgba(57, 57, 57, 1);
+$colorBodyBg: #2E2E32;
 $colorBodyFg: #aaaaaa;
 $colorBodyFgSubtle: #9c9c9c;
 $colorBodyFgEm: #fff;
@@ -399,7 +401,7 @@ $colorLimitYellowIc: #fdc707;
 $colorLimitOrangeBg: #b36b00;
 $colorLimitOrangeFg: #ffe0b2;
 $colorLimitOrangeIc: #ff9900;
-$colorLimitRedBg: #940000;
+$colorLimitRedBg: #B60109;
 $colorLimitRedFg: #ffa489;
 $colorLimitRedIc: #ff4222;
 $colorLimitPurpleBg: #891bb3;
@@ -472,6 +474,7 @@ $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
+$gaugeMeterValueShadow: rgba(255, 255, 255, .5);
 
 // Time Strip and Lists
 $colorPastBg: #444;
