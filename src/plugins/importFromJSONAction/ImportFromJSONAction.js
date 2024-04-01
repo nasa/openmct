@@ -150,7 +150,7 @@ export default class ImportAsJSONAction {
    * This function considers cases where original namespaces are blank and updates those IDs as well.
    *
    * @param {Object} tree - The object tree containing the old IDs.
-   * @param {String} newNamespace - The namespace for the new IDs.
+   * @param {string} newNamespace - The namespace for the new IDs.
    * @returns {Object} A map of old IDs to new IDs.
    */
   _generateIdMap(tree, newNamespace) {
@@ -186,6 +186,10 @@ export default class ImportAsJSONAction {
    * @returns {Promise<Object>} The object with updated IDs.
    */
   async _walkAndRewriteIds(obj, idMap, importDialog) {
+    // How many rewrites to do before yielding to the event loop
+    const UI_UPDATE_INTERVAL = 300;
+    // The percentage of the progress dialog to allocate to rewriting IDs
+    const PERCENT_OF_DIALOG = 80;
     if (obj === null || obj === undefined) {
       return obj;
     }
@@ -199,10 +203,7 @@ export default class ImportAsJSONAction {
       }
     }
 
-    if (
-      Object.prototype.hasOwnProperty.call(obj, 'key') &&
-      Object.prototype.hasOwnProperty.call(obj, 'namespace')
-    ) {
+    if (Object.hasOwn(obj, 'key') && Object.hasOwn(obj, 'namespace')) {
       const oldId = this.openmct.objects.makeKeyString(obj);
       const possibleId = idMap[oldId];
 
@@ -243,9 +244,10 @@ export default class ImportAsJSONAction {
         // Optionally update the importDialog here, after each property has been processed
         if (importDialog) {
           processedCount++;
-          if (processedCount % 300 === 0) {
+          if (processedCount % UI_UPDATE_INTERVAL === 0) {
+            // yield to the event loop to allow the UI to update
             await new Promise((resolve) => setTimeout(resolve, 0));
-            const percentPersisted = Math.ceil(80 * (processedCount / keys.length));
+            const percentPersisted = Math.ceil(PERCENT_OF_DIALOG * (processedCount / keys.length));
             const message = `Rewriting ${processedCount} of ${keys.length} imported objects.`;
             importDialog.updateProgress(percentPersisted, message);
           }
@@ -262,7 +264,7 @@ export default class ImportAsJSONAction {
   /**
    * @private
    * @param {Object} tree
-   * @returns {Promise}
+   * @returns {Promise<Object>}
    */
   async _generateNewIdentifiers(tree, newNamespace, importDialog) {
     const idMap = this._generateIdMap(tree, newNamespace);
