@@ -92,4 +92,13 @@ test.describe('Smoke tests for @mobile', () => {
     await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
     expect(await page.getByLabel('Child Layout 2 Layout').count()).toBe(0);
   });
+  test.fixme(
+    'Ensure that the names of folders are very long are truncated and that the folder action buttons are visible',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/7320'
+      });
+    }
+  );
 });
