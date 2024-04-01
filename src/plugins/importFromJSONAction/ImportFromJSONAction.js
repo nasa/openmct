@@ -39,7 +39,7 @@ export default class ImportAsJSONAction {
   // Public
   /**
    *
-   * @param {object} objectPath
+   * @param {Object} objectPath
    * @returns {boolean}
    */
   appliesTo(objectPath) {
@@ -58,15 +58,15 @@ export default class ImportAsJSONAction {
   }
   /**
    *
-   * @param {object} objectPath
+   * @param {Object} objectPath
    */
   invoke(objectPath) {
     this._showForm(objectPath[0]);
   }
   /**
    *
-   * @param {object} object
-   * @param {object} changes
+   * @param {Object} object
+   * @param {Object} changes
    */
 
   onSave(object, changes) {
@@ -79,9 +79,9 @@ export default class ImportAsJSONAction {
 
   /**
    * @private
-   * @param {object} parent
-   * @param {object} tree
-   * @param {object} seen
+   * @param {Object} parent
+   * @param {Object} tree
+   * @param {Object} seen
    * @param {Array} objectsToCreate tracks objects from import json that will need to be created
    */
   _deepInstantiate(parent, tree, seen, objectsToCreate) {
@@ -112,7 +112,7 @@ export default class ImportAsJSONAction {
 
   /**
    * @private
-   * @param {object} parent
+   * @param {Object} parent
    * @returns [identifiers]
    */
   _getObjectReferenceIds(parent) {
@@ -146,9 +146,9 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} tree
+   * @param {Object} tree
    * @param {string} namespace
-   * @returns {object}
+   * @returns {Object}
    */
   _generateNewIdentifiers(tree, newNamespace) {
     // For each domain object in the file, generate new ID, replace in tree
@@ -166,8 +166,8 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} domainObject
-   * @param {object} objTree
+   * @param {Object} domainObject
+   * @param {Object} objTree
    */
   async _importObjectTree(domainObject, objTree) {
     const objectsToCreate = [];
@@ -211,18 +211,18 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} model
-   * @returns {object}
+   * @param {Object} model
+   * @returns {Object}
    */
   _instantiate(model) {
     return this.openmct.objects.save(model);
   }
   /**
    * @private
-   * @param {object} oldId
-   * @param {object} newId
-   * @param {object} tree
-   * @returns {object}
+   * @param {Object} oldId
+   * @param {Object} newId
+   * @param {Object} tree
+   * @returns {Object}
    */
   _rewriteId(oldId, newId, tree) {
     let newIdKeyString = this.openmct.objects.makeKeyString(newId);
@@ -256,7 +256,7 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} domainObject
+   * @param {Object} domainObject
    */
   _showForm(domainObject) {
     const formStructure = {
@@ -285,7 +285,7 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} data
+   * @param {Object} data
    * @returns {boolean}
    */
   _validateJSON(data) {

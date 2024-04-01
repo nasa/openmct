@@ -74,6 +74,7 @@ import Browse from './ui/router/Browse.js';
  * or registering extensions before the application is started.
  * @constructor
  * @memberof module:openmct
+ * @extends EventEmitter
  */
 export class MCT extends EventEmitter {
   constructor() {

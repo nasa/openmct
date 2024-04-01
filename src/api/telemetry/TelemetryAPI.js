@@ -38,19 +38,19 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  * Describes and bounds requests for telemetry data.
  *
  * @typedef TelemetryRequestOptions
- * @property {String} [sort] the key of the property to sort by. This may
+ * @property {string} [sort] the key of the property to sort by. This may
  *           be prefixed with a "+" or a "-" sign to sort in ascending
  *           or descending order respectively. If no prefix is present,
  *           ascending order will be used.
- * @property {Number} [start] the lower bound for values of the sorting property
- * @property {Number} [end] the upper bound for values of the sorting property
- * @property {String} [strategy] symbolic identifier for strategies
+ * @property {number} [start] the lower bound for values of the sorting property
+ * @property {number} [end] the upper bound for values of the sorting property
+ * @property {string} [strategy] symbolic identifier for strategies
  *           (such as `latest` or `minmax`) which may be recognized by providers;
  *           these will be tried in order until an appropriate provider
  *           is found
  * @property {AbortController} [signal] an AbortController which can be used
  *           to cancel a telemetry request
- * @property {String} [domain] the domain key of the request
+ * @property {string} [domain] the domain key of the request
  * @property {TimeContext} [timeContext] the time context to use for this request
  * @memberof module:openmct.TelemetryAPI~
  */
@@ -59,7 +59,7 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  * Describes and bounds requests for telemetry data.
  *
  * @typedef TelemetrySubscriptionOptions
- * @property {String} [strategy] symbolic identifier directing providers on how
+ * @property {string} [strategy] symbolic identifier directing providers on how
  * to handle telemetry subscriptions. The default behavior is 'latest' which will
  * always return a single telemetry value with each callback, and in the event
  * of throttling will always prioritize the latest data, meaning intermediate
@@ -936,7 +936,7 @@ export default class TelemetryAPI {
  */
 
 /**
- * @typedef {object} LimitsResponseObject
+ * @typedef {Object} LimitsResponseObject
  * @memberof {module:openmct.TelemetryAPI~}
  * @property {LimitDefinition} limitLevel the level name and it's limit definition
  * @example {
@@ -966,7 +966,7 @@ export default class TelemetryAPI {
  * @typedef LimitDefinitionValue
  * @memberof {module:openmct.TelemetryAPI~}
  * @property {string} color color to represent this limit
- * @property {Number} value the limit value
+ * @property {number} value the limit value
  */
 
 /**
@@ -1050,9 +1050,9 @@ export default class TelemetryAPI {
  */
 
 /**
- * @typedef {object} StalenessResponseObject
- * @property {Boolean} isStale boolean representing the staleness state
- * @property {Number} timestamp Unix timestamp in milliseconds
+ * @typedef {Object} StalenessResponseObject
+ * @property {boolean} isStale boolean representing the staleness state
+ * @property {number} timestamp Unix timestamp in milliseconds
  */
 
 /**

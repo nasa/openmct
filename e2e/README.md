@@ -76,28 +76,30 @@ To read about how to write a good visual test, please see [How to write a great 
 
 `npm run test:e2e:visual` commands will run all of the visual tests against a local instance of Open MCT. If no `PERCY_TOKEN` API key is found in the terminal or command line environment variables, no visual comparisons will be made.
 
- - `npm run test:e2e:visual:ci` will run against every commit and PR.
- - `npm run test:e2e:visual:full` will run every night with additional comparisons made for Larger Displays and with the `snow` theme.
+- `npm run test:e2e:visual:ci` will run against every commit and PR.
+- `npm run test:e2e:visual:full` will run every night with additional comparisons made for Larger Displays and with the `snow` theme.
+
 #### Percy.io
 
 To make this possible, we're leveraging a 3rd party service, [Percy](https://percy.io/). This service maintains a copy of all changes, users, scm-metadata, and baselines to verify that the application looks and feels the same _unless approved by a Open MCT developer_. To request a Percy API token, please reach out to the Open MCT Dev team on GitHub. For more information, please see the official [Percy documentation](https://docs.percy.io/docs/visual-testing-basics).
 
-At present, we are using percy with two configuration files: `./e2e/.percy.nightly.yml` and `./e2e/.percy.ci.yml`. This is mainly to reduce the number of snapshots. 
+At present, we are using percy with two configuration files: `./e2e/.percy.nightly.yml` and `./e2e/.percy.ci.yml`. This is mainly to reduce the number of snapshots.
 
 ### Advanced: Snapshot Testing (Not Recommended)
 
 While snapshot testing offers a precise way to detect changes in your application without relying on third-party services like Percy.io, we've found that it doesn't offer any advantages over visual testing in our use-cases. Therefore, snapshot testing is **not recommended** for further implementation.
 
 #### CI vs Manual Checks
+
 Snapshot tests can be reliably executed in Continuous Integration (CI) environments but lack the manual oversight provided by visual testing platforms like Percy.io. This means they may miss issues that a human reviewer could catch during manual checks.
 
 #### Example
+
 A single visual test assertion in Percy.io can be executed across 10 different browser and resolution combinations without additional setup, providing comprehensive testing with minimal configuration. In contrast, a snapshot test is restricted to a single OS and browser resolution, requiring more effort to achieve the same level of coverage.
 
-
 #### Further Reading
-For those interested in the mechanics of snapshot testing with Playwright, you can refer to the [Playwright Snapshots Documentation](https://playwright.dev/docs/test-snapshots). However, keep in mind that we do not recommend using this approach.
 
+For those interested in the mechanics of snapshot testing with Playwright, you can refer to the [Playwright Snapshots Documentation](https://playwright.dev/docs/test-snapshots). However, keep in mind that we do not recommend using this approach.
 
 #### Open MCT's implementation
 
@@ -117,14 +119,6 @@ npm run test:e2e:checksnapshots
 When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desireable or an unintended regression.
 
 To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
-
-MacOS
-
-```
-npm run test:e2e:updatesnapshots
-```
-
-Linux/CI
 
 ```sh
 // Replace {X.X.X} with the current Playwright version 
@@ -173,9 +167,9 @@ When an a11y test fails, the result must be interpreted in the html test report 
 
 The open source performance tests function in three ways which match their naming and folder structure:
 
-`./e2e/tests/performance` - The tests at the root of this folder path detect functional changes which are mostly apparent with large performance regressions like [this](https://github.com/nasa/openmct/issues/6879). These tests run against openmct webpack in `production-mode` with the `npm run test:perf:localhost` script.
-`./e2e/tests/performance/contract/` -  These tests serve as [contracts](https://martinfowler.com/bliki/ContractTest.html) for the locator logic, functionality, and assumptions will work in our downstream, closed source test suites. These tests run against openmct webpack in `dev-mode` with the `npm run test:perf:contract` script.
-`./e2e/tests/performance/memory/` -  These tests execute memory leak detection checks in various ways. This is expected to evolve as we move to the `memlab` project. These tests run against openmct webpack in `production-mode` with the `npm run test:perf:memory` script.
+`tests/performance` - The tests at the root of this folder path detect functional changes which are mostly apparent with large performance regressions like [this](https://github.com/nasa/openmct/issues/6879). These tests run against openmct webpack in `production-mode` with the `npm run test:perf:localhost` script.
+`tests/performance/contract/` -  These tests serve as [contracts](https://martinfowler.com/bliki/ContractTest.html) for the locator logic, functionality, and assumptions will work in our downstream, closed source test suites. These tests run against openmct webpack in `dev-mode` with the `npm run test:perf:contract` script.
+`tests/performance/memory/` -  These tests execute memory leak detection checks in various ways. This is expected to evolve as we move to the `memlab` project. These tests run against openmct webpack in `production-mode` with the `npm run test:perf:memory` script.
 
 These tests are expected to become blocking and gating with assertions as we extend the capabilities of Playwright.
 
@@ -335,9 +329,11 @@ We have a Mission-need to support iPad and mobile devices. To run our test suite
 In general, our test suite is not designed to run against mobile devices as the mobile experience is a focused version of the application. Core functionality is missing (chiefly the 'Create' button). To bypass the object creation, we leverage the `storageState` properties for starting the mobile tests with localstorage.
 
 For now, the mobile tests will exist in the /tests/mobile/ suites and be executed with the
+
 ```sh
 npm run test:e2e:mobile
 ```
+
 command.
 
 #### **Skipping or executing tests based on browser, os, and/os browser version:**
@@ -377,6 +373,7 @@ In general, strive to test only through the UI as a user would. As stated in the
 By adhering to this principle, we can create tests that are both robust and reflective of actual user experiences.
 
 #### How to make tests robust to function in other contexts (VISTA, COUCHDB, YAMCS, VIPER, etc.)
+
   1. Leverage the use of `appActions.js` methods such as `createDomainObjectWithDefaults()`. This ensures that your tests will create unique instances of objects for your test to interact with.
   1. Do not assert on the order or structure of objects available unless you created them yourself. These tests may be used against a persistent datastore like couchdb with many objects in the tree.
   1. Do not search for your created objects. Open MCT does not performance uniqueness checks so it's possible that your tests will break when run twice.
@@ -384,6 +381,7 @@ By adhering to this principle, we can create tests that are both robust and refl
   1. Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });` instead of `{ waitUntil: 'networkidle' }`. Tests run against deployments with websockets often have issues with the networkidle detection.
   
 #### How to make tests faster and more resilient
+
   1. Avoid app interaction when possible. The best way of doing this is to navigate directly by URL:
 
   ```js
@@ -396,10 +394,11 @@ By adhering to this principle, we can create tests that are both robust and refl
 
   1. Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });`
     - Initial navigation should _almost_ always use the `{ waitUntil: 'domcontentloaded' }` option.
-  1.  Avoid repeated setup to test a single assertion. Write longer tests with multiple soft assertions.
+  1. Avoid repeated setup to test a single assertion. Write longer tests with multiple soft assertions.
   This ensures that your changes will be picked up with large refactors.
 
 ##### Utilizing LocalStorage
+
   1. In order to save test runtime in the case of tests that require a decent amount of initial setup (such as in the case of testing complex displays), you may use [Playwright's `storageState` feature](https://playwright.dev/docs/api/class-browsercontext#browser-context-storage-state) to generate and load localStorage states.
   1. To generate a localStorage state to be used in a test:
     - Add an e2e test to our generateLocalStorageData suite which sets the initial state (creating/configuring objects, etc.), saving it in the `test-data` folder:
@@ -420,7 +419,6 @@ By adhering to this principle, we can create tests that are both robust and refl
       }); 
     ```
 
-
 ### How to write a great test
 
 - Avoid using css locators to find elements to the page. Use modern web accessible locators like `getByRole`
@@ -436,7 +434,7 @@ By adhering to this principle, we can create tests that are both robust and refl
   await notesInput.fill(testNotes);
   ```
 
- #### How to Write a Great Visual Test
+#### How to Write a Great Visual Test
 
 1. **Look for the Unknown Unknowns**: Avoid asserting on specific differences in the visual diff. Visual tests are most effective for identifying unknown unknowns.
 
@@ -445,23 +443,27 @@ By adhering to this principle, we can create tests that are both robust and refl
 3. **Expect the Unexpected**: Use functional expect statements only to verify assumptions about the state between steps. A great visual test doesn't fail during the test itself, but rather when changes are reviewed in Percy.io.
 
 4. **Control Variability**: Account for variations inherent in working with time-based telemetry and clocks.
-  - Utilize `percyCSS` to ignore time-based elements. For more details, consult our [percyCSS file](./.percy.ci.yml).
-  - Use Open MCT's fixed-time mode unless explicitly testing realtime clock
-  - Employ the `createExampleTelemetryObject` appAction to source telemetry and specify a `name` to avoid autogenerated names.
-  - Avoid creating objects with a time component like timers and clocks.
+
+- Utilize `percyCSS` to ignore time-based elements. For more details, consult our [percyCSS file](./.percy.ci.yml).
+- Use Open MCT's fixed-time mode unless explicitly testing realtime clock
+- Employ the `createExampleTelemetryObject` appAction to source telemetry and specify a `name` to avoid autogenerated names.
+- Avoid creating objects with a time component like timers and clocks.
 
 5. **Hide the Tree and Inspector**: Generally, your test will not require comparisons involving the tree and inspector. These aspects are covered in component-specific tests (explained below). To exclude them from the comparison by default, navigate to the root of the main view with the tree and inspector hidden:
     - `await page.goto('./#/browse/mine?hideTree=true&hideInspector=true')`
 
 6. **Component-Specific Tests**: If you wish to focus on a particular component, use the `/visual-a11y/component/` folder and limit the scope of the comparison to that component. For instance:
+
     ```js
     await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
         scope: treePane
     });
     ```
+
     - Note: The `scope` variable can be any valid CSS selector.
 
 7. **Write many `percySnapshot` commands in a single test**: In line with our approach to longer functional tests, we recommend that many test percySnapshots are taken in a single test. For instance:
+
     ```js
     //<Some interesting state>
     await percySnapshot(page, `Before object expanded (theme: ${theme})`);
@@ -511,6 +513,7 @@ test.describe('foo test suite', () => {
   });
 });
   ```
+
   More info and options for `overrideClock` can be found in [baseFixtures.js](baseFixtures.js)
 
 - Working with multiple pages
@@ -538,7 +541,6 @@ const key = getFirstKeyFromOpenMctJson(jsonData);
 // Verify the contents of the JSON file
 expect(jsonData.openmct[key]).toHaveProperty('name', 'e2e folder');
 ```
-
 
 ### Reporting
 
@@ -615,6 +617,7 @@ A single e2e test in Open MCT is extended to run:
 ### Writing Tests
 
 Playwright provides 3 supported methods of debugging and authoring tests:
+
 - A 'watch mode' for running tests locally and debugging on the fly
 - A 'debug mode' for debugging tests and writing assertions against tests
 - A 'VSCode plugin' for debugging tests within the VSCode IDE.

@@ -140,7 +140,7 @@ export default {
      * @param {import('../../api/objects/ObjectAPI').DomainObject[]} objectPath
      */
     navigateToPath(objectPath) {
-      /** @type {String} */
+      /** @type {string} */
       const path = `/browse/${this.openmct.objects.getRelativePath(objectPath)}`;
 
       return path.replace('ROOT/', '');

@@ -277,7 +277,6 @@ test.describe('Notebook entry tests', () => {
   // Create Notebook with URL Whitelist
   let notebookObject;
   test.beforeEach(async ({ page }) => {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({
       path: fileURLToPath(new URL('../../../../helper/addInitNotebookWithUrls.js', import.meta.url))
     });

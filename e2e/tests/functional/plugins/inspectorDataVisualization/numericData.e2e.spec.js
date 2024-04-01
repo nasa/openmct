@@ -27,7 +27,6 @@ import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Testing numeric data with inspector data visualization (i.e., data pivoting)', () => {
   test.beforeEach(async ({ page }) => {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({
       path: fileURLToPath(
         new URL('../../../../helper/addInitDataVisualization.js', import.meta.url)
