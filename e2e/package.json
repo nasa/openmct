@@ -1,0 +1,27 @@
+{
+  "name": "openmct-e2e",
+  "version": "4.0.0-next",
+  "description": "The Open MCT e2e framework",
+  "type": "module",
+  "module": "index.js",
+  "exports": {
+    ".": {
+      "import": "./index.js"
+    }
+  },
+  "scripts": {
+    "pretest:visual": "npm install",
+    "test": "npx playwright test",
+    "test:visual": "percy exec"
+  },
+  "devDependencies": {
+    "@types/sinonjs__fake-timers": "8.1.5",
+    "@percy/cli": "1.27.4",
+    "@percy/playwright": "1.0.4",
+    "@playwright/test": "1.42.1",
+    "@axe-core/playwright": "4.8.5",
+    "sinon": "17.0.0"
+  },
+  "author": "NASA Ames Research Center",
+  "license": "Apache-2.0"
+}
