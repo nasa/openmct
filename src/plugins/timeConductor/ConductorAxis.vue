@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="axisHolder" class="c-conductor-axis" @mousedown="dragStart($event)">
+  <div
+    ref="axisHolder"
+    aria-label="Time Conductor Axis"
+    class="c-conductor-axis"
+    @mousedown="dragStart($event)"
+  >
     <div class="c-conductor-axis__zoom-indicator" :style="zoomStyle"></div>
   </div>
 </template>
@@ -29,7 +34,9 @@
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
+import { onMounted, ref } from 'vue';
 
+import { useResizeObserver } from '../../../src/ui/composables/resize.js';
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
@@ -55,20 +62,69 @@ export default {
     }
   },
   emits: ['pan-axis', 'end-pan', 'zoom-axis', 'end-zoom'],
+  setup() {
+    const axisHolder = ref(null);
+    const { size: containerSize, startObserving } = useResizeObserver();
+
+    onMounted(() => {
+      startObserving(axisHolder.value);
+    });
+
+    return {
+      axisHolder,
+      containerSize
+    };
+  },
   data() {
     return {
       inPanMode: false,
       dragStartX: undefined,
       dragX: undefined,
-      zoomStyle: {}
+      zoomStyle: {},
+      rect: null
     };
   },
   computed: {
     inZoomMode() {
       return !this.inPanMode;
+    },
+    left() {
+      return this.rect.left;
+    },
+    panBounds() {
+      const bounds = this.openmct.time.getBounds();
+      const deltaTime = bounds.end - bounds.start;
+      const deltaX = this.dragX - this.dragStartX;
+      const percX = deltaX / this.width;
+      const panStart = bounds.start - percX * deltaTime;
+
+      return {
+        start: parseInt(panStart, 10),
+        end: parseInt(panStart + deltaTime, 10)
+      };
+    },
+    zoomRange() {
+      const leftBound = this.left;
+      const rightBound = this.left + this.width;
+      const zoomStart = this.dragX < leftBound ? leftBound : Math.min(this.dragX, this.dragStartX);
+      const zoomEnd = this.dragX > rightBound ? rightBound : Math.max(this.dragX, this.dragStartX);
+
+      return {
+        start: zoomStart,
+        end: zoomEnd
+      };
+    },
+    isChangingViewBounds() {
+      return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
     }
   },
   watch: {
+    containerSize: {
+      handler() {
+        this.resize();
+      },
+      deep: true
+    },
     viewBounds: {
       handler() {
         this.setScale();
@@ -77,7 +133,7 @@ export default {
     }
   },
   mounted() {
-    let vis = select(this.$refs.axisHolder).append('svg:svg');
+    const vis = select(this.axisHolder).append('svg:svg');
 
     this.xAxis = axisTop();
     this.dragging = false;
@@ -93,15 +149,14 @@ export default {
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setViewFromTimeSystem);
   },
   beforeUnmount() {
-    clearInterval(this.resizeTimer);
+    // Remove the listeners in case the component is unmounted while dragging
+    document.removeEventListener('mousemove', this.drag);
+    document.removeEventListener('mouseup', this.dragEnd);
   },
   methods: {
     setAxisDimensions() {
-      const axisHolder = this.$refs.axisHolder;
-      const rect = axisHolder.getBoundingClientRect();
-
-      this.left = Math.round(rect.left);
-      this.width = axisHolder.clientWidth;
+      this.rect = this.axisHolder.getBoundingClientRect();
+      this.width = this.axisHolder.clientWidth;
     },
     setScale() {
       if (!this.width) {
@@ -204,25 +259,13 @@ export default {
       this.dragX = undefined;
     },
     pan() {
-      const panBounds = this.getPanBounds();
+      const panBounds = this.panBounds;
       this.$emit('pan-axis', panBounds);
     },
     endPan() {
-      const panBounds = this.isChangingViewBounds() ? this.getPanBounds() : undefined;
+      const panBounds = this.isChangingViewBounds ? this.panBounds : undefined;
       this.$emit('end-pan', panBounds);
       this.inPanMode = false;
-    },
-    getPanBounds() {
-      const bounds = this.openmct.time.getBounds();
-      const deltaTime = bounds.end - bounds.start;
-      const deltaX = this.dragX - this.dragStartX;
-      const percX = deltaX / this.width;
-      const panStart = bounds.start - percX * deltaTime;
-
-      return {
-        start: parseInt(panStart, 10),
-        end: parseInt(panStart + deltaTime, 10)
-      };
     },
     startZoom() {
       const x = this.scaleToBounds(this.dragStartX);
@@ -237,7 +280,7 @@ export default {
       });
     },
     zoom() {
-      const zoomRange = this.getZoomRange();
+      const zoomRange = this.zoomRange;
 
       this.zoomStyle = {
         left: `${zoomRange.start - this.left}px`,
@@ -251,8 +294,8 @@ export default {
     },
     endZoom() {
       let zoomBounds;
-      if (this.isChangingViewBounds()) {
-        const zoomRange = this.getZoomRange();
+      if (this.isChangingViewBounds) {
+        const zoomRange = this.zoomRange;
         zoomBounds = {
           start: this.scaleToBounds(zoomRange.start),
           end: this.scaleToBounds(zoomRange.end)
@@ -262,19 +305,6 @@ export default {
       this.zoomStyle = {};
       this.$emit('end-zoom', zoomBounds);
     },
-    getZoomRange() {
-      const leftBound = this.left;
-      const rightBound = this.left + this.width;
-
-      const zoomStart = this.dragX < leftBound ? leftBound : Math.min(this.dragX, this.dragStartX);
-
-      const zoomEnd = this.dragX > rightBound ? rightBound : Math.max(this.dragX, this.dragStartX);
-
-      return {
-        start: zoomStart,
-        end: zoomEnd
-      };
-    },
     scaleToBounds(value) {
       const bounds = this.openmct.time.getBounds();
       const timeDelta = bounds.end - bounds.start;
@@ -283,11 +313,8 @@ export default {
 
       return parseInt(bounds.start + offset, 10);
     },
-    isChangingViewBounds() {
-      return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
-    },
     resize() {
-      if (this.$refs.axisHolder.clientWidth !== this.width) {
+      if (this.axisHolder.clientWidth !== this.width) {
         this.setAxisDimensions();
         this.setScale();
       }

@@ -83,29 +83,26 @@ export function clearBuiltinSpies() {
 }
 
 export function resetApplicationState(openmct) {
-  let promise;
-
   clearBuiltinSpies();
 
-  if (openmct !== undefined) {
+  if (openmct) {
     openmct.destroy();
   }
 
   if (window.location.hash !== '#' && window.location.hash !== '') {
-    promise = new Promise((resolve, reject) => {
-      window.addEventListener('hashchange', cleanup);
-      window.location.hash = '#';
-
-      function cleanup() {
-        window.removeEventListener('hashchange', cleanup);
+    window.location.hash = '#';
+    // Optionally wait for hashchange if necessary
+    return new Promise((resolve) => {
+      // eslint-disable-next-line func-style
+      const onHashChange = () => {
+        window.removeEventListener('hashchange', onHashChange);
         resolve();
-      }
+      };
+      window.addEventListener('hashchange', onHashChange);
     });
   } else {
-    promise = Promise.resolve();
+    return Promise.resolve();
   }
-
-  return promise;
 }
 
 // required: key

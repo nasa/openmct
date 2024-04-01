@@ -15,6 +15,7 @@ const config = {
   timeout: 60 * 1000,
   webServer: {
     command: 'npm run start:coverage',
+    cwd: '../', // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.

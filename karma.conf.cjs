@@ -20,26 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global module,process*/
+// eslint-disable-next-line func-style
+const loadWebpackConfig = async () => {
+  if (process.env.KARMA_DEBUG) {
+    return {
+      config: (await import('./.webpack/webpack.dev.mjs')).default,
+      browsers: ['ChromeDebugging'],
+      singleRun: false
+    };
+  } else {
+    return {
+      config: (await import('./.webpack/webpack.coverage.mjs')).default,
+      browsers: ['ChromeHeadless'],
+      singleRun: true
+    };
+  }
+};
 
 module.exports = async (config) => {
-  let webpackConfig;
-  let browsers;
-  let singleRun;
+  const { config: webpackConfig, browsers, singleRun } = await loadWebpackConfig();
 
-  if (process.env.KARMA_DEBUG) {
-    webpackConfig = (await import('./.webpack/webpack.dev.js')).default;
-    browsers = ['ChromeDebugging'];
-    singleRun = false;
-  } else {
-    webpackConfig = (await import('./.webpack/webpack.coverage.js')).default;
-    browsers = ['ChromeHeadless'];
-    singleRun = true;
-  }
-
+  // Adjust webpack config for Karma
   delete webpackConfig.output;
-  // karma doesn't support webpack entry
-  delete webpackConfig.entry;
+  delete webpackConfig.entry; // Karma doesn't support webpack entry
+
+  // Ensure source maps are enabled for better debugging
+  webpackConfig.devtool = 'inline-source-map';
 
   config.set({
     basePath: '',
@@ -106,7 +112,7 @@ module.exports = async (config) => {
     },
     webpack: webpackConfig,
     webpackMiddleware: {
-      stats: 'errors-warnings'
+      stats: 'detailed' // Changed to 'detailed' for more debugging info
     },
     concurrency: 1,
     singleRun,

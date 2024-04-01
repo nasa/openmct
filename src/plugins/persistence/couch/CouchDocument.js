@@ -30,7 +30,7 @@
  * @memberof platform/persistence/couch
  * @constructor
  * @param {string} id the id under which to store this mode
- * @param {object} model the model to store
+ * @param {Object} model the model to store
  * @param {string} rev the revision to include (or undefined,
  *        if no revision should be noted for couch)
  * @param {boolean} whether or not to mark this document as
