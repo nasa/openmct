@@ -3,10 +3,9 @@ This file extends the webpack.dev.mjs config to add babel istanbul coverage.
 OpenMCT Continuous Integration servers use this configuration to add code coverage
 information to pull requests.
 */
-
 import config from './webpack.dev.mjs';
 
-config.devtool = 'source-map';
+config.devtool = 'eval-source-map';
 config.devServer.hot = false;
 
 config.module.rules.push({
