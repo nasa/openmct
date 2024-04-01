@@ -86,7 +86,7 @@ $colorBodyFgSubtle: #9c9c9c;
 $colorBodyFgEm: #fff;
 $colorGenBg: #222;
 // $colorHeadBg: #262626;
-$colorHeadBg: rgba($colorBodyBg, 0);
+$colorHeadBg: rgba($colorBodyBg, .5);
 $colorHeadFg: $colorBodyFg;
 $colorKey: #1C67E3;
 $colorKeyFg: #fff;
@@ -463,7 +463,7 @@ $colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 
 // Gauges
 $colorGaugeBase: $colorKeyBg;
-$colorGaugeBg: rgba($colorGaugeBase, .15); // Gauge radial area background, meter background
+$colorGaugeBg: rgba($colorGaugeBase, .35); // Gauge radial area background, meter background
 $colorGaugeValue: $colorKeyBg; // Gauge value graphic (radial sweep, bar) color
 $colorGaugeValueShadow: rgba(255, 255, 255, .4);
 $colorGaugeTextValue: #fff; // Radial gauge text value

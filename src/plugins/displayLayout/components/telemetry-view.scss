@@ -47,8 +47,7 @@
     border: $borderMissing;
   }
 }
-.l-layout__frame:has(.c-telemetry-view) {
-  // Override or reset the border styles
-  // This is a conceptual example; ':has' is not widely supported as of my last update
-  background: none; // Example of overriding, adjust as needed
+.l-layout__frame:has(.c-telemetry-view) { 
+  background: none; 
+  border-style: none;
 }
