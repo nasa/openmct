@@ -55,7 +55,6 @@
 
   &__frame {
     position: absolute;
-    @include browseFrameBorder; // Gives us the DIY Highlighted Corners
   }
 }
 

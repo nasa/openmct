@@ -33,10 +33,11 @@
 
   &:not(.c-so-view--no-frame) {
     border: $browseFrameBorder;
-    // @include browseFrameBorder;
+    @include browseFrameBorder;
 
     .is-editing & {
       background: rgba($colorBodyBg, 0.8);
+      @include browseFrameBorder;
     }
   }
 
