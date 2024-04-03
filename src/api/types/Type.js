@@ -23,12 +23,11 @@
 /**
  * A Type describes a kind of domain object that may appear or be
  * created within Open MCT.
- *
- * @param {module:openmct.TypeRegistry~TypeDefinition} definition
- * @class Type
- * @memberof module:openmct
  */
 export default class Type {
+  /**
+   * @param {TypeDefinition} definition
+   */
   constructor(definition) {
     this.definition = definition;
     if (definition.key) {
@@ -36,7 +35,9 @@ export default class Type {
     }
   }
   /**
-   * Create a type definition from a legacy definition.
+   * Convert a legacy type definition to the new format.
+   * @param {LegacyTypeDefinition} legacyDefinition
+   * @returns {TypeDefinition}
    */
   static definitionFromLegacyDefinition(legacyDefinition) {
     let definition = {};
@@ -86,10 +87,8 @@ export default class Type {
   }
   /**
    * Check if a domain object is an instance of this type.
-   * @param domainObject
+   * @param {DomainObject} domainObject
    * @returns {boolean} true if the domain object is of this type
-   * @memberof module:openmct.Type#
-   * @method check
    */
   check(domainObject) {
     // Depends on assignment from MCT.
@@ -119,3 +118,19 @@ export default class Type {
     return def;
   }
 }
+
+/**
+ * @typedef {Object} TypeDefinition
+ * @property {string} [key]
+ * @property {string} name
+ * @property {string} cssClass
+ * @property {string} description
+ * @property {Form} form
+ * @property {Telemetry} telemetry
+ * @property {function(Object): void} initialize
+ * @property {boolean} creatable
+ */
+
+/**
+ * @typedef {import("../objects/ObjectAPI").DomainObject} DomainObject
+ */
