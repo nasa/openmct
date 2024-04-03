@@ -39,31 +39,31 @@ if (document.currentScript) {
 /**
  * @typedef {Object} OpenMCT
  * @property {BuildInfo} buildInfo
- * @property {import('./src/selection/Selection').default} selection
- * @property {import('./src/api/time/TimeAPI').default} time
- * @property {import('./src/api/composition/CompositionAPI').default} composition
- * @property {import('./src/ui/registries/ViewRegistry').default} objectViews
- * @property {import('./src/ui/registries/InspectorViewRegistry').default} inspectorViews
- * @property {import('./src/ui/registries/ViewRegistry').default} propertyEditors
- * @property {import('./src/ui/registries/ToolbarRegistry').default} toolbars
- * @property {import('./src/api/types/TypeRegistry').default} types
- * @property {import('./src/api/objects/ObjectAPI').default} objects
- * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
- * @property {import('./src/api/indicators/IndicatorAPI').default} indicators
- * @property {import('./src/api/user/UserAPI').default} user
- * @property {import('./src/api/notifications/NotificationAPI').default} notifications
- * @property {import('./src/api/Editor').default} editor
- * @property {import('./src/api/overlays/OverlayAPI')} overlays
- * @property {import('./src/api/tooltips/ToolTipAPI')} tooltips
- * @property {import('./src/api/menu/MenuAPI').default} menus
- * @property {import('./src/api/actions/ActionsAPI').default} actions
- * @property {import('./src/api/status/StatusAPI').default} status
- * @property {import('./src/api/priority/PriorityAPI').default} priority
- * @property {import('./src/ui/router/ApplicationRouter')} router
- * @property {import('./src/api/faultmanagement/FaultManagementAPI').default} faults
- * @property {import('./src/api/forms/FormsAPI').default} forms
- * @property {import('./src/api/Branding').default} branding
- * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
+ * @property {import('./src/selection/Selection.js')} selection
+ * @property {import('./src/api/time/TimeAPI.js')} time
+ * @property {import('./src/api/composition/CompositionAPI.js')} composition
+ * @property {import('./src/ui/registries/ViewRegistry.js')} objectViews
+ * @property {import('./src/ui/registries/InspectorViewRegistry.js')} inspectorViews
+ * @property {import('./src/ui/registries/ViewRegistry.js')} propertyEditors
+ * @property {import('./src/ui/registries/ToolbarRegistry.js')} toolbars
+ * @property {import('./src/api/types/TypeRegistry.js')} types
+ * @property {import('./src/api/objects/ObjectAPI.js')} objects
+ * @property {import('./src/api/telemetry/TelemetryAPI.js')} telemetry
+ * @property {import('./src/api/indicators/IndicatorAPI.js')} indicators
+ * @property {import('./src/api/user/UserAPI.js')} user
+ * @property {import('./src/api/notifications/NotificationAPI.js')} notifications
+ * @property {import('./src/api/Editor.js')} editor
+ * @property {import('./src/api/overlays/OverlayAPI.js')} overlays
+ * @property {import('./src/api/tooltips/ToolTipAPI.js')} tooltips
+ * @property {import('./src/api/menu/MenuAPI.js')} menus
+ * @property {import('./src/api/actions/ActionsAPI.js')} actions
+ * @property {import('./src/api/status/StatusAPI.js')} status
+ * @property {import('./src/api/priority/PriorityAPI.js')} priority
+ * @property {import('./src/ui/router/ApplicationRouter.js')} router
+ * @property {import('./src/api/faultmanagement/FaultManagementAPI.js')} faults
+ * @property {import('./src/api/forms/FormsAPI.js')} forms
+ * @property {import('./src/api/Branding.js')} branding
+ * @property {import('./src/api/annotation/AnnotationAPI.js')} annotation
  * @property {{(plugin: OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
  * @property {{(assetPath: string) => void}} setAssetPath
@@ -71,7 +71,6 @@ if (document.currentScript) {
  * @property {{() => void}} startHeadless
  * @property {{() => void}} destroy
  * @property {OpenMCTPlugin[]} plugins
- * @property {OpenMCTComponent[]} components
  */
 import { MCT } from './src/MCT.js';
 
@@ -79,3 +78,12 @@ import { MCT } from './src/MCT.js';
 const openmct = new MCT();
 
 export default openmct;
+
+/**
+ * @typedef {import('./src/api/objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('./src/api/objects/ObjectAPI').Identifier} Identifier
+ * @typedef {() => (openmct: OpenMCT) => void} OpenMCTPlugin
+ * An OpenMCT Plugin returns a function that receives an instance of
+ * the OpenMCT API and uses it to install itself.
+ * @param {OpenMCT} openmct - The Open MCT application instance.
+ */
