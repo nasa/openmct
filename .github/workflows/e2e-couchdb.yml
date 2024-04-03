@@ -37,7 +37,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - run: npx playwright@1.39.0 install
+      - run: npx playwright@1.42.1 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |

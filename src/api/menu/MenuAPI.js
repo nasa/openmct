@@ -25,7 +25,7 @@ import Menu, { MENU_PLACEMENT } from './menu.js';
 /**
  * Popup Menu options
  * @typedef {Object} MenuOptions
- * @property {String} menuClass Class for popup menu
+ * @property {string} menuClass Class for popup menu
  * @property {MENU_PLACEMENT} placement Placement for menu relative to click
  * @property {Function} onDestroy callback function: invoked when menu is destroyed
  */
@@ -33,10 +33,10 @@ import Menu, { MENU_PLACEMENT } from './menu.js';
 /**
  * Popup Menu Item/action
  * @typedef {Object} Action
- * @property {String} cssClass Class for menu item
- * @property {Boolean} isDisabled adds disable class if true
- * @property {String} name Menu item text
- * @property {String} description Menu item description
+ * @property {string} cssClass Class for menu item
+ * @property {boolean} isDisabled adds disable class if true
+ * @property {string} name Menu item text
+ * @property {string} description Menu item description
  * @property {Function} onItemClicked callback function: invoked when item is clicked
  */
 

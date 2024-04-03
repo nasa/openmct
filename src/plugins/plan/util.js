@@ -22,15 +22,15 @@
 
 /**
  * The SourceMap allows mapping specific implementations of plan domain objects to those expected by Open MCT.
- * @typedef {object} SourceMapOption
+ * @typedef {Object} SourceMapOption
  * @property {string} orderedGroups the property of the plan that lists groups/swim lanes specifying what order they will be displayed in Open MCT.
  * @property {string} activities the property of the plan that has the list of activities to be displayed.
  * @property {string} groupId the property of the activity that maps to the group/swim lane it should be displayed in.
  * @property {string} start The start time property of the activity
  * @property {string} end The end time property of the activity
  * @property {string} id The unique id of the activity. This is required to allow setting activity states
- * @property {object} displayProperties a list of key: value pairs that specifies which properties of the activity should be displayed when it is selected. Ex. {'location': 'Location', 'metadata.length_in_meters', 'Length (meters)'}
- * @property {object} filterMetadata a list of strings that specifies which properties of the activity be included for filtering. Ex. {'description','properties.length_in_meters'}
+ * @property {Object} displayProperties a list of key: value pairs that specifies which properties of the activity should be displayed when it is selected. Ex. {'location': 'Location', 'metadata.length_in_meters', 'Length (meters)'}
+ * @property {Object} filterMetadata a list of strings that specifies which properties of the activity be included for filtering. Ex. {'description','properties.length_in_meters'}
  */
 
 import _ from 'lodash';

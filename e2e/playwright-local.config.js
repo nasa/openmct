@@ -1,6 +1,6 @@
 // playwright.config.js
 // @ts-check
-
+import { fileURLToPath } from 'url';
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 0,
@@ -10,6 +10,7 @@ const config = {
   timeout: 30 * 1000,
   webServer: {
     command: 'npm run start:coverage',
+    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 120 * 1000,
     reuseExistingServer: true

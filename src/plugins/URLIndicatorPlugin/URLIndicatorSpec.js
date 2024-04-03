@@ -28,7 +28,7 @@ describe('The URLIndicator', function () {
   let openmct;
   let indicatorElement;
   let pluginOptions;
-  let urlIndicator; // eslint-disable-line
+  let urlIndicator;
   let fetchSpy;
 
   beforeEach(function () {

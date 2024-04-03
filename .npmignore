@@ -22,9 +22,3 @@
 !index.html
 !openmct.js
 !SECURITY.md
-
-# Add e2e tests to npm package
-!/e2e/**/*
-
-# ... except our test-data folder files.
-/e2e/test-data/*.json

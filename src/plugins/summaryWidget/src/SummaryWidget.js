@@ -377,7 +377,7 @@ SummaryWidget.prototype.reorder = function (event) {
 /**
  * Apply a list of css properties to an element
  * @param {element} elem The DOM element to which the rules will be applied
- * @param {object} style an object representing the style
+ * @param {Object} style an object representing the style
  */
 SummaryWidget.prototype.applyStyle = function (elem, style) {
   Object.keys(style).forEach(function (propId) {
