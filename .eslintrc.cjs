@@ -7,7 +7,8 @@ const config = {
     jasmine: true,
     node: true,
     worker: true,
-    serviceworker: true
+    serviceworker: true,
+    webpack: true
   },
   globals: {
     _: 'readonly'

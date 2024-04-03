@@ -24,7 +24,6 @@ const matcher = /\/openmct.js$/;
 if (document.currentScript) {
   let src = document.currentScript.src;
   if (src && matcher.test(src)) {
-    // eslint-disable-next-line no-undef
     __webpack_public_path__ = src.replace(matcher, '') + '/';
   }
 }
@@ -39,31 +38,31 @@ if (document.currentScript) {
 /**
  * @typedef {Object} OpenMCT
  * @property {BuildInfo} buildInfo
- * @property {import('./src/selection/Selection.js')} selection
- * @property {import('./src/api/time/TimeAPI.js')} time
- * @property {import('./src/api/composition/CompositionAPI.js')} composition
- * @property {import('./src/ui/registries/ViewRegistry.js')} objectViews
- * @property {import('./src/ui/registries/InspectorViewRegistry.js')} inspectorViews
- * @property {import('./src/ui/registries/ViewRegistry.js')} propertyEditors
- * @property {import('./src/ui/registries/ToolbarRegistry.js')} toolbars
- * @property {import('./src/api/types/TypeRegistry.js')} types
- * @property {import('./src/api/objects/ObjectAPI.js')} objects
- * @property {import('./src/api/telemetry/TelemetryAPI.js')} telemetry
- * @property {import('./src/api/indicators/IndicatorAPI.js')} indicators
- * @property {import('./src/api/user/UserAPI.js')} user
- * @property {import('./src/api/notifications/NotificationAPI.js')} notifications
- * @property {import('./src/api/Editor.js')} editor
- * @property {import('./src/api/overlays/OverlayAPI.js')} overlays
- * @property {import('./src/api/tooltips/ToolTipAPI.js')} tooltips
- * @property {import('./src/api/menu/MenuAPI.js')} menus
- * @property {import('./src/api/actions/ActionsAPI.js')} actions
- * @property {import('./src/api/status/StatusAPI.js')} status
- * @property {import('./src/api/priority/PriorityAPI.js')} priority
- * @property {import('./src/ui/router/ApplicationRouter.js')} router
- * @property {import('./src/api/faultmanagement/FaultManagementAPI.js')} faults
- * @property {import('./src/api/forms/FormsAPI.js')} forms
- * @property {import('./src/api/Branding.js')} branding
- * @property {import('./src/api/annotation/AnnotationAPI.js')} annotation
+ * @property {SelectionAPI} selection
+ * @property {TimeAPI} time
+ * @property {CompositionAPI} composition
+ * @property {ViewRegistry} objectViews
+ * @property {InspectorViewRegistry} inspectorViews
+ * @property {PropertyEditorsRegistry} propertyEditors
+ * @property {ToolbarRegistry} toolbars
+ * @property {TypeRegistry} types
+ * @property {ObjectAPI} objects
+ * @property {TelemetryAPI} telemetry
+ * @property {IndicatorAPI} indicators
+ * @property {UserAPI} user
+ * @property {NotificationAPI} notifications
+ * @property {EditorAPI} editor
+ * @property {OverlayAPI} overlays
+ * @property {ToolTipAPI} tooltips
+ * @property {MenuAPI} menus
+ * @property {ActionsAPI} actions
+ * @property {StatusAPI} status
+ * @property {PriorityAPI} priority
+ * @property {ApplicationRouter} router
+ * @property {FaultManagementAPI} faults
+ * @property {FormsAPI} forms
+ * @property {BrandingAPI} branding
+ * @property {AnnotationAPI} annotation
  * @property {{(plugin: OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
  * @property {{(assetPath: string) => void}} setAssetPath
@@ -80,6 +79,31 @@ const openmct = new MCT();
 export default openmct;
 
 /**
+ * @typedef {import('./src/selection/Selection').default} SelectionAPI
+ * @typedef {import('./src/api/time/TimeAPI').default} TimeAPI
+ * @typedef {import('./src/api/composition/CompositionAPI').default} CompositionAPI
+ * @typedef {import('./src/ui/registries/ViewRegistry').default} ViewRegistry
+ * @typedef {import('./src/ui/registries/InspectorViewRegistry').default} InspectorViewRegistry
+ * @typedef {import('./src/ui/registries/ViewRegistry').default} PropertyEditorsRegistry
+ * @typedef {import('./src/ui/registries/ToolbarRegistry').default} ToolbarRegistry
+ * @typedef {import('./src/api/types/TypeRegistry').default} TypeRegistry
+ * @typedef {import('./src/api/objects/ObjectAPI').default} ObjectAPI
+ * @typedef {import('./src/api/telemetry/TelemetryAPI').default} TelemetryAPI
+ * @typedef {import('./src/api/indicators/IndicatorAPI').default} IndicatorAPI
+ * @typedef {import('./src/api/user/UserAPI').default} UserAPI
+ * @typedef {import('./src/api/notifications/NotificationAPI').default} NotificationAPI
+ * @typedef {import('./src/api/Editor').default} EditorAPI
+ * @typedef {import('./src/api/overlays/OverlayAPI').default} OverlayAPI
+ * @typedef {import('./src/api/tooltips/ToolTipAPI').default} ToolTipAPI
+ * @typedef {import('./src/api/menu/MenuAPI').default} MenuAPI
+ * @typedef {import('./src/api/actions/ActionsAPI').default} ActionsAPI
+ * @typedef {import('./src/api/status/StatusAPI').default} StatusAPI
+ * @typedef {import('./src/api/priority/PriorityAPI').default} PriorityAPI
+ * @typedef {import('./src/ui/router/ApplicationRouter').default} ApplicationRouter
+ * @typedef {import('./src/api/faultmanagement/FaultManagementAPI').default} FaultManagementAPI
+ * @typedef {import('./src/api/forms/FormsAPI').default} FormsAPI
+ * @typedef {import('./src/api/Branding').default} BrandingAPI
+ * @typedef {import('./src/api/annotation/AnnotationAPI').default} AnnotationAPI
  * @typedef {import('./src/api/objects/ObjectAPI').DomainObject} DomainObject
  * @typedef {import('./src/api/objects/ObjectAPI').Identifier} Identifier
  * @typedef {() => (openmct: OpenMCT) => void} OpenMCTPlugin
