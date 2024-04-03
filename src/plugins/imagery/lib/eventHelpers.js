@@ -20,6 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * @type {EventHelpers}
+ */
 const helperFunctions = {
   listenTo: function (object, event, callback, context) {
     if (!this._listeningTo) {
@@ -95,3 +98,8 @@ const helperFunctions = {
 };
 
 export default helperFunctions;
+/**
+ * @typedef {Object} EventHelpers
+ * @property {(object: any, event: string, callback: Function, context?: any) => void} listenTo
+ * @property {(object: any, event?: string, callback?: Function, context?: any) => void} stopListening
+ */
