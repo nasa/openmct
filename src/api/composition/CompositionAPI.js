@@ -24,7 +24,7 @@ import CompositionCollection from './CompositionCollection.js';
 import DefaultCompositionProvider from './DefaultCompositionProvider.js';
 
 /**
- * @typedef {import('./CompositionProvider').default} CompositionProvider
+ * @typedef {import('./CompositionProvider.js')} CompositionProvider
  */
 
 /**
