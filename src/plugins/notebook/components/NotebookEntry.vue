@@ -31,7 +31,7 @@
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
     @click="selectAndEmitEntry($event, entry)"
-    @paste="addImageOrTextFromPaste"
+    @paste="addImageFromPaste"
   >
     <div class="c-ne__time-and-content">
       <div class="c-ne__time-and-creator-and-delete">
@@ -384,7 +384,7 @@ export default {
 
       this.manageEmbedLayout();
     },
-    async addImageOrTextFromPaste(event) {
+    async addImageFromPaste(event) {
       const clipboardItems = Array.from(
         (event.clipboardData || event.originalEvent.clipboardData).items
       );
@@ -409,9 +409,7 @@ export default {
         })
       );
       this.manageEmbedLayout();
-      // the pasted clipboard data also include text (or text only and no images).
-      // So we will also update the text here
-      this.updateEntryValue(event);
+      this.timestampAndUpdate();
     },
     convertMarkDownToHtml(text = '') {
       let markDownHtml = this.marked.parse(text, {
