@@ -203,7 +203,7 @@ $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $filterItemMissing: brightness(0.6) grayscale(1);
 $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
-$browseFrameCornerColor: #1C67E3 4px; //Color used for the corners of frames
+$browseFrameCornerColor: $colorKey 4px; //Color used for the corners of frames
 
 @mixin browseFrameBorder() { // Used on main object container to add highlighted corners to non-hidden frames.
   border-image: radial-gradient(circle, #575757, #6c6c6c, #818181, #979797, #aeaeae);
@@ -219,7 +219,8 @@ $browseFrameCornerColor: #1C67E3 4px; //Color used for the corners of frames
     linear-gradient(to bottom, $browseFrameCornerColor, transparent 4px) 0 0,
     linear-gradient(to bottom, $browseFrameCornerColor, transparent 4px) 100% 0,
     linear-gradient(to top, $browseFrameCornerColor, transparent 4px) 0 100%,
-    linear-gradient(to top, $browseFrameCornerColor, transparent 4px) 100% 100%;
+    linear-gradient(to top, $browseFrameCornerColor, transparent 4px) 100% 100%,
+    rgb(0, 0, 0, .4);
 
   background-repeat: no-repeat;
   background-size: 35px 35px;
@@ -475,6 +476,9 @@ $colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, .5);
+// TODO: This is some code regarding how we can make Gauges include a border or glow. We may need to revisit this.
+// padding: 5%;
+// background: radial-gradient(circle, transparent 0%, transparent 65%, rgba(255, 255, 255,0.4) 64%, rgba(255,255,255,0) 70%)
 
 // Time Strip and Lists
 $colorPastBg: #444;
