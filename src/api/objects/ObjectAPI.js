@@ -34,7 +34,7 @@ import Transaction from './Transaction.js';
 /**
  * Uniquely identifies a domain object.
  *
- * @typedef {object} Identifier
+ * @typedef {Object} Identifier
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
@@ -51,7 +51,7 @@ import Transaction from './Transaction.js';
  * A few common properties are defined for domain objects. Beyond these,
  * individual types of domain objects may add more as they see fit.
  *
- * @typedef {object} DomainObject
+ * @typedef {Object} DomainObject
  * @property {Identifier} identifier a key/namespace pair which
  *           uniquely identifies this domain object
  * @property {string} type the type of domain object
@@ -572,8 +572,8 @@ export default class ObjectAPI {
 
   /**
    * Return path of telemetry objects in the object composition
-   * @param {object} identifier the identifier for the domain object to query for
-   * @param {object} [telemetryIdentifier] the specific identifier for the telemetry
+   * @param {Object} identifier the identifier for the domain object to query for
+   * @param {Object} [telemetryIdentifier] the specific identifier for the telemetry
    *  to look for in the composition, uses first object in composition otherwise
    * @returns {Array} path of telemetry object in object composition
    */

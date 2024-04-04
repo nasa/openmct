@@ -55,7 +55,7 @@ export default function installWorker() {
 
     /**
      * Establish a new WebSocket connection to the given URL
-     * @param {String} url
+     * @param {string} url
      */
     connect(url) {
       this.#wsUrl = url;

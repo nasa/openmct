@@ -156,7 +156,7 @@ class BatchingWebSocket extends EventTarget {
   }
 
   /**
-   * @param {Number} maxBatchSize the maximum length of a batch of messages. For example,
+   * @param {number} maxBatchSize the maximum length of a batch of messages. For example,
    * the maximum number of telemetry values to batch before dropping them
    * Note that this is a fail-safe that is only invoked if performance drops to the
    * point where Open MCT cannot keep up with the amount of telemetry it is receiving.

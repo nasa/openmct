@@ -28,7 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npx playwright@1.39.0 install
+      - run: npx playwright@1.42.1 install
       - run: npm ci --no-audit --progress=false
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract

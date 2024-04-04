@@ -117,7 +117,7 @@ describe('the plugin', function () {
   describe('The scatter plot view', () => {
     let testDomainObject;
     let scatterPlotObject;
-    // eslint-disable-next-line no-unused-vars
+
     let mockComposition;
 
     beforeEach(async () => {

@@ -23,14 +23,14 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults } from '../../appActions.js';
-import { VISUAL_URL } from '../../constants.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - Telemetry Views', () => {
   let telemetry;
 
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     // Create SWG inside of LAD Table
     telemetry = await createDomainObjectWithDefaults(page, {

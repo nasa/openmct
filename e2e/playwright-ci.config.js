@@ -3,6 +3,7 @@
 
 // eslint-disable-next-line no-unused-vars
 import { devices } from '@playwright/test';
+import { fileURLToPath } from 'url';
 const MAX_FAILURES = 5;
 const NUM_WORKERS = 2;
 
@@ -15,6 +16,7 @@ const config = {
   timeout: 60 * 1000,
   webServer: {
     command: 'npm run start:coverage',
+    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
@@ -27,7 +29,9 @@ const config = {
     ignoreHTTPSErrors: true,
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
-    video: 'off'
+    video: 'off',
+    // @ts-ignore - custom configuration option for nyc codecoverage output path
+    coveragePath: fileURLToPath(new URL('../.nyc_output', import.meta.url))
   },
   projects: [
     {

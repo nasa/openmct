@@ -27,8 +27,8 @@ import { expect } from '../pluginFixtures.js';
  * Given a canvas and a set of points, tags the points on the canvas.
  * @param {import('@playwright/test').Page} page
  * @param {HTMLCanvasElement} canvas a telemetry item with a plot
- * @param {Number} xEnd a telemetry item with a plot
- * @param {Number} yEnd a telemetry item with a plot
+ * @param {number} xEnd a telemetry item with a plot
+ * @param {number} yEnd a telemetry item with a plot
  * @returns {Promise}
  */
 export async function createTags({ page, canvas, xEnd = 700, yEnd = 520 }) {
