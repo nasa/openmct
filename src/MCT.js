@@ -19,8 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* eslint-disable no-undef */
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 import { createApp, markRaw } from 'vue';
 
 import ActionsAPI from './api/actions/ActionsAPI.js';
@@ -73,37 +72,46 @@ import Browse from './ui/router/Browse.js';
  * The Open MCT application. This may be configured by installing plugins
  * or registering extensions before the application is started.
  * @constructor
- * @memberof module:openmct
- * @extends EventEmitter
  */
 export class MCT extends EventEmitter {
+  /**
+   * @type {import('openmct.js').BuildInfo}
+   */
+  buildInfo;
+  /**
+   * @type {string}
+   */
+  defaultClock;
+  /**
+   * @type {Record<string, OpenMCTPlugin>}
+   */
+  plugins;
+  /**
+   * Tracks current selection state of the application.
+   * @type {Selection}
+   */
+  selection;
   constructor() {
     super();
 
     this.buildInfo = {
+      // @ts-ignore
       version: __OPENMCT_VERSION__,
+      // @ts-ignore
       buildDate: __OPENMCT_BUILD_DATE__,
+      // @ts-ignore
       revision: __OPENMCT_REVISION__,
+      // @ts-ignore
       branch: __OPENMCT_BUILD_BRANCH__
     };
 
     this.destroy = this.destroy.bind(this);
     this.defaultClock = 'local';
-
     this.plugins = plugins;
-
-    /**
-     * Tracks current selection state of the application.
-     * @private
-     */
     this.selection = new Selection(this);
 
     /**
-     * MCT's time conductor, which may be used to synchronize view contents
-     * for telemetry- or time-based views.
-     * @type {module:openmct.TimeConductor}
-     * @memberof module:openmct.MCT#
-     * @name conductor
+     * @type {TimeAPI}
      */
     this.time = new TimeAPI(this);
 
@@ -116,9 +124,7 @@ export class MCT extends EventEmitter {
      * `composition` may be called as a function, in which case it acts
      * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
      *
-     * @type {module:openmct.CompositionAPI}
-     * @memberof module:openmct.MCT#
-     * @name composition
+     * @type {CompositionAPI}
      */
     this.composition = new CompositionAPI(this);
 
@@ -126,9 +132,7 @@ export class MCT extends EventEmitter {
      * Registry for views of domain objects which should appear in the
      * main viewing area.
      *
-     * @type {module:openmct.ViewRegistry}
-     * @memberof module:openmct.MCT#
-     * @name objectViews
+     * @type {ViewRegistry}
      */
     this.objectViews = new ViewRegistry();
 
@@ -136,9 +140,7 @@ export class MCT extends EventEmitter {
      * Registry for views which should appear in the Inspector area.
      * These views will be chosen based on the selection state.
      *
-     * @type {module:openmct.InspectorViewRegistry}
-     * @memberof module:openmct.MCT#
-     * @name inspectorViews
+     * @type {InspectorViewRegistry}
      */
     this.inspectorViews = new InspectorViewRegistry();
 
@@ -147,9 +149,7 @@ export class MCT extends EventEmitter {
      * dialogs, and similar user interface elements used for
      * modifying domain objects external to its regular views.
      *
-     * @type {module:openmct.ViewRegistry}
-     * @memberof module:openmct.MCT#
-     * @name propertyEditors
+     * @type {ViewRegistry}
      */
     this.propertyEditors = new ViewRegistry();
 
@@ -157,9 +157,7 @@ export class MCT extends EventEmitter {
      * Registry for views which should appear in the toolbar area while
      * editing. These views will be chosen based on the selection state.
      *
-     * @type {module:openmct.ToolbarRegistry}
-     * @memberof module:openmct.MCT#
-     * @name toolbars
+     * @type {ToolbarRegistry}
      */
     this.toolbars = new ToolbarRegistry();
 
@@ -167,9 +165,7 @@ export class MCT extends EventEmitter {
      * Registry for domain object types which may exist within this
      * instance of Open MCT.
      *
-     * @type {module:openmct.TypeRegistry}
-     * @memberof module:openmct.MCT#
-     * @name types
+     * @type {TypeRegistry}
      */
     this.types = new TypeRegistry();
 
@@ -177,9 +173,7 @@ export class MCT extends EventEmitter {
      * An interface for interacting with domain objects and the domain
      * object hierarchy.
      *
-     * @type {module:openmct.ObjectAPI}
-     * @memberof module:openmct.MCT#
-     * @name objects
+     * @type {ObjectAPI}
      */
     this.objects = new ObjectAPI(this.types, this);
 
@@ -187,49 +181,100 @@ export class MCT extends EventEmitter {
      * An interface for retrieving and interpreting telemetry data associated
      * with a domain object.
      *
-     * @type {module:openmct.TelemetryAPI}
-     * @memberof module:openmct.MCT#
-     * @name telemetry
+     * @type {TelemetryAPI}
      */
     this.telemetry = new TelemetryAPI(this);
 
     /**
      * An interface for creating new indicators and changing them dynamically.
      *
-     * @type {module:openmct.IndicatorAPI}
-     * @memberof module:openmct.MCT#
-     * @name indicators
+     * @type {IndicatorAPI}
      */
     this.indicators = new IndicatorAPI(this);
 
     /**
      * MCT's user awareness management, to enable user and
      * role specific functionality.
-     * @type {module:openmct.UserAPI}
-     * @memberof module:openmct.MCT#
-     * @name user
+     * @type {UserAPI}
      */
     this.user = new UserAPI(this);
 
+    /**
+     * An interface for managing notifications and alerts.
+     * @type {NotificationAPI}
+     */
     this.notifications = new NotificationAPI();
+
+    /**
+     * An interface for editing domain objects.
+     * @type {EditorAPI}
+     */
     this.editor = new EditorAPI(this);
+
+    /**
+     * An interface for managing overlays.
+     * @type {OverlayAPI}
+     */
     this.overlays = new OverlayAPI();
+
+    /**
+     * An interface for managing tooltips.
+     * @type {ToolTipAPI}
+     */
     this.tooltips = new ToolTipAPI();
+
+    /**
+     * An interface for managing menus.
+     * @type {MenuAPI}
+     */
     this.menus = new MenuAPI(this);
+
+    /**
+     * An interface for managing menu actions.
+     * @type {ActionsAPI}
+     */
     this.actions = new ActionsAPI(this);
+
+    /**
+     * An interface for managing statuses.
+     * @type {StatusAPI}
+     */
     this.status = new StatusAPI(this);
+
+    /**
+     * An object defining constants for priority levels.
+     * @type {PriorityAPI}
+     */
     this.priority = PriorityAPI;
+
+    /**
+     * An interface for routing application traffic.
+     * @type {ApplicationRouter}
+     */
     this.router = new ApplicationRouter(this);
+
+    /**
+     * An interface for managing faults.
+     * @type {FaultManagementAPI}
+     */
     this.faults = new FaultManagementAPI(this);
+
+    /**
+     * An interface for managing forms.
+     * @type {FormsAPI}
+     */
     this.forms = new FormsAPI(this);
+
+    /**
+     * An interface for branding the application.
+     * @type {BrandingAPI}
+     */
     this.branding = BrandingAPI;
 
     /**
      * MCT's annotation API that enables
      * human-created comments and categorization linked to data products
-     * @type {module:openmct.AnnotationAPI}
-     * @memberof module:openmct.MCT#
-     * @name annotation
+     * @type {AnnotationAPI}
      */
     this.annotation = new AnnotationAPI(this);
 
@@ -297,7 +342,7 @@ export class MCT extends EventEmitter {
    * @fires module:openmct.MCT~start
    * @memberof module:openmct.MCT#
    * @method start
-   * @param {HTMLElement} [domElement] the DOM element in which to run
+   * @param {Element?} domElement the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
   start(domElement = document.body.firstElementChild, isHeadlessMode = false) {
@@ -372,3 +417,7 @@ export class MCT extends EventEmitter {
     this.emit('destroy');
   }
 }
+
+/**
+ * @typedef {import('../openmct.js').OpenMCTPlugin} OpenMCTPlugin
+ */
