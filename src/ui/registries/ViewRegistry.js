@@ -100,8 +100,11 @@ export default class ViewRegistry extends EventEmitter {
 
     this.providers[key] = provider;
   }
+
   /**
-   * @private
+   * Returns the view provider by key
+   * @param {string} key
+   * @returns {ViewProvider}
    */
   getByProviderKey(key) {
     return this.providers[key];

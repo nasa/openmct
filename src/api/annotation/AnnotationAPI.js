@@ -80,7 +80,7 @@ export default class AnnotationAPI extends EventEmitter {
   #targetComparatorMap;
 
   /**
-   * @param {OpenMCT} openmct
+   * @param {MCT} openmct
    */
   constructor(openmct) {
     super();

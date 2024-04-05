@@ -24,6 +24,14 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 class ActionCollection extends EventEmitter {
+  /**
+   *
+   * @param {any[]} applicableActions
+   * @param {import('openmct').ObjectPath} objectPath
+   * @param {any} view
+   * @param {import('openmct').OpenMCT} openmct
+   * @param {boolean} skipEnvironmentObservers
+   */
   constructor(applicableActions, objectPath, view, openmct, skipEnvironmentObservers) {
     super();
 

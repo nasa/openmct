@@ -30,12 +30,13 @@ import _ from 'lodash';
  */
 
 /**
- * @typedef {import('../../openmct').OpenMCT} OpenMCT
+ * @typedef {import('../../src/MCT').MCT} OpenMCT
  */
 
 /**
  * Manages selection state for Open MCT
- * @private
+ * @constructor
+ * @extends EventEmitter
  */
 export default class Selection extends EventEmitter {
   /**

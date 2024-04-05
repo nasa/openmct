@@ -21,7 +21,7 @@
  *****************************************************************************/
 import Type from './Type.js';
 
-export const UNKNOWN_TYPE = new Type({
+const UNKNOWN_TYPE = new Type({
   key: 'unknown',
   name: 'Unknown Type',
   cssClass: 'icon-object-unknown'
@@ -46,7 +46,7 @@ export const UNKNOWN_TYPE = new Type({
 export default class TypeRegistry {
   constructor() {
     /**
-     * @type {Object<string, Type>}
+     * @type {Record<string, Type>}
      */
     this.types = {};
   }
@@ -54,7 +54,7 @@ export default class TypeRegistry {
    * Register a new object type.
    *
    * @param {string} typeKey a string identifier for this type
-   * @param {TypeDefinition} type the type to add
+   * @param {TypeDefinition} typeDef the type to add
    */
   addType(typeKey, typeDef) {
     this.standardizeType(typeDef);

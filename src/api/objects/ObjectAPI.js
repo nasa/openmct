@@ -47,7 +47,7 @@ import Transaction from './Transaction.js';
  * @property {string} [creator] the user name of the creator of this domain object
  * @property {number} [modified] the time, in milliseconds since the UNIX epoch, at which this domain object was last modified
  * @property {Identifier[]} [composition] if present, this will be used by the default composition provider to load domain objects
- * @property {Object.<string, any>} [configuration] A key-value map containing configuration settings for this domain object.
+ * @property {Record<string, any>} [configuration] A key-value map containing configuration settings for this domain object.
  */
 
 /**
@@ -470,7 +470,6 @@ export default class ObjectAPI {
 
   /**
    * Retrieve the interceptors for a given domain object.
-   * @private
    */
   #listGetInterceptors(identifier, object) {
     return this.interceptorRegistry.getInterceptors(identifier, object);

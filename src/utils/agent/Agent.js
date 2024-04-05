@@ -63,7 +63,7 @@ export default class Agent {
   }
   /**
    * Check if the user is on a tablet sized android device
-   * @returns {boolean} true on an android tablet
+   * @returns {boolean | undefined} true on an android tablet
    */
   isAndroidTablet() {
     if (this.mobileName === 'Android') {
@@ -78,7 +78,7 @@ export default class Agent {
   }
   /**
    * Check if the user is on a tablet-sized mobile device.
-   * @returns {boolean} true on a tablet
+   * @returns {boolean | undefined} true on a tablet
    */
   isTablet() {
     return (

@@ -35,7 +35,7 @@
  * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
  * @property {string} [name] the desired name of the created domain object.
  * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
- * @property {Object<string, string>} [customParameters] any additional parameters to be passed to the domain object's form. E.g. '[aria-label="Data Rate (hz)"]': {'0.1'}
+ * @property {Record<string, string>} [customParameters] any additional parameters to be passed to the domain object's form. E.g. '[aria-label="Data Rate (hz)"]': {'0.1'}
  */
 
 /**

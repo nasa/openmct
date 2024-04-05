@@ -19,22 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
- * application based on values provided by a ticking clock,
- * with the periodicity specified (optionally).
- * @param {number} period The periodicity with which the clock should tick
+ * application based on values provided by a ticking clock.
  * @constructor
  */
-
 export default class DefaultClock extends EventEmitter {
   constructor() {
     super();
 
     this.key = 'clock';
-
     this.cssClass = 'icon-clock';
     this.name = 'Clock';
     this.description = 'A default clock for openmct.';
@@ -49,38 +45,53 @@ export default class DefaultClock extends EventEmitter {
    * Register a listener for the clock. When it ticks, the
    * clock will provide the time from the configured endpoint
    *
-   * @param listener
-   * @returns {function} a function for deregistering the provided listener
+   * @override
+   * @param {string | symbol} event the event to listen for
+   * @param {Function} fn the function to call when the event is emitted
+   * @param {*} [context] the context to use for the function call
+   * @returns {this} a function for deregistering the provided listener
    */
-  on(event) {
-    let result = super.on.apply(this, arguments);
+  on(event, fn, context) {
+    super.on(event, fn, context);
 
     if (this.listeners(event).length === 1) {
       this.start();
     }
 
-    return result;
+    return this;
   }
 
   /**
    * Register a listener for the clock. When it ticks, the
    * clock will provide the current local system time
    *
-   * @param listener
-   * @returns {function} a function for deregistering the provided listener
+   * @override
+   * @param {string | symbol} event the event to listen for
+   * @param {Function} [fn] the function to call when the event is emitted
+   * @param {*} [context] the context to use for the function call
+   * @param {boolean} [once]
+   * @returns {this}
    */
-  off(event) {
-    let result = super.off.apply(this, arguments);
+  off(event, fn, context, once) {
+    super.off(event, fn, context, once);
 
     if (this.listeners(event).length === 0) {
       this.stop();
     }
 
-    return result;
+    return this;
+  }
+
+  stop() {
+    // Not implemented
+  }
+
+  start() {
+    // Not implemented
   }
 
   /**
-   * @returns {number} The last value provided for a clock tick
+   * @returns {number} The most recent value provided for a clock tick
    */
   currentValue() {
     return this.lastTick;

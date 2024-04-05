@@ -727,7 +727,7 @@ export default class TelemetryAPI {
    * Get a format map of all value formatters for a given piece of telemetry
    * metadata.
    *
-   * @returns {Object<String, {TelemetryValueFormatter}>}
+   * @returns {Record<string, TelemetryValueFormatter>}
    */
   getFormatMap(metadata) {
     if (!metadata) {
