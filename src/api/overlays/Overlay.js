@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 import mount from 'utils/mount';
 
 import OverlayComponent from './components/OverlayComponent.vue';

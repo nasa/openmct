@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 import _ from 'lodash';
 import { makeKeyString } from 'objectUtils';
 

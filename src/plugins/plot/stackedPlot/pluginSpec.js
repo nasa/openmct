@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 import mount from 'utils/mount';
 import {
   createMouseEvent,

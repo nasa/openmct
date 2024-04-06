@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 
 const DEFAULT_VIEW_PRIORITY = 100;
 
@@ -37,7 +37,7 @@ export default class ViewRegistry extends EventEmitter {
     this.providers = {};
   }
   /**
-   * @private for platform-internal use
+   * for platform-internal use
    * @param {*} item the object to be viewed
    * @param {array} objectPath - The current contextual object path of the view object
    *                             eg current domainObject is located under MyItems which is under Root

@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 
 import * as templateHelpers from '../../../../utils/template/templateHelpers.js';
 import selectTemplate from '../../res/input/selectTemplate.html';

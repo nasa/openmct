@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 import { identifierEquals, makeKeyString, parseKeyString, refresh } from 'objectUtils';
 
 import ConflictError from './ConflictError.js';
@@ -149,7 +149,7 @@ export default class ObjectAPI {
   /**
    * Get a domain object.
    *
-   * @param {Identifier} identifier the identifier for the domain object to load
+   * @param {Identifier | string} identifier the identifier for the domain object to load
    * @param {AbortSignal} [abortSignal] (optional) signal to abort fetch requests
    * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
    *          dirty/in-transaction objects use and the provider.get method

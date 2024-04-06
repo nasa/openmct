@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 
 const LOCAL_STORAGE_KEY = 'mct-saved-styles';
 const LIMIT = 20;

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 
 import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants.js';
 import StatusAPI from './StatusAPI.js';
