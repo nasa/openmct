@@ -10,7 +10,12 @@ const config = {
     serviceworker: true
   },
   globals: {
-    _: 'readonly'
+    _: 'readonly',
+    __webpack_public_path__: 'writeable',
+    __OPENMCT_VERSION__: 'readonly',
+    __OPENMCT_BUILD_DATE__: 'readonly',
+    __OPENMCT_REVISION__: 'readonly',
+    __OPENMCT_BUILD_BRANCH__: 'readonly'
   },
   plugins: ['prettier', 'unicorn', 'simple-import-sort'],
   extends: [
