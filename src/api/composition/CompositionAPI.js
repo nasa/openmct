@@ -72,7 +72,7 @@ export default class CompositionAPI {
    *
    * @method get
    * @param {DomainObject} domainObject
-   * @returns {CompositionCollection}
+   * @returns {CompositionCollection | undefined}
    */
   get(domainObject) {
     const provider = this.registry.find((p) => {
