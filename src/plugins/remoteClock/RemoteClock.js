@@ -149,8 +149,6 @@ export default class RemoteClock extends DefaultClock {
 
   /**
    * Waits for the clock to have a non-default tick value.
-   *
-   * @private
    */
   #waitForReady() {
     const waitForInitialTick = (resolve) => {
