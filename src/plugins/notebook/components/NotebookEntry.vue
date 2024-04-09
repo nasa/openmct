@@ -31,7 +31,7 @@
     @drop.capture="cancelEditMode"
     @drop.prevent="dropOnEntry"
     @click="selectAndEmitEntry($event, entry)"
-    @paste="addImageFromPaste"
+    @paste="handlePaste"
   >
     <div class="c-ne__time-and-content">
       <div class="c-ne__time-and-creator-and-delete">
@@ -368,6 +368,35 @@ export default {
     }
   },
   methods: {
+    handlePaste(event) {
+      const clipboardImages = [];
+      const clipboardText = [];
+      const clipboardItems = Array.from(
+        (event.clipboardData || event.originalEvent.clipboardData).items
+      );
+
+      clipboardItems.forEach((clipboardItem) => {
+        if (clipboardItem.kind === 'file' && clipboardItem.type.includes('image')) {
+          clipboardImages.push(clipboardItem);
+        }
+
+        if (clipboardItem.kind === 'string') {
+          clipboardText.push(clipboardItem);
+        }
+      });
+
+      if (clipboardImages.length > 0 && clipboardText.length > 0) {
+        console.warn('Both image and text kinds found in event.');
+      }
+
+      if (clipboardImages.length > 0) {
+        this.addImageFromPaste(clipboardImages, event);
+      }
+
+      if (clipboardText.length > 0) {
+        this.addTextFromPaste(event);
+      }
+    },
     async addNewEmbed(objectPath) {
       const bounds = this.openmct.time.bounds();
       const snapshotMeta = {
@@ -384,32 +413,34 @@ export default {
 
       this.manageEmbedLayout();
     },
-    async addImageFromPaste(event) {
-      const clipboardItems = Array.from(
-        (event.clipboardData || event.originalEvent.clipboardData).items
-      );
-      const hasImage = clipboardItems.some(
-        (clipboardItem) => clipboardItem.type.includes('image') && clipboardItem.kind === 'file'
-      );
-      // If the clipboard contained an image, prevent the paste event from reaching the textarea.
-      if (hasImage) {
+    addTextFromPaste(event) {
+      if (!this.editMode) {
         event.preventDefault();
       }
+    },
+    async addImageFromPaste(clipboardImages, event) {
+      event?.preventDefault();
+      let updated = false;
+
       await Promise.all(
-        Array.from(clipboardItems).map(async (clipboardItem) => {
-          const isImage = clipboardItem.type.includes('image') && clipboardItem.kind === 'file';
-          if (isImage) {
-            const imageFile = clipboardItem.getAsFile();
-            const imageEmbed = await createNewImageEmbed(imageFile, this.openmct, imageFile?.name);
-            if (!this.entry.embeds) {
-              this.entry.embeds = [];
-            }
-            this.entry.embeds.push(imageEmbed);
+        Array.from(clipboardImages).map(async (clipboardImage) => {
+          const imageFile = clipboardImage.getAsFile();
+          const imageEmbed = await createNewImageEmbed(imageFile, this.openmct, imageFile?.name);
+
+          if (!this.entry.embeds) {
+            this.entry.embeds = [];
           }
+
+          this.entry.embeds.push(imageEmbed);
+
+          updated = true;
         })
       );
-      this.manageEmbedLayout();
-      this.timestampAndUpdate();
+
+      if (updated) {
+        this.manageEmbedLayout();
+        this.timestampAndUpdate();
+      }
     },
     convertMarkDownToHtml(text = '') {
       let markDownHtml = this.marked.parse(text, {
