@@ -369,31 +369,24 @@ export default {
   },
   methods: {
     handlePaste(event) {
-      const clipboardImages = [];
-      const clipboardText = [];
       const clipboardItems = Array.from(
         (event.clipboardData || event.originalEvent.clipboardData).items
       );
+      const hasClipboardText = clipboardItems.some(
+        (clipboardItem) => clipboardItem.kind === 'string'
+      );
+      const clipboardImages = clipboardItems.filter(
+        (clipboardItem) => clipboardItem.kind === 'file' && clipboardItem.type.includes('image')
+      );
+      const hasClipboardImages = clipboardImages?.length > 0;
 
-      clipboardItems.forEach((clipboardItem) => {
-        if (clipboardItem.kind === 'file' && clipboardItem.type.includes('image')) {
-          clipboardImages.push(clipboardItem);
+      if (hasClipboardImages) {
+        if (hasClipboardText) {
+          console.warn('Image and text kinds found in paste. Only processing images.');
         }
 
-        if (clipboardItem.kind === 'string') {
-          clipboardText.push(clipboardItem);
-        }
-      });
-
-      if (clipboardImages.length > 0 && clipboardText.length > 0) {
-        console.warn('Both image and text kinds found in event.');
-      }
-
-      if (clipboardImages.length > 0) {
         this.addImageFromPaste(clipboardImages, event);
-      }
-
-      if (clipboardText.length > 0) {
+      } else if (hasClipboardText) {
         this.addTextFromPaste(event);
       }
     },
