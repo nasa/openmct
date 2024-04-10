@@ -40,6 +40,8 @@ export default class TelemetryTableConfiguration extends EventEmitter {
       'configuration',
       this.objectMutated
     );
+
+    this.notPersistable = !this.openmct.objects.isPersistable(this.domainObject.identifier);
   }
 
   getConfiguration() {
@@ -52,14 +54,19 @@ export default class TelemetryTableConfiguration extends EventEmitter {
     // anything that doesn't have a telemetryMode existed before the change and should
     // take the properties of any passed in defaults or the defaults from the plugin
     configuration.telemetryMode = configuration.telemetryMode ?? this.defaultOptions.telemetryMode;
-    configuration.persistModeChange =
-      configuration.persistModeChange ?? this.defaultOptions.persistModeChange;
+    configuration.persistModeChange = this.notPersistable
+      ? false
+      : configuration.persistModeChange ?? this.defaultOptions.persistModeChange;
     configuration.rowLimit = configuration.rowLimit ?? this.defaultOptions.rowLimit;
 
     return configuration;
   }
 
   updateConfiguration(configuration) {
+    if (this.notPersistable) {
+      return;
+    }
+
     this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
   }
 
