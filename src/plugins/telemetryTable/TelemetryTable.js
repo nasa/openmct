@@ -140,6 +140,8 @@ define([
 
             const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+            requestOptions.strategy = 'latest';
+            requestOptions.size = 1;
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
