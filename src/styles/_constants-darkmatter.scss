@@ -275,7 +275,7 @@ $colorIconAliasForKeyFilter: #aaa;
 $colorTabsHolderBg: rgba(black, 0.2);
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, 5%);
+$colorBtnBg: pullForward($colorBodyBg, 1%);
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
 $shdwBtnHov: inset rgba(white, 10%) 0 0 0 100px;
 $colorBtnFg: pullForward($colorBodyFg, 10%);
@@ -361,7 +361,7 @@ $formRowCtrlsH: 14px;
 // Inspector
 $colorInspectorBg: pullForward($colorBodyBg, 5%);
 $colorInspectorFg: $colorBodyFg;
-$colorInspectorPropName: pushBack($colorBodyFg, 20%);
+$colorInspectorPropName: $colorBodyFg;
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: rgba($colorBodyBg, .75);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
@@ -434,7 +434,7 @@ $colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBtnFg;
-$colorItemFgDetails: pushBack($colorItemFg, 20%);
+$colorItemFgDetails: pushBack($colorItemFg, 10%);
 $shdwItemText: none;
 
 // Tabular (NOT TABS!)
@@ -602,6 +602,6 @@ $scrollContainer: $colorBodyBg;
 
 @mixin themedButton($c: $colorBtnBg) {
   // background: radial-gradient(pullForward($c, 5%), $c);
-  background: radial-gradient(rgba($c, 1) , rgba($c, .6));
+  background: radial-gradient(rgba($c, 1) , rgba($c, .7));
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
