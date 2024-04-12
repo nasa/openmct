@@ -140,7 +140,7 @@ export function createNewImageEmbed(image, openmct, imageName = '') {
         };
 
         const embedMetaData = {
-          bounds: openmct.time.bounds(),
+          bounds: openmct.time.getBounds(),
           link: null,
           objectPath: null,
           openmct,

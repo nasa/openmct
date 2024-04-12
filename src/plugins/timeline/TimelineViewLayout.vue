@@ -173,16 +173,16 @@ export default {
       });
     },
     getBoundsForTimeSystem(timeSystem) {
-      const currentBounds = this.timeContext.bounds();
+      const currentBounds = this.timeContext.getBounds();
 
       //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
       return currentBounds;
     },
     updateViewBounds() {
-      const bounds = this.timeContext.bounds();
+      const bounds = this.timeContext.getBounds();
       this.updateContentHeight();
       let currentTimeSystemIndex = this.timeSystems.findIndex(
-        (item) => item.timeSystem.key === this.openmct.time.timeSystem().key
+        (item) => item.timeSystem.key === this.openmct.time.getTimeSystem().key
       );
       if (currentTimeSystemIndex > -1) {
         let currentTimeSystem = {

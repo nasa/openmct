@@ -49,7 +49,7 @@ export default {
   mixins: [imageryData],
   inject: ['openmct', 'domainObject', 'objectPath'],
   data() {
-    let timeSystem = this.openmct.time.timeSystem();
+    let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
     this.requestCount = 0;
 
@@ -148,10 +148,10 @@ export default {
       return clientWidth;
     },
     updateViewBounds(bounds, isTick) {
-      this.viewBounds = this.timeContext.bounds();
+      this.viewBounds = this.timeContext.getBounds();
 
       if (this.timeSystem === undefined) {
-        this.timeSystem = this.timeContext.timeSystem();
+        this.timeSystem = this.timeContext.getTimeSystem();
       }
 
       this.setScaleAndPlotImagery(this.timeSystem, !isTick);
@@ -216,7 +216,7 @@ export default {
       }
 
       if (timeSystem === undefined) {
-        timeSystem = this.timeContext.timeSystem();
+        timeSystem = this.timeContext.getTimeSystem();
       }
 
       if (timeSystem.isUTCBased) {

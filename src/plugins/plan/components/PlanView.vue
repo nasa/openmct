@@ -196,7 +196,7 @@ export default {
       this.followTimeContext();
     },
     followTimeContext() {
-      this.updateViewBounds(this.timeContext.bounds());
+      this.updateViewBounds(this.timeContext.getBounds());
 
       this.timeContext.on('timeSystem', this.setScaleAndGenerateActivities);
       this.timeContext.on('bounds', this.updateViewBounds);
@@ -319,7 +319,7 @@ export default {
       }
 
       if (this.timeSystem === null) {
-        this.timeSystem = this.openmct.time.timeSystem();
+        this.timeSystem = this.openmct.time.getTimeSystem();
       }
 
       this.setScaleAndGenerateActivities();
@@ -344,7 +344,7 @@ export default {
       }
 
       if (!timeSystem) {
-        timeSystem = this.openmct.time.timeSystem();
+        timeSystem = this.openmct.time.getTimeSystem();
       }
 
       if (timeSystem.isUTCBased) {

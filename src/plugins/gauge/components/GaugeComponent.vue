@@ -363,7 +363,7 @@ export default {
       rangeLow: gaugeController.min,
       gaugeType: gaugeController.gaugeType,
       showUnits: gaugeController.showUnits,
-      activeTimeSystem: this.openmct.time.timeSystem(),
+      activeTimeSystem: this.openmct.time.getTimeSystem(),
       units: ''
     };
   },
@@ -726,7 +726,7 @@ export default {
         return;
       }
 
-      const { start, end } = this.openmct.time.bounds();
+      const { start, end } = this.openmct.time.getBounds();
       const parsedValue = this.timeFormatter.parse(this.datum);
 
       const beforeStartOfBounds = parsedValue < start;

@@ -369,7 +369,7 @@ export default {
   },
   methods: {
     async addNewEmbed(objectPath) {
-      const bounds = this.openmct.time.bounds();
+      const bounds = this.openmct.time.getBounds();
       const snapshotMeta = {
         bounds,
         link: null,

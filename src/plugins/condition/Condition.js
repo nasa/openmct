@@ -245,7 +245,7 @@ export default class Condition extends EventEmitter {
       latestTimestamp,
       updatedCriterion.data,
       this.timeSystems,
-      this.openmct.time.timeSystem()
+      this.openmct.time.getTimeSystem()
     );
     this.conditionManager.updateCurrentCondition(latestTimestamp);
   }
@@ -309,7 +309,7 @@ export default class Condition extends EventEmitter {
           latestTimestamp,
           data,
           this.timeSystems,
-          this.openmct.time.timeSystem()
+          this.openmct.time.getTimeSystem()
         );
       });
 

@@ -661,7 +661,7 @@ export default {
       this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
       this.startLoading();
-      const bounds = this.timeContext.bounds();
+      const bounds = this.timeContext.getBounds();
       const options = {
         size: this.$parent.$refs.plotWrapper.offsetWidth,
         domain: this.config.xAxis.get('key'),
