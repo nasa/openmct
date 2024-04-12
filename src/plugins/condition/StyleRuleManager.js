@@ -41,7 +41,7 @@ export default class StyleRuleManager extends EventEmitter {
       });
       this.initialize(styleConfigurationWithNoSelection);
       if (styleConfiguration.conditionSetIdentifier) {
-        this.openmct.time.on('bounds', this.refreshData);
+        this.openmct.time.on('boundsChanged', this.refreshData);
         this.subscribeToConditionSet();
       } else {
         this.applyStaticStyle();
@@ -216,7 +216,7 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     if (!skipEventListeners) {
-      this.openmct.time.off('bounds', this.refreshData);
+      this.openmct.time.off('boundsChanged', this.refreshData);
       this.openmct.editor.off('isEditing', this.toggleSubscription);
     }
 

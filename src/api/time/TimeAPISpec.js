@@ -207,8 +207,6 @@ describe('The Time API', function () {
       expect(api.clock()).toBeUndefined();
       api.clock('mts', mockOffsets);
       expect(api.clock()).toBeDefined();
-      // api.stopClock();
-      // expect(api.clock()).toBeUndefined();
     });
 
     it('Provides a default time context', () => {

@@ -212,7 +212,7 @@ export default {
 
     this.openmct.time.on('timeSystem', this.updateTimeSystem);
 
-    this.timestampKey = this.openmct.time.timeSystem().key;
+    this.timestampKey = this.openmct.time.getTimeSystem().key;
 
     this.valueMetadata = undefined;
 

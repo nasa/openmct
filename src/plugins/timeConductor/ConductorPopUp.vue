@@ -141,7 +141,6 @@ export default {
   data() {
     const bounds = this.openmct.time.getBounds();
     const timeSystem = this.openmct.time.getTimeSystem();
-    // const isFixed = this.openmct.time.isFixed();
 
     return {
       timeSystem,
