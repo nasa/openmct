@@ -112,7 +112,12 @@ export default {
   methods: {
     onChange(event) {
       let data = {
-        model: {}
+        model: {},
+        isUseTelemetryLimits: this.isUseTelemetryLimits,
+        min: this.min,
+        max: this.max,
+        limitLow: this.limitLow,
+        limitHigh: this.limitHigh
       };
 
       if (event) {
