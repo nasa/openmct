@@ -23,13 +23,23 @@
 const isMac = process.platform === 'darwin';
 const modifier = isMac ? 'Meta' : 'Control';
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function selectAll(page) {
   await page.keyboard.press(`${modifier}+KeyA`);
 }
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function copy(page) {
   await page.keyboard.press(`${modifier}+KeyC`);
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ */
 async function paste(page) {
   await page.keyboard.press(`${modifier}+KeyV`);
 }
