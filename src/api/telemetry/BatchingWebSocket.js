@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import installWorker from './WebSocketWorker.js';
+
 /**
  * Describes the strategy to be used when batching WebSocket messages
  *
@@ -69,10 +69,7 @@ class BatchingWebSocket extends EventTarget {
   constructor(openmct) {
     super();
     // Install worker, register listeners etc.
-    const workerFunction = `(${installWorker.toString()})()`;
-    const workerBlob = new Blob([workerFunction]);
-    const workerUrl = URL.createObjectURL(workerBlob, { type: 'application/javascript' });
-    this.#worker = new Worker(workerUrl);
+    this.#worker = new Worker(new URL('./WebSocketWorker.js', import.meta.url));
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
     this.#maxBatchSize = Number.POSITIVE_INFINITY;
@@ -86,7 +83,6 @@ class BatchingWebSocket extends EventTarget {
       'destroy',
       () => {
         this.disconnect();
-        URL.revokeObjectURL(workerUrl);
       },
       { once: true }
     );
