@@ -117,7 +117,8 @@ export default {
         min: this.min,
         max: this.max,
         limitLow: this.limitLow,
-        limitHigh: this.limitHigh
+        limitHigh: this.limitHigh,
+        isValid: true
       };
 
       if (event) {
@@ -132,6 +133,10 @@ export default {
 
         this.model.validate(data, (valid) => {
           Object.entries(valid).forEach(([key, isValid]) => {
+            if (!isValid) {
+              data.isValid = false;
+            }
+
             const element = this.$refs[key];
             const reqIndicatorElement = element.parentElement.querySelector('.req-indicator');
             reqIndicatorElement.classList.toggle('invalid', !isValid);
