@@ -28,6 +28,7 @@ import { fileURLToPath } from 'url';
 
 /**
  * @param {import('@playwright/test').Page} page
+ * @param {string} text
  */
 async function enterTextEntry(page, text) {
   await addNotebookEntry(page);
