@@ -552,6 +552,10 @@ test.describe('Notebook entry tests', () => {
    *  Paste into notebook entry tests
    */
   test('Can paste text into a notebook entry', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7686'
+    });
     const TEST_TEXT = 'This is a test';
     const iterations = 20;
     const EXPECTED_TEXT = TEST_TEXT.repeat(iterations);
@@ -571,6 +575,10 @@ test.describe('Notebook entry tests', () => {
   });
 
   test('Prevents pasting text into selected notebook entry if not editing', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7686'
+    });
     const TEST_TEXT = 'This is a test';
 
     await page.goto(notebookObject.url);
