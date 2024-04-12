@@ -30,12 +30,23 @@ import { fileURLToPath } from 'url';
  * @param {import('@playwright/test').Page} page
  */
 async function enterTextEntry(page, text) {
-  // Click the 'Add Notebook Entry' area
-  await page.locator(NOTEBOOK_DROP_AREA).click();
-
-  // enter text
-  await page.getByLabel('Notebook Entry Input').last().fill(text);
+  await addNotebookEntry(page);
+  await enterTextInLastEntry(page, text);
   await commitEntry(page);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function addNotebookEntry(page) {
+  await page.locator(NOTEBOOK_DROP_AREA).click();
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function enterTextInLastEntry(page, text) {
+  await page.getByLabel('Notebook Entry Input').last().fill(text);
 }
 
 /**
@@ -140,10 +151,13 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 }
 
 export {
+  addNotebookEntry,
+  commitEntry,
   createNotebookAndEntry,
   createNotebookEntryAndTags,
   dragAndDropEmbed,
   enterTextEntry,
+  enterTextInLastEntry,
   lockPage,
   startAndAddRestrictedNotebookObject
 };
