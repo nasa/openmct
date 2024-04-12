@@ -569,4 +569,23 @@ test.describe('Notebook entry tests', () => {
 
     await expect(page.locator(`text="${EXPECTED_TEXT}"`)).toBeVisible();
   });
+
+  test('Prevents pasting text into selected notebook entry if not editing', async ({ page }) => {
+    const TEST_TEXT = 'This is a test';
+
+    await page.goto(notebookObject.url);
+
+    await nbUtils.addNotebookEntry(page);
+    await nbUtils.enterTextInLastEntry(page, TEST_TEXT);
+    await hotkeys.selectAll(page);
+    await hotkeys.copy(page);
+    await hotkeys.paste(page);
+    await nbUtils.commitEntry(page);
+
+    // This should not paste text into the entry
+    await hotkeys.paste(page);
+
+    await expect(await page.locator(`text="${TEST_TEXT.repeat(1)}"`).count()).toEqual(1);
+    await expect(await page.locator(`text="${TEST_TEXT.repeat(2)}"`).count()).toEqual(0);
+  });
 });
