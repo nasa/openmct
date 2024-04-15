@@ -80,7 +80,7 @@ $shdwBtns: rgba(black, 0.2) 0 1px 2px;
 $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 
 // Base colors
-$colorBodyBg: #2E2E32;
+$colorBodyBg: #17171B;
 $colorBodyFg: #aaaaaa;
 $colorBodyFgSubtle: #9c9c9c;
 $colorBodyFgEm: #fff;
@@ -92,7 +92,7 @@ $colorKey: #1C67E3;
 $colorKeyFg: #fff;
 $colorKeyBg: #015fca; // Darker version of colorKey for use in major buttons
 $colorKeyHov: lighten($colorKey, 10%);
-$colorKeyFilter: invert(36%) sepia(16%) saturate(2512%) hue-rotate(170deg) brightness(100%) contrast(101%);
+$colorKeyFilter: invert(36%) sepia(10%) saturate(2512%) hue-rotate(170deg) brightness(100%) contrast(200%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
   contrast(100%);
 $colorKeySelectedBg: $colorKey;
@@ -545,7 +545,7 @@ $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;
 $splitterBtnColorFg: #999;
-$splitterBtnLabelColorFg: #666;
+$splitterBtnLabelColorFg: #9d9d9d;
 $splitterCollapsedBtnColorBg: #222;
 $splitterCollapsedBtnColorFg: #555;
 $splitterCollapsedBtnColorBgHov: $colorKey;

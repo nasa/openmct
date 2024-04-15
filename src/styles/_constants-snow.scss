@@ -190,8 +190,6 @@ $borderMissing: 1px dashed $colorAlert !important;
 $browseFrameCornerColor: 0px solid rgb(0,150,215);
 
 @mixin browseFrameBorder() {
-  border: $browseFrameBorder;
-  border-radius: $controlCr;
 }
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color

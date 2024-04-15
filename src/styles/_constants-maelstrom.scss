@@ -193,8 +193,6 @@ $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
 
 @mixin browseFrameBorder() {
-  border: $browseFrameBorder;
-  border-radius: $controlCr;
 }
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
