@@ -275,10 +275,10 @@ $colorIconAliasForKeyFilter: #aaa;
 $colorTabsHolderBg: rgba(black, 0.2);
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, 1%);
+$colorBtnBg: pullForward($colorBodyBg, 20%);
 $colorBtnBgHov: pullForward($colorBtnBg, 10%);
 $shdwBtnHov: inset rgba(white, 10%) 0 0 0 100px;
-$colorBtnFg: pullForward($colorBodyFg, 10%);
+$colorBtnFg: pullForward($colorBodyFg, 100%);
 $colorBtnReverseFg: pullForward($colorBtnFg, 10%);
 $colorBtnReverseBg: pullForward($colorBtnBg, 10%);
 $colorBtnFgHov: $colorBtnFg;
@@ -344,7 +344,7 @@ $colorFormFieldErrorFg: rgba(#fff, 0.6);
 $colorFormLines: rgba(#000, 0.2);
 $colorFormSectionHeaderBg: rgba(#000, 0.1);
 $colorFormSectionHeaderFg: rgba($colorBodyFg, 0.8);
-$colorInputBg: rgba(black, 0.2);
+$colorInputBg: rgba(rgb(70, 70, 70), 0.3);
 $colorInputBgHov: rgba(black, 0.1);
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
@@ -376,7 +376,7 @@ $colorTabCurrentGlow: rgba(white, 0.6);
 
 
 // Overlay
-$colorOvrBlocker: rgba(black, 0.7);
+$colorOvrBlocker: rgba(black, 0.8);
 $overlayCr: $interiorMargin;
 
 // Indicator colors
@@ -604,4 +604,9 @@ $scrollContainer: $colorBodyBg;
   // background: radial-gradient(pullForward($c, 5%), $c);
   background: radial-gradient(rgba($c, 1) , rgba($c, .7));
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
+}
+
+@mixin telemetryView(){
+  border: 1px solid $colorBodyFg;
+  border-radius: $controlCr;
 }
