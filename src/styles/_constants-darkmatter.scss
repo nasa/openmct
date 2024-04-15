@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**************************************************DIY THEME CONSTANTS */
+/************************************************** DARKMATTER THEME*/
 
 // Fonts
 // $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -105,7 +105,7 @@ $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
 // Background Image 
-$bodyBg: $colorBodyBg url('../ui/layout/assets/images/background.png');
+$bodyBg: $colorBodyBg url('../ui/layout/assets/images/darkmatter-bg.png');
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.9;

@@ -38,10 +38,10 @@ const config = {
       }
     },
     {
-      name: 'diy-theme', //Runs the same visual tests but with diy-theme
+      name: 'darkmatter-theme', //Runs the same visual tests but with darkmatter-theme
       use: {
         browserName: 'chromium',
-        theme: 'diy-theme'
+        theme: 'darkmatter-theme'
       }
     }
   ],
