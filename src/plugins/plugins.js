@@ -72,7 +72,7 @@ import SummaryWidget from './summaryWidget/plugin.js';
 import Tabs from './tabs/plugin.js';
 import TelemetryMean from './telemetryMean/plugin.js';
 import TelemetryTablePlugin from './telemetryTable/plugin.js';
-import DarkMatter from './themes/darkMatter.js';
+import DarkMatter from './themes/darkmatter.js';
 import Espresso from './themes/espresso.js';
 import Snow from './themes/snow.js';
 import TimeConductorPlugin from './timeConductor/plugin.js';
