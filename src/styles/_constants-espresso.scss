@@ -213,8 +213,7 @@ $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
 $browseFrameCornerColor: 0px solid rgb(0,150,215);
 
-@mixin browseFrameBorder() {
-}
+@mixin browseFrameBorder() {}
 /************************************************** EDITING */
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
@@ -579,4 +578,4 @@ $scrollContainer: $colorBodyBg;
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
-@mixin telemetryView(){}
+// @mixin telemetryView(){}

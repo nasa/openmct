@@ -434,7 +434,7 @@ $colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBtnFg;
-$colorItemFgDetails: pushBack($colorItemFg, 10%);
+$colorItemFgDetails: pushBack($colorItemFg, 30%);
 $shdwItemText: none;
 
 // Tabular (NOT TABS!)
@@ -606,7 +606,7 @@ $scrollContainer: $colorBodyBg;
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
-@mixin telemetryView(){
-  border: 1px solid $colorBodyFg;
-  border-radius: $controlCr;
-}
+// @mixin telemetryView(){
+//   border: 1px solid $colorBodyFg;
+//   border-radius: $controlCr;
+// }
