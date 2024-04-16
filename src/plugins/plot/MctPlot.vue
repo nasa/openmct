@@ -661,7 +661,7 @@ export default {
       this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
       this.startLoading();
-      const bounds = this.timeContext.bounds();
+      const bounds = this.timeContext.getBounds();
       const options = {
         size: this.$parent.$refs.plotWrapper.offsetWidth,
         domain: this.config.xAxis.get('key'),
@@ -1860,8 +1860,8 @@ export default {
     },
 
     showSynchronizeDialog() {
-      const isLocalClock = this.timeContext.clock();
-      if (isLocalClock !== undefined) {
+      const isFixedTimespanMode = this.timeContext.isFixed();
+      if (!isFixedTimespanMode) {
         const message = `
                 This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
                 Do you want to continue?

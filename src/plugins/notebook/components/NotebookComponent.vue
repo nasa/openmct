@@ -680,7 +680,7 @@ export default {
       } else if (domainObjectData) {
         // plain domain object
         const objectPath = JSON.parse(domainObjectData);
-        const bounds = this.openmct.time.bounds();
+        const bounds = this.openmct.time.getBounds();
         const snapshotMeta = {
           bounds,
           link: null,

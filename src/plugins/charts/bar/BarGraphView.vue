@@ -115,11 +115,11 @@ export default {
       this.followTimeContext();
     },
     followTimeContext() {
-      this.timeContext.on('bounds', this.refreshData);
+      this.timeContext.on('boundsChanged', this.refreshData);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('bounds', this.refreshData);
+        this.timeContext.off('boundsChanged', this.refreshData);
       }
     },
     addToComposition(telemetryObject) {
@@ -253,7 +253,7 @@ export default {
       };
     },
     getOptions() {
-      const { start, end } = this.timeContext.bounds();
+      const { start, end } = this.timeContext.getBounds();
 
       return {
         end,
@@ -372,13 +372,13 @@ export default {
       this.setTrace(key, telemetryObject.name, axisMetadata, xValues, yValues);
     },
     isDataInTimeRange(datum, key, telemetryObject) {
-      const timeSystemKey = this.timeContext.timeSystem().key;
+      const timeSystemKey = this.timeContext.getTimeSystem().key;
       const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
       let metadataValue = metadata.value(timeSystemKey) || { key: timeSystemKey };
 
       let currentTimestamp = this.parse(key, metadataValue.key, datum);
 
-      return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
+      return currentTimestamp && this.timeContext.getBounds().end >= currentTimestamp;
     },
     format(telemetryObjectKey, metadataKey, data) {
       const formats = this.telemetryObjectFormats[telemetryObjectKey];
