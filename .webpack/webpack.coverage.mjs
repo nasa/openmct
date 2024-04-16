@@ -16,7 +16,6 @@ config.module.rules.push({
     loader: 'babel-loader',
     options: {
       retainLines: true,
-      // eslint-disable-next-line no-undef
       plugins: [
         [
           'babel-plugin-istanbul',

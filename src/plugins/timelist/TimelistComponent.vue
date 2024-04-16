@@ -97,7 +97,7 @@ const headerItems = [
     property: 'start',
     name: 'Start Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -112,7 +112,7 @@ const headerItems = [
     property: 'end',
     name: 'End Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -425,14 +425,14 @@ export default {
     },
     isActivityInBounds(activity) {
       const startInBounds =
-        activity.start >= this.timeContext.bounds()?.start &&
-        activity.start <= this.timeContext.bounds()?.end;
+        activity.start >= this.timeContext.getBounds()?.start &&
+        activity.start <= this.timeContext.getBounds()?.end;
       const endInBounds =
-        activity.end >= this.timeContext.bounds()?.start &&
-        activity.end <= this.timeContext.bounds()?.end;
+        activity.end >= this.timeContext.getBounds()?.start &&
+        activity.end <= this.timeContext.getBounds()?.end;
       const middleInBounds =
-        activity.start <= this.timeContext.bounds()?.start &&
-        activity.end >= this.timeContext.bounds()?.end;
+        activity.start <= this.timeContext.getBounds()?.start &&
+        activity.end >= this.timeContext.getBounds()?.end;
 
       return startInBounds || endInBounds || middleInBounds;
     },

@@ -173,16 +173,16 @@ export default {
       });
     },
     getBoundsForTimeSystem(timeSystem) {
-      const currentBounds = this.timeContext.bounds();
+      const currentBounds = this.timeContext.getBounds();
 
       //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
       return currentBounds;
     },
     updateViewBounds() {
-      const bounds = this.timeContext.bounds();
+      const bounds = this.timeContext.getBounds();
       this.updateContentHeight();
       let currentTimeSystemIndex = this.timeSystems.findIndex(
-        (item) => item.timeSystem.key === this.openmct.time.timeSystem().key
+        (item) => item.timeSystem.key === this.openmct.time.getTimeSystem().key
       );
       if (currentTimeSystemIndex > -1) {
         let currentTimeSystem = {
@@ -198,13 +198,13 @@ export default {
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.getTimeSystems();
       this.updateViewBounds();
-      this.timeContext.on('bounds', this.updateViewBounds);
-      this.timeContext.on('clock', this.updateViewBounds);
+      this.timeContext.on('boundsChanged', this.updateViewBounds);
+      this.timeContext.on('clockChanged', this.updateViewBounds);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('bounds', this.updateViewBounds);
-        this.timeContext.off('clock', this.updateViewBounds);
+        this.timeContext.off('boundsChanged', this.updateViewBounds);
+        this.timeContext.off('clockChanged', this.updateViewBounds);
       }
     }
   }

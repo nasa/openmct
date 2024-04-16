@@ -710,7 +710,7 @@ class CouchObjectProvider {
       this.objectQueue[key].pending = true;
       const queued = this.objectQueue[key].dequeue();
       let couchDocument = new CouchDocument(key, queued.model);
-      couchDocument.metadata.created = Date.now();
+
       this.#enqueueForPersistence({
         key,
         document: couchDocument

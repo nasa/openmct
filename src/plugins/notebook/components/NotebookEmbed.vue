@@ -275,10 +275,10 @@ export default {
       }
       const hash = this.embed.historicLink;
 
-      const bounds = this.openmct.time.bounds();
+      const bounds = this.openmct.time.getBounds();
       const isTimeBoundChanged =
         this.embed.bounds.start !== bounds.start || this.embed.bounds.end !== bounds.end;
-      const isFixedTimespanMode = !this.openmct.time.clock();
+      const isFixedTimespanMode = this.openmct.time.isFixed();
 
       let message = '';
       if (isTimeBoundChanged) {
