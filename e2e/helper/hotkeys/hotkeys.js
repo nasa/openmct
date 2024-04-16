@@ -20,12 +20,4 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { copy, paste, selectAll } from './clipboard.js';
-
-const hotkeys = {};
-
-hotkeys.copy = copy;
-hotkeys.paste = paste;
-hotkeys.selectAll = selectAll;
-
-export default hotkeys;
+export * from './clipboard.js';
