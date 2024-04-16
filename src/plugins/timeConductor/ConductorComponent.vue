@@ -74,6 +74,7 @@
 
 <script>
 import _ from 'lodash';
+import { inject, onMounted, provide } from 'vue';
 
 import {
   FIXED_MODE_KEY,
@@ -90,7 +91,7 @@ import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorPopUp from './ConductorPopUp.vue';
 import conductorPopUpManager from './conductorPopUpManager.js';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
-
+import { useTimeSystem } from './useTimeSystem.js';
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
@@ -106,6 +107,16 @@ export default {
   },
   mixins: [conductorPopUpManager],
   inject: ['openmct', 'configuration'],
+  setup() {
+    const openmct = inject('openmct');
+    const { observeTimeSystem, timeSystemKey } = useTimeSystem(openmct);
+
+    onMounted(() => observeTimeSystem());
+
+    provide('timeSystemKey', timeSystemKey);
+
+    return { timeSystemKey };
+  },
   data() {
     const isFixed = this.openmct.time.isFixed();
     const bounds = this.openmct.time.getBounds();
