@@ -430,7 +430,7 @@ class IndependentTimeContext extends TimeContext {
     this.followTimeContext();
 
     // Emit bounds so that views that are changing context get the upstream bounds
-    this.emit('bounds', this.bounds());
+    this.emit('bounds', this.getBounds());
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
   }
 
