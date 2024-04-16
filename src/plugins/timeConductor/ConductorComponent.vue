@@ -19,6 +19,58 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+<template>
+  <div
+    ref="timeConductorOptionsHolder"
+    class="c-compact-tc is-expanded"
+    :class="[
+      { 'is-zooming': isZooming },
+      { 'is-panning': isPanning },
+      { 'alt-pressed': altPressed },
+      isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
+    ]"
+  >
+    <ConductorModeIcon class="c-conductor__mode-icon" />
+    <div class="c-compact-tc__setting-value u-fade-truncate">
+      <conductor-mode :mode="mode" :read-only="true" />
+      <conductor-clock :read-only="true" />
+      <conductor-time-system :read-only="true" />
+    </div>
+    <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
+    <conductor-inputs-realtime v-else :input-bounds="viewBounds" :read-only="true" />
+    <conductor-axis
+      v-if="isFixed"
+      class="c-conductor__ticks"
+      :view-bounds="viewBounds"
+      :is-fixed="isFixed"
+      :alt-pressed="altPressed"
+      @end-pan="endPan"
+      @end-zoom="endZoom"
+      @pan-axis="pan"
+      @zoom-axis="zoom"
+    />
+    <div
+      role="button"
+      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
+      aria-label="Time Conductor Settings"
+    ></div>
+
+    <conductor-pop-up
+      v-if="showConductorPopup"
+      ref="conductorPopup"
+      :bottom="false"
+      :position-x="positionX"
+      :position-y="positionY"
+      :is-fixed="isFixed"
+      @popup-loaded="initializePopup"
+      @mode-updated="saveMode"
+      @clock-updated="saveClock"
+      @fixed-bounds-updated="saveFixedBounds"
+      @clock-offsets-updated="saveClockOffsets"
+      @dismiss="clearPopup"
+    />
+  </div>
+</template>
 
 <script>
 import _ from 'lodash';
@@ -207,56 +259,3 @@ export default {
   }
 };
 </script>
-
-<template>
-  <div
-    ref="timeConductorOptionsHolder"
-    class="c-compact-tc is-expanded"
-    :class="[
-      { 'is-zooming': isZooming },
-      { 'is-panning': isPanning },
-      { 'alt-pressed': altPressed },
-      isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
-    ]"
-  >
-    <ConductorModeIcon class="c-conductor__mode-icon" />
-    <div class="c-compact-tc__setting-value u-fade-truncate">
-      <conductor-mode :mode="mode" :read-only="true" />
-      <conductor-clock :read-only="true" />
-      <conductor-time-system :read-only="true" />
-    </div>
-    <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
-    <conductor-inputs-realtime v-else :input-bounds="viewBounds" :read-only="true" />
-    <conductor-axis
-      v-if="isFixed"
-      class="c-conductor__ticks"
-      :view-bounds="viewBounds"
-      :is-fixed="isFixed"
-      :alt-pressed="altPressed"
-      @end-pan="endPan"
-      @end-zoom="endZoom"
-      @pan-axis="pan"
-      @zoom-axis="zoom"
-    />
-    <div
-      role="button"
-      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
-      aria-label="Time Conductor Settings"
-    ></div>
-
-    <conductor-pop-up
-      v-if="showConductorPopup"
-      ref="conductorPopup"
-      :bottom="false"
-      :position-x="positionX"
-      :position-y="positionY"
-      :is-fixed="isFixed"
-      @popup-loaded="initializePopup"
-      @mode-updated="saveMode"
-      @clock-updated="saveClock"
-      @fixed-bounds-updated="saveFixedBounds"
-      @clock-offsets-updated="saveClockOffsets"
-      @dismiss="clearPopup"
-    />
-  </div>
-</template>
