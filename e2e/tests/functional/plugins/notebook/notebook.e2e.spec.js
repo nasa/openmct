@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 import { fileURLToPath } from 'url';
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
-import hotkeys from '../../../../helper/hotkeys/hotkeys.js';
+import { copy, paste, selectAll } from '../../../../helper/hotkeys/hotkeys.js';
 import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
@@ -564,10 +564,10 @@ test.describe('Notebook entry tests', () => {
 
     await nbUtils.addNotebookEntry(page);
     await nbUtils.enterTextInLastEntry(page, TEST_TEXT);
-    await hotkeys.selectAll(page);
-    await hotkeys.copy(page);
+    await selectAll(page);
+    await copy(page);
     for (let i = 0; i < iterations; i++) {
-      await hotkeys.paste(page);
+      await paste(page);
     }
     await nbUtils.commitEntry(page);
 
@@ -585,13 +585,13 @@ test.describe('Notebook entry tests', () => {
 
     await nbUtils.addNotebookEntry(page);
     await nbUtils.enterTextInLastEntry(page, TEST_TEXT);
-    await hotkeys.selectAll(page);
-    await hotkeys.copy(page);
-    await hotkeys.paste(page);
+    await selectAll(page);
+    await copy(page);
+    await paste(page);
     await nbUtils.commitEntry(page);
 
     // This should not paste text into the entry
-    await hotkeys.paste(page);
+    await paste(page);
 
     await expect(await page.locator(`text="${TEST_TEXT.repeat(1)}"`).count()).toEqual(1);
     await expect(await page.locator(`text="${TEST_TEXT.repeat(2)}"`).count()).toEqual(0);
