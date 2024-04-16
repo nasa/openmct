@@ -191,6 +191,8 @@ $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $filterItemMissing: contrast(0.2);
 $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
+$interiorMarginObjectFrameVertical: 0px;
+$interiorMarginObjectFrameHorizontal: 3px;
 
 @mixin browseFrameBorder() {
 }
@@ -553,7 +555,7 @@ $scrollContainer: $colorBodyBg;
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
-// @mixin telemetryView(){}
+@mixin telemetryView(){}
 
 /**************************************************** OVERRIDES */
 .c-frame {

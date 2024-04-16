@@ -204,6 +204,8 @@ $filterItemMissing: brightness(0.6) grayscale(1);
 $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
 $browseFrameCornerColor: $colorKey 4px; //Color used for the corners of frames
+$interiorMarginObjectFrameVertical: 10px;
+$interiorMarginObjectFrameHorizontal: 10px;
 
 @mixin browseFrameBorder() { // Used on main object container to add highlighted corners to non-hidden frames.
   border-image: radial-gradient(circle, #575757, #6c6c6c, #818181, #979797, #aeaeae);
@@ -606,7 +608,7 @@ $scrollContainer: $colorBodyBg;
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
-// @mixin telemetryView(){
-//   border: 1px solid $colorBodyFg;
-//   border-radius: $controlCr;
-// }
+@mixin telemetryView(){
+  border: 1px solid $colorBodyFg;
+  border-radius: $controlCr;
+}

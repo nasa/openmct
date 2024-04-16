@@ -212,6 +212,8 @@ $filterItemMissing: brightness(0.6) grayscale(1);
 $opacityMissing: 0.5;
 $borderMissing: 1px dashed $colorAlert !important;
 $browseFrameCornerColor: 0px solid rgb(0,150,215);
+$interiorMarginObjectFrameVertical: 0px;
+$interiorMarginObjectFrameHorizontal: 3px;
 
 @mixin browseFrameBorder() {}
 /************************************************** EDITING */
@@ -578,4 +580,4 @@ $scrollContainer: $colorBodyBg;
   box-shadow: rgba(black, 0.5) 0 0.5px 2px;
 }
 
-// @mixin telemetryView(){}
+@mixin telemetryView(){}

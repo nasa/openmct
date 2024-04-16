@@ -18,7 +18,7 @@
   }
 
   &__value {
-    // @include telemetryView();
+    @include telemetryView();
     @include isLimit();
   }
 
@@ -47,7 +47,3 @@
     border: $borderMissing;
   }
 }
-// .l-layout__frame:has(.c-telemetry-view) { 
-//   background: none; 
-//   border-style: none;
-// }
