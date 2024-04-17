@@ -34,7 +34,8 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
  *   observeTimeSystem: () => void,
  *   timeSystemKey: import('vue').Ref<string>,
  *   timeSystemFormatter: import('vue').Ref<() => void>,
- *   timeSystemDurationFormatter: import('vue').Ref<() => void>
+ *   timeSystemDurationFormatter: import('vue').Ref<() => void>,
+ *   isTimeSystemUTCBased: import('vue').Ref<boolean>
  * }}
  */
 export function useTimeSystem(openmct, options) {
@@ -47,6 +48,7 @@ export function useTimeSystem(openmct, options) {
   const timeSystemDurationFormatter = ref(
     getFormatter(openmct, currentTimeSystem.durationFormat || DEFAULT_DURATION_FORMATTER)
   );
+  const isTimeSystemUTCBased = ref(currentTimeSystem.isUTCBased);
 
   onBeforeUnmount(() => stopObservingTimeSystem?.());
 
@@ -62,13 +64,15 @@ export function useTimeSystem(openmct, options) {
       openmct,
       timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
     );
+    isTimeSystemUTCBased.value = timeSystem.isUTCBased;
   }
 
   return {
     observeTimeSystem,
     timeSystemKey,
     timeSystemFormatter,
-    timeSystemDurationFormatter
+    timeSystemDurationFormatter,
+    isTimeSystemUTCBased
   };
 }
 
