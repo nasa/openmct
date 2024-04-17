@@ -92,6 +92,7 @@ import ConductorPopUp from './ConductorPopUp.vue';
 import conductorPopUpManager from './conductorPopUpManager.js';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import { useTimeSystem } from './useTimeSystem.js';
+
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
