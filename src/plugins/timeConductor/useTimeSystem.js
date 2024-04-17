@@ -26,7 +26,7 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
 
 /**
  * Provides a reactive destructuring of the component's current time system,
- * as well as a function to observe and update the time system,
+ * as well as a function to observe and update the component's time system,
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} openmct the Open MCT API
@@ -54,7 +54,7 @@ export function useTimeSystem(openmct, options) {
 
   function observeTimeSystem() {
     openmct.time.on('timeSystemChanged', updateTimeSystem);
-    stopObservingTimeSystem = () => openmct.time.off('timeSystem', updateTimeSystem);
+    stopObservingTimeSystem = () => openmct.time.off('timeSystemChanged', updateTimeSystem);
   }
 
   function updateTimeSystem(timeSystem) {
