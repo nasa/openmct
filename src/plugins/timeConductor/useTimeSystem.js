@@ -22,12 +22,31 @@
 
 import { onBeforeUnmount, ref } from 'vue';
 
+const DEFAULT_DURATION_FORMATTER = 'duration';
+
+/**
+ * Provides a reactive destructuring of the component's current time system,
+ * as well as a function to observe and update the time system,
+ * which automatically stops observing when the component is unmounted.
+ *
+ * @param {OpenMCT} openmct the Open MCT API
+ * @returns {{
+ *   observeTimeSystem: () => void,
+ *   timeSystemKey: import('vue').Ref<string>,
+ *   timeSystemFormatter: import('vue').Ref<() => void>,
+ *   timeSystemDurationFormatter: import('vue').Ref<() => void>
+ * }}
+ */
 export function useTimeSystem(openmct, options) {
   let stopObservingTimeSystem;
 
   const currentTimeSystem = openmct.time.getTimeSystem();
 
   const timeSystemKey = ref(currentTimeSystem.key);
+  const timeSystemFormatter = ref(getFormatter(openmct, currentTimeSystem.timeFormat));
+  const timeSystemDurationFormatter = ref(
+    getFormatter(openmct, currentTimeSystem.durationFormat || DEFAULT_DURATION_FORMATTER)
+  );
 
   onBeforeUnmount(() => stopObservingTimeSystem?.());
 
@@ -38,10 +57,23 @@ export function useTimeSystem(openmct, options) {
 
   function updateTimeSystem(timeSystem) {
     timeSystemKey.value = timeSystem.key;
+    timeSystemFormatter.value = getFormatter(openmct, timeSystem.timeFormat);
+    timeSystemDurationFormatter.value = getFormatter(
+      openmct,
+      timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
+    );
   }
 
   return {
     observeTimeSystem,
-    timeSystemKey
+    timeSystemKey,
+    timeSystemFormatter,
+    timeSystemDurationFormatter
   };
+}
+
+function getFormatter(openmct, key) {
+  return openmct.telemetry.getValueFormatter({
+    format: key
+  }).formatter;
 }
