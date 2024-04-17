@@ -33,7 +33,7 @@ export default class StalenessUtils {
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
-    const { start } = this.openmct.time.bounds();
+    const { start } = this.openmct.time.getBounds();
     const isStalenessInCurrentClock = stalenessResponseTime > start;
 
     if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {

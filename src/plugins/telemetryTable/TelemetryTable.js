@@ -134,7 +134,7 @@ export default class TelemetryTable extends EventEmitter {
 
     //If no persisted sort order, default to sorting by time system, descending.
     sortOptions = sortOptions || {
-      key: this.openmct.time.timeSystem().key,
+      key: this.openmct.time.getTimeSystem().key,
       direction: 'desc'
     };
 

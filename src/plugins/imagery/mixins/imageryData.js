@@ -171,7 +171,7 @@ export default {
       this.bounds = bounds; // setting bounds for ImageryView watcher
     },
     timeSystemChanged() {
-      this.timeSystem = this.timeContext.timeSystem();
+      this.timeSystem = this.timeContext.getTimeSystem();
       this.timeKey = this.timeSystem.key;
       this.timeFormatter = this.getFormatter(this.timeKey);
       this.durationFormatter = this.getFormatter(
