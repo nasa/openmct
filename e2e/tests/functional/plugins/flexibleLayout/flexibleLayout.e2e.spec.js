@@ -122,7 +122,7 @@ test.describe('Flexible Layout', () => {
     expect(await page.locator('.c-fl--rows').count()).toEqual(0);
 
     // Change the layout to rows orientation
-    await page.getByTitle('Columns layout').click();
+    await page.getByTitle('Switch to rows layout').click();
 
     // Assert the layout is in rows orientation
     expect(await page.locator('.c-fl--rows').count()).toBeGreaterThan(0);
