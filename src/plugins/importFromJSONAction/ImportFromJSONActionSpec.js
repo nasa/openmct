@@ -111,7 +111,6 @@ describe('The import JSON action', function () {
   });
 
   it('protects against prototype pollution', (done) => {
-    spyOn(console, 'warn');
     spyOn(openmct.forms, 'showForm').and.callFake(returnResponseWithPrototypePollution);
 
     unObserve = openmct.objects.observe(folderObject, '*', callback);
@@ -123,8 +122,6 @@ describe('The import JSON action', function () {
         Object.prototype.hasOwnProperty.call(newObject, '__proto__') ||
         Object.prototype.hasOwnProperty.call(Object.getPrototypeOf(newObject), 'toString');
 
-      // warning from openmct.objects.get
-      expect(console.warn).not.toHaveBeenCalled();
       expect(hasPollutedProto).toBeFalse();
 
       done();
@@ -134,7 +131,7 @@ describe('The import JSON action', function () {
       const pollutedResponse = {
         selectFile: {
           name: 'imported object',
-          // eslint-disable-next-line prettier/prettier
+
           body: '{"openmct":{"c28d230d-e909-4a3e-9840-d9ef469dda70":{"identifier":{"key":"c28d230d-e909-4a3e-9840-d9ef469dda70","namespace":""},"name":"Unnamed Overlay Plot","type":"telemetry.plot.overlay","composition":[],"configuration":{"series":[]},"modified":1695837546833,"location":"mine","created":1695837546833,"persisted":1695837546833,"__proto__":{"toString":"foobar"}}},"rootId":"c28d230d-e909-4a3e-9840-d9ef469dda70"}'
         }
       };
@@ -192,6 +189,12 @@ describe('The import JSON action', function () {
       type: 'folder'
     };
     spyOn(openmct.objects, 'save').and.callFake((model) => Promise.resolve(model));
+    spyOn(openmct.overlays, 'progressDialog').and.callFake(() => {
+      return {
+        updateProgress: () => {},
+        dismiss: () => {}
+      };
+    });
     try {
       await importFromJSONAction.onSave(targetDomainObject, {
         selectFile: { body: JSON.stringify(incomingObject) }

@@ -5,6 +5,8 @@ on:
     types:
       - labeled
       - unlabeled
+      - milestoned
+      - demilestoned
       - opened
       - reopened
       - synchronize

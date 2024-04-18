@@ -84,6 +84,12 @@ test.describe('Fault Management Visual Tests', () => {
     await shelveFault(page, 1);
     await changeViewTo(page, 'shelved');
 
+    /* cspell:disable-next-line */
+    // Since fault management is heavily dependent on events (bleh), we need to wait for the correct
+    // element counts
+    await expect(page.getByLabel('Select fault:')).toHaveCount(1);
+    await expect(page.getByLabel('Disposition Actions')).toHaveCount(1);
+
     await percySnapshot(page, `Shelved faults appear in the shelved view (theme: '${theme}')`);
 
     await openFaultRowMenu(page, 1);

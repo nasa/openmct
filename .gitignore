@@ -47,3 +47,6 @@ index.html.bak
 .nyc_output
 coverage
 codecov
+
+# Don't commit MacOS screenshots
+*-darwin.png

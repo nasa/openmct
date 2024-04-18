@@ -134,7 +134,7 @@ export default class TelemetryTable extends EventEmitter {
 
     //If no persisted sort order, default to sorting by time system, descending.
     sortOptions = sortOptions || {
-      key: this.openmct.time.timeSystem().key,
+      key: this.openmct.time.getTimeSystem().key,
       direction: 'desc'
     };
 
@@ -170,6 +170,10 @@ export default class TelemetryTable extends EventEmitter {
     const telemetryRemover = this.getTelemetryRemover();
 
     this.removeTelemetryCollection(keyString);
+
+    let sortOptions = this.configuration.getConfiguration().sortOptions;
+    requestOptions.order =
+      sortOptions?.direction ?? (this.telemetryMode === 'performance' ? 'desc' : 'asc');
 
     if (this.telemetryMode === 'performance') {
       requestOptions.size = this.rowLimit;

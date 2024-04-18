@@ -180,13 +180,13 @@ export default {
       this.items.push(item);
       this.subscribeToStaleness(domainObject);
     },
-    removeItem(identifier) {
+    async removeItem(identifier) {
       const keystring = this.openmct.objects.makeKeyString(identifier);
 
       const index = this.items.findIndex((item) => keystring === item.key);
       this.items.splice(index, 1);
 
-      const domainObject = this.openmct.objects.get(keystring);
+      const domainObject = await this.openmct.objects.get(keystring);
       this.triggerUnsubscribeFromStaleness(domainObject);
     },
     reorder(reorderPlan) {

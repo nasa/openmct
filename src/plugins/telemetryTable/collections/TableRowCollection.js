@@ -268,7 +268,7 @@ export default class TableRowCollection extends EventEmitter {
    * collection.sort("timestamp.text");
    *
    *
-   * @param {object} sortOptions An object specifying a sort key, and direction.
+   * @param {Object} sortOptions An object specifying a sort key, and direction.
    */
   sortBy(sortOptions) {
     if (arguments.length > 0) {

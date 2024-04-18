@@ -140,7 +140,7 @@ export default class PlotSeries extends Model {
     //this triggers Model.destroy which in turn triggers destroy methods for other classes.
     super.destroy();
     this.stopListening();
-    this.openmct.time.off('bounds', this.updateLimits);
+    this.openmct.time.off('boundsChanged', this.updateLimits);
 
     if (this.unsubscribe) {
       this.unsubscribe();
@@ -171,7 +171,7 @@ export default class PlotSeries extends Model {
     this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
     this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
     this.limits = [];
-    this.openmct.time.on('bounds', this.updateLimits);
+    this.openmct.time.on('boundsChanged', this.updateLimits);
     this.removeMutationListener = this.openmct.objects.observe(
       this.domainObject,
       'name',
@@ -422,7 +422,7 @@ export default class PlotSeries extends Model {
    *
    * @private
    * @param {Object} newData a telemetry datum.
-   * @param {Boolean} [sorted] default false, if true will append
+   * @param {boolean} [sorted] default false, if true will append
    *                  a point to the end without dupe checking.
    */
   add(newData, sorted = false) {

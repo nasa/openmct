@@ -23,12 +23,18 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults } from '../../appActions.js';
-import { VISUAL_URL } from '../../constants.js';
+import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
 
-test.describe('Visual - Display Layout', () => {
-  test.beforeEach(async ({ page, theme }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+test.describe('Visual - Display Layout @clock', () => {
+  test.use({
+    clockOptions: {
+      now: MISSION_TIME,
+      shouldAdvanceTime: true
+    }
+  });
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     const parentLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
@@ -59,12 +65,15 @@ test.describe('Visual - Display Layout', () => {
     await page.goto(parentLayout.url, { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: 'Edit Object' }).click();
 
-    //Move the Child Right Layout to the Right. It should be on top of the Left Layout at this point.
+    // Select the child right layout
     await page
       .getByLabel('Child Right Layout Layout', { exact: true })
       .getByLabel('Move Sub-object Frame')
       .click();
-    await page.getByLabel('Move Sub-object Frame').nth(3).click(); //I'm not sure why this step is necessary
+    // FIXME: Click to select the parent object (layout)
+    await page.getByLabel('Move Sub-object Frame').nth(3).click();
+
+    // Move the second layout element to the right
     await page.getByLabel('X:').click();
     await page.getByLabel('X:').fill('35');
   });

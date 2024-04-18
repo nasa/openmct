@@ -63,8 +63,7 @@ export default class Selection extends EventEmitter {
    * Selects the selectable object and emits the 'change' event.
    *
    * @param {Selectable|Selectable[]} selectable An object or array of objects with element and context properties
-   * @param {object} selectable an object with element and context properties
-   * @param {Boolean} isMultiSelectEvent flag indication shift key is pressed or not
+   * @param {boolean} isMultiSelectEvent flag indication shift key is pressed or not
    * @private
    */
   select(selectable, isMultiSelectEvent) {

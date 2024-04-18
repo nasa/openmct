@@ -21,7 +21,6 @@
  *****************************************************************************/
 import fs from 'fs';
 
-import { getPreciseDuration } from '../../../../src/utils/duration.js';
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
 import {
   assertPlanActivities,
@@ -132,3 +131,58 @@ test.describe('Gantt Chart', () => {
     );
   });
 });
+
+const ONE_SECOND = 1000;
+const ONE_MINUTE = 60 * ONE_SECOND;
+const ONE_HOUR = ONE_MINUTE * 60;
+const ONE_DAY = ONE_HOUR * 24;
+
+function normalizeAge(num) {
+  const hundredtized = num * 100;
+  const isWhole = hundredtized % 100 === 0;
+
+  return isWhole ? hundredtized / 100 : num;
+}
+
+function padLeadingZeros(num, numOfLeadingZeros) {
+  return num.toString().padStart(numOfLeadingZeros, '0');
+}
+
+function toDoubleDigits(num) {
+  return padLeadingZeros(num, 2);
+}
+
+function toTripleDigits(num) {
+  return padLeadingZeros(num, 3);
+}
+
+function getPreciseDuration(value, { excludeMilliSeconds, useDayFormat } = {}) {
+  let preciseDuration;
+  const ms = value || 0;
+
+  const duration = [
+    Math.floor(normalizeAge(ms / ONE_DAY)),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
+  ];
+  if (!excludeMilliSeconds) {
+    duration.push(toTripleDigits(Math.floor(normalizeAge(ms % ONE_SECOND))));
+  }
+
+  if (useDayFormat) {
+    // Format days as XD
+    const days = duration.shift();
+    if (days > 0) {
+      preciseDuration = `${days}D ${duration.join(':')}`;
+    } else {
+      preciseDuration = duration.join(':');
+    }
+  } else {
+    const days = toDoubleDigits(duration.shift());
+    duration.unshift(days);
+    preciseDuration = duration.join(':');
+  }
+
+  return preciseDuration;
+}

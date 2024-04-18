@@ -58,11 +58,13 @@
 </template>
 
 <script>
+import { nextTick, toRaw } from 'vue';
+
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 import ViewSwitcher from '../layout/ViewSwitcher.vue';
 
-const HIDDEN_ACTIONS = ['remove', 'move', 'preview', 'large.view'];
+const HIDDEN_ACTIONS = ['remove', 'move', 'preview', 'large.view', 'reload'];
 
 export default {
   components: {
@@ -94,12 +96,6 @@ export default {
       default: () => {
         return [];
       }
-    },
-    actionCollection: {
-      type: Object,
-      default: () => {
-        return undefined;
-      }
     }
   },
   emits: ['set-view'],
@@ -111,17 +107,18 @@ export default {
     };
   },
   watch: {
-    actionCollection(actionCollection) {
+    async currentView() {
+      // wait for view to render with next tick
+      await nextTick();
       if (this.actionCollection) {
         this.unlistenToActionCollection();
       }
 
-      this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.getActionsObject());
-    }
-  },
-  mounted() {
-    if (this.actionCollection) {
+      this.actionCollection = this.openmct.actions.getActionsCollection(
+        toRaw(this.objectPath),
+        toRaw(this.currentView)
+      );
+
       this.actionCollection.on('update', this.updateActionItems);
       this.updateActionItems(this.actionCollection.getActionsObject());
     }

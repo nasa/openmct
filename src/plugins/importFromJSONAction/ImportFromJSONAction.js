@@ -39,7 +39,7 @@ export default class ImportAsJSONAction {
   // Public
   /**
    *
-   * @param {object} objectPath
+   * @param {Object} objectPath
    * @returns {boolean}
    */
   appliesTo(objectPath) {
@@ -58,15 +58,15 @@ export default class ImportAsJSONAction {
   }
   /**
    *
-   * @param {object} objectPath
+   * @param {Object} objectPath
    */
   invoke(objectPath) {
     this._showForm(objectPath[0]);
   }
   /**
    *
-   * @param {object} object
-   * @param {object} changes
+   * @param {Object} object
+   * @param {Object} changes
    */
 
   onSave(object, changes) {
@@ -79,9 +79,9 @@ export default class ImportAsJSONAction {
 
   /**
    * @private
-   * @param {object} parent
-   * @param {object} tree
-   * @param {object} seen
+   * @param {Object} parent
+   * @param {Object} tree
+   * @param {Object} seen
    * @param {Array} objectsToCreate tracks objects from import json that will need to be created
    */
   _deepInstantiate(parent, tree, seen, objectsToCreate) {
@@ -112,7 +112,7 @@ export default class ImportAsJSONAction {
 
   /**
    * @private
-   * @param {object} parent
+   * @param {Object} parent
    * @returns [identifiers]
    */
   _getObjectReferenceIds(parent) {
@@ -144,35 +144,150 @@ export default class ImportAsJSONAction {
 
     return Array.from(new Set([...objectIdentifiers, ...itemObjectReferences]));
   }
-  /**
-   * @private
-   * @param {object} tree
-   * @param {string} namespace
-   * @returns {object}
-   */
-  _generateNewIdentifiers(tree, newNamespace) {
-    // For each domain object in the file, generate new ID, replace in tree
-    Object.keys(tree.openmct).forEach((domainObjectId) => {
-      const oldId = parseKeyString(domainObjectId);
 
+  /**
+   * Generates a map of old IDs to new IDs for efficient lookup during tree walking.
+   * This function considers cases where original namespaces are blank and updates those IDs as well.
+   *
+   * @param {Object} tree - The object tree containing the old IDs.
+   * @param {string} newNamespace - The namespace for the new IDs.
+   * @returns {Object} A map of old IDs to new IDs.
+   */
+  _generateIdMap(tree, newNamespace) {
+    const idMap = {};
+    const keys = Object.keys(tree.openmct);
+
+    for (const oldIdKey of keys) {
+      const oldId = parseKeyString(oldIdKey);
       const newId = {
         namespace: newNamespace,
         key: uuid()
       };
-      tree = this._rewriteId(oldId, newId, tree);
-    }, this);
+      const newIdKeyString = this.openmct.objects.makeKeyString(newId);
 
+      // Update the map with the old and new ID key strings.
+      idMap[oldIdKey] = newIdKeyString;
+
+      // If the old namespace is blank, also map the non-namespaced ID.
+      if (!oldId.namespace) {
+        const nonNamespacedOldIdKey = oldId.key;
+        idMap[nonNamespacedOldIdKey] = newIdKeyString;
+      }
+    }
+
+    return idMap;
+  }
+
+  /**
+   * Walks through the object tree and updates IDs according to the provided ID map.
+   * @param {Object} obj - The current object being visited in the tree.
+   * @param {Object} idMap - A map of old IDs to new IDs for rewriting.
+   * @param {Object} importDialog - Optional progress dialog for import.
+   * @returns {Promise<Object>} The object with updated IDs.
+   */
+  async _walkAndRewriteIds(obj, idMap, importDialog) {
+    // How many rewrites to do before yielding to the event loop
+    const UI_UPDATE_INTERVAL = 300;
+    // The percentage of the progress dialog to allocate to rewriting IDs
+    const PERCENT_OF_DIALOG = 80;
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+
+    if (typeof obj === 'string') {
+      const possibleId = idMap[obj];
+      if (possibleId) {
+        return possibleId;
+      } else {
+        return obj;
+      }
+    }
+
+    if (Object.hasOwn(obj, 'key') && Object.hasOwn(obj, 'namespace')) {
+      const oldId = this.openmct.objects.makeKeyString(obj);
+      const possibleId = idMap[oldId];
+
+      if (possibleId) {
+        const newIdParts = possibleId.split(':');
+        if (newIdParts.length >= 2) {
+          // new ID is namespaced, so update both the namespace and key
+          obj.namespace = newIdParts[0];
+          obj.key = newIdParts[1];
+        } else {
+          // old ID was not namespaced, so update the key only
+          obj.namespace = '';
+          obj.key = newIdParts[0];
+        }
+      }
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      for (let i = 0; i < obj.length; i++) {
+        obj[i] = await this._walkAndRewriteIds(obj[i], idMap); // Process each item in the array
+      }
+      return obj;
+    }
+
+    if (typeof obj === 'object') {
+      const newObj = {};
+
+      const keys = Object.keys(obj);
+      let processedCount = 0;
+      for (const key of keys) {
+        const value = obj[key];
+        const possibleId = idMap[key];
+        const newKey = possibleId || key;
+
+        newObj[newKey] = await this._walkAndRewriteIds(value, idMap);
+
+        // Optionally update the importDialog here, after each property has been processed
+        if (importDialog) {
+          processedCount++;
+          if (processedCount % UI_UPDATE_INTERVAL === 0) {
+            // yield to the event loop to allow the UI to update
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const percentPersisted = Math.ceil(PERCENT_OF_DIALOG * (processedCount / keys.length));
+            const message = `Rewriting ${processedCount} of ${keys.length} imported objects.`;
+            importDialog.updateProgress(percentPersisted, message);
+          }
+        }
+      }
+
+      return newObj;
+    }
+
+    // Return the input as-is for types that are not objects, strings, or arrays
+    return obj;
+  }
+
+  /**
+   * @private
+   * @param {Object} tree
+   * @returns {Promise<Object>}
+   */
+  async _generateNewIdentifiers(tree, newNamespace, importDialog) {
+    const idMap = this._generateIdMap(tree, newNamespace);
+    tree.rootId = idMap[tree.rootId];
+    tree.openmct = await this._walkAndRewriteIds(tree.openmct, idMap, importDialog);
     return tree;
   }
   /**
    * @private
-   * @param {object} domainObject
-   * @param {object} objTree
+   * @param {Object} domainObject
+   * @param {Object} objTree
    */
   async _importObjectTree(domainObject, objTree) {
+    // make rewriting objects IDs 80% of the progress bar
+    const importDialog = this.openmct.overlays.progressDialog({
+      progressPerc: 0,
+      message: `Importing ${Object.keys(objTree.openmct).length} objects`,
+      iconClass: 'info',
+      title: 'Importing'
+    });
     const objectsToCreate = [];
     const namespace = domainObject.identifier.namespace;
-    const tree = this._generateNewIdentifiers(objTree, namespace);
+    const tree = await this._generateNewIdentifiers(objTree, namespace, importDialog);
     const rootId = tree.rootId;
 
     const rootObj = tree.openmct[rootId];
@@ -182,11 +297,24 @@ export default class ImportAsJSONAction {
       this._deepInstantiate(rootObj, tree.openmct, [], objectsToCreate);
 
       try {
-        await Promise.all(objectsToCreate.map(this._instantiate, this));
+        let persistedObjects = 0;
+        // make saving objects objects 20% of the progress bar
+        await Promise.all(
+          objectsToCreate.map(async (objectToCreate) => {
+            persistedObjects++;
+            const percentPersisted =
+              Math.ceil(20 * (persistedObjects / objectsToCreate.length)) + 80;
+            const message = `Saving ${persistedObjects} of ${objectsToCreate.length} imported objects.`;
+            importDialog.updateProgress(percentPersisted, message);
+            await this._instantiate(objectToCreate);
+          })
+        );
       } catch (error) {
         this.openmct.notifications.error('Error saving objects');
 
         throw error;
+      } finally {
+        importDialog.dismiss();
       }
 
       const compositionCollection = this.openmct.composition.get(domainObject);
@@ -194,7 +322,8 @@ export default class ImportAsJSONAction {
       this.openmct.objects.mutate(rootObj, 'location', domainObjectKeyString);
       compositionCollection.add(rootObj);
     } else {
-      const dialog = this.openmct.overlays.dialog({
+      importDialog.dismiss();
+      const cannotImportDialog = this.openmct.overlays.dialog({
         iconClass: 'alert',
         message: "We're sorry, but you cannot import that object type into this object.",
         buttons: [
@@ -202,7 +331,7 @@ export default class ImportAsJSONAction {
             label: 'Ok',
             emphasis: true,
             callback: function () {
-              dialog.dismiss();
+              cannotImportDialog.dismiss();
             }
           }
         ]
@@ -211,52 +340,16 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} model
-   * @returns {object}
+   * @param {Object} model
+   * @returns {Object}
    */
   _instantiate(model) {
     return this.openmct.objects.save(model);
   }
+
   /**
    * @private
-   * @param {object} oldId
-   * @param {object} newId
-   * @param {object} tree
-   * @returns {object}
-   */
-  _rewriteId(oldId, newId, tree) {
-    let newIdKeyString = this.openmct.objects.makeKeyString(newId);
-    let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
-    const newTreeString = JSON.stringify(tree).replace(
-      new RegExp(oldIdKeyString, 'g'),
-      newIdKeyString
-    );
-    const newTree = JSON.parse(newTreeString, (key, value) => {
-      if (
-        value !== undefined &&
-        value !== null &&
-        Object.prototype.hasOwnProperty.call(value, 'key') &&
-        Object.prototype.hasOwnProperty.call(value, 'namespace')
-      ) {
-        // first check if key is messed up from regex and contains a colon
-        // if it does, repair it
-        if (value.key.includes(':')) {
-          const splitKey = value.key.split(':');
-          value.key = splitKey[1];
-          value.namespace = splitKey[0];
-        }
-        // now check if we need to replace the id
-        if (value.key === oldId.key && value.namespace === oldId.namespace) {
-          return newId;
-        }
-      }
-      return value;
-    });
-    return newTree;
-  }
-  /**
-   * @private
-   * @param {object} domainObject
+   * @param {Object} domainObject
    */
   _showForm(domainObject) {
     const formStructure = {
@@ -285,7 +378,7 @@ export default class ImportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} data
+   * @param {Object} data
    * @returns {boolean}
    */
   _validateJSON(data) {
