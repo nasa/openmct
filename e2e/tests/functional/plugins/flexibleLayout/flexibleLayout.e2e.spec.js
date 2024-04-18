@@ -78,8 +78,8 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator and Clock to the Flexible Layout
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
-    await clockTreeItem.dragTo(page.locator('.c-fl__container.is-empty'));
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
+    await clockTreeItem.dragTo(page.locator('.c-fl-container.is-empty'));
     // Check that panes can be dragged while Flexible Layout is in Edit mode
     let dragWrapper = page
       .locator('.c-fl-container__frames-holder .c-fl-frame__drag-wrapper')
@@ -105,8 +105,8 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator and Clock to the Flexible Layout
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
-    await clockTreeItem.dragTo(page.locator('.c-fl__container.is-empty'));
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
+    await clockTreeItem.dragTo(page.locator('.c-fl-container.is-empty'));
 
     // Click on the first frame to select it
     await page.locator('.c-fl-container__frame').first().click();
@@ -171,7 +171,7 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -202,7 +202,7 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -242,7 +242,7 @@ test.describe('Flexible Layout', () => {
       name: new RegExp(exampleImageryObject.name)
     });
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await exampleImageryTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await exampleImageryTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
 
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
