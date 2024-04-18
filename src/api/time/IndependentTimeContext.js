@@ -24,18 +24,35 @@ import { MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants.js';
 import TimeContext from './TimeContext.js';
 
 /**
+ * @typedef {import('./TimeAPI.js').default} TimeAPI
+ * @typedef {import('./GlobalTimeContext.js').default} GlobalTimeContext
+ * @typedef {import('./TimeAPI.js').TimeSystem} TimeSystem
+ * @typedef {import('./TimeContext.js').Mode} Mode
+ * @typedef {import('./TimeContext.js').TimeConductorBounds} TimeConductorBounds
+ * @typedef {import('./TimeAPI.js').ClockOffsets} ClockOffsets
+ */
+
+/**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
  * Views will use the GlobalTimeContext unless they specify an alternate/independent time context here.
  */
 class IndependentTimeContext extends TimeContext {
+  /**
+   * @param {import('openmct').OpenMCT} openmct - The Open MCT application instance.
+   * @param {TimeAPI & GlobalTimeContext} globalTimeContext - The global time context.
+   * @param {import('openmct').ObjectPath} objectPath - The path of objects.
+   */
   constructor(openmct, globalTimeContext, objectPath) {
     super();
+    /** @type {any} */
     this.openmct = openmct;
+    /** @type {Function[]} */
     this.unlisteners = [];
+    /** @type {TimeAPI & GlobalTimeContext | undefined} */
     this.globalTimeContext = globalTimeContext;
-    // We always start with the global time context.
-    // This upstream context will be undefined when an independent time context is added later.
+    /** @type {TimeAPI & GlobalTimeContext | undefined} */
     this.upstreamTimeContext = this.globalTimeContext;
+    /** @type {Array<any>} */
     this.objectPath = objectPath;
     this.refreshContext = this.refreshContext.bind(this);
     this.resetContext = this.resetContext.bind(this);
@@ -47,6 +64,10 @@ class IndependentTimeContext extends TimeContext {
     this.globalTimeContext.on('removeOwnContext', this.removeIndependentContext);
   }
 
+  /**
+   * @deprecated
+   * @override
+   */
   bounds() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.bounds(...arguments);
@@ -55,6 +76,9 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * @override
+   */
   getBounds() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.getBounds();
@@ -63,6 +87,9 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * @override
+   */
   setBounds() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.setBounds(...arguments);
@@ -71,6 +98,9 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * @override
+   */
   tick() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.tick(...arguments);
@@ -79,6 +109,9 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * @override
+   */
   clockOffsets() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.clockOffsets(...arguments);
@@ -87,6 +120,9 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * @override
+   */
   getClockOffsets() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.getClockOffsets();
@@ -95,6 +131,9 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * @override
+   */
   setClockOffsets() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.setClockOffsets(...arguments);
@@ -103,12 +142,24 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   *
+   * @param {number} newTOI
+   * @returns {number}
+   */
   timeOfInterest(newTOI) {
     return this.globalTimeContext.timeOfInterest(...arguments);
   }
 
+  /**
+   *
+   * @param {TimeSystem | string} timeSystemOrKey
+   * @param {TimeConductorBounds} bounds
+   * @returns {TimeSystem}
+   * @override
+   */
   timeSystem(timeSystemOrKey, bounds) {
-    return this.globalTimeContext.timeSystem(...arguments);
+    return this.globalTimeContext.setTimeSystem(...arguments);
   }
 
   /**
@@ -116,6 +167,7 @@ class IndependentTimeContext extends TimeContext {
    * @returns {TimeSystem} The currently applied time system
    * @memberof module:openmct.TimeAPI#
    * @method getTimeSystem
+   * @override
    */
   getTimeSystem() {
     return this.globalTimeContext.getTimeSystem();
@@ -246,6 +298,7 @@ class IndependentTimeContext extends TimeContext {
   /**
    * Get the current mode.
    * @return {Mode} the current mode;
+   * @override
    */
   getMode() {
     if (this.upstreamTimeContext) {
@@ -259,9 +312,8 @@ class IndependentTimeContext extends TimeContext {
    * Set the mode to either fixed or realtime.
    *
    * @param {Mode} mode The mode to activate
-   * @param {TimeBounds | ClockOffsets} offsetsOrBounds A time window of a fixed width
-   * @fires module:openmct.TimeAPI~clock
-   * @return {Mode} the currently active mode;
+   * @param {TimeConductorBounds | ClockOffsets} offsetsOrBounds A time window of a fixed width
+   * @return {Mode | undefined} the currently active mode;
    */
   setMode(mode, offsetsOrBounds) {
     if (!mode) {
@@ -299,6 +351,10 @@ class IndependentTimeContext extends TimeContext {
     return this.mode;
   }
 
+  /**
+   * @returns {boolean}
+   * @override
+   */
   isRealTime() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.isRealTime(...arguments);
@@ -307,6 +363,10 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * @returns {number}
+   * @override
+   */
   now() {
     if (this.upstreamTimeContext) {
       return this.upstreamTimeContext.now(...arguments);
@@ -343,6 +403,9 @@ class IndependentTimeContext extends TimeContext {
     this.unlisteners = [];
   }
 
+  /**
+   * Reset the time context to the global time context
+   */
   resetContext() {
     if (this.upstreamTimeContext) {
       this.stopFollowingTimeContext();
@@ -352,6 +415,7 @@ class IndependentTimeContext extends TimeContext {
 
   /**
    * Refresh the time context, following any upstream time contexts as necessary
+   * @param {string} [viewKey] The key of the view to refresh
    */
   refreshContext(viewKey) {
     const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
@@ -366,14 +430,21 @@ class IndependentTimeContext extends TimeContext {
     this.followTimeContext();
 
     // Emit bounds so that views that are changing context get the upstream bounds
-    this.emit('bounds', this.bounds());
+    this.emit('bounds', this.getBounds());
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
   }
 
+  /**
+   * @returns {boolean} True if this time context has an independent context, false otherwise
+   */
   hasOwnContext() {
     return this.upstreamTimeContext === undefined;
   }
 
+  /**
+   * Get the upstream time context of this time context
+   * @returns {TimeAPI & GlobalTimeContext | undefined} The upstream time context
+   */
   getUpstreamContext() {
     // If a view has an independent context, don't return an upstream context
     // Be aware that when a new independent time context is created, we assign the global context as default

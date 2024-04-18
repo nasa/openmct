@@ -164,7 +164,7 @@ describe('Gauge plugin', () => {
       });
       spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });
@@ -306,7 +306,7 @@ describe('Gauge plugin', () => {
       });
       spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });
@@ -448,7 +448,7 @@ describe('Gauge plugin', () => {
       });
       spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });
@@ -763,7 +763,7 @@ describe('Gauge plugin', () => {
           })
       });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });

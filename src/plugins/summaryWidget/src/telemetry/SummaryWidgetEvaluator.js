@@ -62,7 +62,7 @@ SummaryWidgetEvaluator.prototype.subscribe = function (callback) {
       }
 
       const updateCallback = function () {
-        const datum = this.evaluateState(realtimeStates, this.openmct.time.timeSystem().key);
+        const datum = this.evaluateState(realtimeStates, this.openmct.time.getTimeSystem().key);
         if (datum) {
           callback(datum);
         }

@@ -116,7 +116,7 @@ export default {
       }
     },
     setFormatters() {
-      let timeSystem = this.openmct.time.timeSystem();
+      let timeSystem = this.openmct.time.getTimeSystem();
       this.timeFormatter = this.openmct.telemetry.getValueFormatter({
         format: timeSystem.timeFormat
       }).formatter;
