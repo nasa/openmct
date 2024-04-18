@@ -265,8 +265,8 @@ test.describe('Verify tooltips', () => {
       name: 'Test Flexible Layout'
     });
 
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-fl__container >> nth=0');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-fl__container >> nth=1');
+    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-fl-container >> nth=0');
+    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-fl-container >> nth=1');
 
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
