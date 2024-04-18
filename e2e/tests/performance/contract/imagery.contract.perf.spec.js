@@ -34,7 +34,7 @@ TODO:
 
 import { expect, test } from '@playwright/test';
 
-const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
+const filePath = 'test-data/PerformanceDisplayLayout.json';
 
 test.describe('Performance tests', () => {
   test.beforeEach(async ({ page, browser }, testInfo) => {

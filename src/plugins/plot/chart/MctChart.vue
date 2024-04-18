@@ -614,7 +614,7 @@ export default {
       const yAxisId = series.get('yAxisId') || mainYAxisId;
       let offset = this.offset[yAxisId];
 
-      return new MCTChartAlarmLineSet(series, this, offset, this.openmct.time.bounds());
+      return new MCTChartAlarmLineSet(series, this, offset, this.openmct.time.getBounds());
     },
     pointSetForSeries(series) {
       const mainYAxisId = this.config.yAxis.get('id');

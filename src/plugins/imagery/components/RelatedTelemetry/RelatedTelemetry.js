@@ -44,7 +44,7 @@ export default class RelatedTelemetry {
       this.keys = telemetryKeys;
 
       this._timeFormatter = undefined;
-      this._timeSystemChange(this.timeContext.timeSystem());
+      this._timeSystemChange(this.timeContext.getTimeSystem());
 
       // grab related telemetry metadata
       for (let key of this.keys) {
@@ -110,10 +110,10 @@ export default class RelatedTelemetry {
         // and set bounds.
         ephemeralContext.resetContext();
         const newBounds = {
-          start: this.timeContext.bounds().start,
+          start: this.timeContext.getBounds().start,
           end: this._parseTime(datum)
         };
-        ephemeralContext.bounds(newBounds);
+        ephemeralContext.setBounds(newBounds);
 
         const options = {
           start: newBounds.start,

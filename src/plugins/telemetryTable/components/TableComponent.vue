@@ -546,7 +546,7 @@ export default {
     this.table.tableRows.on('sort', this.throttledUpdateVisibleRows);
     this.table.tableRows.on('filter', this.throttledUpdateVisibleRows);
 
-    this.openmct.time.on('bounds', this.boundsChanged);
+    this.openmct.time.on('boundsChanged', this.boundsChanged);
 
     //Default sort
     this.sortOptions = this.table.tableRows.sortBy();
@@ -579,7 +579,7 @@ export default {
 
     this.table.configuration.off('change', this.updateConfiguration);
 
-    this.openmct.time.off('bounds', this.boundsChanged);
+    this.openmct.time.off('boundsChanged', this.boundsChanged);
 
     this.table.configuration.destroy();
 

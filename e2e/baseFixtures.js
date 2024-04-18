@@ -60,14 +60,16 @@ function waitForAnimations(locator) {
   );
 }
 
-/**
- * This is part of our codecoverage shim.
- * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Example Project}
- * @constant {string}
- */
-const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
+const istanbulCLIOutput = fileURLToPath(new URL('.nyc_output', import.meta.url));
 
 const extendedTest = test.extend({
+  /**
+   * Path to output raw coverage files. Can be overridden in Playwright config file.
+   * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Example Project}
+   * @constant {string}
+   */
+
+  coveragePath: [istanbulCLIOutput, { option: true }],
   /**
    * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
    * the Time Indicator Clock to be in a specific state.
@@ -148,17 +150,17 @@ const extendedTest = test.extend({
    * Extends the base context class to add codecoverage shim.
    * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Project}
    */
-  context: async ({ context }, use) => {
+  context: async ({ context, coveragePath }, use) => {
     await context.addInitScript(() =>
       window.addEventListener('beforeunload', () =>
         window.collectIstanbulCoverage(JSON.stringify(window.__coverage__))
       )
     );
-    await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
+    await fs.promises.mkdir(coveragePath, { recursive: true });
     await context.exposeFunction('collectIstanbulCoverage', (coverageJSON) => {
       if (coverageJSON) {
         fs.writeFileSync(
-          path.join(istanbulCLIOutput, `playwright_coverage_${uuid()}.json`),
+          path.join(coveragePath, `playwright_coverage_${uuid()}.json`),
           coverageJSON
         );
       }
@@ -166,9 +168,9 @@ const extendedTest = test.extend({
 
     await use(context);
     for (const page of context.pages()) {
-      await page.evaluate(() =>
-        window.collectIstanbulCoverage(JSON.stringify(window.__coverage__))
-      );
+      await page.evaluate(() => {
+        window.collectIstanbulCoverage(JSON.stringify(window.__coverage__));
+      });
     }
   },
   /**
