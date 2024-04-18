@@ -20,45 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { onBeforeUnmount, ref, shallowRef } from 'vue';
+import { onBeforeUnmount, shallowRef } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import throttle from '../../utils/throttle.js';
 
 /**
- * Provides reactive `bounds`,
- * as well as a function to observe and update bounds changes,
+ * Provides reactive `offsets`,
+ * as well as a function to observe and update offsets changes,
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} openmct the Open MCT API
  * @returns {{
- *   observeTimeBounds: () => void,
- *   bounds: import('vue').Ref<object>,
- *   isTick: import('vue').Ref<boolean>
+ *   observeClockOffsets: () => void,
+ *   offsets: import('vue').Ref<object>,
  * }}
  */
-export function useTimeBounds(openmct, options) {
-  let stopObservingTimeBounds;
+export function useClockOffsets(openmct, options) {
+  let stopObservingClockOffsets;
 
-  const bounds = shallowRef(openmct.time.getBounds());
-  const isTick = ref(false);
+  const offsets = shallowRef(openmct.time.getClockOffsets());
 
-  onBeforeUnmount(() => stopObservingTimeBounds?.());
+  onBeforeUnmount(() => stopObservingClockOffsets?.());
 
-  function observeTimeBounds(milliseconds = 300) {
-    openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
-    stopObservingTimeBounds = () =>
-      openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
+  function observeClockOffsets() {
+    openmct.time.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
+    stopObservingClockOffsets = () =>
+      openmct.time.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
   }
 
-  function updateTimeBounds(_timeBounds, _isTick) {
-    bounds.value = _timeBounds;
-    isTick.value = _isTick;
+  function updateClockOffsets(_offsets) {
+    offsets.value = _offsets;
   }
 
   return {
-    observeTimeBounds,
-    isTick,
-    bounds
+    observeClockOffsets,
+    offsets
   };
 }
