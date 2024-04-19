@@ -36,6 +36,7 @@ import {
  * @param {OpenMCT} openmct the Open MCT API
  * @returns {{
  *   observeTimeMode: () => void,
+ *   timeMode: import('vue').Ref<string>,
  *   isFixedTimeMode: import('vue').Ref<boolean>,
  *   isRealTimeMode: import('vue').Ref<boolean>
  * }}
@@ -60,6 +61,7 @@ export function useTimeMode(openmct, options) {
 
   return {
     observeTimeMode,
+    timeMode,
     isFixedTimeMode,
     isRealTimeMode
   };
