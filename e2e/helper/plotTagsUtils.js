@@ -127,7 +127,7 @@ export async function basicTagsTests(page) {
   await page.getByRole('searchbox', { name: 'Search Input' }).click();
   await page.getByRole('searchbox', { name: 'Search Input' }).fill('sc');
 
-  //Expect Science Tag to be present and and Driving Tags to be deleted
+  //Expect Science Tag to be present and Driving Tags to be deleted
   await expect(page.getByLabel('Search Result').first()).toContainText('Science');
   await expect(page.getByLabel('Search Result').first()).not.toContainText('Driving');
 
