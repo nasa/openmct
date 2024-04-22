@@ -57,7 +57,7 @@ describe('The Time API', function () {
     expect(api.timeOfInterest()).toBe(toi);
   });
 
-  it('Allows setting of valid bounds', function () {
+  it('[Legacy TimeAPI]: Allows setting of valid bounds', function () {
     bounds = {
       start: 0,
       end: 1
@@ -67,7 +67,17 @@ describe('The Time API', function () {
     expect(api.bounds()).toEqual(bounds);
   });
 
-  it('Disallows setting of invalid bounds', function () {
+  it('Allows setting of valid bounds', function () {
+    bounds = {
+      start: 0,
+      end: 1
+    };
+    expect(api.getBounds()).not.toBe(bounds);
+    expect(api.setBounds.bind(api, bounds)).not.toThrow();
+    expect(api.getBounds()).toEqual(bounds);
+  });
+
+  it('[Legacy TimeAPI]: Disallows setting of invalid bounds', function () {
     bounds = {
       start: 1,
       end: 0
@@ -82,7 +92,22 @@ describe('The Time API', function () {
     expect(api.bounds()).not.toEqual(bounds);
   });
 
-  it('Allows setting of previously registered time system with bounds', function () {
+  it('Disallows setting of invalid bounds', function () {
+    bounds = {
+      start: 1,
+      end: 0
+    };
+    expect(api.getBounds()).not.toEqual(bounds);
+    expect(api.setBounds.bind(api, bounds)).toThrow();
+    expect(api.getBounds()).not.toEqual(bounds);
+
+    bounds = { start: 1 };
+    expect(api.getBounds()).not.toEqual(bounds);
+    expect(api.setBounds.bind(api, bounds)).toThrow();
+    expect(api.getBounds()).not.toEqual(bounds);
+  });
+
+  it('[Legacy TimeAPI]: Allows setting of previously registered time system with bounds', function () {
     api.addTimeSystem(timeSystem);
     expect(api.timeSystem()).not.toBe(timeSystem);
     expect(function () {
@@ -91,13 +116,48 @@ describe('The Time API', function () {
     expect(api.timeSystem()).toEqual(timeSystem);
   });
 
-  it('Disallows setting of time system without bounds', function () {
+  it('Allows setting of previously registered time system with bounds', function () {
+    api.addTimeSystem(timeSystem);
+    expect(api.getTimeSystem()).not.toBe(timeSystem);
+    expect(function () {
+      api.setTimeSystem(timeSystem, bounds);
+    }).not.toThrow();
+    expect(api.getTimeSystem()).toEqual(timeSystem);
+  });
+
+  it('[Legacy TimeAPI]: Disallows setting of time system without bounds', function () {
     api.addTimeSystem(timeSystem);
     expect(api.timeSystem()).not.toBe(timeSystem);
     expect(function () {
       api.timeSystem(timeSystemKey);
     }).toThrow();
     expect(api.timeSystem()).not.toBe(timeSystem);
+  });
+
+  it('Allows setting of time system without bounds', function () {
+    api.addTimeSystem(timeSystem);
+    expect(api.getTimeSystem()).not.toBe(timeSystem);
+    expect(function () {
+      api.setTimeSystem(timeSystemKey);
+    }).not.toThrow();
+    expect(api.getTimeSystem()).not.toBe(timeSystem);
+  });
+
+  it('Disallows setting of invalid time system', function () {
+    expect(function () {
+      api.setTimeSystem();
+    }).toThrow();
+    expect(function () {
+      api.setTimeSystem('invalidTimeSystemKey');
+    }).toThrow();
+    expect(function () {
+      api.setTimeSystem({
+        key: 'invalidTimeSystemKey'
+      });
+    }).toThrow();
+    expect(function () {
+      api.setTimeSystem(42);
+    }).toThrow();
   });
 
   it('allows setting of timesystem without bounds with clock', function () {
@@ -114,10 +174,18 @@ describe('The Time API', function () {
     expect(api.timeSystem()).toEqual(timeSystem);
   });
 
-  it('Emits an event when time system changes', function () {
+  it('Emits a legacy event when time system changes', function () {
     api.addTimeSystem(timeSystem);
     expect(eventListener).not.toHaveBeenCalled();
     api.on('timeSystem', eventListener);
+    api.timeSystem(timeSystemKey, bounds);
+    expect(eventListener).toHaveBeenCalledWith(timeSystem);
+  });
+
+  it('Emits an event when time system changes', function () {
+    api.addTimeSystem(timeSystem);
+    expect(eventListener).not.toHaveBeenCalled();
+    api.on('timeSystemChanged', eventListener);
     api.timeSystem(timeSystemKey, bounds);
     expect(eventListener).toHaveBeenCalledWith(timeSystem);
   });
@@ -129,9 +197,16 @@ describe('The Time API', function () {
     expect(eventListener).toHaveBeenCalledWith(toi);
   });
 
-  it('Emits an event when bounds change', function () {
+  it('Emits a legacy event when bounds change', function () {
     expect(eventListener).not.toHaveBeenCalled();
     api.on('bounds', eventListener);
+    api.bounds(bounds);
+    expect(eventListener).toHaveBeenCalledWith(bounds, false);
+  });
+
+  it('Emits an event when bounds change', function () {
+    expect(eventListener).not.toHaveBeenCalled();
+    api.on('boundsChanged', eventListener);
     api.bounds(bounds);
     expect(eventListener).toHaveBeenCalledWith(bounds, false);
   });
@@ -154,13 +229,39 @@ describe('The Time API', function () {
     expect(api.timeOfInterest()).toBeUndefined();
   });
 
-  it('Maintains delta during tick', function () {});
+  it('Maintains delta during tick', function () {
+    const initialBounds = { start: 100, end: 200 };
+    api.bounds(initialBounds);
+    const mockTickSource = jasmine.createSpyObj('mockTickSource', ['on', 'off', 'currentValue']);
+    mockTickSource.key = 'mct';
+    mockTickSource.currentValue.and.returnValue(150);
+    api.addClock(mockTickSource);
+    api.clock('mct', { start: 0, end: 100 });
 
-  it('Allows registered time system to be activated', function () {});
+    // Simulate a tick event
+    const tickCallback = mockTickSource.on.calls.mostRecent().args[1];
+    tickCallback(150);
+
+    const newBounds = api.bounds();
+    expect(newBounds.end - newBounds.start).toEqual(initialBounds.end - initialBounds.start);
+  });
+
+  it('Allows registered time system to be activated', function () {
+    api.addClock(clock);
+    api.clock(clockKey, { start: 0, end: 100 });
+    api.addTimeSystem(timeSystem);
+    api.timeSystem(timeSystemKey);
+    expect(api.timeSystem().key).toEqual(timeSystemKey);
+  });
 
   it('Allows a registered tick source to be activated', function () {
     const mockTickSource = jasmine.createSpyObj('mockTickSource', ['on', 'off', 'currentValue']);
     mockTickSource.key = 'mockTickSource';
+    mockTickSource.currentValue.and.returnValue(50);
+    api.addClock(mockTickSource);
+    api.clock(mockTickSource.key, { start: 0, end: 100 });
+
+    expect(mockTickSource.on).toHaveBeenCalledWith('tick', jasmine.any(Function));
   });
 
   describe(' when enabling a tick source', function () {
@@ -184,7 +285,7 @@ describe('The Time API', function () {
       api.addClock(anotherMockTickSource);
     });
 
-    it('sets bounds based on current value', function () {
+    it('[Legacy TimeAPI]: sets bounds based on current value', function () {
       api.clock('mts', mockOffsets);
       expect(api.bounds()).toEqual({
         start: 10,
@@ -192,8 +293,30 @@ describe('The Time API', function () {
       });
     });
 
-    it('a new tick listener is registered', function () {
+    it('does not set bounds based on current value', function () {
+      api.setClock('mts');
+      expect(api.getBounds()).toEqual({});
+    });
+
+    it('does not set invalid clock', function () {
+      expect(function () {
+        api.setClock();
+      }).toThrow();
+      expect(function () {
+        api.setClock({});
+      }).toThrow();
+      expect(function () {
+        api.setClock('invalidClockKey');
+      }).toThrow();
+    });
+
+    it('[Legacy TimeAPI]: a new tick listener is registered', function () {
       api.clock('mts', mockOffsets);
+      expect(mockTickSource.on).toHaveBeenCalledWith('tick', jasmine.any(Function));
+    });
+
+    it('a new tick listener is registered', function () {
+      api.setClock('mts', mockOffsets);
       expect(mockTickSource.on).toHaveBeenCalledWith('tick', jasmine.any(Function));
     });
 
@@ -203,12 +326,13 @@ describe('The Time API', function () {
       expect(mockTickSource.off).toHaveBeenCalledWith('tick', jasmine.any(Function));
     });
 
-    xit('Allows the active clock to be set and unset', function () {
+    it('[Legacy TimeAPI]: Allows the active clock to be set and unset', function () {
       expect(api.clock()).toBeUndefined();
       api.clock('mts', mockOffsets);
       expect(api.clock()).toBeDefined();
-      // api.stopClock();
-      // expect(api.clock()).toBeUndefined();
+      // Unset the clock
+      api.stopClock();
+      expect(api.clock()).toBeUndefined();
     });
 
     it('Provides a default time context', () => {

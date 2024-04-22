@@ -611,11 +611,11 @@ describe('The Mean Telemetry Provider', function () {
   }
 
   function createMockTimeApi() {
-    return jasmine.createSpyObj('timeApi', ['timeSystem']);
+    return jasmine.createSpyObj('timeApi', ['getTimeSystem']);
   }
 
   function setTimeSystemTo(timeSystemKey) {
-    mockApi.time.timeSystem.and.returnValue({
+    mockApi.time.getTimeSystem.and.returnValue({
       key: timeSystemKey
     });
   }

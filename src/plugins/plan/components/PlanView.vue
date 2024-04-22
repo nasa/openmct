@@ -196,10 +196,10 @@ export default {
       this.followTimeContext();
     },
     followTimeContext() {
-      this.updateViewBounds(this.timeContext.bounds());
+      this.updateViewBounds(this.timeContext.getBounds());
 
       this.timeContext.on('timeSystem', this.setScaleAndGenerateActivities);
-      this.timeContext.on('bounds', this.updateViewBounds);
+      this.timeContext.on('boundsChanged', this.updateViewBounds);
     },
     loadComposition() {
       if (this.composition) {
@@ -211,7 +211,7 @@ export default {
     stopFollowingTimeContext() {
       if (this.timeContext) {
         this.timeContext.off('timeSystem', this.setScaleAndGenerateActivities);
-        this.timeContext.off('bounds', this.updateViewBounds);
+        this.timeContext.off('boundsChanged', this.updateViewBounds);
       }
     },
     showReplacePlanDialog(domainObject) {
@@ -319,7 +319,7 @@ export default {
       }
 
       if (this.timeSystem === null) {
-        this.timeSystem = this.openmct.time.timeSystem();
+        this.timeSystem = this.openmct.time.getTimeSystem();
       }
 
       this.setScaleAndGenerateActivities();
@@ -344,7 +344,7 @@ export default {
       }
 
       if (!timeSystem) {
-        timeSystem = this.openmct.time.timeSystem();
+        timeSystem = this.openmct.time.getTimeSystem();
       }
 
       if (timeSystem.isUTCBased) {

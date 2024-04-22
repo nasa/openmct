@@ -113,7 +113,7 @@ export default class ConditionManager extends EventEmitter {
       {},
       {},
       this.timeSystems,
-      this.openmct.time.timeSystem()
+      this.openmct.time.getTimeSystem()
     );
     this.updateConditionResults({ id: id });
     this.updateCurrentCondition(latestTimestamp);
@@ -383,7 +383,7 @@ export default class ConditionManager extends EventEmitter {
         latestTimestamp,
         data,
         this.timeSystems,
-        this.openmct.time.timeSystem()
+        this.openmct.time.getTimeSystem()
       );
     });
 

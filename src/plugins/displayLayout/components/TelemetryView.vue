@@ -280,7 +280,7 @@ export default {
       await this.$nextTick();
     },
     formattedValueForCopy() {
-      const timeFormatterKey = this.openmct.time.timeSystem().key;
+      const timeFormatterKey = this.openmct.time.getTimeSystem().key;
       const timeFormatter = this.formats[timeFormatterKey];
       const unit = this.unit ? ` ${this.unit}` : '';
 
