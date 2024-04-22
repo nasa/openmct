@@ -126,7 +126,6 @@ $meterNeedleBorderRadius: 5px;
     // Filled area
     position: absolute;
     background: $colorGaugeValue;
-    // box-shadow: rgba($colorGaugeValueShadow, .5) 0px 0px 12px 0px;
     box-shadow: $gaugeMeterValueShadow 0px 2px 10px 1px;
     //z-index: 3;
   }
