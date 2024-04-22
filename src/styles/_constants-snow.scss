@@ -42,10 +42,6 @@ $numericFont: $heroFont;
   font-size: $size;
 }
 
-@mixin numericFont($size: 1em){
-  font-family: $numericFont;
-  font-size: $size;
-}
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
@@ -96,8 +92,10 @@ $filterHovSubtle: hue-rotate(-8deg) brightness(0.5) contrast(1.2);
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
 
-// Background Image 
-$bodyBg: $colorBodyBg; 
+// Body constants
+$bodyBg: $colorBodyBg;
+$bodyBgSize: cover;
+$bodySize: 100%;
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.5;
@@ -182,18 +180,15 @@ $browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layo
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(0.9);
+$interiorMarginObjectFrameVertical: 0px;
+$interiorMarginObjectFrameHorizontal: 3px;
 
 // Missing Items
 $filterItemMissing: contrast(0.2);
 $opacityMissing: 0.4;
 $borderMissing: 1px dashed $colorAlert !important;
-$browseFrameCornerColor: 0px solid rgb(0,150,215);
-$interiorMarginObjectFrameVertical: 0px;
-$interiorMarginObjectFrameHorizontal: 3px;
 
-@mixin browseFrameBorder() {
-}
-/************************************************** EDITING */
+// Edit
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
 $editUIColorFg: #fff;
@@ -330,8 +325,6 @@ $colorTabFg: pullForward($colorTabBg, 60%);
 $colorTabCurrentBg: $colorBodyFg; //pullForward($colorTabBg, 10%);
 $colorTabCurrentFg: $colorBodyBg; //pullForward($colorTabFg, 10%);
 $colorTabsBaseline: $colorTabCurrentBg;
-$colorTabCurrentGlow: rgba(white, 0.0);
-
 
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
@@ -423,13 +416,12 @@ $colorPlotLimitLineBg: rgba($colorBodyBg, 0.4);
 // Gauges
 $colorGaugeBg: pullForward($colorBodyBg, 20%); // Gauge radial area background, meter background
 $colorGaugeValue: rgba(#000, 0.3); // Gauge value graphic (radial sweep, bar) color
-$colorGaugeValueShadow: rgba(#fff, 0);
 $colorGaugeTextValue: pullForward($colorBodyFg, 20%); // Radial gauge text value
 $colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid on value bar
 $colorGaugeRange: $colorBodyFg; // Range text color
 $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.2);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
-$colorGaugeNeedle: rgba(#000, 0.3);
+$colorGaugeNeedle: rgba(#fff, 0);
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, 0);
@@ -535,6 +527,7 @@ $colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: rgba(102, 102, 102, 0.1);
 
+// Mixins
 @mixin discreteItem() {
   background: $colorDiscreteItemBg;
   border: 1px solid $colorInteriorBorder;
@@ -559,3 +552,4 @@ $scrollContainer: rgba(102, 102, 102, 0.1);
 }
 
 @mixin telemetryView(){}
+@mixin browseFrameBorder() {}

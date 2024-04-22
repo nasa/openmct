@@ -161,7 +161,7 @@ a {
 
 body,
 html {
-  height: 100%;
+  height: $bodySize;
   width: 100%;
 }
 
@@ -175,7 +175,7 @@ body {
   @include bodyFont($fontBaseSize);
   // background-color: $colorBodyBg;
   background: $bodyBg;
-  background-size: cover;
+  background-size: $bodyBgSize;
   color: $colorBodyFg;
 }
 
