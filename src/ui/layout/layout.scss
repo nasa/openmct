@@ -133,10 +133,9 @@
     &__pane-tree {
       background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
 
-      .l-pane__header {
-        // Hide all buttons except the collapse button
-        > :not(.l-pane__collapse-button) {
-          display: none;
+      .l-pane__header { 
+        > :not(.l-pane__collapse-button) { // On default, show all the header icons. 
+          display: block;
         }
       }
 
@@ -147,6 +146,11 @@
       &[class*='--collapsed'] {
         [class*='collapse-button'] {
           right: -8px;
+        }
+        .l-pane__header{ // If pane is collapsed, hide all the icons except the collapse button, which gets replaced into the hamburger menu.
+          > :not(.l-pane__collapse-button) { 
+            display: none;
+          }
         }
       }
     }
