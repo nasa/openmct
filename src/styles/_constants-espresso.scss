@@ -42,6 +42,33 @@ $numericFont: $heroFont;
   font-size: $size;
 }
 
+@mixin discreteItem() {
+  background: $colorDiscreteItemBg;
+  border: none;
+  border-radius: $controlCr;
+
+  .c-input-inline:hover {
+    background: $colorBodyBg;
+  }
+
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
+}
+
+@mixin discreteItemInnerElem() {
+  border: 1px solid rgba(#fff, 0.1);
+  border-radius: $controlCr;
+}
+
+@mixin themedButton($c: $colorBtnBg) {
+  background: linear-gradient(pullForward($c, 5%), $c);
+  box-shadow: rgba(black, 0.5) 0 0.5px 2px;
+}
+
+@mixin telemetryView(){}
+@mixin browseFrameBorder() {}
+
 // Functions
 @function buttonBg($c: $colorBtnBg) {
   @return linear-gradient(lighten($c, 5%), $c);
@@ -446,8 +473,8 @@ $colorGanttSelectedBorder: rgba(#fff, 0.3);
 $colorTreeBg: transparent;
 $colorItemTreeHoverBg: rgba(#fff, 0.1);
 $colorItemTreeHoverFg: #fff;
-$colorItemTreeIcon: $colorKey; // Used
-$colorItemTreeIconHover: $colorItemTreeIcon; // Used
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: $colorItemTreeIcon;
 $colorItemTreeFg: #ccc;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
@@ -525,31 +552,3 @@ $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
 $colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: $colorBodyBg;
-
-// Mixins
-@mixin discreteItem() {
-  background: $colorDiscreteItemBg;
-  border: none;
-  border-radius: $controlCr;
-
-  .c-input-inline:hover {
-    background: $colorBodyBg;
-  }
-
-  &--current-match {
-    background: $colorDiscreteItemCurrentBg;
-  }
-}
-
-@mixin discreteItemInnerElem() {
-  border: 1px solid rgba(#fff, 0.1);
-  border-radius: $controlCr;
-}
-
-@mixin themedButton($c: $colorBtnBg) {
-  background: linear-gradient(pullForward($c, 5%), $c);
-  box-shadow: rgba(black, 0.5) 0 0.5px 2px;
-}
-
-@mixin telemetryView(){}
-@mixin browseFrameBorder() {}

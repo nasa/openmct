@@ -42,6 +42,31 @@ $numericFont: $heroFont;
   font-size: $size;
 }
 
+@mixin discreteItem() {
+  background: $colorDiscreteItemBg;
+  border: 1px solid $colorInteriorBorder;
+  border-radius: $controlCr;
+
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
+
+  .c-input-inline:hover {
+    background: $colorBodyBg;
+  }
+}
+
+@mixin discreteItemInnerElem() {
+  border: 1px solid $colorBodyBg;
+  border-radius: $controlCr;
+}
+
+@mixin themedButton($c: $colorBtnBg) {
+  background: $c;
+}
+
+@mixin telemetryView(){}
+@mixin browseFrameBorder() {}
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
@@ -447,8 +472,8 @@ $colorGanttSelectedBorder: #fff;
 $colorTreeBg: transparent;
 $colorItemTreeHoverBg: rgba(black, 0.07);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, 10%);
-$colorItemTreeIcon: $colorKey; // Used
-$colorItemTreeIconHover: $colorItemTreeIcon; // Used
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: $colorItemTreeIcon;
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
@@ -526,30 +551,3 @@ $colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
 $colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
 $colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
 $scrollContainer: rgba(102, 102, 102, 0.1);
-
-// Mixins
-@mixin discreteItem() {
-  background: $colorDiscreteItemBg;
-  border: 1px solid $colorInteriorBorder;
-  border-radius: $controlCr;
-
-  &--current-match {
-    background: $colorDiscreteItemCurrentBg;
-  }
-
-  .c-input-inline:hover {
-    background: $colorBodyBg;
-  }
-}
-
-@mixin discreteItemInnerElem() {
-  border: 1px solid $colorBodyBg;
-  border-radius: $controlCr;
-}
-
-@mixin themedButton($c: $colorBtnBg) {
-  background: $c;
-}
-
-@mixin telemetryView(){}
-@mixin browseFrameBorder() {}
