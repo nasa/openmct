@@ -19,26 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
- 
-@import '../../styles/vendor/normalize-min';
-@import '../../styles/constants';
-@import '../../styles/constants-mobile.scss';
+// Note: This darkmatter theme is in Beta and is not yet ready for prime time. It needs some more tweaking.
 
-@import '../../styles/constants-snow';
+import { installTheme } from './installTheme.js';
 
-@import '../../styles/mixins';
-@import '../../styles/animations';
-@import '../../styles/about';
-@import '../../styles/glyphs';
-@import '../../styles/global';
-@import '../../styles/status';
-@import '../../styles/limits';
-@import '../../styles/controls';
-@import '../../styles/forms';
-@import '../../styles/table';
-@import '../../styles/legacy';
-@import '../../styles/legacy-plots';
-@import '../../styles/plotly';
-@import '../../styles/legacy-messages';
-
-@import '../../styles/vue-styles.scss';
+export default function plugin() {
+  return function install(openmct) {
+    installTheme(openmct, 'darkmatter');
+  };
+}

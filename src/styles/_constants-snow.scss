@@ -25,6 +25,7 @@
 $heroFont: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $headerFont: $heroFont;
 $bodyFont: $heroFont;
+$numericFont: $heroFont;
 
 @mixin heroFont($size: 1em) {
   font-family: $heroFont;
@@ -63,6 +64,9 @@ $bodyFont: $heroFont;
 @mixin themedButton($c: $colorBtnBg) {
   background: $c;
 }
+
+@mixin telemetryView(){}
+@mixin browseFrameBorder() {}
 
 // Functions
 @function buttonBg($c: $colorBtnBg) {
@@ -112,6 +116,11 @@ $filterHov: hue-rotate(-10deg) brightness(0.8) contrast(2); // Tree, location it
 $filterHovSubtle: hue-rotate(-8deg) brightness(0.5) contrast(1.2);
 $colorSelectedBg: pushBack($colorKey, 40%);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
+
+// Body constants
+$bodyBg: $colorBodyBg;
+$bodyBgSize: cover;
+$bodySize: 100%;
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.5;
@@ -196,6 +205,8 @@ $browseFrameBorder: 1px solid $browseFrameColor; // Frames in Disp and Flex Layo
 $browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(0.9);
+$interiorMarginObjectFrameVertical: 0px;
+$interiorMarginObjectFrameHorizontal: 3px;
 
 // Missing Items
 $filterItemMissing: contrast(0.2);
@@ -435,8 +446,10 @@ $colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid o
 $colorGaugeRange: $colorBodyFg; // Range text color
 $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.2);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
+$colorGaugeNeedle: rgba(#fff, 0);
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
+$gaugeMeterValueShadow: rgba(255, 255, 255, 0);
 
 // Time Strip and Lists
 $colorPastBg: #f0f0f0;
@@ -459,8 +472,8 @@ $colorGanttSelectedBorder: #fff;
 $colorTreeBg: transparent;
 $colorItemTreeHoverBg: rgba(black, 0.07);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, 10%);
-$colorItemTreeIcon: $colorKey; // Used
-$colorItemTreeIconHover: $colorItemTreeIcon; // Used
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: $colorItemTreeIcon;
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
