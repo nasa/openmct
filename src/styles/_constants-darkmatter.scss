@@ -154,7 +154,7 @@ $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
 // Body constants
-$bodyBg: $colorBodyBg url('../ui/layout/assets/images/darkmatter-bg.png') no-repeat center 85%; // Reference: https://science.nasa.gov/wp-content/uploads/2023/08/s2-1280.jpg?w=4096&format=webp
+$bodyBg: $colorBodyBg var(--darkmatter-bg-url) no-repeat center 85%; // Reference: https://science.nasa.gov/wp-content/uploads/2023/08/s2-1280.jpg?w=4096&format=webp
 $bodyBgSize: cover;
 $bodySize: 100vh;
 
