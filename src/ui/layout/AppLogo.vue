@@ -25,6 +25,7 @@
     class="l-shell__app-logo"
     role="button"
     aria-label="About Modal"
+    :style="style"
     @click="launchAbout"
   ></div>
 </template>
@@ -32,10 +33,16 @@
 <script>
 import mount from 'utils/mount';
 
+import Logo from '../../ui/layout/assets/images/logo-openmct.svg';
 import AboutDialog from './AboutDialog.vue';
 
 export default {
   inject: ['openmct'],
+  computed: {
+    style() {
+      return `--app-logo: url(${Logo})`;
+    }
+  },
   mounted() {
     const branding = this.openmct.branding();
     if (branding.smallLogoImage) {
