@@ -1048,7 +1048,7 @@ body.desktop {
     // NASA logo, dude
     $w: 5%;
     $m: 10px;
-    background-image: url('../ui/layout/assets/images/logo-nasa.svg');
+    background-image: var(--nasa-logo);
     top: $m;
     right: auto;
     bottom: auto;
