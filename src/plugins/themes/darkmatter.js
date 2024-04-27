@@ -21,10 +21,12 @@
  *****************************************************************************/
 // Note: This darkmatter theme is in Beta and is not yet ready for prime time. It needs some more tweaking.
 
+import BackgroundImage from '../../ui/layout/assets/images/darkmatter-bg.png';
 import { installTheme } from './installTheme.js';
 
 export default function plugin() {
   return function install(openmct) {
     installTheme(openmct, 'darkmatter');
+    document.documentElement.style.setProperty('--darkmatter-bg-url', `url(${BackgroundImage})`);
   };
 }
