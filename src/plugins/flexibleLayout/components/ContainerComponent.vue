@@ -45,7 +45,7 @@
       @object-drop-to="moveOrCreateNewFrame"
     />
 
-    <div role="row" class="c-fl-container__frames-holder">
+    <div role="row" class="c-fl-container__frames-holder" :class="flexLayoutCssClass">
       <template v-for="(frame, i) in frames" :key="frame.id">
         <frame-component
           class="c-fl-container__frame"
@@ -118,6 +118,9 @@ export default {
   },
   emits: ['new-frame', 'move-frame', 'persist'],
   computed: {
+    flexLayoutCssClass() {
+      return this.rowsLayout ? '--layout-rows' : '--layout-cols';
+    },
     frames() {
       return this.container.frames;
     },
