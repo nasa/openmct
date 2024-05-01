@@ -99,7 +99,7 @@ export default {
     }
   },
   mounted() {
-    this.previewAction = new PreviewAction(this.openmct);
+    this.previewAction = this.openmct.actions.getAction('preview');
     this.previewAction.on('isVisible', this.togglePreviewState);
   },
   unmounted() {

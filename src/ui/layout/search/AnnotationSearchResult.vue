@@ -109,12 +109,10 @@ export default {
     this.marked = new Marked();
   },
   mounted() {
-    this.previewAction = new PreviewAction(this.openmct);
-    this.previewAction.on('isVisible', this.togglePreviewState);
+    this.previewAction = this.openmct.actions.getAction('preview');
     this.fireAnnotationSelection = this.fireAnnotationSelection.bind(this);
   },
   unmounted() {
-    this.previewAction.off('isVisible', this.togglePreviewState);
     this.openmct.selection.off('change', this.fireAnnotationSelection);
   },
   methods: {

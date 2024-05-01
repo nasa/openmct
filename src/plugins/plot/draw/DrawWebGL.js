@@ -83,7 +83,10 @@ const VERTEX_SHADER = `
  * @param {CanvasElement} canvas the canvas object to render upon
  * @throws {Error} an error is thrown if WebGL is unavailable.
  */
-function DrawWebGL(canvas, overlay) {
+class DrawWebGL extends EventEmitter {
+  constructor(canvas, overlay) {
+    super();
+    eventHelpers.extend(this);
   this.canvas = canvas;
   this.gl =
     this.canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
@@ -104,18 +107,13 @@ function DrawWebGL(canvas, overlay) {
 
   this.listenTo(this.canvas, 'webglcontextlost', this.onContextLost, this);
 }
-
-Object.assign(DrawWebGL.prototype, EventEmitter.prototype);
-eventHelpers.extend(DrawWebGL.prototype);
-
-DrawWebGL.prototype.onContextLost = function (event) {
+  onContextLost(event) {
   this.emit('error');
   this.isContextLost = true;
   this.destroy();
   // TODO re-initialize and re-draw on context restored
-};
-
-DrawWebGL.prototype.initContext = function () {
+  }
+  initContext() {
   // Initialize shaders
   this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
   this.gl.shaderSource(this.vertexShader, VERTEX_SHADER);
@@ -149,9 +147,8 @@ DrawWebGL.prototype.initContext = function () {
   // Enable blending, for smoothness
   this.gl.enable(this.gl.BLEND);
   this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-};
-
-DrawWebGL.prototype.destroy = function () {
+  }
+  destroy() {
   // Lose the context and delete all associated resources
   // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#lose_contexts_eagerly
   this.gl?.getExtension('WEBGL_lose_context')?.loseContext();
@@ -168,19 +165,16 @@ DrawWebGL.prototype.destroy = function () {
   this.stopListening();
   this.canvas = undefined;
   this.overlay = undefined;
-};
-
+  }
 // Convert from logical to physical x coordinates
-DrawWebGL.prototype.x = function (v) {
+  x(v) {
   return ((v - this.origin[0]) / this.dimensions[0]) * this.width;
-};
-
+  }
 // Convert from logical to physical y coordinates
-DrawWebGL.prototype.y = function (v) {
+  y(v) {
   return this.height - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
-};
-
-DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
+  }
+  doDraw(drawType, buf, color, points, shape) {
   if (this.isContextLost) {
     return;
   }
@@ -195,9 +189,8 @@ DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
   if (points !== 0) {
     this.gl.drawArrays(drawType, 0, points);
   }
-};
-
-DrawWebGL.prototype.clear = function () {
+  }
+  clear() {
   if (this.isContextLost) {
     return;
   }
@@ -211,8 +204,7 @@ DrawWebGL.prototype.clear = function () {
   // resolution than the canvas we requested.
   this.gl.viewport(0, 0, this.gl.drawingBufferWidth, this.gl.drawingBufferHeight);
   this.gl.clear(this.gl.COLOR_BUFFER_BIT + this.gl.DEPTH_BUFFER_BIT);
-};
-
+  }
 /**
  * Set the logical boundaries of the chart.
  * @param {number[]} dimensions the horizontal and
@@ -220,7 +212,7 @@ DrawWebGL.prototype.clear = function () {
  * @param {number[]} origin the horizontal/vertical
  *        origin of the chart
  */
-DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
+  setDimensions(dimensions, origin) {
   this.dimensions = dimensions;
   this.origin = origin;
   if (this.isContextLost) {
@@ -231,8 +223,7 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
     this.gl?.uniform2fv(this.uDimensions, dimensions);
     this.gl?.uniform2fv(this.uOrigin, origin);
   }
-};
-
+  }
 /**
  * Draw the supplied buffer as a line strip (a sequence
  * of line segments), in the chosen color.
@@ -243,27 +234,25 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
  *        is in the range of 0.0-1.0
  * @param {number} points the number of points to draw
  */
-DrawWebGL.prototype.drawLine = function (buf, color, points) {
+  drawLine(buf, color, points) {
   if (this.isContextLost) {
     return;
   }
 
   this.doDraw(this.gl.LINE_STRIP, buf, color, points);
-};
-
+  }
 /**
  * Draw the buffer as points.
  *
  */
-DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize, shape) {
+  drawPoints(buf, color, points, pointSize, shape) {
   if (this.isContextLost) {
     return;
   }
 
   this.gl.uniform1f(this.uPointSize, pointSize);
   this.doDraw(this.gl.POINTS, buf, color, points, shape);
-};
-
+  }
 /**
  * Draw a rectangle extending from one corner to another,
  * in the chosen color.
@@ -273,7 +262,7 @@ DrawWebGL.prototype.drawPoints = function (buf, color, points, pointSize, shape)
  *        the rectangle, as an RGBA color where each element
  *        is in the range of 0.0-1.0
  */
-DrawWebGL.prototype.drawSquare = function (min, max, color) {
+  drawSquare(min, max, color) {
   if (this.isContextLost) {
     return;
   }
@@ -284,16 +273,14 @@ DrawWebGL.prototype.drawSquare = function (min, max, color) {
     color,
     4
   );
-};
-
-DrawWebGL.prototype.drawLimitPoint = function (x, y, size) {
+  }
+  drawLimitPoint(x, y, size) {
   this.c2d.fillRect(x + size, y, size, size);
   this.c2d.fillRect(x, y + size, size, size);
   this.c2d.fillRect(x - size, y, size, size);
   this.c2d.fillRect(x, y - size, size, size);
-};
-
-DrawWebGL.prototype.drawLimitPoints = function (points, color, pointSize) {
+  }
+  drawLimitPoints(points, color, pointSize) {
   const limitSize = pointSize * 2;
   const offset = limitSize / 2;
 
@@ -308,6 +295,7 @@ DrawWebGL.prototype.drawLimitPoints = function (points, color, pointSize) {
   for (let i = 0; i < points.length; i++) {
     this.drawLimitPoint(this.x(points[i].x) - offset, this.y(points[i].y) - offset, limitSize);
   }
-};
+  }
+}
 
 export default DrawWebGL;

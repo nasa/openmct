@@ -79,7 +79,6 @@ import Browse from './ui/router/Browse.js';
 export class MCT extends EventEmitter {
   constructor() {
     super();
-    EventEmitter.call(this);
 
     this.buildInfo = {
       version: __OPENMCT_VERSION__,

@@ -237,13 +237,11 @@ export default {
     }
 
     this.previewAction = new PreviewAction(this.openmct);
-    this.previewAction.on('isVisible', this.togglePreviewState);
   },
   unmounted() {
     this.openmct.time.off('timeSystem', this.updateTimeSystem);
     this.telemetryCollection.off('add', this.setLatestValues);
     this.telemetryCollection.off('clear', this.resetValues);
-    this.previewAction.off('isVisible', this.togglePreviewState);
 
     this.telemetryCollection.destroy();
   },
