@@ -55,6 +55,35 @@ export function useTimeMode(openmct, options) {
     stopObservingTimeMode = () => openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
   }
 
+  function getAllModeMetadata() {
+    return [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(getModeMetadata);
+  }
+
+  function getModeMetadata(key) {
+    const fixedModeMetadata = {
+      key: FIXED_MODE_KEY,
+      name: 'Fixed Timespan',
+      description: 'Query and explore data that falls between two fixed datetimes.',
+      cssClass: 'icon-tabular',
+      onItemClicked: () => setTimeMode(key)
+    };
+
+    const realTimeModeMetadata = {
+      key: REALTIME_MODE_KEY,
+      name: 'Real-Time',
+      description:
+        'Monitor streaming data in real-time. The Time Conductor and displays will automatically advance themselves based on the active clock.',
+      cssClass: 'icon-clock',
+      onItemClicked: () => setTimeMode(key)
+    };
+
+    return key === FIXED_MODE_KEY ? fixedModeMetadata : realTimeModeMetadata;
+  }
+
+  function setTimeMode(_timeMode) {
+    openmct.time.setMode(_timeMode);
+  }
+
   function updateTimeMode(_timeMode) {
     timeMode.value = _timeMode;
   }
@@ -62,6 +91,8 @@ export function useTimeMode(openmct, options) {
   return {
     observeTimeMode,
     timeMode,
+    getAllModeMetadata,
+    getModeMetadata,
     isFixedTimeMode,
     isRealTimeMode
   };

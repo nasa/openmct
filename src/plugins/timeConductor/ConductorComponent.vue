@@ -102,9 +102,20 @@ export default {
   inject: ['openmct', 'configuration'],
   setup() {
     const openmct = inject('openmct');
-    const { observeTimeSystem, timeSystemFormatter, timeSystemDurationFormatter } =
-      useTimeSystem(openmct);
-    const { observeTimeMode, timeMode, isFixedTimeMode, isRealTimeMode } = useTimeMode(openmct);
+    const {
+      observeTimeSystem,
+      timeSystemFormatter,
+      timeSystemDurationFormatter,
+      isTimeSystemUTCBased
+    } = useTimeSystem(openmct);
+    const {
+      observeTimeMode,
+      timeMode,
+      isFixedTimeMode,
+      isRealTimeMode,
+      getAllModeMetadata,
+      getModeMetadata
+    } = useTimeMode(openmct);
     const { observeTimeBounds, bounds, isTick } = useTimeBounds(openmct);
     const { observeClockOffsets, offsets } = useClockOffsets(openmct);
 
@@ -117,9 +128,12 @@ export default {
 
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
+    provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
     provide('timeMode', timeMode);
     provide('isFixedTimeMode', isFixedTimeMode);
     provide('isRealTimeMode', isRealTimeMode);
+    provide('getAllModeMetadata', getAllModeMetadata);
+    provide('getModeMetadata', getModeMetadata);
     provide('bounds', bounds);
     provide('isTick', isTick);
     provide('offsets', offsets);

@@ -23,8 +23,8 @@
   <div v-if="readOnly === false" ref="modeButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-button--menu js-mode-button"
-        :class="[buttonCssClass, selectedMode.cssClass]"
+        class="c-button--menu js-mode-button c-icon-button"
+        :class="selectedMode.cssClass"
         aria-label="Time Conductor Mode Menu"
         @click.prevent.stop="showModesMenu"
       >
@@ -43,19 +43,18 @@
 </template>
 
 <script>
-import { FIXED_MODE_KEY } from '../../api/time/constants';
-import modeMixin from './mode-mixin.js';
-
 export default {
-  mixins: [modeMixin],
-  inject: ['openmct', 'configuration', 'bounds', 'offsets', 'isFixedTimeMode'],
+  inject: [
+    'openmct',
+    'configuration',
+    'bounds',
+    'offsets',
+    'timeMode',
+    'isFixedTimeMode',
+    'getAllModeMetadata',
+    'getModeMetadata'
+  ],
   props: {
-    mode: {
-      type: String,
-      default() {
-        return undefined;
-      }
-    },
     readOnly: {
       type: Boolean,
       default() {
@@ -63,24 +62,20 @@ export default {
       }
     }
   },
-  emits: ['mode-updated'],
   data() {
-    const mode = this.openmct.time.getMode();
-
     return {
-      selectedMode: this.getModeMetadata(mode),
-      modes: []
+      selectedMode: this.getModeMetadata(this.timeMode)
     };
   },
   watch: {
-    mode: {
-      handler(mode) {
-        this.setMode(mode, this.getBoundsForMode(mode));
+    timeMode: {
+      handler() {
+        this.setView();
       }
     }
   },
   mounted() {
-    this.loadModes();
+    this.modes = this.getAllModeMetadata();
   },
   methods: {
     showModesMenu() {
@@ -95,15 +90,8 @@ export default {
 
       this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    setViewFromMode(mode) {
-      this.selectedMode = this.getModeMetadata(mode);
-    },
-    setMode(mode) {
-      this.openmct.time.setMode(mode);
-      this.setViewFromMode(mode);
-    },
-    getBoundsForMode(mode) {
-      return mode === FIXED_MODE_KEY ? this.bounds : this.offsets;
+    setView() {
+      this.selectedMode = this.getModeMetadata(this.timeMode);
     }
   }
 };
