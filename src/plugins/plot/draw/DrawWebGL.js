@@ -297,5 +297,4 @@ class DrawWebGL extends EventEmitter {
     }
   }
 }
-
 export default DrawWebGL;

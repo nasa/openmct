@@ -138,5 +138,4 @@ class Draw2D extends EventEmitter {
     }
   }
 }
-
 export default Draw2D;
