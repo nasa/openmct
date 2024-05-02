@@ -74,7 +74,7 @@ const helperFunctions = {
         } else if (listener.object.removeEventListener) {
           listener.object.removeEventListener(listener.event, listener._cb);
         } else {
-          listener.object.off(listener.event, listener._cb);
+          listener.object.off(listener.event, listener._cb, listener.context);
         }
 
         return listener;
