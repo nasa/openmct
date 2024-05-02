@@ -36,6 +36,13 @@ const config = {
         browserName: 'chromium',
         theme: 'snow'
       }
+    },
+    {
+      name: 'darkmatter-theme', //Runs the same visual tests but with darkmatter-theme
+      use: {
+        browserName: 'chromium',
+        theme: 'darkmatter-theme'
+      }
     }
   ],
   reporter: [
