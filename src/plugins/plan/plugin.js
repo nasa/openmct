@@ -44,6 +44,57 @@ const ACTIVITY_STATES_DEFAULT_NAME = 'Activity States';
  */
 export default function (options = {}) {
   return function install(openmct) {
+    openmct.actions.register({
+      key: 'generate-random-plan',
+      async invoke(objectPath) {
+        const parent = objectPath[0];
+        const newKey = crypto.randomUUID();
+        const randomActivities = {
+          'Driving': {activities: ["Driving", "Pano", "Driver Change"], color: "orange"},
+          'Drilling': {activities: ["Take Bite", "Stow Drill"], color: "blue"},
+          'Comm':  {activities: ["LOS", "AOS", "DSN Handover"], color: "green"},
+          'Science': {activities: ["AIM Image", "NIRVSS Spec.", "NSS ON", "MSOLO ON", "MSOLO OFF", "NSS OFF"], color: "gray"}
+        }
+        const start = Date.now() - 24 * 60 * 60 * 1000;
+        const end = Date.now() + 24 * 60 * 60 * 1000;
+        const groups = Object.keys(randomActivities);
+        let activityStart = start;
+        let activityEnd = start;
+        let randomPlan = {};
+
+        while (activityEnd < end) {
+          activityStart = activityEnd;
+          activityEnd = activityStart + 1000000 + Math.random() * 1000000;
+          let randomGroup = groups[Math.round(Math.random() * (groups.length - 1))];
+          let namesForGroup = randomActivities[randomGroup].activities;
+          let randomName = namesForGroup[Math.round(Math.random() * (namesForGroup.length - 1))];
+          randomPlan[randomGroup] = randomPlan[randomGroup] || [];
+          randomPlan[randomGroup].push({
+            name: randomName,
+            start: activityStart,
+            end: activityEnd,
+            type: randomGroup,
+            color: randomActivities[randomGroup].color,
+            textColor: "white",
+          });
+        }
+        const newPlanObject = {
+          identifier: {
+            namespace: parent.identifier.namespace,
+            key: newKey
+          },
+          type: 'plan',
+          name: `Random plan ${newKey}`,
+          selectFile: {
+            body: randomPlan
+          }
+        };
+        await openmct.objects.save(newPlanObject);
+        const composition = await openmct.composition.get(parent);
+        composition.add(newPlanObject);
+      },
+      name: 'Generate plan'
+    });
     openmct.types.addType('plan', {
       name: 'Plan',
       key: 'plan',
@@ -67,6 +118,7 @@ export default function (options = {}) {
         };
       }
     });
+
     // Name TBD and subject to change
     openmct.types.addType('gantt-chart', {
       name: 'Gantt Chart',

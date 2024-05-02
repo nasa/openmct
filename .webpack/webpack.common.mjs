@@ -34,6 +34,7 @@ const projectRootDir = fileURLToPath(new URL('../', import.meta.url));
 const config = {
   context: projectRootDir,
   devServer: {
+    port: 9000,
     client: {
       progress: true,
       overlay: {
