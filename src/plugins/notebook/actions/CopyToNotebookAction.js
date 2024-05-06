@@ -1,7 +1,8 @@
 import { addNotebookEntry } from '../utils/notebook-entries.js';
 import { getDefaultNotebook, getNotebookSectionAndPage } from '../utils/notebook-storage.js';
 
-export default class CopyToNotebookAction {
+const COPY_TO_NOTEBOOK_ACTION_KEY = 'copyToNotebook';
+class CopyToNotebookAction {
   constructor(openmct) {
     this.openmct = openmct;
 
@@ -49,3 +50,6 @@ export default class CopyToNotebookAction {
     return row.formattedValueForCopy && typeof row.formattedValueForCopy === 'function';
   }
 }
+
+export { COPY_TO_NOTEBOOK_ACTION_KEY };
+export default CopyToNotebookAction;

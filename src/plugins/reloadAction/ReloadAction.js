@@ -19,10 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-export default class ReloadAction {
+
+const RELOAD_ACTION_KEY = 'reload';
+
+class ReloadAction {
   constructor(openmct) {
     this.name = 'Reload';
-    this.key = 'reload';
+    this.key = RELOAD_ACTION_KEY;
     this.description = 'Reload this object and its children';
     this.group = 'action';
     this.priority = 10;
@@ -35,3 +38,6 @@ export default class ReloadAction {
     this.openmct.objectViews.emit('reload', domainObject);
   }
 }
+
+export { RELOAD_ACTION_KEY };
+export default ReloadAction;

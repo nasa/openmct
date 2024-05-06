@@ -20,7 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import { objectPathToUrl } from '/src/tools/url.js';
-export default class OpenInNewTab {
+
+const NEW_TAB_ACTION_KEY = 'newTab';
+
+class OpenInNewTab {
   constructor(openmct) {
     this.name = 'Open In New Tab';
     this.key = 'newTab';
@@ -54,3 +57,6 @@ export default class OpenInNewTab {
     window.open(url, undefined, 'noopener');
   }
 }
+
+export { NEW_TAB_ACTION_KEY };
+export default OpenInNewTab;

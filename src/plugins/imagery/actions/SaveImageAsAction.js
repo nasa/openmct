@@ -20,14 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class SaveImageAction {
+const SAVE_IMAGE_ACTION_KEY = 'saveImageAs';
+class SaveImageAction {
   constructor(openmct) {
     this.openmct = openmct;
 
     this.cssClass = 'icon-save-as';
     this.description = 'Save image to file';
     this.group = 'action';
-    this.key = 'saveImageAs';
+    this.key = SAVE_IMAGE_ACTION_KEY;
     this.name = 'Save Image As';
     this.priority = 1;
   }
@@ -65,3 +66,6 @@ export default class SaveImageAction {
     }
   }
 }
+
+export { SAVE_IMAGE_ACTION_KEY };
+export default SaveImageAction;

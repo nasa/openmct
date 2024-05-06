@@ -21,13 +21,14 @@
  *****************************************************************************/
 
 const SPECIAL_MESSAGE_TYPES = ['layout', 'flexible-layout'];
+const REMOVE_ACTION_KEY = 'remove';
 
-export default class RemoveAction {
+class RemoveAction {
   #transaction;
 
   constructor(openmct) {
     this.name = 'Remove';
-    this.key = 'remove';
+    this.key = REMOVE_ACTION_KEY;
     this.description = 'Remove this object from its containing object.';
     this.cssClass = 'icon-trash';
     this.group = 'action';
@@ -162,3 +163,6 @@ export default class RemoveAction {
     this.#transaction = null;
   }
 }
+
+export { REMOVE_ACTION_KEY };
+export default RemoveAction;

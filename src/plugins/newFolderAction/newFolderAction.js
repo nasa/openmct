@@ -19,13 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import CreateAction from '@/plugins/formActions/CreateAction';
+import { NEW_FOLDER_ACTION_KEY } from './plugin.js';
 
-export default class NewFolderAction {
+class NewFolderAction {
   constructor(openmct) {
     this.type = 'folder';
     this.name = 'Add New Folder';
-    this.key = 'newFolder';
+    this.key = NEW_FOLDER_ACTION_KEY;
     this.description = 'Create a new folder';
     this.cssClass = 'icon-folder-new';
     this.group = 'action';
@@ -47,3 +47,6 @@ export default class NewFolderAction {
     return domainObject.type === this.type && isPersistable;
   }
 }
+
+export { NEW_FOLDER_ACTION_KEY };
+export default NewFolderAction;
