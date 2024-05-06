@@ -57,13 +57,20 @@
 </template>
 
 <script>
-const CONTEXT_MENU_ACTIONS = ['viewDatumAction', 'viewHistoricalData', 'remove'];
-const BLANK_VALUE = '---';
-
 import { objectPathToUrl } from '/src/tools/url.js';
-import PreviewAction from '@/ui/preview/PreviewAction.js';
+import { REMOVE_ACTION_KEY } from '@/plugins/remove/RemoveAction.js';
+import { VIEW_DATUM_ACTION_KEY } from '@/plugins/viewDatumAction/ViewDatumAction.js';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+import { VIEW_HISTORICAL_DATA_ACTION_KEY } from '@/ui/preview/ViewHistoricalDataAction.js';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+
+const BLANK_VALUE = '---';
+const CONTEXT_MENU_ACTIONS = [
+  VIEW_DATUM_ACTION_KEY,
+  VIEW_HISTORICAL_DATA_ACTION_KEY,
+  REMOVE_ACTION_KEY
+];
 
 export default {
   mixins: [tooltipHelpers],
@@ -236,7 +243,7 @@ export default {
       this.setUnit();
     }
 
-    this.previewAction = new PreviewAction(this.openmct);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
   },
   unmounted() {
     this.openmct.time.off('timeSystem', this.updateTimeSystem);

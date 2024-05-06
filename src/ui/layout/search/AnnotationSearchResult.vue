@@ -56,6 +56,8 @@
 import { Marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
 import { identifierToString } from '../../../../src/tools/url.js';
 import ObjectPath from '../../components/ObjectPath.vue';
 
@@ -108,7 +110,7 @@ export default {
     this.marked = new Marked();
   },
   mounted() {
-    this.previewAction = this.openmct.actions.getAction('preview');
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
     this.fireAnnotationSelection = this.fireAnnotationSelection.bind(this);
   },
   unmounted() {

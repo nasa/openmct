@@ -62,6 +62,8 @@
 </template>
 
 <script>
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import ObjectPath from '../components/ObjectPath.vue';
 
@@ -98,7 +100,7 @@ export default {
     }
   },
   mounted() {
-    this.previewAction = this.openmct.actions.getAction('preview');
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
     this.previewAction.on('isVisible', this.togglePreviewState);
   },
   unmounted() {
