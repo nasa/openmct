@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { MOVE_ACTION_KEY } from './plugin.js';
+const MOVE_ACTION_KEY = 'move';
 
 class MoveAction {
   constructor(openmct) {

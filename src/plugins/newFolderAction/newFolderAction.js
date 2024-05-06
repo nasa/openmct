@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { NEW_FOLDER_ACTION_KEY } from './plugin.js';
+
+const NEW_FOLDER_ACTION_KEY = 'newFolder';
 
 class NewFolderAction {
   constructor(openmct) {
@@ -36,8 +37,8 @@ class NewFolderAction {
 
   invoke(objectPath) {
     const parentDomainObject = objectPath[0];
-    const createAction = new CreateAction(this._openmct, this.type, parentDomainObject);
-    createAction.invoke();
+    const createAction = this._openmct.actions.getAction('create');
+    createAction.invoke(this.type, parentDomainObject);
   }
 
   appliesTo(objectPath) {
