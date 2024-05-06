@@ -35,21 +35,13 @@ class CreateAction extends PropertiesAction {
     super(openmct);
 
     this.#transaction = null;
+    this.key = CREATE_ACTION_KEY;
+    // Hide the create action from context menus by default
+    this.isHidden = true;
   }
 
   get invoke() {
     return (type, parentDomainObject) => this._showCreateForm(type, parentDomainObject);
-  }
-  /**
-   * The `create` action should not be shown in
-   * context menus by default, so hide it.
-   */
-  get isHidden() {
-    return true;
-  }
-
-  get key() {
-    return CREATE_ACTION_KEY;
   }
 
   /**
