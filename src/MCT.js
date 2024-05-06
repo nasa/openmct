@@ -370,6 +370,5 @@ export class MCT extends EventEmitter {
   destroy() {
     window.removeEventListener('beforeunload', this.destroy);
     this.emit('destroy');
-    this.router.destroy();
   }
 }
