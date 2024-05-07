@@ -550,7 +550,7 @@ export default {
       this.canvas = mainCanvas;
       this.overlay = overlayCanvas;
       this.drawAPI = DrawLoader.getDrawAPI(mainCanvas, overlayCanvas);
-      if (this.drawAPI && this.drawAPI.on) {
+      if (this.drawAPI?.on) {
         this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
       }
 
