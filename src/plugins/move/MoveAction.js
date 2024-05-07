@@ -221,4 +221,5 @@ class MoveAction {
 }
 
 export { MOVE_ACTION_KEY };
+
 export default MoveAction;

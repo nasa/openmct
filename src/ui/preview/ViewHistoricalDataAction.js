@@ -45,4 +45,5 @@ class ViewHistoricalDataAction extends PreviewAction {
 }
 
 export { VIEW_HISTORICAL_DATA_ACTION_KEY };
+
 export default ViewHistoricalDataAction;

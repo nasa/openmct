@@ -26,7 +26,7 @@ const NEW_TAB_ACTION_KEY = 'newTab';
 class OpenInNewTab {
   constructor(openmct) {
     this.name = 'Open In New Tab';
-    this.key = 'newTab';
+    this.key = NEW_TAB_ACTION_KEY;
     this.description = 'Open in a new browser tab';
     this.group = 'windowing';
     this.priority = 10;
@@ -59,4 +59,5 @@ class OpenInNewTab {
 }
 
 export { NEW_TAB_ACTION_KEY };
+
 export default OpenInNewTab;

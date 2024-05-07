@@ -111,4 +111,5 @@ class ViewLargeAction {
 }
 
 export { VIEW_LARGE_ACTION_KEY };
+
 export default ViewLargeAction;

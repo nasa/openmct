@@ -80,4 +80,5 @@ class ClearDataAction {
 }
 
 export { CLEAR_DATA_ACTION_KEY };
+
 export default ClearDataAction;

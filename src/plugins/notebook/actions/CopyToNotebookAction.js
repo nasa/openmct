@@ -9,7 +9,7 @@ class CopyToNotebookAction {
     this.cssClass = 'icon-duplicate';
     this.description = 'Copy value to notebook as an entry';
     this.group = 'action';
-    this.key = 'copyToNotebook';
+    this.key = COPY_TO_NOTEBOOK_ACTION_KEY;
     this.name = 'Copy to Notebook';
     this.priority = 1;
   }
@@ -52,4 +52,5 @@ class CopyToNotebookAction {
 }
 
 export { COPY_TO_NOTEBOOK_ACTION_KEY };
+
 export default CopyToNotebookAction;

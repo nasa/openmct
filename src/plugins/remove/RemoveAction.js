@@ -165,4 +165,5 @@ class RemoveAction {
 }
 
 export { REMOVE_ACTION_KEY };
+
 export default RemoveAction;

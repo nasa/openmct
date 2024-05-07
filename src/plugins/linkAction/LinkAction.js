@@ -158,4 +158,5 @@ class LinkAction {
 }
 
 export { LINK_ACTION_KEY };
+
 export default LinkAction;

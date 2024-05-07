@@ -196,4 +196,5 @@ class CreateAction extends PropertiesAction {
 }
 
 export { CREATE_ACTION_KEY };
+
 export default CreateAction;

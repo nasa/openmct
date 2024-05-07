@@ -47,4 +47,5 @@ class OpenImageInNewTabAction {
 }
 
 export { OPEN_IMAGE_IN_NEW_TAB_ACTION_KEY };
+
 export default OpenImageInNewTabAction;

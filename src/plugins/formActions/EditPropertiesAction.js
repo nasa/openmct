@@ -24,13 +24,14 @@ import _ from 'lodash';
 
 import CreateWizard from './CreateWizard.js';
 import PropertiesAction from './PropertiesAction.js';
+const EDIT_PROPERTIES_ACTION_KEY = 'properties';
 
-export default class EditPropertiesAction extends PropertiesAction {
+class EditPropertiesAction extends PropertiesAction {
   constructor(openmct) {
     super(openmct);
 
     this.name = 'Edit Properties...';
-    this.key = 'properties';
+    this.key = EDIT_PROPERTIES_ACTION_KEY;
     this.description = 'Edit properties of this object.';
     this.cssClass = 'major icon-pencil';
     this.hideInDefaultMenu = true;
@@ -100,3 +101,7 @@ export default class EditPropertiesAction extends PropertiesAction {
       .catch(this._onCancel.bind(this));
   }
 }
+
+export { EDIT_PROPERTIES_ACTION_KEY };
+
+export default EditPropertiesAction;

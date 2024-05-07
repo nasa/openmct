@@ -40,4 +40,5 @@ class ReloadAction {
 }
 
 export { RELOAD_ACTION_KEY };
+
 export default ReloadAction;

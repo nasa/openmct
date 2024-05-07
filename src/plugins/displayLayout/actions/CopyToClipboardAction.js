@@ -9,7 +9,7 @@ class CopyToClipboardAction {
     this.cssClass = 'icon-duplicate';
     this.description = 'Copy value to clipboard';
     this.group = 'action';
-    this.key = 'copyToClipboard';
+    this.key = COPY_TO_CLIPBOARD_ACTION_KEY;
     this.name = 'Copy to Clipboard';
     this.priority = 1;
   }
@@ -40,4 +40,5 @@ class CopyToClipboardAction {
 }
 
 export { COPY_TO_CLIPBOARD_ACTION_KEY };
+
 export default CopyToClipboardAction;

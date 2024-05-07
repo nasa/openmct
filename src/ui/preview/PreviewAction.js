@@ -114,4 +114,5 @@ class PreviewAction extends EventEmitter {
 }
 
 export { PREVIEW_ACTION_KEY };
+
 export default PreviewAction;

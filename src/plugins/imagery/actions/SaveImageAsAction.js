@@ -68,4 +68,5 @@ class SaveImageAction {
 }
 
 export { SAVE_IMAGE_ACTION_KEY };
+
 export default SaveImageAction;

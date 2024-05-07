@@ -50,4 +50,5 @@ class NewFolderAction {
 }
 
 export { NEW_FOLDER_ACTION_KEY };
+
 export default NewFolderAction;

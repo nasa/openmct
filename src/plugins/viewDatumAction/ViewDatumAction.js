@@ -80,4 +80,5 @@ class ViewDatumAction {
 }
 
 export { VIEW_DATUM_ACTION_KEY };
+
 export default ViewDatumAction;
