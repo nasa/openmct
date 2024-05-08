@@ -45,6 +45,52 @@ test.describe('Telemetry Table', () => {
     await expect(rows).toHaveCount(50);
   });
 
+  test('auto scrolls to the top of the table on load', async ({ page }) => {
+    async function verifyScrollTop() {
+      const tableBody = page.locator('.c-table__body-w');
+
+      // Wait for the scrollbar to appear
+      await tableBody.evaluate((node) => {
+        return new Promise((resolve) => {
+          function checkScroll() {
+            if (node.scrollHeight > node.clientHeight) {
+              resolve();
+            } else {
+              setTimeout(checkScroll, 100);
+            }
+          }
+          checkScroll();
+        });
+      });
+
+      // make sure there are rows
+      const rows = page.getByLabel('table content').getByLabel('Table Row');
+      await rows.first().waitFor();
+
+      // wait a bit to give time for new rows to be added
+      await page.waitForTimeout(1000);
+
+      const scrollTop = await tableBody.evaluate((node) => node.scrollTop);
+      expect(scrollTop).toBe(0);
+    }
+
+    const sineWaveGenerator = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: table.uuid
+    });
+    await page.goto(table.url);
+    await setTimeConductorMode(page, false);
+
+    await verifyScrollTop();
+
+    await page.goto(sineWaveGenerator.url);
+
+    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByText('Telemetry Table', { exact: true }).click();
+
+    await verifyScrollTop();
+  });
+
   test('unpauses and filters data when paused by button and user changes bounds', async ({
     page
   }) => {
