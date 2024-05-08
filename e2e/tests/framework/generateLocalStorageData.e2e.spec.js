@@ -36,6 +36,8 @@ import { fileURLToPath } from 'url';
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
+  editDomainObject,
+  saveDomainObjectFinishEditing,
   setIndependentTimeConductorBounds,
   setTimeConductorBounds
 } from '../../appActions.js';
@@ -43,6 +45,7 @@ import { MISSION_TIME } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
+const conditionSetName = 'Condition Set with Telemetry and Conditions';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata @clock', () => {
   test.use({
@@ -282,6 +285,91 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
     await context.storageState({
       path: fileURLToPath(
         new URL('../../../e2e/test-data/overlay_plot_with_delay_storage.json', import.meta.url)
+      )
+    });
+  });
+
+  test('Generate Condition Set with Telemetry and Conditions', async ({ page, context }) => {
+    // Create Condition Set
+    const conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: conditionSetName
+    });
+
+    // Create Telemetry Object
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+
+    // Make Link from Telemetry Object to Overlay Plot
+    await page.locator('button[title="More actions"]').click();
+
+    // Select 'Create Link' from dropdown
+    await page.getByRole('menuitem', { name: 'Create Link' }).click();
+
+    // Search and Select for Condition Set within Create Modal
+    await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
+    await page
+      .getByRole('dialog')
+      .getByRole('searchbox', { name: 'Search Input' })
+      .fill(conditionSet.name);
+    await page
+      .getByRole('treeitem', { name: new RegExp(conditionSet.name) })
+      .locator('a')
+      .click();
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    // Edit Condition Set
+    await editDomainObject(page, conditionSet.url);
+
+    // Add Condition to Condition Set
+    await page.getByRole('button', { name: 'Add Condition' }).click();
+
+    // Enter Condition Output
+    await page.getByLabel('Condition Name Input').first().fill('Negative');
+    await page
+      .locator('select[aria-label="Condition Output Type"]')
+      .first()
+      .selectOption({ value: 'string' });
+    await page.getByLabel('Condition Output String Input').first().fill('Negative');
+
+    // Condition Trigger default is okay so no change needed to form
+
+    // Enter Condition Criterion
+    await page
+      .locator('select[aria-label="Criterion Telemetry Selection"]')
+      .first()
+      .selectOption({ value: 'all' });
+    await page
+      .locator('select[aria-label="Criterion Metadata Selection"]')
+      .first()
+      .selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .first()
+      .selectOption({ value: 'lessThan' });
+    await page.getByLabel('Criterion Input').first().fill('0');
+
+    // Save the Condition Set
+    await saveDomainObjectFinishEditing(page);
+
+    // Assert Condition Set contains 1 Condition and the Default Condition
+    expect(await page.getByLabel('Condition Set Condition', { exact: true }).count()).toBe(2);
+
+    // Assert the Condition Set contains the Telemetry Object
+    await editDomainObject(page, conditionSet.url);
+    await page.getByRole('tab', { name: 'Elements' }).click();
+    await expect(
+      page
+        .getByRole('tabpanel', { name: 'Inspector Views' })
+        .getByRole('listitem', { name: exampleTelemetry.name })
+    ).toBeVisible();
+
+    // Save localStorage for future test execution
+    await context.storageState({
+      path: fileURLToPath(
+        new URL(
+          '../../../e2e/test-data/condition_set_with_temeletry_and_conditions_storage.json',
+          import.meta.url
+        )
       )
     });
   });
