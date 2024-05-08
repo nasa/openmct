@@ -561,6 +561,8 @@ export default {
 
     this.table.initialize();
     this.rescaleToContainer();
+
+    this.addToAfterLoadActions(this.scroll);
   },
   beforeUnmount() {
     this.table.off('object-added', this.addObject);
