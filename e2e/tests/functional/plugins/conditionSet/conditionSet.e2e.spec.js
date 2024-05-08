@@ -29,7 +29,9 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject
+  createExampleTelemetryObject,
+  editDomainObject,
+  saveDomainObjectFinishEditing
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -473,5 +475,110 @@ test.describe('Basic Condition Set Use', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7484'
     });
+  });
+});
+
+test.describe('Condition Set Composition @localStorage', () => {
+  let conditionSet;
+  let exampleTelemetry;
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    // Create Condition Set
+    conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: 'Condition Set with Telemetry and Conditions'
+    });
+
+    // Create Telemetry Object
+    exampleTelemetry = await createExampleTelemetryObject(page);
+
+    // Make Link from Telemetry Object to Overlay Plot
+    await page.locator('button[title="More actions"]').click();
+
+    // Select 'Create Link' from dropdown
+    await page.getByRole('menuitem', { name: 'Create Link' }).click();
+
+    // Search and Select for Condition Set within Create Modal
+    await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
+    await page
+      .getByRole('dialog')
+      .getByRole('searchbox', { name: 'Search Input' })
+      .fill(conditionSet.name);
+    await page
+      .getByRole('treeitem', { name: new RegExp(conditionSet.name) })
+      .locator('a')
+      .click();
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    // Edit Condition Set
+    await editDomainObject(page, conditionSet.url);
+
+    // Add Condition to Condition Set
+    await page.getByRole('button', { name: 'Add Condition' }).click();
+
+    // Enter Condition Output
+    await page.getByLabel('Condition Name Input').first().fill('Negative');
+    await page
+      .locator('select[aria-label="Condition Output Type"]')
+      .first()
+      .selectOption({ value: 'string' });
+    await page.getByLabel('Condition Output String Input').first().fill('Negative');
+
+    // Condition Trigger default is okay so no change needed to form
+
+    // Enter Condition Criterion
+    await page
+      .locator('select[aria-label="Criterion Telemetry Selection"]')
+      .first()
+      .selectOption({ value: 'all' });
+    await page
+      .locator('select[aria-label="Criterion Metadata Selection"]')
+      .first()
+      .selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .first()
+      .selectOption({ value: 'lessThan' });
+    await page.getByLabel('Criterion Input').first().fill('0');
+
+    // Save the Condition Set
+    await saveDomainObjectFinishEditing(page);
+  });
+
+  test('You can remove telemetry from a condition set with existing conditions', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7710'
+    });
+
+    await page.getByLabel('Expand My Items folder').click();
+    await page.getByLabel(`Expand ${conditionSet.name} conditionSet`).click();
+
+    await page
+      .getByLabel(`Navigate to ${exampleTelemetry.name}`, { exact: false })
+      .first()
+      .click({ button: 'right' });
+
+    await page
+      .getByLabel(`${exampleTelemetry.name} Context Menu`)
+      .getByRole('menuitem', { name: 'Remove' })
+      .click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+
+    await page
+      .getByLabel(`Navigate to ${conditionSet.name} conditionSet Object`, { exact: true })
+      .click();
+    await editDomainObject(page);
+    await page.getByRole('tab', { name: 'Elements' }).click();
+    expect(
+      await page
+        .getByRole('tabpanel', { name: 'Inspector Views' })
+        .getByRole('listitem', { name: exampleTelemetry.name })
+        .count()
+    ).toEqual(0);
   });
 });
