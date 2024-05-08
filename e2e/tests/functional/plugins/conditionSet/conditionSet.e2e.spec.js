@@ -29,9 +29,7 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject,
-  editDomainObject,
-  saveDomainObjectFinishEditing
+  createExampleTelemetryObject
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -513,7 +511,8 @@ test.describe('Condition Set Composition @localStorage', () => {
     await page.getByRole('button', { name: 'Save' }).click();
 
     // Edit Condition Set
-    await editDomainObject(page, conditionSet.url);
+    await page.goto(conditionSet.url);
+    await page.getByRole('button', { name: 'Edit Object' }).click();
 
     // Add Condition to Condition Set
     await page.getByRole('button', { name: 'Add Condition' }).click();
@@ -544,7 +543,8 @@ test.describe('Condition Set Composition @localStorage', () => {
     await page.getByLabel('Criterion Input').first().fill('0');
 
     // Save the Condition Set
-    await saveDomainObjectFinishEditing(page);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   });
 
   test('You can remove telemetry from a condition set with existing conditions', async ({
@@ -572,7 +572,7 @@ test.describe('Condition Set Composition @localStorage', () => {
     await page
       .getByLabel(`Navigate to ${conditionSet.name} conditionSet Object`, { exact: true })
       .click();
-    await editDomainObject(page);
+    await page.getByRole('button', { name: 'Edit Object' }).click();
     await page.getByRole('tab', { name: 'Elements' }).click();
     expect(
       await page

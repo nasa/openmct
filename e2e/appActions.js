@@ -291,20 +291,6 @@ async function openObjectTreeContextMenu(page, url) {
 }
 
 /**
- * Optionally navigate to a given url then
- * click the "Edit Object" button to go into Edit Mode.
- * @param {import('@playwright/test').Page} page
- * @param {string} url the url to the object
- */
-async function editDomainObject(page, url) {
-  if (url?.length > 0) {
-    await page.goto(url);
-  }
-
-  await page.getByRole('button', { name: 'Edit Object' }).click();
-}
-
-/**
  * Expands the entire object tree (every expandable tree item).
  * @param {import('@playwright/test').Page} page
  * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
@@ -483,29 +469,6 @@ async function setStartOffset(page, offset) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await setTimeConductorOffset(page, offset);
-}
-
-
-/**
- * Save the Domain Object and exit Edit Mode.
- * @param {import('@playwright/test').Page} page
- */
-async function saveDomainObjectContinueEditing(page) {
-  if (await _isInEditMode(page)) {
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('listitem', { name: 'Save and Continue Editing' }).click();
-  }
-}
-
-/**
- * Save the Domain Object and exit Edit Mode.
- * @param {import('@playwright/test').Page} page
- */
-async function saveDomainObjectFinishEditing(page) {
-  if (await _isInEditMode(page)) {
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-  }
 }
 
 /**
@@ -687,7 +650,6 @@ export {
   createExampleTelemetryObject,
   createNotification,
   createPlanFromJSON,
-  editDomainObject,
   expandEntireTree,
   expandTreePaneItemByName,
   getCanvasPixels,
@@ -696,8 +658,6 @@ export {
   navigateToObjectWithFixedTimeBounds,
   openObjectTreeContextMenu,
   renameObjectFromContextMenu,
-  saveDomainObjectContinueEditing,
-  saveDomainObjectFinishEditing,
   setEndOffset,
   setFixedTimeMode,
   setIndependentTimeConductorBounds,
