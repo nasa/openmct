@@ -78,13 +78,15 @@ test.describe('Telemetry Table', () => {
       type: 'Sine Wave Generator',
       parent: table.uuid
     });
+
+    // verify in telemetry table object view
     await page.goto(table.url);
     await setTimeConductorMode(page, false);
 
     await verifyScrollTop();
 
+    // verify in telemetry table view
     await page.goto(sineWaveGenerator.url);
-
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByText('Telemetry Table', { exact: true }).click();
 
