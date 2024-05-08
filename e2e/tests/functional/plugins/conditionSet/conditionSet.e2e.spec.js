@@ -371,7 +371,7 @@ test.describe('Basic Condition Set Use', () => {
 
     // Validate that the condition set is evaluating and outputting
     // the correct value when the underlying telemetry subscription is active.
-    let outputValue = page.locator('[aria-label="Current Output Value"]');
+    let outputValue = page.locator('[aria-label="Condition Set Current Output Value"]');
     await expect(outputValue).toHaveText('false');
 
     await page.goto(exampleTelemetry.url);
@@ -462,7 +462,7 @@ test.describe('Basic Condition Set Use', () => {
 
     // Validate that the condition set is evaluating and outputting
     // the correct value when the underlying telemetry subscription is active.
-    let outputValue = page.locator('[aria-label="Current Output Value"]');
+    let outputValue = page.locator('[aria-label="Condition Set Current Output Value"]');
     await expect(outputValue).toHaveText('false');
 
     await page.goto(exampleTelemetry.url);

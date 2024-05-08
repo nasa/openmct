@@ -21,11 +21,14 @@
 -->
 
 <template>
-  <div class="c-cs" :class="{ 'is-stale': isStale }">
+  <div class="c-cs" :class="{ 'is-stale': isStale }" aria-label="Condition Set">
     <section class="c-cs__current-output c-section">
       <div class="c-cs__content c-cs__current-output-value">
         <span class="c-cs__current-output-value__label">Current Output</span>
-        <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
+        <span
+          class="c-cs__current-output-value__value"
+          aria-label="Condition Set Current Output Value"
+        >
           <template v-if="currentConditionOutput">
             {{ currentConditionOutput }}
           </template>

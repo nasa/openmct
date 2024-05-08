@@ -21,7 +21,11 @@
 -->
 
 <template>
-  <section id="conditionCollection" :class="{ 'is-expanded': expanded }">
+  <section
+    id="conditionCollection"
+    :class="{ 'is-expanded': expanded }"
+    aria-label="Condition Set Condition Collection"
+  >
     <div class="c-cs__header c-section__header">
       <span
         class="c-disclosure-triangle c-tree__item__view-control is-enabled"
