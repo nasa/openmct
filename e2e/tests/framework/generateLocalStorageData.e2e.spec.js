@@ -45,7 +45,7 @@ import { MISSION_TIME } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
-const conditionSetName = 'Condition Set with Telemetry and Conditions';
+const CONDITION_SET_NAME = 'Condition Set with Telemetry and Conditions';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata @clock', () => {
   test.use({
@@ -293,7 +293,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
     // Create Condition Set
     const conditionSet = await createDomainObjectWithDefaults(page, {
       type: 'Condition Set',
-      name: conditionSetName
+      name: CONDITION_SET_NAME
     });
 
     // Create Telemetry Object
