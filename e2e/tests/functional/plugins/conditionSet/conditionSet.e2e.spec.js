@@ -476,7 +476,7 @@ test.describe('Basic Condition Set Use', () => {
   });
 });
 
-test.describe('Condition Set Composition @localStorage', () => {
+test.describe('Condition Set Composition', () => {
   let conditionSet;
   let exampleTelemetry;
 
