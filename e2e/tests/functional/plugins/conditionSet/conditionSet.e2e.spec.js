@@ -520,7 +520,7 @@ test.describe('Condition Set Composition', () => {
     // Enter Condition Output
     await page.getByLabel('Condition Name Input').first().fill('Negative');
     await page
-      .locator('select[aria-label="Condition Output Type"]')
+      .getByLabel('Condition Output Type')
       .first()
       .selectOption({ value: 'string' });
     await page.getByLabel('Condition Output String Input').first().fill('Negative');
