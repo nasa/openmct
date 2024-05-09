@@ -493,7 +493,7 @@ test.describe('Condition Set Composition', () => {
     exampleTelemetry = await createExampleTelemetryObject(page);
 
     // Make Link from Telemetry Object to Overlay Plot
-    await page.locator('button[title="More actions"]').click();
+    await page.getByTitle('More actions').click();
 
     // Select 'Create Link' from dropdown
     await page.getByRole('menuitem', { name: 'Create Link' }).click();
