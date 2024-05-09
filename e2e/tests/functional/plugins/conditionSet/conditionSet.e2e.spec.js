@@ -485,30 +485,11 @@ test.describe('Condition Set Composition', () => {
 
     // Create Condition Set
     conditionSet = await createDomainObjectWithDefaults(page, {
-      type: 'Condition Set',
-      name: 'Condition Set with Telemetry and Conditions'
+      type: 'Condition Set'
     });
 
-    // Create Telemetry Object
-    exampleTelemetry = await createExampleTelemetryObject(page);
-
-    // Make Link from Telemetry Object to Overlay Plot
-    await page.getByTitle('More actions').click();
-
-    // Select 'Create Link' from dropdown
-    await page.getByRole('menuitem', { name: 'Create Link' }).click();
-
-    // Search and Select for Condition Set within Create Modal
-    await page.getByRole('dialog').getByRole('searchbox', { name: 'Search Input' }).click();
-    await page
-      .getByRole('dialog')
-      .getByRole('searchbox', { name: 'Search Input' })
-      .fill(conditionSet.name);
-    await page
-      .getByRole('treeitem', { name: new RegExp(conditionSet.name) })
-      .locator('a')
-      .click();
-    await page.getByRole('button', { name: 'Save' }).click();
+    // Create Telemetry Object as child to Condition Set
+    exampleTelemetry = await createExampleTelemetryObject(page, conditionSet.uuid);
 
     // Edit Condition Set
     await page.goto(conditionSet.url);
@@ -551,7 +532,6 @@ test.describe('Condition Set Composition', () => {
 
     await page
       .getByLabel(`Navigate to ${exampleTelemetry.name}`, { exact: false })
-      .first()
       .click({ button: 'right' });
 
     await page
