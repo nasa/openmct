@@ -90,7 +90,7 @@ const config = {
       __OPENMCT_REVISION__: `'${gitRevision}'`,
       __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
       __VUE_OPTIONS_API__: true, // enable/disable Options API support, default: true
-      __VUE_PROD_DEVTOOLS__: false // enable/disable devtools support in production, default: false
+      __VUE_PROD_DEVTOOLS__: true // enable/disable devtools support in production, default: false
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin({
