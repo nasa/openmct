@@ -22,8 +22,8 @@
 
 import {
   createDomainObjectWithDefaults,
-  setTimeConductorBounds,
-  setTimeConductorMode
+  navigateToObjectWithRealTime,
+  setTimeConductorBounds
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -39,8 +39,7 @@ test.describe('Telemetry Table', () => {
       type: 'Sine Wave Generator',
       parent: table.uuid
     });
-    await page.goto(table.url);
-    await setTimeConductorMode(page, false);
+    await navigateToObjectWithRealTime(page, table.url);
     const rows = page.getByLabel('table content').getByLabel('Table Row');
     await expect(rows).toHaveCount(50);
   });
@@ -48,61 +47,22 @@ test.describe('Telemetry Table', () => {
   test('on load, auto scrolls to top for descending, and to bottom for ascending', async ({
     page
   }) => {
-    async function getScrollPosition(top = true) {
-      const tableBody = page.locator('.c-table__body-w');
-
-      // Wait for the scrollbar to appear
-      await tableBody.evaluate((node) => {
-        return new Promise((resolve) => {
-          function checkScroll() {
-            if (node.scrollHeight > node.clientHeight) {
-              resolve();
-            } else {
-              setTimeout(checkScroll, 100);
-            }
-          }
-          checkScroll();
-        });
-      });
-
-      // make sure there are rows
-      const rows = page.getByLabel('table content').getByLabel('Table Row');
-      await rows.first().waitFor();
-
-      // wait a bit to give time for new rows to be added
-      await page.waitForTimeout(1000);
-
-      const { scrollTop, clientHeight, scrollHeight } = await tableBody.evaluate((node) => ({
-        scrollTop: node.scrollTop,
-        clientHeight: node.clientHeight,
-        scrollHeight: node.scrollHeight
-      }));
-
-      // eslint-disable-next-line playwright/no-conditional-in-test
-      if (top) {
-        return scrollTop;
-      } else {
-        return Math.abs(scrollHeight - (scrollTop + clientHeight));
-      }
-    }
-
     const sineWaveGenerator = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: table.uuid
     });
 
     // verify in telemetry table object view
-    await page.goto(table.url);
-    await setTimeConductorMode(page, false);
+    await navigateToObjectWithRealTime(page, table.url);
 
-    expect(await getScrollPosition()).toBe(0);
+    expect(await getScrollPosition(page)).toBe(0);
 
     // verify in telemetry table view
     await page.goto(sineWaveGenerator.url);
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByText('Telemetry Table', { exact: true }).click();
 
-    expect(await getScrollPosition()).toBe(0);
+    expect(await getScrollPosition(page)).toBe(0);
 
     // navigate back to table
     await page.goto(table.url);
@@ -122,7 +82,7 @@ test.describe('Telemetry Table', () => {
     await page.goto(table.url);
 
     // verify scroll position
-    expect(await getScrollPosition(false)).toBeLessThan(1);
+    expect(await getScrollPosition(page, false)).toBeLessThan(1);
   });
 
   test('unpauses and filters data when paused by button and user changes bounds', async ({
@@ -263,3 +223,42 @@ test.describe('Telemetry Table', () => {
     await page.click('button[title="Pause"]');
   });
 });
+
+async function getScrollPosition(page, top = true) {
+  const tableBody = page.locator('.c-table__body-w');
+
+  // Wait for the scrollbar to appear
+  await tableBody.evaluate((node) => {
+    return new Promise((resolve) => {
+      function checkScroll() {
+        if (node.scrollHeight > node.clientHeight) {
+          resolve();
+        } else {
+          setTimeout(checkScroll, 100);
+        }
+      }
+      checkScroll();
+    });
+  });
+
+  // make sure there are rows
+  const rows = page.getByLabel('table content').getByLabel('Table Row');
+  await rows.first().waitFor();
+
+  // Using this to allow for rows to come and go, so we can truly test the scroll position
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(1000);
+
+  const { scrollTop, clientHeight, scrollHeight } = await tableBody.evaluate((node) => ({
+    scrollTop: node.scrollTop,
+    clientHeight: node.clientHeight,
+    scrollHeight: node.scrollHeight
+  }));
+
+  // eslint-disable-next-line playwright/no-conditional-in-test
+  if (top) {
+    return scrollTop;
+  } else {
+    return Math.abs(scrollHeight - (scrollTop + clientHeight));
+  }
+}
