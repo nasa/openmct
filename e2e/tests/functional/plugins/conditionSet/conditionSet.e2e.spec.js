@@ -529,7 +529,7 @@ test.describe('Condition Set Composition', () => {
 
     // Enter Condition Criterion
     await page
-      .locator('select[aria-label="Criterion Telemetry Selection"]')
+      .getByLabel('Criterion Telemetry Selection')
       .first()
       .selectOption({ value: 'all' });
     await page
