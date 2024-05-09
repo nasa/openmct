@@ -107,7 +107,7 @@
             <input
               v-if="selectedOutputSelection === outputOptions[2]"
               v-model="condition.configuration.output"
-              aria-label="Condition Output String Input"
+              aria-label="Condition Output String"
               class="t-condition-name-input"
               type="text"
               @change="persist"

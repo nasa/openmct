@@ -523,7 +523,7 @@ test.describe('Condition Set Composition', () => {
       .getByLabel('Condition Output Type')
       .first()
       .selectOption({ value: 'string' });
-    await page.getByLabel('Condition Output String Input').first().fill('Negative');
+    await page.getByLabel('Condition Output String').first().fill('Negative');
 
     // Condition Trigger default is okay so no change needed to form
 
