@@ -45,8 +45,10 @@ test.describe('Telemetry Table', () => {
     await expect(rows).toHaveCount(50);
   });
 
-  test('auto scrolls to the top of the table on load', async ({ page }) => {
-    async function verifyScrollTop() {
+  test('on load, auto scrolls to top for descending, and to bottom for ascending', async ({
+    page
+  }) => {
+    async function getScrollPosition(top = true) {
       const tableBody = page.locator('.c-table__body-w');
 
       // Wait for the scrollbar to appear
@@ -70,8 +72,18 @@ test.describe('Telemetry Table', () => {
       // wait a bit to give time for new rows to be added
       await page.waitForTimeout(1000);
 
-      const scrollTop = await tableBody.evaluate((node) => node.scrollTop);
-      expect(scrollTop).toBe(0);
+      const { scrollTop, clientHeight, scrollHeight } = await tableBody.evaluate((node) => ({
+        scrollTop: node.scrollTop,
+        clientHeight: node.clientHeight,
+        scrollHeight: node.scrollHeight
+      }));
+
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      if (top) {
+        return scrollTop;
+      } else {
+        return Math.abs(scrollHeight - (scrollTop + clientHeight));
+      }
     }
 
     const sineWaveGenerator = await createDomainObjectWithDefaults(page, {
@@ -83,14 +95,34 @@ test.describe('Telemetry Table', () => {
     await page.goto(table.url);
     await setTimeConductorMode(page, false);
 
-    await verifyScrollTop();
+    expect(await getScrollPosition()).toBe(0);
 
     // verify in telemetry table view
     await page.goto(sineWaveGenerator.url);
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByText('Telemetry Table', { exact: true }).click();
 
-    await verifyScrollTop();
+    expect(await getScrollPosition()).toBe(0);
+
+    // navigate back to table
+    await page.goto(table.url);
+
+    // go into edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // change sort direction
+    await page.locator('thead div').filter({ hasText: 'Time' }).click();
+
+    // save view
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // navigate away and back
+    await page.goto(sineWaveGenerator.url);
+    await page.goto(table.url);
+
+    // verify scroll position
+    expect(await getScrollPosition(false)).toBeLessThan(1);
   });
 
   test('unpauses and filters data when paused by button and user changes bounds', async ({
