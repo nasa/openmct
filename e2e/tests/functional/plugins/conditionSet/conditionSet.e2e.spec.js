@@ -519,23 +519,14 @@ test.describe('Condition Set Composition', () => {
 
     // Enter Condition Output
     await page.getByLabel('Condition Name Input').first().fill('Negative');
-    await page
-      .getByLabel('Condition Output Type')
-      .first()
-      .selectOption({ value: 'string' });
+    await page.getByLabel('Condition Output Type').first().selectOption({ value: 'string' });
     await page.getByLabel('Condition Output String').first().fill('Negative');
 
     // Condition Trigger default is okay so no change needed to form
 
     // Enter Condition Criterion
-    await page
-      .getByLabel('Criterion Telemetry Selection')
-      .first()
-      .selectOption({ value: 'all' });
-    await page
-      .getByLabel('Criterion Metadata Selection')
-      .first()
-      .selectOption({ value: 'sin' });
+    await page.getByLabel('Criterion Telemetry Selection').first().selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').first().selectOption({ value: 'sin' });
     await page
       .locator('select[aria-label="Criterion Comparison Selection"]')
       .first()
