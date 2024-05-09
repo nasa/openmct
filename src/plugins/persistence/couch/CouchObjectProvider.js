@@ -58,8 +58,7 @@ class CouchObjectProvider {
     let sharedWorker;
 
     // eslint-disable-next-line no-undef
-    const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
-
+    const sharedWorkerURL = new URL('CouchChangesFeed.js', import.meta.url);
     sharedWorker = new SharedWorker(
       sharedWorkerURL,
       `CouchDB SSE Shared Worker for ${this.namespace}`

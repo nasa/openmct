@@ -223,8 +223,7 @@ class InMemorySearchProvider {
    */
   startSharedWorker() {
     // eslint-disable-next-line no-undef
-    const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}inMemorySearchWorker.js`;
-
+    const sharedWorkerURL = new URL('inMemorySearchWorker.js', import.meta.url);
     const sharedWorker = new SharedWorker(sharedWorkerURL, 'InMemorySearch Shared Worker');
     sharedWorker.onerror = this.onWorkerError;
     sharedWorker.port.onmessage = this.onWorkerMessage;
