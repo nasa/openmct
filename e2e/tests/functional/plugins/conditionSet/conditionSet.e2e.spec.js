@@ -533,7 +533,7 @@ test.describe('Condition Set Composition', () => {
       .first()
       .selectOption({ value: 'all' });
     await page
-      .locator('select[aria-label="Criterion Metadata Selection"]')
+      .getByLabel('Criterion Metadata Selection')
       .first()
       .selectOption({ value: 'sin' });
     await page
