@@ -25,7 +25,7 @@
       <button
         v-if="selectedClock"
         class="c-icon-button c-button--menu js-clock-button"
-        :class="[buttonCssClass, selectedClock.cssClass]"
+        :class="selectedClock.cssClass"
         aria-label="Independent Time Conductor Clock Menu"
         @click.prevent.stop="showClocksMenu"
       >

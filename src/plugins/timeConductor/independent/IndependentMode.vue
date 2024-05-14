@@ -24,7 +24,7 @@
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         class="c-icon-button c-button--menu js-mode-button"
-        :class="[buttonCssClass, selectedMode.cssClass]"
+        :class="selectedMode.cssClass"
         aria-label="Independent Time Conductor Mode Menu"
         @click.prevent.stop="showModesMenu"
       >

@@ -12,35 +12,29 @@
         v-else
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's mode."
-        :button-css-class="'c-icon-button'"
       />
       <IndependentClock
         v-if="isIndependent"
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's clock."
         :clock="timeOptionClock"
-        :button-css-class="'c-icon-button'"
         @independent-clock-updated="saveIndependentClock"
       />
       <ConductorClock
         v-else
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's clock."
-        :button-css-class="'c-icon-button'"
-        @clock-updated="saveClock"
       />
       <!-- TODO: Time system and history must work even with ITC later -->
       <ConductorTimeSystem
         v-if="!isIndependent"
         class="c-conductor__time-system-select"
         title="Sets the Time Conductor's time system."
-        :button-css-class="'c-icon-button'"
       />
       <ConductorHistory
         v-if="!isIndependent"
         class="c-conductor__history-select"
         title="Select and apply previously entered time intervals."
-        :button-css-class="'c-icon-button'"
       />
     </div>
     <conductor-inputs-fixed
@@ -82,14 +76,7 @@ export default {
     ConductorInputsFixed,
     ConductorInputsRealtime
   },
-  inject: {
-    openmct: 'openmct',
-    configuration: {
-      from: 'configuration',
-      default: undefined
-    },
-    isFixedTimeMode: 'isFixedTimeMode'
-  },
+  inject: ['openmct', 'configuration', 'isFixedTimeMode'],
   props: {
     positionX: {
       type: Number,
@@ -130,7 +117,6 @@ export default {
     'independent-clock-updated',
     'fixed-bounds-updated',
     'clock-offsets-updated',
-    'clock-updated',
     'independent-mode-updated'
   ],
   data() {
@@ -224,9 +210,6 @@ export default {
     },
     saveClockOffsets(offsets) {
       this.$emit('clock-offsets-updated', offsets);
-    },
-    saveClock(clockOptions) {
-      this.$emit('clock-updated', clockOptions);
     },
     saveIndependentMode(mode) {
       this.$emit('independent-mode-updated', mode);

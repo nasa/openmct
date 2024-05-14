@@ -61,9 +61,6 @@
       :position-x="positionX"
       :position-y="positionY"
       @popup-loaded="initializePopup"
-      @clock-updated="saveClock"
-      @fixed-bounds-updated="saveFixedBounds"
-      @clock-offsets-updated="saveClockOffsets"
       @dismiss="clearPopup"
     />
   </div>
@@ -72,7 +69,6 @@
 <script>
 import { inject, onMounted, provide } from 'vue';
 
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants.js';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorClock from './ConductorClock.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
@@ -82,6 +78,7 @@ import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorPopUp from './ConductorPopUp.vue';
 import conductorPopUpManager from './conductorPopUpManager.js';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
+import { useClock } from './useClock.js';
 import { useClockOffsets } from './useClockOffsets.js';
 import { useTimeBounds } from './useTimeBounds.js';
 import { useTimeMode } from './useTimeMode.js';
@@ -117,12 +114,14 @@ export default {
       getModeMetadata
     } = useTimeMode(openmct);
     const { observeTimeBounds, bounds, isTick } = useTimeBounds(openmct);
+    const { observeClock, clock, getAllClockMetadata, getClockMetadata } = useClock(openmct);
     const { observeClockOffsets, offsets } = useClockOffsets(openmct);
 
     onMounted(() => {
       observeTimeSystem();
       observeTimeMode();
       observeTimeBounds();
+      observeClock();
       observeClockOffsets();
     });
 
@@ -137,22 +136,18 @@ export default {
     provide('bounds', bounds);
     provide('isTick', isTick);
     provide('offsets', offsets);
+    provide('clock', clock);
+    provide('getAllClockMetadata', getAllClockMetadata);
+    provide('getClockMetadata', getClockMetadata);
 
     return {
       timeSystemFormatter,
-      timeSystemDurationFormatter,
       isFixedTimeMode,
-      isRealTimeMode,
-      bounds,
-      isTick
+      bounds
     };
   },
   data() {
     return {
-      // offsets: {
-      //   start: offsets && this.durationFormatter.format(Math.abs(offsets.start)),
-      //   end: offsets && this.durationFormatter.format(Math.abs(offsets.end))
-      // },
       viewBounds: {
         start: this.bounds.start,
         end: this.bounds.end
@@ -170,9 +165,6 @@ export default {
         start: this.timeSystemFormatter.format(this.bounds.start),
         end: this.timeSystemFormatter.format(this.bounds.end)
       };
-    },
-    mode() {
-      return this.isFixedTimeMode ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
     }
   },
   watch: {
@@ -234,15 +226,6 @@ export default {
       // this.formattedBounds.end = this.timeFormatter.format(bounds.end);
       this.viewBounds.start = bounds.start;
       this.viewBounds.end = bounds.end;
-    },
-    saveFixedBounds(bounds) {
-      // this.openmct.time.setBounds(bounds);
-    },
-    saveClockOffsets(offsets) {
-      // this.openmct.time.setClockOffsets(offsets);
-    },
-    saveClock(clockOptions) {
-      this.openmct.time.setClock(clockOptions.clockKey);
     }
   }
 };
