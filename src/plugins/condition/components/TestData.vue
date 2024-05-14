@@ -21,7 +21,12 @@
 -->
 
 <template>
-  <section v-show="isEditing" id="test-data" :class="{ 'is-expanded': expanded }">
+  <section
+    v-show="isEditing"
+    id="test-data"
+    :class="{ 'is-expanded': expanded }"
+    aria-label="Condition Set Test Data"
+  >
     <div class="c-cs__header c-section__header">
       <span
         class="c-disclosure-triangle c-tree__item__view-control is-enabled"

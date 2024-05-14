@@ -276,6 +276,17 @@ async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
 }
 
 /**
+ * Navigates directly to a given object url, in real-time mode.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url The url to the domainObject
+ */
+async function navigateToObjectWithRealTime(page, url, start = '1800000', end = '30000') {
+  await page.goto(
+    `${url}?tc.mode=local&tc.startDelta=${start}&tc.endDelta=${end}&tc.timeSystem=utc`
+  );
+}
+
+/**
  * Open the given `domainObject`'s context menu from the object tree.
  * Expands the path to the object and scrolls to it if necessary.
  *
@@ -656,6 +667,7 @@ export {
   getFocusedObjectUuid,
   getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
+  navigateToObjectWithRealTime,
   openObjectTreeContextMenu,
   renameObjectFromContextMenu,
   setEndOffset,
