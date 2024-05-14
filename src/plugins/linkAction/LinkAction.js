@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class LinkAction {
+const LINK_ACTION_KEY = 'link';
+
+class LinkAction {
   constructor(openmct) {
     this.name = 'Create Link';
-    this.key = 'link';
+    this.key = LINK_ACTION_KEY;
     this.description = 'Create Link to object in another location.';
     this.cssClass = 'icon-link';
     this.group = 'action';
@@ -154,3 +156,7 @@ export default class LinkAction {
     this.transaction = null;
   }
 }
+
+export { LINK_ACTION_KEY };
+
+export default LinkAction;
