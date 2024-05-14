@@ -383,7 +383,7 @@ $formInputH: 22px;
 $formRowCtrlsH: 14px;
 
 // Inspector
-$colorInspectorBg: pullForward($colorBodyBg, 5%);
+$colorInspectorBg: $colorBodyBg;
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: $colorBodyFg;
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
@@ -391,7 +391,7 @@ $colorInspectorSectionHeaderBg: rgba($colorBodyBg, 0.75);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Tabs
-$colorTabBg: $colorBodyBg;
+$colorTabBg: pullForward($colorBodyBg, 5%);
 $colorTabFg: $colorBodyFgEm;
 $colorTabCurrentBg: rgba($colorKey, 0.71);
 $colorTabCurrentFg: $colorBodyFgEm;
