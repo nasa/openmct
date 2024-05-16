@@ -29,23 +29,24 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
  * as well as a function to observe and update offsets changes,
  * which automatically stops observing when the component is unmounted.
  *
- * @param {OpenMCT} openmct the Open MCT API
+ * @param {OpenMCT} [openmct] the Open MCT API
+ * @param {TimeContext} [timeContext] the time context to use for time API clock offsets events
  * @returns {{
  *   observeClockOffsets: () => void,
  *   offsets: import('vue').Ref<object>,
  * }}
  */
-export function useClockOffsets(openmct, options) {
+export function useClockOffsets(openmct, timeContext = openmct.time) {
   let stopObservingClockOffsets;
 
-  const offsets = shallowRef(openmct.time.getClockOffsets());
+  const offsets = shallowRef(timeContext.getClockOffsets());
 
   onBeforeUnmount(() => stopObservingClockOffsets?.());
 
   function observeClockOffsets() {
-    openmct.time.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
+    timeContext.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
     stopObservingClockOffsets = () =>
-      openmct.time.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
+      timeContext.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
   }
 
   function updateClockOffsets(_offsets) {

@@ -30,6 +30,7 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} openmct the Open MCT API
+ * @param {TimeContext} [timeContext] the time context to use for time API time system events
  * @returns {{
  *   observeTimeSystem: () => void,
  *   timeSystemKey: import('vue').Ref<string>,
@@ -38,10 +39,10 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
  *   isTimeSystemUTCBased: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeSystem(openmct, options) {
+export function useTimeSystem(openmct, timeContext = openmct.time) {
   let stopObservingTimeSystem;
 
-  const currentTimeSystem = openmct.time.getTimeSystem();
+  const currentTimeSystem = timeContext.getTimeSystem();
 
   const timeSystemKey = ref(currentTimeSystem.key);
   const timeSystemFormatter = ref(getFormatter(openmct, currentTimeSystem.timeFormat));
@@ -53,8 +54,8 @@ export function useTimeSystem(openmct, options) {
   onBeforeUnmount(() => stopObservingTimeSystem?.());
 
   function observeTimeSystem() {
-    openmct.time.on('timeSystemChanged', updateTimeSystem);
-    stopObservingTimeSystem = () => openmct.time.off('timeSystemChanged', updateTimeSystem);
+    timeContext.on('timeSystemChanged', updateTimeSystem);
+    stopObservingTimeSystem = () => timeContext.off('timeSystemChanged', updateTimeSystem);
   }
 
   function updateTimeSystem(timeSystem) {

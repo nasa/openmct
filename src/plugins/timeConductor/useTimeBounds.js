@@ -30,25 +30,26 @@ import throttle from '../../utils/throttle.js';
  * as well as a function to observe and update bounds changes,
  * which automatically stops observing when the component is unmounted.
  *
- * @param {OpenMCT} openmct the Open MCT API
+ * @param {OpenMCT} [openmct] the Open MCT API
+ * @param {TimeContext} [timeContext] the time context to use for time API bounds events
  * @returns {{
  *   observeTimeBounds: () => void,
  *   bounds: import('vue').Ref<object>,
  *   isTick: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeBounds(openmct, options) {
+export function useTimeBounds(openmct, timeContext = openmct.time) {
   let stopObservingTimeBounds;
 
-  const bounds = shallowRef(openmct.time.getBounds());
+  const bounds = shallowRef(timeContext.getBounds());
   const isTick = ref(false);
 
   onBeforeUnmount(() => stopObservingTimeBounds?.());
 
   function observeTimeBounds(milliseconds = 300) {
-    openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
+    timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
     stopObservingTimeBounds = () =>
-      openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
+      timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
   }
 
   function updateTimeBounds(_timeBounds, _isTick) {

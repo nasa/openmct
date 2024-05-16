@@ -29,7 +29,8 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
  * as well as a function to observe and update the component's clock,
  * which automatically stops observing when the component is unmounted.
  *
- * @param {OpenMCT} openmct the Open MCT API
+ * @param {OpenMCT} [openmct] the Open MCT API
+ * @param {TimeContext} [timeContext] the time context to use for time API clock events
  * @returns {{
  *   observeClock: () => void,
  *   timeMode: import('vue').Ref<string>,
@@ -37,16 +38,16 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
  *   isRealTimeMode: import('vue').Ref<boolean>
  * }}
  */
-export function useClock(openmct, options) {
+export function useClock(openmct, timeContext = openmct.time) {
   let stopObservingClock;
 
-  const clock = ref(openmct.time.getClock());
+  const clock = ref(timeContext.getClock());
 
   onBeforeUnmount(() => stopObservingClock?.());
 
   function observeClock() {
-    openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
-    stopObservingClock = () => openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
+    timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
+    stopObservingClock = () => timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
   }
 
   function getAllClockMetadata(menuOptions) {
@@ -54,8 +55,8 @@ export function useClock(openmct, options) {
       ? menuOptions
           .map((menuOption) => menuOption.clock)
           .filter((key, index, array) => key !== undefined && array.indexOf(key) === index)
-          .map((clockKey) => openmct.time.getAllClocks().find((_clock) => _clock.key === clockKey))
-      : openmct.time.getAllClocks();
+          .map((clockKey) => timeContext.getAllClocks().find((_clock) => _clock.key === clockKey))
+      : timeContext.getAllClocks();
 
     const clockMetadata = clocks.map(getClockMetadata);
 
@@ -79,7 +80,7 @@ export function useClock(openmct, options) {
   }
 
   function setClock(key) {
-    openmct.time.setClock(key);
+    timeContext.setClock(key);
   }
 
   function updateClock(_clock) {
