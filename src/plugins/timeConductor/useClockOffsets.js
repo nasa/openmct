@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { onBeforeUnmount, shallowRef } from 'vue';
+import { onBeforeUnmount, shallowRef, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
+import { useTimeContext } from './useTimeContext.js';
 
 /**
  * Provides reactive `offsets`,
@@ -36,17 +37,28 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
  *   offsets: import('vue').Ref<object>,
  * }}
  */
-export function useClockOffsets(openmct, timeContext = openmct.time) {
+export function useClockOffsets(openmct, objectPath) {
   let stopObservingClockOffsets;
 
-  const offsets = shallowRef(timeContext.getClockOffsets());
+  const { timeContext } = useTimeContext(openmct, objectPath);
+
+  const offsets = shallowRef(timeContext.value.getClockOffsets());
 
   onBeforeUnmount(() => stopObservingClockOffsets?.());
 
+  watch(
+    timeContext,
+    (newContext, oldContext) => {
+      oldContext?.value?.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
+      observeClockOffsets();
+    },
+    { immediate: true }
+  );
+
   function observeClockOffsets() {
-    timeContext.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
+    timeContext.value.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
     stopObservingClockOffsets = () =>
-      timeContext.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
+      timeContext.value.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
   }
 
   function updateClockOffsets(_offsets) {
@@ -54,7 +66,6 @@ export function useClockOffsets(openmct, timeContext = openmct.time) {
   }
 
   return {
-    observeClockOffsets,
     offsets
   };
 }

@@ -20,10 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { onBeforeUnmount, ref, shallowRef } from 'vue';
+import { onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
+import { useTimeContext } from './useTimeContext.js';
 import throttle from '../../utils/throttle.js';
+
+const THROTTLE_RATE = 300;
 
 /**
  * Provides reactive `bounds`,
@@ -31,25 +34,35 @@ import throttle from '../../utils/throttle.js';
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} [openmct] the Open MCT API
- * @param {TimeContext} [timeContext] the time context to use for time API bounds events
+ * @param {Array} objectPath The view's objectPath
  * @returns {{
- *   observeTimeBounds: () => void,
  *   bounds: import('vue').Ref<object>,
  *   isTick: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeBounds(openmct, timeContext = openmct.time) {
+export function useTimeBounds(openmct, objectPath) {
   let stopObservingTimeBounds;
 
-  const bounds = shallowRef(timeContext.getBounds());
+  const { timeContext } = useTimeContext(openmct, objectPath);
+
+  const bounds = shallowRef(timeContext.value.getBounds());
   const isTick = ref(false);
 
   onBeforeUnmount(() => stopObservingTimeBounds?.());
 
-  function observeTimeBounds(milliseconds = 300) {
-    timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
+  watch(
+    timeContext,
+    (newContext, oldContext) => {
+      oldContext?.value?.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
+      observeTimeBounds();
+    },
+    { immediate: true }
+  );
+
+  function observeTimeBounds() {
+    timeContext.value.on(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
     stopObservingTimeBounds = () =>
-      timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds), milliseconds);
+      timeContext.value.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
   }
 
   function updateTimeBounds(_timeBounds, _isTick) {
@@ -58,7 +71,6 @@ export function useTimeBounds(openmct, timeContext = openmct.time) {
   }
 
   return {
-    observeTimeBounds,
     isTick,
     bounds
   };

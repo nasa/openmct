@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { inject, onMounted, provide } from 'vue';
+import { inject, provide } from 'vue';
 
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorClock from './ConductorClock.vue';
@@ -99,31 +99,13 @@ export default {
   inject: ['openmct', 'configuration'],
   setup() {
     const openmct = inject('openmct');
-    const {
-      observeTimeSystem,
-      timeSystemFormatter,
-      timeSystemDurationFormatter,
-      isTimeSystemUTCBased
-    } = useTimeSystem(openmct);
-    const {
-      observeTimeMode,
-      timeMode,
-      isFixedTimeMode,
-      isRealTimeMode,
-      getAllModeMetadata,
-      getModeMetadata
-    } = useTimeMode(openmct);
-    const { observeTimeBounds, bounds, isTick } = useTimeBounds(openmct);
-    const { observeClock, clock, getAllClockMetadata, getClockMetadata } = useClock(openmct);
-    const { observeClockOffsets, offsets } = useClockOffsets(openmct);
-
-    onMounted(() => {
-      observeTimeSystem();
-      observeTimeMode();
-      observeTimeBounds();
-      observeClock();
-      observeClockOffsets();
-    });
+    const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
+      useTimeSystem(openmct);
+    const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
+      useTimeMode(openmct);
+    const { bounds, isTick } = useTimeBounds(openmct);
+    const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct);
+    const { offsets } = useClockOffsets(openmct);
 
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);

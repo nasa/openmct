@@ -20,34 +20,45 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
+import { useTimeContext } from './useTimeContext.js';
 
 /**
- * Provides reactive TODO,
+ * Provides reactive `clock` which is reactive to a time context,
  * as well as a function to observe and update the component's clock,
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} [openmct] the Open MCT API
- * @param {TimeContext} [timeContext] the time context to use for time API clock events
+ * @param {Array} objectPath The view's objectPath
  * @returns {{
- *   observeClock: () => void,
- *   timeMode: import('vue').Ref<string>,
- *   isFixedTimeMode: import('vue').Ref<boolean>,
- *   isRealTimeMode: import('vue').Ref<boolean>
+ *   clock: import('vue').Ref<string>,
+ *   getAllClockMetadata: () => Object,
+ *   getClockMetadata: () => Object
  * }}
  */
-export function useClock(openmct, timeContext = openmct.time) {
+export function useClock(openmct, objectPath) {
   let stopObservingClock;
 
-  const clock = ref(timeContext.getClock());
+  const { timeContext } = useTimeContext(openmct, objectPath);
+
+  const clock = ref(timeContext.value.getClock());
 
   onBeforeUnmount(() => stopObservingClock?.());
 
+  watch(
+    timeContext,
+    (newContext, oldContext) => {
+      oldContext?.value?.off(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
+      observeClock();
+    },
+    { immediate: true }
+  );
+
   function observeClock() {
-    timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
-    stopObservingClock = () => timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
+    timeContext.value.on(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
+    stopObservingClock = () => timeContext.value.off(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
   }
 
   function getAllClockMetadata(menuOptions) {
@@ -55,8 +66,8 @@ export function useClock(openmct, timeContext = openmct.time) {
       ? menuOptions
           .map((menuOption) => menuOption.clock)
           .filter((key, index, array) => key !== undefined && array.indexOf(key) === index)
-          .map((clockKey) => timeContext.getAllClocks().find((_clock) => _clock.key === clockKey))
-      : timeContext.getAllClocks();
+          .map((clockKey) => timeContext.value.getAllClocks().find((_clock) => _clock.key === clockKey))
+      : timeContext.value.getAllClocks();
 
     const clockMetadata = clocks.map(getClockMetadata);
 
@@ -80,7 +91,7 @@ export function useClock(openmct, timeContext = openmct.time) {
   }
 
   function setClock(key) {
-    timeContext.setClock(key);
+    timeContext.value.setClock(key);
   }
 
   function updateClock(_clock) {
@@ -136,7 +147,6 @@ export function useClock(openmct, timeContext = openmct.time) {
   */
 
   return {
-    observeClock,
     clock,
     getAllClockMetadata,
     getClockMetadata

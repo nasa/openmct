@@ -20,40 +20,51 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 
 import {
   FIXED_MODE_KEY,
   REALTIME_MODE_KEY,
   TIME_CONTEXT_EVENTS
 } from '../../api/time/constants.js';
+import { useTimeContext } from './useTimeContext.js';
 
 /**
- * Provides reactive `isFixedTimeMode` and `isRealTimeMode`,
+ * Provides reactive `timeMode` which is reactive to a time context,
  * as well as a function to observe and update the component's time mode,
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} openmct the Open MCT API
- * @param {TimeContext} [timeContext] the time context to use for time API mode events
+ * @param {Array} objectPath The view's objectPath
  * @returns {{
- *   observeTimeMode: () => void,
  *   timeMode: import('vue').Ref<string>,
  *   isFixedTimeMode: import('vue').Ref<boolean>,
  *   isRealTimeMode: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeMode(openmct, timeContext = openmct.time) {
+export function useTimeMode(openmct, objectPath) {
   let stopObservingTimeMode;
 
-  const timeMode = ref(timeContext.getMode());
+  const { timeContext } = useTimeContext(openmct, objectPath);
+
+  const timeMode = ref(timeContext.value.getMode());
   const isFixedTimeMode = computed(() => timeMode.value === FIXED_MODE_KEY);
   const isRealTimeMode = computed(() => timeMode.value === REALTIME_MODE_KEY);
 
   onBeforeUnmount(() => stopObservingTimeMode?.());
 
+  watch(
+    timeContext,
+    (newContext, oldContext) => {
+      oldContext?.value?.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
+      observeTimeMode();
+    },
+    { immediate: true }
+  );
+
   function observeTimeMode() {
-    timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
-    stopObservingTimeMode = () => timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
+    timeContext.value.on(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
+    stopObservingTimeMode = () => timeContext.value.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
   }
 
   function getAllModeMetadata() {
@@ -82,7 +93,7 @@ export function useTimeMode(openmct, timeContext = openmct.time) {
   }
 
   function setTimeMode(_timeMode) {
-    timeContext.setMode(_timeMode);
+    timeContext.value.setMode(_timeMode);
   }
 
   function updateTimeMode(_timeMode) {
@@ -90,7 +101,6 @@ export function useTimeMode(openmct, timeContext = openmct.time) {
   }
 
   return {
-    observeTimeMode,
     timeMode,
     getAllModeMetadata,
     getModeMetadata,

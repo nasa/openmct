@@ -20,42 +20,58 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
+
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
+import { useTimeContext } from './useTimeContext.js';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 /**
+ * TODO: could probably use a shallowRef for the timeSystem... and all the other components as well.
+ *
  * Provides a reactive destructuring of the component's current time system,
  * as well as a function to observe and update the component's time system,
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} openmct the Open MCT API
- * @param {TimeContext} [timeContext] the time context to use for time API time system events
+ * @param {Array} objectPath The view's objectPath
  * @returns {{
- *   observeTimeSystem: () => void,
  *   timeSystemKey: import('vue').Ref<string>,
  *   timeSystemFormatter: import('vue').Ref<() => void>,
  *   timeSystemDurationFormatter: import('vue').Ref<() => void>,
  *   isTimeSystemUTCBased: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeSystem(openmct, timeContext = openmct.time) {
+export function useTimeSystem(openmct, objectPath) {
   let stopObservingTimeSystem;
 
-  const currentTimeSystem = timeContext.getTimeSystem();
+  const { timeContext } = useTimeContext(openmct, objectPath);
 
-  const timeSystemKey = ref(currentTimeSystem.key);
-  const timeSystemFormatter = ref(getFormatter(openmct, currentTimeSystem.timeFormat));
+  const initialTimeSystem = timeContext.value.getTimeSystem();
+
+  const timeSystemKey = ref(initialTimeSystem.key);
+  const timeSystemFormatter = ref(getFormatter(openmct, initialTimeSystem.timeFormat));
   const timeSystemDurationFormatter = ref(
-    getFormatter(openmct, currentTimeSystem.durationFormat || DEFAULT_DURATION_FORMATTER)
+    getFormatter(openmct, initialTimeSystem.durationFormat || DEFAULT_DURATION_FORMATTER)
   );
-  const isTimeSystemUTCBased = ref(currentTimeSystem.isUTCBased);
+  const isTimeSystemUTCBased = ref(initialTimeSystem.isUTCBased);
 
   onBeforeUnmount(() => stopObservingTimeSystem?.());
 
+  watch(
+    timeContext,
+    (newContext, oldContext) => {
+      oldContext?.valu?.off(TIME_CONTEXT_EVENTS.timeSystemChanged, updateTimeSystem);
+      observeTimeSystem();
+    },
+    { immediate: true }
+  );
+
   function observeTimeSystem() {
-    timeContext.on('timeSystemChanged', updateTimeSystem);
-    stopObservingTimeSystem = () => timeContext.off('timeSystemChanged', updateTimeSystem);
+    timeContext.value.on(TIME_CONTEXT_EVENTS.timeSystemChanged, updateTimeSystem);
+    stopObservingTimeSystem = () =>
+      timeContext.value.off(TIME_CONTEXT_EVENTS.timeSystemChanged, updateTimeSystem);
   }
 
   function updateTimeSystem(timeSystem) {
@@ -69,7 +85,6 @@ export function useTimeSystem(openmct, timeContext = openmct.time) {
   }
 
   return {
-    observeTimeSystem,
     timeSystemKey,
     timeSystemFormatter,
     timeSystemDurationFormatter,
