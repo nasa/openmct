@@ -49,7 +49,7 @@ export function useClockOffsets(openmct, objectPath) {
   watch(
     timeContext,
     (newContext, oldContext) => {
-      oldContext?.value?.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
+      oldContext?.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, updateClockOffsets);
       observeClockOffsets();
     },
     { immediate: true }

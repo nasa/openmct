@@ -62,7 +62,7 @@ export function useTimeSystem(openmct, objectPath) {
   watch(
     timeContext,
     (newContext, oldContext) => {
-      oldContext?.valu?.off(TIME_CONTEXT_EVENTS.timeSystemChanged, updateTimeSystem);
+      oldContext?.off(TIME_CONTEXT_EVENTS.timeSystemChanged, updateTimeSystem);
       observeTimeSystem();
     },
     { immediate: true }

@@ -53,7 +53,7 @@ export function useTimeBounds(openmct, objectPath) {
   watch(
     timeContext,
     (newContext, oldContext) => {
-      oldContext?.value?.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
+      oldContext?.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
       observeTimeBounds();
     },
     { immediate: true }

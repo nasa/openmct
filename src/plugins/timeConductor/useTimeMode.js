@@ -56,7 +56,7 @@ export function useTimeMode(openmct, objectPath) {
   watch(
     timeContext,
     (newContext, oldContext) => {
-      oldContext?.value?.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
+      oldContext?.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
       observeTimeMode();
     },
     { immediate: true }

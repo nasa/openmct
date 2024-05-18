@@ -50,7 +50,7 @@ export function useClock(openmct, objectPath) {
   watch(
     timeContext,
     (newContext, oldContext) => {
-      oldContext?.value?.off(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
+      oldContext?.off(TIME_CONTEXT_EVENTS.clockChanged, updateClock);
       observeClock();
     },
     { immediate: true }
