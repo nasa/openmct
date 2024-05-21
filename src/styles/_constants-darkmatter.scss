@@ -391,9 +391,9 @@ $colorInspectorSectionHeaderBg: rgba($colorBodyBg, 0.75);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Tabs
-$colorTabBg: pullForward($colorBodyBg, 5%);
+$colorTabBg: $colorBodyBg;
 $colorTabFg: $colorBodyFgEm;
-$colorTabCurrentBg: rgba($colorKey, 0.71);
+$colorTabCurrentBg: radial-gradient(circle, rgba($colorKey, 0.8) 58%, rgba(0, 59, 156, 1) 100%);
 $colorTabCurrentFg: $colorBodyFgEm;
 $colorTabsBaseline: $colorBodyBg;
 
