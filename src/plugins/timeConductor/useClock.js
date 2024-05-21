@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { onBeforeUnmount, ref, watch } from 'vue';
+import { onBeforeUnmount, shallowRef, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import { useTimeContext } from './useTimeContext.js';
@@ -43,7 +43,7 @@ export function useClock(openmct, objectPath) {
 
   const { timeContext } = useTimeContext(openmct, objectPath);
 
-  const clock = ref(timeContext.value.getClock());
+  const clock = shallowRef(timeContext.value.getClock());
 
   onBeforeUnmount(() => stopObservingClock?.());
 
@@ -66,7 +66,9 @@ export function useClock(openmct, objectPath) {
       ? menuOptions
           .map((menuOption) => menuOption.clock)
           .filter((key, index, array) => key !== undefined && array.indexOf(key) === index)
-          .map((clockKey) => timeContext.value.getAllClocks().find((_clock) => _clock.key === clockKey))
+          .map((clockKey) =>
+            timeContext.value.getAllClocks().find((_clock) => _clock.key === clockKey)
+          )
       : timeContext.value.getAllClocks();
 
     const clockMetadata = clocks.map(getClockMetadata);
