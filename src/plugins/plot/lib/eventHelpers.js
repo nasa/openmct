@@ -37,7 +37,7 @@ const helperFunctions = {
     if (object.addEventListener) {
       object.addEventListener(event, listener._cb);
     } else {
-      object.on(event, listener._cb);
+      object.on(event, listener._cb, listener.context);
     }
 
     this._listeningTo.push(listener);
@@ -74,7 +74,7 @@ const helperFunctions = {
         } else if (listener.object.removeEventListener) {
           listener.object.removeEventListener(listener.event, listener._cb);
         } else {
-          listener.object.off(listener.event, listener._cb);
+          listener.object.off(listener.event, listener._cb, listener.context);
         }
 
         return listener;

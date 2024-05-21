@@ -142,7 +142,7 @@ import {
   getConditionSetIdentifierForItem,
   getConsolidatedStyleValues
 } from '@/plugins/condition/utils/styleUtils';
-import PreviewAction from '@/ui/preview/PreviewAction.js';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 
 import FontStyleEditor from '../../../inspectorViews/styles/FontStyleEditor.vue';
 import StyleEditor from './StyleEditor.vue';
@@ -237,7 +237,7 @@ export default {
     this.stylesManager.off('styleSelected', this.applyStyleToSelection);
   },
   mounted() {
-    this.previewAction = new PreviewAction(this.openmct);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
     this.isMultipleSelection = this.selection.length > 1;
     this.getObjectsAndItemsFromSelection();
     this.useConditionSetOutputAsLabel = this.getConfigurationForLabel();

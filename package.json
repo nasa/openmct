@@ -46,7 +46,7 @@
     "eslint-plugin-unicorn": "49.0.0",
     "eslint-plugin-vue": "9.22.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "6.13.0",
-    "eventemitter3": "1.2.0",
+    "eventemitter3": "5.0.1",
     "file-saver": "2.0.5",
     "flatbush": "4.2.0",
     "git-rev-sync": "3.0.2",
