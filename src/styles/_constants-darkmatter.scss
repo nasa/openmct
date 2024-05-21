@@ -212,7 +212,7 @@ $colorPausedFg: #333;
 
 // Time Colors
 $colorTimeCommonFg: #eee;
-$colorTimeFixed: #59554c;
+$colorTimeFixed: #5e594d;
 $colorTimeFixedBg: $colorTimeFixed;
 $colorTimeFixedFg: #eee;
 $colorTimeFixedFgSubtle: #b2aa98;
@@ -235,7 +235,7 @@ $colorTimeRealtimeBtnFgMajor: #fff;
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
 $timeConductorAxisHoverFilter: brightness(1.2);
-$timeConductorActiveBg: $colorKey;
+$timeConductorActiveBg: $colorBodyBg;
 $timeConductorActivePanBg: #226074;
 
 // Browse
@@ -463,7 +463,7 @@ $shdwItemText: none;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
-$colorTabHeaderBg: #575757;
+$colorTabHeaderBg: #2e2e2e;
 $colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
