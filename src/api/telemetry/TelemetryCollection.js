@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import { TIME_CONTEXT_EVENTS } from '../time/constants.js';

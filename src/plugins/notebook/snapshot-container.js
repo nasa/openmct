@@ -1,4 +1,4 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 import { EVENT_SNAPSHOTS_UPDATED } from './notebook-constants.js';
 const NOTEBOOK_SNAPSHOT_STORAGE = 'notebook-snapshot-storage';

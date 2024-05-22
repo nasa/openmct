@@ -26,7 +26,7 @@
  * @typedef {string} Status
  */
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 /**
  * Get, set, and observe statuses for Open MCT objects. A status is a string
  * that represents the current state of an object.

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import { nextTick } from 'vue';
 
 import { createOpenMct, resetApplicationState } from '@/utils/testing';

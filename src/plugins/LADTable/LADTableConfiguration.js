@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import { markRaw } from 'vue';
 export default class LADTableConfiguration extends EventEmitter {
   constructor(domainObject, openmct) {

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import { v4 as uuid } from 'uuid';
 
 import AllTelemetryCriterion from './criterion/AllTelemetryCriterion.js';

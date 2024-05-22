@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 /**
  * The StatusAPI is used to get and set various statuses linked to the current logged in user.

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 import eventHelpers from '../lib/eventHelpers.js';
 import { MARKER_SHAPES } from './MarkerShapes.js';

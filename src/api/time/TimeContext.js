@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants.js';
 

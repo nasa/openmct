@@ -1,4 +1,4 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import * as templateHelpers from '../../../utils/template/templateHelpers.js';

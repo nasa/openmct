@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import { createApp, markRaw } from 'vue';
 
 import ActionsAPI from './api/actions/ActionsAPI.js';

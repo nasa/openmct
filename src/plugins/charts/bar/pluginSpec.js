@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 // import BarGraph from './BarGraphPlot.vue';
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
