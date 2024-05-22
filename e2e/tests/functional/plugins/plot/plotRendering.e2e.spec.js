@@ -25,7 +25,7 @@
  *
  */
 
-import { createDomainObjectWithDefaults, getCanvasPixels } from '../../../../appActions.js';
+import {createDomainObjectWithDefaults, getCanvasPixels, setRealTimeMode} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Rendering', () => {
@@ -50,6 +50,32 @@ test.describe('Plot Rendering', () => {
       createMineFolderRequests.push(req);
     });
     expect(createMineFolderRequests.length).toEqual(0);
+    await page.getByLabel('Plot Canvas').hover();
+  });
+
+  test('Time conductor synchronizes with plot time range when that plot control is clicked', async ({ page }) => {
+    // Navigate to Sine Wave Generator
+    await page.goto(sineWaveGeneratorObject.url);
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on pause control
+    await page.getByTitle('Pause incoming real-time data').click();
+
+    // expect plot to be paused
+    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on synchronize with time conductor
+    await page.getByTitle('Synchronize Time Conductor').click();
+
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+
+    //confirm that you're now in fixed mode with the correct range
+    await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
   });
 
   test.fixme('Plot is rendered when infinity values exist', async ({ page }) => {
