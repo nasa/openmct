@@ -143,7 +143,7 @@ $colorKeyFilter: invert(36%) sepia(10%) saturate(2512%) hue-rotate(170deg) brigh
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
   contrast(100%);
 $colorKeySelectedBg: $colorKey;
-$uiColor: #0093ff; // Resize bars, splitter bars, etc.
+$uiColor: lighten($colorKey, 10%); // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorInteriorBorderNotebook: rgba($colorBodyFg, 0.5);
 $colorA: #ccc;
@@ -246,6 +246,7 @@ $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $interiorMarginObjectFrameVertical: 10px;
 $interiorMarginObjectFrameHorizontal: 10px;
+$layoutCornerSize: 5px;
 
 // Missing Items
 $filterItemMissing: brightness(0.6) grayscale(1);
@@ -391,7 +392,7 @@ $colorInspectorSectionHeaderBg: rgba($colorBodyBg, 0.75);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Tabs
-$colorTabBg: $colorBodyBg;
+$colorTabBg: #2c2c34;
 $colorTabFg: $colorBodyFgEm;
 $colorTabCurrentBg: radial-gradient(circle, rgba($colorKey, 0.8) 58%, rgba(0, 59, 156, 1) 100%);
 $colorTabCurrentFg: $colorBodyFgEm;
@@ -559,7 +560,7 @@ $splitterHandleD: 2px;
 $splitterD: $splitterHandleD;
 $splitterHandleHitMargin: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: pullForward($colorBodyBg, 10%);
+$colorSplitterBg: pullForward($colorBodyBg, 15%);
 $colorSplitterFg: $colorBodyBg;
 $colorSplitterHover: $uiColor;
 $colorSplitterActive: $colorKey;
