@@ -25,7 +25,11 @@
  *
  */
 
-import {createDomainObjectWithDefaults, getCanvasPixels, setRealTimeMode} from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  getCanvasPixels,
+  setRealTimeMode
+} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Rendering', () => {
@@ -53,7 +57,9 @@ test.describe('Plot Rendering', () => {
     await page.getByLabel('Plot Canvas').hover();
   });
 
-  test('Time conductor synchronizes with plot time range when that plot control is clicked', async ({ page }) => {
+  test('Time conductor synchronizes with plot time range when that plot control is clicked', async ({
+    page
+  }) => {
     // Navigate to Sine Wave Generator
     await page.goto(sineWaveGeneratorObject.url);
     // Switch to real-time mode
