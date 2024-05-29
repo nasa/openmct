@@ -101,19 +101,8 @@ async function createDomainObjectWithDefaults(
   // If there are any further parameters, fill them in
   for (const [key, value] of Object.entries(customParameters)) {
     const input = page.locator(`form[name="mctForm"] ${key}`);
-    const inputType = await input.getAttribute('type');
-
-    if (inputType === 'checkbox') {
-      // Locate the slider span associated with the checkbox
-      const slider = input.locator('+ .c-toggle-switch__slider');
-      const isChecked = await input.isChecked();
-      if ((value === 'true' && !isChecked) || (value === 'false' && isChecked)) {
-        await slider.click();
-      }
-    } else {
-      await input.fill('');
-      await input.fill(value);
-    }
+    await input.fill('');
+    await input.fill(value);
   }
 
   // Click OK button and wait for Navigate event
