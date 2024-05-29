@@ -33,12 +33,15 @@ test.describe('Staleness', () => {
     const isStaleClass = 'is-stale';
     const staleSWG = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
-      name: 'SWG',
-      parent: 'mine',
-      customParameters: {
-        'label:has([aria-label="Provide Staleness Updates"]) > input': 'true'
-      }
+      name: 'SWG'
     });
+
+    // edit properties and enable staleness updates
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit properties...').click();
+    await page.getByLabel('Provide Staleness Updates', { exact: true }).click();
+    await page.getByLabel('Save').click();
+
     const folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'Folder 1'
