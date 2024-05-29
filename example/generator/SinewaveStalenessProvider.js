@@ -59,7 +59,7 @@ export default class SinewaveLimitProvider extends EventEmitter {
   subscribeToStaleness(domainObject, callback) {
     const id = this.#getObjectKeyString(domainObject);
 
-    this.#realtimeCheck();
+    this.#realTimeCheck();
     this.#handleClockUpdate();
 
     if (this.#observerExists(id)) {
@@ -87,14 +87,14 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
     if (observers && !this.#watchingTheClock) {
       this.#watchingTheClock = true;
-      this.#openmct.time.on('modeChanged', this.#realtimeCheck, this);
+      this.#openmct.time.on('modeChanged', this.#realTimeCheck, this);
     } else if (!observers && this.#watchingTheClock) {
       this.#watchingTheClock = false;
-      this.#openmct.time.off('modeChanged', this.#realtimeCheck, this);
+      this.#openmct.time.off('modeChanged', this.#realTimeCheck, this);
     }
   }
 
-  #realtimeCheck() {
+  #realTimeCheck() {
     if (!this.#openmct.time.isRealTime()) {
       Object.keys(this.#observingStaleness).forEach((id) => {
         this.#updateStaleness(id, false);
