@@ -352,6 +352,10 @@ export default {
     show(object, viewKey, immediatelySelect, currentObjectPath) {
       this.updateStyle();
 
+      if (this.domainObject) {
+        this.triggerUnsubscribeFromStaleness(this.domainObject);
+      }
+
       if (this.removeSelectable) {
         this.removeSelectable();
         delete this.removeSelectable;
