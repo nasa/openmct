@@ -25,14 +25,14 @@
  *
  */
 
+import { setUserDefinedMinAndMax, turnOffAutoscale } from 'plotActions.js';
+
 import {
   createDomainObjectWithDefaults,
   getCanvasPixels,
   setEndOffset,
   setRealTimeMode,
-  setStartOffset,
-  setUserDefinedMinAndMax,
-  turnOffAutoscale
+  setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 

@@ -656,26 +656,6 @@ async function renameObjectFromContextMenu(page, url, newName) {
   await page.click('[aria-label="Save"]');
 }
 
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function turnOffAutoscale(page) {
-  // uncheck autoscale
-  await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} min
- * @param {string} max
- */
-async function setUserDefinedMinAndMax(page, min, max) {
-  // set minimum value
-  await page.getByRole('spinbutton').first().fill(min);
-  // set maximum value
-  await page.getByRole('spinbutton').nth(1).fill(max);
-}
-
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -697,7 +677,5 @@ export {
   setStartOffset,
   setTimeConductorBounds,
   setTimeConductorMode,
-  setUserDefinedMinAndMax,
-  turnOffAutoscale,
   waitForPlotsToRender
 };
