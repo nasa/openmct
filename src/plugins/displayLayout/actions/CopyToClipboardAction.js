@@ -1,13 +1,15 @@
 import clipboard from '@/utils/clipboard';
 
-export default class CopyToClipboardAction {
+const COPY_TO_CLIPBOARD_ACTION_KEY = 'copyToClipboard';
+
+class CopyToClipboardAction {
   constructor(openmct) {
     this.openmct = openmct;
 
     this.cssClass = 'icon-duplicate';
     this.description = 'Copy value to clipboard';
     this.group = 'action';
-    this.key = 'copyToClipboard';
+    this.key = COPY_TO_CLIPBOARD_ACTION_KEY;
     this.name = 'Copy to Clipboard';
     this.priority = 1;
   }
@@ -36,3 +38,7 @@ export default class CopyToClipboardAction {
     return row.formattedValueForCopy && typeof row.formattedValueForCopy === 'function';
   }
 }
+
+export { COPY_TO_CLIPBOARD_ACTION_KEY };
+
+export default CopyToClipboardAction;

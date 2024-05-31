@@ -22,12 +22,14 @@
 
 import PreviewAction from './PreviewAction.js';
 
-export default class ViewHistoricalDataAction extends PreviewAction {
+const VIEW_HISTORICAL_DATA_ACTION_KEY = 'viewHistoricalData';
+
+class ViewHistoricalDataAction extends PreviewAction {
   constructor(openmct) {
     super(openmct);
 
     this.name = 'View Historical Data';
-    this.key = 'viewHistoricalData';
+    this.key = VIEW_HISTORICAL_DATA_ACTION_KEY;
     this.description = 'View Historical Data in a Table or Plot';
     this.cssClass = 'icon-eye-open';
     this.hideInDefaultMenu = true;
@@ -41,3 +43,7 @@ export default class ViewHistoricalDataAction extends PreviewAction {
     );
   }
 }
+
+export { VIEW_HISTORICAL_DATA_ACTION_KEY };
+
+export default ViewHistoricalDataAction;
