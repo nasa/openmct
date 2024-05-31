@@ -51,7 +51,7 @@ test.describe('Staleness', () => {
     await navigateToObjectWithRealTime(page, staleSWG.url);
 
     // Assert that staleness is shown
-    await expect(page.locator(`.c-object-view .${isStaleClass}`)).toBeAttached({
+    await expect(page.locator(`${objectViewSelector} .${isStaleClass}`)).toBeAttached({
       timeout: 30 * 1000 // Give 30 seconds for the staleness to be updated
     });
 
@@ -59,6 +59,6 @@ test.describe('Staleness', () => {
     await page.goto(folder.url);
 
     // Verify that staleness is not shown
-    await expect(page.locator(`.c-object-view .${isStaleClass}`)).not.toBeAttached();
+    await expect(page.locator(`${objectViewSelector} .${isStaleClass}`)).not.toBeAttached();
   });
 });
