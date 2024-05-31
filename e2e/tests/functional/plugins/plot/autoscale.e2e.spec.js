@@ -24,10 +24,9 @@
 Testsuite for plot autoscale.
 */
 
-import { setUserDefinedMinAndMax, turnOffAutoscale } from 'plotActions.js';
-
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+import { setUserDefinedMinAndMax, turnOffAutoscale } from './plotActions.js';
 test.use({
   viewport: {
     width: 1280,

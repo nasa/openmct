@@ -25,8 +25,6 @@
  *
  */
 
-import { setUserDefinedMinAndMax, turnOffAutoscale } from 'plotActions.js';
-
 import {
   createDomainObjectWithDefaults,
   getCanvasPixels,
@@ -35,6 +33,7 @@ import {
   setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+import { setUserDefinedMinAndMax, turnOffAutoscale } from './plotActions.js';
 
 test.describe('Plot Controls', () => {
   let overlayPlot;
