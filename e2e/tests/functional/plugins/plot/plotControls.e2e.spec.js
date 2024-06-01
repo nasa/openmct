@@ -45,7 +45,7 @@ test.describe('Plot Controls', () => {
       type: 'Overlay Plot'
     });
 
-    // Create an overlay plot with a sive wave generator
+    // Create an overlay plot with a sine wave generator
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: overlayPlot.uuid
