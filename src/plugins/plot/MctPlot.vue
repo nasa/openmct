@@ -180,6 +180,7 @@ import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
 import { toRaw } from 'vue';
 
+import { MODES } from '../../api/time/constants';
 import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames.js';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -1896,7 +1897,7 @@ export default {
 
     synchronizeTimeConductor() {
       const range = this.config.xAxis.get('displayRange');
-      this.timeContext.bounds({
+      this.timeContext.setMode(MODES.fixed, {
         start: range.min,
         end: range.max
       });
