@@ -803,12 +803,12 @@ export default {
         this.synchronizeIfBoundsMatch();
         this.loadMoreData(newRange, true);
       } else {
-        // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
+        // If we're not paused, panning or zooming (time conductor and plot x-axis times are not out of sync)
         // Drop any data that is more than 1x (max-min) before min.
         // Limit these purges to once a second.
         const isPanningOrZooming = this.isTimeOutOfSync;
         const purgeRecords =
-          !isPanningOrZooming && (!this.nextPurge || this.nextPurge < Date.now());
+          !this.isFrozen && !isPanningOrZooming && (!this.nextPurge || this.nextPurge < Date.now());
         if (purgeRecords) {
           const keepRange = {
             min: newRange.min - (newRange.max - newRange.min),
