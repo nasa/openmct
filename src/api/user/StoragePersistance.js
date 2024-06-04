@@ -22,7 +22,7 @@
 
 import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
 
-class StoragePersistance {
+class StoragePersistence {
   getActiveRole() {
     return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
   }
@@ -34,4 +34,4 @@ class StoragePersistance {
   }
 }
 
-export default new StoragePersistance();
+export default new StoragePersistence();

@@ -713,7 +713,7 @@ openmct.telemetry.addFormat({
 
 A single telemetry point is considered a Datum, and is represented by a standard
 javascript object.  Realtime subscriptions (obtained via **subscribe**) will
-invoke the supplied callback once for each telemetry datum recieved.  Telemetry
+invoke the supplied callback once for each telemetry datum received.  Telemetry
 requests (obtained via **request**) will return a promise for an array of
 telemetry datums.
 
@@ -738,7 +738,7 @@ section.
 Limit evaluators allow a telemetry integrator to define which limits exist for a
 telemetry endpoint and how limits should be applied to telemetry from a given domain object.
 
-A limit evaluator can implement the `evalute` method which is used to define how limits
+A limit evaluator can implement the `evaluate` method which is used to define how limits
 should be applied to telemetry and the `getLimits` method which is used to specify
 what the limit values are for different limit levels.
 
@@ -1180,7 +1180,7 @@ An example time conductor configuration is provided below. It sets up some
 default options for the [UTCTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/UTCTimeSystem.js)
 and [LocalTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/localTimeSystem/LocalTimeSystem.js),
 in both fixed mode, and for the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js)
-source. In this configutation, the local clock supports both the UTCTimeSystem
+source. In this configuration, the local clock supports both the UTCTimeSystem
 and LocalTimeSystem. Configuration for fixed bounds mode is specified by omitting
 a clock key.
 
