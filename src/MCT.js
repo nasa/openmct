@@ -79,7 +79,6 @@ import Browse from './ui/router/Browse.js';
 export class MCT extends EventEmitter {
   constructor() {
     super();
-    EventEmitter.call(this);
 
     this.buildInfo = {
       version: __OPENMCT_VERSION__,
@@ -371,6 +370,5 @@ export class MCT extends EventEmitter {
   destroy() {
     window.removeEventListener('beforeunload', this.destroy);
     this.emit('destroy');
-    this.router.destroy();
   }
 }

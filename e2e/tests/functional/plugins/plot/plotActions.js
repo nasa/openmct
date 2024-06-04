@@ -19,13 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-import CreateAction from './CreateAction.js';
-import EditPropertiesAction from './EditPropertiesAction.js';
-
-export default function () {
-  return function (openmct) {
-    openmct.actions.register(new EditPropertiesAction(openmct));
-    openmct.actions.register(new CreateAction(openmct));
-  };
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function turnOffAutoscale(page) {
+  // uncheck autoscale
+  await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 }
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} min
+ * @param {string} max
+ */
+async function setUserDefinedMinAndMax(page, min, max) {
+  // set minimum value
+  await page.getByRole('spinbutton').first().fill(min);
+  // set maximum value
+  await page.getByRole('spinbutton').nth(1).fill(max);
+}
+
+export { setUserDefinedMinAndMax, turnOffAutoscale };

@@ -19,7 +19,7 @@ import { merge } from 'webpack-merge';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
-const packageDefinition = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
+const { version } = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
 
 try {
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
@@ -85,7 +85,7 @@ const config = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
+      __OPENMCT_VERSION__: `'${version}'`,
       __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
       __OPENMCT_REVISION__: `'${gitRevision}'`,
       __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
