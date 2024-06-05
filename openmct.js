@@ -38,13 +38,19 @@ export default openmct;
 
 /**
  * @typedef {MCT} OpenMCT
- * @typedef {import('./src/api/objects/ObjectAPI').DomainObject} DomainObject
- * @typedef {import('./src/api/objects/ObjectAPI').Identifier} Identifier
+ * @typedef {import('./src/api/objects/ObjectAPI.js').DomainObject} DomainObject
+ * @typedef {import('./src/api/objects/ObjectAPI.js').Identifier} Identifier
+ * @typedef {import('./src/api/objects/Transaction.js').default} Transaction
+ * @typedef {import('./src/api/actions/ActionCollection.js').default} ActionCollection
+ * @typedef {import('./src/api/composition/CompositionCollection.js').default} CompositionCollection
+ * @typedef {import('./src/api/composition/CompositionProvider.js').default} CompositionProvider
+ * @typedef {import('./src/ui/registries/ViewRegistry.js').ViewProvider} ViewProvider
+ * @typedef {import('./src/ui/registries/ViewRegistry.js').View} View
+ *
  * @typedef {DomainObject[]} ObjectPath
  * @typedef {(...args: any[]) => (openmct: OpenMCT) => void} OpenMCTPlugin
  * An OpenMCT Plugin returns a function that receives an instance of
  * the OpenMCT API and uses it to install itself.
- * @param {OpenMCT} openmct - The Open MCT application instance.
  */
 
 /**
