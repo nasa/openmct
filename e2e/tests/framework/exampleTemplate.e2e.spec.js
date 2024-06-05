@@ -22,7 +22,7 @@
 
 /*
  * This test suite template is to be used when creating new test suites. It will be kept up to date with the latest improvements
- * made by the Open MCT team. It will also follow our best practises as those evolve. Please use this structure as a _reference_ and clear
+ * made by the Open MCT team. It will also follow our best practices as those evolve. Please use this structure as a _reference_ and clear
  * or update any references when creating a new test suite!
  *
  * To illustrate current best practices, we've included a mocked up test suite for Renaming a Timer domain object.

@@ -1190,7 +1190,7 @@ const ONE_MINUTE = 60 * 1000;
 
 openmct.install(openmct.plugins.Conductor({
     menuOptions: [
-        // 'Fixed' bounds mode configuation for the UTCTimeSystem
+        // 'Fixed' bounds mode configuration for the UTCTimeSystem
         {
             timeSystem: 'utc',
             bounds: {start: Date.now() - 30 * ONE_MINUTE, end: Date.now()},

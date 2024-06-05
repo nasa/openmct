@@ -706,7 +706,7 @@ describe('Telemetry API', () => {
   });
 });
 
-describe('Telemetery', () => {
+describe('telemetry', () => {
   let openmct;
   let telemetryProvider;
   let telemetryAPI;

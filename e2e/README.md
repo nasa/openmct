@@ -181,7 +181,7 @@ In addition to the explicit definition of performance tests, we also ensure that
 
 ### File Structure
 
-Our file structure follows the type of type of testing being excercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
+Our file structure follows the type of type of testing being exercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
 
 |File Path|Description|
 |:-:|-|
