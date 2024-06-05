@@ -25,19 +25,17 @@ const DEFAULT_VIEW_PRIORITY = 0;
 /**
  * A InspectorViewRegistry maintains the definitions for views
  * that may occur in the inspector.
- *
- * @interface InspectorViewRegistry
- * @memberof module:openmct
  */
 export default class InspectorViewRegistry {
   constructor() {
+    /** @type {Record<string, ViewProvider>} */
     this.providers = {};
   }
 
   /**
    *
-   * @param {Object} selection the object to be viewed
-   * @returns {module:openmct.InspectorViewRegistry[]} any providers
+   * @param {DomainObject} selection the object to be viewed
+   * @returns {ViewProvider[]} any providers
    *          which can provide views of this object
    * @private for platform-internal use
    */
@@ -63,11 +61,9 @@ export default class InspectorViewRegistry {
   }
 
   /**
-   * Registers a new type of view.
+   * Registers a new inspector view provider.
    *
-   * @param {module:openmct.InspectorViewRegistry} provider the provider for this view
-   * @method addProvider
-   * @memberof module:openmct.InspectorViewRegistry#
+   * @param {ViewProvider} provider the provider for this view
    */
   addProvider(provider) {
     const key = provider.key;
@@ -88,75 +84,25 @@ export default class InspectorViewRegistry {
     this.providers[key] = provider;
   }
 
+  /**
+   * Retrieves a view provider by its key.
+   * @param {string} key the key of the view provider
+   * @returns {ViewProvider} the view provider
+   */
   getByProviderKey(key) {
     return this.providers[key];
   }
 
+  /**
+   * @returns {ViewProvider[]} all providers
+   */
   #getAllProviders() {
     return Object.values(this.providers);
   }
 }
 
 /**
- * A View is used to provide displayable content, and to react to
- * associated life cycle events.
- *
- * @name View
- * @interface
- * @memberof module:openmct
- */
-
-/**
- * Populate the supplied DOM element with the contents of this view.
- *
- * View implementations should use this method to attach any
- * listeners or acquire other resources that are necessary to keep
- * the contents of this view up-to-date.
- *
- * @param {HTMLElement} container the DOM element to populate
- * @method show
- * @memberof module:openmct.View#
- */
-
-/**
- * Release any resources associated with this view.
- *
- * View implementations should use this method to detach any
- * listeners or release other resources that are no longer necessary
- * once a view is no longer used.
- *
- * @method destroy
- * @memberof module:openmct.View#
- */
-
-/**
- * Exposes types of views in inspector.
- *
- * @interface InspectorViewProvider
- * @property {string} key a unique identifier for this view
- * @property {string} name the human-readable name of this view
- * @property {string} [description] a longer-form description (typically
- *           a single sentence or short paragraph) of this kind of view
- * @property {string} [cssClass] the CSS class to apply to labels for this
- *           view (to add icons, for instance)
- * @memberof module:openmct
- */
-
-/**
- * Checks if this provider can supply views for a selection.
- *
- * @method canView
- * @memberof module:openmct.InspectorViewProvider#
- * @param {module:openmct.selection} selection
- * @returns {boolean} 'true' if the view applies to the provided selection,
- *          otherwise 'false'.
- */
-
-/**
- * Provides a view of the selection object in the inspector.
- *
- * @method view
- * @memberof module:openmct.InspectorViewProvider#
- * @param {module:openmct.selection} selection the selection object
- * @returns {module:openmct.View} a view of this selection
+ * @typedef {import("openmct").View} View
+ * @typedef {import("openmct").ViewProvider} ViewProvider
+ * @typedef {import("openmct").DomainObject} DomainObject
  */

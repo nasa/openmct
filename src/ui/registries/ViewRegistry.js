@@ -27,22 +27,21 @@ const DEFAULT_VIEW_PRIORITY = 100;
 /**
  * A ViewRegistry maintains the definitions for different kinds of views
  * that may occur in different places in the user interface.
- * @interface ViewRegistry
- * @memberof module:openmct
  */
 export default class ViewRegistry extends EventEmitter {
   constructor() {
     super();
     EventEmitter.apply(this);
+    /** @type {Record<string, ViewProvider>} */
     this.providers = {};
   }
+
   /**
    * for platform-internal use
-   * @param {*} item the object to be viewed
-   * @param {array} objectPath - The current contextual object path of the view object
-   *                             eg current domainObject is located under MyItems which is under Root
-   * @returns {module:openmct.ViewProvider[]} any providers
-   *          which can provide views of this object
+   * @param {import('openmct').DomainObject} item the object to be viewed
+   * @param {import('openmct').ObjectPath} objectPath - The current contextual object path of the view object
+   * @returns {ViewProvider[]} a list of providers that can provide views for this object, sorted by
+   * descending priority
    */
   get(item, objectPath) {
     if (objectPath === undefined) {
@@ -62,18 +61,18 @@ export default class ViewRegistry extends EventEmitter {
       })
       .sort(byPriority);
   }
+
   /**
    * @private
    */
   getAllProviders() {
     return Object.values(this.providers);
   }
+
   /**
    * Register a new type of view.
    *
-   * @param {module:openmct.ViewProvider} provider the provider for this view
-   * @method addProvider
-   * @memberof module:openmct.ViewRegistry#
+   * @param {ViewProvider} provider the provider for this view
    */
   addProvider(provider) {
     const key = provider.key;
@@ -109,6 +108,7 @@ export default class ViewRegistry extends EventEmitter {
   getByProviderKey(key) {
     return this.providers[key];
   }
+
   /**
    * Used internally to support seamless usage of new views with old
    * views.
@@ -122,150 +122,69 @@ export default class ViewRegistry extends EventEmitter {
 }
 
 /**
- * A View is used to provide displayable content, and to react to
- * associated life cycle events.
- *
- * @name View
- * @interface
- * @memberof module:openmct
+ * @typedef {import('openmct').DomainObject} DomainObject
+ * @typedef {import('openmct').ObjectPath} ObjectPath
  */
 
 /**
- * Populate the supplied DOM element with the contents of this view.
+ * @typedef {Object} ViewOptions
+ * @property {() => void} [renderWhenVisible]
+ * This function can be used for all rendering logic that would otherwise be executed within a
+ * `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided
+ * function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its
+ * execution until the view becomes visible.
  *
+ * Additionally, `renderWhenVisible` returns a boolean value indicating whether the provided
+ * function was executed immediately (`true`) or deferred (`false`).
+ * Monitoring of visibility begins after the first call to `renderWhenVisible` is made.
+ */
+
+/**
+ * @typedef {Object} View
+ * A View is used to provide displayable content, and to react to
+ * associated life cycle events.
+ * @property {(container: HTMLElement, isEditing: boolean | undefined, viewOptions: ViewOptions | undefined) => void} show
+ * Populate the supplied DOM element with the contents of this view.
  * View implementations should use this method to attach any
  * listeners or acquire other resources that are necessary to keep
  * the contents of this view up-to-date.
  *
- * @param {HTMLElement} container the DOM element to populate
- * @method show
- * @memberof module:openmct.View#
- */
+ * - `container`: The DOM element where the view should be rendered.
+ * - `isEditing`: Indicates whether the view is in editing mode.
+ * - `viewOptions`: An object with configuration options for the view.
+ * @property {() => void} destroy - Release any resources associated with this view.
+ * View implementations should use this method to detach any listeners or release other resources
+ * that are no longer necessary once a view is no longer used.
+ * @property {() => { item: DomainObject, isMultiSelectEvent: boolean }} [getSelectionContext]
+ * A function that returns the selection context of the view.
 
-/**
- * Indicates whether or not the application is in edit mode. This supports
- * views that have distinct visual and behavioral elements when the
- * navigated object is being edited.
- *
- * For cases where a completely separate view is desired for editing purposes,
- * see {@link openmct.ViewProvider#edit}
- *
- * @param {boolean} isEditing
- * @method show
- * @memberof module:openmct.View#
- */
-
-/**
- * Release any resources associated with this view.
- *
- * View implementations should use this method to detach any
- * listeners or release other resources that are no longer necessary
- * once a view is no longer used.
- *
- * @method destroy
- * @memberof module:openmct.View#
- */
-
-/**
- * Returns the selection context.
- *
- * View implementations should use this method to customize
- * the selection context.
- *
- * @method getSelectionContext
- * @memberof module:openmct.View#
+ * View implementations may use this method to customize the selection context.
  */
 
 /**
  * Exposes types of views in Open MCT.
  *
- * @interface ViewProvider
- * @property {string} key a unique identifier for this view
- * @property {string} name the human-readable name of this view
- * @property {string} [description] a longer-form description (typically
- *           a single sentence or short paragraph) of this kind of view
- * @property {string} [cssClass] the CSS class to apply to labels for this
- *           view (to add icons, for instance)
- * @memberof module:openmct
- */
-
-/**
- * Check if this provider can supply views for a domain object.
+ * @typedef {Object} ViewProvider
+ * @property {string} key - The unique key that identifies this view
+ * @property {string} name - The name of the view
+ * @property {string} [cssClass] - The CSS class to apply to labels for this view (to add icons,
+ * for instance)
+ * @property {(domainObject: DomainObject, objectPath: ObjectPath) => boolean} canView
+ * Returns true if this provider is able to supply views for the given {@link DomainObject}.
  *
  * When called by Open MCT, this may include additional arguments
  * which are on the path to the object to be viewed; for instance,
  * when viewing "A Folder" within "My Items", this method will be
- * invoked with "A Folder" (as a domain object) as the first argument
- *
- * @method canView
- * @memberof module:openmct.ViewProvider#
- * @param {module:openmct.DomainObject} domainObject the domain object
- *        to be viewed
- * @param {array} objectPath - The current contextual object path of the view object
- *                             eg current domainObject is located under MyItems which is under Root
- * @returns {boolean} 'true' if the view applies to the provided object,
- *          otherwise 'false'.
- */
-
-/**
+ * invoked with "A Folder" (as a {@link DomainObject}) as the first argument.
+ * @property {(domainObject: DomainObject, objectPath: ObjectPath) => boolean} [canEdit]
  * An optional function that defines whether or not this view can be used to edit a given object.
- * If not provided, will default to `false` and the view will not support editing. To support editing,
- * return true from this function and then -
- * * Return a {@link openmct.View} from the `view` function, using the `onEditModeChange` callback to
- * add and remove editing elements from the view
- * OR
- * * Return a {@link openmct.View} from the `view` function defining a read-only view.
- * AND
- * * Define an {@link openmct.ViewProvider#Edit} function on the view provider that returns an
- * editing-specific view.
+ * If not provided, will default to `false` and the view will not support editing.
+ * @property {(domainObject: DomainObject, objectPath: ObjectPath) => View} view A function that
+ * provides a view for the provided domain object.
+ * @property {(domainObject: DomainObject) => number} [priority]
+ * A function that returns the priority of the view. The more positive the value, the higher the
+ * priority. Similarly, the more negative the value, the lower the priority.
  *
- * @method canEdit
- * @memberof module:openmct.ViewProvider#
- * @param {module:openmct.DomainObject} domainObject the domain object
- *        to be edited
- * @param {array} objectPath - The current contextual object path of the view object
- *                             eg current domainObject is located under MyItems which is under Root
- * @returns {boolean} 'true' if the view can be used to edit the provided object,
- *          otherwise 'false'.
- */
-
-/**
- * Optional method determining the priority of a given view. If this
- * function is not defined on a view provider, then a default priority
- * of 100 will be applicable for all objects supported by this view.
- *
- * @method priority
- * @memberof module:openmct.ViewProvider#
- * @param {module:openmct.DomainObject} domainObject the domain object
- *        to be viewed
- * @returns {number} The priority of the view. If multiple views could apply
- *          to an object, the view that returns the lowest number will be
- *          the default view.
- */
-
-/**
- * Provide a view of this object.
- *
- * When called by Open MCT, the following arguments will be passed to it:
- * @param {Object} domainObject - the domainObject that the view is provided for
- * @param {array} objectPath - The current contextual object path of the view object
- *                             eg current domainObject is located under MyItems which is under Root
- *
- * @method view
- * @memberof module:openmct.ViewProvider#
- * @param {*} object the object to be viewed
- * @returns {module:openmct.View} a view of this domain object
- */
-
-/**
- * Provide an edit-mode specific view of this object.
- *
- * If optionally specified, this function will be called when the application
- * enters edit mode. This will cause the active non-edit mode view and its
- * dom element to be destroyed.
- *
- * @method edit
- * @memberof module:openmct.ViewProvider#
- * @param {*} object the object to be edit
- * @returns {module:openmct.View} an editable view of this domain object
+ * If not provided, the default priority of 100 will be used. This value is used to sort the views
+ * by descending priority if there are multiple views that can be shown for a given object.
  */
