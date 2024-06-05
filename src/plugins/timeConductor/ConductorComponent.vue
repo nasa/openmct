@@ -81,6 +81,7 @@ import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import { useClock } from './useClock.js';
 import { useClockOffsets } from './useClockOffsets.js';
 import { useTimeBounds } from './useTimeBounds.js';
+import { useTimeContext } from './useTimeContext.js';
 import { useTimeMode } from './useTimeMode.js';
 import { useTimeSystem } from './useTimeSystem.js';
 
@@ -97,8 +98,9 @@ export default {
   },
   mixins: [conductorPopUpManager],
   inject: ['openmct', 'configuration'],
-  setup() {
+  setup(props) {
     const openmct = inject('openmct');
+    const { timeContext } = useTimeContext(openmct, () => props.objectPath);
     const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
       useTimeSystem(openmct);
     const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
@@ -110,6 +112,7 @@ export default {
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
     provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
+    provide('timeContext', timeContext);
     provide('timeMode', timeMode);
     provide('isFixedTimeMode', isFixedTimeMode);
     provide('isRealTimeMode', isRealTimeMode);
