@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <time-popup-realtime
+  <TimePopupRealtime
     v-if="readOnly === false"
     :offsets="formattedOffsets"
     @focus="$event.target.select()"
@@ -63,14 +63,15 @@ export default {
   components: {
     TimePopupRealtime
   },
-  inject: ['openmct', 'bounds', 'clock', 'offsets', 'timeSystemKey', 'timeSystemFormatter', 'timeSystemDurationFormatter'],
+  inject: [
+    'openmct',
+    'bounds',
+    'clock',
+    'offsets',
+    'timeSystemFormatter',
+    'timeSystemDurationFormatter'
+  ],
   props: {
-    objectPath: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
     readOnly: {
       type: Boolean,
       default() {
@@ -84,21 +85,13 @@ export default {
       }
     }
   },
-  emits: ['offsets-updated', 'dismiss-inputs-realtime'],
+  emits: ['dismiss-inputs-realtime'],
   data() {
     return {
-      showTCInputStart: false,
-      showTCInputEnd: false,
       currentValue: this.clock.currentValue()
     };
   },
   computed: {
-    formattedBounds() {
-      return {
-        start: this.timeSystemFormatter.format(this.bounds.start),
-        end: this.timeSystemFormatter.format(this.bounds.end)
-      };
-    },
     formattedOffsets() {
       return {
         start: this.timeSystemDurationFormatter.format(Math.abs(this.offsets.start)),
@@ -111,18 +104,12 @@ export default {
   },
   watch: {
     bounds() {
-      console.log(this.formattedOffsets);
       this.updateCurrentValue();
     }
   },
   methods: {
     updateCurrentValue() {
       this.currentValue = this.clock.currentValue();
-    },
-    timePopUpdate({ start, end }) {
-      this.offsets.start = [start.hours, start.minutes, start.seconds].join(':');
-      this.offsets.end = [end.hours, end.minutes, end.seconds].join(':');
-      this.setOffsetsFromView();
     },
     dismiss() {
       this.$emit('dismiss-inputs-realtime');

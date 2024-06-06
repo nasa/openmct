@@ -163,14 +163,17 @@
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
 export default {
+  inject: ['timeContext', 'timeSystemDurationFormatter'],
   props: {
     offsets: {
       type: Object,
       required: true
     }
   },
-  emits: ['update', 'dismiss'],
+  emits: ['dismiss'],
   data() {
     return {
       startInputHrs: '00',
@@ -185,6 +188,7 @@ export default {
   watch: {
     offsets: {
       handler() {
+        console.log('REMOVE THIS');
         this.setOffsets();
       },
       deep: true
@@ -227,18 +231,23 @@ export default {
       this.isDisabled = disabled;
     },
     submit() {
-      this.$emit('update', {
-        start: {
-          hours: this.startInputHrs,
-          minutes: this.startInputMins,
-          seconds: this.startInputSecs
-        },
-        end: {
-          hours: this.endInputHrs,
-          minutes: this.endInputMins,
-          seconds: this.endInputSecs
-        }
-      });
+      const formattedStartOffset = [
+        this.startInputHrs,
+        this.startInputMins,
+        this.startInputSecs
+      ].join(':');
+      const formattedEndOffset = [this.endInputHrs, this.endInputMins, this.endInputSecs].join(':');
+
+      let startOffset = 0 - this.timeSystemDurationFormatter.parse(formattedStartOffset);
+      let endOffset = this.timeSystemDurationFormatter.parse(formattedEndOffset);
+
+      const offsets = {
+        start: startOffset,
+        end: endOffset
+      };
+
+      this.timeContext.setClockOffsets(offsets);
+
       this.$emit('dismiss');
     },
     hide($event) {
@@ -255,13 +264,13 @@ export default {
       this[ref] = cv.toString().padStart(2, '0');
       this.validate();
     },
-    setOffsets() {
+    async setOffsets() {
       [this.startInputHrs, this.startInputMins, this.startInputSecs] =
         this.offsets.start.split(':');
       [this.endInputHrs, this.endInputMins, this.endInputSecs] = this.offsets.end.split(':');
-      this.$nextTick(() => {
-        this.numberSelect('startInputHrs');
-      });
+
+      await nextTick();
+      this.numberSelect('startInputHrs');
     },
     numberSelect(input) {
       if (this.$refs[input] === undefined || this.$refs[input] === null) {

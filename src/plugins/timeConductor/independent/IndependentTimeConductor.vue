@@ -181,11 +181,7 @@ export default {
 
     return {
       independentTCEnabled: this.domainObject.configuration.useIndependentTime === true,
-      timeOptions,
-      viewBounds: {
-        start: this.bounds.start,
-        end: this.bounds.end
-      }
+      timeOptions
     };
   },
   computed: {
@@ -236,10 +232,12 @@ export default {
     //   deep: true
     // }
     clock(newClock) {
-      this.setTimeOptionsClock(newClock);
+      console.log('watchclock');
+      this.saveClock(newClock);
     },
     timeMode(newTimeMode) {
-      this.setTimeOptionsMode(newTimeMode);
+      console.log('watchmode');
+      this.saveMode(newTimeMode);
     }
   },
   created() {
@@ -336,11 +334,12 @@ export default {
           this.isFixedTimeMode ? undefined : this.timeOptions.clock
         );
       } else {
-        if (this.isRealTimeMode) {
-          this.timeContext.setClock(this.timeOptions.clock);
-        }
+        console.log('removed code');
+        // if (this.isRealTimeMode) {
+        //   this.timeContext.setClock(this.timeOptions.clock);
+        // }
 
-        this.timeContext.setMode(this.timeOptions.mode, offsets);
+        // this.timeContext.setMode(this.timeOptions.mode, offsets);
       }
     },
     destroyIndependentTime() {
