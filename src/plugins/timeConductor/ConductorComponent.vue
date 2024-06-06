@@ -194,8 +194,8 @@ export default {
         this.isZooming = false;
       } else {
         this.isZooming = true;
-        this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-        this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+        this.formattedBounds.start = this.timeSystemFormatter.format(bounds.start);
+        this.formattedBounds.end = this.timeSystemFormatter.format(bounds.end);
       }
     },
     endZoom(bounds) {
@@ -207,8 +207,6 @@ export default {
       }
     },
     setViewBounds(bounds) {
-      // this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-      // this.formattedBounds.end = this.timeFormatter.format(bounds.end);
       this.viewBounds.start = bounds.start;
       this.viewBounds.end = bounds.end;
     }
