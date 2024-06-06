@@ -137,7 +137,7 @@ class TimeAPI extends GlobalTimeContext {
    * Get or set an independent time context which follows the TimeAPI timeSystem,
    * but with different offsets for a given domain object
    * @param {string} key The identifier key of the domain object these offsets are set for
-   * @param {ClockOffsets | TimeConductorBounds} value This maintains a sliding time window of a fixed width that automatically updates
+   * @param {ClockOffsets | TimeConductorBounds} value either offsets if in realtime mode, or bounds if in fixed mode
    * @param {key | string} clockKey the real time clock key currently in use
    */
   addIndependentContext(key, value, clockKey) {
