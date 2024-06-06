@@ -122,7 +122,14 @@ export default {
   components: {
     DatePicker
   },
-  inject: ['openmct', 'isTimeSystemUTCBased', 'timeSystemFormatter', 'timeSystemDurationFormatter', 'bounds'],
+  inject: [
+    'openmct',
+    'isTimeSystemUTCBased',
+    'timeContext',
+    'timeSystemFormatter',
+    'timeSystemDurationFormatter',
+    'bounds'
+  ],
   emits: ['update', 'dismiss'],
   data() {
     return {
@@ -174,7 +181,7 @@ export default {
           `${this.formattedBounds.end} ${this.formattedBounds.endTime}`
         );
 
-        this.openmct.time.setBounds({
+        this.timeContext.setBounds({
           start: start,
           end: end
         });
@@ -228,7 +235,7 @@ export default {
           }
         } else {
           if (input === currentInput) {
-            validationResult = this.openmct.time.validateBounds(boundsValues);
+            validationResult = this.timeContext.validateBounds(boundsValues);
           }
         }
 
