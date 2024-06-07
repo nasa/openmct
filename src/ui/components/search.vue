@@ -6,11 +6,12 @@
     <input
         class="c-search__input"
         aria-label="Search Input"
-        tabindex="10000"
+        tabindex="0"
         type="search"
         v-bind="$attrs"
         :value="value"
-        v-on="inputListeners"
+        @click="() => $emit('click')"
+        @input="($event) => $emit('input', $event.target.value)"
     >
     <a
         class="c-search__clear-input icon-x-in-circle"
@@ -35,27 +36,11 @@ export default {
             active: false
         };
     },
-    computed: {
-        inputListeners: function () {
-            let vm = this;
-
-            return Object.assign({},
-                this.$listeners,
-                {
-                    input: function (event) {
-                        vm.$emit('input', event.target.value);
-                        vm.active = (event.target.value.length > 0);
-                    }
-                }
-            );
-        }
-    },
     watch: {
         value(inputValue) {
-            if (!inputValue.length) {
-                this.clearInput();
-            }
+            this.active = inputValue.length > 0;
         }
+
     },
     methods: {
         clearInput() {
