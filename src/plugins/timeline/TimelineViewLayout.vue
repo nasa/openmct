@@ -49,10 +49,12 @@
 
 <script>
 import _ from 'lodash';
+import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
+import { useAlignment } from '../../ui/composables/alignmentContext';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import TimelineObjectView from './TimelineObjectView.vue';
 
@@ -70,6 +72,14 @@ export default {
     SwimLane
   },
   inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const path = inject('objectPath');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+
+    return { alignmentData };
+  },
   data() {
     return {
       items: [],

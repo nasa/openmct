@@ -178,9 +178,10 @@
 import Flatbush from 'flatbush';
 import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
-import { toRaw } from 'vue';
+import { inject, toRaw } from 'vue';
 
 import { MODES } from '../../api/time/constants';
+import { useAlignment } from '../../ui/composables/alignmentContext';
 import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames.js';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -259,8 +260,15 @@ export default {
   ],
   setup() {
     const { EventBus } = useEventBus();
+
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+
     return {
-      EventBus
+      EventBus,
+      alignmentData
     };
   },
   data() {
@@ -295,7 +303,7 @@ export default {
       const rightAxis = this.yAxesIds.find((yAxis) => yAxis.id > 2);
       const leftOffset = this.hasMultipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
       let style = {
-        left: `${this.plotLeftTickWidth + leftOffset}px`
+        left: `${this.alignmentData.leftWidth + leftOffset}px`
       };
       const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
 
@@ -1040,11 +1048,13 @@ export default {
         }
 
         const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        // Add widths of both left Y axes
         const leftTickWidth = this.yAxes
           .filter((yAxis) => yAxis.id < 3)
           .reduce((previous, current) => {
             return previous + current.tickWidth;
           }, 0);
+        // Get width of right Y axis
         const rightTickWidth = this.yAxes
           .filter((yAxis) => yAxis.id > 2)
           .reduce((previous, current) => {

@@ -25,7 +25,7 @@
       {{ heading }}
     </template>
     <template #object>
-      <svg :height="height" :width="width">
+      <svg :height="height" :width="svgWidth" :style="alignmentStyle">
         <symbol id="activity-bar-bg" :height="rowHeight" width="2" preserveAspectRatio="none">
           <rect x="0" y="0" width="100%" height="100%" fill="currentColor" />
           <line
@@ -92,13 +92,17 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+
+import { useAlignment } from '../../../ui/composables/alignmentContext';
 
 export default {
   components: {
     SwimLane
   },
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     activities: {
       type: Array,
@@ -136,10 +140,26 @@ export default {
     }
   },
   emits: ['activity-selected'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+
+    return { alignmentData };
+  },
   data() {
     return {
       lineHeight: 10
     };
+  },
+  computed: {
+    alignmentStyle() {
+      return { marginLeft: `${this.alignmentData.leftWidth + 20}px` };
+    },
+    svgWidth() {
+      return this.width - this.alignmentData.leftWidth - 20;
+    }
   },
   methods: {
     setSelectionForActivity(activity, event) {

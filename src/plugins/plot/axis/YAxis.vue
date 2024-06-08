@@ -71,6 +71,9 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
+import { useAlignment } from '../../../ui/composables/alignmentContext';
 import configStore from '../configuration/ConfigStore.js';
 import eventHelpers from '../lib/eventHelpers.js';
 import MctTicks from '../MctTicks.vue';
@@ -81,7 +84,7 @@ export default {
   components: {
     MctTicks
   },
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     id: {
       type: Number,
@@ -89,12 +92,12 @@ export default {
         return 1;
       }
     },
-    tickWidth: {
-      type: Number,
-      default() {
-        return 0;
-      }
-    },
+    // tickWidth: {
+    //   type: Number,
+    //   default() {
+    //     return 0;
+    //   }
+    // },
     plotLeftTickWidth: {
       type: Number,
       default() {
@@ -107,12 +110,12 @@ export default {
         return 0;
       }
     },
-    hasMultipleLeftAxes: {
-      type: Boolean,
-      default() {
-        return false;
-      }
-    },
+    // hasMultipleLeftAxes: {
+    //   type: Boolean,
+    //   default() {
+    //     return false;
+    //   }
+    // },
     position: {
       type: String,
       default() {
@@ -121,6 +124,14 @@ export default {
     }
   },
   emits: ['plot-y-tick-width', 'toggle-axis-visibility', 'y-key-changed'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+
+    return { alignmentData };
+  },
   data() {
     return {
       yAxisLabel: 'none',
@@ -131,7 +142,8 @@ export default {
       mainYAxisId: null,
       hasAdditionalYAxes: false,
       seriesColors: [],
-      visible: true
+      visible: true,
+      selfTickWidth: 0
     };
   },
   computed: {
@@ -143,19 +155,21 @@ export default {
     },
     yAxisStyle() {
       let style = {
-        width: `${this.tickWidth + AXIS_PADDING}px`
+        width: `${this.alignmentData.leftWidth + AXIS_PADDING}px`
       };
       const multipleAxesPadding = this.hasMultipleLeftAxes ? AXIS_PADDING : 0;
 
       if (this.position === 'right') {
-        style.left = `-${this.tickWidth + AXIS_PADDING}px`;
+        style.left = `-${this.alignmentData.leftWidth + AXIS_PADDING}px`;
       } else {
         const thisIsTheSecondLeftAxis = this.id - 1 > 0;
         if (this.hasMultipleLeftAxes && thisIsTheSecondLeftAxis) {
-          style.left = `${this.plotLeftTickWidth - this.usedTickWidth - this.tickWidth}px`;
+          style.left = `${this.plotLeftTickWidth - this.usedTickWidth - this.alignmentData.leftWidth}px`;
           style['border-right'] = `1px solid`;
         } else {
-          style.left = `${this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
+          console.log(this.selfTickWidth, this.domainObject.type, this.alignmentData.leftWidth);
+          // style.left = `${this.alignmentData.leftWidth - this.selfTickWidth + multipleAxesPadding}px`;
+          style.left = 0;
         }
       }
 
@@ -163,6 +177,7 @@ export default {
     }
   },
   mounted() {
+    this.hasMultipleLeftAxes = false;
     this.seriesModels = [];
     eventHelpers.extend(this);
     this.initAxisAndSeriesConfig();
@@ -265,6 +280,7 @@ export default {
       }
     },
     onTickWidthChange(data) {
+      this.selfTickWidth = data.width;
       this.$emit('plot-y-tick-width', {
         width: data.width,
         yAxisId: this.id

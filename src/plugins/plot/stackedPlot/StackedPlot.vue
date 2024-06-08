@@ -63,9 +63,12 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import ColorPalette from '@/ui/color/ColorPalette';
 
 import ImageExporter from '../../../exporters/ImageExporter.js';
+import { useAlignment } from '../../../ui/composables/alignmentContext';
 import configStore from '../configuration/ConfigStore.js';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotLegend from '../legend/PlotLegend.vue';
@@ -85,6 +88,14 @@ export default {
         return {};
       }
     }
+  },
+  setup() {
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+
+    return { alignmentData };
   },
   data() {
     return {
