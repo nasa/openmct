@@ -134,6 +134,7 @@
       padding-top: 1px;
     }
 
+<<<<<<< HEAD
     &__activity-color-swatch {
       $d: 16px;
       border-radius: 50%;
@@ -141,6 +142,13 @@
       width: $d;
       height: $d;
     }
+=======
+        &[s-selected] {
+            box-shadow: 
+                inset rgba($colorSelectedFg, 0.8) 0 0 0 1px,
+                $colorSelectedGlow 0 0 5px 1px;
+            color: $colorSelectedFg !important;
+>>>>>>> b457d8a2c (Add shadows to panes. Style changes to timelist. Shadows to object tree.)
 
     &__title-and-bounds {
       > * + * {

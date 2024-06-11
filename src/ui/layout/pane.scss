@@ -142,6 +142,7 @@
       display: none; // Hidden by default
       background-color: $splitterCollapsedBtnColorBg;
       color: $splitterCollapsedBtnColorFg;
+      box-shadow: $splitterCollapsedBtnColorShdw 0 0 9px 1px;
 
       &:before {
         // '+' icon
