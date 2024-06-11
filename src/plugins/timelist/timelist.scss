@@ -120,7 +120,9 @@
         grid-column-gap: $interiorMargin;
 
         &[s-selected] {
-            box-shadow: inset rgba($colorSelectedFg, 0.8) 0 0 0 1px;
+            box-shadow: 
+                inset rgba($colorSelectedFg, 0.8) 0 0 0 1px,
+                $colorSelectedGlow 0 0 5px 1px;
             color: $colorSelectedFg !important;
 
             @include styleTliEm($colorSelectedFg);
