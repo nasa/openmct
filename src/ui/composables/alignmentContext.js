@@ -58,7 +58,6 @@ export function useAlignment(targetObject, path, openmct) {
   if (!alignmentKey) {
     const targetObjectKey = openmct.objects.makeKeyString(targetObject.identifier);
     alignmentKey = targetObjectKey;
-    console.log('New alignment for: ', targetObjectKey, path);
     alignmentMap[targetObjectKey] = ref({
       leftWidth: 0,
       rightWidth: 0,
@@ -69,7 +68,6 @@ export function useAlignment(targetObject, path, openmct) {
 
   const resetAlignment = () => {
     const key = getAlignmentKeyForPath(path);
-    console.log('resetting alignment');
     if (key && alignmentMap[key]) {
       delete alignmentMap[key];
     }
@@ -107,7 +105,6 @@ export function useAlignment(targetObject, path, openmct) {
       alignmentMap[alignmentKey].value.rightWidth = rightWidth;
 
       alignmentMap[alignmentKey].value.multiple = leftAxes.length > 1;
-      console.log('updating', yAxisId, width, key, updateObjectPath[0].type);
     }
   };
 
