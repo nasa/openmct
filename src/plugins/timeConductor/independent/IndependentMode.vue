@@ -46,7 +46,7 @@ export default {
       }
     }
   },
-  data: function () {
+  data() {
     return {
       selectedMode: this.getModeMetadata(this.timeMode)
     };

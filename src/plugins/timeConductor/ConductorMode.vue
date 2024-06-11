@@ -44,16 +44,7 @@
 
 <script>
 export default {
-  inject: [
-    'openmct',
-    'configuration',
-    'bounds',
-    'offsets',
-    'timeMode',
-    'isFixedTimeMode',
-    'getAllModeMetadata',
-    'getModeMetadata'
-  ],
+  inject: ['openmct', 'timeMode', 'getAllModeMetadata', 'getModeMetadata'],
   props: {
     readOnly: {
       type: Boolean,

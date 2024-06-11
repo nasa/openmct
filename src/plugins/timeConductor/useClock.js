@@ -66,10 +66,8 @@ export function useClock(openmct, objectPath) {
       ? menuOptions
           .map((menuOption) => menuOption.clock)
           .filter((key, index, array) => key !== undefined && array.indexOf(key) === index)
-          .map((clockKey) =>
-            timeContext.value.getAllClocks().find((_clock) => _clock.key === clockKey)
-          )
-      : timeContext.value.getAllClocks();
+          .map((clockKey) => openmct.time.getAllClocks().find((_clock) => _clock.key === clockKey))
+      : openmct.time.getAllClocks();
 
     const clockMetadata = clocks.map(getClockMetadata);
 

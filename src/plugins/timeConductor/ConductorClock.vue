@@ -48,15 +48,13 @@ export default {
       }
     }
   },
-  data() {
-    return {
-      clocks: this.getAllClockMetadata(this.configuration.menuOptions)
-    };
-  },
   computed: {
     selectedClock() {
       return this.getClockMetadata(this.clock);
     }
+  },
+  mounted() {
+    this.clocks = this.getAllClockMetadata(this.configuration.menuOptions);
   },
   methods: {
     showClocksMenu() {
