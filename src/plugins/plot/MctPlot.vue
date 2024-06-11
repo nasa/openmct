@@ -33,14 +33,9 @@
           v-for="(yAxis, index) in yAxesIds"
           :id="yAxis.id"
           :key="`yAxis-${yAxis.id}-${index}`"
-          :has-multiple-left-axes="hasMultipleLeftAxes"
           :position="yAxis.id > 2 ? 'right' : 'left'"
           :class="{ 'plot-yaxis-right': yAxis.id > 2 }"
-          :tick-width="yAxis.tickWidth"
-          :used-tick-width="plotFirstLeftTickWidth"
-          :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth : plotLeftTickWidth"
           @y-key-changed="setYAxisKey"
-          @plot-y-tick-width="onYTickWidthChange"
           @toggle-axis-visibility="toggleSeriesForYAxis"
         />
       </div>
@@ -66,7 +61,6 @@
             :axis-type="'yAxis'"
             :position="'bottom'"
             :axis-id="yAxis.id"
-            @plot-tick-width="onYTickWidthChange"
           />
 
           <div
@@ -224,16 +218,6 @@ export default {
         return false;
       }
     },
-    parentYTickWidth: {
-      type: Object,
-      default() {
-        return {
-          leftTickWidth: 0,
-          rightTickWidth: 0,
-          hasMultipleLeftAxes: false
-        };
-      }
-    },
     limitLineLabels: {
       type: Object,
       default() {
@@ -253,7 +237,6 @@ export default {
     'grid-lines',
     'loading-complete',
     'loading-updated',
-    'plot-y-tick-width',
     'highlights',
     'lock-highlight-point',
     'status-updated'
@@ -300,27 +283,19 @@ export default {
   },
   computed: {
     xAxisStyle() {
-      const rightAxis = this.yAxesIds.find((yAxis) => yAxis.id > 2);
-      const leftOffset = this.hasMultipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+      const leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
       let style = {
         left: `${this.alignmentData.leftWidth + leftOffset}px`
       };
-      const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
 
-      if (parentRightAxisWidth || rightAxis) {
-        style.right = `${(parentRightAxisWidth || rightAxis.tickWidth) + AXES_PADDING}px`;
+      if (this.alignmentData.rightWidth) {
+        style.right = `${this.alignmentData.rightWidth + AXES_PADDING}px`;
       }
 
       return style;
     },
     yAxesIds() {
       return this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
-    },
-    hasMultipleLeftAxes() {
-      return (
-        this.parentYTickWidth.hasMultipleLeftAxes ||
-        this.yAxes.filter((yAxis) => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1
-      );
     },
     isNestedWithinAStackedPlot() {
       const isNavigatedObject = this.openmct.router.isNavigatedObject(
@@ -338,24 +313,6 @@ export default {
     annotationViewingAndEditingAllowed() {
       // only allow annotations viewing/editing if plot is paused or in fixed time mode
       return this.isFrozen || !this.isRealTime;
-    },
-    plotFirstLeftTickWidth() {
-      const firstYAxis = this.yAxes.find((yAxis) => yAxis.id === 1);
-
-      return firstYAxis ? firstYAxis.tickWidth : 0;
-    },
-    plotLeftTickWidth() {
-      let leftTickWidth = 0;
-      this.yAxes.forEach((yAxis) => {
-        if (yAxis.id > 2) {
-          return;
-        }
-
-        leftTickWidth = leftTickWidth + yAxis.tickWidth;
-      });
-      const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
-
-      return parentLeftTickWidth || leftTickWidth;
     },
     seriesDataLoaded() {
       return this.pending === 0 && this.loaded;
@@ -389,8 +346,7 @@ export default {
     this.yAxes = [
       {
         id: this.config.yAxis.id,
-        seriesCount: 0,
-        tickWidth: 0
+        seriesCount: 0
       }
     ];
     if (this.config.additionalYAxes) {
@@ -398,8 +354,7 @@ export default {
         this.config.additionalYAxes.map((yAxis) => {
           return {
             id: yAxis.id,
-            seriesCount: 0,
-            tickWidth: 0
+            seriesCount: 0
           };
         })
       );
@@ -613,14 +568,6 @@ export default {
     updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
       this.updateAxisUsageCount(oldAxisId, -1);
       this.updateAxisUsageCount(newAxisId, 1);
-
-      const foundYAxis = this.yAxes.find((yAxis) => yAxis.id === oldAxisId);
-      if (foundYAxis.seriesCount === 0) {
-        this.onYTickWidthChange({
-          width: foundYAxis.tickWidth,
-          yAxisId: foundYAxis.id
-        });
-      }
     },
 
     updateAxisUsageCount(yAxisId, updateCountBy) {
@@ -1024,51 +971,6 @@ export default {
           .forEach((yAxis) => {
             yAxis.scale.domain(displayBounds);
           });
-      }
-    },
-
-    /**
-     * Aggregate widths of all left and right y axes and send them up to any parent plots
-     * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
-     * @param fromDifferentObject
-     */
-    onYTickWidthChange(tickWidthWithYAxisId, fromDifferentObject) {
-      const { width, yAxisId } = tickWidthWithYAxisId;
-      if (yAxisId) {
-        const index = this.yAxes.findIndex((yAxis) => yAxis.id === yAxisId);
-        if (fromDifferentObject) {
-          // Always accept tick width if it comes from a different object.
-          this.yAxes[index].tickWidth = width;
-        } else {
-          // Otherwise, only accept tick with if it's larger.
-          const newWidth = Math.max(width, this.yAxes[index].tickWidth);
-          if (width !== this.yAxes[index].tickWidth) {
-            this.yAxes[index].tickWidth = newWidth;
-          }
-        }
-
-        const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        // Add widths of both left Y axes
-        const leftTickWidth = this.yAxes
-          .filter((yAxis) => yAxis.id < 3)
-          .reduce((previous, current) => {
-            return previous + current.tickWidth;
-          }, 0);
-        // Get width of right Y axis
-        const rightTickWidth = this.yAxes
-          .filter((yAxis) => yAxis.id > 2)
-          .reduce((previous, current) => {
-            return previous + current.tickWidth;
-          }, 0);
-        this.$emit(
-          'plot-y-tick-width',
-          {
-            hasMultipleLeftAxes: this.hasMultipleLeftAxes,
-            leftTickWidth,
-            rightTickWidth
-          },
-          id
-        );
       }
     },
 

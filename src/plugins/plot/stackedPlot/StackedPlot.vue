@@ -48,9 +48,7 @@
         :color-palette="colorPalette"
         :cursor-guide="cursorGuide"
         :show-limit-line-labels="showLimitLineLabels"
-        :parent-y-tick-width="maxTickWidth"
         :hide-legend="showLegendsForChildren === false"
-        @plot-y-tick-width="onYTickWidthChange"
         @loading-updated="loadingUpdated"
         @cursor-guide="onCursorGuideChange"
         @grid-lines="onGridLinesChange"
@@ -104,7 +102,6 @@ export default {
       gridLines: true,
       configLoaded: {},
       compositionObjects: [],
-      tickWidthMap: {},
       loaded: false,
       lockHighlightPoint: false,
       highlights: [],
@@ -134,28 +131,6 @@ export default {
       }
 
       return legendExpandedStateClass;
-    },
-    /**
-     * Returns the maximum width of the left and right y axes ticks of this stacked plots children
-     * @returns {{rightTickWidth: number, leftTickWidth: number, hasMultipleLeftAxes: boolean}}
-     */
-    maxTickWidth() {
-      const tickWidthValues = Object.values(this.tickWidthMap);
-      const maxLeftTickWidth = Math.max(
-        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.leftTickWidth)
-      );
-      const maxRightTickWidth = Math.max(
-        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.rightTickWidth)
-      );
-      const hasMultipleLeftAxes = tickWidthValues.some(
-        (tickWidthItem) => tickWidthItem.hasMultipleLeftAxes === true
-      );
-
-      return {
-        leftTickWidth: maxLeftTickWidth,
-        rightTickWidth: maxRightTickWidth,
-        hasMultipleLeftAxes
-      };
     }
   },
   beforeUnmount() {
@@ -237,11 +212,6 @@ export default {
 
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
-      this.tickWidthMap[id] = {
-        leftTickWidth: 0,
-        rightTickWidth: 0
-      };
-
       this.compositionObjects.push({
         object: child,
         keyString: id
@@ -251,8 +221,6 @@ export default {
 
     removeChild(childIdentifier) {
       const id = this.openmct.objects.makeKeyString(childIdentifier);
-
-      delete this.tickWidthMap[id];
 
       const childObj = this.compositionObjects.filter((c) => {
         const identifier = c.keyString;
@@ -294,12 +262,8 @@ export default {
       });
     },
 
-    resetTelemetryAndTicks(domainObject) {
+    resetTelemetry(domainObject) {
       this.compositionObjects = [];
-      this.tickWidthMap = {
-        leftTickWidth: 0,
-        rightTickWidth: 0
-      };
     },
 
     exportJPG() {
@@ -323,19 +287,6 @@ export default {
           this.hideExportButtons = false;
         }.bind(this)
       );
-    },
-    /**
-     * @typedef {Object} PlotYTickData
-     * @property {number} leftTickWidth the width of the ticks for all the y axes on the left of the plot.
-     * @property {number} rightTickWidth the width of the ticks for all the y axes on the right of the plot.
-     * @property {boolean} hasMultipleLeftAxes whether or not there is more than one left y axis.
-     */
-    onYTickWidthChange(data, plotId) {
-      if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
-        return;
-      }
-
-      this.tickWidthMap[plotId] = data;
     },
     legendHoverChanged(data) {
       this.showLimitLineLabels = data;

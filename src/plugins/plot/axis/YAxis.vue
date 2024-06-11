@@ -92,30 +92,6 @@ export default {
         return 1;
       }
     },
-    // tickWidth: {
-    //   type: Number,
-    //   default() {
-    //     return 0;
-    //   }
-    // },
-    plotLeftTickWidth: {
-      type: Number,
-      default() {
-        return 0;
-      }
-    },
-    usedTickWidth: {
-      type: Number,
-      default() {
-        return 0;
-      }
-    },
-    // hasMultipleLeftAxes: {
-    //   type: Boolean,
-    //   default() {
-    //     return false;
-    //   }
-    // },
     position: {
       type: String,
       default() {
@@ -155,21 +131,20 @@ export default {
     },
     yAxisStyle() {
       let style = {
-        width: `${this.alignmentData.leftWidth + AXIS_PADDING}px`
+        width: `${this.selfTickWidth + AXIS_PADDING}px`
       };
-      const multipleAxesPadding = this.hasMultipleLeftAxes ? AXIS_PADDING : 0;
+      const multipleAxesPadding = this.alignmentData.multiple ? AXIS_PADDING : 0;
 
       if (this.position === 'right') {
-        style.left = `-${this.alignmentData.leftWidth + AXIS_PADDING}px`;
+        style.left = `-${this.selfTickWidth + AXIS_PADDING}px`;
       } else {
         const thisIsTheSecondLeftAxis = this.id - 1 > 0;
-        if (this.hasMultipleLeftAxes && thisIsTheSecondLeftAxis) {
-          style.left = `${this.plotLeftTickWidth - this.usedTickWidth - this.alignmentData.leftWidth}px`;
+        if (this.alignmentData.multiple && thisIsTheSecondLeftAxis) {
+          const otherAxisWidth = this.alignmentData.leftWidth - this.selfTickWidth;
+          style.left = `${this.alignmentData.leftWidth - otherAxisWidth - this.selfTickWidth}px`;
           style['border-right'] = `1px solid`;
         } else {
-          console.log(this.selfTickWidth, this.domainObject.type, this.alignmentData.leftWidth);
-          // style.left = `${this.alignmentData.leftWidth - this.selfTickWidth + multipleAxesPadding}px`;
-          style.left = 0;
+          style.left = `${this.alignmentData.leftWidth - this.selfTickWidth + multipleAxesPadding}px`;
         }
       }
 
@@ -177,7 +152,6 @@ export default {
     }
   },
   mounted() {
-    this.hasMultipleLeftAxes = false;
     this.seriesModels = [];
     eventHelpers.extend(this);
     this.initAxisAndSeriesConfig();

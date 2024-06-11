@@ -45,14 +45,12 @@
         :init-cursor-guide="cursorGuide"
         :options="options"
         :limit-line-labels="limitLineLabelsProp"
-        :parent-y-tick-width="parentYTickWidth"
         :color-palette="colorPalette"
         @loading-updated="loadingUpdated"
         @status-updated="setStatus"
         @config-loaded="updateReady"
         @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @plot-y-tick-width="onYTickWidthChange"
         @cursor-guide="onCursorGuideChange"
         @grid-lines="onGridLinesChange"
       >
@@ -119,16 +117,6 @@ export default {
         return undefined;
       }
     },
-    parentYTickWidth: {
-      type: Object,
-      default() {
-        return {
-          leftTickWidth: 0,
-          rightTickWidth: 0,
-          hasMultipleLeftAxes: false
-        };
-      }
-    },
     hideLegend: {
       type: Boolean,
       default() {
@@ -142,7 +130,6 @@ export default {
     'grid-lines',
     'highlights',
     'config-loaded',
-    'plot-y-tick-width',
     'cursor-guide'
   ],
   data() {
@@ -260,9 +247,6 @@ export default {
     updateReady(ready) {
       this.configReady = ready;
       this.$emit('config-loaded', ...arguments);
-    },
-    onYTickWidthChange() {
-      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
       this.$emit('cursor-guide', ...arguments);

@@ -62,7 +62,8 @@ export function useAlignment(targetObject, path, openmct) {
     alignmentMap[targetObjectKey] = ref({
       leftWidth: 0,
       rightWidth: 0,
-      multiple: false
+      multiple: false,
+      axes: {}
     });
   }
 
@@ -74,17 +75,39 @@ export function useAlignment(targetObject, path, openmct) {
     }
   };
 
+  // TODO: How do we remove items from the axes set?
+  /**
+   * Aggregate widths of all left and right y axes and send them up to any parent plots
+   * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
+   */
   const update = ({ width, yAxisId, updateObjectPath, type } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
     if (key) {
       // calculate the maxWidth here
-      alignmentMap[alignmentKey].value.leftWidth = Math.max(
-        width,
-        alignmentMap[alignmentKey].value.leftWidth
-      );
+      if (alignmentMap[alignmentKey].value.axes[yAxisId] === undefined) {
+        alignmentMap[alignmentKey].value.axes[yAxisId] = width;
+      } else if (width > alignmentMap[alignmentKey].value.axes[yAxisId]) {
+        alignmentMap[alignmentKey].value.axes[yAxisId] = width;
+      }
+      const axesKeys = Object.keys(alignmentMap[alignmentKey].value.axes);
+      const leftAxes = axesKeys.filter((axis) => axis <= 2);
+      const rightAxes = axesKeys.filter((axis) => axis > 2);
+      // Get width of left Y axis
+      let leftWidth = 0;
+      leftAxes.forEach((leftAxis) => {
+        leftWidth = leftWidth + alignmentMap[alignmentKey].value.axes[leftAxis];
+      });
+      alignmentMap[alignmentKey].value.leftWidth = leftWidth;
+
+      // Get width of right Y axis
+      let rightWidth = 0;
+      rightAxes.forEach((rightAxis) => {
+        rightWidth = rightWidth + alignmentMap[alignmentKey].value.axes[rightAxis];
+      });
+      alignmentMap[alignmentKey].value.rightWidth = rightWidth;
+
+      alignmentMap[alignmentKey].value.multiple = leftAxes.length > 1;
       console.log('updating', yAxisId, width, key, updateObjectPath[0].type);
-    } else {
-      console.log('not in path');
     }
   };
 
