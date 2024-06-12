@@ -24,6 +24,10 @@ import EventEmitter from 'EventEmitter';
 import LocationBar from 'location-bar';
 import _ from 'lodash';
 
+import Agent from '@/utils/agent/Agent';
+
+const HIDE_TREE_PARAM = 'hideTree';
+
 class ApplicationRouter extends EventEmitter {
   /**
      * events
@@ -49,6 +53,9 @@ class ApplicationRouter extends EventEmitter {
     this.started = false;
 
     this.setHash = _.debounce(this.setHash.bind(this), 300);
+
+    this.agent = new Agent(window);
+    this.isMobile = this.agent.isMobile();
 
     openmct.once('destroy', () => {
       this.destroy();
@@ -136,6 +143,10 @@ class ApplicationRouter extends EventEmitter {
    */
   navigate(hash) {
     this.handleLocationChange(hash.substring(1));
+
+    if (this.isMobile && this.agent.isPortrait()) {
+      this.setSearchParam(HIDE_TREE_PARAM, 'true');
+    }
   }
 
   /**
