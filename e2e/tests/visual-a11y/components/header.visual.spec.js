@@ -27,7 +27,7 @@ Tests the branding associated with the default deployment. At least the about mo
 import percySnapshot from '@percy/playwright';
 import { fileURLToPath } from 'url';
 
-import { expect, test } from '../../../avpFixtures.js';
+import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../../constants.js';
 
 //Declare the component scope of the visual test for Percy
@@ -68,15 +68,16 @@ test.describe('Visual - Header @a11y', () => {
     });
   });
 
-  test('show snapshot button', async ({ page, theme }) => {
+  test.only('show snapshot button', async ({ page, theme }) => {
     await page.getByLabel('Open the Notebook Snapshot Menu').click();
 
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
 
+    await expect(page.getByLabel('Show Snapshots')).toBeVisible();
+    await page.waitForTimeout(2000);
     await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
       scope: header
     });
-    await expect(page.getByLabel('Show Snapshots')).toBeVisible();
   });
 });
 
@@ -99,7 +100,6 @@ test.describe('Mission Header @a11y', () => {
     });
   });
 });
-// Skipping for https://github.com/nasa/openmct/issues/7421
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});

@@ -22,7 +22,7 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { test } from '../../../avpFixtures.js';
+import { scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { MISSION_TIME, VISUAL_FIXED_URL } from '../../../constants.js';
 
 //Declare the scope of the visual test
@@ -55,7 +55,6 @@ test.describe('Visual - Inspector @ally @clock', () => {
     });
   });
 });
-// Skipping for https://github.com/nasa/openmct/issues/7421
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});

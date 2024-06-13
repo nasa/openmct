@@ -24,7 +24,7 @@ import percySnapshot from '@percy/playwright';
 import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
-import { test } from '../../avpFixtures.js';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import {
   createTimelistWithPlanAndSetActivityInProgress,
@@ -178,8 +178,6 @@ test.describe('Visual - Gantt Chart', () => {
     );
   });
 });
-
-// Skipping for https://github.com/nasa/openmct/issues/7421
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});
