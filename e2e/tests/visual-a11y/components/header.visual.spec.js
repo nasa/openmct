@@ -68,7 +68,7 @@ test.describe('Visual - Header @a11y', () => {
     });
   });
 
-  test.only('show snapshot button', async ({ page, theme }) => {
+  test('show snapshot button', async ({ page, theme }) => {
     await page.getByLabel('Open the Notebook Snapshot Menu').click();
 
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();

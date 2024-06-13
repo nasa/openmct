@@ -3,7 +3,6 @@
 import { fileURLToPath } from 'url';
 /** @type {import('@playwright/test').PlaywrightTestConfig<{ theme: string }>} */
 const config = {
-  repeatEach: 5,
   retries: 0, // Visual tests should never retry due to snapshot comparison errors. Leaving as a shim
   testDir: 'tests/visual-a11y',
   testMatch: '**/*.visual.spec.js', // only run visual tests
