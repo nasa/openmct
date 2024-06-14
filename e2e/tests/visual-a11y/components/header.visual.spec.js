@@ -69,12 +69,23 @@ test.describe('Visual - Header @a11y', () => {
   });
 
   test('show snapshot button', async ({ page, theme }) => {
+    test.slow(true, 'We have to wait for the snapshot indicator to stop flashing');
     await page.getByLabel('Open the Notebook Snapshot Menu').click();
 
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
 
     await expect(page.getByLabel('Show Snapshots')).toBeVisible();
-    await page.waitForTimeout(2000);
+
+    /**
+     * We have to wait for the snapshot indicator to stop flashing. This happens
+     * for a really long time (15 seconds 😳).
+     * TODO: Either reduce the length of the animation, convert this to a
+     * Playwright snapshot test (and disable animations), or augment the `waitForAnimations`
+     * fixture to adjust the timeout.
+     */
+    await expect(page.locator('.has-new-snapshot')).not.toBeAttached({
+      timeout: 30 * 1000
+    });
     await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
       scope: header
     });
