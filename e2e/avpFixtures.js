@@ -120,6 +120,11 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
         fs.mkdirSync(TEST_RESULTS_DIR);
       }
 
+      // Take a screenshot to disk
+      await page.screenshot({
+        path: path.join(TEST_RESULTS_DIR, 'screenshots', `${testCaseName}.png`)
+      });
+
       fs.writeFileSync(reportPath, JSON.stringify(accessibilityScanResults, null, 2));
       console.log(`Accessibility report with violations saved successfully as ${reportPath}`);
       return accessibilityScanResults;
