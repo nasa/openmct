@@ -124,7 +124,7 @@
   }
 
   &__drag-area {
-    background: rgba($colorKey, 0.03);
+    background: rgba($colorKey, 0.02);
     border: 1px dashed rgba($colorKey, 0.7);
     color: $colorKey;
     cursor: pointer;
@@ -311,7 +311,7 @@
 
   &__creator,
   &__embed__time {
-    opacity: 0.7;
+    opacity: 0.9;
   }
 
   &__time-and-creator-and-delete,
@@ -328,6 +328,10 @@
       float: right;
       margin-left: auto;
     }
+  }
+
+  &__time-and-creator {
+    color: $colorA;
   }
 
   &__creator [class*='icon'] {
