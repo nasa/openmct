@@ -104,16 +104,22 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
   const accessibilityScanResults = await builder.analyze();
 
   // Assert that no violations should be present
-  expect(
-    accessibilityScanResults.violations,
-    `Accessibility violations found in test case: ${testCaseName}`
-  ).toEqual([]);
+  expect
+    .soft(
+      accessibilityScanResults.violations,
+      `Accessibility violations found in test case: ${testCaseName}`
+    )
+    .toEqual([]);
 
   // Check if there are any violations
   if (accessibilityScanResults.violations.length > 0) {
     let reportName = options.reportName || testCaseName;
     let sanitizedReportName = reportName.replace(/\//g, '_');
-    const reportPath = path.join(TEST_RESULTS_DIR, `${sanitizedReportName}.json`);
+    const reportPath = path.join(
+      TEST_RESULTS_DIR,
+      'a11y-json-reports',
+      `${sanitizedReportName}.json`
+    );
 
     try {
       if (!fs.existsSync(TEST_RESULTS_DIR)) {
@@ -122,7 +128,7 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
 
       // Take a screenshot to disk
       await page.screenshot({
-        path: path.join(TEST_RESULTS_DIR, 'screenshots', `${testCaseName}.png`)
+        path: path.join(TEST_RESULTS_DIR, 'a11y-screenshots', `${testCaseName}.png`)
       });
 
       fs.writeFileSync(reportPath, JSON.stringify(accessibilityScanResults, null, 2));
