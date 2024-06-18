@@ -94,8 +94,6 @@ const extendedTest = test.extend({
  * @param {Object} accessibilityScanResults - The results of the accessibility scan.
  * @returns {Promise<Object>} The accessibility scan results.
  * @throws Will throw an error if writing the report fails.
- *
- * @attribute @scottbell
  */
 async function writeAccessibilityReport(reportPath, accessibilityScanResults) {
   try {
