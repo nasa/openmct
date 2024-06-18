@@ -54,7 +54,7 @@ import { inject } from 'vue';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
-import { useAlignment } from '../../ui/composables/alignmentContext';
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import TimelineObjectView from './TimelineObjectView.vue';
 
@@ -74,11 +74,15 @@ export default {
   inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
   setup() {
     const domainObject = inject('domainObject');
-    const path = inject('objectPath');
+    const objectPath = inject('objectPath');
     const openmct = inject('openmct');
-    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      objectPath,
+      openmct
+    );
 
-    return { alignmentData };
+    return { alignmentData, resetAlignment };
   },
   data() {
     return {
@@ -90,6 +94,7 @@ export default {
     };
   },
   beforeUnmount() {
+    this.resetAlignment();
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);

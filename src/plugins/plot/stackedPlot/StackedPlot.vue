@@ -66,7 +66,7 @@ import { inject } from 'vue';
 import ColorPalette from '@/ui/color/ColorPalette';
 
 import ImageExporter from '../../../exporters/ImageExporter.js';
-import { useAlignment } from '../../../ui/composables/alignmentContext';
+import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 import configStore from '../configuration/ConfigStore.js';
 import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotLegend from '../legend/PlotLegend.vue';
@@ -91,9 +91,13 @@ export default {
     const domainObject = inject('domainObject');
     const path = inject('path');
     const openmct = inject('openmct');
-    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      path,
+      openmct
+    );
 
-    return { alignmentData };
+    return { alignmentData, resetAlignment };
   },
   data() {
     return {
@@ -195,6 +199,7 @@ export default {
       }
     },
     destroy() {
+      this.resetAlignment();
       this.composition.off('add', this.addChild);
       this.composition.off('remove', this.removeChild);
       this.composition.off('reorder', this.compositionReorder);

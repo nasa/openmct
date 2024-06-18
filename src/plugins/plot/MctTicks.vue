@@ -75,7 +75,7 @@
 <script>
 import { inject } from 'vue';
 
-import { useAlignment } from '../../ui/composables/alignmentContext';
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
 import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
@@ -118,9 +118,13 @@ export default {
     const domainObject = inject('domainObject');
     const path = inject('path');
     const openmct = inject('openmct');
-    const { update: updateAlignment } = useAlignment(domainObject, path, openmct);
+    const { update: updateAlignment, remove: removeAlignment } = useAlignment(
+      domainObject,
+      path,
+      openmct
+    );
 
-    return { updateAlignment };
+    return { updateAlignment, removeAlignment };
   },
   data() {
     return {
@@ -143,6 +147,10 @@ export default {
     this.updateTicks();
   },
   beforeUnmount() {
+    this.removeAlignment({
+      yAxisId: this.axisId,
+      updateObjectPath: this.path
+    });
     this.stopListening();
   },
   methods: {

@@ -175,7 +175,7 @@ import { useEventBus } from 'utils/useEventBus';
 import { inject, toRaw } from 'vue';
 
 import { MODES } from '../../api/time/constants';
-import { useAlignment } from '../../ui/composables/alignmentContext';
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames.js';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -247,11 +247,16 @@ export default {
     const domainObject = inject('domainObject');
     const path = inject('path');
     const openmct = inject('openmct');
-    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      path,
+      openmct
+    );
 
     return {
       EventBus,
-      alignmentData
+      alignmentData,
+      resetAlignment
     };
   },
   data() {
@@ -388,6 +393,7 @@ export default {
     });
   },
   beforeUnmount() {
+    this.resetAlignment();
     this.abortController.abort();
     this.openmct.selection.off('change', this.updateSelection);
     document.removeEventListener('keydown', this.handleKeyDown);

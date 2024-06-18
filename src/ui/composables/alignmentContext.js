@@ -21,13 +21,14 @@
  *****************************************************************************/
 /* eslint-disable func-style */
 
-import { onBeforeUnmount, ref } from 'vue';
+import { ref } from 'vue';
 
 /**
- * Registers an event listener on the specified target and automatically removes it when the
- * component is unmounted.
+ * Manages alignment for multiple y axes given an object path
  * This is a Vue composition API utility function.
- * @param {EventTarget} path - The target to attach the event listener to.
+ * @param {Object} targetObject - The target to attach the event listener to.
+ * @param {Array} path - The path of the target object.
+ * @param {Object} openmct - The open mct API.
  */
 
 const alignmentMap = {};
@@ -66,6 +67,7 @@ export function useAlignment(targetObject, path, openmct) {
     });
   }
 
+  // reset any alignment data for the given key
   const resetAlignment = () => {
     const key = getAlignmentKeyForPath(path);
     if (key && alignmentMap[key]) {
@@ -73,46 +75,57 @@ export function useAlignment(targetObject, path, openmct) {
     }
   };
 
-  // TODO: How do we remove items from the axes set?
+  // Given the axes ids and widths, calculate the max left and right widths and whether or not multiple left axes exist
+  const processAlignment = () => {
+    const axesKeys = Object.keys(alignmentMap[alignmentKey].value.axes);
+    const leftAxes = axesKeys.filter((axis) => axis <= 2);
+    const rightAxes = axesKeys.filter((axis) => axis > 2);
+    // Get width of left Y axis
+    let leftWidth = 0;
+    leftAxes.forEach((leftAxis) => {
+      leftWidth = leftWidth + alignmentMap[alignmentKey].value.axes[leftAxis];
+    });
+    alignmentMap[alignmentKey].value.leftWidth = leftWidth;
+
+    // Get width of right Y axis
+    let rightWidth = 0;
+    rightAxes.forEach((rightAxis) => {
+      rightWidth = rightWidth + alignmentMap[alignmentKey].value.axes[rightAxis];
+    });
+    alignmentMap[alignmentKey].value.rightWidth = rightWidth;
+
+    alignmentMap[alignmentKey].value.multiple = leftAxes.length > 1;
+  };
+
   /**
-   * Aggregate widths of all left and right y axes and send them up to any parent plots
-   * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
+   * Unregister y-axis from width calculations
+   * @param {Object: yAxisId, updateObjectPath} the last known width of the y-axis, yAxisId of the tick bar, path of the axis being updated
+   */
+  const remove = ({ yAxisId, updateObjectPath, type } = {}) => {
+    const key = getAlignmentKeyForPath(updateObjectPath);
+    if (key) {
+      if (alignmentMap[alignmentKey].value.axes[yAxisId] !== undefined) {
+        delete alignmentMap[alignmentKey].value.axes[yAxisId];
+      }
+      processAlignment();
+    }
+  };
+
+  /**
+   * Update widths of a y axis given the id and path. The path is used to determine which ancestor should hold the alignment
+   * @param {Object: width, yAxisId, updateObjectPath} the width of the y-axis, yAxisId of the tick bar, path of the axis being updated
    */
   const update = ({ width, yAxisId, updateObjectPath, type } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
     if (key) {
-      // calculate the maxWidth here
       if (alignmentMap[alignmentKey].value.axes[yAxisId] === undefined) {
         alignmentMap[alignmentKey].value.axes[yAxisId] = width;
       } else if (width > alignmentMap[alignmentKey].value.axes[yAxisId]) {
         alignmentMap[alignmentKey].value.axes[yAxisId] = width;
       }
-      const axesKeys = Object.keys(alignmentMap[alignmentKey].value.axes);
-      const leftAxes = axesKeys.filter((axis) => axis <= 2);
-      const rightAxes = axesKeys.filter((axis) => axis > 2);
-      // Get width of left Y axis
-      let leftWidth = 0;
-      leftAxes.forEach((leftAxis) => {
-        leftWidth = leftWidth + alignmentMap[alignmentKey].value.axes[leftAxis];
-      });
-      alignmentMap[alignmentKey].value.leftWidth = leftWidth;
-
-      // Get width of right Y axis
-      let rightWidth = 0;
-      rightAxes.forEach((rightAxis) => {
-        rightWidth = rightWidth + alignmentMap[alignmentKey].value.axes[rightAxis];
-      });
-      alignmentMap[alignmentKey].value.rightWidth = rightWidth;
-
-      alignmentMap[alignmentKey].value.multiple = leftAxes.length > 1;
+      processAlignment();
     }
   };
 
-  if (path) {
-    // Otherwise use lifecycle hooks to add/remove listener
-    onBeforeUnmount(() => resetAlignment());
-  }
-
-  //watch this and update accordingly
-  return { alignment: alignmentMap[alignmentKey], update };
+  return { alignment: alignmentMap[alignmentKey], update, remove, reset: resetAlignment };
 }

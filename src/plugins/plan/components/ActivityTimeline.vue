@@ -96,7 +96,7 @@ import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
-import { useAlignment } from '../../../ui/composables/alignmentContext';
+import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 
 export default {
   components: {
@@ -144,9 +144,13 @@ export default {
     const domainObject = inject('domainObject');
     const path = inject('path');
     const openmct = inject('openmct');
-    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      path,
+      openmct
+    );
 
-    return { alignmentData };
+    return { alignmentData, resetAlignment };
   },
   data() {
     return {

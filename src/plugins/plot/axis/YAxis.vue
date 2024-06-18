@@ -73,7 +73,7 @@
 <script>
 import { inject } from 'vue';
 
-import { useAlignment } from '../../../ui/composables/alignmentContext';
+import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 import configStore from '../configuration/ConfigStore.js';
 import eventHelpers from '../lib/eventHelpers.js';
 import MctTicks from '../MctTicks.vue';
@@ -99,7 +99,7 @@ export default {
       }
     }
   },
-  emits: ['plot-y-tick-width', 'toggle-axis-visibility', 'y-key-changed'],
+  emits: ['toggle-axis-visibility', 'y-key-changed'],
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');
@@ -255,10 +255,6 @@ export default {
     },
     onTickWidthChange(data) {
       this.selfTickWidth = data.width;
-      this.$emit('plot-y-tick-width', {
-        width: data.width,
-        yAxisId: this.id
-      });
     },
     toggleSeriesVisibility() {
       this.visible = !this.visible;
