@@ -226,7 +226,7 @@ jobs:
       suite:
         type: string # ci or full
     executor: pw-focal-development
-    parallelism: 2
+    parallelism: 4
     steps:
       - build_and_install:
           node-version: lts/iron
