@@ -41,7 +41,7 @@ const config = {
       name: 'darkmatter-theme', //Runs the same visual tests but with darkmatter-theme
       use: {
         browserName: 'chromium',
-        theme: 'darkmatter-theme'
+        theme: 'darkmatter'
       }
     }
   ],
