@@ -113,8 +113,8 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
 
   // Check if there are any violations
   if (accessibilityScanResults.violations.length > 0) {
-    let reportName = options.reportName || testCaseName;
-    let sanitizedReportName = reportName.replace(/\//g, '_');
+    const reportName = options.reportName || testCaseName;
+    const sanitizedReportName = reportName.replace(/\//g, '_');
     const reportPath = path.join(
       TEST_RESULTS_DIR,
       'a11y-json-reports',
@@ -125,10 +125,9 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
       if (!fs.existsSync(TEST_RESULTS_DIR)) {
         fs.mkdirSync(TEST_RESULTS_DIR);
       }
-
       // Take a screenshot to disk
       await page.screenshot({
-        path: path.join(TEST_RESULTS_DIR, 'a11y-screenshots', `${testCaseName}.png`)
+        path: path.join(TEST_RESULTS_DIR, 'a11y-screenshots', `${sanitizedReportName}.png`)
       });
 
       fs.writeFileSync(reportPath, JSON.stringify(accessibilityScanResults, null, 2));
