@@ -10,6 +10,7 @@ Once you've created something amazing with Open MCT, showcase your work in our G
 
 ![Screen Shot 2022-11-23 at 9 51 36 AM](https://user-images.githubusercontent.com/4215777/203617422-4d912bfc-766f-4074-8324-409d9bbe7c05.png)
 
+hey hi hello
 
 ## Building and Running Open MCT Locally
 
