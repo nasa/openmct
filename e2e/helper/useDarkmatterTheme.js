@@ -20,14 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { scanForA11yViolations, test } from '../../avpFixtures.js';
-import { VISUAL_FIXED_URL } from '../../constants.js';
-
-test.describe('a11y - Default @a11y', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
-  });
-  test('main view', async ({ page }, testInfo) => {
-    await scanForA11yViolations(page, testInfo.title);
-  });
+// This should be used to install the Darkmatter theme for Open MCT.
+// e.g.
+// await page.addInitScript({ path: path.join(__dirname, 'useDarkmatterTheme.js') });
+document.addEventListener('DOMContentLoaded', () => {
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.DarkmatterTheme());
 });

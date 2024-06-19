@@ -23,7 +23,7 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
-import { expect, test } from '../../avpFixtures.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
@@ -163,8 +163,7 @@ test.describe('Visual - Notebook @a11y', () => {
     // Take a snapshot
     await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
   });
-  // Skipping for https://github.com/nasa/openmct/issues/7421
-  // test.afterEach(async ({ page }, testInfo) => {
-  //   await scanForA11yViolations(page, testInfo.title);
-  // });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
+  });
 });
