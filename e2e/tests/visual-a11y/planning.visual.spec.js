@@ -24,7 +24,7 @@ import percySnapshot from '@percy/playwright';
 import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
-import { test } from '../../avpFixtures.js';
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import {
   createTimelistWithPlanAndSetActivityInProgress,
@@ -108,7 +108,7 @@ test.describe('Visual - Planning', () => {
   });
 });
 
-test.describe('Visual - Gantt Chart', () => {
+test.describe('Visual - Gantt Chart @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -180,6 +180,6 @@ test.describe('Visual - Gantt Chart', () => {
 });
 // FIXME: https://github.com/nasa/openmct/issues/7421
 // Currently has contrast failures
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});
