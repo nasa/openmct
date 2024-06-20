@@ -26,13 +26,16 @@
 </template>
 
 <script>
+const AXES_PADDING = 20;
+
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
-import { onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
+import { useAlignment } from '../composables/alignmentContext';
 import { useResizeObserver } from '../composables/resize';
 
 //TODO: UI direction needed for the following property values
@@ -42,7 +45,7 @@ const PIXELS_PER_TICK_WIDE = 200;
 //This offset needs to be re-considered
 
 export default {
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     bounds: {
       type: Object,
@@ -67,12 +70,6 @@ export default {
       default() {
         return 'svg';
       }
-    },
-    offset: {
-      type: Number,
-      default() {
-        return 0;
-      }
     }
   },
   setup() {
@@ -81,16 +78,43 @@ export default {
     onMounted(() => {
       startObserving(axisHolder.value);
     });
+
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+
     return {
       axisHolder,
-      containerSize
+      containerSize,
+      alignmentData
     };
   },
   watch: {
+    alignmentData: {
+      handler() {
+        let leftOffset = 0;
+        if (this.alignmentData.leftWidth) {
+          leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+        }
+        this.svgElement.attr(
+          'style',
+          `margin-left: ${this.alignmentData.leftWidth + leftOffset}px`
+        );
+
+        const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+        this.alignmentOffset =
+          this.alignmentData.leftWidth + leftOffset + this.alignmentData.rightWidth + rightOffset;
+        this.setDimensions();
+      },
+      deep: true
+    },
     bounds(newBounds) {
+      this.setDimensions();
       this.drawAxis(newBounds, this.timeSystem);
     },
     timeSystem(newTimeSystem) {
+      this.setDimensions();
       this.drawAxis(this.bounds, newTimeSystem);
     },
     contentHeight() {
@@ -110,7 +134,7 @@ export default {
 
     this.container = select(this.axisHolder);
     this.svgElement = this.container.append('svg:svg');
-    // draw x axis with labels. CSS is used to position them.
+    // draw x-axis with labels. CSS is used to position them.
     this.axisElement = this.svgElement
       .append('g')
       .attr('class', 'axis')
@@ -126,7 +150,7 @@ export default {
   },
   methods: {
     resize() {
-      if (this.axisHolder.clientWidth !== this.width) {
+      if (this.axisHolder.clientWidth - this.alignmentOffset !== this.width) {
         this.setDimensions();
         this.drawAxis(this.bounds, this.timeSystem);
         this.updateNowMarker();
@@ -139,12 +163,11 @@ export default {
         nowMarker.style.height = this.contentHeight + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
-        nowMarker.style.left = now + this.offset + 'px';
+        nowMarker.style.left = now + 'px';
       }
     },
     setDimensions() {
-      this.width = this.axisHolder.clientWidth;
-      this.offsetWidth = this.width - this.offset;
+      this.width = this.axisHolder.clientWidth - (this.alignmentOffset ?? 0);
 
       this.height = Math.round(this.axisHolder.getBoundingClientRect().height);
 
@@ -180,16 +203,16 @@ export default {
         this.xScale.domain([bounds.start, bounds.end]);
       }
 
-      this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
+      this.xScale.range([PADDING, this.width - PADDING * 2]);
     },
     setAxis() {
       this.xAxis = axisTop(this.xScale);
       this.xAxis.tickFormat(utcMultiTimeFormat);
 
       if (this.width > 1800) {
-        this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK_WIDE);
+        this.xAxis.ticks(this.width / PIXELS_PER_TICK_WIDE);
       } else {
-        this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK);
+        this.xAxis.ticks(this.width / PIXELS_PER_TICK);
       }
     }
   }

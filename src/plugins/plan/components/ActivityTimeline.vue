@@ -161,14 +161,20 @@ export default {
   },
   computed: {
     alignmentStyle() {
-      const leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      let leftOffset = 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
       return {
         marginLeft: `${this.alignmentData.leftWidth + leftOffset}px`
       };
     },
     svgWidth() {
       // Reduce the width by left axis width, then take off the right yaxis width as well
-      const leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      let leftOffset = 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
       const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
       return (
         this.width -

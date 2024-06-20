@@ -71,14 +71,14 @@ export default {
     TimelineAxis,
     SwimLane
   },
-  inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
+  inject: ['openmct', 'domainObject', 'path', 'composition'],
   setup() {
     const domainObject = inject('domainObject');
-    const objectPath = inject('objectPath');
+    const path = inject('path');
     const openmct = inject('openmct');
     const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
       domainObject,
-      objectPath,
+      path,
       openmct
     );
 
@@ -120,7 +120,7 @@ export default {
     addItem(domainObject) {
       let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
       let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-      let objectPath = [domainObject].concat(this.objectPath.slice());
+      let objectPath = [domainObject].concat(this.path.slice());
       let rowCount = 0;
       if (domainObject.type === 'plan') {
         const planData = getValidatedData(domainObject);
@@ -210,7 +210,7 @@ export default {
     setTimeContext() {
       this.stopFollowingTimeContext();
 
-      this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+      this.timeContext = this.openmct.time.getContextForView(this.path);
       this.getTimeSystems();
       this.updateViewBounds();
       this.timeContext.on('boundsChanged', this.updateViewBounds);

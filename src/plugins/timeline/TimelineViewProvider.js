@@ -51,8 +51,8 @@ export default function TimelineViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
-                composition: openmct.composition.get(domainObject),
-                objectPath
+                path: objectPath,
+                composition: openmct.composition.get(domainObject)
               },
               template: '<timeline-view-layout></timeline-view-layout>'
             },
