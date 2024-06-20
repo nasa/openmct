@@ -105,17 +105,19 @@ export default {
         const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
         this.alignmentOffset =
           this.alignmentData.leftWidth + leftOffset + this.alignmentData.rightWidth + rightOffset;
-        this.setDimensions();
+        this.refresh();
       },
       deep: true
     },
     bounds(newBounds) {
       this.setDimensions();
       this.drawAxis(newBounds, this.timeSystem);
+      this.updateNowMarker();
     },
     timeSystem(newTimeSystem) {
       this.setDimensions();
       this.drawAxis(this.bounds, newTimeSystem);
+      this.updateNowMarker();
     },
     contentHeight() {
       this.updateNowMarker();
@@ -141,8 +143,7 @@ export default {
       .attr('font-size', '1.3em')
       .attr('transform', 'translate(0,20)');
 
-    this.setDimensions();
-    this.drawAxis(this.bounds, this.timeSystem);
+    this.refresh();
     this.resize();
   },
   unmounted() {
@@ -151,10 +152,13 @@ export default {
   methods: {
     resize() {
       if (this.axisHolder.clientWidth - this.alignmentOffset !== this.width) {
-        this.setDimensions();
-        this.drawAxis(this.bounds, this.timeSystem);
-        this.updateNowMarker();
+        this.refresh();
       }
+    },
+    refresh() {
+      this.setDimensions();
+      this.drawAxis(this.bounds, this.timeSystem);
+      this.updateNowMarker();
     },
     updateNowMarker() {
       let nowMarker = this.$el.querySelector('.nowMarker');
@@ -164,6 +168,9 @@ export default {
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
         nowMarker.style.left = now + 'px';
+        if (now > this.width) {
+          nowMarker.classList.add('hidden');
+        }
       }
     },
     setDimensions() {
