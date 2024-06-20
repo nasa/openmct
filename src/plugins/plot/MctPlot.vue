@@ -288,7 +288,10 @@ export default {
   },
   computed: {
     xAxisStyle() {
-      const leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      let leftOffset = 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
       let style = {
         left: `${this.alignmentData.leftWidth + leftOffset}px`
       };
