@@ -41,7 +41,7 @@ const examplePlanSmall2 = JSON.parse(
   fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
 );
 
-test.describe('Visual - Timelist progress bar @clock', () => {
+test.describe('Visual - Timelist progress bar @clock @a11y', () => {
   const firstActivity = getFirstActivity(examplePlanSmall1);
 
   test.use({
@@ -62,7 +62,7 @@ test.describe('Visual - Timelist progress bar @clock', () => {
   });
 });
 
-test.describe('Visual - Planning', () => {
+test.describe('Visual - Planning @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -178,8 +178,7 @@ test.describe('Visual - Gantt Chart @a11y', () => {
     );
   });
 });
-// FIXME: https://github.com/nasa/openmct/issues/7421
-// Currently has contrast failures
+
 test.afterEach(async ({ page }, testInfo) => {
   await scanForA11yViolations(page, testInfo.title);
 });
