@@ -130,7 +130,7 @@ $bodySize: 100%;
 
 // Object labels
 $objectLabelTypeIconOpacity: 0.8; //JOHN
-$objectLabelNameColorFg: lighten($colorBodyFg, 10%);
+$objectLabelNameColorFg: lighten($colorBodyFg, 20%);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -168,7 +168,7 @@ $colorDiagnostic: #a4b442;
 $colorDiagnosticFg: #39461a;
 $colorCommand: #3693bd;
 $colorCommandFg: #fff;
-$colorInfo: #2294a2;
+$colorInfo: #198290;
 $colorInfoFg: #fff;
 $colorOk: #33cc33;
 $colorOkFg: #fff;
@@ -471,7 +471,7 @@ $colorPastBg: #444;
 $colorPastFg: pushBack($colorBodyFg, 10%);
 $colorPastFgEm: $colorBodyFg;
 $colorCurrentBg: #666;
-$colorCurrentFg: $colorBodyFg;
+$colorCurrentFg: pullForward($colorBodyFg, 10%);
 $colorCurrentFgEm: $colorBodyFgEm;
 $colorCurrentBorder: $colorBodyBg;
 $colorFutureBg: $colorPastBg;
