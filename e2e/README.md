@@ -281,7 +281,7 @@ Playwright has native support for semi-intelligent sharding. Read about it [here
 
 We will be adjusting the parallelization of the Per-Commit tests to keep below the 5 minute total runtime threshold.
 
-In addition to the Parallelization of Test Runners (Sharding), we're also running two concurrent threads on every Shard. This is the functional limit of what CircelCI Agents can support from a memory and CPU resource constraint.
+In addition to the Parallelization of Test Runners (Sharding), we're also running two concurrent threads on every Shard. This is the functional limit of what CircleCI Agents can support from a memory and CPU resource constraint.
 
 So for every commit, Playwright is effectively running 4 x 2 concurrent browsercontexts to keep the overall runtime to a miminum.
 
