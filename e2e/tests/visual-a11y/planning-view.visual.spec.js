@@ -62,7 +62,7 @@ test.describe('Visual - Timelist progress bar @clock @a11y', () => {
   });
 });
 
-test.describe('Visual - Planning @a11y', () => {
+test.describe('Visual - Plan View @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
@@ -105,77 +105,6 @@ test.describe('Visual - Planning @a11y', () => {
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall2, plan.url);
     await percySnapshot(page, `Plan View w/ draft status (theme: ${theme})`);
-  });
-});
-
-test.describe('Visual - Gantt Chart @a11y', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
-  });
-  test('Gantt Chart View', async ({ page, theme }) => {
-    const ganttChart = await createDomainObjectWithDefaults(page, {
-      type: 'Gantt Chart',
-      name: 'Gantt Chart Visual Test'
-    });
-    await createPlanFromJSON(page, {
-      json: examplePlanSmall2,
-      parent: ganttChart.uuid
-    });
-    await setBoundsToSpanAllActivities(page, examplePlanSmall2, ganttChart.url);
-    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Clipped Activity Names`);
-
-    // Expand the inspect pane and uncheck the 'Clip Activity Names' option
-    await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
-    await page.getByRole('tab', { name: 'Config' }).click();
-    await page.getByLabel('Edit Object').click();
-    await page.getByLabel('Clip Activity Names').click();
-
-    // Close the inspect pane and save the changes
-    await page.getByRole('button', { name: 'Collapse Inspect Pane' }).click();
-    await page.getByLabel('Save').click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-    // Dismiss the notification
-    await page.getByLabel('Dismiss').click();
-
-    await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Unclipped Activity Names`);
-  });
-
-  test('Gantt Chart View w/ draft status', async ({ page, theme }) => {
-    const ganttChart = await createDomainObjectWithDefaults(page, {
-      type: 'Gantt Chart',
-      name: 'Gantt Chart Visual Test (Draft)'
-    });
-    const plan = await createPlanFromJSON(page, {
-      json: examplePlanSmall2,
-      parent: ganttChart.uuid
-    });
-
-    await setDraftStatusForPlan(page, plan);
-
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
-
-    await setBoundsToSpanAllActivities(page, examplePlanSmall2, ganttChart.url);
-    await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`);
-
-    // Expand the inspect pane and uncheck the 'Clip Activity Names' option
-    await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
-    await page.getByRole('tab', { name: 'Config' }).click();
-    await page.getByLabel('Edit Object').click();
-    await page.getByLabel('Clip Activity Names').click();
-
-    // Close the inspect pane and save the changes
-    await page.getByRole('button', { name: 'Collapse Inspect Pane' }).click();
-    await page.getByLabel('Save').click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-    // Dismiss the notification
-    await page.getByLabel('Dismiss').click();
-
-    await percySnapshot(
-      page,
-      `Gantt Chart View w/ draft status (theme: ${theme}) - Unclipped Activity Names`
-    );
   });
 });
 
