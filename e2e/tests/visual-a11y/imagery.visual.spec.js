@@ -19,19 +19,47 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 import percySnapshot from '@percy/playwright';
+import { readFileSync } from 'fs';
 
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../appActions.js';
 import { waitForAnimations } from '../../baseFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
-test.describe('Visual - Example Imagery', () => {
+test.describe.only('Visual - Example Imagery', () => {
   let exampleImagery;
   let parentLayout;
 
   test.beforeEach(async ({ page }) => {
+    // Intercept images from the Example Imagery Plugin to replace with local files
+    await page.route(
+      (url) =>
+        url.href.startsWith('https://www.nasa.gov/wp-content/uploads/static/history/') &&
+        url.href.endsWith('.jpg') &&
+        !url.href.endsWith('.jpg?w=100&h=100'),
+      (route) => {
+        const localImageBuffer = readFileSync('e2e/test-data/rick.jpg');
+        route.continue({
+          postData: localImageBuffer
+        });
+      }
+    );
+
+    // Intercept thumbnails
+    await page.route(
+      (url) =>
+        url.href.match(
+          'https://www.nasa.gov/wp-content/uploads/static/history/.+\\.jpg\\?w=100&h=100'
+        ),
+      (route) => {
+        const thumbImageBuffer = readFileSync('e2e/test-data/rick-thumb.jpg');
+        route.continue({
+          postData: thumbImageBuffer
+        });
+      }
+    );
+
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     parentLayout = await createDomainObjectWithDefaults(page, {
@@ -44,20 +72,6 @@ test.describe('Visual - Example Imagery', () => {
       name: 'Example Imagery Test',
       parent: parentLayout.uuid
     });
-
-    // Modify Example Imagery to create a really stable Example Imagery
-    await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
-    await page.getByRole('button', { name: 'More actions' }).click();
-    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
-    await page
-      .locator('#imageLocation-textarea')
-      .fill(
-        'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg'
-      );
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.getByTitle('Collapse Browse Pane').click();
-    await page.getByTitle('Collapse Inspect Pane').click();
   });
 
   test('Example Imagery in Fixed Time', async ({ page, theme }) => {

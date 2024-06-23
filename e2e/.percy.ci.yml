@@ -1,4 +1,6 @@
 version: 2
+discovery:
+  captureMockedServiceWorker: true
 snapshot:
   widths: [1024]
   min-height: 1440 # px
@@ -30,4 +32,3 @@ snapshot:
     .gl-plot-chart-area{
       opacity: 0 !important;
     }
-   
