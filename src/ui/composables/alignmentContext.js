@@ -21,7 +21,7 @@
  *****************************************************************************/
 /* eslint-disable func-style */
 
-import { ref } from 'vue';
+import { reactive } from 'vue';
 
 /**
  * Manages alignment for multiple y axes given an object path
@@ -36,32 +36,20 @@ const alignmentMap = new Map();
 export function useAlignment(targetObject, path, openmct) {
   const getAlignmentKeyForPath = () => {
     const keys = Array.from(alignmentMap.keys());
-    if (!keys.length) {
-      return;
-    }
-    return (
-      path
-        //get just the identifiers
-        .map((domainObject) => {
-          return openmct.objects.makeKeyString(domainObject.identifier);
-        })
-        .reverse()
-        // find a match
-        .find((keyString) => {
-          return keys.includes(keyString);
-        })
-    );
+    return path
+      .map((domainObject) => openmct.objects.makeKeyString(domainObject.identifier))
+      .reverse()
+      .find((keyString) => keys.includes(keyString));
   };
 
   // Use the furthest ancestor's alignment if it exists, otherwise, use your own
-  let alignmentKey = getAlignmentKeyForPath(path);
+  let alignmentKey =
+    getAlignmentKeyForPath() || openmct.objects.makeKeyString(targetObject.identifier);
 
-  if (!alignmentKey) {
-    const targetObjectKey = openmct.objects.makeKeyString(targetObject.identifier);
-    alignmentKey = targetObjectKey;
+  if (!alignmentMap.has(alignmentKey)) {
     alignmentMap.set(
-      targetObjectKey,
-      ref({
+      alignmentKey,
+      reactive({
         leftWidth: 0,
         rightWidth: 0,
         multiple: false,
@@ -70,9 +58,9 @@ export function useAlignment(targetObject, path, openmct) {
     );
   }
 
-  // reset any alignment data for the given key
+  // Reset any alignment data for the given key
   const resetAlignment = () => {
-    const key = getAlignmentKeyForPath(path);
+    const key = getAlignmentKeyForPath();
     if (key && alignmentMap.has(key)) {
       alignmentMap.delete(key);
     }
@@ -80,35 +68,24 @@ export function useAlignment(targetObject, path, openmct) {
 
   // Given the axes ids and widths, calculate the max left and right widths and whether or not multiple left axes exist
   const processAlignment = () => {
-    const alignment = alignmentMap.get(alignmentKey).value;
+    const alignment = alignmentMap.get(alignmentKey);
     const axesKeys = Object.keys(alignment.axes);
     const leftAxes = axesKeys.filter((axis) => axis <= 2);
     const rightAxes = axesKeys.filter((axis) => axis > 2);
-    // Get width of left Y axis
-    let leftWidth = 0;
-    leftAxes.forEach((leftAxis) => {
-      leftWidth = leftWidth + alignment.axes[leftAxis];
-    });
-    alignment.leftWidth = leftWidth;
 
-    // Get width of right Y axis
-    let rightWidth = 0;
-    rightAxes.forEach((rightAxis) => {
-      rightWidth = rightWidth + alignment.axes[rightAxis];
-    });
-    alignment.rightWidth = rightWidth;
-
+    alignment.leftWidth = leftAxes.reduce((sum, axis) => sum + alignment.axes[axis], 0);
+    alignment.rightWidth = rightAxes.reduce((sum, axis) => sum + alignment.axes[axis], 0);
     alignment.multiple = leftAxes.length > 1;
   };
 
   /**
    * Unregister y-axis from width calculations
-   * @param {Object: yAxisId, updateObjectPath} the last known width of the y-axis, yAxisId of the tick bar, path of the axis being updated
+   * @param {Object} param0 - The object containing yAxisId, updateObjectPath, and type.
    */
-  const remove = ({ yAxisId, updateObjectPath, type } = {}) => {
+  const remove = ({ yAxisId, updateObjectPath } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
     if (key) {
-      const alignment = alignmentMap.get(alignmentKey).value;
+      const alignment = alignmentMap.get(alignmentKey);
       if (alignment.axes[yAxisId] !== undefined) {
         delete alignment.axes[yAxisId];
       }
@@ -118,15 +95,13 @@ export function useAlignment(targetObject, path, openmct) {
 
   /**
    * Update widths of a y axis given the id and path. The path is used to determine which ancestor should hold the alignment
-   * @param {Object: width, yAxisId, updateObjectPath} the width of the y-axis, yAxisId of the tick bar, path of the axis being updated
+   * @param {Object} param0 - The object containing width, yAxisId, updateObjectPath, and type.
    */
-  const update = ({ width, yAxisId, updateObjectPath, type } = {}) => {
+  const update = ({ width, yAxisId, updateObjectPath } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
     if (key) {
-      const alignment = alignmentMap.get(alignmentKey).value;
-      if (alignment.axes[yAxisId] === undefined) {
-        alignment.axes[yAxisId] = width;
-      } else if (width > alignment.axes[yAxisId]) {
+      const alignment = alignmentMap.get(alignmentKey);
+      if (alignment.axes[yAxisId] === undefined || width > alignment.axes[yAxisId]) {
         alignment.axes[yAxisId] = width;
       }
       processAlignment();
