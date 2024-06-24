@@ -10,8 +10,8 @@
     }
   },
   "scripts": {
-    "test": "npx playwright test",
-    "test:visual": "percy exec"
+    "test": "PERCY_CLIENT_ERROR_LOGS=false npx playwright test",
+    "test:visual": "PERCY_CLIENT_ERROR_LOGS=false percy exec"
   },
   "devDependencies": {
     "@types/sinonjs__fake-timers": "8.1.5",
