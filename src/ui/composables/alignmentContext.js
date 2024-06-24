@@ -24,19 +24,35 @@
 import { reactive } from 'vue';
 
 /**
- * Manages alignment for multiple y axes given an object path
- * This is a Vue composition API utility function.
- * @param {Object} targetObject - The target to attach the event listener to.
- * @param {Array} path - The path of the target object.
- * @param {Object} openmct - The open mct API.
+ * @typedef {import('../../api/objects/ObjectAPI.js').DomainObject[]} ObjectPath
  */
 
-const alignmentMap = new Map();
+/**
+ * @typedef {Object} Alignment
+ * @property {number} leftWidth - The total width of the left axes.
+ * @property {number} rightWidth - The total width of the right axes.
+ * @property {boolean} multiple - Indicates if there are multiple left axes.
+ * @property {Object.<string, number>} axes - A map of axis IDs to their widths.
+ */
 
-export function useAlignment(targetObject, path, openmct) {
+/**
+ * Manages alignment for multiple y axes given an object path.
+ * This is a Vue composition API utility function.
+ * @param {Object} targetObject - The target to attach the event listener to.
+ * @param {ObjectPath} objectPath - The path of the target object.
+ * @param {import('../../../openmct.js').OpenMCT} openmct - The open mct API.
+ * @returns {Object} An object containing alignment data and methods to update, remove, and reset alignment.
+ */
+export function useAlignment(targetObject, objectPath, openmct) {
+  const alignmentMap = new Map();
+
+  /**
+   * Get the alignment key for the given path.
+   * @returns {string|undefined} The alignment key if found, otherwise undefined.
+   */
   const getAlignmentKeyForPath = () => {
     const keys = Array.from(alignmentMap.keys());
-    return path
+    return objectPath
       .map((domainObject) => openmct.objects.makeKeyString(domainObject.identifier))
       .reverse()
       .find((keyString) => keys.includes(keyString));
@@ -58,7 +74,9 @@ export function useAlignment(targetObject, path, openmct) {
     );
   }
 
-  // Reset any alignment data for the given key
+  /**
+   * Reset any alignment data for the given key.
+   */
   const resetAlignment = () => {
     const key = getAlignmentKeyForPath();
     if (key && alignmentMap.has(key)) {
@@ -66,7 +84,9 @@ export function useAlignment(targetObject, path, openmct) {
     }
   };
 
-  // Given the axes ids and widths, calculate the max left and right widths and whether or not multiple left axes exist
+  /**
+   * Given the axes ids and widths, calculate the max left and right widths and whether or not multiple left axes exist.
+   */
   const processAlignment = () => {
     const alignment = alignmentMap.get(alignmentKey);
     const axesKeys = Object.keys(alignment.axes);
@@ -79,8 +99,14 @@ export function useAlignment(targetObject, path, openmct) {
   };
 
   /**
-   * Unregister y-axis from width calculations
-   * @param {Object} param0 - The object containing yAxisId, updateObjectPath, and type.
+   * @typedef {Object} RemoveParams
+   * @property {number} yAxisId - The ID of the y-axis to remove.
+   * @property {ObjectPath} [updateObjectPath] - The path of the object to update.
+   */
+
+  /**
+   * Unregister y-axis from width calculations.
+   * @param {RemoveParams} param0 - The object containing yAxisId and updateObjectPath.
    */
   const remove = ({ yAxisId, updateObjectPath } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
@@ -94,8 +120,15 @@ export function useAlignment(targetObject, path, openmct) {
   };
 
   /**
-   * Update widths of a y axis given the id and path. The path is used to determine which ancestor should hold the alignment
-   * @param {Object} param0 - The object containing width, yAxisId, updateObjectPath, and type.
+   * @typedef {Object} UpdateParams
+   * @property {number} width - The width of the y-axis.
+   * @property {number} yAxisId - The ID of the y-axis to update.
+   * @property {ObjectPath} [updateObjectPath] - The path of the object to update.
+   */
+
+  /**
+   * Update widths of a y axis given the id and path. The path is used to determine which ancestor should hold the alignment.
+   * @param {UpdateParams} param0 - The object containing width, yAxisId, and updateObjectPath.
    */
   const update = ({ width, yAxisId, updateObjectPath } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
