@@ -51,7 +51,7 @@ test.describe('Visual - Example Imagery', () => {
     await page
       .locator('#imageLocation-textarea')
       .fill(
-        'https://github.com/nasa/openmct/blob/master/e2e/test-data/rick.jpg?raw=true,https://github.com/nasa/openmct/blob/master/e2e/test-data/rick.jpg?raw=true'
+        'https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg,https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg'
       );
     await page.getByRole('button', { name: 'Save' }).click();
     await page.reload({ waitUntil: 'domcontentloaded' });
