@@ -10,13 +10,13 @@
     }
   },
   "scripts": {
-    "test": "PERCY_CLIENT_ERROR_LOGS=false npx playwright test",
-    "test:visual": "PERCY_CLIENT_ERROR_LOGS=false percy exec"
+    "test": "npx playwright test",
+    "test:visual": "percy exec"
   },
   "devDependencies": {
     "@types/sinonjs__fake-timers": "8.1.5",
-    "@percy/cli": "1.28.8",
-    "@percy/playwright": "1.0.5",
+    "@percy/cli": "1.27.4",
+    "@percy/playwright": "1.0.4",
     "@playwright/test": "1.44.0",
     "@axe-core/playwright": "4.8.5",
     "sinon": "17.0.0"
