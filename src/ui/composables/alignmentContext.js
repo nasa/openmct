@@ -31,11 +31,11 @@ import { ref } from 'vue';
  * @param {Object} openmct - The open mct API.
  */
 
-const alignmentMap = {};
+const alignmentMap = new Map();
 
 export function useAlignment(targetObject, path, openmct) {
   const getAlignmentKeyForPath = () => {
-    const keys = Object.keys(alignmentMap);
+    const keys = Array.from(alignmentMap.keys());
     if (!keys.length) {
       return;
     }
@@ -59,42 +59,46 @@ export function useAlignment(targetObject, path, openmct) {
   if (!alignmentKey) {
     const targetObjectKey = openmct.objects.makeKeyString(targetObject.identifier);
     alignmentKey = targetObjectKey;
-    alignmentMap[targetObjectKey] = ref({
-      leftWidth: 0,
-      rightWidth: 0,
-      multiple: false,
-      axes: {}
-    });
+    alignmentMap.set(
+      targetObjectKey,
+      ref({
+        leftWidth: 0,
+        rightWidth: 0,
+        multiple: false,
+        axes: {}
+      })
+    );
   }
 
   // reset any alignment data for the given key
   const resetAlignment = () => {
     const key = getAlignmentKeyForPath(path);
-    if (key && alignmentMap[key]) {
-      delete alignmentMap[key];
+    if (key && alignmentMap.has(key)) {
+      alignmentMap.delete(key);
     }
   };
 
   // Given the axes ids and widths, calculate the max left and right widths and whether or not multiple left axes exist
   const processAlignment = () => {
-    const axesKeys = Object.keys(alignmentMap[alignmentKey].value.axes);
+    const alignment = alignmentMap.get(alignmentKey).value;
+    const axesKeys = Object.keys(alignment.axes);
     const leftAxes = axesKeys.filter((axis) => axis <= 2);
     const rightAxes = axesKeys.filter((axis) => axis > 2);
     // Get width of left Y axis
     let leftWidth = 0;
     leftAxes.forEach((leftAxis) => {
-      leftWidth = leftWidth + alignmentMap[alignmentKey].value.axes[leftAxis];
+      leftWidth = leftWidth + alignment.axes[leftAxis];
     });
-    alignmentMap[alignmentKey].value.leftWidth = leftWidth;
+    alignment.leftWidth = leftWidth;
 
     // Get width of right Y axis
     let rightWidth = 0;
     rightAxes.forEach((rightAxis) => {
-      rightWidth = rightWidth + alignmentMap[alignmentKey].value.axes[rightAxis];
+      rightWidth = rightWidth + alignment.axes[rightAxis];
     });
-    alignmentMap[alignmentKey].value.rightWidth = rightWidth;
+    alignment.rightWidth = rightWidth;
 
-    alignmentMap[alignmentKey].value.multiple = leftAxes.length > 1;
+    alignment.multiple = leftAxes.length > 1;
   };
 
   /**
@@ -104,8 +108,9 @@ export function useAlignment(targetObject, path, openmct) {
   const remove = ({ yAxisId, updateObjectPath, type } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
     if (key) {
-      if (alignmentMap[alignmentKey].value.axes[yAxisId] !== undefined) {
-        delete alignmentMap[alignmentKey].value.axes[yAxisId];
+      const alignment = alignmentMap.get(alignmentKey).value;
+      if (alignment.axes[yAxisId] !== undefined) {
+        delete alignment.axes[yAxisId];
       }
       processAlignment();
     }
@@ -118,14 +123,15 @@ export function useAlignment(targetObject, path, openmct) {
   const update = ({ width, yAxisId, updateObjectPath, type } = {}) => {
     const key = getAlignmentKeyForPath(updateObjectPath);
     if (key) {
-      if (alignmentMap[alignmentKey].value.axes[yAxisId] === undefined) {
-        alignmentMap[alignmentKey].value.axes[yAxisId] = width;
-      } else if (width > alignmentMap[alignmentKey].value.axes[yAxisId]) {
-        alignmentMap[alignmentKey].value.axes[yAxisId] = width;
+      const alignment = alignmentMap.get(alignmentKey).value;
+      if (alignment.axes[yAxisId] === undefined) {
+        alignment.axes[yAxisId] = width;
+      } else if (width > alignment.axes[yAxisId]) {
+        alignment.axes[yAxisId] = width;
       }
       processAlignment();
     }
   };
 
-  return { alignment: alignmentMap[alignmentKey], update, remove, reset: resetAlignment };
+  return { alignment: alignmentMap.get(alignmentKey), update, remove, reset: resetAlignment };
 }
