@@ -24,18 +24,6 @@
 import { reactive } from 'vue';
 
 /**
- * @typedef {import('../../api/objects/ObjectAPI.js').DomainObject[]} ObjectPath
- */
-
-/**
- * @typedef {Object} Alignment
- * @property {number} leftWidth - The total width of the left axes.
- * @property {number} rightWidth - The total width of the right axes.
- * @property {boolean} multiple - Indicates if there are multiple left axes.
- * @property {Object.<string, number>} axes - A map of axis IDs to their widths.
- */
-
-/**
  * Manages alignment for multiple y axes given an object path.
  * This is a Vue composition API utility function.
  * @param {Object} targetObject - The target to attach the event listener to.
@@ -143,3 +131,15 @@ export function useAlignment(targetObject, objectPath, openmct) {
 
   return { alignment: alignmentMap.get(alignmentKey), update, remove, reset: resetAlignment };
 }
+
+/**
+ * @typedef {import('../../api/objects/ObjectAPI.js').DomainObject[]} ObjectPath
+ */
+
+/**
+ * @typedef {Object} Alignment
+ * @property {number} leftWidth - The total width of the left axes.
+ * @property {number} rightWidth - The total width of the right axes.
+ * @property {boolean} multiple - Indicates if there are multiple left axes.
+ * @property {Object.<string, number>} axes - A map of axis IDs to their widths.
+ */
