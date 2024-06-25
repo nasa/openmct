@@ -75,7 +75,6 @@ $numericFont: 'Chakra Petch', sans-serif;
 }
 
 @mixin telemetryView() {
-  border: 1px solid $colorBodyFg;
   border-radius: $controlCr;
 }
 
@@ -99,7 +98,7 @@ $numericFont: 'Chakra Petch', sans-serif;
   background-repeat: no-repeat;
   background-size: 35px 35px;
   border-radius: $interiorMarginLg;
-  box-shadow: 0px 0px 20px 2px rgb(140 140 140 / 20%);
+  box-shadow: 0px 0px 8px 4px rgb(140 140 140 / 24%);
 }
 
 // Functions
