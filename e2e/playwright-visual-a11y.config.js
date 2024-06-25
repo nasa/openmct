@@ -13,7 +13,7 @@ const config = {
     cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
-    reuseExistingServer: !process.env.CI
+    reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
   use: {
     baseURL: 'http://localhost:8080/',
