@@ -89,6 +89,7 @@
           <div
             v-if="imageUrl"
             ref="focusedImageElement"
+            aria-label="Focused Image Element"
             class="c-imagery__main-image__background-image"
             :draggable="!isSelectable"
             :style="focusImageStyles"

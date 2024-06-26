@@ -45,8 +45,8 @@ test.describe('Example Imagery Object', () => {
 
     // Verify that the created object is focused
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
-    await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
-    await page.locator(backgroundImageSelector).waitFor();
+    await page.getByLabel('Focused Image Element').hover({ trial: true });
+    await page.getByLabel('Focused Image Element').waitFor();
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -286,23 +286,46 @@ test.describe('Example Imagery Object', () => {
     await buttonZoomOnImageAndAssert(page);
   });
 
-  test('Can use the reset button to reset the image @unstable', async ({ page }, testInfo) => {
+  test('Can use the reset button to reset the image', async ({ page }) => {
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(1) translate(0px, 0px)'
+    );
     // Get initial image dimensions
-    const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const initialBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
 
     // Zoom in twice via button
     await zoomIntoImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(2) translate(0px, 0px)'
+    );
     await zoomIntoImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(3) translate(0px, 0px)'
+    );
 
     // Get and assert zoomed in image dimensions
-    const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-    expect.soft(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
-    expect.soft(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
+    const zoomedInBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
+    expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
     // Reset pan and zoom and assert against initial image dimensions
     await resetImageryPanAndZoom(page);
-    const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-    expect(finalBoundingBox).toEqual(initialBoundingBox);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(1) translate(0px, 0px)'
+    );
+    await expect
+      .poll(
+        async () => {
+          const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+          return finalBoundingBox;
+        },
+        { timeout: 30000 }
+      )
+      .toEqual(initialBoundingBox);
   });
 
   test('Using the zoom features does not pause telemetry', async ({ page }) => {

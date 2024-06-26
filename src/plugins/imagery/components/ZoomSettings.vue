@@ -26,14 +26,21 @@
         <button
           class="c-button t-btn-zoom-out icon-minus"
           title="Zoom out"
+          aria-label="Zoom out"
           @click="zoomOut"
         ></button>
 
-        <button class="c-button t-btn-zoom-in icon-plus" title="Zoom in" @click="zoomIn"></button>
+        <button
+          class="c-button t-btn-zoom-in icon-plus"
+          title="Zoom in"
+          aria-label="Zoom in"
+          @click="zoomIn"
+        ></button>
 
         <button
           class="c-button t-btn-zoom-lock"
           title="Lock current zoom and pan across all images"
+          aria-label="Lock current zoom and pan across all images"
           :class="{ 'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked }"
           @click="toggleZoomLock"
         ></button>
@@ -41,6 +48,7 @@
         <button
           class="c-button icon-reset t-btn-zoom-reset"
           title="Remove zoom and pan"
+          aria-label="Remove zoom and pan"
           @click="handleResetImage"
         ></button>
       </div>
@@ -49,6 +57,7 @@
     <button
       v-if="isMenu"
       class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"
+      aria-label="Close menu"
     ></button>
   </div>
 </template>
