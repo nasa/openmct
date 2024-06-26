@@ -21,7 +21,7 @@
  *****************************************************************************/
 /* eslint-disable func-style */
 
-import { reactive } from 'vue';
+import { reactive, toRefs } from 'vue';
 
 /**
  * Manages alignment for multiple y axes given an object path.
@@ -32,6 +32,7 @@ import { reactive } from 'vue';
  * @returns {Object} An object containing alignment data and methods to update, remove, and reset alignment.
  */
 export function useAlignment(targetObject, objectPath, openmct) {
+  /** @type {Map<string, Alignment>} */
   const alignmentMap = new Map();
 
   /**
@@ -41,7 +42,7 @@ export function useAlignment(targetObject, objectPath, openmct) {
   const getAlignmentKeyForPath = () => {
     const keys = Array.from(alignmentMap.keys());
     return objectPath
-      .map((domainObject) => openmct.objects.makeKeyString(domainObject.identifier))
+      ?.map((domainObject) => openmct.objects.makeKeyString(domainObject.identifier))
       .reverse()
       .find((keyString) => keys.includes(keyString));
   };
@@ -63,16 +64,6 @@ export function useAlignment(targetObject, objectPath, openmct) {
   }
 
   /**
-   * Reset any alignment data for the given key.
-   */
-  const resetAlignment = () => {
-    const key = getAlignmentKeyForPath();
-    if (key && alignmentMap.has(key)) {
-      alignmentMap.delete(key);
-    }
-  };
-
-  /**
    * Given the axes ids and widths, calculate the max left and right widths and whether or not multiple left axes exist.
    */
   const processAlignment = () => {
@@ -81,8 +72,8 @@ export function useAlignment(targetObject, objectPath, openmct) {
     const leftAxes = axesKeys.filter((axis) => axis <= 2);
     const rightAxes = axesKeys.filter((axis) => axis > 2);
 
-    alignment.leftWidth = leftAxes.reduce((sum, axis) => sum + alignment.axes[axis], 0);
-    alignment.rightWidth = rightAxes.reduce((sum, axis) => sum + alignment.axes[axis], 0);
+    alignment.leftWidth = leftAxes.reduce((sum, axis) => sum + (alignment.axes[axis] || 0), 0);
+    alignment.rightWidth = rightAxes.reduce((sum, axis) => sum + (alignment.axes[axis] || 0), 0);
     alignment.multiple = leftAxes.length > 1;
   };
 
@@ -129,7 +120,19 @@ export function useAlignment(targetObject, objectPath, openmct) {
     }
   };
 
-  return { alignment: alignmentMap.get(alignmentKey), update, remove, reset: resetAlignment };
+  const alignment = alignmentMap.get(alignmentKey);
+  if (!alignment) {
+    return {
+      leftWidth: 0,
+      rightWidth: 0,
+      multiple: false,
+      axes: {},
+      update,
+      remove
+    };
+  }
+
+  return { alignment: toRefs(alignment), update, remove };
 }
 
 /**
