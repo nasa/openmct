@@ -23,6 +23,7 @@
 
 import { reactive } from 'vue';
 
+/** @type {Map<string, Alignment>} */
 const alignmentMap = new Map();
 /**
  * Manages alignment for multiple y axes given an object path.
@@ -64,7 +65,7 @@ export function useAlignment(targetObject, objectPath, openmct) {
   /**
    * Reset any alignment data for the given key.
    */
-  const resetAlignment = () => {
+  const reset = () => {
     const key = getAlignmentKeyForPath();
     if (key && alignmentMap.has(key)) {
       alignmentMap.delete(key);
@@ -80,8 +81,8 @@ export function useAlignment(targetObject, objectPath, openmct) {
     const leftAxes = axesKeys.filter((axis) => axis <= 2);
     const rightAxes = axesKeys.filter((axis) => axis > 2);
 
-    alignment.leftWidth = leftAxes.reduce((sum, axis) => sum + alignment.axes[axis], 0);
-    alignment.rightWidth = rightAxes.reduce((sum, axis) => sum + alignment.axes[axis], 0);
+    alignment.leftWidth = leftAxes.reduce((sum, axis) => sum + (alignment.axes[axis] || 0), 0);
+    alignment.rightWidth = rightAxes.reduce((sum, axis) => sum + (alignment.axes[axis] || 0), 0);
     alignment.multiple = leftAxes.length > 1;
   };
 
@@ -128,7 +129,7 @@ export function useAlignment(targetObject, objectPath, openmct) {
     }
   };
 
-  return { alignment: alignmentMap.get(alignmentKey), update, remove, reset: resetAlignment };
+  return { alignment: alignmentMap.get(alignmentKey), update, remove, reset };
 }
 
 /**

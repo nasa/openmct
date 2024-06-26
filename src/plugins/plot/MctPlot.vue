@@ -196,7 +196,7 @@ export default {
     MctTicks,
     MctChart
   },
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,
@@ -245,11 +245,11 @@ export default {
     const { EventBus } = useEventBus();
 
     const domainObject = inject('domainObject');
-    const path = inject('path');
+    const objectPath = inject('objectPath');
     const openmct = inject('openmct');
     const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
       domainObject,
-      path,
+      objectPath,
       openmct
     );
 
@@ -307,12 +307,14 @@ export default {
     },
     isNestedWithinAStackedPlot() {
       const isNavigatedObject = this.openmct.router.isNavigatedObject(
-        [this.domainObject].concat(this.path)
+        [this.domainObject].concat(this.objectPath)
       );
 
       return (
         !isNavigatedObject &&
-        this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked')
+        this.objectPath.find(
+          (pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked'
+        )
       );
     },
     isFrozen() {
@@ -521,7 +523,7 @@ export default {
     },
     setTimeContext() {
       this.stopFollowingTimeContext();
-      this.timeContext = this.openmct.time.getContextForView(this.path);
+      this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.followTimeContext();
     },
     followTimeContext() {
@@ -1232,7 +1234,7 @@ export default {
           item: this.domainObject
         }
       });
-      this.path.forEach((pathObject, index) => {
+      this.objectPath.forEach((pathObject, index) => {
         selection.push({
           element: this.openmct.layout.$refs.browseObject.$el,
           context: {

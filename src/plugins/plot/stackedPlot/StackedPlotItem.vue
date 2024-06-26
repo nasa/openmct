@@ -51,7 +51,7 @@ export default {
     Plot
   },
   mixins: [conditionalStylesMixin, stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   provide() {
     return {
       openmct: this.openmct,

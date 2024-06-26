@@ -84,7 +84,7 @@ export default {
   components: {
     MctTicks
   },
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     id: {
       type: Number,
@@ -102,9 +102,9 @@ export default {
   emits: ['toggle-axis-visibility', 'y-key-changed'],
   setup() {
     const domainObject = inject('domainObject');
-    const path = inject('path');
+    const objectPath = inject('objectPath');
     const openmct = inject('openmct');
-    const { alignment: alignmentData } = useAlignment(domainObject, path, openmct);
+    const { alignment: alignmentData } = useAlignment(domainObject, objectPath, openmct);
 
     return { alignmentData };
   },

@@ -83,7 +83,7 @@ import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
 const SECONDARY_TICK_NUMBER = 2;
 
 export default {
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     axisType: {
       type: String,
@@ -116,11 +116,11 @@ export default {
   emits: ['plot-tick-width'],
   setup() {
     const domainObject = inject('domainObject');
-    const path = inject('path');
+    const objectPath = inject('objectPath');
     const openmct = inject('openmct');
     const { update: updateAlignment, remove: removeAlignment } = useAlignment(
       domainObject,
-      path,
+      objectPath,
       openmct
     );
 
@@ -149,7 +149,7 @@ export default {
   beforeUnmount() {
     this.removeAlignment({
       yAxisId: this.axisId,
-      updateObjectPath: this.path
+      updateObjectPath: this.objectPath
     });
     this.stopListening();
   },
@@ -302,7 +302,7 @@ export default {
               this.updateAlignment({
                 width: tickWidth,
                 yAxisId: this.axisId,
-                updateObjectPath: this.path
+                updateObjectPath: this.objectPath
               });
             }
 

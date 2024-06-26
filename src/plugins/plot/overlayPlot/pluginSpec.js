@@ -315,7 +315,7 @@ describe('the plugin', function () {
             openmct,
             domainObject: overlayPlotObject,
             composition,
-            path: [overlayPlotObject],
+            objectPath: [overlayPlotObject],
             renderWhenVisible
           },
           template: '<plot ref="plotComponent"></plot>'
@@ -507,7 +507,7 @@ describe('the plugin', function () {
             openmct: openmct,
             domainObject: overlayPlotObject,
             composition,
-            path: [overlayPlotObject],
+            objectPath: [overlayPlotObject],
             renderWhenVisible
           },
           template: '<plot ref="plotComponent"></plot>'

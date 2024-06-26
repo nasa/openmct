@@ -78,7 +78,7 @@ export default {
     StackedPlotItem,
     PlotLegend
   },
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,
@@ -89,11 +89,11 @@ export default {
   },
   setup() {
     const domainObject = inject('domainObject');
-    const path = inject('path');
+    const objectPath = inject('objectPath');
     const openmct = inject('openmct');
     const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
       domainObject,
-      path,
+      objectPath,
       openmct
     );
 
