@@ -23,6 +23,7 @@
 
 import { reactive } from 'vue';
 
+const alignmentMap = new Map();
 /**
  * Manages alignment for multiple y axes given an object path.
  * This is a Vue composition API utility function.
@@ -32,8 +33,6 @@ import { reactive } from 'vue';
  * @returns {Object} An object containing alignment data and methods to update, remove, and reset alignment.
  */
 export function useAlignment(targetObject, objectPath, openmct) {
-  const alignmentMap = new Map();
-
   /**
    * Get the alignment key for the given path.
    * @returns {string|undefined} The alignment key if found, otherwise undefined.
