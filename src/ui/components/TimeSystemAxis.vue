@@ -111,7 +111,7 @@ export default {
         if (this.alignmentData.leftWidth) {
           leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
         }
-        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}px, 20)`;
+        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, 20)`;
 
         const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
         this.alignmentOffset =
@@ -173,7 +173,7 @@ export default {
         this.nowMarkerStyle.height = this.contentHeight + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
-        this.nowMarkerStyle.left = now + 'px';
+        this.nowMarkerStyle.left = `${now + this.alignmentOffset}px`;
         if (now > this.width) {
           nowMarker.classList.add('hidden');
         }
