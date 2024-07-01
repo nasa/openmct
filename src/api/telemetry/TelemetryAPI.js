@@ -1033,14 +1033,14 @@ export default class TelemetryAPI {
  */
 
 /**
- * Provides telemetry staleness data. To subscribe to telemetry stalenes,
+ * Provides telemetry staleness data. To subscribe to telemetry staleness,
  * new StalenessProvider implementations should be
  * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
  *
  * @interface StalenessProvider
- * @property {function} supportsStaleness receieves a domainObject and
+ * @property {function} supportsStaleness receives a domainObject and
  *           returns a boolean to indicate it will provide staleness
- * @property {function} subscribeToStaleness receieves a domainObject to
+ * @property {function} subscribeToStaleness receives a domainObject to
  *           be subscribed to and a callback to invoke with a StalenessResponseObject
  * @property {function} isStale an asynchronous method called with a domainObject
  *           and an options object which currently has an abort signal, ex.

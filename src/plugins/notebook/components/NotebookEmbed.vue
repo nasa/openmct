@@ -216,7 +216,7 @@ export default {
       const annotateOverlay = this.openmct.overlays.overlay({
         element: vNode.el,
         size: 'large',
-        dismissable: false,
+        dismissible: false,
         buttons: [
           {
             label: 'Cancel',
@@ -371,7 +371,7 @@ export default {
         onDestroy: destroy,
         size: 'large',
         autoHide: false,
-        dismissable: true,
+        dismissible: true,
         buttons: [
           {
             label: 'Done',
