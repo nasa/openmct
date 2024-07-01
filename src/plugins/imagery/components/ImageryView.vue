@@ -113,6 +113,7 @@
       <button
         class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--prev"
         title="Previous image"
+        aria-label="Previous image"
         :disabled="isPrevDisabled"
         @click="prevImage()"
       ></button>
@@ -120,6 +121,7 @@
       <button
         class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--next"
         title="Next image"
+        aria-label="Next image"
         :disabled="isNextDisabled"
         @click="nextImage()"
       ></button>
@@ -162,6 +164,7 @@
             v-if="!isFixed"
             class="c-button icon-pause pause-play"
             :class="{ 'is-paused': isPaused }"
+            aria-label="Pause automatic scrolling of image thumbnails"
             @click="handlePauseButton(!isPaused)"
           ></button>
         </div>
@@ -193,7 +196,7 @@
           :image="image"
           :active="focusedImageIndex === index"
           :imagery-annotations="imageryAnnotations[image.time]"
-          :selected="focusedImageIndex === index && isPaused"
+          :selected="isSelected(index)"
           :real-time="!isFixed"
           :viewable-area="focusedImageIndex === index ? viewableArea : null"
           @click="thumbnailClicked(index)"
@@ -203,6 +206,7 @@
       <button
         class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
         title="Resume automatic scrolling of image thumbnails"
+        aria-label="Resume automatic scrolling of image thumbnails"
         @click="scrollToRight"
       ></button>
     </div>
@@ -283,55 +287,55 @@ export default {
     this.requestCount = 0;
 
     return {
-      timeFormat: '',
-      layers: [],
-      visibleLayers: [],
-      durationFormatter: undefined,
-      imageHistory: [],
-      bounds: {},
-      timeSystem: timeSystem,
-      keyString: undefined,
+      animateThumbScroll: false,
+      animateZoom: true,
+      annotationsBeingMarqueed: false,
       autoScroll: true,
-      thumbnailClick: THUMBNAIL_CLICKED,
-      isPaused: false,
-      isFixed: false,
+      bounds: {},
       canTrackDuration: false,
-      refreshCSS: false,
-      focusedImageIndex: undefined,
-      focusedImageRelatedTelemetry: {},
-      numericDuration: undefined,
-      relatedTelemetry: {},
-      latestRelatedTelemetry: {},
-      focusedImageNaturalAspectRatio: undefined,
-      imageContainerWidth: undefined,
-      imageContainerHeight: undefined,
-      sizedImageWidth: 0,
-      sizedImageHeight: 0,
-      viewHeight: 0,
-      lockCompass: true,
-      resizingWindow: false,
-      zoomFactor: ZOOM_SCALE_DEFAULT,
+      cursorStates: {
+        isPannable: false,
+        modifierKeyPressed: false,
+        showCursorZoomIn: false,
+        showCursorZoomOut: false
+      },
+      durationFormatter: undefined,
       filters: {
         brightness: 100,
         contrast: 100
       },
-      cursorStates: {
-        isPannable: false,
-        showCursorZoomIn: false,
-        showCursorZoomOut: false,
-        modifierKeyPressed: false
-      },
+      focusedImageIndex: undefined,
+      focusedImageNaturalAspectRatio: undefined,
+      focusedImageRelatedTelemetry: {},
+      forceShowThumbnails: false,
+      imageContainerHeight: undefined,
+      imageContainerWidth: undefined,
+      imageHistory: [],
+      imagePanned: false,
       imageTranslateX: 0,
       imageTranslateY: 0,
-      imageViewportWidth: 0,
       imageViewportHeight: 0,
-      pan: undefined,
-      animateZoom: true,
-      imagePanned: false,
-      forceShowThumbnails: false,
-      animateThumbScroll: false,
+      imageViewportWidth: 0,
       imageryAnnotations: {},
-      annotationsBeingMarqueed: false
+      isFixed: false,
+      isPaused: false,
+      keyString: undefined,
+      latestRelatedTelemetry: {},
+      layers: [],
+      lockCompass: true,
+      numericDuration: undefined,
+      pan: undefined,
+      refreshCSS: false,
+      relatedTelemetry: {},
+      resizingWindow: false,
+      sizedImageHeight: 0,
+      sizedImageWidth: 0,
+      thumbnailClick: THUMBNAIL_CLICKED,
+      timeFormat: '',
+      timeSystem: timeSystem,
+      viewHeight: 0,
+      visibleLayers: [],
+      zoomFactor: ZOOM_SCALE_DEFAULT
     };
   },
   computed: {
@@ -1421,6 +1425,9 @@ export default {
       let isVisible = this.layers[index].visible === true;
       this.layers[index].visible = !isVisible;
       this.visibleLayers = this.layers.filter((layer) => layer.visible);
+    },
+    isSelected(index) {
+      return this.focusedImageIndex === index && this.isPaused;
     }
   }
 };
