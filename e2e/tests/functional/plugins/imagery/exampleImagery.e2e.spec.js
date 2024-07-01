@@ -28,7 +28,6 @@ but only assume that example imagery is present.
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
 import { waitForAnimations } from '../../../../baseFixtures.js';
 import { expect, test } from '../../../../pluginFixtures.js';
-const backgroundImageSelector = '.c-imagery__main-image__background-image';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
@@ -63,7 +62,7 @@ test.describe('Example Imagery Object', () => {
 
   test('Can right click on image and open it in a new tab @2p', async ({ page, context }) => {
     // try to right click on image
-    const backgroundImage = await page.locator(backgroundImageSelector);
+    const backgroundImage = page.getByLabel('Focused Image Element');
     await backgroundImage.click({
       button: 'right',
       // eslint-disable-next-line playwright/no-force-option
@@ -80,7 +79,7 @@ test.describe('Example Imagery Object', () => {
     const newPage = await pagePromise;
     await newPage.waitForLoadState();
     // expect new tab url to have jpg in it
-    await expect(newPage.url()).toContain('.jpg');
+    expect(newPage.url()).toContain('.jpg');
   });
 
   // this requires CORS to be enabled in some fashion
@@ -173,7 +172,7 @@ test.describe('Example Imagery Object', () => {
     // zoom in
     await page.mouse.wheel(0, deltaYStep * 2);
     await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
-    const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
     const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
     const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
     // move to the right
@@ -195,7 +194,7 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
     await page.mouse.up();
     await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-    const afterRightPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const afterRightPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
     expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 
     // pan left
@@ -204,7 +203,7 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.move(imageCenterX, imageCenterY, 10);
     await page.mouse.up();
     await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-    const afterLeftPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const afterLeftPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
     expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
 
     // pan up
@@ -214,7 +213,7 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
     await page.mouse.up();
     await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-    const afterUpPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const afterUpPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
     expect(afterUpPanBoundingBox.y).toBeGreaterThan(afterLeftPanBoundingBox.y);
 
     // pan down
@@ -223,7 +222,7 @@ test.describe('Example Imagery Object', () => {
     await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
     await page.mouse.up();
     await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-    const afterDownPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+    const afterDownPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
     expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
   });
 
@@ -282,7 +281,7 @@ test.describe('Example Imagery Object', () => {
     await expect(page.getByText('Drilling')).toBeVisible();
   });
 
-  test('Can use + - buttons to zoom on the image @unstable', async ({ page }) => {
+  test('Can use + - buttons to zoom on the image', async ({ page }) => {
     await buttonZoomOnImageAndAssert(page);
   });
 
@@ -413,7 +412,7 @@ test.describe('Example Imagery in Display Layout', () => {
     await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
   });
 
-  test('Imagery View operations @unstable', async ({ page }) => {
+  test('Imagery View operations', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5265'
@@ -525,11 +524,11 @@ test.describe('Example Imagery in Flexible layout', () => {
 
   test('Can double-click on the image to view large image', async ({ page }) => {
     // Double-click on the image to open large view
-    const imageElement = await page.getByRole('button', { name: 'Image Wrapper' });
+    const imageElement = page.getByRole('button', { name: 'Image Wrapper' });
     await imageElement.dblclick();
 
     // Check if the large view is visible
-    await page.getByRole('button', { name: 'Background Image', state: 'visible' });
+    page.getByRole('button', { name: 'Focused Image Element', state: 'visible' });
 
     // Close the large view
     await page.getByRole('button', { name: 'Close' }).click();
@@ -566,7 +565,7 @@ test.describe('Example Imagery in Flexible layout', () => {
 
     await page.goto(flexibleLayout.url);
   });
-  test('Imagery View operations @unstable', async ({ page, browserName }) => {
+  test('Imagery View operations', async ({ page, browserName }) => {
     test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
     test.info().annotations.push({
       type: 'issue',
@@ -610,7 +609,7 @@ test.describe('Example Imagery in Tabs View', () => {
 
     await page.goto(tabsView.url);
   });
-  test('Imagery View operations @unstable', async ({ page }) => {
+  test('Imagery View operations', async ({ page }) => {
     await performImageryViewOperationsAndAssert(page);
   });
 });
@@ -681,14 +680,12 @@ async function performImageryViewOperationsAndAssert(page) {
   const mainImage = page.locator('.c-imagery__main-image__image');
   await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
   await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
-
   // Click previous image button
-  const previousImageButton = page.locator('.c-nav--prev');
-  await previousImageButton.click();
-
-  // Verify previous image
-  const selectedImage = page.locator('.selected');
-  await expect(selectedImage).toBeVisible();
+  const previousImageButton = page.getByLabel('Previous image');
+  if (!(await previousImageButton.isVisible())) {
+    await page.getByLabel('Image Wrapper').hover({ trial: true });
+  }
+  await previousImageButton.click({ force: true });
 
   // Use the zoom buttons to zoom in and out
   await buttonZoomOnImageAndAssert(page);
@@ -703,18 +700,29 @@ async function performImageryViewOperationsAndAssert(page) {
   await mouseZoomOnImageAndAssert(page, -2);
 
   // Click next image button
-  const nextImageButton = page.locator('.c-nav--next');
-  await nextImageButton.click();
+  const nextImageButton = page.getByLabel('Next image');
+  if (!(await nextImageButton.isVisible())) {
+    await page.getByLabel('Image Wrapper').hover({ trial: true });
+  }
+  await nextImageButton.click({ force: true });
 
   // set realtime mode
   await setRealTimeMode(page);
+  // Verify previous image
+  if (!(await previousImageButton.isVisible())) {
+    await page.getByLabel('Image Wrapper').hover({ trial: true });
+  }
+  await previousImageButton.click({ force: true });
+  await page.locator('.active').click();
+  const selectedImage = page.locator('.selected');
+  await expect(selectedImage).toBeVisible();
 
   // Zoom in on next image
   await mouseZoomOnImageAndAssert(page, 2);
 
   // Clicking on the left arrow should pause the imagery and go to previous image
   await previousImageButton.click();
-  await expect(page.locator('.c-button.pause-play')).toHaveClass(/is-paused/);
+  await expect(page.getByLabel('Pause automatic scrolling of image thumbnails')).toBeVisible();
   await expect(selectedImage).toBeVisible();
 
   // The imagery view should be updated when new images come in
@@ -852,7 +860,7 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
 async function panZoomAndAssertImageProperties(page) {
   const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
   expect(expectedAltText).toEqual(imageryHintsText);
-  const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
   const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
 
@@ -862,7 +870,7 @@ async function panZoomAndAssertImageProperties(page) {
   await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
   await page.mouse.up();
   await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-  const afterRightPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const afterRightPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
 
   // Pan left
@@ -871,7 +879,7 @@ async function panZoomAndAssertImageProperties(page) {
   await page.mouse.move(imageCenterX, imageCenterY, 10);
   await page.mouse.up();
   await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-  const afterLeftPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const afterLeftPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
 
   // Pan up
@@ -881,7 +889,7 @@ async function panZoomAndAssertImageProperties(page) {
   await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
   await page.mouse.up();
   await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-  const afterUpPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const afterUpPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   expect(afterUpPanBoundingBox.y).toBeGreaterThanOrEqual(afterLeftPanBoundingBox.y);
 
   // Pan down
@@ -890,7 +898,7 @@ async function panZoomAndAssertImageProperties(page) {
   await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
   await page.mouse.up();
   await Promise.all(panHotkey.map((x) => page.keyboard.up(x)));
-  const afterDownPanBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const afterDownPanBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   expect(afterDownPanBoundingBox.y).toBeLessThanOrEqual(afterUpPanBoundingBox.y);
 }
 
@@ -901,11 +909,12 @@ async function panZoomAndAssertImageProperties(page) {
  * @param {number} [factor = 2] The zoom factor. Positive for zoom in, negative for zoom out.
  */
 async function mouseZoomOnImageAndAssert(page, factor = 2) {
+  await page.getByLabel('Focused Image Element').hover({ trial: true });
   // Zoom in
-  const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+  const originalImageDimensions = await page.getByLabel('Focused Image Element').boundingBox();
   const deltaYStep = 100; // equivalent to 1x zoom
   await page.mouse.wheel(0, deltaYStep * factor);
-  const zoomedBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
   const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
 
@@ -913,8 +922,8 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
   await page.mouse.move(imageCenterX, imageCenterY);
 
   // Wait for zoom animation to finish
-  await page.locator('.c-imagery__main-image__bg').hover({ trial: true });
-  const imageMouseZoomed = await page.locator(backgroundImageSelector).boundingBox();
+  await page.getByLabel('Focused Image Element').hover({ trial: true });
+  const imageMouseZoomed = await page.getByLabel('Focused Image Element').boundingBox();
 
   if (factor > 0) {
     expect(imageMouseZoomed.height).toBeGreaterThan(originalImageDimensions.height);
@@ -931,30 +940,67 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
  * @param {import('@playwright/test').Page} page
  */
 async function buttonZoomOnImageAndAssert(page) {
+  // Lock the zoom and pan so it doesn't reset if a new image comes in
+  await page.getByLabel('Focused Image Element').hover({ trial: true });
+  const lockButton = page.getByRole('button', {
+    name: 'Lock current zoom and pan across all images'
+  });
+  if (!(await lockButton.isVisible())) {
+    await page.getByLabel('Focused Image Element').hover({ trial: true });
+  }
+  await lockButton.click();
+
+  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+    'style.transform',
+    'scale(1) translate(0px, 0px)'
+  );
   // Get initial image dimensions
-  const initialBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const initialBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
 
   // Zoom in twice via button
   await zoomIntoImageryByButton(page);
+  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+    'style.transform',
+    'scale(2) translate(0px, 0px)'
+  );
   await zoomIntoImageryByButton(page);
+  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+    'style.transform',
+    'scale(3) translate(0px, 0px)'
+  );
 
   // Get and assert zoomed in image dimensions
-  const zoomedInBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const zoomedInBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
   expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
   // Zoom out once via button
   await zoomOutOfImageryByButton(page);
+  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+    'style.transform',
+    'scale(2) translate(0px, 0px)'
+  );
 
   // Get and assert zoomed out image dimensions
-  const zoomedOutBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
+  const zoomedOutBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
   expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
 
   // Zoom out again via button, assert against the initial image dimensions
   await zoomOutOfImageryByButton(page);
-  const finalBoundingBox = await page.locator(backgroundImageSelector).boundingBox();
-  expect(finalBoundingBox).toEqual(initialBoundingBox);
+  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+    'style.transform',
+    'scale(1) translate(0px, 0px)'
+  );
+  await expect
+    .poll(
+      async () => {
+        const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+        return finalBoundingBox;
+      },
+      { timeout: 10000 }
+    )
+    .toEqual(initialBoundingBox);
 }
 
 /**
@@ -980,10 +1026,8 @@ async function assertBackgroundImageContrast(page, expected) {
  */
 async function zoomIntoImageryByButton(page) {
   // FIXME: There should only be one set of imagery buttons, but there are two?
-  const zoomInBtn = page
-    .locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-in")
-    .nth(0);
-  const backgroundImage = page.locator(backgroundImageSelector);
+  const zoomInBtn = page.getByRole('button', { name: 'Zoom in' });
+  const backgroundImage = page.getByLabel('Focused Image Element');
   if (!(await zoomInBtn.isVisible())) {
     await backgroundImage.hover({ trial: true });
   }
@@ -999,10 +1043,8 @@ async function zoomIntoImageryByButton(page) {
  */
 async function zoomOutOfImageryByButton(page) {
   // FIXME: There should only be one set of imagery buttons, but there are two?
-  const zoomOutBtn = page
-    .locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-out")
-    .nth(0);
-  const backgroundImage = page.locator(backgroundImageSelector);
+  const zoomOutBtn = page.getByRole('button', { name: 'Zoom out' });
+  const backgroundImage = page.getByLabel('Focused Image Element');
   if (!(await zoomOutBtn.isVisible())) {
     await backgroundImage.hover({ trial: true });
   }
@@ -1017,11 +1059,8 @@ async function zoomOutOfImageryByButton(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function resetImageryPanAndZoom(page) {
-  // FIXME: There should only be one set of imagery buttons, but there are two?
-  const panZoomResetBtn = page
-    .locator("[role='toolbar'][aria-label='Image controls'] .t-btn-zoom-reset")
-    .nth(0);
-  const backgroundImage = page.locator(backgroundImageSelector);
+  const panZoomResetBtn = page.getByRole('button', { name: 'Remove zoom and pan' });
+  const backgroundImage = page.getByLabel('Focused Image Element');
   if (!(await panZoomResetBtn.isVisible())) {
     await backgroundImage.hover({ trial: true });
   }
