@@ -696,6 +696,10 @@ async function performImageryViewOperationsAndAssert(page) {
   if (!(await previousImageButton.isVisible())) {
     await page.getByLabel('Image Wrapper').hover({ trial: true });
   }
+
+  // Need to force click as the annotation canvas lies on top of the image
+  // and fails the accessibility checks
+  // eslint-disable-next-line playwright/no-force-option
   await previousImageButton.click({ force: true });
 
   // Use the zoom buttons to zoom in and out
@@ -715,6 +719,7 @@ async function performImageryViewOperationsAndAssert(page) {
   if (!(await nextImageButton.isVisible())) {
     await page.getByLabel('Image Wrapper').hover({ trial: true });
   }
+  // eslint-disable-next-line playwright/no-force-option
   await nextImageButton.click({ force: true });
 
   // set realtime mode
@@ -723,6 +728,7 @@ async function performImageryViewOperationsAndAssert(page) {
   if (!(await previousImageButton.isVisible())) {
     await page.getByLabel('Image Wrapper').hover({ trial: true });
   }
+  // eslint-disable-next-line playwright/no-force-option
   await previousImageButton.click({ force: true });
   await page.locator('.active').click();
   const selectedImage = page.locator('.selected');
