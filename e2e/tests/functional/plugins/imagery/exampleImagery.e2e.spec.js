@@ -104,16 +104,29 @@ test.describe('Example Imagery Object', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6821'
     });
+
+    // FIXME: This is a workaround to address flakiness of ITC test-- button event handlers not
+    // registering in time due to the time conductors' over-use of event emitters.
+    // Adds delay to ensure that the button event handlers have time to register.
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(1000);
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
-    await page.getByRole('switch', { name: 'Enable Independent Time Conductor' }).click();
+    await page.getByLabel('Enable Independent Time Conductor').click();
 
-    // Adding in delay to address flakiness of ITC test-- button event handlers not registering in time
     await expect(page.locator('#independentTCToggle')).toBeChecked();
     await expect(page.locator('.c-compact-tc').first()).toBeVisible();
-
+    await expect(
+      page.getByRole('button', { name: 'Independent Time Conductor Settings' })
+    ).toBeEnabled();
     await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
+    await expect(
+      page.getByText('Fixed Timespan Local Clock Start Date Time End Date Time')
+    ).toBeVisible();
 
+    // FIXME: See above comment.
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(1000);
     await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
     await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
@@ -121,10 +134,8 @@ test.describe('Example Imagery Object', () => {
     await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
     await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
-    await page.keyboard.press('Tab');
-    await page.keyboard.press('Enter');
-
-    // check image date
+    await page.getByLabel('Submit time bounds').click();
+    await waitForAnimations(page.locator('.c-imagery__thumbs-wrapper')); // check image date
     await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
 
     // flip it off

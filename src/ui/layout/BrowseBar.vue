@@ -53,7 +53,7 @@
         v-if="supportsIndependentTime"
         class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
       >
-        <independent-time-conductor
+        <IndependentTimeConductor
           :domain-object="domainObject"
           :object-path="openmct.router.path"
         />
