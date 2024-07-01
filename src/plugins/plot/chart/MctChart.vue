@@ -111,7 +111,7 @@ const HANDLED_ATTRIBUTES = {
 
 export default {
   components: { LimitLine, LimitLabel },
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   props: {
     rectangles: {
       type: Array,

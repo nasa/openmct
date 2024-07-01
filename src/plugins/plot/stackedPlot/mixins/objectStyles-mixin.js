@@ -24,7 +24,7 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
 export default {
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   data() {
     return {
       objectStyle: undefined
