@@ -19,21 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
 
-import Licenses from './LicensesComponent.vue';
-
-export default function () {
-  return function install(openmct) {
-    openmct.router.route(/^\/licenses$/, () => {
-      const { vNode, destroy } = mount(Licenses, { app: openmct.app });
-
-      openmct.overlays.overlay({
-        element: vNode.el,
-        size: 'fullscreen',
-        dismissible: false,
-        onDestroy: destroy
-      });
-    });
-  };
-}
+// This should be used to install the Darkmatter theme for Open MCT.
+// e.g.
+// await page.addInitScript({ path: path.join(__dirname, 'useDarkmatterTheme.js') });
+document.addEventListener('DOMContentLoaded', () => {
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.DarkmatterTheme());
+});

@@ -22,7 +22,7 @@
 
 /*
  * This test suite template is to be used when creating new test suites. It will be kept up to date with the latest improvements
- * made by the Open MCT team. It will also follow our best pratices as those evolve. Please use this structure as a _reference_ and clear
+ * made by the Open MCT team. It will also follow our best practices as those evolve. Please use this structure as a _reference_ and clear
  * or update any references when creating a new test suite!
  *
  * To illustrate current best practices, we've included a mocked up test suite for Renaming a Timer domain object.
@@ -81,7 +81,7 @@ test.describe('Renaming Timer Object', () => {
   test('An existing Timer object can be renamed via the 3dot actions menu', async ({ page }) => {
     const newObjectName = 'Renamed Timer';
 
-    // We've created an example of a shared function which pases the page and newObjectName values
+    // We've created an example of a shared function which passes the page and newObjectName values
     await renameTimerFrom3DotMenu(page, timer.url, newObjectName);
 
     // Assert that the name has changed in the browser bar to the value we assigned above

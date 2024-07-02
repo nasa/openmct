@@ -76,7 +76,7 @@ class OverlayAPI {
    */
   dismissLastOverlay() {
     let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
-    if (lastOverlay && lastOverlay.dismissable) {
+    if (lastOverlay && lastOverlay.dismissible) {
       lastOverlay.notifyAndDismiss();
     }
   }
@@ -89,7 +89,7 @@ class OverlayAPI {
    * @property {'large'|'small'|'fit'} size The preferred size of the overlay.
    * @property {Array<{label: string, callback: Function}>} [buttons] Optional array of button objects, each with 'label' and 'callback' properties.
    * @property {Function} onDestroy Callback to be called when the overlay is destroyed.
-   * @property {boolean} [dismissable=true] Whether the overlay can be dismissed by pressing 'esc' or clicking outside of it. Defaults to true.
+   * @property {boolean} [dismissible=true] Whether the overlay can be dismissed by pressing 'esc' or clicking outside of it. Defaults to true.
    *
    * @param {OverlayOptions} options - The configuration options for the overlay.
    * @returns {Overlay} An instance of the Overlay class.

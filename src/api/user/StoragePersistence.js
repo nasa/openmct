@@ -19,21 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import mount from 'utils/mount';
 
-import Licenses from './LicensesComponent.vue';
+import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
 
-export default function () {
-  return function install(openmct) {
-    openmct.router.route(/^\/licenses$/, () => {
-      const { vNode, destroy } = mount(Licenses, { app: openmct.app });
-
-      openmct.overlays.overlay({
-        element: vNode.el,
-        size: 'fullscreen',
-        dismissible: false,
-        onDestroy: destroy
-      });
-    });
-  };
+class StoragePersistence {
+  getActiveRole() {
+    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+  }
+  setActiveRole(role) {
+    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
+  }
+  clearActiveRole() {
+    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+  }
 }
+
+export default new StoragePersistence();

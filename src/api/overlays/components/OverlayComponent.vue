@@ -24,7 +24,7 @@
     <div class="c-overlay__blocker" @click="destroy"></div>
     <div class="c-overlay__outer">
       <button
-        v-if="dismissable"
+        v-if="dismissible"
         aria-label="Close"
         class="c-click-icon c-overlay__close-button icon-x"
         @click.stop="destroy"
@@ -56,7 +56,7 @@
 
 <script>
 export default {
-  inject: ['dismiss', 'element', 'buttons', 'dismissable'],
+  inject: ['dismiss', 'element', 'buttons', 'dismissible'],
   emits: ['destroy'],
   data() {
     return {
@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     destroy() {
-      if (this.dismissable) {
+      if (this.dismissible) {
         this.dismiss();
       }
     },

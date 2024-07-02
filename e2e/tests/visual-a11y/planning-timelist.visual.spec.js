@@ -20,18 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
+import percySnapshot from '@percy/playwright';
+import fs from 'fs';
 
-class StoragePersistance {
-  getActiveRole() {
-    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
-  setActiveRole(role) {
-    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
-  }
-  clearActiveRole() {
-    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
-}
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import {
+  createTimelistWithPlanAndSetActivityInProgress,
+  getFirstActivity
+} from '../../helper/planningUtils.js';
 
-export default new StoragePersistance();
+const examplePlanSmall1 = JSON.parse(
+  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url))
+);
+
+test.describe('Visual - Timelist progress bar @clock @a11y', () => {
+  const firstActivity = getFirstActivity(examplePlanSmall1);
+
+  test.use({
+    clockOptions: {
+      now: firstActivity.end + 10000,
+      shouldAdvanceTime: true
+    }
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
+    await page.getByLabel('Click to collapse items').click();
+  });
+
+  test('progress pie is full', async ({ page, theme }) => {
+    // Progress pie is completely full and doesn't update if now is greater than the end time
+    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
+  });
+});
+
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});

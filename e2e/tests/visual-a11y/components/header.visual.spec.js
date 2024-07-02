@@ -27,7 +27,7 @@ Tests the branding associated with the default deployment. At least the about mo
 import percySnapshot from '@percy/playwright';
 import { fileURLToPath } from 'url';
 
-import { expect, test } from '../../../avpFixtures.js';
+import { expect, scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../../constants.js';
 
 //Declare the component scope of the visual test for Percy
@@ -69,14 +69,26 @@ test.describe('Visual - Header @a11y', () => {
   });
 
   test('show snapshot button', async ({ page, theme }) => {
+    test.slow(true, 'We have to wait for the snapshot indicator to stop flashing');
     await page.getByLabel('Open the Notebook Snapshot Menu').click();
 
     await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
 
+    await expect(page.getByLabel('Show Snapshots')).toBeVisible();
+
+    /**
+     * We have to wait for the snapshot indicator to stop flashing. This happens
+     * for a really long time (15 seconds 😳).
+     * TODO: Either reduce the length of the animation, convert this to a
+     * Playwright snapshot test (and disable animations), or augment the `waitForAnimations`
+     * fixture to adjust the timeout.
+     */
+    await expect(page.locator('.has-new-snapshot')).not.toBeAttached({
+      timeout: 30 * 1000
+    });
     await percySnapshot(page, `Notebook Snapshot Show button (theme: '${theme}')`, {
       scope: header
     });
-    await expect(page.getByLabel('Show Snapshots')).toBeVisible();
   });
 });
 
@@ -99,7 +111,6 @@ test.describe('Mission Header @a11y', () => {
     });
   });
 });
-// Skipping for https://github.com/nasa/openmct/issues/7421
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});
