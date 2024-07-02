@@ -19,27 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import DEFAULT_IMAGE_SAMPLES from '@/../example/imagery/exampleImages.js';
+import Layer16x9 from '@/plugins/imagery/layers/example-imagery-layer-16x9.png';
+import LayerSafe from '@/plugins/imagery/layers/example-imagery-layer-safe.png';
+import LayerScale from '@/plugins/imagery/layers/example-imagery-layer-scale.png';
 
-const DEFAULT_IMAGE_SAMPLES = [
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18732.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18733.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18734.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18735.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18736.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18737.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18738.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18739.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18740.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18741.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18742.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18743.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18744.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18745.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18746.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18747.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18748.jpg'
-];
 const DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 20000;
 const MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 5000;
 
@@ -94,15 +78,15 @@ export default function () {
               },
               layers: [
                 {
-                  source: 'dist/imagery/example-imagery-layer-16x9.png',
+                  source: Layer16x9,
                   name: '16:9'
                 },
                 {
-                  source: 'dist/imagery/example-imagery-layer-safe.png',
+                  source: LayerSafe,
                   name: 'Safe'
                 },
                 {
-                  source: 'dist/imagery/example-imagery-layer-scale.png',
+                  source: LayerScale,
                   name: 'Scale'
                 }
               ]
@@ -168,16 +152,13 @@ function getCompassValues(min, max) {
 
 function getImageSamples(configuration) {
   let imageSamples = DEFAULT_IMAGE_SAMPLES;
+  const { imageLocation } = configuration;
 
-  if (configuration.imageLocation && configuration.imageLocation.length) {
-    imageSamples = getImageUrlListFromConfig(configuration);
+  if (imageLocation && imageLocation.length) {
+    imageSamples = imageLocation;
   }
 
   return imageSamples;
-}
-
-function getImageUrlListFromConfig(configuration) {
-  return configuration.imageLocation.split(',');
 }
 
 function getImageLoadDelay(domainObject) {

@@ -21,7 +21,7 @@
 -->
 <template>
   <!-- eslint-disable vue/no-v-html -->
-  <div class="c-about c-about--splash">
+  <div class="c-about c-about--splash" :style="style">
     <div class="c-about__image c-splash-image" role="img" alt="Open MCT Splash Logo"></div>
     <div class="c-about__text s-text">
       <div
@@ -71,6 +71,10 @@
   </div>
 </template>
 <script>
+import SplashImage from '../../ui/layout/assets/images/bg-splash.jpg';
+import NasaLogo from '../../ui/layout/assets/images/logo-nasa.svg';
+import OpenMCTShadowLogo from '../../ui/layout/assets/images/logo-openmct-shdw.svg';
+
 export default {
   inject: ['openmct'],
   data() {
@@ -78,6 +82,15 @@ export default {
       branding: JSON.parse(JSON.stringify(this.openmct.branding())),
       buildInfo: JSON.parse(JSON.stringify(this.openmct.buildInfo))
     };
+  },
+  computed: {
+    style() {
+      return {
+        '--splash-image-url': `url(${SplashImage})`,
+        '--nasa-logo': `url(${NasaLogo})`,
+        '--openmct-shadow-logo': `url(${OpenMCTShadowLogo})`
+      };
+    }
   },
   methods: {
     showLicenses() {

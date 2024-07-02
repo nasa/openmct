@@ -158,21 +158,21 @@ const config = {
         test: /\.(jpg|jpeg|png|svg)$/,
         type: 'asset/resource',
         generator: {
-          filename: 'images/[name][ext]'
+          filename: 'assets/images/[hash][ext][query]'
         }
       },
       {
         test: /\.ico$/,
         type: 'asset/resource',
         generator: {
-          filename: 'icons/[name][ext]'
+          filename: 'assets/icons/[name][ext]'
         }
       },
       {
         test: /\.(woff|woff2?|eot|ttf)$/,
         type: 'asset/resource',
         generator: {
-          filename: 'fonts/[name][ext]'
+          filename: 'assets/fonts/[name][ext]'
         }
       }
     ]
