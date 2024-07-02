@@ -21,6 +21,10 @@
     "@axe-core/playwright": "4.8.5",
     "sinon": "17.0.0"
   },
-  "author": "NASA Ames Research Center",
+  "homepage": "https://github.com/nasa/openmct/tree/master/e2e",
+  "author": {
+    "name": "National Aeronautics and Space Administration",
+    "url": "https://www.nasa.gov"
+  },
   "license": "Apache-2.0"
 }
