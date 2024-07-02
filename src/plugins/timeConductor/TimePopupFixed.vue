@@ -19,7 +19,7 @@
           aria-label="Start date"
           @input="validateAllBounds('startDate')"
         />
-        <date-picker
+        <DatePicker
           v-if="isUTCBased"
           class="c-ctrl-wrapper--menus-right"
           :default-date-time="formattedBounds.start"
@@ -56,7 +56,7 @@
           aria-label="End date"
           @input="validateAllBounds('endDate')"
         />
-        <date-picker
+        <DatePicker
           v-if="isUTCBased"
           class="c-ctrl-wrapper--menus-left"
           :default-date-time="formattedBounds.end"

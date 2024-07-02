@@ -57,7 +57,7 @@
         <span class="c-condition__summary">
           <template v-if="!condition.isDefault && !canEvaluateCriteria"> Define criteria </template>
           <span v-else>
-            <condition-description :show-label="false" :condition="condition" />
+            <ConditionDescription :show-label="false" :condition="condition" />
           </span>
         </span>
 
@@ -184,7 +184,7 @@
         <span class="c-condition__output"> Output: {{ condition.configuration.output }} </span>
       </div>
       <div class="c-condition__summary">
-        <condition-description :show-label="false" :condition="condition" />
+        <ConditionDescription :show-label="false" :condition="condition" />
       </div>
     </div>
   </div>

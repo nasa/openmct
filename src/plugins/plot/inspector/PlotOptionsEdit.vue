@@ -24,10 +24,10 @@
     <ul v-if="!isStackedPlotObject" class="c-tree" role="tree">
       <h2 class="--first" title="Display properties for this Plot Series object">Plot Series</h2>
       <li v-for="series in plotSeries" :key="series.keyString">
-        <series-form :series="series" @series-updated="updateSeriesConfigForObject" />
+        <SeriesForm :series="series" @series-updated="updateSeriesConfigForObject" />
       </li>
     </ul>
-    <y-axis-form
+    <YAxisForm
       v-for="(yAxisId, index) in yAxesIds"
       :id="yAxisId.id"
       :key="`yAxis-${index}`"
@@ -44,7 +44,7 @@
       role="tree"
     >
       <h2 class="--first" title="Legend options">Legend</h2>
-      <legend-form role="treeitem" tabindex="0" class="grid-properties" :legend="config.legend" />
+      <LegendForm role="treeitem" tabindex="0" class="grid-properties" :legend="config.legend" />
     </ul>
   </div>
 </template>

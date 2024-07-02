@@ -25,7 +25,7 @@
     <div v-if="properties.length" class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
       <ul v-for="property in properties" :key="property.id" class="c-inspect-properties__section">
-        <activity-property :label="property.label" :value="property.value" />
+        <ActivityProperty :label="property.label" :value="property.value" />
       </ul>
     </div>
   </div>

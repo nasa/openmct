@@ -26,24 +26,24 @@
     role="toolbar"
     aria-label="Image controls"
   >
-    <imagery-view-menu-switcher
+    <ImageryViewMenuSwitcher
       :icon-class="'icon-brightness'"
       :aria-label="'Brightness and contrast'"
       :title="'Brightness and contrast'"
     >
-      <filter-settings @filter-changed="updateFilterValues" />
-    </imagery-view-menu-switcher>
+      <FilterSettings @filter-changed="updateFilterValues" />
+    </ImageryViewMenuSwitcher>
 
-    <imagery-view-menu-switcher
+    <ImageryViewMenuSwitcher
       v-if="layers.length"
       icon-class="icon-layers"
       aria-label="Layers"
       title="Layers"
     >
-      <layer-settings :layers="layers" @toggle-layer-visibility="toggleLayerVisibility" />
-    </imagery-view-menu-switcher>
+      <LayerSettings :layers="layers" @toggle-layer-visibility="toggleLayerVisibility" />
+    </ImageryViewMenuSwitcher>
 
-    <zoom-settings
+    <ZoomSettings
       class="--hide-if-less-than-220"
       :pan-zoom-locked="panZoomLocked"
       :zoom-factor="zoomFactor"
@@ -53,13 +53,13 @@
       @handle-reset-image="handleResetImage"
     />
 
-    <imagery-view-menu-switcher
+    <ImageryViewMenuSwitcher
       class="--show-if-less-than-220"
       :icon-class="'icon-magnify'"
       :aria-label="'Zoom settings'"
       :title="'Zoom settings'"
     >
-      <zoom-settings
+      <ZoomSettings
         :pan-zoom-locked="panZoomLocked"
         :class="'c-control-menu c-menu--has-close-btn'"
         :zoom-factor="zoomFactor"
@@ -69,7 +69,7 @@
         @toggle-zoom-lock="toggleZoomLock"
         @handle-reset-image="handleResetImage"
       />
-    </imagery-view-menu-switcher>
+    </ImageryViewMenuSwitcher>
   </div>
 </template>
 

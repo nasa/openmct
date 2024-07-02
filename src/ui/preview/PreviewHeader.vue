@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="l-browse-bar__end">
-      <view-switcher :v-if="!hideViewSwitcher" :views="views" :current-view="currentView" />
+      <ViewSwitcher :v-if="!hideViewSwitcher" :views="views" :current-view="currentView" />
       <NotebookMenuSwitcher
         :domain-object="domainObject"
         :object-path="objectPath"
