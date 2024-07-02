@@ -44,14 +44,14 @@
         :button-css-class="'c-icon-button'"
       />
     </div>
-    <conductor-inputs-fixed
+    <ConductorInputsFixed
       v-if="isFixed"
       :input-bounds="bounds"
       :object-path="objectPath"
       @bounds-updated="saveFixedBounds"
       @dismiss-inputs-fixed="dismiss"
     />
-    <conductor-inputs-realtime
+    <ConductorInputsRealtime
       v-else
       :input-bounds="bounds"
       :object-path="objectPath"

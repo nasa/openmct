@@ -32,13 +32,13 @@
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
     <div class="c-compact-tc__setting-value u-fade-truncate">
-      <conductor-mode :mode="mode" :read-only="true" />
-      <conductor-clock :read-only="true" />
-      <conductor-time-system :read-only="true" />
+      <ConductorMode :mode="mode" :read-only="true" />
+      <ConductorClock :read-only="true" />
+      <ConductorTimeSystem :read-only="true" />
     </div>
-    <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
-    <conductor-inputs-realtime v-else :input-bounds="viewBounds" :read-only="true" />
-    <conductor-axis
+    <ConductorInputsFixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
+    <ConductorInputsRealtime v-else :input-bounds="viewBounds" :read-only="true" />
+    <ConductorAxis
       v-if="isFixed"
       class="c-conductor__ticks"
       :view-bounds="viewBounds"
@@ -55,7 +55,7 @@
       aria-label="Time Conductor Settings"
     ></div>
 
-    <conductor-pop-up
+    <ConductorPopUp
       v-if="showConductorPopup"
       ref="conductorPopup"
       :bottom="false"

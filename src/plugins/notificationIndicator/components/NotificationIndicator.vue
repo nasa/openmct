@@ -38,7 +38,7 @@
     </span>
     <span class="c-indicator__count">{{ notifications.length }}</span>
 
-    <notifications-list
+    <NotificationsList
       v-if="showNotificationsOverlay"
       :notifications="notifications"
       @close="toggleNotificationsList"

@@ -112,11 +112,11 @@
           :class="{ 'is-current': conditionStyle.conditionId === selectedConditionId }"
           @click="applySelectedConditionStyle(conditionStyle.conditionId)"
         >
-          <condition-error
+          <ConditionError
             :show-label="true"
             :condition="getCondition(conditionStyle.conditionId)"
           />
-          <condition-description
+          <ConditionDescription
             :show-label="true"
             :condition="getCondition(conditionStyle.conditionId)"
           />

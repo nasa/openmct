@@ -37,18 +37,18 @@
       aria-label="Plot Canvas"
     ></canvas>
     <div ref="limitArea" class="js-limit-area" aria-hidden="true">
-      <limit-label
+      <LimitLabel
         v-for="(limitLabel, index) in visibleLimitLabels"
         :key="`limitLabel-${limitLabel.limit.seriesKey}-${index}`"
         :point="limitLabel.point"
         :limit="limitLabel.limit"
-      ></limit-label>
-      <limit-line
+      ></LimitLabel>
+      <LimitLine
         v-for="(limitLine, index) in visibleLimitLines"
         :key="`limitLine-${limitLine.limit.seriesKey}${index}`"
         :point="limitLine.point"
         :limit="limitLine.limit"
-      ></limit-line>
+      ></LimitLine>
     </div>
   </div>
 </template>

@@ -34,7 +34,7 @@
         id="inspector-elements-tree"
         class="c-tree c-elements-pool__tree"
       >
-        <element-item
+        <ElementItem
           v-for="(element, index) in elements"
           :key="element.identifier.key"
           :index="index"

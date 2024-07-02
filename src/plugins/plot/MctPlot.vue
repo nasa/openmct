@@ -29,7 +29,7 @@
     <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
       <div v-if="seriesModels.length" class="u-contents">
-        <y-axis
+        <YAxis
           v-for="(yAxis, index) in yAxesIds"
           :id="yAxis.id"
           :key="`yAxis-${yAxis.id}-${index}`"
@@ -74,7 +74,7 @@
             class="gl-plot-chart-wrapper"
             :class="[{ 'alt-pressed': altPressed }]"
           >
-            <mct-chart
+            <MctChart
               :rectangles="rectangles"
               :highlights="highlights"
               :show-limit-line-labels="limitLineLabels"
@@ -165,10 +165,7 @@
             class="c-cursor-guide--h js-cursor-guide--h"
           ></div>
         </div>
-        <x-axis
-          v-if="seriesModels.length > 0 && !options.compact"
-          :series-model="seriesModels[0]"
-        />
+        <XAxis v-if="seriesModels.length > 0 && !options.compact" :series-model="seriesModels[0]" />
       </div>
     </div>
   </div>

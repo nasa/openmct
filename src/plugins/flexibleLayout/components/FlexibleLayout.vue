@@ -34,7 +34,7 @@
       :aria-label="`Flexible Layout ${rowsLayout ? 'Rows' : 'Columns'}`"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
-        <drop-hint
+        <DropHint
           v-if="index === 0 && containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="-1"
@@ -42,7 +42,7 @@
           @object-drop-to="moveContainer"
         />
 
-        <container-component
+        <ContainerComponent
           :index="index"
           :container="container"
           :rows-layout="rowsLayout"
@@ -54,7 +54,7 @@
           @persist="persist"
         />
 
-        <resize-handle
+        <ResizeHandle
           v-if="index !== containers.length - 1"
           :index="index"
           :drag-orientation="rowsLayout ? 'vertical' : 'horizontal'"
@@ -64,7 +64,7 @@
           @end-move="endContainerResizing"
         />
 
-        <drop-hint
+        <DropHint
           v-if="containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="index"

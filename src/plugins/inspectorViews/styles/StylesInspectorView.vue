@@ -21,16 +21,16 @@
 -->
 
 <template>
-  <multipane type="vertical">
-    <pane class="c-inspector__styles">
+  <Multipane type="vertical">
+    <Pane class="c-inspector__styles">
       <div class="u-contents">
         <StylesView />
       </div>
-    </pane>
-    <pane v-if="isEditing" class="c-inspector__saved-styles" handle="before" label="Saved Styles">
+    </Pane>
+    <Pane v-if="isEditing" class="c-inspector__saved-styles" handle="before" label="Saved Styles">
       <SavedStylesInspectorView />
-    </pane>
-  </multipane>
+    </Pane>
+  </Multipane>
 </template>
 
 <script>

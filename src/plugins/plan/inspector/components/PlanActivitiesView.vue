@@ -20,19 +20,19 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <plan-activity-time-view
+  <PlanActivityTimeView
     v-for="activity in activities"
     :key="activity.key"
     :activity="activity"
     :heading="heading"
   />
-  <plan-activity-properties-view
+  <PlanActivityPropertiesView
     v-for="activity in activities"
     :key="activity.key"
     heading="Properties"
     :activity="activity"
   />
-  <plan-activity-status-view
+  <PlanActivityStatusView
     v-if="canPersistState"
     :key="activities[0].key"
     :activity="activities[0]"

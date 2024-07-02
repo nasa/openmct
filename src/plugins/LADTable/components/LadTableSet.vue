@@ -39,7 +39,7 @@
               {{ ladTable.domainObject.name }}
             </td>
           </tr>
-          <lad-row
+          <LadRow
             v-for="ladRow in ladTelemetryObjects[ladTable.key]"
             :key="combineKeys(ladTable.key, ladRow.key)"
             :domain-object="ladRow.domainObject"

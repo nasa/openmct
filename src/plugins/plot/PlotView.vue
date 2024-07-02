@@ -33,12 +33,12 @@
         's-status-timeconductor-unsynced': status === 'timeconductor-unsynced'
       }"
     >
-      <progress-bar
+      <ProgressBar
         v-show="!!loading"
         class="c-telemetry-table__progress-bar"
         :model="{ progressPerc: null }"
       />
-      <mct-plot
+      <MctPlot
         ref="mctPlot"
         :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
         :init-grid-lines="gridLinesProp"
@@ -56,7 +56,7 @@
         @cursor-guide="onCursorGuideChange"
         @grid-lines="onGridLinesChange"
       >
-        <plot-legend
+        <PlotLegend
           v-if="configReady && hideLegend === false"
           :cursor-locked="lockHighlightPoint"
           :highlights="highlights"
@@ -64,7 +64,7 @@
           @expanded="updateExpanded"
           @position="updatePosition"
         />
-      </mct-plot>
+      </MctPlot>
     </div>
   </div>
 </template>

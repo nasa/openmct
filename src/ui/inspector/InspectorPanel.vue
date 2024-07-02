@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-inspector js-inspector">
-    <object-name />
+    <ObjectName />
     <InspectorTabs :is-editing="isEditing" @select-tab="selectTab" />
     <InspectorViews :selected-tab="selectedTab" />
   </div>

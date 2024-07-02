@@ -22,10 +22,10 @@
 <template>
   <div>
     <div v-if="canEdit">
-      <plot-options-edit />
+      <PlotOptionsEdit />
     </div>
     <div v-else>
-      <plot-options-browse />
+      <PlotOptionsBrowse />
     </div>
   </div>
 </template>

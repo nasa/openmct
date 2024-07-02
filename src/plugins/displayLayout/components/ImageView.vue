@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -31,7 +31,7 @@
     <template #content>
       <div class="c-image-view" :style="style"></div>
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>

@@ -22,7 +22,7 @@
 <template>
   <div class="c-tree-and-search l-shell__tree">
     <ul class="c-tree-and-search__tree c-tree c-tree__scrollable" aria-label="Recent Objects">
-      <recent-objects-list-item
+      <RecentObjectsListItem
         v-for="recentObject in recentObjects"
         :key="recentObject.navigationPath"
         :object-path="recentObject.objectPath"

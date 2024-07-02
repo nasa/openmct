@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <swim-lane :is-nested="isNested" :status="status">
+  <SwimLane :is-nested="isNested" :status="status">
     <template #label>
       {{ heading }}
     </template>
@@ -88,7 +88,7 @@
         </text>
       </svg>
     </template>
-  </swim-lane>
+  </SwimLane>
 </template>
 
 <script>

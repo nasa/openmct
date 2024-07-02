@@ -36,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        <lad-row
+        <LadRow
           v-for="ladRow in items"
           :key="ladRow.key"
           :domain-object="ladRow.domainObject"

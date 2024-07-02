@@ -107,7 +107,7 @@
             To start a new entry, click here or drag and drop any object
           </span>
         </div>
-        <progress-bar
+        <ProgressBar
           v-if="savingTransaction"
           class="c-telemetry-table__progress-bar"
           :model="{ progressPerc: null }"

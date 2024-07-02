@@ -76,7 +76,7 @@
       class="c-tabs-view__object-holder"
       :class="{ 'c-tabs-view__object-holder--hidden': !isCurrent(tab) }"
     >
-      <object-view
+      <ObjectView
         v-if="shouldLoadTab(tab)"
         class="c-tabs-view__object"
         :default-object="tab.domainObject"

@@ -50,14 +50,14 @@
         </div>
 
         <div v-if="isEditing" class="c-inspect-properties__label span-all">
-          <toggle-switch
+          <ToggleSwitch
             :id="keyString"
             :checked="persistedFilters.useGlobal"
             @change="useGlobalFilter"
           />
           Use global filter
         </div>
-        <filter-field
+        <FilterField
           v-for="metadatum in activeFilters"
           :key="metadatum.key"
           :filter-field="metadatum"

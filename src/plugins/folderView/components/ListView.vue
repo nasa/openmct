@@ -73,7 +73,7 @@
         </tr>
       </thead>
       <tbody>
-        <list-item
+        <ListItem
           v-for="item in sortedItems"
           :key="item.objectKeyString"
           :item="item"

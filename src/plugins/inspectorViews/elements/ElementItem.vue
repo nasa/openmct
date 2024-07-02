@@ -40,7 +40,7 @@
       }"
     >
       <span class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"></span>
-      <object-label
+      <ObjectLabel
         :domain-object="elementObject"
         :object-path="[elementObject, domainObject]"
         @context-click-active="setContextClickState"

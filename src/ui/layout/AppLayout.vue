@@ -49,7 +49,7 @@
         :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         @click="toggleShellHead"
       ></button>
-      <notification-banner />
+      <NotificationBanner />
       <div class="l-shell__head-section l-shell__controls">
         <button
           class="c-icon-button c-icon-button--major icon-new-window"
@@ -67,13 +67,13 @@
           @click="fullScreenToggle"
         ></button>
       </div>
-      <app-logo />
+      <AppLogo />
     </div>
 
     <div class="l-shell__drawer c-drawer c-drawer--push c-drawer--align-top"></div>
 
-    <multipane class="l-shell__main" :class="[resizingClass]" type="horizontal">
-      <pane
+    <Multipane class="l-shell__main" :class="[resizingClass]" type="horizontal">
+      <Pane
         class="l-shell__pane-tree"
         handle="after"
         label="Browse"
@@ -96,16 +96,16 @@
             @click="handleSyncTreeNavigation"
           ></button>
         </template>
-        <multipane type="vertical">
-          <pane>
-            <mct-tree
+        <Multipane type="vertical">
+          <Pane>
+            <MctTree
               ref="mctTree"
               :sync-tree-navigation="triggerSync"
               :reset-tree-navigation="triggerReset"
               class="l-shell__tree"
             />
-          </pane>
-          <pane
+          </Pane>
+          <Pane
             handle="before"
             label="Recently Viewed"
             :persist-position="true"
@@ -127,18 +127,18 @@
                 @click="handleClearRecentObjects"
               ></button>
             </template>
-          </pane>
-        </multipane>
-      </pane>
-      <pane class="l-shell__pane-main" role="main">
-        <browse-bar
+          </Pane>
+        </Multipane>
+      </Pane>
+      <Pane class="l-shell__pane-main" role="main">
+        <BrowseBar
           ref="browseBar"
           class="l-shell__main-view-browse-bar"
           :action-collection="actionCollection"
           @sync-tree-navigation="handleSyncTreeNavigation"
         />
-        <toolbar v-if="toolbar" class="l-shell__toolbar" />
-        <object-view
+        <Toolbar v-if="toolbar" class="l-shell__toolbar" />
+        <ObjectView
           ref="browseObject"
           class="l-shell__main-container js-main-container js-notebook-snapshot-item"
           data-selectable
@@ -150,8 +150,8 @@
           class="l-shell__time-conductor"
           aria-label="Global Time Conductor"
         />
-      </pane>
-      <pane
+      </Pane>
+      <Pane
         class="l-shell__pane-inspector l-pane--holds-multipane"
         handle="before"
         label="Inspect"
@@ -161,8 +161,8 @@
         @end-resizing="onEndResizing"
       >
         <Inspector ref="inspector" :is-editing="isEditing" />
-      </pane>
-    </multipane>
+      </Pane>
+    </Multipane>
   </div>
 </template>
 

@@ -38,7 +38,7 @@
       </div>
     </div>
     <ul v-if="expanded" class="c-inspect-properties">
-      <filter-field
+      <FilterField
         v-for="metadatum in globalMetadata"
         :key="metadatum.key"
         :filter-field="metadatum"

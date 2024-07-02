@@ -21,7 +21,7 @@
 -->
 <template>
   <div class="l-grid-view" role="grid" :aria-label="`${domainObject.name} Grid View`">
-    <grid-item
+    <GridItem
       v-for="(item, index) in items"
       :key="index"
       :item="item"

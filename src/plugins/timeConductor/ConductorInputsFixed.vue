@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <time-popup-fixed
+  <TimePopupFixed
     v-if="readOnly === false"
     :input-bounds="bounds"
     :input-time-system="timeSystem"
