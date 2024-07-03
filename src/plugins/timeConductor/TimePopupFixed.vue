@@ -31,21 +31,21 @@
       <div
         class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-start-date"
       >
+        <DatePicker
+          v-if="canSplitDateTime"
+          class="c-ctrl-wrapper--menus-right"
+          :default-date-time="formattedBounds.startDate"
+          @date-selected="startDateSelected"
+        />
         <input
           ref="startDate"
-          v-model="formattedBounds.start"
+          v-model="formattedBounds.startDate"
           class="c-input--datetime"
           type="text"
           autocorrect="off"
           spellcheck="false"
           aria-label="Start date"
           @change="validateAllBounds('startDate')"
-        />
-        <DatePicker
-          v-if="isTimeSystemUTCBased"
-          class="c-ctrl-wrapper--menus-right"
-          :default-date-time="formattedBounds.start"
-          @date-selected="startDateSelected"
         />
       </div>
 
@@ -67,21 +67,21 @@
       <div
         class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-end-date"
       >
+        <DatePicker
+          v-if="canSplitDateTime"
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.endDate"
+          @date-selected="endDateSelected"
+        />
         <input
           ref="endDate"
-          v-model="formattedBounds.end"
+          v-model="formattedBounds.endDate"
           class="c-input--datetime"
           type="text"
           autocorrect="off"
           spellcheck="false"
           aria-label="End date"
           @change="validateAllBounds('endDate')"
-        />
-        <DatePicker
-          v-if="isTimeSystemUTCBased"
-          class="c-ctrl-wrapper--menus-left"
-          :default-date-time="formattedBounds.end"
-          @date-selected="endDateSelected"
         />
       </div>
 
@@ -137,24 +137,30 @@ export default {
       isDisabled: false
     };
   },
+  computed: {
+    canSplitDateTime() {
+      return Boolean(
+        this.isTimeSystemUTCBased &&
+        this.timeSystemFormatter?.getDelimiter
+      );
+    }
+  },
   watch: {
     bounds: {
       handler() {
-        this.handleNewBounds();
-      },
-      deep: true
+        console.log(this.bounds);
+        this.setViewFromBounds();
+      }
     }
   },
-  created() {
+  mounted() {
+    this.delimiter = this.timeSystemFormatter.getDelimiter?.();
     this.setViewFromBounds();
   },
   beforeUnmount() {
     this.clearAllValidation();
   },
   methods: {
-    handleNewBounds() {
-      this.setViewFromBounds();
-    },
     clearAllValidation() {
       [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
     },
@@ -163,27 +169,28 @@ export default {
       input.title = '';
     },
     setViewFromBounds() {
-      const formattedBounds = {};
+      const formattedStartBounds = this.timeSystemFormatter.format(this.bounds.start);
+      const formattedEndBounds = this.timeSystemFormatter.format(this.bounds.end);
 
-      formattedBounds.start = this.timeSystemFormatter.format(this.bounds.start).split(' ')[0];
-      formattedBounds.end = this.timeSystemFormatter.format(this.bounds.end).split(' ')[0];
-      formattedBounds.startTime = this.timeSystemDurationFormatter.format(Math.abs(this.bounds.start));
-      formattedBounds.endTime = this.timeSystemDurationFormatter.format(Math.abs(this.bounds.end));
-
-      this.formattedBounds = formattedBounds;
+      this.formattedBounds = {
+        startDate: formattedStartBounds.split(this.delimiter)[0],
+        startTime: formattedStartBounds.split(this.delimiter)[1],
+        endDate: formattedEndBounds.split(this.delimiter)[0],
+        endTime: formattedEndBounds.split(this.delimiter)[1]
+      };
     },
     setBoundsFromView(dismiss) {
       if (this.$refs.fixedDeltaInput.checkValidity()) {
-        let start = this.timeSystemFormatter.parse(
-          `${this.formattedBounds.start} ${this.formattedBounds.startTime}`
+        const start = this.timeSystemFormatter.parse(
+          `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
         );
-        let end = this.timeSystemFormatter.parse(
-          `${this.formattedBounds.end} ${this.formattedBounds.endTime}`
+        const end = this.timeSystemFormatter.parse(
+          `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
         );
 
         this.timeContext.setBounds({
-          start: start,
-          end: end
+          start,
+          end
         });
       }
 
@@ -214,12 +221,12 @@ export default {
       const currentInput = this.$refs[ref];
 
       return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        let boundsValues = {
+        const boundsValues = {
           start: this.timeSystemFormatter.parse(
-            `${this.formattedBounds.start} ${this.formattedBounds.startTime}`
+            `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
           ),
           end: this.timeSystemFormatter.parse(
-            `${this.formattedBounds.end} ${this.formattedBounds.endTime}`
+            `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
           )
         };
         //TODO: Do we need limits here? We have conductor limits disabled right now
@@ -250,8 +257,8 @@ export default {
       return [this.$refs.startDate, this.$refs.endDate].every((input) => {
         const formattedDate =
           input === this.$refs.startDate
-            ? `${this.formattedBounds.start} ${this.formattedBounds.startTime}`
-            : `${this.formattedBounds.end} ${this.formattedBounds.endTime}`;
+            ? `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
+            : `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`;
         if (!this.timeSystemFormatter.validate(formattedDate)) {
           validationResult = {
             valid: false,
@@ -287,11 +294,11 @@ export default {
       return validationResult.valid;
     },
     startDateSelected(date) {
-      this.formattedBounds.start = this.timeSystemFormatter.format(date).split(' ')[0];
+      this.formattedBounds.startDate = this.timeSystemFormatter.format(date).split(this.delimiter)[0];
       this.validateAllBounds('startDate');
     },
     endDateSelected(date) {
-      this.formattedBounds.end = this.timeSystemFormatter.format(date).split(' ')[0];
+      this.formattedBounds.endDate = this.timeSystemFormatter.format(date).split(this.delimiter)[0];
       this.validateAllBounds('endDate');
     },
     hide($event) {
