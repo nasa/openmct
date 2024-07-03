@@ -59,7 +59,7 @@ export default {
     ConductorInputsFixed,
     ConductorInputsRealtime
   },
-  inject: ['openmct', 'configuration', 'isFixedTimeMode'],
+  inject: ['openmct', 'isFixedTimeMode'],
   props: {
     positionX: {
       type: Number,
