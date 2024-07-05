@@ -122,8 +122,11 @@ export default {
     'grid-lines',
     'plot-y-tick-width'
   ],
-  mounted() {
+  beforeMount() {
+    // We must do this before mounted to use any series configuration options set at the stacked plot level
     this.updateView();
+  },
+  mounted() {
     this.isEditing = this.openmct.editor.isEditing();
     this.openmct.editor.on('isEditing', this.setEditState);
     this.setupClockChangedEvent((domainObject) => {
