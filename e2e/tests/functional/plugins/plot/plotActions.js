@@ -27,6 +27,14 @@ async function turnOffAutoscale(page) {
   await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 }
 
+async function turnOffAlarmMarkers(page) {
+  // uncheck alarm markers
+  await page
+    .getByRole('list', { name: 'Plot Series Properties' })
+    .locator('[title="Alarm Markers"] input')
+    .uncheck();
+}
+
 /**
  * @param {import('@playwright/test').Page} page
  * @param {string} min
@@ -39,4 +47,4 @@ async function setUserDefinedMinAndMax(page, min, max) {
   await page.getByRole('spinbutton').nth(1).fill(max);
 }
 
-export { setUserDefinedMinAndMax, turnOffAutoscale };
+export { setUserDefinedMinAndMax, turnOffAlarmMarkers, turnOffAutoscale };

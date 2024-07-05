@@ -82,7 +82,7 @@
           </select>
         </div>
       </li>
-      <li class="grid-row">
+      <li class="grid-row" title="Alarm Markers">
         <div class="grid-cell label" title="Display markers visually denoting points in alarm.">
           Alarm Markers
         </div>

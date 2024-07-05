@@ -27,6 +27,7 @@ necessarily be used for reference when writing new tests in this area.
 
 import { createDomainObjectWithDefaults, waitForPlotsToRender } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+import { turnOffAlarmMarkers } from './plotActions.js';
 
 test.describe('Stacked Plot', () => {
   let stackedPlot;
@@ -226,6 +227,46 @@ test.describe('Stacked Plot', () => {
     await expect(
       page.locator('[aria-label="Plot Series Properties"] .c-object-label')
     ).toContainText(swgC.name);
+  });
+
+  test.only('Changing properties of an immutable child plot are applied correctly', async ({
+    page
+  }) => {
+    await page.goto(stackedPlot.url);
+
+    // Go into edit mode
+    await page.getByLabel('Edit Object').click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Click on canvas for the 1st plot
+    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"]`).click();
+
+    // Expand config for the series
+    await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
+
+    // turn off alarm markers
+    await turnOffAlarmMarkers(page);
+
+    // save
+    await page.click('button[title="Save"]');
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // reload page
+    await page.reload();
+
+    // Click on the 1st plot
+    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"] canvas`).nth(1).click();
+
+    await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
+
+    // Assert that alarm markers are still turned off
+    await expect(
+      await page
+        .getByRole('list', { name: 'Plot Series Properties' })
+        .locator('[title="Alarm Markers"]>div')
+        .nth(1)
+    ).toContainText('Disabled');
   });
 
   test('the legend toggles between aggregate and per child', async ({ page }) => {

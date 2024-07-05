@@ -79,7 +79,7 @@
             {{ markerOptionsDisplayText }}
           </div>
         </li>
-        <li class="grid-row" role="row">
+        <li class="grid-row" role="row" title="Alarm Markers">
           <div
             class="grid-cell label"
             title="Display markers visually denoting points in alarm."
