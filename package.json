@@ -15,7 +15,7 @@
     "e2e"
   ],
   "devDependencies": {
-    "@babel/eslint-parser": "7.23.3",
+    "@babel/eslint-parser": "7.24.7",
     "@braintree/sanitize-url": "6.0.4",
     "@types/d3-axis": "3.0.6",
     "@types/d3-scale": "4.0.8",
