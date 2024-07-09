@@ -21,11 +21,15 @@
 -->
 <template>
   <ul>
-    <li class="c-tree__item menus-to-left" :class="isAliasCss">
+    <li class="c-tree__item menus-to-left" :class="isAliasCss" role="treeitem">
       <span
         class="c-disclosure-triangle is-enabled flex-elem"
         :class="expandedCssClass"
+        role="button"
+        :aria-label="ariaLabelValue"
+        tabindex="0"
         @click="toggleExpanded"
+        @keydown.enter="toggleExpanded"
       >
       </span>
       <div :class="objectLabelCss">
@@ -82,12 +86,17 @@
           </select>
         </div>
       </li>
-      <li class="grid-row" title="Alarm Markers">
+      <li class="grid-row">
         <div class="grid-cell label" title="Display markers visually denoting points in alarm.">
-          Alarm Markers
+          <label for="alarm-markers-checkbox">Alarm Markers</label>
         </div>
         <div class="grid-cell value">
-          <input v-model="alarmMarkers" type="checkbox" @change="updateForm('alarmMarkers')" />
+          <input
+            id="alarm-markers-checkbox"
+            v-model="alarmMarkers"
+            type="checkbox"
+            @change="updateForm('alarmMarkers')"
+          />
         </div>
       </li>
       <li class="grid-row">
@@ -169,6 +178,13 @@ export default {
     };
   },
   computed: {
+    ariaLabelValue() {
+      //series.domainObject.name
+      const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
+      const type = this.series.domainObject.type ? ` ${this.series.domainObject.type}` : '';
+
+      return `${this.expanded ? 'Collapse' : 'Expand'}${name}${type}`;
+    },
     colorPalette() {
       return this.series.collection.palette.groups();
     },
