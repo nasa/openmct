@@ -232,9 +232,7 @@ test.describe('Stacked Plot', () => {
     ).toContainText(swgC.name);
   });
 
-  test.only('Changing properties of an immutable child plot are applied correctly', async ({
-    page
-  }) => {
+  test('Changing properties of an immutable child plot are applied correctly', async ({ page }) => {
     await page.goto(stackedPlot.url);
 
     // Go into edit mode
@@ -248,10 +246,8 @@ test.describe('Stacked Plot', () => {
     // Expand config for the series
     await page.getByLabel('Expand Sine Wave Generator').click();
 
-    // turn off alarm markers
+    // turn off alarm markers. Technically there should be a getBy locator to ensure we're selecting the correct alarm marker
     await page.getByLabel('Alarm Markers').uncheck();
-    //TODO We need to get it to the point that the following is the locator logic
-    // await page.getByRole('listitem', { name: 'Alarm Markers' }).getByRole('checkbox').uncheck();
 
     // save
     await page.getByRole('button', { name: 'Save' }).click();
@@ -268,14 +264,11 @@ test.describe('Stacked Plot', () => {
     await page.getByLabel('Expand Sine Wave Generator').click();
 
     // Assert that alarm markers are still turned off
-    //TODO We need to get it to the point that the following is the locator logic
-    // await await expect(page.getByRole('listitem', { name: 'Alarm Markers' }).getByRole('checkbox').not.toBeChecked();
     await expect(
       page
         .getByTitle('Display markers visually denoting points in alarm.')
         .getByRole('cell', { name: 'Disabled' })
     ).toBeVisible();
-    // await expect(page.getByLabel('Inspector Views').getByRole('checkbox').nth(1)).not.toBeChecked();
   });
 
   test('the legend toggles between aggregate and per child', async ({ page }) => {
