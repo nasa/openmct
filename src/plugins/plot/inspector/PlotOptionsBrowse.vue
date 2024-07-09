@@ -21,7 +21,7 @@
 -->
 <template>
   <div v-if="loaded" class="js-plot-options-browse">
-    <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
+    <ul v-if="!isStackedPlotObject" class="c-tree" role="tree">
       <h2 class="--first" title="Plot series display properties in this object">Plot Series</h2>
       <PlotOptionsItem v-for="series in plotSeries" :key="series.keyString" :series="series" />
     </ul>

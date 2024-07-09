@@ -27,7 +27,6 @@ necessarily be used for reference when writing new tests in this area.
 
 import { createDomainObjectWithDefaults, waitForPlotsToRender } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
-import { turnOffAlarmMarkers } from './plotActions.js';
 
 test.describe('Stacked Plot', () => {
   let stackedPlot;
@@ -40,19 +39,23 @@ test.describe('Stacked Plot', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     stackedPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Stacked Plot'
+      type: 'Stacked Plot',
+      name: 'Stacked Plot'
     });
 
     swgA = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator A',
       parent: stackedPlot.uuid
     });
     swgB = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator B',
       parent: stackedPlot.uuid
     });
     swgC = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator C',
       parent: stackedPlot.uuid
     });
   });
@@ -240,33 +243,39 @@ test.describe('Stacked Plot', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
 
     // Click on canvas for the 1st plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"]`).click();
+    await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
     // Expand config for the series
-    await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
+    await page.getByLabel('Expand Sine Wave Generator').click();
 
     // turn off alarm markers
-    await turnOffAlarmMarkers(page);
+    await page.getByLabel('Alarm Markers').uncheck();
+    //TODO We need to get it to the point that the following is the locator logic
+    // await page.getByRole('listitem', { name: 'Alarm Markers' }).getByRole('checkbox').uncheck();
 
     // save
-    await page.click('button[title="Save"]');
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    // reload page
+    // reload page and waitForPlotsToRender
     await page.reload();
+    await waitForPlotsToRender(page);
 
-    // Click on the 1st plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"] canvas`).nth(1).click();
+    // Click on canvas for the 1st plot
+    await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
-    await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
+    // Expand config for the series
+    await page.getByLabel('Expand Sine Wave Generator').click();
 
     // Assert that alarm markers are still turned off
+    //TODO We need to get it to the point that the following is the locator logic
+    // await await expect(page.getByRole('listitem', { name: 'Alarm Markers' }).getByRole('checkbox').not.toBeChecked();
     await expect(
-      await page
-        .getByRole('list', { name: 'Plot Series Properties' })
-        .locator('[title="Alarm Markers"]>div')
-        .nth(1)
-    ).toContainText('Disabled');
+      page
+        .getByTitle('Display markers visually denoting points in alarm.')
+        .getByRole('cell', { name: 'Disabled' })
+    ).toBeVisible();
+    // await expect(page.getByLabel('Inspector Views').getByRole('checkbox').nth(1)).not.toBeChecked();
   });
 
   test('the legend toggles between aggregate and per child', async ({ page }) => {

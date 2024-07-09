@@ -21,11 +21,14 @@
 -->
 <template>
   <ul>
-    <li class="c-tree__item menus-to-left" :class="isAliasClass">
+    <li class="c-tree__item menus-to-left" :class="isAliasClass" role="listitem">
       <span
         class="c-disclosure-triangle is-enabled flex-elem"
         :class="expandedCssClass"
+        :aria-label="ariaLabelValue"
+        tabindex="0"
         @click="toggleExpanded"
+        @keydown.enter="toggleExpanded"
       >
       </span>
       <div class="c-object-label" :class="statusClass">
@@ -79,14 +82,8 @@
             {{ markerOptionsDisplayText }}
           </div>
         </li>
-        <li class="grid-row" role="row" title="Alarm Markers">
-          <div
-            class="grid-cell label"
-            title="Display markers visually denoting points in alarm."
-            role="cell"
-          >
-            Alarm Markers
-          </div>
+        <li class="grid-row" role="row" title="Display markers visually denoting points in alarm.">
+          <div class="grid-cell label" role="cell">Alarm Markers</div>
           <div class="grid-cell value" role="cell">
             {{ alarmMarkers ? 'Enabled' : 'Disabled' }}
           </div>
@@ -137,6 +134,13 @@ export default {
     };
   },
   computed: {
+    ariaLabelValue() {
+      //series.domainObject.name
+      const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
+      const type = this.series.domainObject.type ? ` ${this.series.domainObject.type}` : '';
+
+      return `${this.expanded ? 'Collapse' : 'Expand'}${name}${type}`;
+    },
     isAliasClass() {
       let cssClass = '';
       const domainObjectPath = [this.series.domainObject, ...this.path];
