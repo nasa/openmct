@@ -33,7 +33,7 @@ export default function ToolbarRegistry() {
 /**
  * Gets toolbar controls from providers which can provide a toolbar for this selection.
  *
- * @param {object} selection the selection object
+ * @param {Object} selection the selection object
  * @returns {Object[]} an array of objects defining controls for the toolbar
  * @private for platform-internal use
  */
@@ -112,6 +112,6 @@ ToolbarRegistry.prototype.addProvider = function (provider) {
  *
  * @method toolbar
  * @memberof module:openmct.ToolbarProvider#
- * @param {object} selection the selection object
+ * @param {Object} selection the selection object
  * @returns {Object[]} an array of objects defining controls for the toolbar.
  */

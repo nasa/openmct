@@ -21,7 +21,7 @@
         />
         <date-picker
           v-if="isUTCBased"
-          class="c-ctrl-wrapper--menus-left"
+          class="c-ctrl-wrapper--menus-right"
           :default-date-time="formattedBounds.start"
           :formatter="timeFormatter"
           @date-selected="startDateSelected"
@@ -87,7 +87,7 @@
         ></button>
         <button
           class="c-button icon-x"
-          aria-label="Discard time bounds"
+          aria-label="Discard changes and close time popup"
           @click.prevent="hide"
         ></button>
       </div>

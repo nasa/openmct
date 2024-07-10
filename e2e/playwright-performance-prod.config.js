@@ -1,6 +1,6 @@
 // playwright.config.js
 // @ts-check
-
+import { fileURLToPath } from 'url';
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 0, //Only for debugging purposes for trace: 'on-first-retry'
@@ -10,6 +10,7 @@ const config = {
   workers: 1, //Only run in serial with 1 worker
   webServer: {
     command: 'npm run start:prod', //Production mode
+    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: false //Must be run with this option to prevent dev mode

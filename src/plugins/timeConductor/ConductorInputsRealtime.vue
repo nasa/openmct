@@ -148,7 +148,10 @@ export default {
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+    this.handleNewBounds = _.throttle(this.handleNewBounds, 300, {
+      leading: true,
+      trailing: false
+    });
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();

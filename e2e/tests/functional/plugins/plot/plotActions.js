@@ -19,19 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
-
-class StoragePersistance {
-  getActiveRole() {
-    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
-  setActiveRole(role) {
-    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
-  }
-  clearActiveRole() {
-    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function turnOffAutoscale(page) {
+  // uncheck autoscale
+  await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 }
 
-export default new StoragePersistance();
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} min
+ * @param {string} max
+ */
+async function setUserDefinedMinAndMax(page, min, max) {
+  // set minimum value
+  await page.getByRole('spinbutton').first().fill(min);
+  // set maximum value
+  await page.getByRole('spinbutton').nth(1).fill(max);
+}
+
+export { setUserDefinedMinAndMax, turnOffAutoscale };

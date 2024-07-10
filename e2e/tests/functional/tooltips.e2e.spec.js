@@ -269,8 +269,8 @@ test.describe('Verify tooltips', () => {
       name: 'Test Flexible Layout'
     });
 
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-fl__container >> nth=0');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-fl__container >> nth=1');
+    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-fl-container >> nth=0');
+    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-fl-container >> nth=1');
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
@@ -453,3 +453,10 @@ test.describe('Verify tooltips', () => {
     expect(tooltipText).toBe(sineWaveObject3.path);
   });
 });
+
+async function getToolTip(object) {
+  await page.locator('.c-create-button').hover();
+  await page.getByLabel('lad name').getByText(object.name).hover();
+  let tooltipText = await page.locator('.c-tooltip').textContent();
+  return tooltipText.replace('\n', '').trim();
+}

@@ -96,6 +96,7 @@
           max="59"
           title="Enter 0 - 59"
           step="1"
+          aria-label="End offset minutes"
           @change="validate()"
           @keyup="validate()"
           @focusin="selectAll($event)"
@@ -132,7 +133,7 @@
         ></button>
         <button
           class="c-button icon-x"
-          aria-label="Discard time offsets"
+          aria-label="Discard changes and close time popup"
           @click.prevent="hide"
         ></button>
       </div>

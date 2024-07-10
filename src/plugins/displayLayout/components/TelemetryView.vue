@@ -37,24 +37,24 @@
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
+        aria-label="Alpha-numeric telemetry"
         @contextmenu.prevent="showContextMenu"
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
-        <div
-          class="is-status__indicator"
-          :aria-label="`This item is ${status}`"
-          :title="`This item is ${status}`"
-        ></div>
+        <div class="is-status__indicator"></div>
         <div v-if="showLabel" class="c-telemetry-view__label">
-          <div class="c-telemetry-view__label-text">
+          <div
+            class="c-telemetry-view__label-text"
+            :aria-label="`Alpha-numeric telemetry name for ${domainObject.name}`"
+          >
             {{ domainObject.name }}
           </div>
         </div>
 
         <div
           v-if="showValue"
-          :aria-label="fieldName"
+          :aria-label="`Alpha-numeric telemetry value of ${telemetryValue}`"
           :title="fieldName"
           class="c-telemetry-view__value"
           :class="[telemetryClass]"
@@ -72,11 +72,14 @@
 </template>
 
 <script>
+import { COPY_TO_CLIPBOARD_ACTION_KEY } from '@/plugins/displayLayout/actions/CopyToClipboardAction.js';
+import { COPY_TO_NOTEBOOK_ACTION_KEY } from '@/plugins/notebook/actions/CopyToNotebookAction.js';
 import {
   getDefaultNotebook,
   getNotebookSectionAndPage
 } from '@/plugins/notebook/utils/notebook-storage.js';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import { VIEW_HISTORICAL_DATA_ACTION_KEY } from '@/ui/preview/ViewHistoricalDataAction.js';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
@@ -84,7 +87,11 @@ import LayoutFrame from './LayoutFrame.vue';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
-const CONTEXT_MENU_ACTIONS = ['copyToClipboard', 'copyToNotebook', 'viewHistoricalData'];
+const CONTEXT_MENU_ACTIONS = [
+  COPY_TO_CLIPBOARD_ACTION_KEY,
+  COPY_TO_NOTEBOOK_ACTION_KEY,
+  VIEW_HISTORICAL_DATA_ACTION_KEY
+];
 
 export default {
   makeDefinition(openmct, gridSize, domainObject, position) {
@@ -280,7 +287,7 @@ export default {
       await this.$nextTick();
     },
     formattedValueForCopy() {
-      const timeFormatterKey = this.openmct.time.timeSystem().key;
+      const timeFormatterKey = this.openmct.time.getTimeSystem().key;
       const timeFormatter = this.formats[timeFormatterKey];
       const unit = this.unit ? ` ${this.unit}` : '';
 
@@ -381,7 +388,7 @@ export default {
 
       return CONTEXT_MENU_ACTIONS.map((actionKey) => {
         const action = this.openmct.actions.getAction(actionKey);
-        if (action.key === 'copyToNotebook') {
+        if (action.key === COPY_TO_NOTEBOOK_ACTION_KEY) {
           action.name = defaultNotebookName;
         }
 

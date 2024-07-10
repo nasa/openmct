@@ -20,11 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="c-overlay js-overlay">
+  <div class="c-overlay js-overlay" role="dialog" aria-modal="true" aria-label="Modal Overlay">
     <div class="c-overlay__blocker" @click="destroy"></div>
     <div class="c-overlay__outer">
       <button
-        v-if="dismissable"
+        v-if="dismissible"
         aria-label="Close"
         class="c-click-icon c-overlay__close-button icon-x"
         @click.stop="destroy"
@@ -34,9 +34,6 @@
           ref="element"
           class="c-overlay__contents js-notebook-snapshot-item-wrapper"
           tabindex="0"
-          aria-modal="true"
-          aria-label="Overlay"
-          role="dialog"
         ></div>
         <div v-if="buttons" class="c-overlay__button-bar">
           <button
@@ -59,9 +56,9 @@
 
 <script>
 export default {
-  inject: ['dismiss', 'element', 'buttons', 'dismissable'],
+  inject: ['dismiss', 'element', 'buttons', 'dismissible'],
   emits: ['destroy'],
-  data: function () {
+  data() {
     return {
       focusIndex: -1
     };
@@ -76,7 +73,7 @@ export default {
   },
   methods: {
     destroy() {
-      if (this.dismissable) {
+      if (this.dismissible) {
         this.dismiss();
       }
     },

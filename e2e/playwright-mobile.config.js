@@ -10,10 +10,11 @@ import { fileURLToPath } from 'url';
 const config = {
   retries: 1, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
   testDir: 'tests',
-  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
+  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-performance.config.js
   timeout: 30 * 1000,
   webServer: {
     command: 'npm run start:coverage',
+    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
@@ -27,7 +28,9 @@ const config = {
     ignoreHTTPSErrors: true,
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
-    video: 'off'
+    video: 'off',
+    // @ts-ignore - custom configuration option for nyc codecoverage output path
+    coveragePath: fileURLToPath(new URL('../.nyc_output', import.meta.url))
   },
   projects: [
     {

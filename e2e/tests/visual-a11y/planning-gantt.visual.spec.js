@@ -24,75 +24,17 @@ import percySnapshot from '@percy/playwright';
 import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
-import { test } from '../../avpFixtures.js';
-import { VISUAL_URL } from '../../constants.js';
-import {
-  createTimelistWithPlanAndSetActivityInProgress,
-  getFirstActivity,
-  setBoundsToSpanAllActivities,
-  setDraftStatusForPlan
-} from '../../helper/planningUtils.js';
-
-const examplePlanSmall1 = JSON.parse(
-  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url))
-);
+import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
+import { setBoundsToSpanAllActivities, setDraftStatusForPlan } from '../../helper/planningUtils.js';
 
 const examplePlanSmall2 = JSON.parse(
   fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
 );
 
-test.describe('Visual - Timelist progress bar @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.end + 10000,
-      shouldAdvanceTime: true
-    }
-  });
-
+test.describe('Visual - Gantt Chart @a11y', () => {
   test.beforeEach(async ({ page }) => {
-    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-    await page.getByLabel('Click to collapse items').click();
-  });
-
-  test('progress pie is full', async ({ page, theme }) => {
-    // Progress pie is completely full and doesn't update if now is greater than the end time
-    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
-  });
-});
-
-test.describe('Visual - Planning', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-  });
-
-  test('Plan View', async ({ page, theme }) => {
-    const plan = await createPlanFromJSON(page, {
-      name: 'Plan Visual Test',
-      json: examplePlanSmall2
-    });
-
-    await setBoundsToSpanAllActivities(page, examplePlanSmall2, plan.url);
-    await percySnapshot(page, `Plan View (theme: ${theme})`);
-  });
-
-  test('Plan View w/ draft status', async ({ page, theme }) => {
-    const plan = await createPlanFromJSON(page, {
-      name: 'Plan Visual Test (Draft)',
-      json: examplePlanSmall2
-    });
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-    await setDraftStatusForPlan(page, plan);
-
-    await setBoundsToSpanAllActivities(page, examplePlanSmall2, plan.url);
-    await percySnapshot(page, `Plan View w/ draft status (theme: ${theme})`);
-  });
-});
-
-test.describe('Visual - Gantt Chart', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test('Gantt Chart View', async ({ page, theme }) => {
     const ganttChart = await createDomainObjectWithDefaults(page, {
@@ -135,7 +77,7 @@ test.describe('Visual - Gantt Chart', () => {
 
     await setDraftStatusForPlan(page, plan);
 
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     await setBoundsToSpanAllActivities(page, examplePlanSmall2, ganttChart.url);
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`);
@@ -161,7 +103,6 @@ test.describe('Visual - Gantt Chart', () => {
   });
 });
 
-// Skipping for https://github.com/nasa/openmct/issues/7421
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});

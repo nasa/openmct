@@ -78,8 +78,8 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator and Clock to the Flexible Layout
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
-    await clockTreeItem.dragTo(page.locator('.c-fl__container.is-empty'));
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
+    await clockTreeItem.dragTo(page.locator('.c-fl-container.is-empty'));
     // Check that panes can be dragged while Flexible Layout is in Edit mode
     let dragWrapper = page
       .locator('.c-fl-container__frames-holder .c-fl-frame__drag-wrapper')
@@ -105,8 +105,8 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator and Clock to the Flexible Layout
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
-    await clockTreeItem.dragTo(page.locator('.c-fl__container.is-empty'));
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
+    await clockTreeItem.dragTo(page.locator('.c-fl-container.is-empty'));
 
     // Click on the first frame to select it
     await page.locator('.c-fl-container__frame').first().click();
@@ -122,7 +122,7 @@ test.describe('Flexible Layout', () => {
     expect(await page.locator('.c-fl--rows').count()).toEqual(0);
 
     // Change the layout to rows orientation
-    await page.getByTitle('Columns layout').click();
+    await page.getByTitle('Switch to rows layout').click();
 
     // Assert the layout is in rows orientation
     expect(await page.locator('.c-fl--rows').count()).toBeGreaterThan(0);
@@ -171,7 +171,7 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -202,7 +202,7 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -242,7 +242,7 @@ test.describe('Flexible Layout', () => {
       name: new RegExp(exampleImageryObject.name)
     });
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await exampleImageryTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await exampleImageryTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
 
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
@@ -289,7 +289,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await page.getByTitle('Add Container').click();
     expect(await containerHandles.count()).toEqual(3);
     await page.getByTitle('Remove Container').click();
-    await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
     );
     await page.getByRole('button', { name: 'OK', exact: true }).click();
@@ -299,7 +299,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(2);
     await page.getByRole('group', { name: 'Child Layout 1' }).click();
     await page.getByTitle('Remove Frame').click();
-    await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will remove this frame from this Flexible Layout. Do you want to continue?'
     );
     await page.getByRole('button', { name: 'OK', exact: true }).click();
@@ -309,9 +309,9 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
     const flexRows = page.getByLabel('Flexible Layout Row');
     expect(await flexRows.count()).toEqual(0);
-    await page.getByTitle('Columns layout').click();
+    await page.getByTitle('Switch to rows layout').click();
     expect(await flexRows.count()).toEqual(1);
-    await page.getByTitle('Rows layout').click();
+    await page.getByTitle('Switch to columns layout').click();
     expect(await flexRows.count()).toEqual(0);
   });
 });

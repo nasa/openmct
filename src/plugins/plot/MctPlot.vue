@@ -193,6 +193,7 @@ import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
 import { toRaw } from 'vue';
 
+import { MODES } from '../../api/time/constants';
 import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames.js';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -674,7 +675,7 @@ export default {
       this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
       this.startLoading();
-      const bounds = this.timeContext.bounds();
+      const bounds = this.timeContext.getBounds();
       const options = {
         size: this.$parent.$refs.plotWrapper.offsetWidth,
         domain: this.config.xAxis.get('key'),
@@ -816,12 +817,12 @@ export default {
         this.synchronizeIfBoundsMatch();
         this.loadMoreData(newRange, true);
       } else {
-        // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
+        // If we're not paused, panning or zooming (time conductor and plot x-axis times are not out of sync)
         // Drop any data that is more than 1x (max-min) before min.
         // Limit these purges to once a second.
         const isPanningOrZooming = this.isTimeOutOfSync;
         const purgeRecords =
-          !isPanningOrZooming && (!this.nextPurge || this.nextPurge < Date.now());
+          !this.isFrozen && !isPanningOrZooming && (!this.nextPurge || this.nextPurge < Date.now());
         if (purgeRecords) {
           const keepRange = {
             min: newRange.min - (newRange.max - newRange.min),
@@ -1873,8 +1874,8 @@ export default {
     },
 
     showSynchronizeDialog() {
-      const isLocalClock = this.timeContext.clock();
-      if (isLocalClock !== undefined) {
+      const isFixedTimespanMode = this.timeContext.isFixed();
+      if (!isFixedTimespanMode) {
         const message = `
                 This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
                 Do you want to continue?
@@ -1909,7 +1910,7 @@ export default {
 
     synchronizeTimeConductor() {
       const range = this.config.xAxis.get('displayRange');
-      this.timeContext.bounds({
+      this.timeContext.setMode(MODES.fixed, {
         start: range.min,
         end: range.max
       });

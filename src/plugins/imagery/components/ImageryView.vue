@@ -213,8 +213,10 @@ import _ from 'lodash';
 import moment from 'moment';
 import { nextTick } from 'vue';
 
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
-import imageryData from '../../imagery/mixins/imageryData.js';
+import { TIME_CONTEXT_EVENTS } from '@/api/time/constants.js';
+import imageryData from '@/plugins/imagery/mixins/imageryData.js';
+import { VIEW_LARGE_ACTION_KEY } from '@/plugins/viewLargeAction/viewLargeAction.js';
+
 import eventHelpers from '../lib/eventHelpers.js';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
 import Compass from './Compass/CompassComponent.vue';
@@ -827,7 +829,9 @@ export default {
         this.currentView
       );
       const visibleActions = actionCollection.getVisibleActions();
-      const viewLargeAction = visibleActions?.find((action) => action.key === 'large.view');
+      const viewLargeAction = visibleActions?.find(
+        (action) => action.key === VIEW_LARGE_ACTION_KEY
+      );
 
       if (viewLargeAction?.appliesTo(this.objectPath, this.currentView)) {
         viewLargeAction.invoke(this.objectPath, this.currentView);

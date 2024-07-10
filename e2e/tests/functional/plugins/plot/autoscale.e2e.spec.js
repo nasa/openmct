@@ -26,6 +26,7 @@ Testsuite for plot autoscale.
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+import { setUserDefinedMinAndMax, turnOffAutoscale } from './plotActions.js';
 test.use({
   viewport: {
     width: 1280,
@@ -126,26 +127,6 @@ test.describe('Autoscale', () => {
       .toMatchSnapshot('autoscale-canvas-panned.png', { animations: 'disabled' });
   });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function turnOffAutoscale(page) {
-  // uncheck autoscale
-  await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} min
- * @param {string} max
- */
-async function setUserDefinedMinAndMax(page, min, max) {
-  // set minimum value
-  await page.getByRole('spinbutton').first().fill(min);
-  // set maximum value
-  await page.getByRole('spinbutton').nth(1).fill(max);
-}
 
 /**
  * @param {import('@playwright/test').Page} page

@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { VIEW_DATUM_ACTION_KEY } from '@/plugins/viewDatumAction/ViewDatumAction.js';
+import { VIEW_HISTORICAL_DATA_ACTION_KEY } from '@/ui/preview/ViewHistoricalDataAction.js';
 
 export default class TelemetryTableRow {
   constructor(datum, columns, objectKeyString, limitEvaluator, inPlaceUpdateKey) {
@@ -86,7 +88,7 @@ export default class TelemetryTableRow {
   }
 
   getContextMenuActions() {
-    return ['viewDatumAction', 'viewHistoricalData'];
+    return [VIEW_DATUM_ACTION_KEY, VIEW_HISTORICAL_DATA_ACTION_KEY];
   }
 
   updateWithDatum(updatesToDatum) {

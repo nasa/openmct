@@ -225,6 +225,7 @@
             lengthAdjust="spacing"
             text-anchor="middle"
             dominant-baseline="middle"
+            :aria-label="`gauge value of ${curVal}`"
             x="50%"
             y="50%"
           >
@@ -367,7 +368,7 @@ export default {
       rangeLow: gaugeController.min,
       gaugeType: gaugeController.gaugeType,
       showUnits: gaugeController.showUnits,
-      activeTimeSystem: this.openmct.time.timeSystem(),
+      activeTimeSystem: this.openmct.time.getTimeSystem(),
       units: ''
     };
   },
@@ -549,7 +550,7 @@ export default {
 
     this.composition.load();
 
-    this.openmct.time.on('bounds', this.refreshData);
+    this.openmct.time.on('boundsChanged', this.refreshData);
     this.openmct.time.on('timeSystem', this.setTimeSystem);
 
     this.setupClockChangedEvent((domainObject) => {
@@ -565,7 +566,7 @@ export default {
       this.unsubscribe();
     }
 
-    this.openmct.time.off('bounds', this.refreshData);
+    this.openmct.time.off('boundsChanged', this.refreshData);
     this.openmct.time.off('timeSystem', this.setTimeSystem);
   },
   methods: {
@@ -730,7 +731,7 @@ export default {
         return;
       }
 
-      const { start, end } = this.openmct.time.bounds();
+      const { start, end } = this.openmct.time.getBounds();
       const parsedValue = this.timeFormatter.parse(this.datum);
 
       const beforeStartOfBounds = parsedValue < start;

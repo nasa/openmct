@@ -22,8 +22,9 @@
 import { v4 as uuid } from 'uuid';
 
 import JSONExporter from '/src/exporters/JSONExporter.js';
+const EXPORT_AS_JSON_ACTION_KEY = 'export.JSON';
 
-export default class ExportAsJSONAction {
+class ExportAsJSONAction {
   #openmct;
 
   /**
@@ -39,7 +40,7 @@ export default class ExportAsJSONAction {
     this.saveAs = this.saveAs.bind(this);
 
     this.name = 'Export as JSON';
-    this.key = 'export.JSON';
+    this.key = EXPORT_AS_JSON_ACTION_KEY;
     this.description = '';
     this.cssClass = 'icon-export';
     this.group = 'export';
@@ -59,7 +60,7 @@ export default class ExportAsJSONAction {
   // Public
   /**
    *
-   * @param {object} objectPath
+   * @param {Object} objectPath
    * @returns {boolean}
    */
   appliesTo(objectPath) {
@@ -191,9 +192,9 @@ export default class ExportAsJSONAction {
 
   /**
    * @private
-   * @param {object} child
-   * @param {object} parent
-   * @returns {object}
+   * @param {Object} child
+   * @param {Object} parent
+   * @returns {Object}
    */
   #rewriteLink(child, parent) {
     const originalKeyString = this.#getKeystring(child);
@@ -266,7 +267,7 @@ export default class ExportAsJSONAction {
 
   /**
    * @private
-   * @param {object} domainObject
+   * @param {Object} domainObject
    * @returns {string} A string representation of the given identifier, including namespace and key
    */
   #getKeystring(domainObject) {
@@ -275,7 +276,7 @@ export default class ExportAsJSONAction {
 
   /**
    * @private
-   * @param {object} domainObject
+   * @param {Object} domainObject
    * @returns {boolean}
    */
   #isCreatableAndPersistable(domainObject) {
@@ -287,8 +288,8 @@ export default class ExportAsJSONAction {
 
   /**
    * @private
-   * @param {object} child
-   * @param {object} parent
+   * @param {Object} child
+   * @param {Object} parent
    * @returns {boolean}
    */
   #isLinkedObject(child, parent) {
@@ -376,14 +377,14 @@ export default class ExportAsJSONAction {
   }
   /**
    * @private
-   * @param {object} completedTree
+   * @param {Object} completedTree
    */
   saveAs(completedTree) {
     this.JSONExportService.export(completedTree, { filename: this.root.name + '.json' });
   }
   /**
    * @private
-   * @returns {object}
+   * @returns {Object}
    */
   #wrapTree() {
     return {
@@ -410,3 +411,7 @@ export default class ExportAsJSONAction {
     return JSON.parse(JSON.stringify(object));
   }
 }
+
+export { EXPORT_AS_JSON_ACTION_KEY };
+
+export default ExportAsJSONAction;

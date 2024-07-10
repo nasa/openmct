@@ -55,7 +55,7 @@ class Selection extends Overlay {
     super({
       element: component.$el,
       size: 'fit',
-      dismissable: false,
+      dismissible: false,
       onChange,
       currentSelection,
       ...options

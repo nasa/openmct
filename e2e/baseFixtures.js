@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -40,7 +39,7 @@ import { v4 as uuid } from 'uuid';
  * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
  * @private
  * @param {import('@playwright/test').ConsoleMessage} msg
- * @returns {String} formatted string with message type, text, url, and line and column numbers
+ * @returns {string} formatted string with message type, text, url, and line and column numbers
  */
 function _consoleMessageToString(msg) {
   const { url, lineNumber, columnNumber } = msg.location();
@@ -61,14 +60,16 @@ function waitForAnimations(locator) {
   );
 }
 
-/**
- * This is part of our codecoverage shim.
- * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Example Project}
- * @constant {string}
- */
-const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
+const istanbulCLIOutput = fileURLToPath(new URL('.nyc_output', import.meta.url));
 
 const extendedTest = test.extend({
+  /**
+   * Path to output raw coverage files. Can be overridden in Playwright config file.
+   * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Example Project}
+   * @constant {string}
+   */
+
+  coveragePath: [istanbulCLIOutput, { option: true }],
   /**
    * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
    * the Time Indicator Clock to be in a specific state.
@@ -112,20 +113,54 @@ const extendedTest = test.extend({
     }
   ],
   /**
+   * Exposes a function to manually tick the clock. This is useful when overriding the clock to not
+   * tick (`shouldAdvanceTime: false`) for visual tests, as events such as re-renders and router params
+   * updates are clock-driven and must be manually ticked.
+   *
+   * Usage:
+   * ```js
+   * test.describe('Manual Clock Tick', () => {
+   *  test.use({
+   *   clockOptions: {
+   *     now: MISSION_TIME, // Set to the desired time
+   *     shouldAdvanceTime: false // Clock overridden to no longer tick
+   *   }
+   *  });
+   *  test('Visual - Manual Clock Tick', async ({ page, tick }) => {
+   *   // Tick the clock 2 seconds in the future
+   *   await tick(2000);
+   *  });
+   * });
+   * ```
+   *
+   * @param {Object} param0
+   * @param {import('@playwright/test').Page} param0.page
+   * @param {import('@playwright/test').Use} param0.use
+   */
+  tick: async ({ page }, use) => {
+    // eslint-disable-next-line func-style
+    const tick = async (milliseconds) => {
+      await page.evaluate((_milliseconds) => {
+        window.__clock.tick(_milliseconds);
+      }, milliseconds);
+    };
+    await use(tick);
+  },
+  /**
    * Extends the base context class to add codecoverage shim.
    * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Project}
    */
-  context: async ({ context }, use) => {
+  context: async ({ context, coveragePath }, use) => {
     await context.addInitScript(() =>
       window.addEventListener('beforeunload', () =>
         window.collectIstanbulCoverage(JSON.stringify(window.__coverage__))
       )
     );
-    await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
+    await fs.promises.mkdir(coveragePath, { recursive: true });
     await context.exposeFunction('collectIstanbulCoverage', (coverageJSON) => {
       if (coverageJSON) {
         fs.writeFileSync(
-          path.join(istanbulCLIOutput, `playwright_coverage_${uuid()}.json`),
+          path.join(coveragePath, `playwright_coverage_${uuid()}.json`),
           coverageJSON
         );
       }
@@ -133,9 +168,9 @@ const extendedTest = test.extend({
 
     await use(context);
     for (const page of context.pages()) {
-      await page.evaluate(() =>
-        window.collectIstanbulCoverage(JSON.stringify(window.__coverage__))
-      );
+      await page.evaluate(() => {
+        window.collectIstanbulCoverage(JSON.stringify(window.__coverage__));
+      });
     }
   },
   /**
@@ -154,17 +189,13 @@ const extendedTest = test.extend({
     // function in the generatorWorker context. This is necessary
     // to ensure that example telemetry data is generated for the new clock time.
     if (clockOptions?.now !== undefined) {
-      page.on(
-        'worker',
-        (worker) => {
-          if (worker.url().includes('generatorWorker')) {
-            worker.evaluate((time) => {
-              self.Date.now = () => time;
-            });
-          }
-        },
-        clockOptions.now
-      );
+      page.on('worker', (worker) => {
+        if (worker.url().includes('generatorWorker')) {
+          worker.evaluate((time) => {
+            self.Date.now = () => time;
+          }, clockOptions.now);
+        }
+      });
     }
 
     // Capture any console errors during test execution

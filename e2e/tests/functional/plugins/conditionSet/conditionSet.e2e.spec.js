@@ -292,6 +292,16 @@ test.describe('Basic Condition Set Use', () => {
     await expect(page.getByRole('menuitem', { name: /Conditions View/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
+    await page.getByLabel('Plot').click();
+    await expect(
+      page.getByLabel('Plot Legend Collapsed').getByText('Test Condition Set')
+    ).toBeVisible();
+    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel('Telemetry Table').click();
+    await expect(page.getByRole('searchbox', { name: 'output filter input' })).toBeVisible();
+    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel('Conditions View').click();
+    await expect(page.getByText('Current Output')).toBeVisible();
   });
   test('ConditionSet has correct outputs when telemetry is and is not available', async ({
     page
@@ -361,7 +371,7 @@ test.describe('Basic Condition Set Use', () => {
 
     // Validate that the condition set is evaluating and outputting
     // the correct value when the underlying telemetry subscription is active.
-    let outputValue = page.locator('[aria-label="Current Output Value"]');
+    let outputValue = page.getByLabel('Current Output Value');
     await expect(outputValue).toHaveText('false');
 
     await page.goto(exampleTelemetry.url);
@@ -452,9 +462,94 @@ test.describe('Basic Condition Set Use', () => {
 
     // Validate that the condition set is evaluating and outputting
     // the correct value when the underlying telemetry subscription is active.
-    let outputValue = page.locator('[aria-label="Current Output Value"]');
+    let outputValue = page.getByLabel('Current Output Value');
     await expect(outputValue).toHaveText('false');
 
     await page.goto(exampleTelemetry.url);
+  });
+
+  test.fixme('Ensure condition sets work with telemetry like operator status', ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7484'
+    });
+  });
+});
+
+test.describe('Condition Set Composition', () => {
+  let conditionSet;
+  let exampleTelemetry;
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    // Create Condition Set
+    conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set'
+    });
+
+    // Create Telemetry Object as child to Condition Set
+    exampleTelemetry = await createExampleTelemetryObject(page, conditionSet.uuid);
+
+    // Edit Condition Set
+    await page.goto(conditionSet.url);
+    await page.getByRole('button', { name: 'Edit Object' }).click();
+
+    // Add Condition to Condition Set
+    await page.getByRole('button', { name: 'Add Condition' }).click();
+
+    // Enter Condition Output
+    await page.getByLabel('Condition Name Input').first().fill('Negative');
+    await page.getByLabel('Condition Output Type').first().selectOption({ value: 'string' });
+    await page.getByLabel('Condition Output String').first().fill('Negative');
+
+    // Condition Trigger default is okay so no change needed to form
+
+    // Enter Condition Criterion
+    await page.getByLabel('Criterion Telemetry Selection').first().selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').first().selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .first()
+      .selectOption({ value: 'lessThan' });
+    await page.getByLabel('Criterion Input').first().fill('0');
+
+    // Save the Condition Set
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+  });
+
+  test('You can remove telemetry from a condition set with existing conditions', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7710'
+    });
+
+    await page.getByLabel('Expand My Items folder').click();
+    await page.getByLabel(`Expand ${conditionSet.name} conditionSet`).click();
+
+    await page
+      .getByLabel(`Navigate to ${exampleTelemetry.name}`, { exact: false })
+      .click({ button: 'right' });
+
+    await page
+      .getByLabel(`${exampleTelemetry.name} Context Menu`)
+      .getByRole('menuitem', { name: 'Remove' })
+      .click();
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+
+    await page
+      .getByLabel(`Navigate to ${conditionSet.name} conditionSet Object`, { exact: true })
+      .click();
+    await page.getByRole('button', { name: 'Edit Object' }).click();
+    await page.getByRole('tab', { name: 'Elements' }).click();
+    expect(
+      await page
+        .getByRole('tabpanel', { name: 'Inspector Views' })
+        .getByRole('listitem', { name: exampleTelemetry.name })
+        .count()
+    ).toEqual(0);
   });
 });

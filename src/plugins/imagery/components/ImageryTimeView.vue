@@ -32,7 +32,7 @@ import _ from 'lodash';
 import mount from 'utils/mount';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import PreviewAction from '@/ui/preview/PreviewAction';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 
 import imageryData from '../../imagery/mixins/imageryData.js';
 
@@ -49,7 +49,7 @@ export default {
   mixins: [imageryData],
   inject: ['openmct', 'domainObject', 'objectPath'],
   data() {
-    let timeSystem = this.openmct.time.timeSystem();
+    let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
     this.requestCount = 0;
 
@@ -71,7 +71,7 @@ export default {
     }
   },
   mounted() {
-    this.previewAction = new PreviewAction(this.openmct);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
 
     this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
     this.canvas.height = 0;
@@ -109,12 +109,12 @@ export default {
       this.stopFollowingTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.timeContext.on('timeSystem', this.setScaleAndPlotImagery);
-      this.timeContext.on('bounds', this.updateViewBounds);
+      this.timeContext.on('boundsChanged', this.updateViewBounds);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
         this.timeContext.off('timeSystem', this.setScaleAndPlotImagery);
-        this.timeContext.off('bounds', this.updateViewBounds);
+        this.timeContext.off('boundsChanged', this.updateViewBounds);
       }
     },
     expand(imageTimestamp) {
@@ -148,10 +148,10 @@ export default {
       return clientWidth;
     },
     updateViewBounds(bounds, isTick) {
-      this.viewBounds = this.timeContext.bounds();
+      this.viewBounds = this.timeContext.getBounds();
 
       if (this.timeSystem === undefined) {
-        this.timeSystem = this.timeContext.timeSystem();
+        this.timeSystem = this.timeContext.getTimeSystem();
       }
 
       this.setScaleAndPlotImagery(this.timeSystem, !isTick);
@@ -216,7 +216,7 @@ export default {
       }
 
       if (timeSystem === undefined) {
-        timeSystem = this.timeContext.timeSystem();
+        timeSystem = this.timeContext.getTimeSystem();
       }
 
       if (timeSystem.isUTCBased) {

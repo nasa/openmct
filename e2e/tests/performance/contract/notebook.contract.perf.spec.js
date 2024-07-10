@@ -33,7 +33,7 @@ TODO:
 
 import { expect, test } from '@playwright/test';
 
-const notebookFilePath = 'e2e/test-data/PerformanceNotebook.json';
+const notebookFilePath = 'test-data/PerformanceNotebook.json';
 
 test.describe('Performance tests', () => {
   test.beforeEach(async ({ page, browser }, testInfo) => {

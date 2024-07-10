@@ -92,7 +92,7 @@ TelemetryAverager.prototype.calculateMean = function () {
  * @private
  */
 TelemetryAverager.prototype.setDomainKeyAndFormatter = function () {
-  const domainKey = this.timeAPI.timeSystem().key;
+  const domainKey = this.timeAPI.getTimeSystem().key;
   if (domainKey !== this.domainKey) {
     this.domainKey = domainKey;
     this.domainFormatter = this.getFormatter(domainKey);

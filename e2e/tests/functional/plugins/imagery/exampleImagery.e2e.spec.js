@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding imagery,
 but only assume that example imagery is present.
 */
-/* globals process */
+
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
 import { waitForAnimations } from '../../../../baseFixtures.js';
 import { expect, test } from '../../../../pluginFixtures.js';
@@ -773,7 +773,7 @@ async function dragContrastSliderAndAssertFilterValues(page) {
  * Gets the filter:brightness value of the current background-image and
  * asserts against an expected value
  * @param {import('@playwright/test').Page} page
- * @param {String} expected The expected brightness value
+ * @param {string} expected The expected brightness value
  */
 async function assertBackgroundImageBrightness(page, expected) {
   const backgroundImage = page.locator('.c-imagery__main-image__background-image');
@@ -938,7 +938,7 @@ async function buttonZoomOnImageAndAssert(page) {
  * Gets the filter:contrast value of the current background-image and
  * asserts against an expected value
  * @param {import('@playwright/test').Page} page
- * @param {String} expected The expected contrast value
+ * @param {string} expected The expected contrast value
  */
 async function assertBackgroundImageContrast(page, expected) {
   const backgroundImage = page.locator('.c-imagery__main-image__background-image');

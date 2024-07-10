@@ -27,6 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 import { fileURLToPath } from 'url';
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { copy, paste, selectAll } from '../../../../helper/hotkeys/hotkeys.js';
 import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
@@ -277,7 +278,6 @@ test.describe('Notebook entry tests', () => {
   // Create Notebook with URL Whitelist
   let notebookObject;
   test.beforeEach(async ({ page }) => {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({
       path: fileURLToPath(new URL('../../../../helper/addInitNotebookWithUrls.js', import.meta.url))
     });
@@ -546,5 +546,54 @@ test.describe('Notebook entry tests', () => {
       'blockquote:has-text("until the idea succeeds")'
     );
     await expect(secondLineOfBlockquoteText).toBeVisible();
+  });
+
+  /**
+   *  Paste into notebook entry tests
+   */
+  test('Can paste text into a notebook entry', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7686'
+    });
+    const TEST_TEXT = 'This is a test';
+    const iterations = 20;
+    const EXPECTED_TEXT = TEST_TEXT.repeat(iterations);
+
+    await page.goto(notebookObject.url);
+
+    await nbUtils.addNotebookEntry(page);
+    await nbUtils.enterTextInLastEntry(page, TEST_TEXT);
+    await selectAll(page);
+    await copy(page);
+    for (let i = 0; i < iterations; i++) {
+      await paste(page);
+    }
+    await nbUtils.commitEntry(page);
+
+    await expect(page.locator(`text="${EXPECTED_TEXT}"`)).toBeVisible();
+  });
+
+  test('Prevents pasting text into selected notebook entry if not editing', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7686'
+    });
+    const TEST_TEXT = 'This is a test';
+
+    await page.goto(notebookObject.url);
+
+    await nbUtils.addNotebookEntry(page);
+    await nbUtils.enterTextInLastEntry(page, TEST_TEXT);
+    await selectAll(page);
+    await copy(page);
+    await paste(page);
+    await nbUtils.commitEntry(page);
+
+    // This should not paste text into the entry
+    await paste(page);
+
+    await expect(await page.locator(`text="${TEST_TEXT.repeat(1)}"`).count()).toEqual(1);
+    await expect(await page.locator(`text="${TEST_TEXT.repeat(2)}"`).count()).toEqual(0);
   });
 });

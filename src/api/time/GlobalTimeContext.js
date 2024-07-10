@@ -23,6 +23,10 @@
 import TimeContext from './TimeContext.js';
 
 /**
+ * @typedef {import('./TimeAPI').TimeConductorBounds} TimeConductorBounds
+ */
+
+/**
  * The GlobalContext handles getting and setting time of the openmct application in general.
  * Views will use this context unless they specify an alternate/independent time context
  */
@@ -38,12 +42,10 @@ class GlobalTimeContext extends TimeContext {
    * Get or set the start and end time of the time conductor. Basic validation
    * of bounds is performed.
    *
-   * @param {module:openmct.TimeAPI~TimeConductorBounds} newBounds
+   * @param {TimeConductorBounds} newBounds
    * @throws {Error} Validation error
-   * @fires module:openmct.TimeAPI~bounds
-   * @returns {module:openmct.TimeAPI~TimeConductorBounds}
-   * @memberof module:openmct.TimeAPI#
-   * @method bounds
+   * @returns {TimeConductorBounds}
+   * @override
    */
   bounds(newBounds) {
     if (arguments.length > 0) {
@@ -61,9 +63,9 @@ class GlobalTimeContext extends TimeContext {
 
   /**
    * Update bounds based on provided time and current offsets
-   * @private
    * @param {number} timestamp A time from which bounds will be calculated
    * using current offsets.
+   * @override
    */
   tick(timestamp) {
     super.tick.call(this, ...arguments);
@@ -81,11 +83,8 @@ class GlobalTimeContext extends TimeContext {
    * be manipulated by the user from the time conductor or from other views.
    * The time of interest can effectively be unset by assigning a value of
    * 'undefined'.
-   * @fires module:openmct.TimeAPI~timeOfInterest
    * @param newTOI
    * @returns {number} the current time of interest
-   * @memberof module:openmct.TimeAPI#
-   * @method timeOfInterest
    */
   timeOfInterest(newTOI) {
     if (arguments.length > 0) {
@@ -93,8 +92,7 @@ class GlobalTimeContext extends TimeContext {
       /**
        * The Time of Interest has moved.
        * @event timeOfInterest
-       * @memberof module:openmct.TimeAPI~
-       * @property {number} Current time of interest
+       * @property {number} timeOfInterest time of interest
        */
       this.emit('timeOfInterest', this.toi);
     }

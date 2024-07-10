@@ -24,58 +24,62 @@
 Tests to verify log plot functionality when objects are missing
 */
 
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Handle missing object for plots', () => {
-  test('Displays empty div for missing stacked plot item @unstable', async ({
-    page,
-    browserName,
-    openmctConfig
-  }) => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+  test('Displays empty div for missing stacked plot item', async ({ page, browserName }) => {
     // eslint-disable-next-line playwright/no-skipped-test
     test.skip(browserName === 'firefox', 'Firefox failing due to console events being missed');
 
-    const { myItemsFolderName } = openmctConfig;
-    const errorLogs = [];
+    let warningReceived = false;
 
     page.on('console', (message) => {
       if (message.type() === 'warning' && message.text().includes('Missing domain object')) {
-        errorLogs.push(message.text());
+        warningReceived = true;
       }
     });
 
-    //Make stacked plot
-    await makeStackedPlot(page, myItemsFolderName);
+    const stackedPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Stacked Plot'
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: stackedPlot.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: stackedPlot.uuid
+    });
 
     //Gets local storage and deletes the last sine wave generator in the stacked plot
-    const localStorage = await page.evaluate(() => window.localStorage);
-    const parsedData = JSON.parse(localStorage.mct);
-    const keys = Object.keys(parsedData);
-    const lastKey = keys[keys.length - 1];
+    const mct = await page.evaluate(() => window.localStorage.getItem('mct'));
+    const parsedData = JSON.parse(mct);
+    const key = Object.entries(parsedData).find(([, value]) => value.type === 'generator')?.[0];
 
-    delete parsedData[lastKey];
+    delete parsedData[key];
 
     //Sets local storage with missing object
-    await page.evaluate(`window.localStorage.setItem('mct', '${JSON.stringify(parsedData)}')`);
+    const jsonData = JSON.stringify(parsedData);
+    await page.evaluate((data) => {
+      window.localStorage.setItem('mct', data);
+    }, jsonData);
 
     //Reloads page and clicks on stacked plot
     await Promise.all([page.reload(), page.waitForLoadState('domcontentloaded')]);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.goto(stackedPlot.url);
 
     //Verify Main section is there on load
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Stacked Plot');
-
-    await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-    await Promise.all([
-      page.waitForNavigation(),
-      page.locator('text=Unnamed Stacked Plot').first().click()
-    ]);
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(stackedPlot.name);
 
     //Check that there is only one stacked item plot with a plot, the missing one will be empty
-    await expect(page.locator('.c-plot--stacked-container:has(.gl-plot)')).toHaveCount(1);
-    //Verify that console.warn is thrown
-    expect(errorLogs).toHaveLength(1);
+    await expect(page.getByLabel('Stacked Plot Item')).toHaveCount(1);
+    //Verify that console.warn was thrown
+    expect(warningReceived).toBe(true);
   });
 });
 

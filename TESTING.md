@@ -63,7 +63,7 @@ Once the file is generated, it can be published to codecov with
 ### e2e
 The e2e line coverage is a bit more complex than the karma implementation. This is the general sequence of events:
 
-1. Each e2e suite will start webpack with the ```npm run start:coverage``` command with config `webpack.coverage.js` and the `babel-plugin-istanbul` plugin to generate code coverage during e2e test execution using our custom [baseFixture](./baseFixtures.js). 
+1. Each e2e suite will start webpack with the ```npm run start:coverage``` command with config `webpack.coverage.mjs` and the `babel-plugin-istanbul` plugin to generate code coverage during e2e test execution using our custom [baseFixture](./baseFixtures.js). 
 1. During testcase execution, each e2e shard will generate its piece of the larger coverage suite. **This coverage file is not merged**. The raw coverage file is stored in a `.nyc_report` directory.
 1. [nyc](https://github.com/istanbuljs/nyc) converts this directory into a `lcov` file with the following command `npm run cov:e2e:report`
 1. Most of the tests are run in the '@stable' configuration and focus on chrome/ubuntu at a single resolution. This coverage is published to codecov with `npm run cov:e2e:stable:publish`.
@@ -91,12 +91,14 @@ There are a few reasons that your GitHub PR could be failing beyond simple faile
 ### Local=Pass and CI=Fail
 Although rare, it is possible that your test can pass locally but fail in CI.
 
-#### Busting Cache
-In certain circumstances, the CircleCI cache can become stale. In order to bust the cache, we've implemented a runtime boolean parameter in Circle CI creatively name BUST_CACHE. To execute:
-1. Navigate to the branch in Circle CI believed to have stale cache.
-1. Click on the 'Trigger Pipeline' button.
-1. Add Parameter -> Parameter Type = boolean , Name = BUST_CACHE ,Value = true
-1. Click 'Trigger Pipeline'
+### Reset your workspace
+It's possible that you're running with dependencies or a local environment which is out of sync with the branch you're working on. Make sure to execute the following:
+
+```sh
+nvm use
+npm run clean
+npm install
+```
 
 #### Run tests in the same container as CI
 

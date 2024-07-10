@@ -219,6 +219,11 @@ export default {
     },
 
     addChild(child) {
+      if (this.openmct.objects.isMissing(child)) {
+        console.warn('Missing domain object for stacked plot: ', child);
+        return;
+      }
+
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
       this.tickWidthMap[id] = {
@@ -310,9 +315,9 @@ export default {
     },
     /**
      * @typedef {Object} PlotYTickData
-     * @property {Number} leftTickWidth the width of the ticks for all the y axes on the left of the plot.
-     * @property {Number} rightTickWidth the width of the ticks for all the y axes on the right of the plot.
-     * @property {Boolean} hasMultipleLeftAxes whether or not there is more than one left y axis.
+     * @property {number} leftTickWidth the width of the ticks for all the y axes on the left of the plot.
+     * @property {number} rightTickWidth the width of the ticks for all the y axes on the right of the plot.
+     * @property {boolean} hasMultipleLeftAxes whether or not there is more than one left y axis.
      */
     onYTickWidthChange(data, plotId) {
       if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {

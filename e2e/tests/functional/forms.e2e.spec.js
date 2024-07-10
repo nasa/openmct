@@ -31,8 +31,8 @@ import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 const TEST_FOLDER = 'test folder';
-const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';
-const imageFilePath = 'e2e/test-data/rick.jpg';
+const jsonFilePath = 'test-data/ExampleLayouts.json';
+const imageFilePath = 'test-data/rick.jpg';
 
 test.describe('Form Validation Behavior', () => {
   test('Required Field indicators appear if title is empty and can be corrected', async ({

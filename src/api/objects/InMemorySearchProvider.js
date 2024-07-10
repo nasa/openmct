@@ -391,7 +391,7 @@ class InMemorySearchProvider {
    * Dispatch a search query to the worker and return a queryId.
    *
    * @private
-   * @returns {String} a unique query Id for the query.
+   * @returns {string} a unique query Id for the query.
    */
   #dispatchSearchToWorker({ queryId, searchType, query, maxResults }) {
     const message = {

@@ -122,4 +122,14 @@ test.describe('Reload action', () => {
     expect(fullReloadAlphaTelemetryValue).not.toEqual(afterReloadAlphaTelemetryValue);
     expect(fullReloadBetaTelemetryValue).not.toEqual(afterReloadBetaTelemetryValue);
   });
+
+  test('is disabled in Previews', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7638'
+    });
+    await page.getByLabel('Alpha Table Frame Controls').getByLabel('Large View').click();
+    await page.getByLabel('Modal Overlay').getByLabel('More actions').click();
+    await expect(page.getByLabel('Reload')).toBeHidden();
+  });
 });

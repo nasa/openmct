@@ -21,10 +21,12 @@
  *****************************************************************************/
 import DuplicateTask from './DuplicateTask.js';
 
-export default class DuplicateAction {
+const DUPLICATE_ACTION_KEY = 'duplicate';
+
+class DuplicateAction {
   constructor(openmct) {
     this.name = 'Duplicate';
-    this.key = 'duplicate';
+    this.key = DUPLICATE_ACTION_KEY;
     this.description = 'Duplicate this object.';
     this.cssClass = 'icon-duplicate';
     this.group = 'action';
@@ -169,3 +171,7 @@ export default class DuplicateAction {
     this.transaction = null;
   }
 }
+
+export { DUPLICATE_ACTION_KEY };
+
+export default DuplicateAction;

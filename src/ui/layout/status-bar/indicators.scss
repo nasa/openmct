@@ -47,7 +47,7 @@
     // Make <a> in label look like buttons
     @include transition(background-color);
     background-color: transparent;
-    border: 1px solid rgba($colorIndicatorMenuFg, 0.5);
+    border: 1px solid rgba($colorIndicatorMenuFg, 0.8);
     border-radius: $controlCr;
     box-sizing: border-box;
     color: inherit;

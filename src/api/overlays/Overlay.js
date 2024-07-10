@@ -15,7 +15,7 @@ class Overlay extends EventEmitter {
   constructor({
     buttons,
     autoHide = true,
-    dismissable = true,
+    dismissible = true,
     element,
     onDestroy,
     onDismiss,
@@ -27,7 +27,7 @@ class Overlay extends EventEmitter {
     this.container.classList.add('l-overlay-wrapper', cssClasses[size]);
 
     this.autoHide = autoHide;
-    this.dismissable = dismissable !== false;
+    this.dismissible = dismissible !== false;
 
     const { destroy } = mount(
       {
@@ -38,7 +38,7 @@ class Overlay extends EventEmitter {
           dismiss: this.notifyAndDismiss.bind(this),
           element,
           buttons,
-          dismissable: this.dismissable
+          dismissible: this.dismissible
         },
         template: '<overlay-component></overlay-component>'
       },

@@ -276,6 +276,17 @@ async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
 }
 
 /**
+ * Navigates directly to a given object url, in real-time mode.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url The url to the domainObject
+ */
+async function navigateToObjectWithRealTime(page, url, start = '1800000', end = '30000') {
+  await page.goto(
+    `${url}?tc.mode=local&tc.startDelta=${start}&tc.endDelta=${end}&tc.timeSystem=utc`
+  );
+}
+
+/**
  * Open the given `domainObject`'s context menu from the object tree.
  * Expands the path to the object and scrolls to it if necessary.
  *
@@ -392,6 +403,8 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
     await page.waitForURL(/tc\.mode=local/);
   }
+  //dismiss the time conductor popup
+  await page.getByLabel('Discard changes and close time popup').click();
 }
 
 /**
@@ -579,9 +592,6 @@ async function waitForPlotsToRender(page) {
  * @return {Promise<PlotPixel[]>}
  */
 async function getCanvasPixels(page, canvasSelector) {
-  const getTelemValuePromise = new Promise((resolve) =>
-    page.exposeFunction('getCanvasValue', resolve)
-  );
   const canvasHandle = await page.evaluateHandle(
     (canvas) => document.querySelector(canvas),
     canvasSelector
@@ -592,7 +602,7 @@ async function getCanvasPixels(page, canvasSelector) {
   );
 
   await waitForPlotsToRender(page);
-  await page.evaluate(
+  return page.evaluate(
     ([canvas, ctx]) => {
       // The document canvas is where the plot points and lines are drawn.
       // The only way to access the canvas is using document (using page.evaluate)
@@ -620,12 +630,10 @@ async function getCanvasPixels(page, canvasSelector) {
         i = i + 4;
       }
 
-      window.getCanvasValue(plotPixels);
+      return plotPixels;
     },
     [canvasHandle, canvasContextHandle]
   );
-
-  return getTelemValuePromise;
 }
 
 /**
@@ -654,6 +662,7 @@ export {
   getFocusedObjectUuid,
   getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
+  navigateToObjectWithRealTime,
   openObjectTreeContextMenu,
   renameObjectFromContextMenu,
   setEndOffset,
@@ -662,5 +671,6 @@ export {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
+  setTimeConductorMode,
   waitForPlotsToRender
 };

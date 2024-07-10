@@ -45,7 +45,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.node_version }}-
 
-      - run: npm install --cache ~/.npm --no-audit --progress=false
+      - run: npm ci --no-audit --progress=false
 
       - run: npm test
 

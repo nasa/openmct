@@ -65,7 +65,7 @@ export default {
       this.overlay = this.openmct.overlays.overlay({
         element: this.$el,
         size: 'large',
-        dismissable: true,
+        dismissible: true,
         buttons: [
           {
             label: 'Clear All Notifications',
