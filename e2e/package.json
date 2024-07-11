@@ -21,7 +21,6 @@
     "@axe-core/playwright": "4.8.5",
     "sinon": "17.0.0"
   },
-  "homepage": "https://github.com/nasa/openmct/tree/master/e2e",
   "author": {
     "name": "National Aeronautics and Space Administration",
     "url": "https://www.nasa.gov"
