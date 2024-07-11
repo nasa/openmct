@@ -23,7 +23,6 @@
 import { onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import { useTimeContext } from './useTimeContext.js';
 import throttle from '../../utils/throttle.js';
 
 const THROTTLE_RATE = 300;
@@ -40,10 +39,8 @@ const THROTTLE_RATE = 300;
  *   isTick: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeBounds(openmct, objectPath) {
+export function useTimeBounds(openmct, timeContext) {
   let stopObservingTimeBounds;
-
-  const { timeContext } = useTimeContext(openmct, objectPath);
 
   const bounds = shallowRef(timeContext.value.getBounds());
   const isTick = ref(false);

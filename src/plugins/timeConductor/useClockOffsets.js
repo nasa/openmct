@@ -23,7 +23,6 @@
 import { onBeforeUnmount, shallowRef, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import { useTimeContext } from './useTimeContext.js';
 
 /**
  * Provides reactive `offsets`,
@@ -37,10 +36,8 @@ import { useTimeContext } from './useTimeContext.js';
  *   offsets: import('vue').Ref<object>,
  * }}
  */
-export function useClockOffsets(openmct, objectPath) {
+export function useClockOffsets(openmct, timeContext) {
   let stopObservingClockOffsets;
-
-  const { timeContext } = useTimeContext(openmct, objectPath);
 
   const offsets = shallowRef(timeContext.value.getClockOffsets());
 

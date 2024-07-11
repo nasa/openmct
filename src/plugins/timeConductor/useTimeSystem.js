@@ -23,7 +23,6 @@
 import { onBeforeUnmount, ref, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import { useTimeContext } from './useTimeContext.js';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -43,10 +42,8 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
  *   isTimeSystemUTCBased: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeSystem(openmct, objectPath) {
+export function useTimeSystem(openmct, timeContext) {
   let stopObservingTimeSystem;
-
-  const { timeContext } = useTimeContext(openmct, objectPath);
 
   const initialTimeSystem = timeContext.value.getTimeSystem();
 

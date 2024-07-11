@@ -27,7 +27,6 @@ import {
   REALTIME_MODE_KEY,
   TIME_CONTEXT_EVENTS
 } from '../../api/time/constants.js';
-import { useTimeContext } from './useTimeContext.js';
 
 /**
  * Provides reactive `timeMode` which is reactive to a time context,
@@ -42,10 +41,8 @@ import { useTimeContext } from './useTimeContext.js';
  *   isRealTimeMode: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeMode(openmct, objectPath) {
+export function useTimeMode(openmct, timeContext) {
   let stopObservingTimeMode;
-
-  const { timeContext } = useTimeContext(openmct, objectPath);
 
   const timeMode = ref(timeContext.value.getMode());
   const isFixedTimeMode = computed(() => timeMode.value === FIXED_MODE_KEY);

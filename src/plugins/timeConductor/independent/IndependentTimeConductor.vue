@@ -111,15 +111,15 @@ export default {
   },
   setup(props) {
     const openmct = inject('openmct');
-    const { timeContext } = useTimeContext(openmct, getReactiveObjectPath);
+    const { timeContext } = useTimeContext(openmct, () => props.objectPath);
 
     const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
-      useTimeSystem(openmct, getReactiveObjectPath);
+      useTimeSystem(openmct, timeContext);
     const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
-      useTimeMode(openmct, getReactiveObjectPath);
-    const { bounds, isTick } = useTimeBounds(openmct, getReactiveObjectPath);
-    const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, getReactiveObjectPath);
-    const { offsets } = useClockOffsets(openmct, getReactiveObjectPath);
+      useTimeMode(openmct, timeContext);
+    const { bounds, isTick } = useTimeBounds(openmct, timeContext);
+    const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
+    const { offsets } = useClockOffsets(openmct, timeContext);
 
     watch(timeContext, () => {
       console.log('context changed setup');
@@ -225,16 +225,22 @@ export default {
       this.handleIndependentTimeConductorChange();
     },
     clock() {
-      this.saveClock();
+      if (this.independentTCEnabled) {
+        this.saveClock();
+      }
     },
     timeMode() {
-      this.saveMode();
+      if (this.independentTCEnabled) {
+        this.saveMode();
+      }
     },
     clockOffsets() {
-      this.saveClockOffsets();
+      if (this.independentTCEnabled) {
+        this.saveClockOffsets();
+      }
     },
     bounds() {
-      if (this.isTick === false) {
+      if (this.independentTCEnabled && this.isTick === false) {
         this.saveFixedBounds();
       }
     }
@@ -321,12 +327,20 @@ export default {
       const independentTimeContextBoundsOrOffsets = this.isFixedTimeMode ? bounds : offsets;
       const independentTimeContextClockKey = this.isFixedTimeMode ? undefined : clockKey;
 
-      if (!this.timeContext.hasOwnContext()) {
+      const independentTimeContext = this.openmct.time.getIndependentContext(this.keyString);
+
+      if (!independentTimeContext.hasOwnContext()) {
         this.unregisterIndependentTimeContext = this.openmct.time.addIndependentContext(
           this.keyString,
           independentTimeContextBoundsOrOffsets,
           independentTimeContextClockKey
         );
+      } else {
+        if (this.isRealTimeMode) {
+          independentTimeContext.setClock(this.timeOptions.clock);
+        }
+
+        independentTimeContext.setMode(this.timeOptions.mode, independentTimeContextBoundsOrOffsets);
       }
     },
     registerIndependentTimeOffsets() {

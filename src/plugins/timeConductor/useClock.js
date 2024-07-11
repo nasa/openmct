@@ -23,7 +23,6 @@
 import { onBeforeUnmount, shallowRef, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import { useTimeContext } from './useTimeContext.js';
 
 /**
  * Provides reactive `clock` which is reactive to a time context,
@@ -38,10 +37,8 @@ import { useTimeContext } from './useTimeContext.js';
  *   getClockMetadata: () => Object
  * }}
  */
-export function useClock(openmct, objectPath) {
+export function useClock(openmct, timeContext) {
   let stopObservingClock;
-
-  const { timeContext } = useTimeContext(openmct, objectPath);
 
   const clock = shallowRef(timeContext.value.getClock());
 

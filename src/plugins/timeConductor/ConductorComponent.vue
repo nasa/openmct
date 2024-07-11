@@ -100,14 +100,14 @@ export default {
   inject: ['openmct', 'configuration'],
   setup(props) {
     const openmct = inject('openmct');
-    const { timeContext } = useTimeContext(openmct, () => props.objectPath);
+    const { timeContext } = useTimeContext(openmct);
     const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
-      useTimeSystem(openmct);
+      useTimeSystem(openmct, timeContext);
     const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
-      useTimeMode(openmct);
-    const { bounds, isTick } = useTimeBounds(openmct);
-    const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct);
-    const { offsets } = useClockOffsets(openmct);
+      useTimeMode(openmct, timeContext);
+    const { bounds, isTick } = useTimeBounds(openmct, timeContext);
+    const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
+    const { offsets } = useClockOffsets(openmct, timeContext);
 
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
