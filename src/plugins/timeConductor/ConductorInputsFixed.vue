@@ -20,7 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <TimePopupFixed v-if="readOnly === false" @focus="$event.target.select()" @dismiss="dismiss" />
+  <DateTimePopupFixed v-if="delimiter && !readOnly" :delimiter="delimiter" @focus="$event.target.select()" @dismiss="dismiss" />
+  <TimePopupFixed v-else-if="!readOnly" @focus="$event.target.select()" @dismiss="dismiss" />
   <div v-else class="c-compact-tc__setting-wrapper">
     <div
       class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
@@ -42,10 +43,12 @@
 
 <script>
 import TimePopupFixed from './TimePopupFixed.vue';
+import DateTimePopupFixed from './DateTimePopupFixed.vue';
 
 export default {
   components: {
-    TimePopupFixed
+    TimePopupFixed,
+    DateTimePopupFixed
   },
   inject: ['openmct', 'timeContext', 'bounds', 'timeSystemFormatter'],
   props: {
@@ -64,6 +67,9 @@ export default {
   },
   emits: ['dismiss-inputs-fixed'],
   computed: {
+    delimiter() {
+      return this.timeSystemFormatter.getDelimiter?.();
+    },
     formattedBounds() {
       return {
         start: this.timeSystemFormatter.format(this.bounds.start),
