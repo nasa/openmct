@@ -22,7 +22,7 @@
 
 <template>
   <form ref="deltaInput">
-    <div class="c-tc-input-popup__input-grid">
+    <div class="c-tc-input-popup__input-grid-utc">
       <div class="pr-time-label icon-minus pr-time-label-minus-hrs">Hrs</div>
       <div class="pr-time-label pr-time-label-minus-mins">Mins</div>
       <div class="pr-time-label pr-time-label-minus-secs">Secs</div>

@@ -23,12 +23,10 @@
 <template>
   <form ref="fixedDeltaInput">
     <div class="c-tc-input-popup__input-grid">
-      <div class="pr-time-label pr-time-label-start-date">Start</div>
-      <div class="pr-time-label pr-time-label-start-time"></div>
-      <div class="pr-time-label pr-time-label-end-date">End</div>
-      <div class="pr-time-label pr-time-label-end-time"></div>
+      <div class="pr-time-label pr-time-label-start-time">Start</div>
+      <div class="pr-time-label pr-time-label-end-time">End</div>
 
-      <div class="pr-time-input pr-time-input--time pr-time-input-start-date">
+      <div class="pr-time-input pr-time-input-start">
         <input
           ref="startTime"
           v-model="formattedBounds.start"
@@ -43,7 +41,7 @@
 
       <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-      <div class="pr-time-input pr-time-input--time pr-time-input-end-date">
+      <div class="pr-time-input pr-time-input-end">
         <input
           ref="endTime"
           v-model="formattedBounds.end"
