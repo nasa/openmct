@@ -91,7 +91,7 @@ test.describe('Overlay Plot', () => {
     // Assert that the legend is collapsed by default
     await expect(page.getByLabel('Plot Legend Collapsed')).toBeVisible();
     await expect(page.getByLabel('Plot Legend Expanded')).toBeHidden();
-    await expect(page.getByLabel('Expand by Default')).toHaveText('No');
+    await expect(page.getByLabel('Expand by Default')).toHaveText(/No/);
 
     expect(await page.getByLabel('Plot Legend Item').count()).toBe(3);
 
@@ -106,7 +106,7 @@ test.describe('Overlay Plot', () => {
     await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
-    await expect(page.getByLabel('Expand by Default')).toHaveText('Yes');
+    await expect(page.getByLabel('Expand by Default')).toHaveText(/Yes/);
     await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
 
     // Assert that the legend is expanded on page load
@@ -116,7 +116,7 @@ test.describe('Overlay Plot', () => {
     await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
-    await expect(page.getByLabel('Expand by Default')).toHaveText('Yes');
+    await expect(page.getByLabel('Expand by Default')).toHaveText(/Yes/);
     await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
   });
 

@@ -86,7 +86,10 @@ export default {
       );
     },
     yAxesIds() {
-      return !this.isStackedPlotObject && this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
+      if (this.isStackedPlotObject) {
+        return [];
+      }
+      return this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
     }
   },
   created() {

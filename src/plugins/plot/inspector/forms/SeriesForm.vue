@@ -33,7 +33,7 @@
       >
       </span>
       <div :class="objectLabelCss">
-        <div class="c-object-label__type-icon" :class="[seriesCss]">
+        <div class="c-object-label__type-icon" :class="seriesCss">
           <span class="is-status__indicator" title="This item is missing or suspect"></span>
         </div>
         <div class="c-object-label__name">{{ series.domainObject.name }}</div>
@@ -47,12 +47,7 @@
         </div>
         <div class="grid-cell value">
           <select v-model="yKey" @change="updateForm('yKey')">
-            <option
-              v-for="option in yKeyOptions"
-              :key="option.value"
-              :value="option.value"
-              :selected="option.value == yKey"
-            >
+            <option v-for="option in yKeyOptions" :key="option.value" :value="option.value">
               {{ option.name }}
             </option>
           </select>
@@ -189,14 +184,14 @@ export default {
       return this.series.collection.palette.groups();
     },
     objectLabelCss() {
-      return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
+      return this.status ? `c-object-label is-status--${this.status}` : 'c-object-label';
     },
     seriesCss() {
-      let type = this.openmct.types.get(this.series.domainObject.type);
+      const type = this.openmct.types.get(this.series.domainObject.type);
+      const baseClass = 'c-object-label__type-icon';
+      const typeClass = type.definition.cssClass || '';
 
-      return type.definition.cssClass
-        ? `c-object-label__type-icon ${type.definition.cssClass}`
-        : `c-object-label__type-icon`;
+      return `${baseClass} ${typeClass}`.trim();
     },
     isAliasCss() {
       let cssClass = '';

@@ -25,11 +25,12 @@
       <span
         class="c-disclosure-triangle is-enabled flex-elem"
         :class="expandedCssClass"
-        :aria-label="ariaLabelValue"
         tabindex="0"
         @click="toggleExpanded"
         @keydown.enter="toggleExpanded"
       >
+        <!-- Visually hidden text for a11y -->
+        <span class="visually-hidden">{{ ariaLabel }}</span>
       </span>
       <div class="c-object-label" :class="statusClass">
         <div class="c-object-label__type-icon" :class="getSeriesClass">
@@ -134,8 +135,7 @@ export default {
     };
   },
   computed: {
-    ariaLabelValue() {
-      //series.domainObject.name
+    ariaLabel() {
       const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
       const type = this.series.domainObject.type ? ` ${this.series.domainObject.type}` : '';
 
