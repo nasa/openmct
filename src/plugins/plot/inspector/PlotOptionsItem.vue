@@ -24,13 +24,12 @@
     <span
       class="c-disclosure-triangle is-enabled flex-elem"
       :class="expandedCssClass"
+      role="button"
+      :aria-label="ariaLabelExpandCollapse"
       tabindex="0"
       @click="toggleExpanded"
       @keydown.enter="toggleExpanded"
-    >
-      <!-- Visually hidden text for a11y -->
-      <span class="visually-hidden">{{ ariaLabelExpandCollapse }}</span>
-    </span>
+    ></span>
     <div class="c-object-label" :class="statusClass">
       <div class="c-object-label__type-icon" :class="getSeriesClass">
         <span class="is-status__indicator" title="This item is missing or suspect"></span>
