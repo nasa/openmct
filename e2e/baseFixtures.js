@@ -212,23 +212,6 @@ const extendedTest = test.extend({
           .not.toEqual('error')
       );
     }
-  },
-  /**
-   * Extends the base browser class to enable CDP connection definition in playwright.config.js. Once
-   * that RFE is implemented, this function can be removed.
-   * @see {@link https://github.com/microsoft/playwright/issues/8379 Github RFE}
-   */
-  browser: async ({ playwright, browser }, use, workerInfo) => {
-    // Use browserless if configured
-    if (workerInfo.project.name.match(/browserless/)) {
-      const vBrowser = await playwright.chromium.connectOverCDP({
-        endpointURL: 'ws://localhost:3003'
-      });
-      await use(vBrowser);
-    } else {
-      // Use Local Browser for testing.
-      await use(browser);
-    }
   }
 });
 
