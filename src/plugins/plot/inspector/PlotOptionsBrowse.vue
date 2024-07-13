@@ -20,32 +20,46 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div v-if="loaded" class="js-plot-options-browse">
-    <ul v-if="showPlotSeries" class="c-tree" role="tree">
-      <h2 class="--first" title="Plot series display properties in this object">Plot Series</h2>
-      <PlotOptionsItem v-for="series in plotSeries" :key="series.keyString" :series="series" />
-    </ul>
-    <div v-if="showYAxisProperties" class="grid-properties">
-      <ul
+  <ul v-if="loaded" class="js-plot-options-browse" aria-label="Plot Configuration">
+    <li v-if="showPlotSeries" class="c-tree" aria-labelledby="plot-series-header">
+      <h2 id="plot-series-header" class="--first">Plot Series</h2>
+      <ul aria-label="Plot Series Items" class="l-inspector-part">
+        <PlotOptionsItem v-for="series in plotSeries" :key="series.keyString" :series="series" />
+      </ul>
+    </li>
+    <ul v-if="showYAxisProperties" aria-label="Y Axes" class="l-inspector-part js-yaxis-properties">
+      <li
         v-for="(yAxis, index) in yAxesWithSeries"
         :key="`yAxis-${index}`"
-        class="l-inspector-part js-yaxis-properties"
-        :aria-label="yAxisAriaLabel(yAxis)"
+        :aria-labelledby="getYAxisHeaderId(index)"
       >
-        <h2 title="Y axis settings for this object">
+        <h2 :id="getYAxisHeaderId(index)">
           Y Axis {{ yAxesWithSeries.length > 1 ? yAxis.id : '' }}
         </h2>
-        <li v-for="(prop, key) in yAxisProperties(yAxis)" :key="key" class="grid-row">
-          <div class="u-contents" :aria-label="prop.label">
-            <div class="grid-cell label" :title="prop.title">{{ prop.label }}</div>
-            <div class="grid-cell value">{{ prop.value }}</div>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div v-if="showLegendProperties" class="grid-properties">
-      <ul class="l-inspector-part js-legend-properties">
-        <h2 class="--first" title="Legend settings for this object">Legend</h2>
+        <ul class="grid-properties" :aria-label="`Y Axis ${yAxis.id} Properties`">
+          <li
+            v-for="(prop, key) in yAxisProperties(yAxis)"
+            :key="key"
+            :aria-labelledby="getYAxisPropId(index, prop.label)"
+            class="grid-row"
+            role="grid"
+          >
+            <div
+              :id="getYAxisPropId(index, prop.label)"
+              class="grid-cell label"
+              :title="prop.title"
+              role="gridcell"
+            >
+              {{ prop.label }}
+            </div>
+            <div class="grid-cell value" role="gridcell">{{ prop.value }}</div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <li v-if="showLegendProperties" class="grid-properties" aria-label="Legend Configuration">
+      <ul class="l-inspector-part js-legend-properties" aria-labelledby="legend-header">
+        <h2 id="legend-header" class="--first">Legend</h2>
         <li v-for="(prop, key) in legendProperties" :key="key" class="grid-row">
           <div class="u-contents" :aria-label="prop.label">
             <div class="grid-cell label" :title="prop.title">{{ prop.label }}</div>
@@ -53,8 +67,8 @@
           </div>
         </li>
       </ul>
-    </div>
-  </div>
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -269,6 +283,14 @@ export default {
         foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
       }
     },
+    getYAxisHeaderId(index) {
+      return `yAxis-${index}-header`;
+    },
+
+    getYAxisPropId(index, label) {
+      return `y-axis-${index}-${label.toLowerCase().replace(' ', '-')}`;
+    },
+
     yAxisAriaLabel(yAxis) {
       return this.yAxesWithSeries.length > 1
         ? `Y Axis ${yAxis.id} Properties`
