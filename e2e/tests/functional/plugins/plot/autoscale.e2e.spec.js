@@ -61,12 +61,11 @@ test.describe('Autoscale', () => {
     await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
-
-    // turn off autoscale
     await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 
-    await page.getByLabel('Y Axis 1 Minimum value').fill('-2');
-    await page.getByLabel('Y Axis 1 Maximum value').fill('2');
+    await page.getByRole('spinbutton').first().fill(-2);
+    // set maximum value
+    await page.getByRole('spinbutton').nth(1).fill(2);
 
     // save
     await page.click('button[title="Save"]');
