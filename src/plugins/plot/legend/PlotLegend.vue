@@ -27,11 +27,11 @@
       'is-legend-hidden': isLegendHidden
     }"
   >
-    <div
+    <button
       class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
       :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
       @click="toggleLegend"
-    ></div>
+    ></button>
 
     <div class="c-plot-legend__wrapper" :class="{ 'is-cursor-locked': cursorLocked }">
       <!-- COLLAPSED PLOT LEGEND -->
