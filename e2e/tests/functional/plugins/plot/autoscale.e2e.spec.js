@@ -26,7 +26,6 @@ Testsuite for plot autoscale.
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
-import { setUserDefinedMinAndMax, turnOffAutoscale } from './plotActions.js';
 test.use({
   viewport: {
     width: 1280,
@@ -62,9 +61,11 @@ test.describe('Autoscale', () => {
     await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
-    await turnOffAutoscale(page);
+    await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 
-    await setUserDefinedMinAndMax(page, '-2', '2');
+    await page.getByRole('spinbutton').first().fill(-2);
+    // set maximum value
+    await page.getByRole('spinbutton').nth(1).fill(2);
 
     // save
     await page.click('button[title="Save"]');
