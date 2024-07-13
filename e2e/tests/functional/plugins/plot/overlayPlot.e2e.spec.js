@@ -144,15 +144,8 @@ test.describe('Overlay Plot', () => {
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('[title="Display limit lines"]~div input')
-      .check();
+    await page.getByLabel('Expand Sine Wave Generator:').click();
+    await page.getByLabel('Limit lines').check();
 
     await assertLimitLinesExistAndAreVisible(page);
 
@@ -215,21 +208,13 @@ test.describe('Overlay Plot', () => {
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .getByRole('checkbox', { name: 'Limit lines' })
-      .check();
+    await page.getByLabel('Expand Sine Wave Generator:').click();
+    await page.getByLabel('Limit lines').check();
 
     await assertLimitLinesExistAndAreVisible(page);
 
-    // Save (exit edit mode)
-    await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     const initialCoords = await assertLimitLinesExistAndAreVisible(page);
     // Resize the chart container by showing the snapshot pane.

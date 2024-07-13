@@ -155,81 +155,76 @@ test.describe('Stacked Plot', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
 
     // Click on the 1st plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"] canvas`).nth(1).click();
+    await page
+      .getByLabel('Stacked Plot Item Sine Wave Generator A')
+      .getByLabel('Plot Canvas')
+      .click();
 
     // Assert that the inspector shows the Y Axis properties for swgA
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgA.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator A', { exact: true })
+    ).toBeVisible();
 
     // Click on the 2nd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgB.name}"] canvas`).nth(1).click();
-
+    await page
+      .getByLabel('Stacked Plot Item Sine Wave Generator B')
+      .getByLabel('Plot Canvas')
+      .click();
     // Assert that the inspector shows the Y Axis properties for swgB
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgB.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator B', { exact: true })
+    ).toBeVisible();
 
     // Click on the 3rd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgC.name}"] canvas`).nth(1).click();
-
-    // Assert that the inspector shows the Y Axis properties for swgC
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await page
+      .getByLabel('Stacked Plot Item Sine Wave Generator C')
+      .getByLabel('Plot Canvas')
+      .click();
+    // Assert that the inspector shows the Y Axis properties for swgB
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgC.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator C', { exact: true })
+    ).toBeVisible();
 
     // Go into edit mode
     await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
-    // Click on canvas for the 1st plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"]`).click();
+    // Click on the 1st plot
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator A').click();
 
     // Assert that the inspector shows the Y Axis properties for swgA
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgA.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator A', { exact: true })
+    ).toBeVisible();
 
-    //Click on canvas for the 2nd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgB.name}"]`).click();
+    // Click on the 2nd plot
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator B').click();
 
     // Assert that the inspector shows the Y Axis properties for swgB
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgB.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator B', { exact: true })
+    ).toBeVisible();
 
-    //Click on canvas for the 3rd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgC.name}"]`).click();
+    // Click on the 3rd plot
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator C').click();
 
     // Assert that the inspector shows the Y Axis properties for swgC
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgC.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator C', { exact: true })
+    ).toBeVisible();
   });
 
   test('Changing properties of an immutable child plot are applied correctly', async ({ page }) => {
@@ -246,7 +241,7 @@ test.describe('Stacked Plot', () => {
     // Expand config for the series
     await page.getByLabel('Expand Sine Wave Generator').click();
 
-    // turn off alarm markers. Technically there should be a getBy locator to ensure we're selecting the correct alarm marker
+    // turn off alarm markers
     await page.getByLabel('Alarm Markers').uncheck();
 
     // save
@@ -261,7 +256,8 @@ test.describe('Stacked Plot', () => {
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
     // Expand config for the series
-    await page.getByLabel('Expand Sine Wave Generator').click();
+    //TODO Fix this locator
+    await page.getByLabel('Expand Sine Wave Generator A generator').click();
 
     // Assert that alarm markers are still turned off
     await expect(
