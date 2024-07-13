@@ -21,16 +21,7 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which can quickly verify that any openmct installation is
-operable and that any type of testing can proceed.
-
-Ideally, smoke tests should make zero assumptions about how and where they are run. This makes them
-more resilient to change and therefor a better indicator of failure. Smoke tests will also run quickly
-as they cover a very "thin surface" of functionality.
-
-When deciding between authoring new smoke tests or functional tests, ask yourself "would I feel
-comfortable running this test during a live mission?" Avoid creating or deleting Domain Objects.
-Make no assumptions about the order that elements appear in the DOM.
+This suite is dedicated to tests which verify that tooltips are displayed correctly.
 */
 
 import { createDomainObjectWithDefaults, expandEntireTree } from '../../appActions.js';
@@ -98,29 +89,32 @@ test.describe('Verify tooltips', () => {
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
 
-    // Add the Sine Wave Generator to the LAD table and save changes
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-lad-table-wrapper');
-    await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-lad-table-wrapper');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-lad-table-wrapper');
+    // Add the Sine Wave Generator to the LAD table and save changes.
+    //TODO Follow up with https://github.com/nasa/openmct/issues/7773
+    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '#lad-table-drop-area');
+    await page.dragAndDrop(`text=${sineWaveObject2.name}`, '#lad-table-drop-area');
+    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '#lad-table-drop-area');
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
-
-    //I'm not sure why this is necessary to hover over Create
+    //Hover on something else
     await page.getByRole('button', { name: 'Create' }).hover();
-    await page.getByRole('cell', { name: sineWaveObject1.name }).hover();
-    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
+    //Hover over the first
+    await page.getByLabel('lad name').getByText(sineWaveObject1.name).hover();
+    await expect(page.getByRole('tooltip', { name: sineWaveObject1.path })).toBeVisible();
 
-    //I'm not sure why this is necessary to hover over Create
+    //Hover on something else
     await page.getByRole('button', { name: 'Create' }).hover();
-    await page.getByRole('cell', { name: sineWaveObject2.name }).hover();
-    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject2.path);
+    //Hover over second object
+    await page.getByLabel('lad name').getByText(sineWaveObject2.name).hover();
+    await expect(page.getByRole('tooltip', { name: sineWaveObject2.path })).toBeVisible();
 
-    //I'm not sure why this is necessary to hover over Create
+    //Hover on something else
     await page.getByRole('button', { name: 'Create' }).hover();
-    await page.getByRole('cell', { name: sineWaveObject3.name }).hover();
-    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
+    //Hover over third object
+    await page.getByLabel('lad name').getByText(sineWaveObject3.name).hover();
+    await expect(page.getByRole('tooltip', { name: sineWaveObject3.path })).toBeVisible();
   });
 
   test('display correct paths for expanded and collapsed plot legend items', async ({ page }) => {
@@ -132,66 +126,74 @@ test.describe('Verify tooltips', () => {
     // Edit Overlay Plot
     await page.getByLabel('Edit Object').click();
 
-    // Add the Sine Wave Generator to the LAD table and save changes
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.gl-plot');
-    await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.gl-plot');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.gl-plot');
+    // Add the Sine Wave Generators to the  and save changes
+    await page
+      .getByLabel('Preview SWG 1 generator Object')
+      .dragTo(page.getByLabel('Plot Container Style Target'));
+    await page
+      .getByLabel('Preview SWG 2 generator Object')
+      .dragTo(page.getByLabel('Plot Container Style Target'));
+    await page
+      .getByLabel('Preview SWG 3 generator Object')
+      .dragTo(page.getByLabel('Plot Container Style Target'));
+
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    //Hover over Collapsed Plot Legend Components with the Control Key pressed
     await page.keyboard.down('Control');
-
-    async function getCollapsedLegendToolTip(object) {
-      await page.getByRole('button', { name: 'create' }).hover();
-      await page
-        .locator('.plot-series-name', { has: page.locator(`text="${object.name} Hz"`) })
-        .hover();
-      let tooltipText = await page.locator('.c-tooltip').innerText();
-      return tooltipText.replace('\n', '').trim();
-    }
-
-    async function getExpandedLegendToolTip(object) {
-      await page.getByRole('button', { name: 'create' }).hover();
-      await page
-        .locator('.plot-series-name', { has: page.locator(`text="${object.name}"`) })
-        .hover();
-      let tooltipText = await page.locator('.c-tooltip').innerText();
-      return tooltipText.replace('\n', '').trim();
-    }
-
-    expect(await getCollapsedLegendToolTip(sineWaveObject1)).toBe(sineWaveObject1.path);
-    expect(await getCollapsedLegendToolTip(sineWaveObject2)).toBe(sineWaveObject2.path);
-    expect(await getCollapsedLegendToolTip(sineWaveObject3)).toBe(sineWaveObject3.path);
-
+    //Hover over first object
+    await page.getByText('SWG 1 Hz').hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
+    //Hover over another object to clear
+    await page.getByRole('button', { name: 'create' }).hover();
+    //Hover over second object
+    await page.getByText('SWG 2 Hz').hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject2.path);
+    //Hover over another object to clear
+    await page.getByRole('button', { name: 'create' }).hover();
+    //Hover over third object
+    await page.getByText('SWG 3 Hz').hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
+    //Release the Control Key
     await page.keyboard.up('Control');
+
+    //Expand the legend
     await page.locator('.gl-plot-legend__view-control.c-disclosure-triangle').click();
+
+    //Hover over Expanded Plot Legend Components with the Control Key pressed
     await page.keyboard.down('Control');
 
-    expect(await getExpandedLegendToolTip(sineWaveObject1)).toBe(sineWaveObject1.path);
-    expect(await getExpandedLegendToolTip(sineWaveObject2)).toBe(sineWaveObject2.path);
-    expect(await getExpandedLegendToolTip(sineWaveObject3)).toBe(sineWaveObject3.path);
+    await page.getByLabel('Plot Legend Expanded').getByText('SWG 1').hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
+    //Hover over another object to clear
+    await page.getByRole('button', { name: 'create' }).hover();
+    //Hover over second object
+    await page.getByLabel('Plot Legend Expanded').getByText('SWG 2').hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject2.path);
+    //Hover over another object to clear
+    await page.getByRole('button', { name: 'create' }).hover();
+    //Hover over third object
+    await page.getByLabel('Plot Legend Expanded').getByText('SWG 3').hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering over object labels', async ({ page }) => {
-    async function getObjectLabelTooltip(object) {
-      await page
-        .locator('.c-tree__item__name.c-object-label__name', {
-          has: page.locator(`text="${object.name}"`)
-        })
-        .click();
-      await page.keyboard.down('Control');
-      await page
-        .locator('.l-browse-bar__object-name.c-object-label__name', {
-          has: page.locator(`text="${object.name}"`)
-        })
-        .hover();
-      const tooltipText = await page.locator('.c-tooltip').innerText();
-      await page.keyboard.up('Control');
-      return tooltipText.replace('\n', '').trim();
-    }
+    //Navigate to SWG 1 in Tree
+    await page.getByLabel('Navigate to SWG 1 generator').click();
 
-    expect(await getObjectLabelTooltip(sineWaveObject1)).toBe(sineWaveObject1.path);
-    expect(await getObjectLabelTooltip(sineWaveObject3)).toBe(sineWaveObject3.path);
+    //Expect tooltip to be the path of SWG 1
+    await page.keyboard.down('Control');
+    await page.getByRole('main').getByText('SWG 1', { exact: true }).hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
+    await page.keyboard.up('Control');
+
+    //Navigate to SWG 3 in Tree
+    await page.getByLabel('Navigate to SWG 3 generator').click();
+    //Expect tooltip to be the path of SWG 3
+    await page.keyboard.down('Control');
+    await page.getByRole('main').getByText('SWG 3', { exact: true }).hover();
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering over display layout pane headers', async ({ page }) => {
@@ -202,7 +204,10 @@ test.describe('Verify tooltips', () => {
     });
     // Edit Overlay Plot
     await page.getByLabel('Edit Object').click();
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.gl-plot');
+
+    await page
+      .getByLabel('Preview SWG 1 generator Object')
+      .dragTo(page.getByLabel('Plot Container Style Target'));
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -213,6 +218,7 @@ test.describe('Verify tooltips', () => {
     });
     // Edit Stacked Plot
     await page.getByLabel('Edit Object').click();
+
     await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-plot--stacked.holder');
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
@@ -237,6 +243,7 @@ test.describe('Verify tooltips', () => {
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    //Hover over Overlay Plot with the Control Key pressed
     await page.keyboard.down('Control');
 
     await page.getByText('Test Overlay Plot').nth(2).hover();
@@ -353,7 +360,7 @@ test.describe('Verify tooltips', () => {
       description: 'https://github.com/nasa/openmct/issues/7421'
     });
     // set endBound to 10 seconds after start bound
-    const url = await page.url();
+    const url = page.url();
     const parsedUrl = new URL(url.replace('#', '!'));
     const startBound = Number(parsedUrl.searchParams.get('tc.startBound'));
     const tenSecondsInMilliseconds = 10 * 1000;
