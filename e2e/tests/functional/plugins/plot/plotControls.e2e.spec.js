@@ -33,7 +33,6 @@ import {
   setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
-import { setUserDefinedMinAndMax, turnOffAutoscale } from './plotActions.js';
 
 test.describe('Plot Controls', () => {
   let overlayPlot;
@@ -78,9 +77,12 @@ test.describe('Plot Controls', () => {
     await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
-    await turnOffAutoscale(page);
+    await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 
-    await setUserDefinedMinAndMax(page, '-1', '1');
+    // set minimum value
+    await page.getByRole('spinbutton').first().fill(-1);
+    // set maximum value
+    await page.getByRole('spinbutton').nth(1).fill(1);
 
     // save
     await page.click('button[title="Save"]');
