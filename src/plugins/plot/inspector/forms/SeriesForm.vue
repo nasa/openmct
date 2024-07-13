@@ -174,7 +174,6 @@ export default {
   },
   computed: {
     ariaLabelValue() {
-      //series.domainObject.name
       const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
       const type = this.series.domainObject.type ? ` ${this.series.domainObject.type}` : '';
 
