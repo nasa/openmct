@@ -722,6 +722,7 @@ export default {
       }
     },
     initiateSort(columnKey, swapOrder = true) {
+      console.log('swapOrder', swapOrder)
       if (swapOrder) {
         // If sorting by the same column, flip the sort direction.
         if (this.sortOptions.key === columnKey) {
