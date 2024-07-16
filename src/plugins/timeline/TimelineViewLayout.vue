@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -53,7 +53,7 @@ import _ from 'lodash';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
-import { getValidatedData } from '../plan/util';
+import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
@@ -108,7 +108,8 @@ export default {
       let objectPath = [domainObject].concat(this.objectPath.slice());
       let rowCount = 0;
       if (domainObject.type === 'plan') {
-        rowCount = Object.keys(getValidatedData(domainObject)).length;
+        const planData = getValidatedData(domainObject);
+        rowCount = getValidatedGroups(domainObject, planData).length;
       } else if (domainObject.type === 'gantt-chart') {
         rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
       }
@@ -172,16 +173,16 @@ export default {
       });
     },
     getBoundsForTimeSystem(timeSystem) {
-      const currentBounds = this.timeContext.bounds();
+      const currentBounds = this.timeContext.getBounds();
 
       //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
       return currentBounds;
     },
     updateViewBounds() {
-      const bounds = this.timeContext.bounds();
+      const bounds = this.timeContext.getBounds();
       this.updateContentHeight();
       let currentTimeSystemIndex = this.timeSystems.findIndex(
-        (item) => item.timeSystem.key === this.openmct.time.timeSystem().key
+        (item) => item.timeSystem.key === this.openmct.time.getTimeSystem().key
       );
       if (currentTimeSystemIndex > -1) {
         let currentTimeSystem = {
@@ -197,13 +198,13 @@ export default {
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.getTimeSystems();
       this.updateViewBounds();
-      this.timeContext.on('bounds', this.updateViewBounds);
-      this.timeContext.on('clock', this.updateViewBounds);
+      this.timeContext.on('boundsChanged', this.updateViewBounds);
+      this.timeContext.on('clockChanged', this.updateViewBounds);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('bounds', this.updateViewBounds);
-        this.timeContext.off('clock', this.updateViewBounds);
+        this.timeContext.off('boundsChanged', this.updateViewBounds);
+        this.timeContext.off('clockChanged', this.updateViewBounds);
       }
     }
   }

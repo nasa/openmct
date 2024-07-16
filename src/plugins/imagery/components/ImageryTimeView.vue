@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,14 +27,14 @@
 </template>
 
 <script>
-import * as d3Scale from 'd3-scale';
+import { scaleLinear, scaleUtc } from 'd3-scale';
 import _ from 'lodash';
 import mount from 'utils/mount';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import PreviewAction from '@/ui/preview/PreviewAction';
 
-import imageryData from '../../imagery/mixins/imageryData';
+import imageryData from '../../imagery/mixins/imageryData.js';
 
 const PADDING = 1;
 const ROW_HEIGHT = 100;
@@ -49,7 +49,7 @@ export default {
   mixins: [imageryData],
   inject: ['openmct', 'domainObject', 'objectPath'],
   data() {
-    let timeSystem = this.openmct.time.timeSystem();
+    let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
     this.requestCount = 0;
 
@@ -109,12 +109,12 @@ export default {
       this.stopFollowingTimeContext();
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.timeContext.on('timeSystem', this.setScaleAndPlotImagery);
-      this.timeContext.on('bounds', this.updateViewBounds);
+      this.timeContext.on('boundsChanged', this.updateViewBounds);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
         this.timeContext.off('timeSystem', this.setScaleAndPlotImagery);
-        this.timeContext.off('bounds', this.updateViewBounds);
+        this.timeContext.off('boundsChanged', this.updateViewBounds);
       }
     },
     expand(imageTimestamp) {
@@ -148,10 +148,10 @@ export default {
       return clientWidth;
     },
     updateViewBounds(bounds, isTick) {
-      this.viewBounds = this.timeContext.bounds();
+      this.viewBounds = this.timeContext.getBounds();
 
       if (this.timeSystem === undefined) {
-        this.timeSystem = this.timeContext.timeSystem();
+        this.timeSystem = this.timeContext.getTimeSystem();
       }
 
       this.setScaleAndPlotImagery(this.timeSystem, !isTick);
@@ -216,14 +216,14 @@ export default {
       }
 
       if (timeSystem === undefined) {
-        timeSystem = this.timeContext.timeSystem();
+        timeSystem = this.timeContext.getTimeSystem();
       }
 
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
         this.xScale.domain([new Date(this.viewBounds.start), new Date(this.viewBounds.end)]);
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
         this.xScale.domain([this.viewBounds.start, this.viewBounds.end]);
       }
 

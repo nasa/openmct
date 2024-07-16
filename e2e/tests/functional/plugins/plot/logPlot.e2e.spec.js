@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,8 +25,8 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { setTimeConductorBounds } = require('../../../../appActions');
+import { setTimeConductorBounds } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Log plot tests', () => {
   test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({
@@ -95,18 +95,15 @@ async function makeOverlayPlot(page, myItemsFolderName) {
 
   await page.locator('button.c-create-button').click();
   await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
+  // Click OK button and wait for Navigate event
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear
+    page.waitForLoadState(),
+    await page.getByRole('button', { name: 'Save' }).click(),
+    // Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 
   // save the overlay plot
-
   await saveOverlayPlot(page);
 
   // create a sinewave generator
@@ -114,34 +111,24 @@ async function makeOverlayPlot(page, myItemsFolderName) {
   await page.locator('button.c-create-button').click();
   await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
 
-  // set amplitude to 6, offset 4, period 2
+  // set amplitude to 6, offset 4, data rate 2 hz
 
-  await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').click();
-  await page.locator('div:nth-child(5) .c-form-row__controls .form-control .field input').fill('6');
+  await page.getByLabel('Amplitude').fill('6');
+  await page.getByLabel('Offset').fill('4');
+  await page.getByLabel('Data Rate (hz)').fill('2');
 
-  await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').click();
-  await page.locator('div:nth-child(6) .c-form-row__controls .form-control .field input').fill('4');
-
-  await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').click();
-  await page.locator('div:nth-child(7) .c-form-row__controls .form-control .field input').fill('2');
-
-  // Click OK to make generator
-
+  // Click OK button and wait for Navigate event
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle' }),
-    page.locator('button:has-text("OK")').click(),
-    //Wait for Save Banner to appear
+    page.waitForLoadState(),
+    await page.getByRole('button', { name: 'Save' }).click(),
+    // Wait for Save Banner to appear
     page.waitForSelector('.c-message-banner__message')
   ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 
   // click on overlay plot
-
   await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
   await Promise.all([
-    page.waitForNavigation(),
+    page.waitForLoadState(),
     page.locator('text=Unnamed Overlay Plot').first().click()
   ]);
 }
@@ -183,7 +170,7 @@ async function testLogTicks(page) {
  */
 async function enableEditMode(page) {
   // turn on edit mode
-  await page.getByRole('button', { name: 'Edit' }).click();
+  await page.getByRole('button', { name: 'Edit Object' }).click();
   await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
 }
 

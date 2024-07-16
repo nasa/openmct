@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,7 +36,7 @@ export default class InspectorViewRegistry {
 
   /**
    *
-   * @param {object} selection the object to be viewed
+   * @param {Object} selection the object to be viewed
    * @returns {module:openmct.InspectorViewRegistry[]} any providers
    *          which can provide views of this object
    * @private for platform-internal use

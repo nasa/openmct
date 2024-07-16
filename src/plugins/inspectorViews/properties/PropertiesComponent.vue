@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,10 @@
 
 <template>
   <div>
-    <div class="c-inspector__properties c-inspect-properties">
+    <div
+      class="c-inspector__properties c-inspect-properties"
+      aria-label="Inspector Properties Details"
+    >
       <div class="c-inspect-properties__header">Details</div>
       <ul v-if="hasDetails" class="c-inspect-properties__section">
         <Component

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,13 @@
 
 <template>
   <div class="u-contents">
-    <div class="c-clock l-time-display u-style-receiver js-style-receiver">
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-label="Clock"
+      class="c-clock l-time-display u-style-receiver js-style-receiver"
+    >
       <div class="c-clock__timezone">
         {{ timeZoneAbbr }}
       </div>

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,8 +24,7 @@
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         aria-label="Time Conductor History"
-        class="c-button--menu c-history-button icon-history"
-        :class="buttonCssClass"
+        class="c-button--menu c-history-button icon-history c-icon-button"
         @click.prevent.stop="showHistoryMenu"
       >
         <span class="c-button__label">History</span>
@@ -42,20 +41,11 @@ const DEFAULT_RECORDS_LENGTH = 10;
 
 import { millisecondsToDHMS } from 'utils/duration';
 
-import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import UTCTimeFormat from '../utcTimeSystem/UTCTimeFormat.js';
 
 export default {
   inject: ['openmct', 'configuration'],
-  props: {
-    buttonCssClass: {
-      type: String,
-      required: false,
-      default() {
-        return '';
-      }
-    }
-  },
   data() {
     const mode = this.openmct.time.getMode();
 

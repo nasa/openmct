@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-lad-table-wrapper u-style-receiver js-style-receiver" :class="staleClass">
-    <table class="c-table c-lad-table" :class="applyLayoutClass">
+    <table aria-label="lad table" class="c-table c-lad-table" :class="applyLayoutClass">
       <thead>
         <tr>
           <th>Name</th>
@@ -180,13 +180,13 @@ export default {
       this.items.push(item);
       this.subscribeToStaleness(domainObject);
     },
-    removeItem(identifier) {
+    async removeItem(identifier) {
       const keystring = this.openmct.objects.makeKeyString(identifier);
 
       const index = this.items.findIndex((item) => keystring === item.key);
       this.items.splice(index, 1);
 
-      const domainObject = this.openmct.objects.get(keystring);
+      const domainObject = await this.openmct.objects.get(keystring);
       this.triggerUnsubscribeFromStaleness(domainObject);
     },
     reorder(reorderPlan) {

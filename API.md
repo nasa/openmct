@@ -1305,6 +1305,16 @@ View provider Example:
 }
 ```
 
+## User API
+
+Open MCT provides a User API which can be used to define providers for user information. The API
+can be used to manage user information and roles.
+
+### Example
+
+Open MCT provides an example [user](example/exampleUser/exampleUserCreator.js) and [user provider](example/exampleUser/ExampleUserProvider.js) which 
+can be used as a starting point for creating a custom user provider.
+
 ## Visibility-Based Rendering in View Providers
 
 To enhance performance and resource efficiency in OpenMCT, a visibility-based rendering feature has been added. This feature is designed to defer the execution of rendering logic for views that are not currently visible. It ensures that views are only updated when they are in the viewport, similar to how modern browsers handle rendering of inactive tabs but optimized for the OpenMCT tabbed display. It also works when views are scrolled outside the viewport (e.g., in a Display Layout).
@@ -1315,9 +1325,11 @@ The show function is responsible for the rendering of a view. An [Intersection O
 
 ### Implementing Visibility-Based Rendering
 
-The `renderWhenVisible` function is passed to the show function as a required part of the `viewOptions` object. This function should be used for all rendering logic that would otherwise be executed within a `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its execution until the view becomes visible.
+The `renderWhenVisible` function is passed to the show function as part of the `viewOptions` object. This function can be used for all rendering logic that would otherwise be executed within a `requestAnimationFrame` call. When called, `renderWhenVisible` will either execute the provided function immediately (via `requestAnimationFrame`) if the view is currently visible, or defer its execution until the view becomes visible.
 
 Additionally, `renderWhenVisible` returns a boolean value indicating whether the provided function was executed immediately (`true`) or deferred (`false`).
+
+Monitoring of visibility begins after the first call to `renderWhenVisible` is made.
 
 Here’s the signature for the show function:
 
@@ -1325,7 +1337,7 @@ Here’s the signature for the show function:
 
   * `element` (HTMLElement) - The DOM element where the view should be rendered.
   * `isEditing` (boolean) - Indicates whether the view is in editing mode.
-  * `viewOptions` (Object) - A required object with configuration options for the view, including:
+  * `viewOptions` (Object) - An object with configuration options for the view, including:
     * `renderWhenVisible` (Function) - This function wraps the `requestAnimationFrame` and only triggers the provided render logic when the view is visible in the viewport.
 
 ### Example

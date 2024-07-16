@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
-import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
-import DefaultMetadataProvider from './DefaultMetadataProvider';
-import TelemetryCollection from './TelemetryCollection';
-import TelemetryMetadataManager from './TelemetryMetadataManager';
-import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
-import TelemetryValueFormatter from './TelemetryValueFormatter';
+import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter.js';
+import BatchingWebSocket from './BatchingWebSocket.js';
+import DefaultMetadataProvider from './DefaultMetadataProvider.js';
+import TelemetryCollection from './TelemetryCollection.js';
+import TelemetryMetadataManager from './TelemetryMetadataManager.js';
+import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor.js';
+import TelemetryValueFormatter from './TelemetryValueFormatter.js';
 
 /**
  * @typedef {import('../time/TimeContext').TimeContext} TimeContext
@@ -37,22 +38,44 @@ import TelemetryValueFormatter from './TelemetryValueFormatter';
  * Describes and bounds requests for telemetry data.
  *
  * @typedef TelemetryRequestOptions
- * @property {String} [sort] the key of the property to sort by. This may
+ * @property {string} [sort] the key of the property to sort by. This may
  *           be prefixed with a "+" or a "-" sign to sort in ascending
  *           or descending order respectively. If no prefix is present,
  *           ascending order will be used.
- * @property {Number} [start] the lower bound for values of the sorting property
- * @property {Number} [end] the upper bound for values of the sorting property
- * @property {String} [strategy] symbolic identifier for strategies
+ * @property {number} [start] the lower bound for values of the sorting property
+ * @property {number} [end] the upper bound for values of the sorting property
+ * @property {string} [strategy] symbolic identifier for strategies
  *           (such as `latest` or `minmax`) which may be recognized by providers;
  *           these will be tried in order until an appropriate provider
  *           is found
  * @property {AbortController} [signal] an AbortController which can be used
  *           to cancel a telemetry request
- * @property {String} [domain] the domain key of the request
+ * @property {string} [domain] the domain key of the request
  * @property {TimeContext} [timeContext] the time context to use for this request
  * @memberof module:openmct.TelemetryAPI~
  */
+
+/**
+ * Describes and bounds requests for telemetry data.
+ *
+ * @typedef TelemetrySubscriptionOptions
+ * @property {string} [strategy] symbolic identifier directing providers on how
+ * to handle telemetry subscriptions. The default behavior is 'latest' which will
+ * always return a single telemetry value with each callback, and in the event
+ * of throttling will always prioritize the latest data, meaning intermediate
+ * data will be skipped. Alternatively, the `batch` strategy can be used, which
+ * will return all telemetry values since the last callback. This strategy is
+ * useful for cases where intermediate data is important, such as when
+ * rendering a telemetry plot or table. If `batch` is specified, the subscription
+ * callback will be invoked with an Array.
+ *
+ * @memberof module:openmct.TelemetryAPI~
+ */
+
+const SUBSCRIBE_STRATEGY = {
+  LATEST: 'latest',
+  BATCH: 'batch'
+};
 
 /**
  * Utilities for telemetry
@@ -61,6 +84,12 @@ import TelemetryValueFormatter from './TelemetryValueFormatter';
  */
 export default class TelemetryAPI {
   #isGreedyLAD;
+  #subscribeCache;
+  #hasReturnedFirstData;
+
+  get SUBSCRIBE_STRATEGY() {
+    return SUBSCRIBE_STRATEGY;
+  }
 
   constructor(openmct) {
     this.openmct = openmct;
@@ -78,6 +107,9 @@ export default class TelemetryAPI {
     this.valueFormatterCache = new WeakMap();
     this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
     this.#isGreedyLAD = true;
+    this.BatchingWebSocket = BatchingWebSocket;
+    this.#subscribeCache = {};
+    this.#hasReturnedFirstData = false;
   }
 
   abortAllRequests() {
@@ -353,7 +385,10 @@ export default class TelemetryAPI {
     arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
     try {
       const telemetry = await provider.request(...arguments);
-
+      if (!this.#hasReturnedFirstData) {
+        this.#hasReturnedFirstData = true;
+        performance.mark('firstHistoricalDataReturned');
+      }
       return telemetry;
     } catch (error) {
       if (error.name !== 'AbortError') {
@@ -378,54 +413,111 @@ export default class TelemetryAPI {
    * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    * @param {module:openmct.DomainObject} domainObject the object
    *        which has associated telemetry
-   * @param {TelemetryRequestOptions} options configuration items for subscription
+   * @param {TelemetrySubscriptionOptions} options configuration items for subscription
    * @param {Function} callback the callback to invoke with new data, as
    *        it becomes available
    * @returns {Function} a function which may be called to terminate
    *          the subscription
    */
-  subscribe(domainObject, callback, options) {
+  subscribe(domainObject, callback, options = { strategy: SUBSCRIBE_STRATEGY.LATEST }) {
+    const requestedStrategy = options.strategy || SUBSCRIBE_STRATEGY.LATEST;
+
     if (domainObject.type === 'unknown') {
       return () => {};
     }
 
-    const provider = this.findSubscriptionProvider(domainObject);
+    const provider = this.findSubscriptionProvider(domainObject, options);
+    const supportsBatching =
+      Boolean(provider?.supportsBatching) && provider?.supportsBatching(domainObject, options);
 
-    if (!this.subscribeCache) {
-      this.subscribeCache = {};
+    if (!this.#subscribeCache) {
+      this.#subscribeCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
-    let subscriber = this.subscribeCache[keyString];
+    const keyString = makeKeyString(domainObject.identifier);
+    const supportedStrategy = supportsBatching ? requestedStrategy : SUBSCRIBE_STRATEGY.LATEST;
+    // Override the requested strategy with the strategy supported by the provider
+    const optionsWithSupportedStrategy = {
+      ...options,
+      strategy: supportedStrategy
+    };
+    // If batching is supported, we need to cache a subscription for each strategy -
+    // latest and batched.
+    const cacheKey = `${keyString}:${supportedStrategy}`;
+    let subscriber = this.#subscribeCache[cacheKey];
 
     if (!subscriber) {
-      subscriber = this.subscribeCache[keyString] = {
-        callbacks: [callback]
+      subscriber = this.#subscribeCache[cacheKey] = {
+        latestCallbacks: [],
+        batchCallbacks: []
       };
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
-          function (value) {
-            subscriber.callbacks.forEach(function (cb) {
-              cb(value);
-            });
-          },
-          options
+          invokeCallbackWithRequestedStrategy,
+          optionsWithSupportedStrategy
         );
       } else {
         subscriber.unsubscribe = function () {};
       }
+    }
+
+    if (requestedStrategy === SUBSCRIBE_STRATEGY.BATCH) {
+      subscriber.batchCallbacks.push(callback);
     } else {
-      subscriber.callbacks.push(callback);
+      subscriber.latestCallbacks.push(callback);
+    }
+
+    // Guarantees that view receive telemetry in the expected form
+    function invokeCallbackWithRequestedStrategy(data) {
+      invokeCallbacksWithArray(data, subscriber.batchCallbacks);
+      invokeCallbacksWithSingleValue(data, subscriber.latestCallbacks);
+    }
+
+    function invokeCallbacksWithArray(data, batchCallbacks) {
+      //
+      if (data === undefined || data === null || data.length === 0) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
+      if (!Array.isArray(data)) {
+        data = [data];
+      }
+
+      batchCallbacks.forEach((cb) => {
+        cb(data);
+      });
+    }
+
+    function invokeCallbacksWithSingleValue(data, latestCallbacks) {
+      if (Array.isArray(data)) {
+        data = data[data.length - 1];
+      }
+
+      if (data === undefined || data === null) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
+      latestCallbacks.forEach((cb) => {
+        cb(data);
+      });
     }
 
     return function unsubscribe() {
-      subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
+      subscriber.latestCallbacks = subscriber.latestCallbacks.filter(function (cb) {
         return cb !== callback;
       });
-      if (subscriber.callbacks.length === 0) {
+      subscriber.batchCallbacks = subscriber.batchCallbacks.filter(function (cb) {
+        return cb !== callback;
+      });
+
+      if (subscriber.latestCallbacks.length === 0 && subscriber.batchCallbacks.length === 0) {
         subscriber.unsubscribe();
-        delete this.subscribeCache[keyString];
+        delete this.#subscribeCache[cacheKey];
       }
     }.bind(this);
   }
@@ -454,7 +546,7 @@ export default class TelemetryAPI {
       this.stalenessSubscriberCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let stalenessSubscriber = this.stalenessSubscriberCache[keyString];
 
     if (!stalenessSubscriber) {
@@ -513,7 +605,7 @@ export default class TelemetryAPI {
       this.limitsSubscribeCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let subscriber = this.limitsSubscribeCache[keyString];
 
     if (!subscriber) {
@@ -844,7 +936,7 @@ export default class TelemetryAPI {
  */
 
 /**
- * @typedef {object} LimitsResponseObject
+ * @typedef {Object} LimitsResponseObject
  * @memberof {module:openmct.TelemetryAPI~}
  * @property {LimitDefinition} limitLevel the level name and it's limit definition
  * @example {
@@ -874,7 +966,7 @@ export default class TelemetryAPI {
  * @typedef LimitDefinitionValue
  * @memberof {module:openmct.TelemetryAPI~}
  * @property {string} color color to represent this limit
- * @property {Number} value the limit value
+ * @property {number} value the limit value
  */
 
 /**
@@ -958,9 +1050,9 @@ export default class TelemetryAPI {
  */
 
 /**
- * @typedef {object} StalenessResponseObject
- * @property {Boolean} isStale boolean representing the staleness state
- * @property {Number} timestamp Unix timestamp in milliseconds
+ * @typedef {Object} StalenessResponseObject
+ * @property {boolean} isStale boolean representing the staleness state
+ * @property {number} timestamp Unix timestamp in milliseconds
  */
 
 /**

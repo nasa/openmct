@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module*/
 
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {
@@ -31,24 +30,23 @@ if (document.currentScript) {
 }
 
 /**
- * @typedef {object} BuildInfo
+ * @typedef {Object} BuildInfo
  * @property {string} version
  * @property {string} buildDate
  * @property {string} revision
  * @property {string} branch
  */
-
 /**
- * @typedef {object} OpenMCT
+ * @typedef {Object} OpenMCT
  * @property {BuildInfo} buildInfo
- * @property {*} selection
+ * @property {import('./src/selection/Selection').default} selection
  * @property {import('./src/api/time/TimeAPI').default} time
  * @property {import('./src/api/composition/CompositionAPI').default} composition
- * @property {*} objectViews
- * @property {*} inspectorViews
- * @property {*} propertyEditors
- * @property {*} toolbars
- * @property {*} types
+ * @property {import('./src/ui/registries/ViewRegistry').default} objectViews
+ * @property {import('./src/ui/registries/InspectorViewRegistry').default} inspectorViews
+ * @property {import('./src/ui/registries/ViewRegistry').default} propertyEditors
+ * @property {import('./src/ui/registries/ToolbarRegistry').default} toolbars
+ * @property {import('./src/api/types/TypeRegistry').default} types
  * @property {import('./src/api/objects/ObjectAPI').default} objects
  * @property {import('./src/api/telemetry/TelemetryAPI').default} telemetry
  * @property {import('./src/api/indicators/IndicatorAPI').default} indicators
@@ -60,7 +58,7 @@ if (document.currentScript) {
  * @property {import('./src/api/menu/MenuAPI').default} menus
  * @property {import('./src/api/actions/ActionsAPI').default} actions
  * @property {import('./src/api/status/StatusAPI').default} status
- * @property {*} priority
+ * @property {import('./src/api/priority/PriorityAPI').default} priority
  * @property {import('./src/ui/router/ApplicationRouter')} router
  * @property {import('./src/api/faultmanagement/FaultManagementAPI').default} faults
  * @property {import('./src/api/forms/FormsAPI').default} forms
@@ -68,16 +66,16 @@ if (document.currentScript) {
  * @property {import('./src/api/annotation/AnnotationAPI').default} annotation
  * @property {{(plugin: OpenMCTPlugin) => void}} install
  * @property {{() => string}} getAssetPath
+ * @property {{(assetPath: string) => void}} setAssetPath
  * @property {{(domElement: HTMLElement, isHeadlessMode: boolean) => void}} start
  * @property {{() => void}} startHeadless
  * @property {{() => void}} destroy
  * @property {OpenMCTPlugin[]} plugins
  * @property {OpenMCTComponent[]} components
  */
-
-const MCT = require('./src/MCT');
+import { MCT } from './src/MCT.js';
 
 /** @type {OpenMCT} */
 const openmct = new MCT();
 
-module.exports = openmct;
+export default openmct;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,9 +24,9 @@ import EventEmitter from 'EventEmitter';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import { FIXED_MODE_KEY } from '../../api/time/constants';
-import { TIMELIST_TYPE } from './constants';
-import TimelistPlugin from './plugin';
+import { FIXED_MODE_KEY } from '../../api/time/constants.js';
+import { TIMELIST_TYPE } from './constants.js';
+import TimelistPlugin from './plugin.js';
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
@@ -71,7 +71,10 @@ describe('the plugin', function () {
             end: twoHoursFuture,
             type: 'TEST-GROUP',
             color: 'fuchsia',
-            textColor: 'black'
+            textColor: 'black',
+            properties: {
+              location: 'garden'
+            }
           },
           {
             name: 'Sed ut perspiciatis two',
@@ -79,7 +82,10 @@ describe('the plugin', function () {
             end: threeHoursFuture,
             type: 'TEST-GROUP',
             color: 'fuchsia',
-            textColor: 'black'
+            textColor: 'black',
+            properties: {
+              location: 'hallway'
+            }
           }
         ]
       })
@@ -229,7 +235,7 @@ describe('the plugin', function () {
 
     it('displays the activity headers', () => {
       const headers = element.querySelectorAll(LIST_ITEM_BODY_CLASS);
-      expect(headers.length).toEqual(4);
+      expect(headers.length).toEqual(5);
     });
 
     it('displays activity details', (done) => {
@@ -238,8 +244,8 @@ describe('the plugin', function () {
       nextTick(() => {
         const itemEls = element.querySelectorAll(LIST_ITEM_CLASS);
         const itemValues = itemEls[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
-        expect(itemValues.length).toEqual(4);
-        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis');
+        expect(itemValues.length).toEqual(5);
+        expect(itemValues[4].innerHTML.trim()).toEqual('Sed ut perspiciatis');
         expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
         expect(itemValues[1].innerHTML.trim()).toEqual(
           timeFormatter.format(twoHoursFuture, TIME_FORMAT)
@@ -305,7 +311,7 @@ describe('the plugin', function () {
     });
   });
 
-  describe('filters', () => {
+  describe('filters by name', () => {
     let timelistDomainObject;
     let timelistView;
 
@@ -374,7 +380,130 @@ describe('the plugin', function () {
         expect(itemValues[1].innerHTML.trim()).toEqual(
           timeFormatter.format(threeHoursFuture, TIME_FORMAT)
         );
-        expect(itemValues[3].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
+        expect(itemValues[4].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
+      });
+    });
+  });
+
+  describe('filters by metadata', () => {
+    let timelistDomainObject;
+    let timelistView;
+
+    beforeEach(() => {
+      timelistDomainObject = {
+        identifier: {
+          key: 'test-object',
+          namespace: ''
+        },
+        type: TIMELIST_TYPE,
+        id: 'test-object',
+        configuration: {
+          sortOrderIndex: 2,
+          futureEventsIndex: 1,
+          futureEventsDurationIndex: 0,
+          futureEventsDuration: 0,
+          currentEventsIndex: 1,
+          currentEventsDurationIndex: 0,
+          currentEventsDuration: 0,
+          pastEventsIndex: 1,
+          pastEventsDurationIndex: 0,
+          pastEventsDuration: 0,
+          filter: '',
+          filterMetadata: 'hallway,garden'
+        },
+        composition: [
+          {
+            identifier: {
+              key: 'test-plan-object',
+              namespace: ''
+            }
+          }
+        ]
+      };
+
+      openmct.router.path = [timelistDomainObject];
+
+      const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+      timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+      let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+      view.show(child, true);
+
+      return nextTick();
+    });
+
+    it('activities and sorts them correctly', () => {
+      mockComposition.emit('add', planObject);
+
+      return nextTick(() => {
+        const timeFormat = openmct.time.timeSystem().timeFormat;
+        const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+
+        const items = element.querySelectorAll(LIST_ITEM_CLASS);
+        expect(items.length).toEqual(2);
+
+        const itemValues = items[1].querySelectorAll(LIST_ITEM_VALUE_CLASS);
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(threeHoursFuture, TIME_FORMAT)
+        );
+        expect(itemValues[4].innerHTML.trim()).toEqual('Sed ut perspiciatis two');
+      });
+    });
+  });
+
+  describe('filters by name and metadata', () => {
+    let timelistDomainObject;
+    let timelistView;
+
+    beforeEach(() => {
+      timelistDomainObject = {
+        identifier: {
+          key: 'test-object',
+          namespace: ''
+        },
+        type: TIMELIST_TYPE,
+        id: 'test-object',
+        configuration: {
+          sortOrderIndex: 2,
+          currentEventsIndex: 1,
+          filter: 'two',
+          filterMetadata: 'garden'
+        },
+        composition: [
+          {
+            identifier: {
+              key: 'test-plan-object',
+              namespace: ''
+            }
+          }
+        ]
+      };
+
+      openmct.router.path = [timelistDomainObject];
+
+      const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+      timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+      let view = timelistView.view(timelistDomainObject, [timelistDomainObject]);
+      view.show(child, true);
+
+      return nextTick();
+    });
+
+    it('activities and sorts them correctly', () => {
+      mockComposition.emit('add', planObject);
+
+      return nextTick(() => {
+        const timeFormat = openmct.time.timeSystem().timeFormat;
+        const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
+
+        const items = element.querySelectorAll(LIST_ITEM_CLASS);
+        expect(items.length).toEqual(2);
+
+        const itemValues = items[0].querySelectorAll(LIST_ITEM_VALUE_CLASS);
+        expect(itemValues[0].innerHTML.trim()).toEqual(timeFormatter.format(now, TIME_FORMAT));
+        expect(itemValues[1].innerHTML.trim()).toEqual(
+          timeFormatter.format(twoHoursFuture, TIME_FORMAT)
+        );
       });
     });
   });

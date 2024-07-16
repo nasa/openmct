@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionManager from './ConditionManager';
+import ConditionManager from './ConditionManager.js';
 
 export default class ConditionSetTelemetryProvider {
   constructor(openmct) {
@@ -40,12 +40,10 @@ export default class ConditionSetTelemetryProvider {
     return domainObject.type === 'conditionSet';
   }
 
-  request(domainObject, options) {
+  async request(domainObject, options) {
     let conditionManager = this.getConditionManager(domainObject);
-
-    return conditionManager.requestLADConditionSetOutput(options).then((latestOutput) => {
-      return latestOutput;
-    });
+    let latestOutput = await conditionManager.requestLADConditionSetOutput(options);
+    return latestOutput;
   }
 
   subscribe(domainObject, callback) {

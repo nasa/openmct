@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,15 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-const { test, expect } = require('../../../pluginFixtures');
-const { createPlanFromJSON, createDomainObjectWithDefaults } = require('../../../appActions');
-const testPlan1 = require('../../../test-data/examplePlans/ExamplePlan_Small1.json');
-const testPlan2 = require('../../../test-data/examplePlans/ExamplePlan_Small2.json');
-const {
+import fs from 'fs';
+
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import {
   assertPlanActivities,
   setBoundsToSpanAllActivities
-} = require('../../../helper/planningUtils');
-const { getPreciseDuration } = require('../../../../src/utils/duration');
+} from '../../../helper/planningUtils.js';
+import { expect, test } from '../../../pluginFixtures.js';
+
+const testPlan1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+  )
+);
+const testPlan2 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url)
+  )
+);
 
 test.describe('Gantt Chart', () => {
   let ganttChart;
@@ -58,7 +68,7 @@ test.describe('Gantt Chart', () => {
       .getByRole('dialog')
       .filter({ hasText: 'This action will replace the current Plan. Do you want to continue?' });
     await expect(replaceModal).toBeVisible();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     await assertPlanActivities(page, testPlan2, ganttChart.url);
   });
@@ -121,3 +131,58 @@ test.describe('Gantt Chart', () => {
     );
   });
 });
+
+const ONE_SECOND = 1000;
+const ONE_MINUTE = 60 * ONE_SECOND;
+const ONE_HOUR = ONE_MINUTE * 60;
+const ONE_DAY = ONE_HOUR * 24;
+
+function normalizeAge(num) {
+  const hundredtized = num * 100;
+  const isWhole = hundredtized % 100 === 0;
+
+  return isWhole ? hundredtized / 100 : num;
+}
+
+function padLeadingZeros(num, numOfLeadingZeros) {
+  return num.toString().padStart(numOfLeadingZeros, '0');
+}
+
+function toDoubleDigits(num) {
+  return padLeadingZeros(num, 2);
+}
+
+function toTripleDigits(num) {
+  return padLeadingZeros(num, 3);
+}
+
+function getPreciseDuration(value, { excludeMilliSeconds, useDayFormat } = {}) {
+  let preciseDuration;
+  const ms = value || 0;
+
+  const duration = [
+    Math.floor(normalizeAge(ms / ONE_DAY)),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
+    toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
+  ];
+  if (!excludeMilliSeconds) {
+    duration.push(toTripleDigits(Math.floor(normalizeAge(ms % ONE_SECOND))));
+  }
+
+  if (useDayFormat) {
+    // Format days as XD
+    const days = duration.shift();
+    if (days > 0) {
+      preciseDuration = `${days}D ${duration.join(':')}`;
+    } else {
+      preciseDuration = duration.join(':');
+    }
+  } else {
+    const days = toDoubleDigits(duration.shift());
+    duration.unshift(days);
+    preciseDuration = duration.join(':');
+  }
+
+  return preciseDuration;
+}

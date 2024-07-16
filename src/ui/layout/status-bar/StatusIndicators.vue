@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
  Open MCT is licensed under the Apache License, Version 2.0 (the
@@ -17,24 +17,43 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div></div>
+  <div class="l-shell__head-section l-shell__indicators">
+    <component
+      :is="indicator.value.vueComponent"
+      v-for="indicator in sortedIndicators"
+      :key="indicator.value.key"
+      role="status"
+    />
+  </div>
 </template>
 
 <script>
+import { shallowRef } from 'vue';
 export default {
   inject: ['openmct'],
+  data() {
+    return {
+      indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef)
+    };
+  },
+  computed: {
+    sortedIndicators() {
+      if (this.indicators.length === 0) {
+        return [];
+      }
 
+      return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
+    }
+  },
   beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
   },
-  mounted() {
-    this.openmct.indicators.getIndicatorObjectsByPriority().forEach(this.addIndicator);
-
+  created() {
     this.openmct.indicators.on('addIndicator', this.addIndicator);
   },
   methods: {
     addIndicator(indicator) {
-      this.$el.appendChild(indicator.element);
+      this.indicators.push(shallowRef(indicator));
     }
   }
 };

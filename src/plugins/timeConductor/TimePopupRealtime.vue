@@ -1,16 +1,36 @@
+<!--
+ Open MCT, Copyright (c) 2014-2024, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+
 <template>
   <form ref="deltaInput">
-    <div class="c-tc-input-popup__input-grid">
-      <div class="pr-time-label icon-minus">Hrs</div>
-      <div class="pr-time-label">Mins</div>
-      <div class="pr-time-label">Secs</div>
-      <div class="pr-time-label"></div>
-      <div class="pr-time-label icon-plus">Hrs</div>
-      <div class="pr-time-label">Mins</div>
-      <div class="pr-time-label">Secs</div>
-      <div class="pr-time-label"></div>
+    <div class="c-tc-input-popup__input-grid-utc">
+      <div class="pr-time-label icon-minus pr-time-label-minus-hrs">Hrs</div>
+      <div class="pr-time-label pr-time-label-minus-mins">Mins</div>
+      <div class="pr-time-label pr-time-label-minus-secs">Secs</div>
+      <div class="pr-time-label icon-plus pr-time-label-plus-hrs">Hrs</div>
+      <div class="pr-time-label pr-time-label-plus-mins">Mins</div>
+      <div class="pr-time-label pr-time-label-plus-secs">Secs</div>
 
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-minus-hrs">
         <input
           ref="startInputHrs"
           v-model="startInputHrs"
@@ -29,7 +49,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-minus-mins">
         <input
           ref="startInputMins"
           v-model="startInputMins"
@@ -48,7 +68,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-minus-secs">
         <input
           ref="startInputSecs"
           v-model="startInputSecs"
@@ -69,7 +89,7 @@
 
       <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-plus-hrs">
         <input
           ref="endInputHrs"
           v-model="endInputHrs"
@@ -88,7 +108,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-plus-mins">
         <input
           ref="endInputMins"
           v-model="endInputMins"
@@ -106,7 +126,7 @@
         />
         <b>:</b>
       </div>
-      <div class="pr-time-input">
+      <div class="pr-time-input pr-time-input-plus-secs">
         <input
           ref="endInputSecs"
           v-model="endInputSecs"
@@ -134,7 +154,7 @@
         ></button>
         <button
           class="c-button icon-x"
-          aria-label="Discard time offsets"
+          aria-label="Discard changes and close time popup"
           @click.prevent="hide"
         ></button>
       </div>
@@ -143,14 +163,17 @@
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
 export default {
+  inject: ['timeContext', 'timeSystemDurationFormatter'],
   props: {
     offsets: {
       type: Object,
       required: true
     }
   },
-  emits: ['update', 'dismiss'],
+  emits: ['dismiss'],
   data() {
     return {
       startInputHrs: '00',
@@ -165,6 +188,7 @@ export default {
   watch: {
     offsets: {
       handler() {
+        console.log('REMOVE THIS');
         this.setOffsets();
       },
       deep: true
@@ -207,18 +231,23 @@ export default {
       this.isDisabled = disabled;
     },
     submit() {
-      this.$emit('update', {
-        start: {
-          hours: this.startInputHrs,
-          minutes: this.startInputMins,
-          seconds: this.startInputSecs
-        },
-        end: {
-          hours: this.endInputHrs,
-          minutes: this.endInputMins,
-          seconds: this.endInputSecs
-        }
-      });
+      const formattedStartOffset = [
+        this.startInputHrs,
+        this.startInputMins,
+        this.startInputSecs
+      ].join(':');
+      const formattedEndOffset = [this.endInputHrs, this.endInputMins, this.endInputSecs].join(':');
+
+      let startOffset = 0 - this.timeSystemDurationFormatter.parse(formattedStartOffset);
+      let endOffset = this.timeSystemDurationFormatter.parse(formattedEndOffset);
+
+      const offsets = {
+        start: startOffset,
+        end: endOffset
+      };
+
+      this.timeContext.setClockOffsets(offsets);
+
       this.$emit('dismiss');
     },
     hide($event) {
@@ -235,13 +264,13 @@ export default {
       this[ref] = cv.toString().padStart(2, '0');
       this.validate();
     },
-    setOffsets() {
+    async setOffsets() {
       [this.startInputHrs, this.startInputMins, this.startInputSecs] =
         this.offsets.start.split(':');
       [this.endInputHrs, this.endInputMins, this.endInputSecs] = this.offsets.end.split(':');
-      this.$nextTick(() => {
-        this.numberSelect('startInputHrs');
-      });
+
+      await nextTick();
+      this.numberSelect('startInputHrs');
     },
     numberSelect(input) {
       if (this.$refs[input] === undefined || this.$refs[input] === null) {

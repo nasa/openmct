@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,9 +32,9 @@ TODO:
 
 */
 
-const { test, expect } = require('@playwright/test');
+import { expect, test } from '@playwright/test';
 
-const filePath = 'e2e/test-data/PerformanceDisplayLayout.json';
+const filePath = 'test-data/PerformanceDisplayLayout.json';
 
 test.describe('Performance tests', () => {
   test.beforeEach(async ({ page, browser }, testInfo) => {
@@ -178,7 +178,7 @@ test.describe('Performance tests', () => {
     console.log('jpgResourceTiming ' + JSON.stringify(jpgResourceTiming));
 
     // Click Close Icon
-    await page.locator('[aria-label="Close"]').click();
+    await page.getByRole('button', { name: 'Close' }).click();
     await page.evaluate(() => window.performance.mark('view-large-close-button'));
 
     //await client.send('HeapProfiler.enable');

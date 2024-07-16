@@ -1,4 +1,4 @@
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
 import ObjectAPI from './ObjectAPI.js';
 
 describe('The Object API', () => {
@@ -362,7 +362,7 @@ describe('The Object API', () => {
       expect(objectAPI.get).not.toHaveBeenCalled();
 
       return objectAPI.refresh(testObject).then(() => {
-        expect(objectAPI.get).toHaveBeenCalledWith(testObject.identifier);
+        expect(objectAPI.get).toHaveBeenCalledWith(testObject.identifier, null, false);
 
         expect(testObject.otherAttribute).toEqual(OTHER_ATTRIBUTE_VALUE);
         expect(testObject.newAttribute).toEqual(NEW_ATTRIBUTE_VALUE);

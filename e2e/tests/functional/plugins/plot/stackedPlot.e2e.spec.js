@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,8 +25,8 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../../../appActions');
+import { createDomainObjectWithDefaults, waitForPlotsToRender } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Stacked Plot', () => {
   let stackedPlot;
@@ -69,7 +69,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -101,7 +101,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -187,7 +187,7 @@ test.describe('Stacked Plot', () => {
     ).toContainText(swgC.name);
 
     // Go into edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
@@ -231,8 +231,10 @@ test.describe('Stacked Plot', () => {
   test('the legend toggles between aggregate and per child', async ({ page }) => {
     await page.goto(stackedPlot.url);
 
+    await waitForPlotsToRender(page);
+
     // Go into edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
@@ -245,11 +247,65 @@ test.describe('Stacked Plot', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    await waitForPlotsToRender(page);
+
     await assertAggregateLegendIsVisible(page);
 
     await page.reload();
 
+    await waitForPlotsToRender(page);
+
     await assertAggregateLegendIsVisible(page);
+  });
+
+  test('can toggle between aggregate and per child legends', async ({ page }) => {
+    // make some an overlay plot
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      parent: stackedPlot.uuid
+    });
+
+    // make some SWGs for the overlay plot
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(stackedPlot.url);
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Inspector Views').getByRole('checkbox').uncheck();
+    await page.getByLabel('Expand By Default').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Expanded')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // reload and ensure the legend is still expanded
+    await page.reload();
+    await expect(page.getByLabel('Plot Legend Expanded')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // change to collapsed by default
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Expand By Default').uncheck();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Collapsed')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // change it to individual legends
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Show Legends For Children').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Collapsed')).toHaveCount(4);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
   });
 });
 

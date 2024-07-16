@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from './object-utils';
+import { isIdentifier } from './object-utils.js';
 
 export default class RootRegistry {
   constructor(openmct) {
@@ -47,12 +47,12 @@ export default class RootRegistry {
   }
 
   _isValid(rootItem) {
-    if (utils.isIdentifier(rootItem) || typeof rootItem === 'function') {
+    if (isIdentifier(rootItem) || typeof rootItem === 'function') {
       return true;
     }
 
     if (Array.isArray(rootItem)) {
-      return rootItem.every(utils.isIdentifier);
+      return rootItem.every(isIdentifier);
     }
 
     return false;

@@ -15,6 +15,9 @@
 *.idea
 *.iml
 
+# VSCode
+.vscode/settings.json
+
 # Build output
 target
 dist
@@ -45,5 +48,5 @@ index.html.bak
 coverage
 codecov
 
-# :(
-package-lock.json
+# Don't commit MacOS screenshots
+*-darwin.png

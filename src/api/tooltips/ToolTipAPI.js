@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,16 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Tooltip from './ToolTip';
+import Tooltip from './ToolTip.js';
 
 /**
  * @readonly
- * @enum {String} TooltipLocation
- * @property {String} ABOVE The string for locating tooltips above an element
- * @property {String} BELOW The string for locating tooltips below an element
- * @property {String} RIGHT The pixel-spatial annotation type
- * @property {String} LEFT The temporal annotation type
- * @property {String} CENTER The plot-spatial annotation type
+ * @enum {string} TooltipLocation
+ * @property {string} ABOVE The string for locating tooltips above an element
+ * @property {string} BELOW The string for locating tooltips below an element
+ * @property {string} RIGHT The pixel-spatial annotation type
+ * @property {string} LEFT The temporal annotation type
+ * @property {string} CENTER The plot-spatial annotation type
  */
 const TOOLTIP_LOCATIONS = Object.freeze({
   ABOVE: 'above',

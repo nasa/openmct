@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,20 +21,20 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import utils from 'objectUtils';
+import { identifierEquals, makeKeyString, parseKeyString, refresh } from 'objectUtils';
 
-import ConflictError from './ConflictError';
-import InMemorySearchProvider from './InMemorySearchProvider';
-import InterceptorRegistry from './InterceptorRegistry';
-import MutableDomainObject from './MutableDomainObject';
-import RootObjectProvider from './RootObjectProvider';
-import RootRegistry from './RootRegistry';
-import Transaction from './Transaction';
+import ConflictError from './ConflictError.js';
+import InMemorySearchProvider from './InMemorySearchProvider.js';
+import InterceptorRegistry from './InterceptorRegistry.js';
+import MutableDomainObject from './MutableDomainObject.js';
+import RootObjectProvider from './RootObjectProvider.js';
+import RootRegistry from './RootRegistry.js';
+import Transaction from './Transaction.js';
 
 /**
  * Uniquely identifies a domain object.
  *
- * @typedef {object} Identifier
+ * @typedef {Object} Identifier
  * @property {string} namespace the namespace to/from which this domain
  *           object should be loaded/stored.
  * @property {string} key a unique identifier for the domain object
@@ -51,7 +51,7 @@ import Transaction from './Transaction';
  * A few common properties are defined for domain objects. Beyond these,
  * individual types of domain objects may add more as they see fit.
  *
- * @typedef {object} DomainObject
+ * @typedef {Object} DomainObject
  * @property {Identifier} identifier a key/namespace pair which
  *           uniquely identifies this domain object
  * @property {string} type the type of domain object
@@ -82,8 +82,19 @@ import Transaction from './Transaction';
  * @memberof module:openmct
  */
 export default class ObjectAPI {
+  #makeKeyString;
+  #parseKeyString;
+  #identifierEquals;
+  #refresh;
+  #openmct;
+
   constructor(typeRegistry, openmct) {
-    this.openmct = openmct;
+    this.#makeKeyString = makeKeyString;
+    this.#parseKeyString = parseKeyString;
+    this.#identifierEquals = identifierEquals;
+    this.#refresh = refresh;
+    this.#openmct = openmct;
+
     this.typeRegistry = typeRegistry;
     this.SEARCH_TYPES = Object.freeze({
       OBJECTS: 'OBJECTS',
@@ -99,7 +110,13 @@ export default class ObjectAPI {
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
-    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
+    this.SYNCHRONIZED_OBJECT_TYPES = [
+      'notebook',
+      'restricted-notebook',
+      'plan',
+      'annotation',
+      'activity-states'
+    ];
 
     this.errors = {
       Conflict: ConflictError
@@ -200,14 +217,14 @@ export default class ObjectAPI {
    *          has been saved, or be rejected if it cannot be saved
    */
   get(identifier, abortSignal, forceRemote = false) {
-    let keystring = this.makeKeyString(identifier);
+    let keystring = this.#makeKeyString(identifier);
 
     if (!forceRemote) {
       if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
       }
 
-      identifier = utils.parseKeyString(identifier);
+      identifier = parseKeyString(identifier);
 
       if (this.isTransactionActive()) {
         let dirtyObject = this.transaction.getDirtyObject(identifier);
@@ -221,7 +238,7 @@ export default class ObjectAPI {
     const provider = this.getProvider(identifier);
 
     if (!provider) {
-      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}"`);
+      throw new Error(`No Provider Matched for keyString "${this.#makeKeyString(identifier)}"`);
     }
 
     if (!provider.get) {
@@ -232,6 +249,10 @@ export default class ObjectAPI {
       .get(identifier, abortSignal)
       .then((domainObject) => {
         delete this.cache[keystring];
+        if (!domainObject && abortSignal?.aborted) {
+          // we've aborted the request
+          return;
+        }
         domainObject = this.applyGetInterceptors(identifier, domainObject);
 
         if (this.supportsMutation(identifier)) {
@@ -315,7 +336,7 @@ export default class ObjectAPI {
    */
   getMutable(identifier) {
     if (!this.supportsMutation(identifier)) {
-      throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
+      throw new Error(`Object "${this.#makeKeyString(identifier)}" does not support mutation.`);
     }
 
     return this.get(identifier).then((object) => {
@@ -342,14 +363,17 @@ export default class ObjectAPI {
   }
 
   isPersistable(idOrKeyString) {
-    let identifier = utils.parseKeyString(idOrKeyString);
+    let identifier = parseKeyString(idOrKeyString);
     let provider = this.getProvider(identifier);
+    if (provider?.isReadOnly) {
+      return !provider.isReadOnly();
+    }
 
     return provider !== undefined && provider.create !== undefined && provider.update !== undefined;
   }
 
   isMissing(domainObject) {
-    let identifier = utils.makeKeyString(domainObject.identifier);
+    let identifier = makeKeyString(domainObject.identifier);
     let missingName = 'Missing: ' + identifier;
 
     return domainObject.name === missingName;
@@ -429,21 +453,21 @@ export default class ObjectAPI {
       if (error instanceof this.errors.Conflict) {
         // Synchronized objects will resolve their own conflicts
         if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
-          this.openmct.notifications.info(
-            `Conflict detected while saving "${this.makeKeyString(
+          this.#openmct.notifications.info(
+            `Conflict detected while saving "${this.#makeKeyString(
               domainObject.name
             )}", attempting to resolve`
           );
         } else {
-          this.openmct.notifications.error(
-            `Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`
+          this.#openmct.notifications.error(
+            `Conflict detected while saving ${this.#makeKeyString(domainObject.identifier)}`
           );
 
           if (this.isTransactionActive()) {
             this.endTransaction();
           }
 
-          await this.refresh(domainObject);
+          await this.#refresh(domainObject);
         }
       }
 
@@ -452,7 +476,7 @@ export default class ObjectAPI {
   }
 
   async #getCurrentUsername() {
-    const user = await this.openmct.user.getCurrentUser();
+    const user = await this.#openmct.user.getCurrentUser();
     let username;
 
     if (user !== undefined) {
@@ -541,15 +565,15 @@ export default class ObjectAPI {
    */
   getRelativePath(objectPath) {
     return objectPath
-      .map((p) => this.makeKeyString(p.identifier))
+      .map((p) => this.#makeKeyString(p.identifier))
       .reverse()
       .join('/');
   }
 
   /**
    * Return path of telemetry objects in the object composition
-   * @param {object} identifier the identifier for the domain object to query for
-   * @param {object} [telemetryIdentifier] the specific identifier for the telemetry
+   * @param {Object} identifier the identifier for the domain object to query for
+   * @param {Object} [telemetryIdentifier] the specific identifier for the telemetry
    *  to look for in the composition, uses first object in composition otherwise
    * @returns {Array} path of telemetry object in object composition
    */
@@ -561,13 +585,13 @@ export default class ObjectAPI {
     }
 
     let sourceTelemetry = null;
-    if (telemetryIdentifier && utils.identifierEquals(identifier, telemetryIdentifier)) {
+    if (telemetryIdentifier && this.#identifierEquals(identifier, telemetryIdentifier)) {
       sourceTelemetry = identifier;
     } else if (objectDetails.composition) {
       sourceTelemetry = objectDetails.composition[0];
       if (telemetryIdentifier) {
         sourceTelemetry = objectDetails.composition.find((telemetrySource) =>
-          utils.identifierEquals(telemetrySource, telemetryIdentifier)
+          this.#identifierEquals(telemetrySource, telemetryIdentifier)
         );
       }
     }
@@ -653,7 +677,7 @@ export default class ObjectAPI {
       mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
 
       // Check if provider supports realtime updates
-      let identifier = utils.parseKeyString(mutableObject.identifier);
+      let identifier = parseKeyString(mutableObject.identifier);
       let provider = this.getProvider(identifier);
 
       if (
@@ -683,15 +707,17 @@ export default class ObjectAPI {
   /**
    * Updates a domain object based on its latest persisted state. Note that this will mutate the provided object.
    * @param {module:openmct.DomainObject} domainObject an object to refresh from its persistence store
+   * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
+   *          dirty/in-transaction objects use and the provider.get method
    * @returns {Promise} the provided object, updated to reflect the latest persisted state of the object.
    */
-  async refresh(domainObject) {
-    const refreshedObject = await this.get(domainObject.identifier);
+  async refresh(domainObject, forceRemote = false) {
+    const refreshedObject = await this.get(domainObject.identifier, null, forceRemote);
 
     if (domainObject.isMutable) {
       domainObject.$refresh(refreshedObject);
     } else {
-      utils.refresh(domainObject, refreshedObject);
+      refresh(domainObject, refreshedObject);
     }
 
     return domainObject;
@@ -730,7 +756,7 @@ export default class ObjectAPI {
    * @returns {string} A string representation of the given identifier, including namespace and key
    */
   makeKeyString(identifier) {
-    return utils.makeKeyString(identifier);
+    return makeKeyString(identifier);
   }
 
   /**
@@ -738,7 +764,7 @@ export default class ObjectAPI {
    * @returns {module:openmct.ObjectAPI~Identifier} An identifier object
    */
   parseKeyString(keyString) {
-    return utils.parseKeyString(keyString);
+    return parseKeyString(keyString);
   }
 
   /**
@@ -746,9 +772,9 @@ export default class ObjectAPI {
    * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
    */
   areIdsEqual(...identifiers) {
-    const firstIdentifier = utils.parseKeyString(identifiers[0]);
+    const firstIdentifier = this.#parseKeyString(identifiers[0]);
 
-    return identifiers.map(utils.parseKeyString).every((identifier) => {
+    return identifiers.map(this.#parseKeyString).every((identifier) => {
       return (
         identifier === firstIdentifier ||
         (identifier.namespace === firstIdentifier.namespace &&
@@ -776,7 +802,7 @@ export default class ObjectAPI {
     }
 
     return path.some((pathElement) => {
-      const identifierToCheck = utils.parseKeyString(keyStringToCheck);
+      const identifierToCheck = this.#parseKeyString(keyStringToCheck);
 
       return this.areIdsEqual(identifierToCheck, pathElement.identifier);
     });
@@ -786,16 +812,20 @@ export default class ObjectAPI {
    * Given an identifier, constructs the original path by walking up its parents
    * @param {module:openmct.ObjectAPI~Identifier} identifier
    * @param {Array<module:openmct.DomainObject>} path an array of path objects
+   * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
    * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifier, path = []) {
-    const domainObject = await this.get(identifier);
+  async getOriginalPath(identifier, path = [], abortSignal = null) {
+    const domainObject = await this.get(identifier, abortSignal);
+    if (!domainObject) {
+      return [];
+    }
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
       // if we have a location, and we don't already have this in our constructed path,
       // then keep walking up the path
-      return this.getOriginalPath(utils.parseKeyString(location), path);
+      return this.getOriginalPath(this.#parseKeyString(location), path, abortSignal);
     } else {
       return path;
     }
@@ -834,8 +864,8 @@ export default class ObjectAPI {
       await Promise.all(
         keyStrings.map((keyString) =>
           this.supportsMutation(keyString)
-            ? this.getMutable(utils.parseKeyString(keyString))
-            : this.get(utils.parseKeyString(keyString))
+            ? this.getMutable(this.#parseKeyString(keyString))
+            : this.get(this.#parseKeyString(keyString))
         )
       )
     ).reverse();
@@ -847,7 +877,7 @@ export default class ObjectAPI {
     return (
       objectPath !== undefined &&
       objectPath.length > 1 &&
-      domainObject.location !== this.makeKeyString(objectPath[1].identifier)
+      domainObject.location !== this.#makeKeyString(objectPath[1].identifier)
     );
   }
 

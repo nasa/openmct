@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -72,8 +72,8 @@ export default {
     this.openmct.notifications.on('dismiss-all', this.updateNotifications);
   },
   unmounted() {
-    this.openmct.notifications.of('notification', this.updateNotifications);
-    this.openmct.notifications.of('dismiss-all', this.updateNotifications);
+    this.openmct.notifications.off('notification', this.updateNotifications);
+    this.openmct.notifications.off('dismiss-all', this.updateNotifications);
   },
   methods: {
     dismissAllNotifications() {

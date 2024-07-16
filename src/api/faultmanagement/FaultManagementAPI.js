@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -88,21 +88,21 @@ export default class FaultManagementAPI {
 }
 
 /**
- * @typedef {object} TriggerValueInfo
+ * @typedef {Object} TriggerValueInfo
  * @property {number} value
  * @property {string} rangeCondition
  * @property {string} monitoringResult
  */
 
 /**
- * @typedef {object} CurrentValueInfo
+ * @typedef {Object} CurrentValueInfo
  * @property {number} value
  * @property {string} rangeCondition
  * @property {string} monitoringResult
  */
 
 /**
- * @typedef {object} Fault
+ * @typedef {Object} Fault
  * @property {boolean} acknowledged
  * @property {CurrentValueInfo} currentValueInfo
  * @property {string} id
@@ -117,7 +117,7 @@ export default class FaultManagementAPI {
  */
 
 /**
- * @typedef {object} FaultAPIResponse
+ * @typedef {Object} FaultAPIResponse
  * @property {string} type
  * @property {Fault} fault
  */

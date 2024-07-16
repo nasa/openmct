@@ -1,78 +1,56 @@
+<!--
+ Open MCT, Copyright (c) 2014-2024, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+
 <template>
   <form ref="fixedDeltaInput">
     <div class="c-tc-input-popup__input-grid">
-      <div class="pr-time-label"><em>Start</em> Date</div>
-      <div class="pr-time-label">Time</div>
-      <div class="pr-time-label"></div>
-      <div class="pr-time-label"><em>End</em> Date</div>
-      <div class="pr-time-label">Time</div>
-      <div class="pr-time-label"></div>
+      <div class="pr-time-label pr-time-label-start-time">Start</div>
+      <div class="pr-time-label pr-time-label-end-time">End</div>
 
-      <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+      <div class="pr-time-input pr-time-input-start">
         <input
-          ref="startDate"
+          ref="startTime"
           v-model="formattedBounds.start"
           class="c-input--datetime"
           type="text"
           autocorrect="off"
           spellcheck="false"
-          aria-label="Start date"
-          @change="validateAllBounds('startDate')"
-        />
-        <date-picker
-          v-if="isUTCBased"
-          class="c-ctrl-wrapper--menus-left"
-          :default-date-time="formattedBounds.start"
-          :formatter="timeFormatter"
-          @date-selected="startDateSelected"
-        />
-      </div>
-
-      <div class="pr-time-input pr-time-input--time">
-        <input
-          ref="startTime"
-          v-model="formattedBounds.startTime"
-          class="c-input--datetime"
-          type="text"
-          autocorrect="off"
-          spellcheck="false"
           aria-label="Start time"
-          @change="validateAllBounds('startDate')"
+          @change="validateAllBounds('startTime')"
         />
       </div>
 
       <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-      <div class="pr-time-input pr-time-input--date pr-time-input--input-and-button">
+      <div class="pr-time-input pr-time-input-end">
         <input
-          ref="endDate"
+          ref="endTime"
           v-model="formattedBounds.end"
           class="c-input--datetime"
           type="text"
           autocorrect="off"
           spellcheck="false"
-          aria-label="End date"
-          @change="validateAllBounds('endDate')"
-        />
-        <date-picker
-          v-if="isUTCBased"
-          class="c-ctrl-wrapper--menus-left"
-          :default-date-time="formattedBounds.end"
-          :formatter="timeFormatter"
-          @date-selected="endDateSelected"
-        />
-      </div>
-
-      <div class="pr-time-input pr-time-input--time">
-        <input
-          ref="endTime"
-          v-model="formattedBounds.endTime"
-          class="c-input--datetime"
-          type="text"
-          autocorrect="off"
-          spellcheck="false"
           aria-label="End time"
-          @change="validateAllBounds('endDate')"
+          @change="validateAllBounds('endTime')"
         />
       </div>
 
@@ -85,7 +63,7 @@
         ></button>
         <button
           class="c-button icon-x"
-          aria-label="Discard time bounds"
+          aria-label="Discard changes and close time popup"
           @click.prevent="hide"
         ></button>
       </div>
@@ -94,120 +72,64 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
-import DatePicker from './DatePicker.vue';
-
-const DEFAULT_DURATION_FORMATTER = 'duration';
-
 export default {
-  components: {
-    DatePicker
-  },
-  inject: ['openmct'],
-  props: {
-    inputBounds: {
-      type: Object,
-      required: true
-    },
-    inputTimeSystem: {
-      type: Object,
-      required: true
-    }
-  },
+  inject: [
+    'openmct',
+    'isTimeSystemUTCBased',
+    'timeContext',
+    'timeSystemFormatter',
+    'timeSystemDurationFormatter',
+    'bounds'
+  ],
   emits: ['update', 'dismiss'],
   data() {
-    let timeSystem = this.openmct.time.getTimeSystem();
-    let durationFormatter = this.getFormatter(
-      timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
-    );
-    let timeFormatter = this.getFormatter(timeSystem.timeFormat);
-    let bounds = this.bounds || this.openmct.time.getBounds();
-
     return {
-      timeFormatter,
-      durationFormatter,
-      bounds: {
-        start: bounds.start,
-        end: bounds.end
-      },
-      formattedBounds: {
-        start: timeFormatter.format(bounds.start).split(' ')[0],
-        end: timeFormatter.format(bounds.end).split(' ')[0],
-        startTime: durationFormatter.format(Math.abs(bounds.start)),
-        endTime: durationFormatter.format(Math.abs(bounds.end))
-      },
-      isUTCBased: timeSystem.isUTCBased,
+      formattedBounds: {},
       isDisabled: false
     };
   },
+  computed: {
+
+  },
   watch: {
-    inputBounds: {
-      handler(newBounds) {
-        this.handleNewBounds(newBounds);
-      },
-      deep: true
-    },
-    inputTimeSystem: {
-      handler(newTimeSystem) {
-        this.setTimeSystem(newTimeSystem);
-      },
-      deep: true
+    bounds: {
+      handler() {
+        console.log(this.bounds);
+        this.setViewFromBounds();
+      }
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
-    this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
+    this.setViewFromBounds();
   },
   beforeUnmount() {
     this.clearAllValidation();
   },
   methods: {
-    handleNewBounds(bounds) {
-      this.setBounds(bounds);
-      this.setViewFromBounds(bounds);
-    },
     clearAllValidation() {
-      [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
+      [this.$refs.startTime, this.$refs.endTime].forEach(this.clearValidationForInput);
     },
     clearValidationForInput(input) {
       input.setCustomValidity('');
       input.title = '';
     },
-    setBounds(bounds) {
-      this.bounds = bounds;
-    },
-    setViewFromBounds(bounds) {
-      this.formattedBounds.start = this.timeFormatter.format(bounds.start).split(' ')[0];
-      this.formattedBounds.end = this.timeFormatter.format(bounds.end).split(' ')[0];
-      this.formattedBounds.startTime = this.durationFormatter.format(Math.abs(bounds.start));
-      this.formattedBounds.endTime = this.durationFormatter.format(Math.abs(bounds.end));
-    },
-    setTimeSystem(timeSystem) {
-      this.timeSystem = timeSystem;
-      this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
-      this.durationFormatter = this.getFormatter(
-        timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
-      );
-      this.isUTCBased = timeSystem.isUTCBased;
-    },
-    getFormatter(key) {
-      return this.openmct.telemetry.getValueFormatter({
-        format: key
-      }).formatter;
+    setViewFromBounds() {
+      const start = this.timeSystemFormatter.format(this.bounds.start);
+      const end = this.timeSystemFormatter.format(this.bounds.end);
+
+      this.formattedBounds = {
+        start,
+        end
+      };
     },
     setBoundsFromView(dismiss) {
       if (this.$refs.fixedDeltaInput.checkValidity()) {
-        let start = this.timeFormatter.parse(
-          `${this.formattedBounds.start} ${this.formattedBounds.startTime}`
-        );
-        let end = this.timeFormatter.parse(
-          `${this.formattedBounds.end} ${this.formattedBounds.endTime}`
-        );
+        const start = this.timeSystemFormatter.parse(this.formattedBounds.start);
+        const end = this.timeSystemFormatter.parse(this.formattedBounds.end);
 
-        this.$emit('update', {
-          start: start,
-          end: end
+        this.timeContext.setBounds({
+          start,
+          end
         });
       }
 
@@ -237,20 +159,20 @@ export default {
       };
       const currentInput = this.$refs[ref];
 
-      return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        let boundsValues = {
-          start: this.timeFormatter.parse(
-            `${this.formattedBounds.start} ${this.formattedBounds.startTime}`
-          ),
-          end: this.timeFormatter.parse(
-            `${this.formattedBounds.end} ${this.formattedBounds.endTime}`
-          )
+      return [this.$refs.startTime, this.$refs.endTime].every((input) => {
+        const start = this.timeSystemFormatter.parse(this.formattedBounds.start);
+        const end = this.timeSystemFormatter.parse(this.formattedBounds.end);
+
+        const bounds = {
+          start,
+          end
         };
+
         //TODO: Do we need limits here? We have conductor limits disabled right now
         // const limit = this.getBoundsLimit();
         const limit = false;
 
-        if (this.timeSystem.isUTCBased && limit && boundsValues.end - boundsValues.start > limit) {
+        if (this.isTimeSystemUTCBased && limit && bounds.end - bounds.start > limit) {
           if (input === currentInput) {
             validationResult = {
               valid: false,
@@ -259,7 +181,7 @@ export default {
           }
         } else {
           if (input === currentInput) {
-            validationResult = this.openmct.time.validateBounds(boundsValues);
+            validationResult = this.timeContext.validateBounds(bounds);
           }
         }
 
@@ -271,12 +193,12 @@ export default {
         valid: true
       };
 
-      return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        const formattedDate =
-          input === this.$refs.startDate
-            ? `${this.formattedBounds.start} ${this.formattedBounds.startTime}`
-            : `${this.formattedBounds.end} ${this.formattedBounds.endTime}`;
-        if (!this.timeFormatter.validate(formattedDate)) {
+      return [this.$refs.startTime, this.$refs.endTime].every((input) => {
+        const formattedBounds =
+          input === this.$refs.startTime
+            ? this.formattedBounds.start
+            : this.formattedBounds.end;
+        if (!this.timeSystemFormatter.validate(formattedBounds)) {
           validationResult = {
             valid: false,
             message: 'Invalid date'
@@ -309,14 +231,6 @@ export default {
       this.$refs.fixedDeltaInput.reportValidity();
 
       return validationResult.valid;
-    },
-    startDateSelected(date) {
-      this.formattedBounds.start = this.timeFormatter.format(date).split(' ')[0];
-      this.validateAllBounds('startDate');
-    },
-    endDateSelected(date) {
-      this.formattedBounds.end = this.timeFormatter.format(date).split(' ')[0];
-      this.validateAllBounds('endDate');
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {

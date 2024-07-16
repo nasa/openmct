@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,11 +23,11 @@
 import EventEmitter from 'eventemitter3';
 import _ from 'lodash';
 
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 
 /**
- * @template {object} T
- * @template {object} O
+ * @template {Object} T
+ * @template {Object} O
  */
 export default class Model extends EventEmitter {
   /**
@@ -139,18 +139,20 @@ export default class Model extends EventEmitter {
 
 /** @typedef {any} TODO */
 
-/** @typedef {TODO} OpenMCT */
+/**
+ * @typedef {import('../../../../openmct.js').OpenMCT} OpenMCT
+ */
 
 /**
-@template {object} T
+@template {Object} T
 @typedef {{
     id?: string
 } & T} ModelType
 */
 
 /**
-@template {object} T
-@template {object} O
+@template {Object} T
+@template {Object} O
 @typedef {{
     model?: ModelType<T>
     models?: T[]

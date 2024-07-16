@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -33,7 +33,8 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import VisibilityObserver from '../../utils/visibility/VisibilityObserver';
+import { objectEquals } from '../../api/objects/object-utils.js';
+import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 
 export default {
   mixins: [stalenessMixin],
@@ -130,7 +131,10 @@ export default {
     this.debounceUpdateView = _.debounce(this.updateView, 10);
   },
   mounted() {
-    this.visibilityObserver = new VisibilityObserver(this.$refs.objectViewWrapper);
+    this.visibilityObserver = new VisibilityObserver(
+      this.$refs.objectViewWrapper,
+      this.openmct.element
+    );
     this.updateView();
     this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
       capture: true
@@ -184,6 +188,7 @@ export default {
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.openmct.objectViews.off('clearData', this.clearData);
+      this.openmct.objectViews.off('reload', this.reload);
       if (this.contextActionEvent) {
         this.openmct.objectViews.off(this.contextActionEvent, this.performContextAction);
       }
@@ -218,6 +223,13 @@ export default {
       this.clear();
       this.updateView(true);
     },
+    reload(domainObjectToReload) {
+      if (objectEquals(domainObjectToReload, this.domainObject)) {
+        this.updateView(true);
+        this.initObjectStyles();
+        this.triggerStalenessSubscribe(this.domainObject);
+      }
+    },
     triggerStalenessSubscribe(object) {
       if (this.openmct.telemetry.isTelemetryObject(object)) {
         this.subscribeToStaleness(object);
@@ -236,7 +248,11 @@ export default {
         if (elemToStyle) {
           if (typeof styleObj[key] === 'string' && styleObj[key].indexOf('__no_value') > -1) {
             if (elemToStyle.style[key]) {
-              elemToStyle.style[key] = '';
+              if (key === 'background-color') {
+                elemToStyle.style[key] = 'transparent';
+              } else {
+                elemToStyle.style[key] = '';
+              }
             }
           } else {
             if (
@@ -312,6 +328,7 @@ export default {
         this.domainObject.identifier
       )}`;
       this.openmct.objectViews.on('clearData', this.clearData);
+      this.openmct.objectViews.on('reload', this.reload);
       this.openmct.objectViews.on(this.contextActionEvent, this.performContextAction);
 
       this.$nextTick(() => {

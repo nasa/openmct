@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -53,13 +53,13 @@
             ></span>
           </div>
 
-          <mct-ticks
+          <MctTicks
             v-show="gridLines && !options.compact"
             :axis-type="'xAxis'"
             :position="'right'"
           />
 
-          <mct-ticks
+          <MctTicks
             v-for="(yAxis, index) in yAxesIds"
             v-show="gridLines"
             :key="`yAxis-gridlines-${index}`"
@@ -178,14 +178,16 @@
 import Flatbush from 'flatbush';
 import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
+import { toRaw } from 'vue';
 
+import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames.js';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
 import MctChart from './chart/MctChart.vue';
-import configStore from './configuration/ConfigStore';
-import PlotConfigurationModel from './configuration/PlotConfigurationModel';
-import eventHelpers from './lib/eventHelpers';
-import LinearScale from './LinearScale';
+import configStore from './configuration/ConfigStore.js';
+import PlotConfigurationModel from './configuration/PlotConfigurationModel.js';
+import eventHelpers from './lib/eventHelpers.js';
+import LinearScale from './LinearScale.js';
 import MctTicks from './MctTicks.vue';
 
 const OFFSET_THRESHOLD = 10;
@@ -465,9 +467,14 @@ export default {
     cancelSelection(event) {
       if (this.$refs?.plot) {
         const clickedInsidePlot = this.$refs.plot.contains(event.target);
+        // unfortunate side effect from possibly being detached from the DOM when
+        // adding/deleting tags, so closest() won't work
+        const clickedTagEditor = Object.values(TagEditorClassNames).some((className) => {
+          return event.target.classList.contains(className);
+        });
         const clickedInsideInspector = event.target.closest('.js-inspector') !== null;
         const clickedOption = event.target.closest('.js-autocomplete-options') !== null;
-        if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption) {
+        if (!clickedInsidePlot && !clickedInsideInspector && !clickedOption && !clickedTagEditor) {
           this.rectangles = [];
           this.annotationSelectionsBySeries = {};
           this.selectPlot();
@@ -654,7 +661,7 @@ export default {
       this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
       this.startLoading();
-      const bounds = this.timeContext.bounds();
+      const bounds = this.timeContext.getBounds();
       const options = {
         size: this.$parent.$refs.plotWrapper.offsetWidth,
         domain: this.config.xAxis.get('key'),
@@ -937,7 +944,10 @@ export default {
       const targetDetails = [];
       const uniqueBoundsAnnotations = [];
       annotations.forEach((annotation) => {
-        targetDetails.push(annotation.targets);
+        // for each target, push toRaw
+        annotation.targets.forEach((target) => {
+          targetDetails.push(toRaw(target));
+        });
 
         const boundingBoxAlreadyAdded = uniqueBoundsAnnotations.some((existingAnnotation) => {
           const existingBoundingBox = Object.values(existingAnnotation.targets)[0];
@@ -1850,8 +1860,8 @@ export default {
     },
 
     showSynchronizeDialog() {
-      const isLocalClock = this.timeContext.clock();
-      if (isLocalClock !== undefined) {
+      const isFixedTimespanMode = this.timeContext.isFixed();
+      if (!isFixedTimespanMode) {
         const message = `
                 This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
                 Do you want to continue?

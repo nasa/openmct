@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,8 +23,8 @@
 import EventEmitter from 'EventEmitter';
 import { v4 as uuid } from 'uuid';
 
-import Condition from './Condition';
-import { getLatestTimestamp } from './utils/time';
+import Condition from './Condition.js';
+import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
   constructor(conditionSetDomainObject, openmct) {
@@ -56,20 +56,38 @@ export default class ConditionManager extends EventEmitter {
     );
   }
 
-  subscribeToTelemetry(endpoint) {
-    const id = this.openmct.objects.makeKeyString(endpoint.identifier);
-    if (this.subscriptions[id]) {
-      console.log('subscription already exists');
+  async requestLatestValue(endpoint) {
+    const options = {
+      size: 1,
+      strategy: 'latest'
+    };
+    const latestData = await this.openmct.telemetry.request(endpoint, options);
 
+    if (!latestData) {
+      throw new Error('Telemetry request failed by returning a falsy response');
+    }
+    if (latestData.length === 0) {
+      return;
+    }
+    this.telemetryReceived(endpoint, latestData[0]);
+  }
+
+  subscribeToTelemetry(endpoint) {
+    const telemetryKeyString = this.openmct.objects.makeKeyString(endpoint.identifier);
+    if (this.subscriptions[telemetryKeyString]) {
       return;
     }
 
     const metadata = this.openmct.telemetry.getMetadata(endpoint);
 
-    this.telemetryObjects[id] = Object.assign({}, endpoint, {
+    this.telemetryObjects[telemetryKeyString] = Object.assign({}, endpoint, {
       telemetryMetaData: metadata ? metadata.valueMetadatas : []
     });
-    this.subscriptions[id] = this.openmct.telemetry.subscribe(
+
+    // get latest telemetry value (in case subscription is cached and no new data is coming in)
+    this.requestLatestValue(endpoint);
+
+    this.subscriptions[telemetryKeyString] = this.openmct.telemetry.subscribe(
       endpoint,
       this.telemetryReceived.bind(this, endpoint)
     );
@@ -91,11 +109,11 @@ export default class ConditionManager extends EventEmitter {
 
     //force re-computation of condition set result as we might be in a state where
     // there is no telemetry datum coming in for a while or at all.
-    let latestTimestamp = getLatestTimestamp(
+    const latestTimestamp = getLatestTimestamp(
       {},
       {},
       this.timeSystems,
-      this.openmct.time.timeSystem()
+      this.openmct.time.getTimeSystem()
     );
     this.updateConditionResults({ id: id });
     this.updateCurrentCondition(latestTimestamp);
@@ -334,57 +352,54 @@ export default class ConditionManager extends EventEmitter {
     return currentCondition;
   }
 
-  requestLADConditionSetOutput(options) {
+  async requestLADConditionSetOutput(options) {
     if (!this.conditions.length) {
-      return Promise.resolve([]);
+      return [];
     }
 
-    return this.compositionLoad.then(() => {
-      let latestTimestamp;
-      let conditionResults = {};
-      let nextLegOptions = { ...options };
-      delete nextLegOptions.onPartialResponse;
+    await this.compositionLoad;
 
-      const conditionRequests = this.conditions.map((condition) =>
-        condition.requestLADConditionResult(nextLegOptions)
+    let latestTimestamp;
+    let conditionResults = {};
+    let nextLegOptions = { ...options };
+    delete nextLegOptions.onPartialResponse;
+
+    const results = await Promise.all(
+      this.conditions.map((condition) => condition.requestLADConditionResult(nextLegOptions))
+    );
+
+    results.forEach((resultObj) => {
+      const {
+        id,
+        data,
+        data: { result }
+      } = resultObj;
+
+      if (this.findConditionById(id)) {
+        conditionResults[id] = Boolean(result);
+      }
+
+      latestTimestamp = getLatestTimestamp(
+        latestTimestamp,
+        data,
+        this.timeSystems,
+        this.openmct.time.getTimeSystem()
       );
-
-      return Promise.all(conditionRequests).then((results) => {
-        results.forEach((resultObj) => {
-          const {
-            id,
-            data,
-            data: { result }
-          } = resultObj;
-          if (this.findConditionById(id)) {
-            conditionResults[id] = Boolean(result);
-          }
-
-          latestTimestamp = getLatestTimestamp(
-            latestTimestamp,
-            data,
-            this.timeSystems,
-            this.openmct.time.timeSystem()
-          );
-        });
-
-        if (!Object.values(latestTimestamp).some((timeSystem) => timeSystem)) {
-          return [];
-        }
-
-        const currentCondition = this.getCurrentConditionLAD(conditionResults);
-        const currentOutput = Object.assign(
-          {
-            output: currentCondition.configuration.output,
-            id: this.conditionSetDomainObject.identifier,
-            conditionId: currentCondition.id
-          },
-          latestTimestamp
-        );
-
-        return [currentOutput];
-      });
     });
+
+    if (!Object.values(latestTimestamp).some((timeSystem) => timeSystem)) {
+      return [];
+    }
+
+    const currentCondition = this.getCurrentConditionLAD(conditionResults);
+    const currentOutput = {
+      output: currentCondition.configuration.output,
+      id: this.conditionSetDomainObject.identifier,
+      conditionId: currentCondition.id,
+      ...latestTimestamp
+    };
+
+    return [currentOutput];
   }
 
   isTelemetryUsed(endpoint) {
@@ -409,7 +424,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     const normalizedDatum = this.createNormalizedDatum(datum, endpoint);
-    const timeSystemKey = this.openmct.time.timeSystem().key;
+    const timeSystemKey = this.openmct.time.getTimeSystem().key;
     let timestamp = {};
     const currentTimestamp = normalizedDatum[timeSystemKey];
     timestamp[timeSystemKey] = currentTimestamp;

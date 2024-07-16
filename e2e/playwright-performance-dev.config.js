@@ -1,7 +1,6 @@
-/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
-
+import { fileURLToPath } from 'url';
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 1, //Only for debugging purposes for trace: 'on-first-retry'
@@ -11,6 +10,7 @@ const config = {
   workers: 1, //Only run in serial with 1 worker
   webServer: {
     command: 'npm run start', //need development mode for performance.marks and others
+    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: false
@@ -40,4 +40,4 @@ const config = {
   ]
 };
 
-module.exports = config;
+export default config;

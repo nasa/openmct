@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,8 +31,8 @@ function replaceDotsWithUnderscores(filename) {
   return filename.replace(regex, '_');
 }
 
+import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
-import { saveAs } from 'saveAs';
 import { v4 as uuid } from 'uuid';
 
 class ImageExporter {
@@ -43,7 +43,7 @@ class ImageExporter {
    * Converts an HTML element into a PNG or JPG Blob.
    * @private
    * @param {node} element that will be converted to an image
-   * @param {object} options Image options.
+   * @param {Object} options Image options.
    * @returns {promise}
    */
   renderElement(element, { imageType, className, thumbnailSize }) {

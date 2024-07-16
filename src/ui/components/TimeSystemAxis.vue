@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -26,15 +26,17 @@
 </template>
 
 <script>
-import * as d3Axis from 'd3-axis';
-import * as d3Scale from 'd3-scale';
-import * as d3Selection from 'd3-selection';
+import { axisTop } from 'd3-axis';
+import { scaleLinear, scaleUtc } from 'd3-scale';
+import { select } from 'd3-selection';
+import { onMounted, ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
+import { useResizeObserver } from '../composables/resize';
+
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
-const RESIZE_POLL_INTERVAL = 200;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 //This offset needs to be re-considered
@@ -73,6 +75,17 @@ export default {
       }
     }
   },
+  setup() {
+    const axisHolder = ref(null);
+    const { size: containerSize, startObserving } = useResizeObserver();
+    onMounted(() => {
+      startObserving(axisHolder.value);
+    });
+    return {
+      axisHolder,
+      containerSize
+    };
+  },
   watch: {
     bounds(newBounds) {
       this.drawAxis(newBounds, this.timeSystem);
@@ -82,6 +95,12 @@ export default {
     },
     contentHeight() {
       this.updateNowMarker();
+    },
+    containerSize: {
+      handler() {
+        this.resize();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -89,7 +108,7 @@ export default {
       this.useSVG = true;
     }
 
-    this.container = d3Selection.select(this.$refs.axisHolder);
+    this.container = select(this.axisHolder);
     this.svgElement = this.container.append('svg:svg');
     // draw x axis with labels. CSS is used to position them.
     this.axisElement = this.svgElement
@@ -100,14 +119,14 @@ export default {
 
     this.setDimensions();
     this.drawAxis(this.bounds, this.timeSystem);
-    this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+    this.resize();
   },
   unmounted() {
     clearInterval(this.resizeTimer);
   },
   methods: {
     resize() {
-      if (this.$refs.axisHolder.clientWidth !== this.width) {
+      if (this.axisHolder.clientWidth !== this.width) {
         this.setDimensions();
         this.drawAxis(this.bounds, this.timeSystem);
         this.updateNowMarker();
@@ -124,11 +143,10 @@ export default {
       }
     },
     setDimensions() {
-      const axisHolder = this.$refs.axisHolder;
-      this.width = axisHolder.clientWidth;
+      this.width = this.axisHolder.clientWidth;
       this.offsetWidth = this.width - this.offset;
 
-      this.height = Math.round(axisHolder.getBoundingClientRect().height);
+      this.height = Math.round(this.axisHolder.getBoundingClientRect().height);
 
       if (this.useSVG) {
         this.svgElement.attr('width', this.width);
@@ -155,17 +173,17 @@ export default {
       }
 
       if (timeSystem.isUTCBased) {
-        this.xScale = d3Scale.scaleUtc();
+        this.xScale = scaleUtc();
         this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
       } else {
-        this.xScale = d3Scale.scaleLinear();
+        this.xScale = scaleLinear();
         this.xScale.domain([bounds.start, bounds.end]);
       }
 
       this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
     },
     setAxis() {
-      this.xAxis = d3Axis.axisTop(this.xScale);
+      this.xAxis = axisTop(this.xScale);
       this.xAxis.tickFormat(utcMultiTimeFormat);
 
       if (this.width > 1800) {

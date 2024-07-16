@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -62,9 +62,9 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import ObjectPath from '../components/ObjectPath.vue';
-import PreviewAction from '../preview/PreviewAction';
+import PreviewAction from '../preview/PreviewAction.js';
 
 export default {
   name: 'RecentObjectsListItem',

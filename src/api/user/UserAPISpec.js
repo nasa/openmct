@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,12 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
-import { MULTIPLE_PROVIDER_ERROR } from './constants';
-
-const USERNAME = 'Test User';
-const EXAMPLE_ROLE = 'flight';
+import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider.js';
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import { MULTIPLE_PROVIDER_ERROR } from './constants.js';
 
 describe('The User API', () => {
   let openmct;
@@ -63,50 +60,6 @@ describe('The User API', () => {
       openmct.user.setProvider(new ExampleUserProvider(openmct));
 
       expect(openmct.user.hasProvider()).toBeTrue();
-    });
-  });
-
-  describe('provides the ability', () => {
-    let provider;
-
-    beforeEach(() => {
-      provider = new ExampleUserProvider(openmct);
-      provider.autoLogin(USERNAME);
-    });
-
-    it('to check if a user (not specific) is logged in', (done) => {
-      expect(openmct.user.isLoggedIn()).toBeFalse();
-
-      openmct.user.on('providerAdded', () => {
-        expect(openmct.user.isLoggedIn()).toBeTrue();
-        done();
-      });
-
-      // this will trigger the user indicator plugin,
-      // which will in turn login the user
-      openmct.user.setProvider(provider);
-    });
-
-    it('to get the current user', (done) => {
-      openmct.user.setProvider(provider);
-      openmct.user
-        .getCurrentUser()
-        .then((apiUser) => {
-          expect(apiUser.name).toEqual(USERNAME);
-        })
-        .finally(done);
-    });
-
-    it('to check if a user has a specific role (by id)', (done) => {
-      openmct.user.setProvider(provider);
-      let junkIdCheckPromise = openmct.user.hasRole('junk-id').then((hasRole) => {
-        expect(hasRole).toBeFalse();
-      });
-      let realIdCheckPromise = openmct.user.hasRole(EXAMPLE_ROLE).then((hasRole) => {
-        expect(hasRole).toBeTrue();
-      });
-
-      Promise.all([junkIdCheckPromise, realIdCheckPromise]).finally(done);
     });
   });
 });

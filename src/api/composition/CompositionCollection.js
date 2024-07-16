@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,7 +33,7 @@
  */
 
 /**
- * @typedef {object} ListenerMap
+ * @typedef {Object} ListenerMap
  * @property {Array.<any>} add
  * @property {Array.<any>} remove
  * @property {Array.<any>} load
@@ -271,7 +271,7 @@ export default class CompositionCollection {
   /**
    * Handle reorder from provider.
    * @private
-   * @param {object} reorderMap
+   * @param {Object} reorderMap
    */
   #onProviderReorder(reorderMap) {
     this.#emit('reorder', reorderMap);

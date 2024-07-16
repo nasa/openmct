@@ -1,11 +1,11 @@
 import { v4 as uuid } from 'uuid';
 
-import objectLink from '../../../ui/mixins/object-link';
+import objectLink from '../../../ui/mixins/object-link.js';
 import {
   createNotebookImageDomainObject,
   getThumbnailURLFromImageUrl,
   saveNotebookImageDomainObject
-} from './notebook-image';
+} from './notebook-image.js';
 
 async function getUsername(openmct) {
   let username = null;
@@ -140,7 +140,7 @@ export function createNewImageEmbed(image, openmct, imageName = '') {
         };
 
         const embedMetaData = {
-          bounds: openmct.time.bounds(),
+          bounds: openmct.time.getBounds(),
           link: null,
           objectPath: null,
           openmct,

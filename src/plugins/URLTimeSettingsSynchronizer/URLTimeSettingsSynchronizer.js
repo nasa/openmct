@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { FIXED_MODE_KEY, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import {
+  FIXED_MODE_KEY,
+  REALTIME_MODE_KEY,
+  TIME_CONTEXT_EVENTS
+} from '../../api/time/constants.js';
 
 const SEARCH_MODE = 'tc.mode';
 const SEARCH_TIME_SYSTEM = 'tc.timeSystem';
@@ -57,7 +61,7 @@ export default class URLTimeSettingsSynchronizer {
     TIME_EVENTS.forEach((event) => {
       this.openmct.time.on(event, this.setUrlFromTimeApi);
     });
-    this.openmct.time.on('bounds', this.updateBounds);
+    this.openmct.time.on('boundsChanged', this.updateBounds);
   }
 
   destroy() {
@@ -69,7 +73,7 @@ export default class URLTimeSettingsSynchronizer {
     TIME_EVENTS.forEach((event) => {
       this.openmct.time.off(event, this.setUrlFromTimeApi);
     });
-    this.openmct.time.off('bounds', this.updateBounds);
+    this.openmct.time.off('boundsChanged', this.updateBounds);
   }
 
   updateTimeSettings() {

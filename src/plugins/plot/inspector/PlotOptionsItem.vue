@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -132,7 +132,8 @@ export default {
   },
   data() {
     return {
-      expanded: false
+      expanded: false,
+      status: null
     };
   },
   computed: {
@@ -183,7 +184,7 @@ export default {
       return this.series.get('color').asHexString();
     }
   },
-  mounted() {
+  created() {
     this.status = this.openmct.status.get(this.series.domainObject.identifier);
     this.removeStatusListener = this.openmct.status.observe(
       this.series.domainObject.identifier,

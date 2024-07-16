@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,13 +20,31 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const {
+import {
   createDomainObjectWithDefaults,
-  setTimeConductorBounds
-} = require('../../../../appActions');
-const { test, expect } = require('../../../../pluginFixtures');
+  setTimeConductorBounds,
+  setTimeConductorMode
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Telemetry Table', () => {
+  let table;
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
+  });
+
+  test('Limits to 50 rows by default', async ({ page }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: table.uuid
+    });
+    await page.goto(table.url);
+    await setTimeConductorMode(page, false);
+    const rows = page.getByLabel('table content').getByLabel('Table Row');
+    await expect(rows).toHaveCount(50);
+  });
+
   test('unpauses and filters data when paused by button and user changes bounds', async ({
     page
   }) => {
@@ -37,7 +55,6 @@ test.describe('Telemetry Table', () => {
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: table.uuid
@@ -67,10 +84,9 @@ test.describe('Telemetry Table', () => {
 
     // Get the most recent telemetry date
     const latestTelemetryDate = await page
-      .locator('table.c-telemetry-table__body > tbody > tr')
+      .getByLabel('table content')
+      .getByLabel('utc table cell')
       .last()
-      .locator('td')
-      .nth(1)
       .getAttribute('title');
 
     // Verify that it is <= our new end bound
@@ -82,7 +98,6 @@ test.describe('Telemetry Table', () => {
   test('Supports filtering telemetry by regular text search', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
     await createDomainObjectWithDefaults(page, {
       type: 'Event Message Generator',
       parent: table.uuid
@@ -94,7 +109,7 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('Roger');
 
-    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    let cells = await page.getByRole('cell').getByText(/Roger/).all();
     // ensure we've got more than one cell
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
@@ -106,7 +121,10 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('Dodger');
 
-    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    cells = await page
+      .getByRole('cell')
+      .getByText(/Dodger/)
+      .all();
     // ensure we've got more than one cell
     expect(cells.length).toBe(0);
     // ensure the text content of each cell contains the search term
@@ -122,7 +140,6 @@ test.describe('Telemetry Table', () => {
   test('Supports filtering using Regex', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    const table = await createDomainObjectWithDefaults(page, { type: 'Telemetry Table' });
     await createDomainObjectWithDefaults(page, {
       type: 'Event Message Generator',
       parent: table.uuid
@@ -131,11 +148,14 @@ test.describe('Telemetry Table', () => {
     // focus the Telemetry Table
     page.goto(table.url);
     await page.getByRole('searchbox', { name: 'message filter input' }).hover();
-    await page.getByLabel('Message filter header').getByRole('button', { name: '/R/' }).click();
+    await page
+      .getByLabel('Message filter header')
+      .getByLabel('Click to enable regex: enter a string with slashes, like this: /regex_exp/')
+      .click();
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Rr]oger/');
 
-    let cells = await page.getByRole('cell', { name: /Roger/ }).all();
+    let cells = await page.getByRole('cell').getByText(/Roger/).all();
     // ensure we've got more than one cell
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
@@ -147,7 +167,10 @@ test.describe('Telemetry Table', () => {
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
     await page.getByRole('searchbox', { name: 'message filter input' }).fill('/[Dd]oger/');
 
-    cells = await page.getByRole('cell', { name: /Dodger/ }).all();
+    cells = await page
+      .getByRole('cell')
+      .getByText(/Dodger/)
+      .all();
     // ensure we've got more than one cell
     expect(cells.length).toBe(0);
     // ensure the text content of each cell contains the search term

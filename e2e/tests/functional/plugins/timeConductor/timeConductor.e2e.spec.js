@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import {
+  setEndOffset,
   setFixedTimeMode,
   setRealTimeMode,
   setStartOffset,
-  setEndOffset,
   setTimeConductorBounds
-} = require('../../../../appActions');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Time conductor operations', () => {
   test('validate start time does not exceeds end time', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('Time conductor operations', () => {
     await setTimeConductorBounds(page, startDate);
 
     // Bring up the time conductor popup
-    const timeConductorMode = await page.locator('.c-compact-tc');
+    const timeConductorMode = page.locator('.c-compact-tc');
     await timeConductorMode.click();
     const startDateLocator = page.locator('input[type="text"]').first();
     const endDateLocator = page.locator('input[type="text"]').nth(2);

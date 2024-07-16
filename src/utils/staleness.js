@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,7 +33,7 @@ export default class StalenessUtils {
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
-    const { start } = this.openmct.time.bounds();
+    const { start } = this.openmct.time.getBounds();
     const isStalenessInCurrentClock = stalenessResponseTime > start;
 
     if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {

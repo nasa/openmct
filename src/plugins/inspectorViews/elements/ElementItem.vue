@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,6 +23,8 @@
 <template>
   <li
     draggable="true"
+    :aria-label="`${elementObject.name} Element Item`"
+    :aria-grabbed="hover"
     @dragstart="emitDragStartEvent"
     @dragenter="onDragenter"
     @dragover.prevent
@@ -76,15 +78,18 @@ export default {
   },
   emits: ['drop-custom', 'dragstart-custom'],
   data() {
-    const isAlias =
-      this.elementObject.location !==
-      this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
     return {
       contextClickActive: false,
-      hover: false,
-      isAlias
+      hover: false
     };
+  },
+  computed: {
+    isAlias() {
+      return (
+        this.elementObject.location !==
+        this.openmct.objects.makeKeyString(this.domainObject.identifier)
+      );
+    }
   },
   methods: {
     emitDropEvent(event) {

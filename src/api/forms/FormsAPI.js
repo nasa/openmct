@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@ import _ from 'lodash';
 import mount from 'utils/mount';
 
 import FormProperties from './components/FormProperties.vue';
-import FormController from './FormController';
+import FormController from './FormController.js';
 
 export default class FormsAPI {
   constructor(openmct) {
@@ -48,7 +48,7 @@ export default class FormsAPI {
    *      this formControlViewProvider is used inside form overlay to show/render a form row
    *
    * @public
-   * @param {String} controlName a form structure, array of section
+   * @param {string} controlName a form structure, array of section
    * @param {ControlViewProvider} controlViewProvider
    */
   addNewFormControl(controlName, controlViewProvider) {
@@ -59,7 +59,7 @@ export default class FormsAPI {
    * Get a ControlViewProvider for a given/stored form controlName
    *
    * @public
-   * @param {String} controlName a form structure, array of section
+   * @param {string} controlName a form structure, array of section
    * @return {ControlViewProvider}
    */
   getFormControl(controlName) {
@@ -69,7 +69,7 @@ export default class FormsAPI {
   /**
    * Section definition for formStructure
    * @typedef Section
-   * @property {object} name Name of the section to display on Form
+   * @property {Object} name Name of the section to display on Form
    * @property {string} cssClass class name for styling section
    * @property {array<Row>} rows collection of rows inside a section
    */

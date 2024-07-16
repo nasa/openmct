@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,30 +19,29 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets. Note: this
 suite is sharing state between tests which is considered an anti-pattern. Implementing in this way to
 demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
 */
 
-const { test, expect } = require('../../../../pluginFixtures.js');
-const {
+import { fileURLToPath } from 'url';
+
+import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject
-} = require('../../../../appActions');
-const path = require('path');
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 let conditionSetUrl;
-let getConditionSetIdentifierFromUrl;
 
-test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
+test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () => {
   test.beforeAll(async ({ browser }) => {
     //TODO: This needs to be refactored
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
 
@@ -50,47 +49,54 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
 
     //Save localStorage for future test execution
     await context.storageState({
-      path: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+      path: fileURLToPath(
+        new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+      )
     });
 
     //Set object identifier from url
     conditionSetUrl = page.url();
 
-    getConditionSetIdentifierFromUrl = conditionSetUrl.split('/').pop().split('?')[0];
-    console.debug(`getConditionSetIdentifierFromUrl: ${getConditionSetIdentifierFromUrl}`);
     await page.close();
   });
 
   //Load localStorage for subsequent tests
   test.use({
-    storageState: path.resolve(__dirname, '../../../../test-data/recycled_local_storage.json')
+    storageState: fileURLToPath(
+      new URL('../../../../test-data/recycled_local_storage.json', import.meta.url)
+    )
   });
 
   //Begin suite of tests again localStorage
-  test('Condition set object properties persist in main view and inspector @localStorage', async ({
-    page
-  }) => {
-    //Navigate to baseURL with injected localStorage
-    await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+  test.fixme(
+    'Condition set object properties persist in main view and inspector @localStorage',
+    async ({ page }) => {
+      test.info().annotations.push({
+        type: 'issue',
+        description: 'https://github.com/nasa/openmct/issues/7421'
+      });
+      //Navigate to baseURL with injected localStorage
+      await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
 
-    //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
+      //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
+      await expect
+        .soft(page.locator('.l-browse-bar__object-name'))
+        .toContainText('Unnamed Condition Set');
 
-    //Assertions on loaded Condition Set in Inspector
-    expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
+      //Assertions on loaded Condition Set in Inspector
+      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
 
-    //Reload Page
-    await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+      //Reload Page
+      await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
 
-    //Re-verify after reload
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
-    //Assertions on loaded Condition Set in Inspector
-    expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
-  });
+      //Re-verify after reload
+      await expect
+        .soft(page.locator('.l-browse-bar__object-name'))
+        .toContainText('Unnamed Condition Set');
+      //Assertions on loaded Condition Set in Inspector
+      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
+    }
+  );
   test('condition set object can be modified on @localStorage', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
@@ -192,7 +198,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage', () => {
       .first()
       .click();
     // Click hamburger button
-    await page.locator('[title="More options"]').click();
+    await page.locator('[title="More actions"]').click();
 
     // Click 'Remove' and press OK
     await page.locator('li[role="menuitem"]:has-text("Remove")').click();
@@ -230,7 +236,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Click Add Condition button
     await page.locator('#addCondition').click();
@@ -258,7 +264,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(conditionSet.url);
 
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     page.click('button[title="Show selected item in tree"]');
@@ -280,22 +286,32 @@ test.describe('Basic Condition Set Use', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    await page.click('button[title="Change the current view"]');
+    await page.getByLabel('Open the View Switcher Menu').click();
 
     await expect(page.getByRole('menuitem', { name: /Lad Table/ })).toBeHidden();
     await expect(page.getByRole('menuitem', { name: /Conditions View/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Plot/ })).toBeVisible();
     await expect(page.getByRole('menuitem', { name: /Telemetry Table/ })).toBeVisible();
+    await page.getByLabel('Plot').click();
+    await expect(
+      page.getByLabel('Plot Legend Collapsed').getByText('Test Condition Set')
+    ).toBeVisible();
+    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel('Telemetry Table').click();
+    await expect(page.getByRole('searchbox', { name: 'output filter input' })).toBeVisible();
+    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel('Conditions View').click();
+    await expect(page.getByText('Current Output')).toBeVisible();
   });
   test('ConditionSet has correct outputs when telemetry is and is not available', async ({
     page
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
 
-    await page.getByTitle('Show selected item in tree').click();
+    await page.getByLabel('Show selected item in tree').click();
     await page.goto(conditionSet.url);
     // Change the object to edit mode
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Create two conditions
     await page.locator('#addCondition').click();
@@ -362,7 +378,7 @@ test.describe('Basic Condition Set Use', () => {
 
     // Edit SWG to add 8 second loading delay to simulate the case
     // where telemetry is not available.
-    await page.getByTitle('More options').click();
+    await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     await page.getByRole('spinbutton', { name: 'Loading Delay (ms)' }).fill('8000');
     await page.getByLabel('Save').click();
@@ -371,5 +387,91 @@ test.describe('Basic Condition Set Use', () => {
     // underlying telemetry subscription is not active.
     await page.goto(conditionSet.url);
     await expect(outputValue).toHaveText('---');
+  });
+
+  test('ConditionSet has correct outputs when test data is enabled', async ({ page }) => {
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+
+    await page.getByLabel('Show selected item in tree').click();
+    await page.goto(conditionSet.url);
+    // Change the object to edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // Create two conditions
+    await page.locator('#addCondition').click();
+    await page.locator('#addCondition').click();
+    await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
+    await page.locator('#conditionCollection').getByRole('textbox').nth(1).fill('Second Condition');
+
+    // Add Telemetry to ConditionSet
+    const sineWaveGeneratorTreeItem = page
+      .getByRole('tree', {
+        name: 'Main Tree'
+      })
+      .getByRole('treeitem', {
+        name: exampleTelemetry.name
+      });
+    const conditionCollection = page.locator('#conditionCollection');
+    await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
+
+    // Modify First Criterion
+    const firstCriterionTelemetry = page.locator(
+      '[aria-label="Criterion Telemetry Selection"] >> nth=0'
+    );
+    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    const firstCriterionMetadata = page.locator(
+      '[aria-label="Criterion Metadata Selection"] >> nth=0'
+    );
+    firstCriterionMetadata.selectOption({ label: 'Sine' });
+    const firstCriterionComparison = page.locator(
+      '[aria-label="Criterion Comparison Selection"] >> nth=0'
+    );
+    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
+    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
+    await firstCriterionInput.fill('0');
+
+    // Modify Second Criterion
+    const secondCriterionTelemetry = page.locator(
+      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
+    );
+    await secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+
+    const secondCriterionMetadata = page.locator(
+      '[aria-label="Criterion Metadata Selection"] >> nth=1'
+    );
+    await secondCriterionMetadata.selectOption({ label: 'Sine' });
+
+    const secondCriterionComparison = page.locator(
+      '[aria-label="Criterion Comparison Selection"] >> nth=1'
+    );
+    await secondCriterionComparison.selectOption({ label: 'is less than' });
+
+    const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
+    await secondCriterionInput.fill('0');
+
+    // Enable test data
+    await page.getByLabel('Apply Test Data').nth(1).click();
+    const testDataTelemetry = page.locator('[aria-label="Test Data Telemetry Selection"] >> nth=0');
+    await testDataTelemetry.selectOption({ label: exampleTelemetry.name });
+
+    const testDataMetadata = page.locator('[aria-label="Test Data Metadata Selection"] >> nth=0');
+    await testDataMetadata.selectOption({ label: 'Sine' });
+
+    const testInput = page.locator('[aria-label="Test Data Input"] >> nth=0');
+    await testInput.fill('0');
+
+    // Validate that the condition set is evaluating and outputting
+    // the correct value when the underlying telemetry subscription is active.
+    let outputValue = page.locator('[aria-label="Current Output Value"]');
+    await expect(outputValue).toHaveText('false');
+
+    await page.goto(exampleTelemetry.url);
+  });
+
+  test.fixme('Ensure condition sets work with telemetry like operator status', ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7484'
+    });
   });
 });
