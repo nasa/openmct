@@ -5,7 +5,7 @@ orbs:
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.45.0-focal
+      - image: mcr.microsoft.com/playwright:v1.45.2-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
@@ -159,7 +159,7 @@ jobs:
     steps:
       - build_and_install:
           node-version: lts/hydrogen
-      - run: npx playwright@1.45.0 install #Necessary for bare ubuntu machine
+      - run: npx playwright@1.45.2 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
