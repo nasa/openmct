@@ -196,7 +196,7 @@ class TimeContext extends EventEmitter {
     } else if (bounds.start > bounds.end) {
       return {
         valid: false,
-        message: 'Specified start date exceeds end bound'
+        message: 'Start bound exceeds end bound'
       };
     }
 

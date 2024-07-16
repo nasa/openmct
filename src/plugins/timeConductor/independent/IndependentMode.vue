@@ -23,8 +23,8 @@
   <div ref="modeMenuButton" class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-icon-button c-button--menu js-mode-button"
-        :class="[buttonCssClass, selectedMode.cssClass]"
+        class="c-button--menu js-mode-button c-icon-button"
+        :class="selectedMode.cssClass"
         aria-label="Independent Time Conductor Mode Menu"
         @click.prevent.stop="showModesMenu"
       >
@@ -35,19 +35,10 @@
 </template>
 
 <script>
-import toggleMixin from '../../../ui/mixins/toggle-mixin.js';
-import modeMixin from '../mode-mixin.js';
 
 export default {
-  mixins: [toggleMixin, modeMixin],
-  inject: ['openmct'],
+  inject: ['openmct', 'timeMode', 'getAllModeMetadata', 'getModeMetadata'],
   props: {
-    mode: {
-      type: String,
-      default() {
-        return undefined;
-      }
-    },
     enabled: {
       type: Boolean,
       default() {
@@ -55,27 +46,25 @@ export default {
       }
     }
   },
-  emits: ['independent-mode-updated'],
-  data: function () {
+  data() {
     return {
-      selectedMode: this.getModeMetadata(this.mode),
-      modes: []
+      selectedMode: this.getModeMetadata(this.timeMode)
     };
   },
   watch: {
-    mode: {
-      handler(newMode) {
-        this.setViewFromMode(newMode);
+    timeMode: {
+      handler() {
+        this.setView();
       }
     },
     enabled(newValue, oldValue) {
       if (newValue !== undefined && newValue !== oldValue && newValue === true) {
-        this.setViewFromMode(this.mode);
+        this.setView();
       }
     }
   },
   mounted: function () {
-    this.loadModes();
+    this.modes = this.getAllModeMetadata();
   },
   methods: {
     showModesMenu() {
@@ -89,13 +78,8 @@ export default {
       };
       this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    setViewFromMode(mode) {
-      this.selectedMode = this.getModeMetadata(mode);
-    },
-    setMode(mode) {
-      this.setViewFromMode(mode);
-
-      this.$emit('independent-mode-updated', mode);
+    setView() {
+      this.selectedMode = this.getModeMetadata(this.timeMode);
     }
   }
 };

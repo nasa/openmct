@@ -26,8 +26,7 @@
     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
   >
     <button
-      class="c-button--menu c-time-system-button"
-      :class="[buttonCssClass]"
+      class="c-button--menu c-time-system-button c-icon-button"
       aria-label="Time Conductor Time System"
       @click.prevent.stop="showTimeSystemMenu"
     >
@@ -50,13 +49,6 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 export default {
   inject: ['openmct', 'configuration'],
   props: {
-    buttonCssClass: {
-      type: String,
-      required: false,
-      default() {
-        return '';
-      }
-    },
     readOnly: {
       type: Boolean,
       default() {
