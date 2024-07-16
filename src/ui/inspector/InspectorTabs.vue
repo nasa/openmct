@@ -28,8 +28,10 @@
       role="tab"
       class="c-inspector__tab c-tab"
       :class="{ 'is-current': isSelected(tab) }"
+      tabindex="0"
       :title="tab.name"
       @click="selectTab(tab)"
+      @keydown.enter="selectTab(tab)"
     >
       <span class="c-inspector__tab-name c-tab__name">{{ tab.name }}</span>
     </div>
