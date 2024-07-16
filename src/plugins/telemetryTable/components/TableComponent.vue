@@ -721,18 +721,22 @@ export default {
         this.initiateSort(columnKey);
       }
     },
-    initiateSort(columnKey) {
-      // If sorting by the same column, flip the sort direction.
-      if (this.sortOptions.key === columnKey) {
-        if (this.sortOptions.direction === 'asc') {
-          this.sortOptions.direction = 'desc';
+    initiateSort(columnKey, swapOrder = true) {
+      if (swapOrder) {
+        // If sorting by the same column, flip the sort direction.
+        if (this.sortOptions.key === columnKey) {
+          this.sortOptions.direction = this.sortOptions.direction === 'asc' ? 'desc' : 'asc';
         } else {
-          this.sortOptions.direction = 'asc';
+          this.sortOptions = {
+            key: columnKey,
+            direction: 'desc'
+          };
         }
       } else {
+        // Do not swap the sort order, just set the column key
         this.sortOptions = {
           key: columnKey,
-          direction: 'desc'
+          direction: this.sortOptions.direction || 'desc'
         };
       }
 
@@ -1240,7 +1244,7 @@ export default {
         this.openmct.notifications.info(
           'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
         );
-        this.initiateSort(timeSystemKey);
+        this.initiateSort(timeSystemKey, false); // Pass false to avoid swapping the sort order
       }
     },
     setRowHeight(height) {
