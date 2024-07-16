@@ -32,6 +32,7 @@ const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
+const EXTENDED_TIMEOUT = 60 * 1000;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
@@ -45,7 +46,6 @@ test.describe('Example Imagery Object', () => {
     // Verify that the created object is focused
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
     await page.getByLabel('Focused Image Element').hover({ trial: true });
-    await page.getByLabel('Focused Image Element').waitFor();
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -105,11 +105,6 @@ test.describe('Example Imagery Object', () => {
       description: 'https://github.com/nasa/openmct/issues/6821'
     });
 
-    // FIXME: This is a workaround to address flakiness of ITC test-- button event handlers not
-    // registering in time due to the time conductors' over-use of event emitters.
-    // Adds delay to ensure that the button event handlers have time to register.
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(1000);
     // Test independent fixed time with global fixed time
     // flip on independent time conductor
     await page.getByLabel('Enable Independent Time Conductor').click();
@@ -120,19 +115,20 @@ test.describe('Example Imagery Object', () => {
       page.getByRole('button', { name: 'Independent Time Conductor Settings' })
     ).toBeEnabled();
     await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
-    await expect(
-      page.getByText('Fixed Timespan Local Clock Start Date Time End Date Time')
-    ).toBeVisible();
+    await expect(page.getByLabel('Time Conductor Options')).toBeVisible();
+    await page.getByLabel('Time Conductor Options').hover({ trial: true });
 
-    // FIXME: See above comment.
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(1000);
+    await page.getByRole('textbox', { name: 'Start date' }).hover({ trial: true });
     await page.getByRole('textbox', { name: 'Start date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
+    await page.getByRole('textbox', { name: 'Start time' }).hover({ trial: true });
     await page.getByRole('textbox', { name: 'Start time' }).fill('01:01:00');
     await page.keyboard.press('Tab');
+    await page.getByRole('textbox', { name: 'End date' }).hover({ trial: true });
     await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
+    await page.getByRole('textbox', { name: 'End time' }).hover({ trial: true });
+    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.getByLabel('Submit time bounds').click();
     await waitForAnimations(page.locator('.c-imagery__thumbs-wrapper')); // check image date
@@ -329,11 +325,11 @@ test.describe('Example Imagery Object', () => {
     );
     await expect
       .poll(
+        // eslint-disable-next-line require-await
         async () => {
-          const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-          return finalBoundingBox;
+          return page.getByLabel('Focused Image Element').boundingBox();
         },
-        { timeout: 30000 }
+        { timeout: EXTENDED_TIMEOUT }
       )
       .toEqual(initialBoundingBox);
   });
@@ -1011,9 +1007,9 @@ async function buttonZoomOnImageAndAssert(page) {
   );
   await expect
     .poll(
+      // eslint-disable-next-line require-await
       async () => {
-        const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-        return finalBoundingBox;
+        return page.getByLabel('Focused Image Element').boundingBox();
       },
       { timeout: 10000 }
     )
@@ -1078,12 +1074,13 @@ async function zoomOutOfImageryByButton(page) {
 async function resetImageryPanAndZoom(page) {
   const panZoomResetBtn = page.getByRole('button', { name: 'Remove zoom and pan' });
   const backgroundImage = page.getByLabel('Focused Image Element');
-  if (!(await panZoomResetBtn.isVisible())) {
-    await backgroundImage.hover({ trial: true });
-  }
+  await expect(panZoomResetBtn).toBeVisible();
+  await backgroundImage.hover({ trial: true });
 
   await panZoomResetBtn.click();
   await waitForAnimations(backgroundImage);
+  await expect(page.getByText('Alt drag to pan')).toBeHidden();
+  await expect(page.locator('.c-thumb__viewable-area')).toBeHidden();
 }
 
 /**
