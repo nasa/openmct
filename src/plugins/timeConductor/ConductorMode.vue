@@ -43,13 +43,12 @@
 </template>
 
 <script>
-import modeMixin from './mode-mixin';
-
-const TEST_IDS = true;
+import { FIXED_MODE_KEY } from '../../api/time/constants';
+import modeMixin from './mode-mixin.js';
 
 export default {
   mixins: [modeMixin],
-  inject: ['openmct', 'configuration'],
+  inject: ['openmct', 'configuration', 'bounds', 'offsets', 'isFixedTimeMode'],
   props: {
     mode: {
       type: String,
@@ -69,14 +68,14 @@ export default {
     const mode = this.openmct.time.getMode();
 
     return {
-      selectedMode: this.getModeMetadata(mode, TEST_IDS),
+      selectedMode: this.getModeMetadata(mode),
       modes: []
     };
   },
   watch: {
     mode: {
-      handler(newMode) {
-        this.setViewFromMode(newMode);
+      handler(mode) {
+        this.setMode(mode, this.getBoundsForMode(mode));
       }
     }
   },
@@ -97,12 +96,14 @@ export default {
       this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
     setViewFromMode(mode) {
-      this.selectedMode = this.getModeMetadata(mode, TEST_IDS);
+      this.selectedMode = this.getModeMetadata(mode);
     },
     setMode(mode) {
+      this.openmct.time.setMode(mode);
       this.setViewFromMode(mode);
-
-      this.$emit('mode-updated', mode);
+    },
+    getBoundsForMode(mode) {
+      return mode === FIXED_MODE_KEY ? this.bounds : this.offsets;
     }
   }
 };

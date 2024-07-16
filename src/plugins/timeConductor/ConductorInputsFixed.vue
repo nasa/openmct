@@ -20,12 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <time-popup-fixed
+  <TimePopupFixed
     v-if="readOnly === false"
     :input-bounds="bounds"
     :input-time-system="timeSystem"
     @focus="$event.target.select()"
-    @update="setBoundsFromView"
     @dismiss="dismiss"
   />
   <div v-else class="c-compact-tc__setting-wrapper">
@@ -165,12 +164,6 @@ export default {
       return this.openmct.telemetry.getValueFormatter({
         format: key
       }).formatter;
-    },
-    setBoundsFromView(bounds) {
-      this.$emit('bounds-updated', {
-        start: bounds.start,
-        end: bounds.end
-      });
     },
     dismiss() {
       this.$emit('dismiss-inputs-fixed');

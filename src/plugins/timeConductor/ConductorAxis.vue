@@ -34,20 +34,14 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
 import utcMultiTimeFormat from './utcMultiTimeFormat.js';
 
 const PADDING = 1;
-const DEFAULT_DURATION_FORMATTER = 'duration';
-const RESIZE_POLL_INTERVAL = 200;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 
 export default {
-  inject: ['openmct'],
+  inject: ['openmct', 'isFixedTimeMode'],
   props: {
     viewBounds: {
       type: Object,
-      required: true
-    },
-    isFixed: {
-      type: Boolean,
       required: true
     },
     altPressed: {
@@ -145,22 +139,8 @@ export default {
       this.axisElement.call(this.xAxis);
       this.setScale();
     },
-    getActiveFormatter() {
-      let timeSystem = this.openmct.time.getTimeSystem();
-
-      if (this.isFixed) {
-        return this.getFormatter(timeSystem.timeFormat);
-      } else {
-        return this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-      }
-    },
-    getFormatter(key) {
-      return this.openmct.telemetry.getValueFormatter({
-        format: key
-      }).formatter;
-    },
     dragStart($event) {
-      if (this.isFixed) {
+      if (this.isFixedTimeMode) {
         this.dragStartX = $event.clientX;
 
         if (this.altPressed) {

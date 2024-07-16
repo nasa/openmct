@@ -13,7 +13,6 @@
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's mode."
         :button-css-class="'c-icon-button'"
-        @mode-updated="saveMode"
       />
       <IndependentClock
         v-if="isIndependent"
@@ -45,7 +44,7 @@
       />
     </div>
     <conductor-inputs-fixed
-      v-if="isFixed"
+      v-if="isFixedTimeMode"
       :input-bounds="bounds"
       :object-path="objectPath"
       @bounds-updated="saveFixedBounds"
@@ -88,7 +87,8 @@ export default {
     configuration: {
       from: 'configuration',
       default: undefined
-    }
+    },
+    isFixedTimeMode: 'isFixedTimeMode'
   },
   props: {
     positionX: {
@@ -97,10 +97,6 @@ export default {
     },
     positionY: {
       type: Number,
-      required: true
-    },
-    isFixed: {
-      type: Boolean,
       required: true
     },
     isIndependent: {
@@ -135,7 +131,6 @@ export default {
     'fixed-bounds-updated',
     'clock-offsets-updated',
     'clock-updated',
-    'mode-updated',
     'independent-mode-updated'
   ],
   data() {
@@ -165,7 +160,7 @@ export default {
     },
     popupClasses() {
       const value = this.bottom ? 'c-tc-input-popup--bottom ' : '';
-      const mode = this.isFixed ? 'fixed-mode' : 'realtime-mode';
+      const mode = this.isFixedTimeMode ? 'fixed-mode' : 'realtime-mode';
       const independentClass = this.isIndependent ? 'itc-popout ' : '';
 
       return `${independentClass}${value}c-tc-input-popup--${mode}`;
@@ -216,12 +211,12 @@ export default {
       this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
     },
     setViewFromClock() {
-      this.bounds = this.isFixed
+      this.bounds = this.isFixedTimeMode
         ? this.timeContext.getBounds()
         : this.openmct.time.getClockOffsets();
     },
     setBounds(bounds, isTick) {
-      if (this.isFixed || !isTick) {
+      if (this.isFixedTimeMode || !isTick) {
         this.bounds = bounds;
       }
     },
@@ -233,9 +228,6 @@ export default {
     },
     saveClock(clockOptions) {
       this.$emit('clock-updated', clockOptions);
-    },
-    saveMode(mode) {
-      this.$emit('mode-updated', mode);
     },
     saveIndependentMode(mode) {
       this.$emit('independent-mode-updated', mode);
