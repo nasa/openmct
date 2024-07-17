@@ -25,6 +25,7 @@ import fs from 'fs';
 
 import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
 import { scanForA11yViolations, test } from '../../avpFixtures.js';
+import { waitForAnimations } from '../../baseFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import { setBoundsToSpanAllActivities } from '../../helper/planningUtils.js';
 
@@ -51,7 +52,13 @@ test.describe('Visual - Time Strip @a11y', () => {
     });
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
+    //This will indirectly modify the url such that the SWG is not rendered
     await setBoundsToSpanAllActivities(page, examplePlanSmall2, timeStrip.url);
+
+    //TODO Find a way to set the "now" activity line
+
+    //This will stabalize the state of the test and allow the SWG to render as empty
+    await waitForAnimations(page.getByLabel('Plot Canvas'));
 
     await percySnapshot(page, `Time Strip View (theme: ${theme}) - With SWG and Plan`);
   });
