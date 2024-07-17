@@ -49,7 +49,7 @@
           class="c-button icon-reset t-btn-zoom-reset"
           title="Remove zoom and pan"
           aria-label="Remove zoom and pan"
-          @click="handleResetImage"
+          @click="resetImage"
         ></button>
       </div>
       <div class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</div>
@@ -64,7 +64,7 @@
 
 <script>
 export default {
-  inject: ['openmct'],
+  inject: ['openmct', 'resetImage'],
   props: {
     zoomFactor: {
       type: Number,
@@ -79,7 +79,7 @@ export default {
       required: false
     }
   },
-  emits: ['handle-reset-image', 'toggle-zoom-lock', 'zoom-in', 'zoom-out'],
+  emits: ['toggle-zoom-lock', 'zoom-in', 'zoom-out'],
   data() {
     return {};
   },
@@ -94,9 +94,6 @@ export default {
       if (!closeButton) {
         e.stopPropagation();
       }
-    },
-    handleResetImage() {
-      this.$emit('handle-reset-image');
     },
     toggleZoomLock() {
       this.$emit('toggle-zoom-lock');

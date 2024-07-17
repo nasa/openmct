@@ -26,13 +26,12 @@ but only assume that example imagery is present.
 */
 
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
-import { waitForAnimations } from '../../../../baseFixtures.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
-const EXTENDED_TIMEOUT = 60 * 1000;
+const EXTENDED_TIMEOUT = 30 * 1000;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
@@ -131,7 +130,9 @@ test.describe('Example Imagery Object', () => {
     await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.getByLabel('Submit time bounds').click();
-    await waitForAnimations(page.locator('.c-imagery__thumbs-wrapper')); // check image date
+
+    // wait for image thumbnails to stabilize
+    await page.getByLabel('Image Thumbnails').hover({ trial: true });
     await expect(page.getByText('2021-12-30 01:01:00.000Z').first()).toBeVisible();
 
     // flip it off
@@ -297,6 +298,7 @@ test.describe('Example Imagery Object', () => {
       'style.transform',
       'scale(1) translate(0px, 0px)'
     );
+    await page.getByLabel('Focused Image Element').hover({ trial: true });
     // Get initial image dimensions
     const initialBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
 
@@ -1046,7 +1048,7 @@ async function zoomIntoImageryByButton(page) {
   }
 
   await zoomInBtn.click();
-  await waitForAnimations(backgroundImage);
+  await backgroundImage.hover({ trial: true });
 }
 
 /**
@@ -1055,15 +1057,12 @@ async function zoomIntoImageryByButton(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function zoomOutOfImageryByButton(page) {
-  // FIXME: There should only be one set of imagery buttons, but there are two?
   const zoomOutBtn = page.getByRole('button', { name: 'Zoom out' });
   const backgroundImage = page.getByLabel('Focused Image Element');
-  if (!(await zoomOutBtn.isVisible())) {
-    await backgroundImage.hover({ trial: true });
-  }
+  await backgroundImage.hover({ trial: true });
 
   await zoomOutBtn.click();
-  await waitForAnimations(backgroundImage);
+  await backgroundImage.hover({ trial: true });
 }
 
 /**
@@ -1075,10 +1074,10 @@ async function resetImageryPanAndZoom(page) {
   const panZoomResetBtn = page.getByRole('button', { name: 'Remove zoom and pan' });
   const backgroundImage = page.getByLabel('Focused Image Element');
   await expect(panZoomResetBtn).toBeVisible();
-  await backgroundImage.hover({ trial: true });
-
+  await panZoomResetBtn.hover({ trial: true });
   await panZoomResetBtn.click();
-  await waitForAnimations(backgroundImage);
+
+  await backgroundImage.hover({ trial: true });
   await expect(page.getByText('Alt drag to pan')).toBeHidden();
   await expect(page.locator('.c-thumb__viewable-area')).toBeHidden();
 }

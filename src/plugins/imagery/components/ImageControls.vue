@@ -50,7 +50,6 @@
       @zoom-out="zoomOut"
       @zoom-in="zoomIn"
       @toggle-zoom-lock="toggleZoomLock"
-      @handle-reset-image="handleResetImage"
     />
 
     <ImageryViewMenuSwitcher
@@ -67,7 +66,6 @@
         @zoom-out="zoomOut"
         @zoom-in="zoomIn"
         @toggle-zoom-lock="toggleZoomLock"
-        @handle-reset-image="handleResetImage"
       />
     </ImageryViewMenuSwitcher>
   </div>
@@ -98,7 +96,7 @@ export default {
     ImageryViewMenuSwitcher,
     ZoomSettings
   },
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'resetImage', 'handlePanZoomUpdate'],
   props: {
     layers: {
       type: Array,
@@ -117,7 +115,6 @@ export default {
   },
   emits: [
     'cursors-updated',
-    'reset-image',
     'pan-zoom-updated',
     'filters-updated',
     'start-pan',
@@ -155,7 +152,7 @@ export default {
     imageUrl(newUrl, oldUrl) {
       // reset image pan/zoom if newUrl only if not locked
       if (newUrl && !this.panZoomLocked) {
-        this.handleResetImage();
+        this.resetImage();
       }
     },
     cursorStates(states) {
@@ -172,12 +169,6 @@ export default {
     document.removeEventListener('keyup', this.handleKeyUp);
   },
   methods: {
-    handleResetImage() {
-      this.$emit('reset-image');
-    },
-    handleUpdatePanZoom(options) {
-      this.$emit('pan-zoom-updated', options);
-    },
     toggleZoomLock() {
       this.panZoomLocked = !this.panZoomLocked;
     },
@@ -208,10 +199,10 @@ export default {
       }
 
       if (newScaleFactor <= 0 || newScaleFactor <= ZOOM_LIMITS_MIN_DEFAULT) {
-        return this.handleResetImage();
+        return this.resetImage();
       }
 
-      this.handleUpdatePanZoom({
+      this.handlePanZoomUpdate({
         newScaleFactor,
         screenClientX,
         screenClientY

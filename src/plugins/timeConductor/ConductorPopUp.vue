@@ -1,6 +1,6 @@
 <template>
   <div class="c-tc-input-popup" :class="popupClasses" :style="position">
-    <div class="c-tc-input-popup__options">
+    <div class="c-tc-input-popup__options" aria-label="Time Conductor Options">
       <IndependentMode
         v-if="isIndependent"
         class="c-conductor__mode-select"

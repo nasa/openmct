@@ -39,8 +39,6 @@
         :zoom-factor="zoomFactor"
         :image-url="imageUrl"
         :layers="layers"
-        @reset-image="resetImage"
-        @pan-zoom-updated="handlePanZoomUpdate"
         @filters-updated="setFilters"
         @cursors-updated="setCursorStates"
         @start-pan="startPan"
@@ -188,6 +186,7 @@
             'animate-scroll': animateThumbScroll
           }
         ]"
+        aria-label="Image Thumbnails"
         @scroll="handleScroll"
       >
         <ImageThumbnail
@@ -272,6 +271,12 @@ export default {
     'imageFreshnessOptions',
     'showCompassHUD'
   ],
+  provide() {
+    return {
+      resetImage: this.resetImage,
+      handlePanZoomUpdate: this.handlePanZoomUpdate
+    };
+  },
   props: {
     focusedImageTimestamp: {
       type: Number,
