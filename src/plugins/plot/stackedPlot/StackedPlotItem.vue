@@ -102,9 +102,19 @@ export default {
       }
     }
   },
-  emits: ['lock-highlight-point', 'highlights', 'config-loaded', 'cursor-guide', 'grid-lines'],
-  mounted() {
+  emits: [
+    'lock-highlight-point',
+    'highlights',
+    'config-loaded',
+    'cursor-guide',
+    'grid-lines',
+    'plot-y-tick-width'
+  ],
+  beforeMount() {
+    // We must do this before mounted to use any series configuration options set at the stacked plot level
     this.updateView();
+  },
+  mounted() {
     this.isEditing = this.openmct.editor.isEditing();
     this.openmct.editor.on('isEditing', this.setEditState);
     this.setupClockChangedEvent((domainObject) => {
