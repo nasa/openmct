@@ -81,10 +81,10 @@ async function createDomainObjectWithDefaults(
   await page.goto(parentUrl);
 
   // Click the Create button
-  await page.getByLabel('Create', { exact: true }).click();
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
 
   // Click the object specified by 'type'
-  await page.getByLabel(type, { exact: true }).click();
+  await page.getByRole('menuitem', { name: type, exact: true }).click();
 
   // Modify the name input field of the domain object to accept 'name'
   const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
