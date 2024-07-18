@@ -690,9 +690,8 @@ async function performImageryViewOperationsAndAssert(page) {
   await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
   // Click previous image button
   const previousImageButton = page.getByLabel('Previous image');
-  if (!(await previousImageButton.isVisible())) {
+  await expect(previousImageButton).toBeVisible();
     await page.getByLabel('Image Wrapper').hover({ trial: true });
-  }
 
   // Need to force click as the annotation canvas lies on top of the image
   // and fails the accessibility checks
@@ -713,18 +712,16 @@ async function performImageryViewOperationsAndAssert(page) {
 
   // Click next image button
   const nextImageButton = page.getByLabel('Next image');
-  if (!(await nextImageButton.isVisible())) {
+  await expect(nextImageButton).toBeVisible();
     await page.getByLabel('Image Wrapper').hover({ trial: true });
-  }
   // eslint-disable-next-line playwright/no-force-option
   await nextImageButton.click({ force: true });
 
   // set realtime mode
   await setRealTimeMode(page);
   // Verify previous image
-  if (!(await previousImageButton.isVisible())) {
+  await expect(previousImageButton).toBeVisible();
     await page.getByLabel('Image Wrapper').hover({ trial: true });
-  }
   // eslint-disable-next-line playwright/no-force-option
   await previousImageButton.click({ force: true });
   await page.locator('.active').click();
