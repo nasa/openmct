@@ -47,9 +47,6 @@
       class="--hide-if-less-than-220"
       :pan-zoom-locked="panZoomLocked"
       :zoom-factor="zoomFactor"
-      @zoom-out="zoomOut"
-      @zoom-in="zoomIn"
-      @toggle-zoom-lock="toggleZoomLock"
     />
 
     <ImageryViewMenuSwitcher
@@ -63,9 +60,6 @@
         :class="'c-control-menu c-menu--has-close-btn'"
         :zoom-factor="zoomFactor"
         :is-menu="true"
-        @zoom-out="zoomOut"
-        @zoom-in="zoomIn"
-        @toggle-zoom-lock="toggleZoomLock"
       />
     </ImageryViewMenuSwitcher>
   </div>
@@ -97,6 +91,14 @@ export default {
     ZoomSettings
   },
   inject: ['openmct', 'domainObject', 'resetImage', 'handlePanZoomUpdate'],
+  provide() {
+    return {
+      resetImage: this.resetImage,
+      zoomIn: this.zoomIn,
+      zoomOut: this.zoomOut,
+      toggleZoomLock: this.toggleZoomLock
+    };
+  },
   props: {
     layers: {
       type: Array,

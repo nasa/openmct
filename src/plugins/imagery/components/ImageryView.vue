@@ -273,6 +273,7 @@ export default {
   ],
   provide() {
     return {
+      toggleZoomLock: this.toggleZoomLock,
       resetImage: this.resetImage,
       handlePanZoomUpdate: this.handlePanZoomUpdate
     };

@@ -64,7 +64,7 @@
 
 <script>
 export default {
-  inject: ['openmct', 'resetImage'],
+  inject: ['zoomIn', 'zoomOut', 'toggleZoomLock', 'resetImage'],
   props: {
     zoomFactor: {
       type: Number,
@@ -79,10 +79,6 @@ export default {
       required: false
     }
   },
-  emits: ['toggle-zoom-lock', 'zoom-in', 'zoom-out'],
-  data() {
-    return {};
-  },
   computed: {
     formattedZoomFactor() {
       return Number.parseFloat(this.zoomFactor).toPrecision(2);
@@ -94,15 +90,6 @@ export default {
       if (!closeButton) {
         e.stopPropagation();
       }
-    },
-    toggleZoomLock() {
-      this.$emit('toggle-zoom-lock');
-    },
-    zoomIn() {
-      this.$emit('zoom-in');
-    },
-    zoomOut() {
-      this.$emit('zoom-out');
     }
   }
 };
