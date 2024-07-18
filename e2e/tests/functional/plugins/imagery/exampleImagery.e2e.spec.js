@@ -26,6 +26,7 @@ but only assume that example imagery is present.
 */
 
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
+import { waitForAnimations } from '../../../../baseFixtures.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
@@ -691,7 +692,7 @@ async function performImageryViewOperationsAndAssert(page) {
   // Click previous image button
   const previousImageButton = page.getByLabel('Previous image');
   await expect(previousImageButton).toBeVisible();
-    await page.getByLabel('Image Wrapper').hover({ trial: true });
+  await page.getByLabel('Image Wrapper').hover({ trial: true });
 
   // Need to force click as the annotation canvas lies on top of the image
   // and fails the accessibility checks
@@ -713,7 +714,7 @@ async function performImageryViewOperationsAndAssert(page) {
   // Click next image button
   const nextImageButton = page.getByLabel('Next image');
   await expect(nextImageButton).toBeVisible();
-    await page.getByLabel('Image Wrapper').hover({ trial: true });
+  await page.getByLabel('Image Wrapper').hover({ trial: true });
   // eslint-disable-next-line playwright/no-force-option
   await nextImageButton.click({ force: true });
 
@@ -721,7 +722,7 @@ async function performImageryViewOperationsAndAssert(page) {
   await setRealTimeMode(page);
   // Verify previous image
   await expect(previousImageButton).toBeVisible();
-    await page.getByLabel('Image Wrapper').hover({ trial: true });
+  await page.getByLabel('Image Wrapper').hover({ trial: true });
   // eslint-disable-next-line playwright/no-force-option
   await previousImageButton.click({ force: true });
   await page.locator('.active').click();
@@ -1105,6 +1106,6 @@ async function createImageryView(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function getFocusedImageBoundingBox(page) {
-  await page.getByLabel('Focused Image Element').hover({ trial: true });
+  await waitForAnimations(page.getByLabel('Focused Image Element'));
   return page.getByLabel('Focused Image Element').boundingBox();
 }
