@@ -330,7 +330,7 @@ describe('the plugin', function () {
           provide: {
             openmct,
             domainObject: stackedPlotObject,
-            path: [stackedPlotObject],
+            objectPath: [stackedPlotObject],
             renderWhenVisible
           },
           template: '<stacked-plot ref="stackedPlotRef"></stacked-plot>'
