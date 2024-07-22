@@ -57,7 +57,7 @@ test.describe('Visual - Time Strip @a11y', () => {
 
     //TODO Find a way to set the "now" activity line
 
-    //This will stabalize the state of the test and allow the SWG to render as empty
+    //This will stabilize the state of the test and allow the SWG to render as empty
     await waitForAnimations(page.getByLabel('Plot Canvas'));
 
     await percySnapshot(page, `Time Strip View (theme: ${theme}) - With SWG and Plan`);
