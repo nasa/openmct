@@ -48,7 +48,13 @@ test.describe('Visual - Time Conductor', () => {
   //   await scanForA11yViolations(page, testInfo.title);
   // });
 
-  test('Visual - Time Conductor (Fixed time) @clock @snapshot', async ({ page }) => {
+  /**
+   * FIXME: This test fails sporadically due to layout shift during initial load.
+   * The layout shift seems to be caused by loading Open MCT's icons, which are not preloaded
+   * and load after the initial DOM content has loaded.
+   * @see https://github.com/nasa/openmct/issues/7775
+   */
+  test.fixme('Visual - Time Conductor (Fixed time) @clock @snapshot', async ({ page }) => {
     // Navigate to a specific view that uses the Time Conductor in Fixed Time mode with inspect and browse panes collapsed
     await page.goto(
       `./#/browse/mine?tc.mode=fixed&tc.startBound=${MISSION_TIME_FIXED_START}&tc.endBound=${MISSION_TIME_FIXED_END}&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true`,

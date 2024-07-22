@@ -21,7 +21,7 @@
 -->
 <template>
   <ul>
-    <li class="c-tree__item menus-to-left" :class="aliasCss">
+    <li class="c-tree__item menus-to-left" :class="aliasCss" role="treeitem">
       <span
         class="c-disclosure-triangle is-enabled flex-elem"
         :class="expandedCssClass"
