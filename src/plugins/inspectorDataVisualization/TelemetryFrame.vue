@@ -74,7 +74,7 @@ export default {
   provide() {
     return {
       domainObject: this.telemetryObject,
-      path: this.path,
+      objectPath: this.path,
       renderWhenVisible: this.renderWhenVisible
     };
   },
