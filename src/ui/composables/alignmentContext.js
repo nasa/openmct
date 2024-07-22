@@ -97,7 +97,7 @@ export function useAlignment(targetObject, objectPath, openmct) {
    * @param {RemoveParams} param0 - The object containing yAxisId and updateObjectPath.
    */
   const remove = ({ yAxisId, updateObjectPath } = {}) => {
-    const key = getAlignmentKeyForPath(updateObjectPath);
+    const key = getAlignmentKeyForPath();
     if (key) {
       const alignment = alignmentMap.get(alignmentKey);
       if (alignment.axes[yAxisId] !== undefined) {
@@ -119,7 +119,7 @@ export function useAlignment(targetObject, objectPath, openmct) {
    * @param {UpdateParams} param0 - The object containing width, yAxisId, and updateObjectPath.
    */
   const update = ({ width, yAxisId, updateObjectPath } = {}) => {
-    const key = getAlignmentKeyForPath(updateObjectPath);
+    const key = getAlignmentKeyForPath();
     if (key) {
       const alignment = alignmentMap.get(alignmentKey);
       if (alignment.axes[yAxisId] === undefined || width > alignment.axes[yAxisId]) {
