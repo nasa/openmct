@@ -22,6 +22,7 @@
 
 <template>
   <div
+    id="display-layout-drop-area"
     class="l-layout u-style-receiver js-style-receiver"
     :class="{
       'is-multi-selected': selectedLayoutItems.length > 1,
