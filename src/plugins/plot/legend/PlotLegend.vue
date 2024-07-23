@@ -30,6 +30,8 @@
     <button
       class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
       :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
+      :aria-label="ariaLabelValue"
+      tabindex="0"
       @click="toggleLegend"
     ></button>
 
@@ -127,6 +129,11 @@ export default {
     };
   },
   computed: {
+    ariaLabelValue() {
+      const name = this.domainObject.name ? ` ${this.domainObject.name}` : '';
+
+      return `${this.isLegendExpanded ? 'Collapse' : 'Expand'}${name} Legend`;
+    },
     showUnitsWhenExpanded() {
       return this.loaded && this.legend.get('showUnitsWhenExpanded') === true;
     },
