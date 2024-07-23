@@ -26,7 +26,6 @@
     :class="gaugeClasses"
     :title="gaugeTitle"
     :aria-label="`${domainObject.name}`"
-    role="meter"
     :aria-valuemin="rangeLow"
     :aria-valuemax="rangeHigh"
     :aria-valuenow="curVal"
@@ -37,6 +36,7 @@
         ref="gauge"
         class="c-gauge c-dial"
         viewBox="0 0 10 10"
+        role="meter"
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
@@ -238,7 +238,7 @@
     </template>
 
     <template v-if="typeMeter">
-      <div class="c-meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
+      <div class="c-meter" role="meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
         <div v-if="displayMinMax" class="c-gauge__range c-meter__range js-gauge-meter-range">
           <div class="c-meter__range__high">{{ rangeHigh }}</div>
           <div class="c-meter__range__low">{{ rangeLow }}</div>
