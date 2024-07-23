@@ -33,7 +33,7 @@ const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' :
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
-test.describe('Example Imagery Object', () => {
+test.describe.only('Example Imagery Object', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -916,6 +916,7 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
   const originalImageDimensions = await page.getByLabel('Focused Image Element').boundingBox();
   const deltaYStep = 100; // equivalent to 1x zoom
   await page.mouse.wheel(0, deltaYStep * factor);
+  await waitForZoomTransition(page);
 
   const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
@@ -1087,6 +1088,9 @@ async function createImageryView(page) {
  */
 // eslint-disable-next-line require-await
 async function waitForZoomTransition(page) {
+  // Wait for zoom to start and end
   await expect(page.getByLabel('Focused Image Element')).toHaveClass(/is-zooming/);
   await expect(page.getByLabel('Focused Image Element')).not.toHaveClass(/is-zooming/);
+  // Wait for image to stabilize
+  await page.getByLabel('Focused Image Element').hover({ trial: true });
 }
