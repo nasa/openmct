@@ -231,43 +231,51 @@ test.describe('Verify tooltips', () => {
     // Edit Display Layout
     await page.getByLabel('Edit Object').click();
 
-    await page.dragAndDrop("text='Test Overlay Plot'", '.l-layout__grid-holder', {
-      targetPosition: { x: 0, y: 0 }
-    });
-    await page.dragAndDrop("text='Test Stacked Plot'", '.l-layout__grid-holder', {
-      targetPosition: { x: 0, y: 250 }
-    });
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.l-layout__grid-holder', {
-      targetPosition: { x: 500, y: 200 }
-    });
+    await page
+      .getByLabel('Preview Test Overlay Plot')
+      .dragTo(page.locator('#display-layout-drop-area'), {
+        targetPosition: { x: 0, y: 0 }
+      });
+
+    //Add Display Layout below Overlay Plot
+    await page
+      .getByLabel('Preview Test Stacked Plot')
+      .dragTo(page.locator('#display-layout-drop-area'), {
+        targetPosition: { x: 0, y: 250 }
+      });
+
+    //Drag the SWG3 Object to the Display off to the right
+    await page
+      .getByLabel('Preview SWG 3 generator Object')
+      .dragTo(page.locator('#display-layout-drop-area'), {
+        targetPosition: { x: 500, y: 200 }
+      });
+
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     //Hover over Overlay Plot with the Control Key pressed
     await page.keyboard.down('Control');
 
-    await page.getByText('Test Overlay Plot').nth(2).hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe('My Items / Test Overlay Plot');
-
+    //Hover Overlay Plot
+    await page.getByTitle('Test Overlay Plot').hover();
+    await expect(page.getByRole('tooltip')).toHaveText('My Items / Test Overlay Plot');
     await page.keyboard.up('Control');
-    await page.locator('.c-plot-legend__view-control >> nth=0').click();
+
+    //Expand the Overlay Plot Legend
+    await page
+      .getByLabel('Test Overlay Plot Frame', { exact: true })
+      .getByRole('button', { name: '' })
+      .click();
     await page.keyboard.down('Control');
     await page.locator('.plot-wrapper-expanded-legend .plot-series-name').first().hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject1.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
     await page.getByText('Test Stacked Plot').nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe('My Items / Test Stacked Plot');
+    await expect(page.getByRole('tooltip')).toHaveText('My Items / Test Stacked Plot');
 
     await page.getByText('SWG 3').nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(sineWaveObject3.path).toBe(tooltipText);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering over flexible object labels', async ({ page }) => {
