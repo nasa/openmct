@@ -33,7 +33,7 @@ const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' :
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
-test.describe.only('Example Imagery Object', () => {
+test.describe('Example Imagery Object', () => {
   test.beforeEach(async ({ page }) => {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
