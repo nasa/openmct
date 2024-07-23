@@ -352,9 +352,9 @@ test.describe('Verify tooltips', () => {
       name: 'Test Gauge'
     });
 
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-gauge__wrapper');
+    await page.getByLabel('Navigate to SWG 3 generator').dragTo(page.getByRole('meter'));
     await page.keyboard.down('Control');
-    await page.getByRole('meter').hover({ position: { x: 0, y: 0 }, force: true });
+    await page.getByRole('meter').hover({ position: { x: 0, y: 0 } });
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
@@ -364,9 +364,11 @@ test.describe('Verify tooltips', () => {
       name: 'Test Notebook'
     });
 
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-notebook__drag-area');
+    await page
+      .getByLabel('Navigate to SWG 3 generator')
+      .dragTo(page.getByLabel('To start a new entry, click'));
     await page.keyboard.down('Control');
-    await page.locator('.c-ne__embed').hover();
+    await page.getByLabel('SWG 3 Notebook Embed').hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
@@ -409,31 +411,20 @@ test.describe('Verify tooltips', () => {
 
   test('display tooltip path for recently viewed items', async ({ page }) => {
     // drag up Recently Viewed pane
-    await page
-      .locator('.l-pane.l-pane--vertical-handle-before', {
-        hasText: 'Recently Viewed'
-      })
-      .locator('.l-pane__handle')
-      .hover();
+    await page.getByLabel('Resize Recently Viewed Pane').hover();
     await page.mouse.down();
     await page.mouse.move(0, 300);
     await page.mouse.up();
 
     await page.keyboard.down('Control');
     await page.getByLabel('Recent Objects').getByText(sineWaveObject3.name).hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
 
     await page.getByLabel('Recent Objects').getByText(sineWaveObject2.name).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject2.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject2.path);
 
     await page.getByLabel('Recent Objects').getByText(sineWaveObject1.name).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject1.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
   });
 
   test('display tooltip path for time strips', async ({ page }) => {
@@ -461,18 +452,12 @@ test.describe('Verify tooltips', () => {
 
     await page.keyboard.down('Control');
     await page.getByText(sineWaveObject1.name).nth(2).hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject1.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
     await page.getByText(sineWaveObject2.name).nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject2.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject2.path);
 
     await page.getByText(sineWaveObject3.name).nth(2).hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 });
