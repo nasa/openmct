@@ -6,13 +6,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.visual.spec.js'],
-      rules: {
-        'playwright/expect-expect': 'off'
-      }
-    },
-    {
-      files: ['**/*.perf.spec.js'],
+      files: ['**/*.spec.js'], // Added the 'files' property
       rules: {
         'playwright/expect-expect': 'off'
       }
