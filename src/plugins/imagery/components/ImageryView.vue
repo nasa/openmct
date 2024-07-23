@@ -85,10 +85,11 @@
             fetchpriority="low"
           />
           <div
-            v-if="imageUrl"
+            v-show="imageUrl"
             ref="focusedImageElement"
             aria-label="Focused Image Element"
             class="c-imagery__main-image__background-image"
+            :class="{ 'is-zooming': isZooming }"
             :draggable="!isSelectable"
             :style="focusImageStyles"
           ></div>
@@ -325,6 +326,7 @@ export default {
       imageryAnnotations: {},
       isFixed: false,
       isPaused: false,
+      isZooming: false,
       keyString: undefined,
       latestRelatedTelemetry: {},
       layers: [],
@@ -678,6 +680,9 @@ export default {
     this.focusedImageWrapper = this.$refs.focusedImageWrapper;
     this.focusedImageElement = this.$refs.focusedImageElement;
 
+    this.focusedImageElement.addEventListener('transitionstart', this.handleZoomTransitionStart);
+    this.focusedImageElement.addEventListener('transitionend', this.handleZoomTransitionEnd);
+
     //We only need to use this till the user focuses an image manually
     if (this.focusedImageTimestamp !== undefined) {
       this.isPaused = true;
@@ -735,6 +740,9 @@ export default {
     this.openmct.selection.on('change', this.updateSelection);
   },
   beforeUnmount() {
+    this.focusedImageElement.removeEventListener('transitionstart', this.handleZoomTransitionStart);
+    this.focusedImageElement.removeEventListener('transitionend', this.handleZoomTransitionEnd);
+
     this.abortController.abort();
     this.persistVisibleLayers();
     this.stopFollowingTimeContext();
@@ -896,6 +904,12 @@ export default {
       mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
       return mostRecent[valueKey];
+    },
+    handleZoomTransitionStart() {
+      this.isZooming = true;
+    },
+    handleZoomTransitionEnd() {
+      this.isZooming = false;
     },
     loadVisibleLayers() {
       const layersMetadata = this.imageMetadataValue.layers;
