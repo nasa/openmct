@@ -262,39 +262,45 @@ test.describe('Verify tooltips', () => {
     await expect(page.getByRole('tooltip')).toHaveText('My Items / Test Overlay Plot');
     await page.keyboard.up('Control');
 
-    //Expand the Overlay Plot Legend
-    await page
-      .getByLabel('Test Overlay Plot Frame', { exact: true })
-      .getByRole('button', { name: '' })
-      .click();
+    //Expand the Overlay Plot Legend and hover over the first legend item
+    await page.getByLabel('Expand Test Overlay Plot Legend').click();
+
     await page.keyboard.down('Control');
-    await page.locator('.plot-wrapper-expanded-legend .plot-series-name').first().hover();
+    await page.getByLabel('Plot Legend Item for Test').getByText('SWG').hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
-    await page.getByText('Test Stacked Plot').nth(2).hover();
+    //Hover over Stacked Plot Title
+    await page.getByTitle('Test Stacked Plot').hover();
     await expect(page.getByRole('tooltip')).toHaveText('My Items / Test Stacked Plot');
 
-    await page.getByText('SWG 3').nth(2).hover();
+    //Hover over SWG3 Object
+    await page.getByLabel('Alpha-numeric telemetry name for SWG').hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering over flexible object labels', async ({ page }) => {
+    //Create Flexible Layout
     await createDomainObjectWithDefaults(page, {
       type: 'Flexible Layout',
       name: 'Test Flexible Layout'
     });
 
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-fl-container >> nth=0');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-fl-container >> nth=1');
+    //Add SWG1 and SWG3 to Flexible Layout
+    await page.getByLabel('Navigate to SWG 1 generator').dragTo(page.getByRole('row').nth(0));
+    await page
+      .getByLabel('Preview SWG 3 generator Object')
+      .dragTo(page.getByLabel('Container Handle 2'));
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    //Hover over SWG1 Object
     await page.keyboard.down('Control');
-    await page.getByText('SWG 1').nth(2).hover();
+    await page.getByTitle('SWG 1').hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
-    await page.getByText('SWG 3').nth(2).hover();
+    //Hover over SWG3 Object
+    await page.getByTitle('SWG 3').hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
@@ -304,36 +310,39 @@ test.describe('Verify tooltips', () => {
       name: 'Test Tabs View'
     });
 
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-tabs-view__tabs-holder');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-tabs-view__tabs-holder');
+    //Add SWG1 and SWG3 to Flexible Layout
+    await page
+      .getByLabel('Navigate to SWG 1 generator')
+      .dragTo(page.getByText('Drag objects here to add them'));
+    await page.getByLabel('Preview SWG 3 generator Object').dragTo(page.getByLabel('SWG 1 tab'));
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     await page.keyboard.down('Control');
-    await page.getByText('SWG 1').nth(2).hover();
+    await page.getByLabel('SWG 1 tab').getByText('SWG').hover();
 
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
-    await page.getByText('SWG 3').nth(2).hover();
+    await page.getByLabel('SWG 3 tab').getByText('SWG').hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering tree items', async ({ page }) => {
     await page.keyboard.down('Control');
-    await page.getByText('SWG 1').nth(0).hover();
+    await page.getByText('SWG 1').first().hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
 
-    await page.getByText('SWG 3').nth(0).hover();
+    await page.getByText('SWG 3').first().hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test('display correct paths when hovering search items', async ({ page }) => {
     await page.getByRole('searchbox', { name: 'Search Input' }).click();
-    await page.fill('.c-search__input', 'SWG 3');
+    await page.getByRole('searchbox', { name: 'Search Input' }).fill('SWG 3');
 
     await page.keyboard.down('Control');
-    await page.locator('.c-gsearch-result__title').hover();
+    await page.getByLabel('Object Results').getByText('SWG').hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
@@ -342,9 +351,10 @@ test.describe('Verify tooltips', () => {
       type: 'Gauge',
       name: 'Test Gauge'
     });
+
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-gauge__wrapper');
     await page.keyboard.down('Control');
-    await page.getByRole('meter', { name: 'Test Gauge' }).hover({ position: { x: 0, y: 0 } });
+    await page.getByRole('meter').hover({ position: { x: 0, y: 0 }, force: true });
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
@@ -357,9 +367,7 @@ test.describe('Verify tooltips', () => {
     await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-notebook__drag-area');
     await page.keyboard.down('Control');
     await page.locator('.c-ne__embed').hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
   test.fixme('display tooltip path for telemetry table names', async ({ page }) => {
