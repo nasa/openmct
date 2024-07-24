@@ -26,50 +26,42 @@
     role="toolbar"
     aria-label="Image controls"
   >
-    <imagery-view-menu-switcher
+    <ImageryViewMenuSwitcher
       :icon-class="'icon-brightness'"
       :aria-label="'Brightness and contrast'"
       :title="'Brightness and contrast'"
     >
-      <filter-settings @filter-changed="updateFilterValues" />
-    </imagery-view-menu-switcher>
+      <FilterSettings @filter-changed="updateFilterValues" />
+    </ImageryViewMenuSwitcher>
 
-    <imagery-view-menu-switcher
+    <ImageryViewMenuSwitcher
       v-if="layers.length"
       icon-class="icon-layers"
       aria-label="Layers"
       title="Layers"
     >
-      <layer-settings :layers="layers" @toggle-layer-visibility="toggleLayerVisibility" />
-    </imagery-view-menu-switcher>
+      <LayerSettings :layers="layers" @toggle-layer-visibility="toggleLayerVisibility" />
+    </ImageryViewMenuSwitcher>
 
-    <zoom-settings
+    <ZoomSettings
       class="--hide-if-less-than-220"
       :pan-zoom-locked="panZoomLocked"
       :zoom-factor="zoomFactor"
-      @zoom-out="zoomOut"
-      @zoom-in="zoomIn"
-      @toggle-zoom-lock="toggleZoomLock"
-      @handle-reset-image="handleResetImage"
     />
 
-    <imagery-view-menu-switcher
+    <ImageryViewMenuSwitcher
       class="--show-if-less-than-220"
       :icon-class="'icon-magnify'"
       :aria-label="'Zoom settings'"
       :title="'Zoom settings'"
     >
-      <zoom-settings
+      <ZoomSettings
         :pan-zoom-locked="panZoomLocked"
         :class="'c-control-menu c-menu--has-close-btn'"
         :zoom-factor="zoomFactor"
         :is-menu="true"
-        @zoom-out="zoomOut"
-        @zoom-in="zoomIn"
-        @toggle-zoom-lock="toggleZoomLock"
-        @handle-reset-image="handleResetImage"
       />
-    </imagery-view-menu-switcher>
+    </ImageryViewMenuSwitcher>
   </div>
 </template>
 
@@ -98,7 +90,15 @@ export default {
     ImageryViewMenuSwitcher,
     ZoomSettings
   },
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'resetImage', 'handlePanZoomUpdate'],
+  provide() {
+    return {
+      resetImage: this.resetImage,
+      zoomIn: this.zoomIn,
+      zoomOut: this.zoomOut,
+      toggleZoomLock: this.toggleZoomLock
+    };
+  },
   props: {
     layers: {
       type: Array,
@@ -117,7 +117,6 @@ export default {
   },
   emits: [
     'cursors-updated',
-    'reset-image',
     'pan-zoom-updated',
     'filters-updated',
     'start-pan',
@@ -155,7 +154,7 @@ export default {
     imageUrl(newUrl, oldUrl) {
       // reset image pan/zoom if newUrl only if not locked
       if (newUrl && !this.panZoomLocked) {
-        this.handleResetImage();
+        this.resetImage();
       }
     },
     cursorStates(states) {
@@ -172,12 +171,6 @@ export default {
     document.removeEventListener('keyup', this.handleKeyUp);
   },
   methods: {
-    handleResetImage() {
-      this.$emit('reset-image');
-    },
-    handleUpdatePanZoom(options) {
-      this.$emit('pan-zoom-updated', options);
-    },
     toggleZoomLock() {
       this.panZoomLocked = !this.panZoomLocked;
     },
@@ -208,10 +201,10 @@ export default {
       }
 
       if (newScaleFactor <= 0 || newScaleFactor <= ZOOM_LIMITS_MIN_DEFAULT) {
-        return this.handleResetImage();
+        return this.resetImage();
       }
 
-      this.handleUpdatePanZoom({
+      this.handlePanZoomUpdate({
         newScaleFactor,
         screenClientX,
         screenClientY

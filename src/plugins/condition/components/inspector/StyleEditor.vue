@@ -43,31 +43,31 @@
         </span>
       </div>
 
-      <toolbar-color-picker
+      <ToolbarColorPicker
         v-if="hasProperty(styleItem.style.border)"
         class="c-style__toolbar-button--border-color u-menu-to--center"
         :options="borderColorOption"
         @change="updateStyleValue"
       />
-      <toolbar-color-picker
+      <ToolbarColorPicker
         v-if="hasProperty(styleItem.style.backgroundColor)"
         class="c-style__toolbar-button--background-color u-menu-to--center"
         :options="backgroundColorOption"
         @change="updateStyleValue"
       />
-      <toolbar-color-picker
+      <ToolbarColorPicker
         v-if="hasProperty(styleItem.style.color)"
         class="c-style__toolbar-button--color u-menu-to--center"
         :options="colorOption"
         @change="updateStyleValue"
       />
-      <toolbar-button
+      <ToolbarButton
         v-if="hasProperty(styleItem.style.imageUrl)"
         class="c-style__toolbar-button--image-url"
         :options="imageUrlOption"
         @change="updateStyleValue"
       />
-      <toolbar-toggle-button
+      <ToolbarToggleButton
         v-if="hasProperty(styleItem.style.isStyleInvisible)"
         class="c-style__toolbar-button--toggle-visible"
         :options="isStyleInvisibleOption"
@@ -76,7 +76,7 @@
     </div>
 
     <!-- Save Styles -->
-    <toolbar-button
+    <ToolbarButton
       v-if="canSaveStyle"
       ref="saveStyleButton"
       class="c-style__toolbar-button--save c-local-controls--show-on-hover c-icon-button c-icon-button--major"

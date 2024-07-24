@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <time-popup-realtime
+  <TimePopupRealtime
     v-if="readOnly === false"
     :offsets="offsets"
     @focus="$event.target.select()"

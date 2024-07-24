@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <swim-lane
+  <SwimLane
     :icon-class="item.type.definition.cssClass"
     :status="status"
     :min-height="item.height"
@@ -33,7 +33,7 @@
       {{ item.domainObject.name }}
     </template>
     <template #object>
-      <object-view
+      <ObjectView
         ref="objectView"
         class="u-contents"
         :default-object="item.domainObject"
@@ -41,7 +41,7 @@
         @change-action-collection="setActionCollection"
       />
     </template>
-  </swim-lane>
+  </SwimLane>
 </template>
 
 <script>

@@ -22,22 +22,22 @@
 
 <template>
   <div ref="timelineHolder" class="c-timeline-holder">
-    <swim-lane v-for="timeSystemItem in timeSystems" :key="timeSystemItem.timeSystem.key">
+    <SwimLane v-for="timeSystemItem in timeSystems" :key="timeSystemItem.timeSystem.key">
       <template #label>
         {{ timeSystemItem.timeSystem.name }}
       </template>
       <template #object>
-        <timeline-axis
+        <TimelineAxis
           :bounds="timeSystemItem.bounds"
           :time-system="timeSystemItem.timeSystem"
           :content-height="height"
           :rendering-engine="'svg'"
         />
       </template>
-    </swim-lane>
+    </SwimLane>
 
     <div ref="contentHolder" class="c-timeline__objects">
-      <timeline-object-view
+      <TimelineObjectView
         v-for="item in items"
         :key="item.keyString"
         class="c-timeline__content js-timeline__content"

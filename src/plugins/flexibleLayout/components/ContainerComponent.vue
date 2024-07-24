@@ -38,7 +38,7 @@
       <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
     </div>
 
-    <drop-hint
+    <DropHint
       class="c-fl-frame__drop-hint"
       :index="-1"
       :allow-drop="allowDrop"
@@ -47,7 +47,7 @@
 
     <div role="row" class="c-fl-container__frames-holder" :class="flexLayoutCssClass">
       <template v-for="(frame, i) in frames" :key="frame.id">
-        <frame-component
+        <FrameComponent
           class="c-fl-container__frame"
           :frame="frame"
           :index="i"
@@ -58,14 +58,14 @@
           :object-path="objectPath"
         />
 
-        <drop-hint
+        <DropHint
           class="c-fl-frame__drop-hint"
           :index="i"
           :allow-drop="allowDrop"
           @object-drop-to="moveOrCreateNewFrame"
         />
 
-        <resize-handle
+        <ResizeHandle
           v-if="i !== frames.length - 1"
           :index="i"
           :drag-orientation="rowsLayout ? 'horizontal' : 'vertical'"

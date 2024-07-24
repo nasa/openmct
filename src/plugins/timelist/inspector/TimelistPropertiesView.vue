@@ -61,7 +61,7 @@
             <span v-else>{{ sortOrderOptions[sortOrderIndex].label }}</span>
           </div>
         </li>
-        <event-properties
+        <EventProperties
           v-for="type in eventTypes"
           :key="type.prefix"
           :label="type.label"
@@ -73,7 +73,7 @@
     <div class="c-inspect-properties">
       <ul class="c-inspect-properties__section">
         <div class="c-inspect-properties_header" title="'Filters'">Filtering</div>
-        <filtering @updated="eventPropertiesUpdated" />
+        <Filtering @updated="eventPropertiesUpdated" />
       </ul>
     </div>
   </div>

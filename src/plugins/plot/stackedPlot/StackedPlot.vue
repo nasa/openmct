@@ -27,7 +27,7 @@
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
     aria-label="Stacked Plot Style Target"
   >
-    <plot-legend
+    <PlotLegend
       v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
@@ -37,7 +37,7 @@
       @position="updatePosition"
     />
     <div class="l-view-section">
-      <stacked-plot-item
+      <StackedPlotItem
         v-for="objectWrapper in compositionObjects"
         ref="stackedPlotItems"
         :key="objectWrapper.keyString"

@@ -24,7 +24,7 @@
     <ul class="c-tree">
       <h2 title="Display properties for this object">Bar Graph Series</h2>
       <li>
-        <series-options
+        <SeriesOptions
           v-for="series in plotSeries"
           :key="series.keyString"
           :item="series"
