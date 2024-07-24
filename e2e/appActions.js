@@ -78,13 +78,13 @@ async function createDomainObjectWithDefaults(
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
-  await page.goto(`${parentUrl}`);
+  await page.goto(parentUrl);
 
-  //Click the Create button
-  await page.getByRole('button', { name: 'Create' }).click();
+  // Click the Create button
+  await page.getByRole('button', { name: 'Create', exact: true }).click();
 
-  // Click the object specified by 'type'
-  await page.click(`li[role='menuitem']:text("${type}")`);
+  // Click the object specified by 'type'-- case insensitive
+  await page.getByRole('menuitem', { name: new RegExp(`^${type}$`, 'i') }).click();
 
   // Modify the name input field of the domain object to accept 'name'
   const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
@@ -353,7 +353,7 @@ async function getFocusedObjectUuid(page) {
  * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, identifier) {
-  await page.waitForLoadState('load');
+  await page.waitForLoadState('domcontentloaded');
   const hashUrl = await page.evaluate(async (objectIdentifier) => {
     const path = await window.openmct.objects.getOriginalPath(objectIdentifier);
     let url =

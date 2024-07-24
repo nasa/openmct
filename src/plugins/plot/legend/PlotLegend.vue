@@ -45,7 +45,7 @@
           class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
           title="Cursor is point locked. Click anywhere in the plot to unlock."
         ></div>
-        <plot-legend-item-collapsed
+        <PlotLegendItemCollapsed
           v-for="(seriesObject, seriesIndex) in seriesModels"
           :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
           :highlights="highlights"
@@ -79,7 +79,7 @@
             </tr>
           </thead>
           <tbody>
-            <plot-legend-item-expanded
+            <PlotLegendItemExpanded
               v-for="(seriesObject, seriesIndex) in seriesModels"
               :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
               :series-key-string="seriesObject.keyString"

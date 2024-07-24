@@ -28,7 +28,7 @@
       </div>
     </div>
     <div role="list" class="w-messages c-overlay__messages">
-      <notification-message
+      <NotificationMessage
         v-for="(notification, notificationIndex) in notifications"
         :key="notificationIndex"
         :close-overlay="closeOverlay"

@@ -100,7 +100,7 @@
         }}
       </div>
 
-      <toggle-switch
+      <ToggleSwitch
         id="show-filtered-rows-toggle"
         label="Show selected items only"
         :checked="isShowingMarkedRowsOnly"
@@ -139,7 +139,7 @@
         :style="dropTargetStyle"
       ></div>
 
-      <progress-bar
+      <ProgressBar
         v-if="loading"
         class="c-telemetry-table__progress-bar"
         :model="{ progressPerc: null }"
@@ -155,7 +155,7 @@
         <table class="c-table__headers c-telemetry-table__headers">
           <thead>
             <tr class="c-telemetry-table__headers__labels">
-              <table-column-header
+              <TableColumnHeader
                 v-for="(title, key, headerIndex) in headers"
                 :key="key"
                 :header-key="key"
@@ -171,10 +171,10 @@
                 @resize-column-end="updateConfiguredColumnWidths"
               >
                 <span class="c-telemetry-table__headers__label">{{ title }}</span>
-              </table-column-header>
+              </TableColumnHeader>
             </tr>
             <tr v-if="allowFiltering" class="c-telemetry-table__headers__filter">
-              <table-column-header
+              <TableColumnHeader
                 v-for="(title, key, headerIndex) in headers"
                 :key="key"
                 :header-key="key"
@@ -188,7 +188,7 @@
                 @reorder-column="reorderColumn"
                 @resize-column-end="updateConfiguredColumnWidths"
               >
-                <search
+                <Search
                   :value="filters[key]"
                   class="c-table__search"
                   :aria-label="`${key} filter input`"
@@ -204,8 +204,8 @@
                   >
                     /R/
                   </button>
-                </search>
-              </table-column-header>
+                </Search>
+              </TableColumnHeader>
             </tr>
           </thead>
         </table>
@@ -225,7 +225,7 @@
           :aria-label="`${table.domainObject.name} table content`"
         >
           <tbody>
-            <telemetry-table-row
+            <TelemetryTableRow
               v-for="(row, rowIndex) in visibleRows"
               :key="rowIndex"
               :headers="headers"
@@ -250,7 +250,7 @@
         class="c-telemetry-table__sizing js-telemetry-table__sizing"
         :style="sizingTableWidth"
       >
-        <sizing-row :is-editing="isEditing" @change-height="setRowHeight" />
+        <SizingRow :is-editing="isEditing" @change-height="setRowHeight" />
         <tr>
           <template v-for="(title, key) in headers" :key="key">
             <th
@@ -263,7 +263,7 @@
             </th>
           </template>
         </tr>
-        <telemetry-table-row
+        <TelemetryTableRow
           v-for="(sizingRowData, objectKeyString) in sizingRows"
           :key="objectKeyString"
           :headers="headers"
@@ -273,7 +273,7 @@
           @row-context-click="updateViewContext"
         />
       </table>
-      <table-footer-indicator
+      <TableFooterIndicator
         class="c-telemetry-table__footer"
         :marked-rows="markedRows.length"
         :total-rows="totalNumberOfRows"

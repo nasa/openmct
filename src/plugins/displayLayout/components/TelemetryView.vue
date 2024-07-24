@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -68,7 +68,7 @@
         </div>
       </div>
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>
