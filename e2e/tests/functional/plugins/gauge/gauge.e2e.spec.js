@@ -136,14 +136,11 @@ test.describe('Gauge', () => {
     // TODO: Verify changes in the UI
   });
 
-  test.fixme('Gauge does not display NaN when data not available', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7421'
-    });
+  test('Gauge does not display NaN when data not available', async ({ page }) => {
     // Create a Gauge
     const gauge = await createDomainObjectWithDefaults(page, {
-      type: 'Gauge'
+      type: 'Gauge',
+      name: 'Gauge with no data'
     });
 
     // Create a Sine Wave Generator in the Gauge with a loading delay
@@ -154,7 +151,7 @@ test.describe('Gauge', () => {
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
 
     //Edit Example Telemetry Object to include 5s loading Delay
-    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
+    await page.getByLabel('Loading Delay (ms)', { exact: true }).fill('5000');
 
     await page.getByRole('button', { name: 'Save' }).click();
 
@@ -162,9 +159,13 @@ test.describe('Gauge', () => {
     await page.waitForURL(`**/${gauge.uuid}/*`);
 
     // Nav to the Gauge
-    await page.goto(gauge.url);
-    const gaugeNoDataText = await page.locator('.js-dial-current-value tspan').textContent();
-    expect(gaugeNoDataText).toBe('--');
+    await page.goto(gauge.url, { waitUntil: 'domcontentloaded' });
+    // Check that the value is not displayed
+    //TODO https://github.com/nasa/openmct/issues/7790 update this locator
+    await expect(page.getByTitle('Value is currently out of')).toHaveAttribute(
+      'aria-valuenow',
+      '--'
+    );
   });
 
   test('Gauge enforces composition policy', async ({ page }) => {
