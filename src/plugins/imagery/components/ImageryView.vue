@@ -89,7 +89,7 @@
             ref="focusedImageElement"
             aria-label="Focused Image Element"
             class="c-imagery__main-image__background-image"
-            :class="{ 'is-zooming': isZooming }"
+            :class="{ 'is-zooming': isZooming, 'is-panning': isPanning }"
             :draggable="!isSelectable"
             :style="focusImageStyles"
           ></div>
@@ -332,7 +332,7 @@ export default {
       layers: [],
       lockCompass: true,
       numericDuration: undefined,
-      pan: undefined,
+      pan: null,
       refreshCSS: false,
       relatedTelemetry: {},
       resizingWindow: false,
@@ -347,6 +347,9 @@ export default {
     };
   },
   computed: {
+    isPanning() {
+      return Boolean(this.pan);
+    },
     displayThumbnails() {
       return this.forceShowThumbnails || this.viewHeight >= SHOW_THUMBS_THRESHOLD_HEIGHT;
     },
@@ -1424,7 +1427,7 @@ export default {
       this.updatePanZoom(this.zoomFactor, dX, dY);
     },
     endPan() {
-      this.pan = undefined;
+      this.pan = null;
       this.animateZoom = true;
     },
     onMouseUp(event) {
