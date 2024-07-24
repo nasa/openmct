@@ -220,10 +220,8 @@ export default {
       });
       this.$emit('dismiss');
     },
-    hide($event) {
-      if ($event.target.className.indexOf('c-button icon-x') > -1) {
-        this.$emit('dismiss');
-      }
+    hide() {
+      this.$emit('dismiss');
     },
     increment($ev, ref) {
       $ev.preventDefault();

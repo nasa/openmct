@@ -88,7 +88,7 @@
         <button
           class="c-button icon-x"
           aria-label="Discard changes and close time popup"
-          @click.prevent="handleFormSubmission(true)"
+          @click.prevent="dismiss"
         ></button>
       </div>
     </div>
@@ -322,10 +322,8 @@ export default {
       this.formattedBounds.end = this.timeFormatter.format(date).split(' ')[0];
       this.validateAllBounds('endDate');
     },
-    hide($event) {
-      if ($event.target.className.indexOf('c-button icon-x') > -1) {
-        this.$emit('dismiss');
-      }
+    dismiss() {
+      this.$emit('dismiss');
     }
   }
 };
