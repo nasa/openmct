@@ -372,19 +372,15 @@ test.describe('Verify tooltips', () => {
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
-  test.fixme('display tooltip path for telemetry table names', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7421'
-    });
-    // set endBound to 10 seconds after start bound
-    const url = page.url();
-    const parsedUrl = new URL(url.replace('#', '!'));
-    const startBound = Number(parsedUrl.searchParams.get('tc.startBound'));
-    const tenSecondsInMilliseconds = 10 * 1000;
-    const endBound = startBound + tenSecondsInMilliseconds;
-    parsedUrl.searchParams.set('tc.endBound', endBound);
-    await page.goto(parsedUrl.href.replace('!', '#'));
+  test('display tooltip path for telemetry table names', async ({ page }) => {
+    // set endBound to 10 seconds after start bound to ensure that the telemetry doesn't change
+    // const url = page.url();
+    // const parsedUrl = new URL(url.replace('#', '!'));
+    // const startBound = Number(parsedUrl.searchParams.get('tc.startBound'));
+    // const tenSecondsInMilliseconds = 10 * 1000;
+    // const endBound = startBound + tenSecondsInMilliseconds;
+    // parsedUrl.searchParams.set('tc.endBound', endBound);
+    // await page.goto(parsedUrl.href.replace('!', '#'));
 
     await createDomainObjectWithDefaults(page, {
       type: 'Telemetry Table',
@@ -398,15 +394,13 @@ test.describe('Verify tooltips', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.keyboard.down('Control');
 
+    //Hover over SWG3 in Telemetry Table
     await page.locator('.noselect > [title="SWG 3"]').first().hover();
-    let tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject3.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
 
+    //Hover over SWG1 in Telemetry Table
     await page.locator('.noselect > [title="SWG 1"]').first().hover();
-    tooltipText = await page.locator('.c-tooltip').innerText();
-    tooltipText = tooltipText.replace('\n', '').trim();
-    expect(tooltipText).toBe(sineWaveObject1.path);
+    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
   });
 
   test('display tooltip path for recently viewed items', async ({ page }) => {

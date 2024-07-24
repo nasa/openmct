@@ -84,11 +84,7 @@ test.describe('Plot Rendering', () => {
     await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
   });
 
-  test.fixme('Plot is rendered when infinity values exist', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7421'
-    });
+  test('Plot is rendered when infinity values exist', async ({ page }) => {
     // Edit Plot
     await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
 
