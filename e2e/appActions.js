@@ -84,7 +84,7 @@ async function createDomainObjectWithDefaults(
   await page.getByRole('button', { name: 'Create', exact: true }).click();
 
   // Click the object specified by 'type'-- case insensitive
-  await page.getByRole('menuitem', { name: new RegExp(type, 'i'), exact: true }).click();
+  await page.getByRole('menuitem', { name: new RegExp(`^${type}$`, 'i') }).click();
 
   // Modify the name input field of the domain object to accept 'name'
   const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
