@@ -436,8 +436,8 @@ async function setRealTimeMode(page) {
 /**
  * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
  * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- * @param {import('@playwright/test').Locator} offsetButton
+ * @param {OffsetValues} offset - Object containing offset values
+ * @param {boolean} [offset.submitChanges=true] - If true, submit the offset changes; otherwise, discard them
  */
 async function setTimeConductorOffset(
   page,
@@ -479,7 +479,7 @@ async function setTimeConductorOffset(
  * Set the values (hours, mins, secs) for the start time offset when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
- * @param {boolean} [submit=true] Whether to submit the offset
+ * @param {boolean} [submit=true] If true, submit the offset changes; otherwise, discard them
  */
 async function setStartOffset(page, { submitChanges = true, ...offset }) {
   // Click 'mode' button
@@ -491,7 +491,7 @@ async function setStartOffset(page, { submitChanges = true, ...offset }) {
  * Set the values (hours, mins, secs) for the end time offset when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
- * @param {boolean} [submit=true] Whether to submit the offset
+ * @param {boolean} [submit=true] If true, submit the offset changes; otherwise, discard them
  */
 async function setEndOffset(page, { submitChanges = true, ...offset }) {
   // Click 'mode' button
@@ -510,7 +510,7 @@ async function setEndOffset(page, { submitChanges = true, ...offset }) {
  * @param {string} [bounds.startTime] - The start time in HH:mm:ss format
  * @param {string} [bounds.endDate] - The end date in YYYY-MM-DD format
  * @param {string} [bounds.endTime] - The end time in HH:mm:ss format
- * @param {boolean} [bounds.submitChanges=true] - Whether to submit the changes
+ * @param {boolean} [bounds.submitChanges=true] - If true, submit the changes; otherwise, discard them.
  */
 async function setTimeConductorBounds(page, { submitChanges = true, ...bounds }) {
   const { startDate, endDate, startTime, endTime } = bounds;
