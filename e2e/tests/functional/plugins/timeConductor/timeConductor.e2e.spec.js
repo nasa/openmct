@@ -132,6 +132,10 @@ test.describe('Global Time Conductor', () => {
   });
 
   test('Input field validation: fixed time mode', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7791'
+    });
     // Switch to fixed time mode
     await setFixedTimeMode(page);
 
