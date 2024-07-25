@@ -25,7 +25,7 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-import { setTimeConductorBounds } from '../../../../appActions.js';
+import { createDomainObjectWithDefaults, setTimeConductorBounds } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Log plot tests', () => {
@@ -86,51 +86,36 @@ async function makeOverlayPlot(page, myItemsFolderName) {
   // Set a specific time range for consistency, otherwise it will change
   // on every test to a range based on the current time.
 
-  const start = '2022-03-29 22:00:00.000Z';
-  const end = '2022-03-29 22:00:30.000Z';
+  const startDate = '2022-03-29';
+  const startTime = '22:00:00';
+  const endDate = '2022-03-29';
+  const endTime = '22:00:30';
 
-  await setTimeConductorBounds(page, start, end);
+  await setTimeConductorBounds(page, { startDate, startTime, endDate, endTime });
 
-  // create overlay plot
-
-  await page.locator('button.c-create-button').click();
-  await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    await page.getByRole('button', { name: 'Save' }).click(),
-    // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-
-  // save the overlay plot
-  await saveOverlayPlot(page);
+  const overlayPlot = await createDomainObjectWithDefaults(page, {
+    type: 'Overlay Plot',
+    name: 'Unnamed Overlay Plot'
+  });
 
   // create a sinewave generator
+  await createDomainObjectWithDefaults(page, {
+    type: 'Sine Wave Generator',
+    name: 'Unnamed Sine Wave Generator',
+    parent: overlayPlot.uuid
+  });
 
-  await page.locator('button.c-create-button').click();
-  await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
+  await page.getByLabel('More actions').click();
+  await page.getByLabel('Edit Properties...').click();
 
   // set amplitude to 6, offset 4, data rate 2 hz
+  await page.getByLabel('Amplitude', { exact: true }).fill('6');
+  await page.getByLabel('Offset', { exact: true }).fill('4');
+  await page.getByLabel('Data Rate (hz)', { exact: true }).fill('2');
 
-  await page.getByLabel('Amplitude').fill('6');
-  await page.getByLabel('Offset').fill('4');
-  await page.getByLabel('Data Rate (hz)').fill('2');
+  await page.getByLabel('Save').click();
 
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    await page.getByRole('button', { name: 'Save' }).click(),
-    // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-
-  // click on overlay plot
-  await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-  await Promise.all([
-    page.waitForLoadState(),
-    page.locator('text=Unnamed Overlay Plot').first().click()
-  ]);
+  await page.goto(overlayPlot.url);
 }
 
 /**

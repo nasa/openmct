@@ -53,6 +53,9 @@ test.describe('Example Imagery Object', () => {
     // Verify that the created object is focused
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
     await page.getByLabel('Focused Image Element').hover({ trial: true });
+
+    // Wait for image thumbnail auto-scroll to complete
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {

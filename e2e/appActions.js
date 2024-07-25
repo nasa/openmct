@@ -436,61 +436,67 @@ async function setRealTimeMode(page) {
 /**
  * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode
  * @param {import('@playwright/test').Page} page
- * @param {OffsetValues} offset
- * @param {import('@playwright/test').Locator} offsetButton
+ * @param {OffsetValues} offset - Object containing offset values
+ * @param {boolean} [offset.submitChanges=true] - If true, submit the offset changes; otherwise, discard them
  */
 async function setTimeConductorOffset(
   page,
-  { startHours, startMins, startSecs, endHours, endMins, endSecs }
+  { startHours, startMins, startSecs, endHours, endMins, endSecs, submitChanges = true }
 ) {
   if (startHours) {
-    await page.getByRole('spinbutton', { name: 'Start offset hours' }).fill(startHours);
+    await page.getByLabel('Start offset hours').fill(startHours);
   }
 
   if (startMins) {
-    await page.getByRole('spinbutton', { name: 'Start offset minutes' }).fill(startMins);
+    await page.getByLabel('Start offset minutes').fill(startMins);
   }
 
   if (startSecs) {
-    await page.getByRole('spinbutton', { name: 'Start offset seconds' }).fill(startSecs);
+    await page.getByLabel('Start offset seconds').fill(startSecs);
   }
 
   if (endHours) {
-    await page.getByRole('spinbutton', { name: 'End offset hours' }).fill(endHours);
+    await page.getByLabel('End offset hours').fill(endHours);
   }
 
   if (endMins) {
-    await page.getByRole('spinbutton', { name: 'End offset minutes' }).fill(endMins);
+    await page.getByLabel('End offset minutes').fill(endMins);
   }
 
   if (endSecs) {
-    await page.getByRole('spinbutton', { name: 'End offset seconds' }).fill(endSecs);
+    await page.getByLabel('End offset seconds').fill(endSecs);
   }
 
   // Click the check button
-  await page.locator('.pr-time-input--buttons .icon-check').click();
+  if (submitChanges) {
+    await page.getByLabel('Submit time offsets').click();
+  } else {
+    await page.getByLabel('Discard changes and close time popup').click();
+  }
 }
 
 /**
  * Set the values (hours, mins, secs) for the start time offset when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
+ * @param {boolean} [submit=true] If true, submit the offset changes; otherwise, discard them
  */
-async function setStartOffset(page, offset) {
+async function setStartOffset(page, { submitChanges = true, ...offset }) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
-  await setTimeConductorOffset(page, offset);
+  await setTimeConductorOffset(page, { submitChanges, ...offset });
 }
 
 /**
  * Set the values (hours, mins, secs) for the end time offset when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
+ * @param {boolean} [submit=true] If true, submit the offset changes; otherwise, discard them
  */
-async function setEndOffset(page, offset) {
+async function setEndOffset(page, { submitChanges = true, ...offset }) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
-  await setTimeConductorOffset(page, offset);
+  await setTimeConductorOffset(page, { submitChanges, ...offset });
 }
 
 /**
@@ -499,17 +505,40 @@ async function setEndOffset(page, offset) {
  * NOTE: Unless explicitly testing the Time Conductor itself, it is advised to instead
  * navigate directly to the object with the desired time bounds using `navigateToObjectWithFixedTimeBounds()`.
  * @param {import('@playwright/test').Page} page
- * @param {string} startDate
- * @param {string} endDate
+ * @param {Object} bounds - The time conductor bounds
+ * @param {string} [bounds.startDate] - The start date in YYYY-MM-DD format
+ * @param {string} [bounds.startTime] - The start time in HH:mm:ss format
+ * @param {string} [bounds.endDate] - The end date in YYYY-MM-DD format
+ * @param {string} [bounds.endTime] - The end time in HH:mm:ss format
+ * @param {boolean} [bounds.submitChanges=true] - If true, submit the changes; otherwise, discard them.
  */
-async function setTimeConductorBounds(page, startDate, endDate) {
-  // Bring up the time conductor popup
-  expect(await page.locator('.l-shell__time-conductor.c-compact-tc').count()).toBe(1);
-  await page.click('.l-shell__time-conductor.c-compact-tc');
+async function setTimeConductorBounds(page, { submitChanges = true, ...bounds }) {
+  const { startDate, endDate, startTime, endTime } = bounds;
 
-  await setTimeBounds(page, startDate, endDate);
+  // Open the time conductor popup
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-  await page.keyboard.press('Enter');
+  if (startDate) {
+    await page.getByLabel('Start date').fill(startDate);
+  }
+
+  if (startTime) {
+    await page.getByLabel('Start time').fill(startTime);
+  }
+
+  if (endDate) {
+    await page.getByLabel('End date').fill(endDate);
+  }
+
+  if (endTime) {
+    await page.getByLabel('End time').fill(endTime);
+  }
+
+  if (submitChanges) {
+    await page.getByLabel('Submit time bounds').click();
+  } else {
+    await page.getByLabel('Discard changes and close time popup').click();
+  }
 }
 
 /**

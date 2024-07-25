@@ -117,18 +117,25 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
       end: '2024-11-12 20:11:11.000Z'
     });
 
-    const NEW_GLOBAL_START_BOUNDS = '2024-11-11 19:11:11.000Z';
-    const NEW_GLOBAL_END_BOUNDS = '2024-11-11 20:11:11.000Z';
+    const NEW_GLOBAL_START_DATE = '2024-11-11';
+    const NEW_GLOBAL_START_TIME = '19:11:11';
+    const NEW_GLOBAL_END_DATE = '2024-11-11';
+    const NEW_GLOBAL_END_TIME = '20:11:11';
 
-    await setTimeConductorBounds(page, NEW_GLOBAL_START_BOUNDS, NEW_GLOBAL_END_BOUNDS);
+    await setTimeConductorBounds(page, {
+      startDate: NEW_GLOBAL_START_DATE,
+      startTime: NEW_GLOBAL_START_TIME,
+      endDate: NEW_GLOBAL_END_DATE,
+      endTime: NEW_GLOBAL_END_TIME
+    });
 
     // Verify that the global time conductor bounds have been updated
-    expect(
-      await page.getByLabel('Global Time Conductor').getByLabel('Start bounds').textContent()
-    ).toEqual(NEW_GLOBAL_START_BOUNDS);
-    expect(
-      await page.getByLabel('Global Time Conductor').getByLabel('End bounds').textContent()
-    ).toEqual(NEW_GLOBAL_END_BOUNDS);
+    await expect(
+      page.getByLabel(`Start bounds: ${NEW_GLOBAL_START_DATE} ${NEW_GLOBAL_START_TIME}.000Z`)
+    ).toBeVisible();
+    await expect(
+      page.getByLabel(`End bounds: ${NEW_GLOBAL_END_DATE} ${NEW_GLOBAL_END_TIME}.000Z`)
+    ).toBeVisible();
 
     //Save localStorage for future test execution
     await context.storageState({
