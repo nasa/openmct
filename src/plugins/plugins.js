@@ -86,6 +86,7 @@ import UTCTimeSystem from './utcTimeSystem/plugin.js';
 import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
+import CompsPlugin from './comps/plugin.js';
 
 const plugins = {};
 
@@ -173,5 +174,6 @@ plugins.Gauge = GaugePlugin;
 plugins.Timelist = TimeList;
 plugins.InspectorViews = InspectorViews;
 plugins.InspectorDataVisualization = InspectorDataVisualization;
+plugins.Comps = CompsPlugin;
 
 export default plugins;
