@@ -91,7 +91,7 @@ test.describe('Global Time Conductor', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Real-Time Mode: input field validation', async ({ page }) => {
+  test('Input field validation: real-time mode', async ({ page }) => {
     const startOffset = {
       startHours: '01',
       startMins: '29',
@@ -119,21 +119,83 @@ test.describe('Global Time Conductor', () => {
     // Verify time was updated on preceding time offset button
     await expect(page.getByLabel('End offset: 01:30:31')).toBeVisible();
 
+    // Discard changes and verify that offsets remain unchanged
     await setStartOffset(page, {
       startHours: '00',
       startMins: '30',
       startSecs: '00',
       submitChanges: false
     });
-    await expect(page.getByLabel('Start offset: 00:30:00')).toBeHidden();
+
+    await expect(page.getByLabel('Start offset: 01:29:23')).toBeVisible();
+    await expect(page.getByLabel('End offset: 01:30:31')).toBeVisible();
   });
 
-  test('Fixed Time Mode: input field validation', async ({ page }) => {
+  test('Input field validation: fixed time mode', async ({ page }) => {
     // Switch to fixed time mode
     await setFixedTimeMode(page);
 
-    // Set start time offset
-    await setStartBo;
+    // Define valid time bounds for testing
+    const validBounds = {
+      startDate: '2024-04-20',
+      startTime: '00:04:20',
+      endDate: '2024-04-20',
+      endTime: '16:04:20'
+    };
+    // Set valid time conductor bounds ✌️
+    await setTimeConductorBounds(page, validBounds);
+
+    // Verify that the time bounds are set correctly
+    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
+    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
+
+    // Open the Time Conductor Mode popup
+    await page.getByLabel('Time Conductor Mode').click();
+
+    // Test invalid start date
+    const invalidStartDate = '2024-04-21';
+    await page.getByLabel('Start date').fill(invalidStartDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('Start date').fill(validBounds.startDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Test invalid end date
+    const invalidEndDate = '2024-04-19';
+    await page.getByLabel('End date').fill(invalidEndDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('End date').fill(validBounds.endDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Test invalid start time
+    const invalidStartTime = '16:04:21';
+    await page.getByLabel('Start time').fill(invalidStartTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('Start time').fill(validBounds.startTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Test invalid end time
+    const invalidEndTime = '00:04:19';
+    await page.getByLabel('End time').fill(invalidEndTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('End time').fill(validBounds.endTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Verify that the time bounds remain unchanged after invalid inputs
+    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
+    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
+
+    // Discard changes and verify that bounds remain unchanged
+    await setTimeConductorBounds(page, {
+      startDate: validBounds.startDate,
+      startTime: '04:20:00',
+      endDate: validBounds.endDate,
+      endTime: '04:20:20',
+      submitChanges: false
+    });
+
+    // Verify that the original time bounds are still displayed after discarding changes
+    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
+    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
   });
 
   /**

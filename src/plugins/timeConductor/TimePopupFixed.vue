@@ -88,7 +88,7 @@
         <button
           class="c-button icon-x"
           aria-label="Discard changes and close time popup"
-          @click.prevent="handleFormSubmission(true)"
+          @click.prevent="hide"
         ></button>
       </div>
     </div>
