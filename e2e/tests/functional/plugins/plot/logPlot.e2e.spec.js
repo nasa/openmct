@@ -30,14 +30,44 @@ import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Log plot tests', () => {
   test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({
-    page,
-    openmctConfig
+    page
   }) => {
-    const { myItemsFolderName } = openmctConfig;
-    //Test is slow and should be split in the future
-    test.slow();
+    // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await makeOverlayPlot(page, myItemsFolderName);
+    // Set a specific time range for consistency, otherwise it will change
+    // on every test to a range based on the current time.
+    const startDate = '2022-03-29';
+    const startTime = '22:00:00';
+    const endDate = '2022-03-29';
+    const endTime = '22:00:30';
+
+    await setTimeConductorBounds(page, { startDate, startTime, endDate, endTime });
+
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Unnamed Overlay Plot'
+    });
+
+    // create a sinewave generator
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'Unnamed Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+
+    // set amplitude to 6, offset 4, data rate 2 hz
+    await page.getByLabel('Amplitude', { exact: true }).fill('6');
+    await page.getByLabel('Offset', { exact: true }).fill('4');
+    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('2');
+
+    await page.getByLabel('Save').click();
+
+    await page.goto(overlayPlot.url);
+
     await testRegularTicks(page);
     await enableEditMode(page);
     await page.getByRole('tab', { name: 'Config' }).click();
@@ -79,51 +109,14 @@ test.describe('Log plot tests', () => {
  * @param {import('@playwright/test').Page} page
  * @param {string} myItemsFolderName
  */
-async function makeOverlayPlot(page, myItemsFolderName) {
-  // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-  await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-  // Set a specific time range for consistency, otherwise it will change
-  // on every test to a range based on the current time.
-
-  const startDate = '2022-03-29';
-  const startTime = '22:00:00';
-  const endDate = '2022-03-29';
-  const endTime = '22:00:30';
-
-  await setTimeConductorBounds(page, { startDate, startTime, endDate, endTime });
-
-  const overlayPlot = await createDomainObjectWithDefaults(page, {
-    type: 'Overlay Plot',
-    name: 'Unnamed Overlay Plot'
-  });
-
-  // create a sinewave generator
-  await createDomainObjectWithDefaults(page, {
-    type: 'Sine Wave Generator',
-    name: 'Unnamed Sine Wave Generator',
-    parent: overlayPlot.uuid
-  });
-
-  await page.getByLabel('More actions').click();
-  await page.getByLabel('Edit Properties...').click();
-
-  // set amplitude to 6, offset 4, data rate 2 hz
-  await page.getByLabel('Amplitude', { exact: true }).fill('6');
-  await page.getByLabel('Offset', { exact: true }).fill('4');
-  await page.getByLabel('Data Rate (hz)', { exact: true }).fill('2');
-
-  await page.getByLabel('Save').click();
-
-  await page.goto(overlayPlot.url);
-}
+async function makeOverlayPlot(page, myItemsFolderName) {}
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function testRegularTicks(page) {
   const yTicks = page.locator('.gl-plot-y-tick-label');
-  expect(await yTicks.count()).toBe(7);
+  await expect(yTicks).toHaveCount(7);
   await expect(yTicks.nth(0)).toHaveText('-2');
   await expect(yTicks.nth(1)).toHaveText('0');
   await expect(yTicks.nth(2)).toHaveText('2');
@@ -138,7 +131,7 @@ async function testRegularTicks(page) {
  */
 async function testLogTicks(page) {
   const yTicks = page.locator('.gl-plot-y-tick-label');
-  expect(await yTicks.count()).toBe(9);
+  await expect(yTicks).toHaveCount(9);
   await expect(yTicks.nth(0)).toHaveText('-2.98');
   await expect(yTicks.nth(1)).toHaveText('-1.51');
   await expect(yTicks.nth(2)).toHaveText('-0.58');
