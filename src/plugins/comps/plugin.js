@@ -31,14 +31,13 @@ export default function CompsPlugin() {
       creatable: true,
       cssClass: 'icon-telemetry',
       initialize: function (domainObject) {
-        domainObject.configuration = {
-        };
+        domainObject.configuration = {};
         domainObject.composition = [];
         domainObject.telemetry = {};
       }
     });
     openmct.composition.addPolicy((parent, child) => {
-        return openmct.telemetry.isTelemetryObject(child);
+      return openmct.telemetry.isTelemetryObject(child);
     });
     openmct.telemetry.addProvider(new CompsTelemetryProvider(openmct));
   };

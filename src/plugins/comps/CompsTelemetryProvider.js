@@ -23,6 +23,7 @@
 export default class ConditionSetTelemetryProvider {
   constructor(openmct) {
     this.openmct = openmct;
+    this.#startSharedWorker();
   }
 
   isTelemetryObject(domainObject) {
@@ -37,13 +38,46 @@ export default class ConditionSetTelemetryProvider {
     return domainObject.type === 'comps';
   }
 
+  // eslint-disable-next-line require-await
   async request(domainObject, options) {
     // TODO: do some math in a worker
-    return { value: 0};
+    return { value: 0 };
   }
 
   subscribe(domainObject, callback) {
     // TODO: add to listener list and return a function to remove it
     return () => {};
+  }
+
+  #startSharedWorker() {
+    // eslint-disable-next-line no-undef
+    const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}compsMathWorker.js`;
+
+    const sharedWorker = new SharedWorker(sharedWorkerURL, `Comps Math Worker`);
+    sharedWorker.port.onmessage = this.onSharedWorkerMessage.bind(this);
+    sharedWorker.port.onmessageerror = this.onSharedWorkerMessageError.bind(this);
+    sharedWorker.port.start();
+
+    // send an initial message to the worker
+    sharedWorker.port.postMessage({ type: 'init' });
+
+    // for testing, try a message adding two numbers
+    sharedWorker.port.postMessage({
+      type: 'calculate',
+      data: [{ a: 1, b: 2 }],
+      expression: 'a + b'
+    });
+
+    this.openmct.on('destroy', () => {
+      sharedWorker.port.close();
+    });
+  }
+
+  onSharedWorkerMessage(event) {
+    console.log('📝 Shared worker message:', event.data);
+  }
+
+  onSharedWorkerMessageError(event) {
+    console.error('❌ Shared worker message error:', event);
   }
 }
