@@ -104,5 +104,5 @@ export default class InspectorViewRegistry {
 /**
  * @typedef {import("openmct").View} View
  * @typedef {import("openmct").ViewProvider} ViewProvider
- * @typedef {import("openmct").DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */

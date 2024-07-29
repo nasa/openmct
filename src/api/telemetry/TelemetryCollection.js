@@ -27,7 +27,7 @@ import { TIME_CONTEXT_EVENTS } from '../time/constants.js';
 import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants.js';
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**

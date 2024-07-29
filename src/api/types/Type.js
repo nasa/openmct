@@ -132,5 +132,5 @@ export default class Type {
  */
 
 /**
- * @typedef {import("../objects/ObjectAPI").DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */

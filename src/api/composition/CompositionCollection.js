@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
@@ -280,7 +280,7 @@ export default class CompositionCollection {
   /**
    * Handle adds from provider.
    * @private
-   * @param {import('../objects/ObjectAPI').Identifier} childId
+   * @param {import('openmct').Identifier} childId
    * @returns {DomainObject}
    */
   #onProviderAdd(childId) {

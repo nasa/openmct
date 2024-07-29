@@ -28,7 +28,7 @@ import DefaultCompositionProvider from './DefaultCompositionProvider.js';
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
