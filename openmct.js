@@ -41,6 +41,7 @@ export default openmct;
  * @typedef {import('./src/api/objects/ObjectAPI.js').DomainObject} DomainObject
  * @typedef {import('./src/api/objects/ObjectAPI.js').Identifier} Identifier
  * @typedef {import('./src/api/objects/Transaction.js').default} Transaction
+ * @typedef {import('./src/api/actions/ActionsAPI.js').Action} Action
  * @typedef {import('./src/api/actions/ActionCollection.js').default} ActionCollection
  * @typedef {import('./src/api/composition/CompositionCollection.js').default} CompositionCollection
  * @typedef {import('./src/api/composition/CompositionProvider.js').default} CompositionProvider
