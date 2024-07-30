@@ -226,6 +226,9 @@ export default ActionsAPI;
  * @property {string} [group] - The group this action belongs to (e.g., 'action', 'import').
  * @property {number} [priority] - The priority of the action within its group (controls the order of the actions in the menu).
  * @property {boolean} [isHidden] - Whether the action should be hidden from menus.
- * @property {(objectPath: Array<Object>, [view: Object]) => void} invoke - Executes the action.
- * @property {(objectPath: Array<Object>, [view: Object]) => boolean} appliesTo - Determines if the action is applicable to the given object path.
+ * @property {(objectPath: ObjectPath, view: View) => void} invoke - Executes the action.
+ * @property {(objectPath: ObjectPath, view: View) => boolean} appliesTo - Determines if the action is applicable to the given object path.
  */
+
+/** @typedef {import('openmct').ObjectPath} ObjectPath */
+/** @typedef {import('openmct').View} View */
