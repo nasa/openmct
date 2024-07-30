@@ -30,7 +30,6 @@ import Selection from './Selection.js';
  * the body of the document, which is useful for displaying templates
  * which need to block the full screen.
  *
- * @memberof api/overlays
  * @constructor
  */
 

@@ -301,7 +301,6 @@ class TimeContext extends EventEmitter {
       /**
        * Event that is triggered when clock offsets change.
        * @event clockOffsets
-       * @memberof module:openmct.TimeAPI~
        * @property {ClockOffsets} clockOffsets The newly activated clock
        * offsets.
        */
@@ -546,7 +545,6 @@ class TimeContext extends EventEmitter {
     /**
      * The active clock has changed.
      * @event clock
-     * @memberof module:openmct.TimeAPI~
      * @property {TimeContext} clock The newly activated clock, or undefined
      * if the system is no longer following a clock source
      */

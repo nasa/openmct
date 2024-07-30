@@ -313,7 +313,6 @@ export class MCT extends EventEmitter {
   }
   /**
    * Set path to where assets are hosted.  This should be the path to main.js.
-   * @memberof module:openmct.MCT#
    * @method setAssetPath
    */
   setAssetPath(assetPath) {
@@ -321,7 +320,6 @@ export class MCT extends EventEmitter {
   }
   /**
    * Get path to where assets are hosted.
-   * @memberof module:openmct.MCT#
    * @method getAssetPath
    */
   getAssetPath() {
@@ -340,7 +338,6 @@ export class MCT extends EventEmitter {
    * Start running Open MCT. This should be called only after any plugins
    * have been installed.
    * @fires module:openmct.MCT~start
-   * @memberof module:openmct.MCT#
    * @method start
    * @param {Element?} domElement the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
@@ -375,7 +372,6 @@ export class MCT extends EventEmitter {
      * Fired by [MCT]{@link module:openmct.MCT} when the application
      * is started.
      * @event start
-     * @memberof module:openmct.MCT~
      */
     if (!isHeadlessMode) {
       const appLayout = createApp(Layout);
@@ -406,7 +402,6 @@ export class MCT extends EventEmitter {
    *
    * @param {Function} plugin a plugin install function which will be
    *     invoked with the mct instance.
-   * @memberof module:openmct.MCT#
    */
   install(plugin) {
     plugin(this);

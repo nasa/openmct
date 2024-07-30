@@ -449,7 +449,6 @@ export default class ObjectAPI {
    *        this item(s) position in the root object's composition (example: order in object tree).
    *        For arrays, they are treated as blocks.
    * @method addRoot
-   * @memberof module:openmct.ObjectAPI#
    */
   addRoot(identifier, priority) {
     this.rootRegistry.addRoot(identifier, priority);
@@ -462,7 +461,6 @@ export default class ObjectAPI {
    *
    * @param {module:openmct.InterceptorDef} interceptorDef the interceptor definition to add
    * @method addGetInterceptor
-   * @memberof module:openmct.InterceptorRegistry#
    */
   addGetInterceptor(interceptorDef) {
     this.interceptorRegistry.addInterceptor(interceptorDef);

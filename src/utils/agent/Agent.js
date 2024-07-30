@@ -25,7 +25,6 @@
  * device names
  * @constructor
  * @param window the browser object model
- * @memberof /utils/agent
  */
 export default class Agent {
   constructor(window) {

@@ -38,7 +38,6 @@ const ANY_OBJECT_EVENT = 'mutation';
  * (via openmct.objects.destroy) when you're done with it.
  *
  * @typedef MutableDomainObject
- * @memberof module:openmct
  */
 class MutableDomainObject {
   constructor(eventEmitter) {

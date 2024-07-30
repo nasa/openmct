@@ -49,7 +49,6 @@ class UserAPI extends EventEmitter {
    * Set the user provider for the user API. This allows you
    *  to specify ONE user provider to be used with Open MCT.
    * @method setProvider
-   * @memberof module:openmct.UserAPI#
    * @param {module:openmct.UserAPI~UserProvider} provider the new
    *        user provider
    */
@@ -69,7 +68,6 @@ class UserAPI extends EventEmitter {
   /**
    * Return true if the user provider has been set.
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {boolean} true if the user provider exists
    */
   hasProvider() {
@@ -80,7 +78,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return a copy of a user object from
    * the provider. If the user is not logged in, it will return undefined;
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|Promise} user provider 'getCurrentUser' method
    * @throws Will throw an error if no user provider is set
    */
@@ -94,7 +91,6 @@ class UserAPI extends EventEmitter {
   /**
    *  If a user provider is set, it will return an array of possible roles
    *  that can be selected by the current user
-   *  @memberof module:openmct.UserAPI#
    *  @returns {Array}
    *  @throws Will throw an error if no user provider is set
    */
@@ -107,7 +103,6 @@ class UserAPI extends EventEmitter {
   }
   /**
    * If a user provider is set, it will return the active role or null
-   * @memberof module:openmct.UserAPI#
    * @returns {string|null}
    */
   getActiveRole() {
@@ -122,7 +117,6 @@ class UserAPI extends EventEmitter {
   }
   /**
    * Set the active role in session storage
-   * @memberof module:openmct.UserAPI#
    * @returns {undefined}
    */
   setActiveRole(role) {
@@ -136,7 +130,6 @@ class UserAPI extends EventEmitter {
 
   /**
    * Will return if a role can provide a operator status response
-   * @memberof module:openmct.UserApi#
    * @returns {boolean}
    */
   canProvideStatusForRole() {
@@ -152,7 +145,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return the user provider's
    * 'isLoggedIn' method
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|Boolean} user provider 'isLoggedIn' method
    * @throws Will throw an error if no user provider is set
    */
@@ -168,7 +160,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return a call to it's
    * 'hasRole' method
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|boolean} user provider 'isLoggedIn' method
    * @param {string} roleId id of role to check for
    * @throws Will throw an error if no user provider is set

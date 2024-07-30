@@ -28,7 +28,6 @@ import moment from 'moment';
  *
  * @implements {Format}
  * @constructor
- * @memberof platform/commonUI/formats
  */
 export default class UTCTimeFormat {
   constructor() {
