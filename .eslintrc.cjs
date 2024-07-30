@@ -10,7 +10,8 @@ const config = {
     serviceworker: true
   },
   globals: {
-    _: 'readonly'
+    _: 'readonly',
+    __OPENMCT_ROOT_RELATIVE__: 'readonly'
   },
   plugins: ['prettier', 'unicorn', 'simple-import-sort'],
   extends: [

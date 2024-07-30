@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import CompsTelemetryProvider from './CompsTelemetryProvider.js';
+import CompsViewProvider from './CompsViewProvider.js';
 
 export default function CompsPlugin() {
   return function install(openmct) {
@@ -40,5 +41,6 @@ export default function CompsPlugin() {
       return openmct.telemetry.isTelemetryObject(child);
     });
     openmct.telemetry.addProvider(new CompsTelemetryProvider(openmct));
+    openmct.objectViews.addProvider(new CompsViewProvider(openmct));
   };
 }
