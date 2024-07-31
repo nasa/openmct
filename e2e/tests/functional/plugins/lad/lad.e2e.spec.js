@@ -237,7 +237,7 @@ test.describe('Testing LAD table configuration', () => {
   });
 });
 
-test.describe('Testing LAD table @unstable', () => {
+test.describe('Testing LAD table', () => {
   let sineWaveObject;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });

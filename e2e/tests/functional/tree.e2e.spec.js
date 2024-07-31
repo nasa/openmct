@@ -113,7 +113,7 @@ test.describe('Main Tree', () => {
     ).toBeVisible();
   });
   // eslint-disable-next-line playwright/expect-expect
-  test('Renaming an object reorders the tree @unstable', async ({ page, openmctConfig }) => {
+  test('Renaming an object reorders the tree', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
     await createDomainObjectWithDefaults(page, {

@@ -86,9 +86,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     await page.locator('button.c-notebook__toggle-nav-button').click();
   });
 
-  test('Locked page should now be in a locked state @addInit @unstable', async ({
-    page
-  }, testInfo) => {
+  test('Locked page should now be in a locked state @addInit', async ({ page }, testInfo) => {
     // eslint-disable-next-line playwright/no-skipped-test
     test.skip(testInfo.project === 'chrome-beta', 'Test is unreliable on chrome-beta');
     // main lock message on page

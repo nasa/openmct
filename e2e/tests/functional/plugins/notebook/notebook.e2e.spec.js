@@ -296,7 +296,7 @@ test.describe('Notebook entry tests', () => {
     await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
     await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
   });
-  test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({
+  test('When an object is dropped into a notebook, a new entry is created and it should be focused', async ({
     page
   }) => {
     // Create Overlay Plot
@@ -320,7 +320,7 @@ test.describe('Notebook entry tests', () => {
     await expect(embed).toHaveClass(/icon-plot-overlay/);
     expect(embedName).toBe(overlayPlot.name);
   });
-  test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({
+  test('When an object is dropped into a notebooks existing entry, it should be focused', async ({
     page
   }) => {
     // Create Overlay Plot
