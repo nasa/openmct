@@ -22,9 +22,9 @@
 
 import {
   createDomainObjectWithDefaults,
+  navigateToObjectWithRealTime,
   openObjectTreeContextMenu,
   setFixedTimeMode,
-  setRealTimeMode,
   setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
@@ -241,7 +241,8 @@ test.describe('Testing LAD table', () => {
   let sineWaveObject;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await setRealTimeMode(page);
+    // Switch to real time mode by navigating directly to the URL
+    await navigateToObjectWithRealTime(page, './');
 
     // Create Sine Wave Generator
     sineWaveObject = await createDomainObjectWithDefaults(page, {
@@ -270,7 +271,7 @@ test.describe('Testing LAD table', () => {
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the LAD table is the most recent value
     // from the Sine Wave Generator
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     const subscribeTelemValue = await getTelemValuePromise;
     const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
     const ladTableValue = await ladTableValuePromise.textContent();
@@ -296,7 +297,7 @@ test.describe('Testing LAD table', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
     await setStartOffset(page, { mins: '1' });
     await setFixedTimeMode(page);
