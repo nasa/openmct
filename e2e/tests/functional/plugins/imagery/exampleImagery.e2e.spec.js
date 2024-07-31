@@ -836,8 +836,8 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function panZoomAndAssertImageProperties(page) {
-  const imageryHintsText = page.locator('.c-imagery__hints');
-  await expect(expectedAltText).toHaveText(imageryHintsText);
+  const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
+  expect(expectedAltText).toEqual(imageryHintsText);
   const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
   const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
