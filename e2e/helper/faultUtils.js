@@ -61,6 +61,7 @@ export async function navigateToFaultManagementWithoutExample(page) {
  */
 async function navigateToFaultItemInTree(page) {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.waitForURL('**/#/browse/mine?**');
 
   const faultManagementTreeItem = page
     .getByRole('tree', {

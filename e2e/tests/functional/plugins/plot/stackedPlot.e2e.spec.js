@@ -239,7 +239,7 @@ test.describe('Stacked Plot', () => {
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
     // Expand config for the series
-    await page.getByLabel('Expand Sine Wave Generator').click();
+    await page.getByLabel('Expand Sine Wave Generator A').click();
 
     // turn off alarm markers
     await page.getByLabel('Alarm Markers').uncheck();
