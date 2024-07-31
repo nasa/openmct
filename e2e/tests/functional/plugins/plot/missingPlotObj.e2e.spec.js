@@ -69,7 +69,8 @@ test.describe('Handle missing object for plots', () => {
     }, jsonData);
 
     //Reloads page and clicks on stacked plot
-    await Promise.all([page.reload(), page.waitForLoadState('domcontentloaded')]);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.goto(stackedPlot.url);
 
     //Verify Main section is there on load
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(stackedPlot.name);
