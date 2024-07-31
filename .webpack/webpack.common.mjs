@@ -70,7 +70,6 @@ const config = {
       '@': path.join(projectRootDir, 'src'),
       legacyRegistry: path.join(projectRootDir, 'src/legacyRegistry'),
       csv: 'comma-separated-values',
-      EventEmitter: 'eventemitter3',
       bourbon: 'bourbon.scss',
       'plotly-basic': 'plotly.js-basic-dist-min',
       'plotly-gl2d': 'plotly.js-gl2d-dist-min',

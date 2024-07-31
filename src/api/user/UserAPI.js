@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 
 import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants.js';
 import StatusAPI from './StatusAPI.js';
@@ -28,27 +28,27 @@ import StoragePersistence from './StoragePersistence.js';
 import User from './User.js';
 
 class UserAPI extends EventEmitter {
-  /** @type {OpenMCT} */
+  /**
+   * @type {OpenMCT}
+   */
   #openmct;
   /**
    * @param {OpenMCT} openmct
-   * @param {UserAPIConfiguration} config
    */
-  constructor(openmct, config) {
+  constructor(openmct) {
     super();
 
     this.#openmct = openmct;
     this._provider = undefined;
 
     this.User = User;
-    this.status = new StatusAPI(this, openmct, config);
+    this.status = new StatusAPI(this, openmct);
   }
 
   /**
    * Set the user provider for the user API. This allows you
    *  to specify ONE user provider to be used with Open MCT.
    * @method setProvider
-   * @memberof module:openmct.UserAPI#
    * @param {module:openmct.UserAPI~UserProvider} provider the new
    *        user provider
    */
@@ -68,7 +68,6 @@ class UserAPI extends EventEmitter {
   /**
    * Return true if the user provider has been set.
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {boolean} true if the user provider exists
    */
   hasProvider() {
@@ -79,7 +78,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return a copy of a user object from
    * the provider. If the user is not logged in, it will return undefined;
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|Promise} user provider 'getCurrentUser' method
    * @throws Will throw an error if no user provider is set
    */
@@ -93,7 +91,6 @@ class UserAPI extends EventEmitter {
   /**
    *  If a user provider is set, it will return an array of possible roles
    *  that can be selected by the current user
-   *  @memberof module:openmct.UserAPI#
    *  @returns {Array}
    *  @throws Will throw an error if no user provider is set
    */
@@ -106,7 +103,6 @@ class UserAPI extends EventEmitter {
   }
   /**
    * If a user provider is set, it will return the active role or null
-   * @memberof module:openmct.UserAPI#
    * @returns {string|null}
    */
   getActiveRole() {
@@ -121,7 +117,6 @@ class UserAPI extends EventEmitter {
   }
   /**
    * Set the active role in session storage
-   * @memberof module:openmct.UserAPI#
    * @returns {undefined}
    */
   setActiveRole(role) {
@@ -135,7 +130,6 @@ class UserAPI extends EventEmitter {
 
   /**
    * Will return if a role can provide a operator status response
-   * @memberof module:openmct.UserApi#
    * @returns {boolean}
    */
   canProvideStatusForRole() {
@@ -151,7 +145,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return the user provider's
    * 'isLoggedIn' method
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|Boolean} user provider 'isLoggedIn' method
    * @throws Will throw an error if no user provider is set
    */
@@ -167,7 +160,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return a call to it's
    * 'hasRole' method
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|boolean} user provider 'isLoggedIn' method
    * @param {string} roleId id of role to check for
    * @throws Will throw an error if no user provider is set
@@ -206,14 +198,9 @@ export default UserAPI;
 
 /**
  * @typedef {string} Role
- */
-
-/**
- * @typedef {import('../../../openmct.js').OpenMCT} OpenMCT
- */
-
-/**
- * @typedef {{statusStyles: Object.<string, StatusStyleDefinition>}} UserAPIConfiguration
+ * @typedef {import('../../MCT.js').MCT} OpenMCT
+ * @typedef {{statusStyles: Record<string, StatusStyleDefinition>}} UserAPIConfiguration
+ * @typedef {Object} UserProvider
  */
 
 /**
@@ -223,8 +210,4 @@ export default UserAPI;
  * @property {string} statusClass The class to apply to the indicator when this status is active eg. "s-status-error"
  * @property {string} statusBgColor The background color to apply in the status summary section of the poll question popup for this status eg."#9900cc"
  * @property {string} statusFgColor The foreground color to apply in the status summary section of the poll question popup for this status eg. "#fff"
- */
-
-/**
- * @typedef {Object} UserProvider
  */

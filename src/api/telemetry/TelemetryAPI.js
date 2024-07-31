@@ -52,7 +52,6 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  *           to cancel a telemetry request
  * @property {string} [domain] the domain key of the request
  * @property {TimeContext} [timeContext] the time context to use for this request
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
@@ -69,7 +68,6 @@ import TelemetryValueFormatter from './TelemetryValueFormatter.js';
  * rendering a telemetry plot or table. If `batch` is specified, the subscription
  * callback will be invoked with an Array.
  *
- * @memberof module:openmct.TelemetryAPI~
  */
 
 const SUBSCRIBE_STRATEGY = {
@@ -80,7 +78,6 @@ const SUBSCRIBE_STRATEGY = {
 /**
  * Utilities for telemetry
  * @interface TelemetryAPI
- * @memberof module:openmct
  */
 export default class TelemetryAPI {
   #isGreedyLAD;
@@ -133,7 +130,7 @@ export default class TelemetryAPI {
    * object is any object which has telemetry metadata-- regardless of whether
    * the telemetry object has an available telemetry provider.
    *
-   * @param {module:openmct.DomainObject} domainObject
+   * @param {import('openmct').DomainObject} domainObject
    * @returns {boolean} true if the object is a telemetry object.
    */
   isTelemetryObject(domainObject) {
@@ -145,10 +142,9 @@ export default class TelemetryAPI {
    * this domain object.
    *
    * @method canProvideTelemetry
-   * @param {module:openmct.DomainObject} domainObject the object for
+   * @param {import('openmct').DomainObject} domainObject the object for
    *        which telemetry would be provided
    * @returns {boolean} true if telemetry can be provided
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   canProvideTelemetry(domainObject) {
     return (
@@ -161,7 +157,6 @@ export default class TelemetryAPI {
    * Register a telemetry provider with the telemetry service. This
    * allows you to connect alternative telemetry sources.
    * @method addProvider
-   * @memberof module:openmct.TelemetryAPI#
    * @param {module:openmct.TelemetryAPI~TelemetryProvider} provider the new
    *        telemetry provider
    */
@@ -268,7 +263,6 @@ export default class TelemetryAPI {
    *
    * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
    * @method addRequestInterceptor
-   * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
    */
   addRequestInterceptor(requestInterceptorDef) {
     this.requestInterceptorRegistry.addInterceptor(requestInterceptorDef);
@@ -312,7 +306,6 @@ export default class TelemetryAPI {
    *
    * @method greedyLAD
    * @returns {boolean} if greedyLAD is active or not
-   * @memberof module:openmct.TelemetryAPI#
    */
   greedyLAD(isGreedy) {
     if (arguments.length > 0) {
@@ -333,8 +326,7 @@ export default class TelemetryAPI {
    * telemetry (aggregation, latest available, etc.).
    *
    * @method requestCollection
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry
    * @param {TelemetryRequestOptions} options
    *        options for this telemetry collection request
@@ -351,8 +343,7 @@ export default class TelemetryAPI {
    * telemetry (aggregation, latest available, etc.).
    *
    * @method request
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry
    * @param {TelemetryRequestOptions} options
    *        options for this historical request
@@ -410,8 +401,7 @@ export default class TelemetryAPI {
    * realtime provider.
    *
    * @method subscribe
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry
    * @param {TelemetrySubscriptionOptions} options configuration items for subscription
    * @param {Function} callback the callback to invoke with new data, as
@@ -527,8 +517,7 @@ export default class TelemetryAPI {
    * The callback will be called whenever staleness changes.
    *
    * @method subscribeToStaleness
-   * @memberof module:openmct.TelemetryAPI~StalenessProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *          to watch for staleness updates
    * @param {Function} callback the callback to invoke with staleness data,
    *  as it is received: ex.
@@ -586,8 +575,7 @@ export default class TelemetryAPI {
    * limit provider.
    *
    * @method subscribeToLimits
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated limits
    * @param {Function} callback the callback to invoke with new data, as
    *        it becomes available
@@ -640,8 +628,7 @@ export default class TelemetryAPI {
    * Request telemetry staleness for a domain object.
    *
    * @method isStale
-   * @memberof module:openmct.TelemetryAPI~StalenessProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry staleness
    * @returns {Promise.<StalenessResponseObject>} a promise for a StalenessResponseObject
    *        or undefined if no provider exists
@@ -727,7 +714,7 @@ export default class TelemetryAPI {
    * Get a format map of all value formatters for a given piece of telemetry
    * metadata.
    *
-   * @returns {Object<String, {TelemetryValueFormatter}>}
+   * @returns {Record<string, TelemetryValueFormatter>}
    */
   getFormatMap(metadata) {
     if (!metadata) {
@@ -801,11 +788,10 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to evaluate limits
    * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
    * @method limitEvaluator
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   limitEvaluator(domainObject) {
     return this.getLimitEvaluator(domainObject);
@@ -821,11 +807,10 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to get limits
    * @returns {LimitsResponseObject}
    * @method limits
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   limitDefinition(domainObject) {
     return this.getLimits(domainObject);
@@ -841,11 +826,10 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to evaluate limits
    * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
    * @method limitEvaluator
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   getLimitEvaluator(domainObject) {
     const provider = this.#findLimitEvaluator(domainObject);
@@ -868,12 +852,11 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to display limits
    * @returns {LimitsResponseObject}
    * @method limits returns a limits object of type {LimitsResponseObject}
    *  supported colors are purple, red, orange, yellow and cyan
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   getLimits(domainObject) {
     const provider = this.#findLimitEvaluator(domainObject);
@@ -911,7 +894,6 @@ export default class TelemetryAPI {
  * have exceeded nominal conditions.
  *
  * @interface LimitEvaluator
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
@@ -919,7 +901,6 @@ export default class TelemetryAPI {
  * @method evaluate
  * @param {*} datum the telemetry datum to evaluate
  * @param {TelemetryProperty} the property to check for limit violations
- * @memberof module:openmct.TelemetryAPI~LimitEvaluator
  * @returns {LimitViolation} metadata about
  *          the limit violation, or undefined if a value is within limits
  */
@@ -927,7 +908,6 @@ export default class TelemetryAPI {
 /**
  * A violation of limits defined for a telemetry property.
  * @typedef LimitViolation
- * @memberof {module:openmct.TelemetryAPI~}
  * @property {string} cssClass the class (or space-separated classes) to
  *           apply to display elements for values which violate this limit
  * @property {string} name the human-readable name for the limit violation
@@ -937,7 +917,6 @@ export default class TelemetryAPI {
 
 /**
  * @typedef {Object} LimitsResponseObject
- * @memberof {module:openmct.TelemetryAPI~}
  * @property {LimitDefinition} limitLevel the level name and it's limit definition
  * @example {
  *  [limitLevel]: {
@@ -956,7 +935,6 @@ export default class TelemetryAPI {
 /**
  * Limit defined for a telemetry property.
  * @typedef LimitDefinition
- * @memberof {module:openmct.TelemetryAPI~}
  * @property {LimitDefinitionValue} low a lower limit
  * @property {LimitDefinitionValue} high a higher limit
  */
@@ -964,7 +942,6 @@ export default class TelemetryAPI {
 /**
  * Limit definition for a Limit of a telemetry property.
  * @typedef LimitDefinitionValue
- * @memberof {module:openmct.TelemetryAPI~}
  * @property {string} color color to represent this limit
  * @property {number} value the limit value
  */
@@ -974,7 +951,6 @@ export default class TelemetryAPI {
  * display as text.
  *
  * @interface TelemetryFormatter
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
@@ -982,7 +958,6 @@ export default class TelemetryAPI {
  * telemetry metadata in domain object.
  *
  * @method format
- * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
  */
 
 /**
@@ -990,7 +965,6 @@ export default class TelemetryAPI {
  * associated with a particular domain object.
  *
  * @typedef TelemetryProperty
- * @memberof module:openmct.TelemetryAPI~
  * @property {string} key the name of the property in the datum which
  *           contains this telemetry value
  * @property {string} name the human-readable name for this property
@@ -1010,7 +984,6 @@ export default class TelemetryAPI {
  * Describes and bounds requests for telemetry data.
  *
  * @typedef TelemetryRequest
- * @memberof module:openmct.TelemetryAPI~
  * @property {string} sort the key of the property to sort by. This may
  *           be prefixed with a "+" or a "-" sign to sort in ascending
  *           or descending order respectively. If no prefix is present,
@@ -1029,7 +1002,6 @@ export default class TelemetryAPI {
  * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
  *
  * @interface TelemetryProvider
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
@@ -1046,7 +1018,6 @@ export default class TelemetryAPI {
  *           and an options object which currently has an abort signal, ex.
  *           { signal: <AbortController.signal> }
  *           this method should return a current StalenessResponseObject
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
@@ -1061,5 +1032,4 @@ export default class TelemetryAPI {
  *
  * @interface TelemetryAPI
  * @augments module:openmct.TelemetryAPI~TelemetryProvider
- * @memberof module:openmct
  */

@@ -43,7 +43,6 @@ const TOOLTIP_LOCATIONS = Object.freeze({
  * The TooltipAPI is responsible for adding custom tooltips to
  * the desired elements on the screen
  *
- * @memberof api/tooltips
  * @constructor
  */
 

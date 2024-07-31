@@ -108,7 +108,7 @@ class ExportAsJSONAction {
 
   /**
    * @private
-   * @param {import('../../api/objects/ObjectAPI').DomainObject} parent
+   * @param {import('openmct').DomainObject} parent
    */
   async #write(parent) {
     this.totalToExport++;

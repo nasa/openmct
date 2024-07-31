@@ -251,7 +251,7 @@ export default {
     /**
      * Returns true if the `domainObject` supports composition and we are not already
      * tracking its composition.
-     * @param {import('../../api/objects/ObjectAPI').DomainObject} domainObject
+     * @param {import('openmct').DomainObject} domainObject
      * @param {string} navigationPath
      */
     shouldTrackCompositionFor(domainObject, navigationPath) {

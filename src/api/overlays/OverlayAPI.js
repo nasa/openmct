@@ -29,11 +29,7 @@ import Selection from './Selection.js';
  * The OverlayAPI is responsible for pre-pending templates to
  * the body of the document, which is useful for displaying templates
  * which need to block the full screen.
- *
- * @memberof api/overlays
- * @constructor
  */
-
 class OverlayAPI {
   constructor() {
     this.activeOverlays = [];
@@ -48,7 +44,9 @@ class OverlayAPI {
   }
 
   /**
-   * private
+   * Shows an overlay
+   * @private
+   * @param {Overlay} overlay - The overlay to show
    */
   showOverlay(overlay) {
     if (this.activeOverlays.length) {
@@ -72,7 +70,8 @@ class OverlayAPI {
   }
 
   /**
-   * private
+   * Dismisses the last overlay
+   * @private
    */
   dismissLastOverlay() {
     let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
@@ -83,14 +82,6 @@ class OverlayAPI {
 
   /**
    * Creates and displays an overlay with the specified options.
-   *
-   * @typedef {Object} OverlayOptions
-   * @property {HTMLElement} element The DOM Element to be inserted or shown in the overlay.
-   * @property {'large'|'small'|'fit'} size The preferred size of the overlay.
-   * @property {Array<{label: string, callback: Function}>} [buttons] Optional array of button objects, each with 'label' and 'callback' properties.
-   * @property {Function} onDestroy Callback to be called when the overlay is destroyed.
-   * @property {boolean} [dismissible=true] Whether the overlay can be dismissed by pressing 'esc' or clicking outside of it. Defaults to true.
-   *
    * @param {OverlayOptions} options - The configuration options for the overlay.
    * @returns {Overlay} An instance of the Overlay class.
    */
@@ -104,23 +95,9 @@ class OverlayAPI {
 
   /**
    * Displays a blocking (modal) dialog. This dialog can be used for
-   * displaying messages that require the user's
-   * immediate attention.
-   * @param {model} options defines options for the dialog
-   * @returns {Object} with an object with a dismiss function that can be called from the calling code
-   * to dismiss/destroy the dialog
-   *
-   * A description of the model options that may be passed to the
-   * dialog method. Note that the DialogModel described
-   * here is shared with the Notifications framework.
-   * @see NotificationService
-   *
-   * @typedef options
-   * @property {string} title the title to use for the dialog
-   * @property {string} iconClass class to apply to icon that is shown on dialog
-   * @property {string} message text that indicates a current message,
-   * @property {buttons[]} buttons a list of buttons with title and callback properties that will
-   * be added to the dialog.
+   * displaying messages that require the user's immediate attention.
+   * @param {DialogOptions} options - Defines options for the dialog
+   * @returns {Dialog} An object with a dismiss function that can be called from the calling code to dismiss/destroy the dialog
    */
   dialog(options) {
     let dialog = new Dialog(options);
@@ -133,21 +110,10 @@ class OverlayAPI {
   /**
    * Displays a blocking (modal) progress dialog. This dialog can be used for
    * displaying messages that require the user's attention, and show progress
-   * @param {model} options defines options for the dialog
-   * @returns {Object} with an object with a dismiss function that can be called from the calling code
+   * @param {ProgressDialogOptions} options - Defines options for the dialog
+   * @returns {ProgressDialog} An object with a dismiss function that can be called from the calling code
    * to dismiss/destroy the dialog and an updateProgress function that takes progressPercentage(Number 0-100)
    * and progressText (string)
-   *
-   * A description of the model options that may be passed to the
-   * dialog method. Note that the DialogModel described
-   * here is shared with the Notifications framework.
-   * @see NotificationService
-   *
-   * @typedef options
-   * @property {number | null} progressPerc the initial progress value (0-100) or null for anonymous progress
-   * @property {string} progressText the initial text to be shown under the progress bar
-   * @property {buttons[]} buttons a list of buttons with title and callback properties that will
-   * be added to the dialog.
    */
   progressDialog(options) {
     let progressDialog = new ProgressDialog(options);
@@ -157,6 +123,11 @@ class OverlayAPI {
     return progressDialog;
   }
 
+  /**
+   * Creates and displays a selection overlay
+   * @param {SelectionOptions} options - The options for the selection overlay
+   * @returns {Selection} The created Selection instance
+   */
   selection(options) {
     let selection = new Selection(options);
     this.showOverlay(selection);
@@ -166,3 +137,32 @@ class OverlayAPI {
 }
 
 export default OverlayAPI;
+
+/**
+ * @typedef {Object} OverlayOptions
+ * @property {HTMLElement} element - The DOM Element to be inserted or shown in the overlay.
+ * @property {'large'|'small'|'fit'} size - The preferred size of the overlay.
+ * @property {Array<{label: string, callback: Function}>} [buttons] - Optional array of button objects, each with 'label' and 'callback' properties.
+ * @property {Function} onDestroy - Callback to be called when the overlay is destroyed.
+ * @property {boolean} [dismissible=true] - Whether the overlay can be dismissed by pressing 'esc' or clicking outside of it. Defaults to true.
+ */
+
+/**
+ * @typedef {Object} DialogOptions
+ * @property {string} title - The title to use for the dialog
+ * @property {string} iconClass - Class to apply to icon that is shown on dialog
+ * @property {string} message - Text that indicates a current message
+ * @property {Array<{label: string, callback: Function}>} buttons - A list of buttons with label and callback properties that will be added to the dialog.
+ */
+
+/**
+ * @typedef {Object} ProgressDialogOptions
+ * @property {number | null} progressPerc - The initial progress value (0-100) or null for anonymous progress
+ * @property {string} progressText - The initial text to be shown under the progress bar
+ * @property {Array<{label: string, callback: Function}>} buttons - A list of buttons with label and callback properties that will be added to the dialog.
+ */
+
+/**
+ * @typedef {Object} SelectionOptions
+ * @property {any} options - The options for the selection overlay
+ */
