@@ -38,7 +38,7 @@ test.describe('Gauge', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Can add and remove telemetry sources @unstable', async ({ page }) => {
+  test('Can add and remove telemetry sources', async ({ page }) => {
     // Create the gauge with defaults
     const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
 
@@ -53,6 +53,7 @@ test.describe('Gauge', () => {
     // the SWG appears in the elements pool
     await page.goto(gauge.url);
     await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Elements' }).click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
@@ -78,6 +79,7 @@ test.describe('Gauge', () => {
     // appears in the elements pool and the old one is gone
     await page.goto(gauge.url);
     await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Elements' }).click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).click();
