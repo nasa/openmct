@@ -109,7 +109,7 @@ Our e2e (end-to-end), Visual, and Performance tests leverage the Playwright fram
 - **e2e Tests**: These tests are run on every commit. To run the tests locally, use:
 
   ```sh
-  npm run test:e2e:stable
+  npm run test:e2e:ci
   ```
 
 - **Visual Tests**: For running the visual test suite, use:

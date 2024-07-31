@@ -30,7 +30,6 @@
  * Demonstrated:
  * - Using appActions to leverage existing functions
  * - Structure
- * - @unstable annotation
  * - await, expect, test, describe syntax
  * - Writing a custom function for a test suite
  * - Test stub for unfinished test coverage (test.fixme)
@@ -53,9 +52,6 @@ import { expect, test } from '../../pluginFixtures.js';
  *  Try to keep a single describe block per logical groups of tests.
  *  If your test runtime exceeds 5 minutes or 500 lines, it's likely that it will need to be split.
  *
- * Annotations:
- *  Please use the @unstable tag at the end of the test title so that our automation can pick it up
- *  as a part of our test promotion pipeline.
  */
 test.describe('Renaming Timer Object', () => {
   // Top-level declaration of the Timer object created in beforeEach().

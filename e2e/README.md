@@ -229,7 +229,6 @@ Current list of test tags:
 |`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
 |`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB). See [note](#utilizing-localstorage)|
 |`@snapshot` | Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.|
-|`@unstable` | A new test or test which is known to be flaky.|
 |`@2p` | Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.|
 |`@generatedata` | Indicates that a test is used to generate testdata or test the generated test data. Usually to be associated with localstorage, but this may grow over time.|
 |`@clock` | A test which modifies the clock. These have expanded out of the visual tests and into the functional tests.
@@ -248,7 +247,7 @@ Our CI environment consists of 3 main modes of operation:
 
 CircleCI
 
-- Stable e2e tests against ubuntu and chrome
+- e2e tests against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 - e2e tests are linted
 - Visual and a11y tests are run in a single resolution on the default `espresso` theme
@@ -286,18 +285,6 @@ In addition to the Parallelization of Test Runners (Sharding), we're also runnin
 So for every commit, Playwright is effectively running 4 x 2 concurrent browsercontexts to keep the overall runtime to a miminum.
 
 At the same time, we don't want to waste CI resources on parallel runs, so we've configured each shard to fail after 5 test failures. Test failure logs are recorded and stored to allow fast triage.
-
-#### Test Promotion
-
-In order to maintain fast and reliable feedback, tests go through a promotion process. All new test cases or test suites must be labeled with the `@unstable` annotation. The Open MCT dev team runs these unstable tests in our private repos to ensure they work downstream and are reliable.
-
-- To run the stable tests, use the `npm run test:e2e:stable` command.
-- To run the new and flaky tests, use the `npm run test:e2e:unstable` command.
-
-A testcase and testsuite are to be unmarked as @unstable when:
-
-1. They run as part of "full" run 5 times without failure.
-2. They've been by a Open MCT Developer 5 times in the closed source repo without failure.
 
 ### Cross-browser and Cross-operating system
 
