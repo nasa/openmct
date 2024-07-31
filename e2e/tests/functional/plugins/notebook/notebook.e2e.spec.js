@@ -259,7 +259,7 @@ test.describe('Notebook export tests', () => {
     const exportedText = await streamToString(readStream);
     expect(exportedText).toContain('Foo bar entry');
   });
-  test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+  test.fixme('can export multiple notebook entries as text', async ({ page }) => {});
   test.fixme('can export all notebook entry metdata', async ({ page }) => {});
   test.fixme('can export all notebook tags', async ({ page }) => {});
   test.fixme('can export all notebook snapshots', async ({ page }) => {});

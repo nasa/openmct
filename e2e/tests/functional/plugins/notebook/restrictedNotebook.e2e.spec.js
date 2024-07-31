@@ -173,7 +173,7 @@ test.describe('can export restricted notebook as text', () => {
     await startAndAddRestrictedNotebookObject(page);
   });
 
-  test('basic functionality ', async ({ page }) => {
+  test('basic functionality', async ({ page }) => {
     await enterTextEntry(page, `Foo bar entry`);
     // Click on 3 Dot Menu
     await page.locator('button[title="More actions"]').click();
@@ -190,7 +190,7 @@ test.describe('can export restricted notebook as text', () => {
     expect(exportedText).toContain('Foo bar entry');
   });
 
-  test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+  test.fixme('can export multiple notebook entries as text', async ({ page }) => {});
   test.fixme('can export all notebook entry metdata', async ({ page }) => {});
   test.fixme('can export all notebook tags', async ({ page }) => {});
   test.fixme('can export all notebook snapshots', async ({ page }) => {});

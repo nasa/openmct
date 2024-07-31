@@ -75,18 +75,12 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     const TEST_FIXED_END_TIME = TEST_FIXED_START_TIME + 3600000; // 2024-11-11 20:11:11.000Z
 
     // Verify the ITC has the expected initial bounds
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('Start bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_START_BOUNDS);
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('End bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_END_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
 
     // Update the global fixed bounds to 2024-11-11 19:11:11.000Z / 2024-11-11 20:11:11.000Z
     const url = page.url().split('?')[0];
@@ -98,18 +92,12 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     );
 
     // ITC bounds should still match the initial ITC bounds
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('Start bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_START_BOUNDS);
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('End bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_END_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
 
     // Open the Child Overlay Plot 1 in a new tab
     await page.getByLabel('View menu items').click();
@@ -120,28 +108,22 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     await newPage.waitForLoadState('domcontentloaded');
 
     // Verify that the global time conductor bounds in the new page match the updated global bounds
-    expect(
-      await newPage.getByLabel('Global Time Conductor').getByLabel('Start bounds').textContent()
-    ).toEqual(NEW_GLOBAL_START_BOUNDS);
-    expect(
-      await newPage.getByLabel('Global Time Conductor').getByLabel('End bounds').textContent()
-    ).toEqual(NEW_GLOBAL_END_BOUNDS);
+    await expect(newPage.getByLabel('Global Time Conductor').getByLabel('Start bounds')).toHaveText(
+      NEW_GLOBAL_START_BOUNDS
+    );
+    await expect(newPage.getByLabel('Global Time Conductor').getByLabel('End bounds')).toHaveText(
+      NEW_GLOBAL_END_BOUNDS
+    );
 
     // Verify that the ITC is enabled in the new page
     await expect(newPage.getByLabel('Disable Independent Time Conductor')).toBeVisible();
     // Verify that the ITC bounds in the new page match the original ITC bounds
-    expect(
-      await newPage
-        .getByLabel('Independent Time Conductor Panel')
-        .getByLabel('Start bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_START_BOUNDS);
-    expect(
-      await newPage
-        .getByLabel('Independent Time Conductor Panel')
-        .getByLabel('End bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_END_BOUNDS);
+    await expect(
+      newPage.getByLabel('Independent Time Conductor Panel').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      newPage.getByLabel('Independent Time Conductor Panel').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
   });
 });
 

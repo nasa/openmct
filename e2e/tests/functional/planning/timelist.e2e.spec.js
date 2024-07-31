@@ -66,7 +66,7 @@ test.describe('Time List', () => {
       // Verify all events are displayed
       const eventCount = await page.getByRole('row').count();
       // subtracting one for the header
-      await expect(eventCount - 1).toEqual(firstGroupItems.length);
+      expect(eventCount - 1).toEqual(firstGroupItems.length);
     });
 
     await test.step('Does not show milliseconds in times', async () => {
@@ -142,7 +142,7 @@ test("View a timelist in expanded view, verify all the activities are displayed 
 
     // Verify all events are displayed
     const eventCount = await page.getByRole('row').count();
-    await expect(eventCount).toEqual(firstGroupItems.length);
+    expect(eventCount).toEqual(firstGroupItems.length);
   });
 
   await test.step('Shows activity properties when a row is selected in the expanded view', async () => {
@@ -158,7 +158,7 @@ test("View a timelist in expanded view, verify all the activities are displayed 
 
   await test.step("Verify absence of progress indication for an activity that's not in progress", async () => {
     // When an activity is not in progress, the progress pie is not visible
-    const hidden = await page.getByRole('row').locator('path').nth(1).isHidden();
-    await expect(hidden).toBe(true);
+    const hidden = page.getByRole('row').locator('path').nth(1);
+    await expect(hidden).toBeHidden();
   });
 });

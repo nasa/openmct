@@ -351,8 +351,8 @@ test.describe('Example Imagery Object', () => {
   });
 
   test('Uses low fetch priority', async ({ page }) => {
-    const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
-    expect(priority).toBe('low');
+    const priority = page.locator('.js-imageryView-image');
+    await expect(priority).toHaveAttribute('fetchpriority', 'low');
   });
 });
 
@@ -557,38 +557,7 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
     await page.getByRole('button', { name: 'Close' }).click();
   });
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-    flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
-    await page.goto(flexibleLayout.url);
-
-    /* Create Sine Wave Generator with minimum Image Load Delay */
-    // Click the Create button
-    await page.getByRole('button', { name: 'Create' }).click();
-
-    // Click text=Example Imagery
-    await page.click('li[role="menuitem"]:has-text("Example Imagery")');
-
-    // Clear and set Image load delay to minimum value
-    await page.locator('input[type="number"]').fill('');
-    await page.locator('input[type="number"]').fill('5000');
-
-    // Click text=OK
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-      page.click('button:has-text("OK")'),
-      //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
-    ]);
-
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
-      'Unnamed Example Imagery'
-    );
-
-    await page.goto(flexibleLayout.url);
-  });
-  test('Imagery View operations @unstable', async ({ page, browserName }) => {
+  test('Imagery View operations @clock', async ({ page, browserName }) => {
     test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
     test.info().annotations.push({
       type: 'issue',
@@ -867,8 +836,8 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function panZoomAndAssertImageProperties(page) {
-  const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-  expect(expectedAltText).toEqual(imageryHintsText);
+  const imageryHintsText = page.locator('.c-imagery__hints');
+  await expect(expectedAltText).toHaveText(imageryHintsText);
   const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
   const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
@@ -1080,14 +1049,19 @@ async function createImageryViewWithShortDelay(page, { name, parent }) {
   await page.getByLabel('More actions').click();
   await page.getByLabel('Edit Properties').click();
   // Clear and set Image load delay to minimum value
-  await page.locator('input[type="number"]').fill('');
-  await page.locator('input[type="number"]').fill('5000');
+  await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
+  await page.getByLabel('Save').click();
+}
 
-  // Click text=OK
-  await Promise.all([
-    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-    page.click('button:has-text("OK")'),
-    //Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+// eslint-disable-next-line require-await
+async function waitForZoomAndPanTransitions(page) {
+  // Wait for image to stabilize
+  await page.getByLabel('Focused Image Element').hover({ trial: true });
+  // Wait for zoom to end
+  await expect(page.getByLabel('Focused Image Element')).not.toHaveClass(/is-zooming|is-panning/);
+  // Wait for image to stabilize
+  await page.getByLabel('Focused Image Element').hover({ trial: true });
 }

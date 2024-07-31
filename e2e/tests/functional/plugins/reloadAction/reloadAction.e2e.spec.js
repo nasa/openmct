@@ -76,11 +76,10 @@ test.describe('Reload action', () => {
   });
 
   test('can reload display layout and its children', async ({ page }) => {
-    const beforeReloadAlphaTelemetryValue = await page
+    const beforeReloadAlphaTelemetryValue = page
       .getByLabel('Alpha Table table content')
       .getByLabel('wavelengths table cell')
-      .first()
-      .getAttribute('title');
+      .first();
     const beforeReloadBetaTelemetryValue = await page
       .getByLabel('Beta Table table content')
       .getByLabel('wavelengths table cell')
@@ -101,7 +100,10 @@ test.describe('Reload action', () => {
       .first()
       .getAttribute('title');
 
-    expect(beforeReloadAlphaTelemetryValue).not.toEqual(afterReloadAlphaTelemetryValue);
+    await expect(beforeReloadAlphaTelemetryValue).not.toHaveAttribute(
+      'title',
+      afterReloadAlphaTelemetryValue
+    );
     expect(beforeReloadBetaTelemetryValue).toEqual(afterReloadBetaTelemetryValue);
 
     // now reload parent

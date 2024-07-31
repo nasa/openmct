@@ -219,7 +219,7 @@ test.describe('Testing LAD table configuration', () => {
   test("LAD Tables don't allow selection of rows but does show context click menus", async ({
     page
   }) => {
-    const cell = await page.locator('.js-first-data');
+    const cell = page.locator('.js-first-data');
     const userSelectable = await cell.evaluate((el) => {
       return window.getComputedStyle(el).getPropertyValue('user-select');
     });

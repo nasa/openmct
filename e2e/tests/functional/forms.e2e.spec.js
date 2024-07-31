@@ -87,8 +87,8 @@ test.describe('Form File Input Behavior', () => {
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    const type = await page.locator('#file-input-type').textContent();
-    await expect(type).toBe(`"string"`);
+    const type = page.locator('#file-input-type');
+    await expect(type).toHaveText(`"string"`);
   });
 
   test('Can select an image file type', async ({ page }) => {
@@ -101,8 +101,8 @@ test.describe('Form File Input Behavior', () => {
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    const type = await page.locator('#file-input-type').textContent();
-    await expect(type).toBe(`"object"`);
+    const type = page.locator('#file-input-type');
+    await expect(type).toHaveText(`"object"`);
   });
 });
 

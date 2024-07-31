@@ -141,12 +141,12 @@ test.describe('ExportAsJSON Disabled Actions', () => {
   });
   test('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
     await page.getByLabel('More actions').click();
-    await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
+    await expect(page.getByLabel('Export as JSON')).toHaveCount(0);
 
     await page.getByRole('treeitem', { name: 'Fault Management' }).click({
       button: 'right'
     });
-    await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
+    await expect(page.getByLabel('Export as JSON')).toHaveCount(0);
   });
 });
 test.describe('ExportAsJSON ProgressBar @couchdb', () => {

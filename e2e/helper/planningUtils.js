@@ -101,8 +101,8 @@ export async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
   for (let i = 0; i < groups.length; i++) {
     // Assert that the order of groups in the plan view matches the order of
     // groups in the plan data
-    const groupName = await planGroups[i].innerText();
-    expect(groupName).toEqual(groups[i].name);
+    const groupName = planGroups[i];
+    await expect(groupName).toHaveText(groups[i].name);
   }
 }
 

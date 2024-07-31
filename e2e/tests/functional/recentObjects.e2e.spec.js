@@ -235,9 +235,7 @@ test.describe('Recent Objects', () => {
       .getByRole('listitem', { name: clock.name })
       .getByRole('navigation');
     expect(await clockBreadcrumbs.count()).toBe(2);
-    expect(await clockBreadcrumbs.nth(0).innerText()).not.toEqual(
-      await clockBreadcrumbs.nth(1).innerText()
-    );
+    await expect(clockBreadcrumbs.nth(0)).not.toHaveText(await clockBreadcrumbs.nth(1).innerText());
   });
   test('Enforces a limit of 20 recent objects and clears the recent objects', async ({ page }) => {
     // Creating 21 objects takes a while, so increase the timeout
@@ -303,9 +301,7 @@ test.describe('Recent Objects', () => {
     expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
 
     // Assert that the button is enabled
-    expect(await page.getByRole('button', { name: 'Clear Recently Viewed' }).isEnabled()).toBe(
-      true
-    );
+    await expect(page.getByRole('button', { name: 'Clear Recently Viewed' })).toBeEnabled();
 
     // Click the aria-label="Clear Recently Viewed" button
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
@@ -317,9 +313,7 @@ test.describe('Recent Objects', () => {
     expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
 
     // Assert that the button is disabled
-    expect(await page.getByRole('button', { name: 'Clear Recently Viewed' }).isEnabled()).toBe(
-      false
-    );
+    await expect(page.getByRole('button', { name: 'Clear Recently Viewed' })).toBeDisabled();
 
     // Navigate to folder object
     await page.goto(folderA.url);
@@ -328,9 +322,7 @@ test.describe('Recent Objects', () => {
     expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(1);
 
     // Assert that the button is enabled
-    expect(await page.getByRole('button', { name: 'Clear Recently Viewed' }).isEnabled()).toBe(
-      true
-    );
+    await expect(page.getByRole('button', { name: 'Clear Recently Viewed' })).toBeEnabled();
 
     // Assert initial state of pane and collapse the Recent Objects panel
     await expect(page.getByLabel('Expand Recently Viewed Pane')).toBeHidden();

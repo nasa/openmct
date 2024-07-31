@@ -277,7 +277,7 @@ test.describe('Stacked Plot', () => {
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
-    let legendProperties = await page.locator('[aria-label="Legend Properties"]');
+    const legendProperties = page.getByLabel('Legend Properties');
     await legendProperties.locator('[title="Display legends per sub plot."]~div input').uncheck();
 
     await assertAggregateLegendIsVisible(page);

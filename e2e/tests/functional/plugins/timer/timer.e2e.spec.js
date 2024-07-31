@@ -214,11 +214,11 @@ async function assertTimerStateAfterAction(page, action) {
     case 'Start':
     case 'Restart at 0':
       timerStateClass = 'is-started';
-      expect(await timerValue.innerText()).toBe('0D 00:00:00');
+      await expect(timerValue).toHaveText('0D 00:00:00');
       break;
     case 'Stop':
       timerStateClass = 'is-stopped';
-      expect(await timerValue.innerText()).toBe('--:--:--');
+      await expect(timerValue).toHaveText('--:--:--');
       break;
     case 'Pause':
       timerStateClass = 'is-paused';
@@ -242,10 +242,10 @@ async function assertTimerElements(page, timer) {
   const timerDirectionIcon = page.locator('.c-timer__direction');
   const timerValue = page.locator('.c-timer__value');
 
-  expect(await page.locator('.l-browse-bar__object-name').innerText()).toBe(timer.name);
-  expect(timerElement).toBeAttached();
-  expect(resetButton).toBeAttached();
-  expect(pausePlayButton).toBeAttached();
-  expect(timerDirectionIcon).toBeAttached();
-  expect(timerValue).toBeAttached();
+  await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer.name);
+  await expect(timerElement).toBeAttached();
+  await expect(resetButton).toBeAttached();
+  await expect(pausePlayButton).toBeAttached();
+  await expect(timerDirectionIcon).toBeAttached();
+  await expect(timerValue).toBeAttached();
 }

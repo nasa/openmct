@@ -107,8 +107,8 @@ test.describe('Sine Wave Generator', () => {
     await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
     await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
 
-    const value = await page.locator('.field.control.l-input-sm input').first().inputValue();
-    await expect(value).toBe('6');
+    const value = page.locator('.field.control.l-input-sm input').first();
+    await expect(value).toHaveValue('6');
 
     //Click text=OK
     await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
