@@ -211,11 +211,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.
@@ -307,11 +303,7 @@ test.describe('Validate Overlay Plot with Telemetry Object @localStorage @genera
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.
@@ -352,11 +344,7 @@ test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorag
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(plotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.
