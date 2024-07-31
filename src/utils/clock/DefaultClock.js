@@ -83,11 +83,11 @@ export default class DefaultClock extends EventEmitter {
   }
 
   stop() {
-    // Not implemented
+    throw new Error("Method 'stop()' must be implemented.");
   }
 
   start() {
-    // Not implemented
+    throw new Error("Method 'start()' must be implemented.");
   }
 
   /**

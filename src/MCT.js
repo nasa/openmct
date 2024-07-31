@@ -95,13 +95,9 @@ export class MCT extends EventEmitter {
     super();
 
     this.buildInfo = {
-      // @ts-ignore
       version: __OPENMCT_VERSION__,
-      // @ts-ignore
       buildDate: __OPENMCT_BUILD_DATE__,
-      // @ts-ignore
       revision: __OPENMCT_REVISION__,
-      // @ts-ignore
       branch: __OPENMCT_BUILD_BRANCH__
     };
 

@@ -71,7 +71,7 @@ class VisibilityObserver {
    * @returns {boolean}
    */
   #inOverlay() {
-    return Boolean(this.#element?.closest('.js-overlay'));
+    return this.#element?.closest('.js-overlay');
   }
 
   #observerCallback = (entries) => {

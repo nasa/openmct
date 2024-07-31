@@ -74,8 +74,8 @@ export function millisecondsToDHMS(numericDuration) {
 export function getPreciseDuration(
   value,
   { excludeMilliSeconds, useDayFormat } = {
-    excludeMilliSeconds: undefined,
-    useDayFormat: undefined
+    excludeMilliSeconds: null,
+    useDayFormat: null
   }
 ) {
   let preciseDuration;
