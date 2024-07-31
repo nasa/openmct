@@ -60,7 +60,7 @@ test.describe('Restricted Notebook', () => {
     await Promise.all([
       page.waitForNavigation(),
       page.locator('button:has-text("OK")').click(),
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // has been deleted

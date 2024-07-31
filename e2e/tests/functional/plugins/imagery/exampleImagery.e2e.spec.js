@@ -597,7 +597,7 @@ test.describe('Example Imagery in Tabs View @clock', () => {
       page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
       page.click('button:has-text("OK")'),
       //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(
@@ -836,8 +836,7 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function panZoomAndAssertImageProperties(page) {
-  const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-  expect(expectedAltText).toEqual(imageryHintsText);
+  await expect(page.locator('.c-imagery__hints')).toContainText(expectedAltText);
   const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
   const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;

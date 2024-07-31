@@ -207,6 +207,7 @@ const extendedTest = test.extend({
     // Assert against console errors during teardown
     if (failOnConsoleError) {
       messages.forEach((msg) =>
+        // eslint-disable-next-line playwright/no-standalone-expect
         expect
           .soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`)
           .not.toEqual('error')

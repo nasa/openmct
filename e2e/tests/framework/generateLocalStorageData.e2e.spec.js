@@ -270,7 +270,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
       page.waitForNavigation(),
       page.locator('text=OK').click(),
       //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // focus the overlay plot

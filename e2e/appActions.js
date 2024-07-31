@@ -110,7 +110,7 @@ async function createDomainObjectWithDefaults(
     page.waitForLoadState(),
     await page.getByRole('button', { name: 'Save' }).click(),
     // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
+    page.locator('.c-message-banner__message').hover({ trial: true })
   ]);
 
   // Wait until the URL is updated
@@ -204,7 +204,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     page.waitForLoadState(),
     page.click('[aria-label="Save"]'),
     // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
+    page.locator('.c-message-banner__message').hover({ trial: true })
   ]);
 
   // Wait until the URL is updated

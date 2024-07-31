@@ -73,11 +73,11 @@ test.describe('Autoscale', () => {
     await Promise.all([
       page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
       //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
     //Wait until Save Banner is gone
     await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+    await page.locator('.c-message-banner__message').waitFor({ state: 'detached' });
 
     // Make sure that after turning off autoscale, the user entered range values are reflected in the ticks.
     await testYTicks(page, [

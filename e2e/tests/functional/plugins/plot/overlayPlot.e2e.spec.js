@@ -136,7 +136,7 @@ test.describe('Overlay Plot', () => {
     await page.goto(overlayPlot.url);
 
     // Assert that no limit lines are shown by default
-    await page.waitForSelector('.js-limit-area', { state: 'attached' });
+    await page.locator('.js-limit-area').waitFor({ state: 'attached' });
     expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
 
     // Enter edit mode
@@ -381,7 +381,7 @@ async function assertLimitLinesExistAndAreVisible(page) {
   // Wait for plot series data to load
   await waitForPlotsToRender(page);
   // Wait for limit lines to be created
-  await page.waitForSelector('.js-limit-area', { state: 'attached' });
+  await page.locator('.js-limit-area').waitFor({ state: 'attached' });
   // There should be 10 limit lines created by default
   await expect(page.locator('.c-plot-limit-line')).toHaveCount(10);
   const limitLineCount = await page.locator('.c-plot-limit-line').count();

@@ -62,9 +62,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     await selectFaultItem(page, 1);
 
     await page.getByRole('tab', { name: 'Config' }).click();
-    const selectedFaultName = page.locator(
-      '.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname'
-    );
+
     const inspectorFaultName = page
       .getByLabel('Source inspector properties')
       .getByLabel('inspector property value');

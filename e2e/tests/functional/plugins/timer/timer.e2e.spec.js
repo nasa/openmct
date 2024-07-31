@@ -66,11 +66,9 @@ test.describe('Timer', () => {
 });
 
 test.describe('Timer with target date @clock', () => {
-  let timer;
-
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
+    await createDomainObjectWithDefaults(page, { type: 'timer' });
   });
 
   // Override clock
