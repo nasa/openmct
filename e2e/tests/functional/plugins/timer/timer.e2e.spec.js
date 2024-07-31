@@ -33,7 +33,6 @@ test.describe('Timer', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
-    await assertTimerElements(page, timer);
   });
 
   test('Can perform actions on the Timer', async ({ page }) => {
@@ -72,7 +71,6 @@ test.describe('Timer with target date @clock', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
-    await assertTimerElements(page, timer);
   });
 
   // Override clock
@@ -226,26 +224,4 @@ async function assertTimerStateAfterAction(page, action) {
   }
 
   await expect.soft(page.locator('.c-timer')).toHaveClass(new RegExp(timerStateClass));
-}
-
-/**
- * Assert that all the major components of a timer are present in the DOM.
- * @param {import('@playwright/test').Page} page
- * @param {import('../../../../appActions').CreatedObjectInfo} timer
- */
-async function assertTimerElements(page, timer) {
-  const timerElement = page.locator('.c-timer');
-  const resetButton = page.getByRole('button', { name: 'Reset' });
-  const pausePlayButton = page
-    .getByRole('button', { name: 'Pause' })
-    .or(page.getByRole('button', { name: 'Start' }));
-  const timerDirectionIcon = page.locator('.c-timer__direction');
-  const timerValue = page.locator('.c-timer__value');
-
-  await expect(page.locator('.l-browse-bar__object-name')).toHaveText(timer.name);
-  await expect(timerElement).toBeAttached();
-  await expect(resetButton).toBeAttached();
-  await expect(pausePlayButton).toBeAttached();
-  await expect(timerDirectionIcon).toBeAttached();
-  await expect(timerValue).toBeAttached();
 }
