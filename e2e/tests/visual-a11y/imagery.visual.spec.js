@@ -64,6 +64,10 @@ test.describe('Visual - Example Imagery', () => {
   test('Example Imagery in Fixed Time', async ({ page, theme }) => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
 
+    // Wait for the thumbnails to finish their scroll animation
+    // (Wait until the rightmost thumbnail is in view)
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
+
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();
 
     await percySnapshot(page, `Example Imagery in Fixed Time (theme: ${theme})`);
@@ -76,6 +80,9 @@ test.describe('Visual - Example Imagery', () => {
   test('Example Imagery in Real Time', async ({ page, theme }) => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
 
+    // Wait for the thumbnails to finish their scroll animation
+    // (Wait until the rightmost thumbnail is in view)
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
     await setRealTimeMode(page, true);
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();

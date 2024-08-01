@@ -29,45 +29,6 @@ export default class CompsTelemetryProvider {
 
   constructor(openmct) {
     this.#openmct = openmct;
-    this.#loadComposition();
-    this.#startSharedWorker();
-  }
-
-  async #loadComposition() {
-    this.#composition = this.#openmct.composition.get(this.domainObject);
-    if (this.#composition) {
-      await this.#composition.load();
-      // load all of our telemetry objects
-      this.#composition.forEach(this.#addTelemetryObject);
-
-      this.#composition.on('add', this.#addTelemetryObject);
-      this.#composition.on('remove', this.#removeTelemetryObject);
-    }
-  }
-
-  destroy() {
-    this.#composition.off('add', this.#addTelemetryObject);
-    this.#composition.off('remove', this.removeTelemetryObject);
-  }
-
-  #addTelemetryObject(telemetryObject) {
-    const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
-    this.#telemetryObjects[keyString] = telemetryObject;
-    this.#telemetryCollections[keyString] =
-      this.#openmct.telemetry.requestCollection(telemetryObject);
-
-    this.#telemetryCollections[keyString].on('add', this.#telemetryProcessor);
-    this.#telemetryCollections[keyString].on('clear', this.#clearData);
-    this.#telemetryCollections[keyString].load();
-  }
-
-  #telemetryProcessor(telemetryObjects) {
-    console.debug('📡 Processing telemetry:', telemetryObjects);
-  }
-
-  #clearData() {
-    // clear data
-    console.debug('🆑 Clearing data');
   }
 
   #removeTelemetryObject(telemetryObject) {

@@ -27,11 +27,12 @@ import CompsView from './components/CompsView.vue';
 const DEFAULT_VIEW_PRIORITY = 100;
 
 export default class ConditionSetViewProvider {
-  constructor(openmct) {
+  constructor(openmct, compsManagerPool) {
     this.openmct = openmct;
     this.name = 'Comps View';
     this.key = 'comps.view';
     this.cssClass = 'icon-telemetry';
+    this.compsManagerPool = compsManagerPool;
   }
 
   canView(domainObject, objectPath) {
@@ -57,14 +58,15 @@ export default class ConditionSetViewProvider {
             provide: {
               openmct: this.openmct,
               domainObject,
-              objectPath
+              objectPath,
+              compsManagerPool: this.compsManagerPool
             },
             data() {
               return {
                 isEditing
               };
             },
-            template: '<comps :isEditing="isEditing"></comps>'
+            template: '<CompsView :isEditing="isEditing"></CompsView>'
           },
           {
             app: this.openmct.app,

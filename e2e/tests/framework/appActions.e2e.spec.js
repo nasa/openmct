@@ -24,14 +24,18 @@ import {
   createDomainObjectWithDefaults,
   createNotification,
   expandEntireTree,
-  openObjectTreeContextMenu
+  openObjectTreeContextMenu,
+  setFixedTimeMode,
+  setRealTimeMode,
+  setTimeConductorBounds
 } from '../../appActions.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('AppActions', () => {
-  test('createDomainObjectsWithDefaults', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-
+  });
+  test('createDomainObjectsWithDefaults', async ({ page }) => {
     const e2eFolder = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'e2e folder'
@@ -91,7 +95,6 @@ test.describe('AppActions', () => {
     });
   });
   test('createNotification', async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createNotification(page, {
       message: 'Test info notification',
       severity: 'info'
@@ -115,8 +118,6 @@ test.describe('AppActions', () => {
     await page.locator('[aria-label="Dismiss"]').click();
   });
   test('expandEntireTree', async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-
     const rootFolder = await createDomainObjectWithDefaults(page, {
       type: 'Folder'
     });
@@ -168,12 +169,30 @@ test.describe('AppActions', () => {
     expect(await locatorTreeCollapsedItems.count()).toBe(0);
   });
   test('openObjectTreeContextMenu', async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-
     const folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder'
     });
     await openObjectTreeContextMenu(page, folder.url);
     await expect(page.getByLabel(`${folder.name} Context Menu`)).toBeVisible();
+  });
+  test('setTimeConductorMode', async ({ page }) => {
+    await setFixedTimeMode(page);
+    await expect(page.getByLabel('Start bounds:')).toBeVisible();
+    await expect(page.getByLabel('End bounds:')).toBeVisible();
+    await setRealTimeMode(page);
+    await expect(page.getByLabel('Start offset')).toBeVisible();
+    await expect(page.getByLabel('End offset')).toBeVisible();
+  });
+  test('setTimeConductorBounds', async ({ page }) => {
+    // Assume in real-time mode by default
+    await setFixedTimeMode(page);
+    await setTimeConductorBounds(page, {
+      startDate: '2024-01-01',
+      endDate: '2024-01-02',
+      startTime: '00:00:00',
+      endTime: '23:59:59'
+    });
+    await expect(page.getByLabel('Start bounds: 2024-01-01 00:00:00')).toBeVisible();
+    await expect(page.getByLabel('End bounds: 2024-01-02 23:59:59')).toBeVisible();
   });
 });

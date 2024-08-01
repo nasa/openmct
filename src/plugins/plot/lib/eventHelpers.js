@@ -19,8 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*jscs:disable disallowDanglingUnderscores */
 
+/**
+ * @type {EventHelpers}
+ */
 const helperFunctions = {
   listenTo: function (object, event, callback, context) {
     if (!this._listeningTo) {
@@ -94,7 +96,7 @@ export default helperFunctions;
 
 /**
 @typedef {{
-    listenTo: (object: any, event: any, callback: any, context: any) => void
+    listenTo: (object: any, event: any, callback: any, context: any) => void,
     stopListening: (object: any, event: any, callback: any, context: any) => void
 }} EventHelpers
 */

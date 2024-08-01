@@ -88,6 +88,9 @@ import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
 import CompsPlugin from './comps/plugin.js';
 
+/**
+ * @type {Object}
+ */
 const plugins = {};
 
 plugins.example = {};

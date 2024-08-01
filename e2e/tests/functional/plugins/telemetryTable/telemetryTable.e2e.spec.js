@@ -112,13 +112,14 @@ test.describe('Telemetry Table', () => {
 
     // Subtract 5 minutes from the current end bound datetime and set it
     // Bring up the time conductor popup
-    let endDate = await page.locator('[aria-label="End bounds"]').textContent();
-    endDate = new Date(endDate);
+    let endTimeStamp = await page.getByLabel('End bounds').textContent();
+    endTimeStamp = new Date(endTimeStamp);
 
-    endDate.setUTCMinutes(endDate.getUTCMinutes() - 5);
-    endDate = endDate.toISOString().replace(/T/, ' ');
+    endTimeStamp.setUTCMinutes(endTimeStamp.getUTCMinutes() - 5);
+    const endDate = endTimeStamp.toISOString().split('T')[0];
+    const endTime = endTimeStamp.toISOString().split('T')[1];
 
-    await setTimeConductorBounds(page, undefined, endDate);
+    await setTimeConductorBounds(page, { endDate, endTime });
 
     await expect(tableWrapper).not.toHaveClass(/is-paused/);
 
@@ -131,7 +132,7 @@ test.describe('Telemetry Table', () => {
 
     // Verify that it is <= our new end bound
     const latestMilliseconds = Date.parse(latestTelemetryDate);
-    const endBoundMilliseconds = Date.parse(endDate);
+    const endBoundMilliseconds = Date.parse(endTimeStamp);
     expect(latestMilliseconds).toBeLessThanOrEqual(endBoundMilliseconds);
   });
 

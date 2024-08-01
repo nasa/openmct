@@ -21,19 +21,45 @@
 -->
 
 <template>
-    <div class="u-contents"></div>
+  <div class="u-contents">This is the comps view</div>
 </template>
 
-<script>
-export default {
-    inject: ['openmct', 'domainObject'],
-    mounted() { },
-    beforeUnmount() {
-        if (this.unobserve) {
-            this.unobserve();
-        }
+<script setup>
+import { inject, onBeforeUnmount, onMounted } from 'vue';
 
-        this.openmct.time.off('tick', this.tick);
-    }
-};
+import CompsManager from '../CompsManager';
+
+const openmct = inject('openmct');
+const domainObject = inject('domainObject');
+const compsManagerPool = inject('compsManagerPool');
+const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsManagerPool);
+const composition = openmct.composition.get(domainObject);
+
+onMounted(() => {
+  loadComposition();
+  console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
+});
+
+async function loadComposition() {
+  if (composition) {
+    composition.on('add', addTelemetryObject);
+    composition.on('remove', removeTelemetryObject);
+    await composition.load();
+  }
+}
+
+function addTelemetryObject(object) {
+  console.debug('📢 CompsView: addTelemetryObject', object);
+}
+
+function removeTelemetryObject(object) {
+  console.debug('❌ CompsView: removeTelemetryObject', object);
+}
+
+onBeforeUnmount(() => {
+  if (composition) {
+    composition.off('add', addTelemetryObject);
+    composition.off('remove', removeTelemetryObject);
+  }
+});
 </script>

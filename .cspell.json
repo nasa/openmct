@@ -481,9 +481,20 @@
     "specced",
     "composables",
     "countup",
-    "darkmatter"
+    "darkmatter",
+    "Undeletes"
   ],
-  "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
+  "dictionaries": [
+    "npm",
+    "softwareTerms",
+    "node",
+    "html",
+    "css",
+    "bash",
+    "en_US",
+    "en-gb",
+    "misc"
+  ],
   "ignorePaths": [
     "package.json",
     "dist/**",

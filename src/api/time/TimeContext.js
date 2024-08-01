@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
 import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants.js';
 
@@ -34,7 +34,7 @@ import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '.
 
 /**
  * @typedef {Object} TimeConductorBounds
- * @property {number} start The start time displayed by the time conductor
+ * @property {number } start The start time displayed by the time conductor
  * in ms since epoch. Epoch determined by currently active time system
  * @property {number} end The end time displayed by the time conductor in ms
  * since epoch.
@@ -301,7 +301,6 @@ class TimeContext extends EventEmitter {
       /**
        * Event that is triggered when clock offsets change.
        * @event clockOffsets
-       * @memberof module:openmct.TimeAPI~
        * @property {ClockOffsets} clockOffsets The newly activated clock
        * offsets.
        */
@@ -426,8 +425,8 @@ class TimeContext extends EventEmitter {
   /**
    * Set the time system of the TimeAPI.
    * Emits a "timeSystem" event with the new time system.
-   * @param {TimeSystem | string} timeSystemOrKey The time system to set, or its key
-   * @param {TimeConductorBounds} [bounds] Optional bounds to set
+   * @param {TimeSystem | string} timeSystemOrKey
+   * @param {TimeConductorBounds} bounds
    */
   setTimeSystem(timeSystemOrKey, bounds) {
     if (timeSystemOrKey === undefined) {
@@ -546,7 +545,6 @@ class TimeContext extends EventEmitter {
     /**
      * The active clock has changed.
      * @event clock
-     * @memberof module:openmct.TimeAPI~
      * @property {TimeContext} clock The newly activated clock, or undefined
      * if the system is no longer following a clock source
      */

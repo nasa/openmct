@@ -19,13 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 import { h } from 'vue';
 
 import MenuComponent from './components/MenuComponent.vue';
 import SuperMenuComponent from './components/SuperMenu.vue';
 
+/**
+ * Enum for menu placement options.
+ * @readonly
+ * @enum {string}
+ */
 export const MENU_PLACEMENT = {
   TOP: 'top',
   TOP_LEFT: 'top-left',
@@ -37,7 +42,15 @@ export const MENU_PLACEMENT = {
   RIGHT: 'right'
 };
 
+/**
+ * Class representing a menu.
+ * @extends EventEmitter
+ */
 class Menu extends EventEmitter {
+  /**
+   * Create a menu.
+   * @param {MenuOptions} options - The options for the menu.
+   */
   constructor(options) {
     super();
 
@@ -52,6 +65,9 @@ class Menu extends EventEmitter {
     this.showSuperMenu = this.showSuperMenu.bind(this);
   }
 
+  /**
+   * Dismiss the menu.
+   */
   dismiss() {
     if (this.destroy) {
       this.destroy();
@@ -61,6 +77,9 @@ class Menu extends EventEmitter {
     this.emit('destroy');
   }
 
+  /**
+   * Show the menu component.
+   */
   showMenu() {
     if (this.destroy) {
       return;
@@ -80,6 +99,9 @@ class Menu extends EventEmitter {
     this.show();
   }
 
+  /**
+   * Show the super menu component.
+   */
   showSuperMenu() {
     const { vNode, destroy } = mount({
       data() {
@@ -102,6 +124,9 @@ class Menu extends EventEmitter {
     this.show();
   }
 
+  /**
+   * Show the menu.
+   */
   show() {
     document.body.appendChild(this.el);
     document.addEventListener('click', this.dismiss);
@@ -109,3 +134,8 @@ class Menu extends EventEmitter {
 }
 
 export default Menu;
+
+/**
+ * @typedef {Object} MenuOptions
+ * @property {() => void} [onDestroy] - Callback function to be called when the menu is destroyed.
+ */

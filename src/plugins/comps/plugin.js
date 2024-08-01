@@ -23,6 +23,8 @@ import CompsTelemetryProvider from './CompsTelemetryProvider.js';
 import CompsViewProvider from './CompsViewProvider.js';
 
 export default function CompsPlugin() {
+  const compsManagerPool = {};
+
   return function install(openmct) {
     openmct.types.addType('comps', {
       name: 'Comps',
@@ -40,7 +42,7 @@ export default function CompsPlugin() {
     openmct.composition.addPolicy((parent, child) => {
       return openmct.telemetry.isTelemetryObject(child);
     });
-    openmct.telemetry.addProvider(new CompsTelemetryProvider(openmct));
-    openmct.objectViews.addProvider(new CompsViewProvider(openmct));
+    openmct.telemetry.addProvider(new CompsTelemetryProvider(openmct, compsManagerPool));
+    openmct.objectViews.addProvider(new CompsViewProvider(openmct, compsManagerPool));
   };
 }
