@@ -185,14 +185,14 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure Sine Wave headers are visible initially too
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and verify they columns are still hidden
     await page.getByLabel('Save').click();
@@ -206,14 +206,14 @@ test.describe('Testing LAD table configuration', () => {
     // Ensure Units & Limit columns are gone
     // as Event Generator don't have them
     await page.goto(ladTable.url);
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeHidden();
   });
 
   test("LAD Tables don't allow selection of rows but does show context click menus", async ({
