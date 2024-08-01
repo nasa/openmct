@@ -105,13 +105,7 @@ async function createDomainObjectWithDefaults(
     await input.fill(value);
   }
 
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    await page.getByRole('button', { name: 'Save' }).click(),
-    // Wait for Save Banner to appear
-    page.locator('.c-message-banner__message').hover({ trial: true })
-  ]);
+  await page.getByRole('button', { name: 'Save' }).click();
 
   // Wait until the URL is updated
   await page.waitForURL(`**/${parent}/*`);
@@ -199,13 +193,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
     buffer: Buffer.from(JSON.stringify(json))
   });
 
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    page.click('[aria-label="Save"]'),
-    // Wait for Save Banner to appear
-    page.locator('.c-message-banner__message').hover({ trial: true })
-  ]);
+  await page.getByLabel('Save').click();
 
   // Wait until the URL is updated
   await page.waitForURL(`**/${parent}/*`);
