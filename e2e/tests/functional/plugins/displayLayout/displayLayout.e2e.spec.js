@@ -243,12 +243,10 @@ test.describe('Display Layout', () => {
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the  Display Layout is the most recent value
     // from the Sine Wave Generator
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
-    const formattedTelemetryValue = getTelemValuePromise;
-    const displayLayoutValuePromise = await page.waitForSelector(
-      `text="${formattedTelemetryValue}"`
-    );
-    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
+    const formattedTelemetryValue = await getTelemValuePromise;
+    await expect(page.getByText(formattedTelemetryValue)).toBeVisible();
+    const displayLayoutValue = await page.getByText(formattedTelemetryValue).textContent();
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
@@ -286,18 +284,16 @@ test.describe('Display Layout', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
     await setStartOffset(page, { mins: '1' });
     await setFixedTimeMode(page);
 
     // On getting data, check if the value found in the Display Layout is the most recent value
     // from the Sine Wave Generator
-    const formattedTelemetryValue = getTelemValuePromise;
-    const displayLayoutValuePromise = await page.waitForSelector(
-      `text="${formattedTelemetryValue}"`
-    );
-    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const formattedTelemetryValue = await getTelemValuePromise;
+    await expect(page.getByText(formattedTelemetryValue)).toBeVisible();
+    const displayLayoutValue = await page.getByText(formattedTelemetryValue).textContent();
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);

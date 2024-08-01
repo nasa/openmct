@@ -273,10 +273,10 @@ test.describe('Testing LAD table', () => {
     // from the Sine Wave Generator
     const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     const subscribeTelemValue = await getTelemValuePromise;
-    const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
-    const ladTableValue = await ladTableValuePromise.textContent();
+    await expect(page.getByText(subscribeTelemValue)).toBeVisible();
+    const ladTableValue = await page.getByText(subscribeTelemValue).textContent();
 
-    expect(ladTableValue).toBe(subscribeTelemValue);
+    expect(ladTableValue).toEqual(subscribeTelemValue);
   });
   test('telemetry value exactly matches latest telemetry value received in fixed time', async ({
     page
@@ -305,10 +305,10 @@ test.describe('Testing LAD table', () => {
     // On getting data, check if the value found in the LAD table is the most recent value
     // from the Sine Wave Generator
     const subscribeTelemValue = await getTelemValuePromise;
-    const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
-    const ladTableValue = await ladTableValuePromise.textContent();
+    await expect(page.getByText(subscribeTelemValue)).toBeVisible();
+    const ladTableValue = await page.getByText(subscribeTelemValue).textContent();
 
-    expect(ladTableValue).toBe(subscribeTelemValue);
+    expect(ladTableValue).toEqual(subscribeTelemValue);
   });
 });
 

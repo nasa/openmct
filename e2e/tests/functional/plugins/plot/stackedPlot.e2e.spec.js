@@ -355,11 +355,9 @@ async function assertAggregateLegendIsVisible(page) {
   // Wait for plot series data to load
   await waitForPlotsToRender(page);
   // Wait for plot legend to be shown
-  await page.waitForSelector('.js-stacked-plot-legend', { state: 'attached' });
+  await expect(page.locator('.js-stacked-plot-legend')).toBeVisible();
   // There should be 3 legend items
-  expect(
-    await page
-      .locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
-      .count()
-  ).toBe(3);
+  await expect(
+    page.locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
+  ).toHaveCount(3);
 }
