@@ -239,7 +239,7 @@ test.describe('Stacked Plot', () => {
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
     // Expand config for the series
-    await page.getByLabel('Expand Sine Wave Generator A').click();
+    await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
 
     // turn off alarm markers
     await page.getByLabel('Alarm Markers').uncheck();
@@ -256,8 +256,7 @@ test.describe('Stacked Plot', () => {
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
     // Expand config for the series
-    //TODO Fix this locator
-    await page.getByLabel('Expand Sine Wave Generator A generator').click();
+    await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
 
     // Assert that alarm markers are still turned off
     await expect(

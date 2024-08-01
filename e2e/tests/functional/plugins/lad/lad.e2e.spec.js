@@ -56,61 +56,61 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure headers are visible initially
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // hide timestamp column
     await page.getByLabel('Timestamp', { exact: true }).uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // hide units & type column
     await page.getByLabel('Units').uncheck();
     await page.getByLabel('Type', { exact: true }).uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // hide WATCH column
     await page.getByLabel('WATCH').uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and verify they columns are still hidden
-    await page.locator('button[title="Save"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
@@ -118,27 +118,27 @@ test.describe('Testing LAD table configuration', () => {
 
     // show timestamp column
     await page.getByLabel('Timestamp', { exact: true }).check();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and make sure timestamp is still visible
-    await page.locator('button[title="Save"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
@@ -148,27 +148,27 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByLabel('Units').check();
     await page.getByLabel('Type', { exact: true }).check();
     await page.getByLabel('WATCH').check();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and make sure all columns are still visible
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
   });
 
   test('When adding something without Units, do not show Units column', async ({ page }) => {

@@ -100,10 +100,7 @@ test.describe('Reload action', () => {
       .first()
       .getAttribute('title');
 
-    await expect(beforeReloadAlphaTelemetryValue).not.toHaveAttribute(
-      'title',
-      afterReloadAlphaTelemetryValue
-    );
+    expect(beforeReloadAlphaTelemetryValue).not.toEqual(afterReloadAlphaTelemetryValue);
     expect(beforeReloadBetaTelemetryValue).toEqual(afterReloadBetaTelemetryValue);
 
     // now reload parent

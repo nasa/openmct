@@ -156,17 +156,17 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
   test('can add/remove Image to a single layout', async ({ page }) => {
     const layoutObject = 'Image';
     await test.step("Add and remove image element from the parent's layout", async () => {
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
       await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(1);
       await removeLayoutObject(page, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
     });
     await test.step("Add and remove image from the child's layout", async () => {
       await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(1);
       await removeLayoutObject(page, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
     });
   });
   test(`can add/remove Box to a single layout`, async ({ page }) => {
