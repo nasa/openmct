@@ -77,23 +77,16 @@ test.describe('Plot Controls', () => {
     await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
+
+    // turn off autoscale
     await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
 
-    // set minimum value
-    await page.getByRole('spinbutton').first().fill(-1);
-    // set maximum value
-    await page.getByRole('spinbutton').nth(1).fill(1);
+    await page.getByLabel('Y Axis 1 Minimum value').fill('-1');
+    await page.getByLabel('Y Axis 1 Maximum value').fill('1');
 
     // save
-    await page.click('button[title="Save"]');
-    await Promise.all([
-      page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
-      //Wait for Save Banner to appear
-      page.locator('.c-message-banner__message').hover({ trial: true })
-    ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.locator('.c-message-banner__message').waitFor({ state: 'detached' });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // hover over plot for plot controls
     await page.getByLabel('Plot Canvas').hover();
     // click on pause control
