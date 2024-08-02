@@ -51,17 +51,13 @@ test.describe('Restricted Notebook', () => {
     const restrictedNotebookTreeObject = page.locator(`a:has-text("${notebook.name}")`);
 
     // notebook tree object exists
-    expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
+    await expect(restrictedNotebookTreeObject).toHaveCount(1);
 
     // Click Remove Text
     await page.locator('li[role="menuitem"]:has-text("Remove")').click();
 
-    // Click 'OK' on confirmation window and wait for save banner to appear
-    await Promise.all([
-      page.waitForNavigation(),
-      page.locator('button:has-text("OK")').click(),
-      page.locator('.c-message-banner__message').hover({ trial: true })
-    ]);
+    // Click 'OK' on confirmation window
+    await page.locator('button:has-text("OK")').click();
 
     // has been deleted
     await expect(restrictedNotebookTreeObject).toHaveCount(0);
@@ -70,8 +66,7 @@ test.describe('Restricted Notebook', () => {
   test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
     await enterTextEntry(page, TEST_TEXT);
 
-    const commitButton = page.locator('button:has-text("Commit Entries")');
-    await expect(commitButton).toHaveCount(1);
+    await expect(page.getByLabel('Commit Entries')).toHaveCount(1);
   });
 });
 
@@ -93,11 +88,11 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     const lockMessage = page.locator(
       'text=This page has been committed and cannot be modified or removed'
     );
-    expect.soft(await lockMessage.count()).toEqual(1);
+    await expect(lockMessage).toHaveCount(1);
 
     // lock icon on page in sidebar
     const pageLockIcon = page.locator('ul.c-notebook__pages li div.icon-lock');
-    expect.soft(await pageLockIcon.count()).toEqual(1);
+    await expect(pageLockIcon).toHaveCount(1);
 
     // no way to remove a restricted notebook with a locked page
     await openObjectTreeContextMenu(page, notebook.url);
@@ -117,17 +112,14 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     await page.getByText('Unnamed Page').nth(1).fill(TEST_TEXT_NAME);
 
     // expect to be able to rename unlocked pages
-    const newPageElement = page.getByText(TEST_TEXT_NAME);
-    const newPageCount = await newPageElement.count();
-    await newPageElement.press('Enter'); // exit contenteditable state
-    expect(newPageCount).toEqual(1);
+    await page.getByText(TEST_TEXT_NAME).press('Enter'); // exit contenteditable state
+    await expect(page.locator('div').filter({ hasText: /^Test Page$/ })).toHaveCount(1);
 
     // enter test text
     await enterTextEntry(page, TEST_TEXT);
 
     // expect new page to be lockable
-    const commitButton = page.getByRole('button', { name: ' Commit Entries' });
-    await expect(commitButton).toHaveCount(1);
+    await expect(page.getByLabel('Commit Entries')).toHaveCount(1);
 
     // Click the context menu button for the new page
     await page.getByTitle('Open context menu').click();
