@@ -227,14 +227,14 @@ test.describe('Recent Objects', () => {
       .click();
 
     // Assert that two recent objects are displayed and one of them is an alias
-    expect(await recentObjectsList.getByRole('listitem', { name: clock.name }).count()).toBe(2);
-    expect(await recentObjectsList.locator('.is-alias').count()).toBe(1);
+    await expect(recentObjectsList.getByRole('listitem', { name: clock.name })).toHaveCount(2);
+    await expect(recentObjectsList.locator('.is-alias')).toHaveCount(1);
 
     // Assert that the alias and the original's breadcrumbs are different
     const clockBreadcrumbs = recentObjectsList
       .getByRole('listitem', { name: clock.name })
       .getByRole('navigation');
-    expect(await clockBreadcrumbs.count()).toBe(2);
+    await expect(clockBreadcrumbs).toHaveCount(2);
     await expect(clockBreadcrumbs.nth(0)).not.toHaveText(await clockBreadcrumbs.nth(1).innerText());
   });
   test('Enforces a limit of 20 recent objects and clears the recent objects', async ({ page }) => {
@@ -242,7 +242,7 @@ test.describe('Recent Objects', () => {
     test.slow();
 
     // Assert that the list initially contains 3 objects (clock, folder, my items)
-    expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
+    await expect(recentObjectsList.locator('.c-recentobjects-listitem')).toHaveCount(3);
 
     let lastFolder;
     let lastClock;
@@ -259,7 +259,7 @@ test.describe('Recent Objects', () => {
     }
 
     // Assert that the list contains 20 objects
-    expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(20);
+    await expect(recentObjectsList.locator('.c-recentobjects-listitem')).toHaveCount(20);
 
     // Collapse the tree
     await page.getByTitle('Collapse all tree items').click();
@@ -294,11 +294,11 @@ test.describe('Recent Objects', () => {
     await page.getByRole('button', { name: 'OK', exact: true }).click();
 
     // Assert that the list is empty
-    expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
+    await expect(recentObjectsList.locator('.c-recentobjects-listitem')).toHaveCount(0);
   });
   test('Verify functionality of "clear" and "collapse pane" buttons', async ({ page }) => {
     // Assert that the list initially contains 3 objects (clock, folder, my items)
-    expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(3);
+    await expect(recentObjectsList.locator('.c-recentobjects-listitem')).toHaveCount(3);
 
     // Assert that the button is enabled
     await expect(page.getByRole('button', { name: 'Clear Recently Viewed' })).toBeEnabled();
@@ -310,7 +310,7 @@ test.describe('Recent Objects', () => {
     await page.getByRole('button', { name: 'OK', exact: true }).click();
 
     // Assert that the list is empty
-    expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(0);
+    await expect(recentObjectsList.locator('.c-recentobjects-listitem')).toHaveCount(0);
 
     // Assert that the button is disabled
     await expect(page.getByRole('button', { name: 'Clear Recently Viewed' })).toBeDisabled();
@@ -319,7 +319,7 @@ test.describe('Recent Objects', () => {
     await page.goto(folderA.url);
 
     // Assert that the list contains 1 object
-    expect(await recentObjectsList.locator('.c-recentobjects-listitem').count()).toBe(1);
+    await expect(recentObjectsList.locator('.c-recentobjects-listitem')).toHaveCount(1);
 
     // Assert that the button is enabled
     await expect(page.getByRole('button', { name: 'Clear Recently Viewed' })).toBeEnabled();

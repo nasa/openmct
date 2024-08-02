@@ -93,7 +93,7 @@ test.describe('Overlay Plot', () => {
     await expect(page.getByLabel('Plot Legend Expanded')).toBeHidden();
     await expect(page.getByLabel('Expand by Default')).toHaveText(/No/);
 
-    expect(await page.getByLabel('Plot Legend Item').count()).toBe(3);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
 
     // Change the legend to expand by default
     await page.getByLabel('Edit Object').click();
@@ -137,7 +137,7 @@ test.describe('Overlay Plot', () => {
 
     // Assert that no limit lines are shown by default
     await page.locator('.js-limit-area').waitFor({ state: 'attached' });
-    expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
+    await expect(page.locator('.c-plot-limit-line')).toHaveCount(0);
 
     // Enter edit mode
     await page.getByLabel('Edit Object').click();

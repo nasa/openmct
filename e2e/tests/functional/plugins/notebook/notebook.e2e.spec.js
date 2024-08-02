@@ -383,7 +383,7 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await validLink.count()).toBe(1);
+    await expect(validLink).toHaveCount(1);
 
     // Start waiting for popup before clicking. Note no await.
     const popupPromise = page.waitForEvent('popup');
@@ -410,7 +410,7 @@ test.describe('Notebook entry tests', () => {
 
     const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await invalidLink.count()).toBe(0);
+    await expect(invalidLink).toHaveCount(0);
   });
   test('when a link is entered, but it is not in the whitelisted urls, it does not become clickable when viewing', async ({
     page
@@ -427,7 +427,7 @@ test.describe('Notebook entry tests', () => {
 
     const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await invalidLink.count()).toBe(0);
+    await expect(invalidLink).toHaveCount(0);
   });
   test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({
     page
@@ -444,7 +444,7 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${INVALID_TEST_LINK}"]`);
 
-    expect(await validLink.count()).toBe(1);
+    await expect(validLink).toHaveCount(1);
   });
   test('when a valid secure link is entered into a notebook entry, it becomes clickable when viewing', async ({
     page
@@ -461,7 +461,7 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await validLink.count()).toBe(1);
+    await expect(validLink).toHaveCount(1);
 
     // Start waiting for popup before clicking. Note no await.
     const popupPromise = page.waitForEvent('popup');
@@ -494,7 +494,7 @@ test.describe('Notebook entry tests', () => {
     const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
 
     expect.soft(await sanitizedLink.count()).toBe(1);
-    expect(await unsanitizedLink.count()).toBe(0);
+    await expect(unsanitizedLink).toHaveCount(0);
   });
   test('Can add markdown to a notebook entry', async ({ page }) => {
     await page.goto(notebookObject.url);

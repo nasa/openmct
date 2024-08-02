@@ -50,7 +50,7 @@ test.describe('Notifications List', () => {
     });
 
     // Verify that there is a button with aria-label "Review 2 Notifications"
-    expect(await page.locator('button[aria-label="Review 2 Notifications"]').count()).toBe(1);
+    await expect(page.locator('button[aria-label="Review 2 Notifications"]')).toHaveCount(1);
 
     // Click on button with aria-label "Review 2 Notifications"
     await page.click('button[aria-label="Review 2 Notifications"]');
@@ -72,7 +72,7 @@ test.describe('Notifications List', () => {
     await page.click('button[aria-label="Dismiss notification of Alert message"]');
 
     // Verify that there is no dialog since the notification overlay was closed automatically after all notifications were dismissed
-    expect(await page.locator('div[role="dialog"]').count()).toBe(0);
+    await expect(page.locator('div[role="dialog"]')).toHaveCount(0);
   });
 });
 

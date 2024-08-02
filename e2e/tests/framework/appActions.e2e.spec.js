@@ -153,7 +153,7 @@ test.describe('AppActions', () => {
       name: 'Main Tree'
     });
     const treePaneCollapsedItems = treePane.getByRole('treeitem', { expanded: false });
-    expect(await treePaneCollapsedItems.count()).toBe(0);
+    await expect(treePaneCollapsedItems).toHaveCount(0);
 
     await page.goto('./#/browse/mine');
     //Click the Create button
@@ -166,7 +166,7 @@ test.describe('AppActions', () => {
       name: 'Create Modal Tree'
     });
     const locatorTreeCollapsedItems = locatorTree.locator('role=treeitem[expanded=false]');
-    expect(await locatorTreeCollapsedItems.count()).toBe(0);
+    await expect(locatorTreeCollapsedItems).toHaveCount(0);
   });
   test('openObjectTreeContextMenu', async ({ page }) => {
     const folder = await createDomainObjectWithDefaults(page, {
