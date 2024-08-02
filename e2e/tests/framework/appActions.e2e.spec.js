@@ -28,8 +28,6 @@ import {
   createPlanFromJSON,
   expandEntireTree,
   getCanvasPixels,
-  getFocusedObjectUuid,
-  getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
   setEndOffset,
@@ -38,7 +36,6 @@ import {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
-  setTimeConductorMode,
   waitForPlotsToRender
 } from '../../appActions.js';
 import { assertPlanActivities, setBoundsToSpanAllActivities } from '../../helper/planningUtils.js';
@@ -227,12 +224,42 @@ test.describe('AppActions', () => {
     await expect(locatorTreeCollapsedItems).toHaveCount(0);
   });
   test('setTimeConductorMode', async ({ page }) => {
-    await setFixedTimeMode(page);
-    await expect(page.getByLabel('Start bounds:')).toBeVisible();
-    await expect(page.getByLabel('End bounds:')).toBeVisible();
-    await setRealTimeMode(page);
-    await expect(page.getByLabel('Start offset')).toBeVisible();
-    await expect(page.getByLabel('End offset')).toBeVisible();
+    await test.step('setFixedTimeMode', async () => {
+      await setFixedTimeMode(page);
+      await expect(page.getByLabel('Start bounds:')).toBeVisible();
+      await expect(page.getByLabel('End bounds:')).toBeVisible();
+    });
+    await test.step('setTimeConductorBounds', async () => {
+      await setTimeConductorBounds(page, {
+        startDate: '2024-01-01',
+        endDate: '2024-01-02',
+        startTime: '00:00:00',
+        endTime: '23:59:59'
+      });
+      await expect(page.getByLabel('Start bounds: 2024-01-01 00:00:00')).toBeVisible();
+      await expect(page.getByLabel('End bounds: 2024-01-02 23:59:59')).toBeVisible();
+    });
+    await test.step('setRealTimeMode', async () => {
+      await setRealTimeMode(page);
+      await expect(page.getByLabel('Start offset')).toBeVisible();
+      await expect(page.getByLabel('End offset')).toBeVisible();
+    });
+    await test.step('setStartOffset', async () => {
+      await setStartOffset(page, {
+        startHours: '04',
+        startMins: '20',
+        startSecs: '22'
+      });
+      await expect(page.getByLabel('Start offset: 04:20:22')).toBeVisible();
+    });
+    await test.step('setEndOffset', async () => {
+      await setEndOffset(page, {
+        endHours: '04',
+        endMins: '20',
+        endSecs: '22'
+      });
+      await expect(page.getByLabel('End offset: 04:20:22')).toBeVisible();
+    });
   });
   test('setTimeConductorBounds', async ({ page }) => {
     // Assume in real-time mode by default

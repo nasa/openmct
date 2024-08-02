@@ -628,8 +628,6 @@ export {
   createPlanFromJSON,
   expandEntireTree,
   getCanvasPixels,
-  getFocusedObjectUuid,
-  getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
   setEndOffset,
@@ -638,6 +636,5 @@ export {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
-  setTimeConductorMode,
   waitForPlotsToRender
 };
