@@ -23,7 +23,6 @@
 import {
   createDomainObjectWithDefaults,
   navigateToObjectWithRealTime,
-  openObjectTreeContextMenu,
   setFixedTimeMode,
   setRealTimeMode,
   setStartOffset
@@ -337,4 +336,19 @@ async function subscribeToTelemetry(page, objectIdentifier) {
   }, objectIdentifier);
 
   return getTelemValuePromise;
+}
+
+/**
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url the url to the object
+ */
+async function openObjectTreeContextMenu(page, url) {
+  await page.goto(url);
+  await page.getByLabel('Show selected item in tree').click();
+  await page.locator('.is-navigated-object').click({
+    button: 'right'
+  });
 }

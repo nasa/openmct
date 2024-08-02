@@ -24,7 +24,6 @@ import {
   createDomainObjectWithDefaults,
   createNotification,
   expandEntireTree,
-  openObjectTreeContextMenu,
   setFixedTimeMode,
   setRealTimeMode,
   setTimeConductorBounds
@@ -167,13 +166,6 @@ test.describe('AppActions', () => {
     });
     const locatorTreeCollapsedItems = locatorTree.locator('role=treeitem[expanded=false]');
     expect(await locatorTreeCollapsedItems.count()).toBe(0);
-  });
-  test('openObjectTreeContextMenu', async ({ page }) => {
-    const folder = await createDomainObjectWithDefaults(page, {
-      type: 'Folder'
-    });
-    await openObjectTreeContextMenu(page, folder.url);
-    await expect(page.getByLabel(`${folder.name} Context Menu`)).toBeVisible();
   });
   test('setTimeConductorMode', async ({ page }) => {
     await setFixedTimeMode(page);

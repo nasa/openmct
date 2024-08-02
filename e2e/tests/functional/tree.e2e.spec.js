@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults, renameObjectFromContextMenu } from '../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Main Tree', () => {
@@ -55,15 +55,13 @@ test.describe('Main Tree', () => {
   });
 
   test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @2p', async ({
-    page,
-    openmctConfig
+    page
   }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6391'
     });
 
-    const { myItemsFolderName } = openmctConfig;
     const page2 = await page.context().newPage();
 
     // Both pages: Go to baseURL
@@ -86,15 +84,13 @@ test.describe('Main Tree', () => {
   });
 
   test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @couchdb @2p', async ({
-    page,
-    openmctConfig
+    page
   }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6391'
     });
 
-    const { myItemsFolderName } = openmctConfig;
     const page2 = await page.context().newPage();
 
     // Both pages: Go to baseURL
@@ -227,4 +223,34 @@ async function getAndAssertTreeItems(page, expected) {
   // Get rid of root folder ('My Items') as its position will not change
   allTexts.shift();
   expect(allTexts).toEqual(expected);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} myItemsFolderName
+ * @param {string} url
+ * @param {string} newName
+ */
+async function renameObjectFromContextMenu(page, url, newName) {
+  await openObjectTreeContextMenu(page, url);
+  await page.locator('li:text("Edit Properties")').click();
+  const nameInput = page.getByLabel('Title', { exact: true });
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  await page.locator('[aria-label="Save"]').click();
+}
+
+/**
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url the url to the object
+ */
+async function openObjectTreeContextMenu(page, url) {
+  await page.goto(url);
+  await page.getByLabel('Show selected item in tree').click();
+  await page.locator('.is-navigated-object').click({
+    button: 'right'
+  });
 }

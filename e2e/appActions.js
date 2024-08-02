@@ -142,28 +142,25 @@ async function createNotification(page, createNotificationOptions) {
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
-  if (!name) {
-    name = `Plan:${genUuid()}`;
-  }
-
   const parentUrl = await getHashUrlToDomainObject(page, parent);
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
   await page.goto(`${parentUrl}`);
 
-  // Click the Create button
   await page.getByRole('button', { name: 'Create' }).click();
 
-  // Click 'Plan' menu option
-  await page.locator(`li:text("Plan")`).click();
+  await page.getByRole('menuitem', { name: 'Plan' }).click();
 
-  // Modify the name input field of the domain object to accept 'name'
+  // Fill in the name of the object or generate a random one
+  if (!name) {
+    name = `Plan:${genUuid()}`;
+  }
   await page.getByLabel('Title', { exact: true }).fill('');
   await page.getByLabel('Title', { exact: true }).fill(name);
 
   // Upload buffer from memory
-  await page.locator('input#fileElem').setInputFiles({
+  await page.getByRole('button', { name: 'Select File...' }).setInputFiles({
     name: 'plan.txt',
     mimeType: 'text/plain',
     buffer: Buffer.from(JSON.stringify(json))
@@ -197,10 +194,10 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 
   await page.getByRole('button', { name: 'Create' }).click();
 
-  await page.locator('li:has-text("Sine Wave Generator")').click();
+  await page.getByRole('menuitem', { name: 'Sine Wave Generator' }).click();
 
   const name = 'VIPER Rover Heading';
-  await page.getByRole('dialog').locator('input[type="text"]').fill(name);
+  await page.getByLabel('Title', { exact: true }).fill(name);
 
   // Fill out the fields with default values
   await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
@@ -248,21 +245,6 @@ async function navigateToObjectWithRealTime(page, url, start = '1800000', end = 
   await page.goto(
     `${url}?tc.mode=local&tc.startDelta=${start}&tc.endDelta=${end}&tc.timeSystem=utc`
   );
-}
-
-/**
- * Open the given `domainObject`'s context menu from the object tree.
- * Expands the path to the object and scrolls to it if necessary.
- *
- * @param {import('@playwright/test').Page} page
- * @param {string} url the url to the object
- */
-async function openObjectTreeContextMenu(page, url) {
-  await page.goto(url);
-  await page.getByLabel('Show selected item in tree').click();
-  await page.locator('.is-navigated-object').click({
-    button: 'right'
-  });
 }
 
 /**
@@ -629,21 +611,6 @@ async function getCanvasPixels(page, canvasSelector) {
   );
 }
 
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- * @param {string} url
- * @param {string} newName
- */
-async function renameObjectFromContextMenu(page, url, newName) {
-  await openObjectTreeContextMenu(page, url);
-  await page.locator('li:text("Edit Properties")').click();
-  const nameInput = page.getByLabel('Title', { exact: true });
-  await nameInput.fill('');
-  await nameInput.fill(newName);
-  await page.locator('[aria-label="Save"]').click();
-}
-
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -655,8 +622,6 @@ export {
   getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
-  openObjectTreeContextMenu,
-  renameObjectFromContextMenu,
   setEndOffset,
   setFixedTimeMode,
   setIndependentTimeConductorBounds,

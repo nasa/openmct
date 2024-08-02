@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-  createDomainObjectWithDefaults,
-  openObjectTreeContextMenu
-} from '../../../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { MISSION_TIME } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -144,7 +141,7 @@ test.describe('Timer with target date @clock', () => {
 async function triggerTimerContextMenuAction(page, timerUrl, action) {
   const menuAction = `.c-menu ul li >> text="${action}"`;
   await openObjectTreeContextMenu(page, timerUrl);
-  await page.locator(menuAction).click();
+  await await page.locator(menuAction).click();
   assertTimerStateAfterAction(page, action);
 }
 
@@ -222,4 +219,19 @@ async function assertTimerStateAfterAction(page, action) {
   }
 
   await expect.soft(page.locator('.c-timer')).toHaveClass(new RegExp(timerStateClass));
+}
+
+/**
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url the url to the object
+ */
+async function openObjectTreeContextMenu(page, url) {
+  await page.goto(url);
+  await page.getByLabel('Show selected item in tree').click();
+  await page.locator('.is-navigated-object').click({
+    button: 'right'
+  });
 }

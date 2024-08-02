@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { openObjectTreeContextMenu } from '../../../../appActions.js';
 import {
   dragAndDropEmbed,
   enterTextEntry,
@@ -193,3 +192,18 @@ test.describe('can export restricted notebook as text', () => {
   test.fixme('can export all notebook tags', async ({ page }) => {});
   test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });
+
+/**
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url the url to the object
+ */
+async function openObjectTreeContextMenu(page, url) {
+  await page.goto(url);
+  await page.getByLabel('Show selected item in tree').click();
+  await page.locator('.is-navigated-object').click({
+    button: 'right'
+  });
+}
