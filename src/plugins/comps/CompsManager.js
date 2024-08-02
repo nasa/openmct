@@ -59,7 +59,7 @@ export default class CompsManager extends EventEmitter {
     return 'a + b';
   }
 
-  #addTelemetryObject = (telemetryObject) => {
+  #addTelemetryObject = async (telemetryObject) => {
     console.debug('📢 CompsManager: #addTelemetryObject', telemetryObject);
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
     this.#telemetryObjects[keyString] = telemetryObject;
@@ -68,7 +68,7 @@ export default class CompsManager extends EventEmitter {
 
     this.#telemetryCollections[keyString].on('add', this.#telemetryProcessor);
     this.#telemetryCollections[keyString].on('clear', this.#clearData);
-    this.#telemetryCollections[keyString].load();
+    await this.#telemetryCollections[keyString].load();
   };
 
   static getCompsManager(domainObject, openmct, compsManagerPool) {

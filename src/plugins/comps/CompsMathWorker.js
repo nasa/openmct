@@ -41,8 +41,8 @@ function calculate(telemetryForComps, expression) {
   for (const [utc, sin1] of utcMap1.entries()) {
     if (utcMap2.has(utc)) {
       const sin2 = utcMap2.get(utc);
-      const sumSin = evaluate(expression, { a: sin1, b: sin2 });
-      sumResults.push({ utc, sumSin });
+      const output = evaluate(expression, { a: sin1, b: sin2 });
+      sumResults.push({ utc, output });
     }
   }
   return sumResults;
