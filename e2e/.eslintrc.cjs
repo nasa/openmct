@@ -2,13 +2,14 @@
 module.exports = {
   extends: ['plugin:playwright/recommended'],
   rules: {
-    'playwright/max-nested-describe': ['error', { max: 1 }]
+    'playwright/max-nested-describe': ['error', { max: 1 }],
+    'playwright/expect-expect': 'off'
   },
   overrides: [
     {
-      files: ['**/*.spec.js'], // Added the 'files' property
+      files: ['appActions.js', 'baseFixtures.js', 'pluginFixtures.js'],
       rules: {
-        'playwright/expect-expect': 'off'
+        'playwright/no-raw-locators': 2
       }
     }
   ]
