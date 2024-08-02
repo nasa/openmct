@@ -395,11 +395,11 @@ test.describe('Verify tooltips', () => {
     await page.keyboard.down('Control');
 
     //Hover over SWG3 in Telemetry Table
-    await page.locator('.noselect > [title="SWG 3"]').first().hover();
+    await page.locator('.noselect').getByText('SWG 3').first().hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
 
     //Hover over SWG1 in Telemetry Table
-    await page.locator('.noselect > [title="SWG 1"]').first().hover();
+    await page.locator('.noselect').getByText('SWG 1').first().hover();
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
   });
 
