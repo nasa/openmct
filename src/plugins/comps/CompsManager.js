@@ -47,9 +47,11 @@ export default class CompsManager extends EventEmitter {
     return underlyingTelemetry;
   }
 
-  #telemetryProcessor(telemetryObjects) {
+  #telemetryProcessor = (telemetryObjects) => {
+    // new data!
+    console.debug(`🎉 new data!`, telemetryObjects);
     this.emit('underlyingTelemetryUpdated', telemetryObjects);
-  }
+  };
 
   #clearData() {
     console.debug('Clear Data');

@@ -32,16 +32,16 @@ function calculate(telemetryForComps, expression) {
   const dataSet2 = Object.values(telemetryForComps)[1];
 
   // Organize data by utc for quick access
-  const utcMap1 = new Map(dataSet1.map((item) => [item.utc, item.sin]));
-  const utcMap2 = new Map(dataSet2.map((item) => [item.utc, item.sin]));
+  const utcMap1 = new Map(dataSet1.map((item) => [item.utc, item]));
+  const utcMap2 = new Map(dataSet2.map((item) => [item.utc, item]));
 
   const sumResults = [];
 
   // Iterate over the first dataset and check for matching utc in the second dataset
-  for (const [utc, sin1] of utcMap1.entries()) {
+  for (const [utc, item1] of utcMap1.entries()) {
     if (utcMap2.has(utc)) {
-      const sin2 = utcMap2.get(utc);
-      const output = evaluate(expression, { a: sin1, b: sin2 });
+      const item2 = utcMap2.get(utc);
+      const output = evaluate(expression, { a: item1.sin, b: item2.sin });
       sumResults.push({ utc, output });
     }
   }
