@@ -286,7 +286,7 @@ test.describe('Display Layout', () => {
     // Subscribe to the Sine Wave Generator data
     const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
-    await setStartOffset(page, { mins: '1' });
+    await setStartOffset(page, { startMins: '1' });
     await setFixedTimeMode(page);
 
     // On getting data, check if the value found in the Display Layout is the most recent value
