@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import fs from 'fs';
+
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -39,7 +41,7 @@ import {
   setTimeConductorMode,
   waitForPlotsToRender
 } from '../../appActions.js';
-import fs from 'fs';
+import { assertPlanActivities, setBoundsToSpanAllActivities } from '../../helper/planningUtils.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('AppActions', () => {
@@ -163,19 +165,15 @@ test.describe('AppActions', () => {
   test('createPlanFromJSON', async ({ page }) => {
     const examplePlanSmall1 = JSON.parse(
       fs.readFileSync(
-        new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+        new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
       )
     );
-    await createPlanFromJSON(page, {
+    const plan = await createPlanFromJSON(page, {
       name: 'Test Plan',
       json: examplePlanSmall1
     });
-    await page.getByLabel('Show selected item in tree2').click();
-
-    // Verify all events are displayed
-    const eventCount = await page.getByRole('row').count();
-    // subtracting one for the header
-    expect(eventCount - 1).toEqual(firstGroupItems.length);
+    await setBoundsToSpanAllActivities(page, examplePlanSmall1, plan.url);
+    await assertPlanActivities(page, examplePlanSmall1, plan.url);
   });
   test('expandEntireTree', async ({ page }) => {
     const rootFolder = await createDomainObjectWithDefaults(page, {

@@ -30,9 +30,9 @@ import { expect } from '../pluginFixtures.js';
  * start time as the start bound and the current activity's end time as the end bound.
  * @param {import('@playwright/test').Page} page the page
  * @param {Object} plan The raw plan json to assert against
- * @param {string} objectUrl The URL of the object to assert against (plan or gantt chart)
+ * @param {string} planObjectUrl The URL of the object to assert against (plan or gantt chart)
  */
-export async function assertPlanActivities(page, plan, objectUrl) {
+export async function assertPlanActivities(page, plan, planObjectUrl) {
   const groups = Object.keys(plan);
   for (const group of groups) {
     for (let i = 0; i < plan[group].length; i++) {
@@ -48,13 +48,12 @@ export async function assertPlanActivities(page, plan, objectUrl) {
 
       // Switch to fixed time mode with all plan events within the bounds
       await page.goto(
-        `${objectUrl}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`
+        `${planObjectUrl}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`
       );
 
       // Assert that the number of activities in the plan view matches the number of
       // activities in the plan data within the specified time bounds
-      const eventCount = await page.locator('.activity-bounds').count();
-      expect(eventCount).toEqual(
+      await expect(page.locator('.activity-bounds')).toHaveCount(
         Object.values(plan)
           .flat()
           .filter((event) =>
