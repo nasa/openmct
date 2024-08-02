@@ -586,25 +586,21 @@ test.describe('Example Imagery in Tabs View @clock', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
-    await page.click('li[role="menuitem"]:has-text("Example Imagery")');
+    await page.getByRole('menuitem', { name: 'Example Imagery' }).click();
 
     // Clear and set Image load delay to minimum value
     await page.locator('input[type="number"]').clear();
     await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
 
-    // Click text=OK
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-      page.click('button:has-text("OK")'),
-      //Wait for Save Banner to appear
-      page.locator('.c-message-banner__message').hover({ trial: true })
-    ]);
+    await page.getByLabel('Save').click();
 
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(
       'Unnamed Example Imagery'
     );
 
     await page.goto(tabsView.url);
+    // Wait for image thumbnail auto-scroll to complete
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
   test('Imagery View operations @clock', async ({ page }) => {
     await performImageryViewOperationsAndAssert(page, tabsView);
