@@ -63,7 +63,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     // Assert that only two requests are made
     // Network Requests are:
     // 1) The actual POST to create the page
-    expect(notebookElementsRequests.length).toBe(1);
+    expect(notebookElementsRequests).toHaveLength(1);
 
     // Assert on request object
     expect(notebookUrlRequest.postDataJSON().metadata.name).toBe(testNotebook.name);

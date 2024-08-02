@@ -167,7 +167,7 @@ test.describe('Telemetry Table', () => {
       .getByText(/Dodger/)
       .all();
     // ensure we've got more than one cell
-    expect(cells.length).toBe(0);
+    expect(cells).toHaveLength(0);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
       const text = await cell.textContent();
@@ -213,7 +213,7 @@ test.describe('Telemetry Table', () => {
       .getByText(/Dodger/)
       .all();
     // ensure we've got more than one cell
-    expect(cells.length).toBe(0);
+    expect(cells).toHaveLength(0);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
       const text = await cell.textContent();
