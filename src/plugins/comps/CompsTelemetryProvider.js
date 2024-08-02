@@ -59,12 +59,12 @@ export default class CompsTelemetryProvider {
       this.#compsManagerPool
     );
     await specificCompsManager.load();
-    const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
-    console.debug('🏟️ Telemetry for comps:', telemetryForComps);
-    const expression = specificCompsManager.getExpression();
-    // need to create callbackID with a promise for future execution
     return new Promise((resolve, reject) => {
       const callbackID = this.#getCallbackID();
+      const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
+      const expression = specificCompsManager.getExpression();
+      // need to create callbackID with a promise for future execution
+      console.debug('🏟️ Telemetry for comps:', telemetryForComps);
       this.#requestPromises[callbackID] = { resolve, reject };
       this.#sharedWorker.port.postMessage({
         type: 'calculateRequest',
