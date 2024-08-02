@@ -35,7 +35,6 @@
  * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
  * @property {string} [name] the desired name of the created domain object.
  * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
- * @property {Record<string, string>} [customParameters] any additional parameters to be passed to the domain object's form. E.g. '[aria-label="Data Rate (hz)"]': {'0.1'}
  */
 
 /**
@@ -62,14 +61,14 @@ import { v4 as genUuid } from 'uuid';
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
  * in the e2e suite when uninterested in properties of the objects themselves.
  *
- * @param {import('@playwright/test').Page} page
- * @param {CreateObjectOptions} options
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {Object} options - Options for creating the domain object.
+ * @param {string} options.type - The type of domain object to create (e.g., "Sine Wave Generator").
+ * @param {string} [options.name] - The desired name of the created domain object.
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [options.parent='mine'] - The Identifier or uuid of the parent object. Defaults to 'mine' folder
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(
-  page,
-  { type, name, parent = 'mine', customParameters = {} }
-) {
+async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -86,23 +85,15 @@ async function createDomainObjectWithDefaults(
   // Click the object specified by 'type'-- case insensitive
   await page.getByRole('menuitem', { name: new RegExp(`^${type}$`, 'i') }).click();
 
-  // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-  await nameInput.fill('');
-  await nameInput.fill(name);
+  // Fill in the name of the object
+  await page.getByLabel('Title', { exact: true }).fill('');
+  await page.getByLabel('Title', { exact: true }).fill(name);
 
   if (page.testNotes) {
     // Fill the "Notes" section with information about the
     // currently running test and its project.
-    const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
-    await notesInput.fill(page.testNotes);
-  }
-
-  // If there are any further parameters, fill them in
-  for (const [key, value] of Object.entries(customParameters)) {
-    const input = page.locator(`form[name="mctForm"] ${key}`);
-    await input.fill('');
-    await input.fill(value);
+    // eslint-disable-next-line playwright/no-raw-locators
+    await page.locator('#notes-textarea').fill(page.testNotes);
   }
 
   await page.getByRole('button', { name: 'Save' }).click();
@@ -145,20 +136,6 @@ async function createNotification(page, createNotificationOptions) {
 }
 
 /**
- * Expand an item in the tree by a given object name.
- * @param {import('@playwright/test').Page} page
- * @param {string} name
- */
-async function expandTreePaneItemByName(page, name) {
-  const treePane = page.getByRole('tree', {
-    name: 'Main Tree'
-  });
-  const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
-  const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-  await expandTriangle.click();
-}
-
-/**
  * Create a Plan object from JSON with the provided options.
  * @param {import('@playwright/test').Page} page
  * @param {*} options
@@ -179,12 +156,11 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.getByRole('button', { name: 'Create' }).click();
 
   // Click 'Plan' menu option
-  await page.click(`li:text("Plan")`);
+  await page.locator(`li:text("Plan")`).click();
 
   // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.getByLabel('Title', { exact: true });
-  await nameInput.fill('');
-  await nameInput.fill(name);
+  await page.getByLabel('Title', { exact: true }).fill('');
+  await page.getByLabel('Title', { exact: true }).fill(name);
 
   // Upload buffer from memory
   await page.locator('input#fileElem').setInputFiles({
@@ -661,11 +637,11 @@ async function getCanvasPixels(page, canvasSelector) {
  */
 async function renameObjectFromContextMenu(page, url, newName) {
   await openObjectTreeContextMenu(page, url);
-  await page.click('li:text("Edit Properties")');
+  await page.locator('li:text("Edit Properties")').click();
   const nameInput = page.getByLabel('Title', { exact: true });
   await nameInput.fill('');
   await nameInput.fill(newName);
-  await page.click('[aria-label="Save"]');
+  await page.locator('[aria-label="Save"]').click();
 }
 
 export {
@@ -674,7 +650,6 @@ export {
   createNotification,
   createPlanFromJSON,
   expandEntireTree,
-  expandTreePaneItemByName,
   getCanvasPixels,
   getFocusedObjectUuid,
   getHashUrlToDomainObject,

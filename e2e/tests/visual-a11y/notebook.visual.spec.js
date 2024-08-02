@@ -22,7 +22,7 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
@@ -86,9 +86,7 @@ test.describe('Visual - Notebook @a11y', () => {
       name: 'Test Notebook'
     });
   });
-  test('Accepts dropped objects as embeds', async ({ page, theme, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
-
+  test('Accepts dropped objects as embeds', async ({ page, theme }) => {
     // Create Overlay Plot
     await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot',
@@ -98,7 +96,7 @@ test.describe('Visual - Notebook @a11y', () => {
     //Open Tree to perform drag
     await page.getByRole('button', { name: 'Browse' }).click();
 
-    await expandTreePaneItemByName(page, myItemsFolderName);
+    await page.getByLabel('Expand My Items folder').click();
 
     await page.goto(notebook.url);
 

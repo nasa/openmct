@@ -47,7 +47,8 @@ test.describe('Main Tree', () => {
       parent: folder.uuid
     });
 
-    await expandTreePaneItemByName(page, folder.name);
+    await page.getByLabel(`Expand ${folder.name} folder`).click();
+
     await expect(
       page.getByRole('tree', { name: 'Main Tree' }).getByRole('treeitem', { name: clock.name })
     ).toBeVisible();
@@ -75,7 +76,8 @@ test.describe('Main Tree', () => {
       type: 'Folder'
     });
 
-    await expandTreePaneItemByName(page2, myItemsFolderName);
+    await page.getByLabel('Expand My Items folder').click();
+
     await expect(
       page2
         .getByRole('tree', { name: 'Main Tree' })
@@ -105,17 +107,15 @@ test.describe('Main Tree', () => {
       type: 'Folder'
     });
 
-    await expandTreePaneItemByName(page2, myItemsFolderName);
+    await page.getByLabel('Expand My Items folder').click();
     await expect(
       page2
         .getByRole('tree', { name: 'Main Tree' })
         .getByRole('treeitem', { name: page1Folder.name })
     ).toBeVisible();
   });
-  // eslint-disable-next-line playwright/expect-expect
-  test('Renaming an object reorders the tree', async ({ page, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
 
+  test('Renaming an object reorders the tree', async ({ page }) => {
     await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'Foo'
@@ -142,7 +142,7 @@ test.describe('Main Tree', () => {
     });
 
     // Expand the root folder
-    await expandTreePaneItemByName(page, myItemsFolderName);
+    await page.getByLabel('Expand My Items folder').click();
 
     await test.step('Reorders objects with the same tree depth', async () => {
       await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
@@ -161,9 +161,9 @@ test.describe('Main Tree', () => {
       await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
       await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
       // Expand the unopened folders
-      await expandTreePaneItemByName(page, 'Bar');
-      await expandTreePaneItemByName(page, 'Baz');
-      await expandTreePaneItemByName(page, 'Foo');
+      await page.getByLabel(`Expand Bar folder`).click();
+      await page.getByLabel(`Expand Baz folder`).click();
+      await page.getByLabel(`Expand Foo folder`).click();
 
       await renameObjectFromContextMenu(page, clock1.url, '___');
       await getAndAssertTreeItems(page, [
@@ -182,10 +182,8 @@ test.describe('Main Tree', () => {
     });
   });
   test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
-    page,
-    openmctConfig
+    page
   }) => {
-    const { myItemsFolderName } = openmctConfig;
     let requestWasAborted = false;
 
     page.on('requestfailed', (request) => {
@@ -211,7 +209,7 @@ test.describe('Main Tree', () => {
     // Quickly Expand/close the root folder
     await page
       .getByRole('button', {
-        name: `Expand ${myItemsFolderName} folder`
+        name: `Expand My Items folder`
       })
       .dblclick({ delay: 400 });
 
@@ -229,19 +227,4 @@ async function getAndAssertTreeItems(page, expected) {
   // Get rid of root folder ('My Items') as its position will not change
   allTexts.shift();
   expect(allTexts).toEqual(expected);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} name
- */
-async function expandTreePaneItemByName(page, name) {
-  const mainTree = page.getByRole('tree', {
-    name: 'Main Tree'
-  });
-  const treeItem = mainTree.getByRole('treeitem', {
-    name,
-    expanded: false
-  });
-  await treeItem.locator('.c-disclosure-triangle').click();
 }
