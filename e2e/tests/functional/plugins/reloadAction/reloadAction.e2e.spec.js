@@ -42,19 +42,21 @@ test.describe('Reload action', () => {
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
-      parent: alphaTable.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.001'
-      }
+      parent: alphaTable.uuid
     });
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: /Edit Properties/ }).click();
+    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('0.001');
+    await page.getByLabel('Save').click();
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
-      parent: betaTable.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.001'
-      }
+      parent: betaTable.uuid
     });
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: /Edit Properties/ }).click();
+    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('0.001');
+    await page.getByLabel('Save').click();
 
     await page.goto(displayLayout.url);
 
@@ -75,11 +77,12 @@ test.describe('Reload action', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   });
 
-  test('can reload display layout and its children', async ({ page }) => {
+  test.only('can reload display layout and its children @clock', async ({ page }) => {
     const beforeReloadAlphaTelemetryValue = page
       .getByLabel('Alpha Table table content')
       .getByLabel('wavelengths table cell')
-      .first();
+      .first()
+      .getAttribute('title');
     const beforeReloadBetaTelemetryValue = await page
       .getByLabel('Beta Table table content')
       .getByLabel('wavelengths table cell')

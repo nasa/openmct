@@ -268,7 +268,7 @@ async function expandEntireTree(page, treeName = 'Main Tree') {
     .getByRole('treeitem', {
       expanded: false
     })
-    .locator('span.c-disclosure-triangle.is-enabled');
+    .getByLabel(/Expand/);
 
   while ((await collapsedTreeItems.count()) > 0) {
     //eslint-disable-next-line playwright/no-nth-methods
