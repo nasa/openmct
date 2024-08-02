@@ -241,16 +241,17 @@ test.describe('Testing LAD table', () => {
   let sineWaveObject;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    // Switch to real time mode by navigating directly to the URL
-    await navigateToObjectWithRealTime(page, './');
 
     // Create Sine Wave Generator
     sineWaveObject = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Test Sine Wave Generator'
     });
+
+    // Switch to real time mode by navigating directly to the URL
+    await navigateToObjectWithRealTime(page, sineWaveObject.url);
   });
-  test('telemetry value exactly matches latest telemetry value received in real time', async ({
+  test('telemetry value exactly matches latest telemetry value received in realtime mode', async ({
     page
   }) => {
     // Create LAD table
@@ -262,10 +263,10 @@ test.describe('Testing LAD table', () => {
     await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
-    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    await page.getByLabel('Expand My Items').click();
     // Add the Sine Wave Generator to the LAD table and save changes
-    await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('#lad-table-drop-area'));
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
@@ -278,7 +279,7 @@ test.describe('Testing LAD table', () => {
 
     expect(ladTableValue).toEqual(subscribeTelemValue);
   });
-  test('telemetry value exactly matches latest telemetry value received in fixed time', async ({
+  test('telemetry value exactly matches latest telemetry value received in fixed time mode', async ({
     page
   }) => {
     // Create LAD table
@@ -290,17 +291,17 @@ test.describe('Testing LAD table', () => {
     await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
-    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    await page.getByLabel('Expand My Items').click();
     // Add the Sine Wave Generator to the LAD table and save changes
-    await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('#lad-table-drop-area'));
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
     await setRealTimeMode(page);
-    await setStartOffset(page, { mins: '1' });
+    await setStartOffset(page, { startMins: '01' });
     await setFixedTimeMode(page);
 
     // On getting data, check if the value found in the LAD table is the most recent value
