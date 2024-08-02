@@ -25,6 +25,7 @@ import {
   navigateToObjectWithRealTime,
   openObjectTreeContextMenu,
   setFixedTimeMode,
+  setRealTimeMode,
   setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
@@ -273,7 +274,7 @@ test.describe('Testing LAD table', () => {
     // from the Sine Wave Generator
     const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     const subscribeTelemValue = await getTelemValuePromise;
-    await expect(page.getByText(subscribeTelemValue)).toBeVisible();
+    await expect(page.getByLabel('lad value')).toHaveText(subscribeTelemValue);
     const ladTableValue = await page.getByText(subscribeTelemValue).textContent();
 
     expect(ladTableValue).toEqual(subscribeTelemValue);
@@ -299,16 +300,14 @@ test.describe('Testing LAD table', () => {
     // Subscribe to the Sine Wave Generator data
     const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
+    await setRealTimeMode(page);
     await setStartOffset(page, { mins: '1' });
     await setFixedTimeMode(page);
 
     // On getting data, check if the value found in the LAD table is the most recent value
     // from the Sine Wave Generator
     const subscribeTelemValue = await getTelemValuePromise;
-    await expect(page.getByText(subscribeTelemValue)).toBeVisible();
-    const ladTableValue = await page.getByText(subscribeTelemValue).textContent();
-
-    expect(ladTableValue).toEqual(subscribeTelemValue);
+    await expect(page.getByLabel('lad value')).toHaveText(subscribeTelemValue);
   });
 });
 
