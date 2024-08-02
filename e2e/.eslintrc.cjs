@@ -7,9 +7,13 @@ module.exports = {
   },
   overrides: [
     {
+      //Apply Best Practices to externalFixtures
       files: ['appActions.js', 'baseFixtures.js', 'pluginFixtures.js'],
       rules: {
-        'playwright/no-raw-locators': 2
+        'playwright/no-raw-locators': 'error',
+        'playwright/no-nth-methods': 'error',
+        'playwright/no-get-by-title': 'error',
+        'playwright/prefer-comparison-matcher': 'error'
       }
     }
   ]

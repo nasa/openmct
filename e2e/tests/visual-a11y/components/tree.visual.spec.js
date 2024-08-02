@@ -23,8 +23,8 @@
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults } from '../../../appActions.js';
-import { VISUAL_FIXED_URL } from '../../../constants.js';
 import { test } from '../../../avpFixtures.js';
+import { VISUAL_FIXED_URL } from '../../../constants.js';
 
 //Declare the scope of the visual test
 const treePane = "[role=tree][aria-label='Main Tree']";

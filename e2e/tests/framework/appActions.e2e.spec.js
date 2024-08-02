@@ -19,15 +19,27 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 import {
   createDomainObjectWithDefaults,
+  createExampleTelemetryObject,
   createNotification,
+  createPlanFromJSON,
   expandEntireTree,
+  getCanvasPixels,
+  getFocusedObjectUuid,
+  getHashUrlToDomainObject,
+  navigateToObjectWithFixedTimeBounds,
+  navigateToObjectWithRealTime,
+  setEndOffset,
   setFixedTimeMode,
+  setIndependentTimeConductorBounds,
   setRealTimeMode,
-  setTimeConductorBounds
+  setStartOffset,
+  setTimeConductorBounds,
+  setTimeConductorMode,
+  waitForPlotsToRender
 } from '../../appActions.js';
+import fs from 'fs';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('AppActions', () => {
@@ -93,6 +105,38 @@ test.describe('AppActions', () => {
       expect(folder3.url).toBe(`${e2eFolder.url}/${folder1.uuid}/${folder2.uuid}/${folder3.uuid}`);
     });
   });
+  test('createExampleTelemetryObject', async ({ page }) => {
+    const gauge = await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Gauge with no data'
+    });
+
+    const swgWithParent = await createExampleTelemetryObject(page, gauge.uuid);
+
+    await page.goto(swgWithParent.url);
+    await expect(page.locator('.l-browse-bar__object-name')).toHaveText(swgWithParent.name);
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+
+    // Check Default values of created object
+    await expect(page.getByLabel('Title', { exact: true })).toHaveValue('VIPER Rover Heading');
+    await expect(page.getByRole('spinbutton', { name: 'Period' })).toHaveValue('10');
+    await expect(page.getByRole('spinbutton', { name: 'Amplitude' })).toHaveValue('1');
+    await expect(page.getByRole('spinbutton', { name: 'Offset' })).toHaveValue('0');
+    await expect(page.getByRole('spinbutton', { name: 'Data Rate (hz)' })).toHaveValue('1');
+    await expect(page.getByRole('spinbutton', { name: 'Phase (radians)' })).toHaveValue('0');
+    await expect(page.getByRole('spinbutton', { name: 'Randomness' })).toHaveValue('0');
+    await expect(page.getByRole('spinbutton', { name: 'Loading Delay (ms)' })).toHaveValue('0');
+
+    await page.getByLabel('Cancel').click();
+
+    const swgWithoutParent = await createExampleTelemetryObject(page);
+
+    await page.getByLabel('Show selected item in tree').click();
+
+    expect(swgWithParent.url).toBe(`${gauge.url}/${swgWithParent.uuid}`);
+    expect(swgWithoutParent.url).toBe(`./#/browse/mine/${swgWithoutParent.uuid}`);
+  });
   test('createNotification', async ({ page }) => {
     await createNotification(page, {
       message: 'Test info notification',
@@ -115,6 +159,23 @@ test.describe('AppActions', () => {
     await expect(page.locator('.c-message-banner__message')).toHaveText('Test error notification');
     await expect(page.locator('.c-message-banner')).toHaveClass(/error/);
     await page.locator('[aria-label="Dismiss"]').click();
+  });
+  test('createPlanFromJSON', async ({ page }) => {
+    const examplePlanSmall1 = JSON.parse(
+      fs.readFileSync(
+        new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+      )
+    );
+    await createPlanFromJSON(page, {
+      name: 'Test Plan',
+      json: examplePlanSmall1
+    });
+    await page.getByLabel('Show selected item in tree2').click();
+
+    // Verify all events are displayed
+    const eventCount = await page.getByRole('row').count();
+    // subtracting one for the header
+    expect(eventCount - 1).toEqual(firstGroupItems.length);
   });
   test('expandEntireTree', async ({ page }) => {
     const rootFolder = await createDomainObjectWithDefaults(page, {

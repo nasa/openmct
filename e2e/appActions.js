@@ -136,9 +136,13 @@ async function createNotification(page, createNotificationOptions) {
 }
 
 /**
- * Create a Plan object from JSON with the provided options.
+ * Create a Plan object from JSON with the provided options. Must be used with a json based plan.
+ * Please check appActions.e2e.spec.js for an example of how to use this function.
+ *
  * @param {import('@playwright/test').Page} page
- * @param {*} options
+ * @param {string} name
+ * @param {Object} json
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
@@ -248,7 +252,10 @@ async function navigateToObjectWithRealTime(page, url, start = '1800000', end = 
 }
 
 /**
- * Expands the entire object tree (every expandable tree item).
+ * Expands the entire object tree (every expandable tree item). Can be used to
+ * ensure that the tree is fully expanded before performing actions on objects.
+ * Can be applied to either the main tree or the create modal tree.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
  */
@@ -256,6 +263,7 @@ async function expandEntireTree(page, treeName = 'Main Tree') {
   const treeLocator = page.getByRole('tree', {
     name: treeName
   });
+  //eslint-disable-next-line playwright/no-raw-locators
   const collapsedTreeItems = treeLocator
     .getByRole('treeitem', {
       expanded: false
@@ -263,6 +271,7 @@ async function expandEntireTree(page, treeName = 'Main Tree') {
     .locator('span.c-disclosure-triangle.is-enabled');
 
   while ((await collapsedTreeItems.count()) > 0) {
+    //eslint-disable-next-line playwright/no-nth-methods
     await collapsedTreeItems.nth(0).click();
 
     // FIXME: Replace hard wait with something event-driven.
@@ -499,7 +508,7 @@ async function setIndependentTimeConductorBounds(page, { start, end }) {
 
   // Bring up the time conductor popup
   await page.getByLabel('Independent Time Conductor Settings').click();
-  await expect(page.locator('.itc-popout')).toBeInViewport();
+  await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
   await setTimeBounds(page, start, end);
 
   await page.keyboard.press('Enter');
@@ -544,6 +553,7 @@ async function setTimeBounds(page, startDate, endDate) {
  * @param {import('@playwright/test').Page} page
  */
 async function waitForPlotsToRender(page) {
+  //eslint-disable-next-line playwright/no-raw-locators
   const plotLocator = page.locator('.gl-plot');
   for (const plot of await plotLocator.all()) {
     await expect(plot).toHaveClass(/js-series-data-loaded/);
