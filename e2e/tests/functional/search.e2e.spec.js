@@ -162,7 +162,7 @@ test.describe('Grand Search', () => {
     const searchResults = page.getByRole('listitem', { name: 'Object Search Result' });
 
     // Verify that no results are found
-    expect(await searchResults.count()).toBe(0);
+    await expect(searchResults).toHaveCount(0);
 
     // Verify proper message appears
     await expect(page.getByText('No results found')).toBeVisible();
@@ -187,7 +187,7 @@ test.describe('Grand Search', () => {
 
     // Verify that one result is found
     await expect(searchResults).toBeVisible();
-    expect(await searchResults.count()).toBe(1);
+    await expect(searchResults).toHaveCount(1);
     await expect(searchResults).toContainText(folderName);
   });
 
@@ -282,7 +282,7 @@ test.describe('Grand Search', () => {
     // Get the search results
     const objectSearchResults = page.getByLabel('Object Search Result');
     // Verify that two results are found
-    expect(await objectSearchResults.count()).toBe(2);
+    await expect(objectSearchResults).toHaveCount(2);
   });
 });
 

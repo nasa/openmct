@@ -517,7 +517,7 @@ test.describe('Display Layout', () => {
 });
 
 async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LAYOUT_NAME) {
-  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);
   await addLayoutObject(page, DISPLAY_LAYOUT_NAME, layoutObject);
   expect(
     await page
@@ -527,7 +527,7 @@ async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LA
       .count()
   ).toBe(1);
   await removeLayoutObject(page, layoutObject);
-  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);
 }
 
 /**

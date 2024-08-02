@@ -90,6 +90,6 @@ test.describe('Smoke tests for @mobile', () => {
     await page.getByRole('button', { name: 'OK' }).click();
     //Verify that the object is removed
     await expect(page.getByLabel('Child Layout 1 Layout')).toBeVisible();
-    expect(await page.getByLabel('Child Layout 2 Layout').count()).toBe(0);
+    await expect(page.getByLabel('Child Layout 2 Layout')).toHaveCount(0);
   });
 });

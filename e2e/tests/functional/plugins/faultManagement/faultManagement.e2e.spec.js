@@ -108,13 +108,13 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     // check it is removed from standard view
     const afterShelvedFault = getFaultByName(page, shelvedFaultName);
-    expect(await afterShelvedFault.count()).toBe(0);
+    await expect(afterShelvedFault).toHaveCount(0);
 
     await changeViewTo(page, 'shelved');
 
     const shelvedViewFault = getFaultByName(page, shelvedFaultName);
 
-    expect(await shelvedViewFault.count()).toBe(1);
+    await expect(shelvedViewFault).toHaveCount(1);
   });
 
   test('Allows you to acknowledge a fault', async ({ page }) => {

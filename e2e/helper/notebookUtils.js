@@ -95,10 +95,9 @@ async function startAndAddRestrictedNotebookObject(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function lockPage(page) {
-  const commitButton = page.locator('button:has-text("Commit Entries")');
-  await commitButton.click();
-
-  //Wait until Lock Banner is visible
+  // Click the Commit Entries button
+  await page.getByLabel('Commit Entries').click();
+  // Wait until Lock Banner is visible
   await page.locator('text=Lock Page').click();
 }
 
