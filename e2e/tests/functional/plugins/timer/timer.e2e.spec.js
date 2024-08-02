@@ -141,7 +141,7 @@ test.describe('Timer with target date @clock', () => {
 async function triggerTimerContextMenuAction(page, timerUrl, action) {
   const menuAction = `.c-menu ul li >> text="${action}"`;
   await openObjectTreeContextMenu(page, timerUrl);
-  await await page.locator(menuAction).click();
+  await page.locator(menuAction).click();
   assertTimerStateAfterAction(page, action);
 }
 
