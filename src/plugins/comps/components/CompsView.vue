@@ -33,33 +33,10 @@ const openmct = inject('openmct');
 const domainObject = inject('domainObject');
 const compsManagerPool = inject('compsManagerPool');
 const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsManagerPool);
-const composition = openmct.composition.get(domainObject);
 
 onMounted(() => {
-  loadComposition();
   console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
 });
 
-async function loadComposition() {
-  if (composition) {
-    composition.on('add', addTelemetryObject);
-    composition.on('remove', removeTelemetryObject);
-    await composition.load();
-  }
-}
-
-function addTelemetryObject(object) {
-  console.debug('📢 CompsView: addTelemetryObject', object);
-}
-
-function removeTelemetryObject(object) {
-  console.debug('❌ CompsView: removeTelemetryObject', object);
-}
-
-onBeforeUnmount(() => {
-  if (composition) {
-    composition.off('add', addTelemetryObject);
-    composition.off('remove', removeTelemetryObject);
-  }
-});
+onBeforeUnmount(() => {});
 </script>

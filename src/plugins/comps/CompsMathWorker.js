@@ -6,21 +6,26 @@ onconnect = function (e) {
 
   port.onmessage = function (event) {
     console.debug('🧮 Comps Math Worker message:', event);
-    const { type, id, data, expression } = event.data;
-    if (type === 'calculate') {
+    const { type, callbackID, telemetryForComps, expression } = event.data;
+    if (type === 'calculateRequest' || type === 'calculateSubscription') {
       try {
-        const result = data.map((point) => {
+        // the reply type is different for request and subscription
+        const replyType =
+          type === 'calculateRequest'
+            ? 'calculationRequestResult'
+            : 'calculationSubscriptionResult';
+        const result = telemetryForComps.map((point) => {
           // Using Math.js to evaluate the expression against the data
           return { ...point, value: evaluate(expression, point) };
         });
-        port.postMessage({ type: 'response', id, result });
+        port.postMessage({ type: replyType, callbackID, result });
       } catch (error) {
-        port.postMessage({ type: 'error', id, error: error.message });
+        port.postMessage({ type: 'error', callbackID, error: error.message });
       }
     } else if (type === 'init') {
       port.postMessage({ type: 'ready' });
     } else {
-      port.postMessage({ type: 'error', id, error: 'Invalid message type' });
+      port.postMessage({ type: 'error', callbackID, error: 'Invalid message type' });
     }
   };
 };

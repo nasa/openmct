@@ -40,7 +40,10 @@ export default function CompsPlugin() {
       }
     });
     openmct.composition.addPolicy((parent, child) => {
-      return openmct.telemetry.isTelemetryObject(child);
+      if (parent.type === 'comps' && !openmct.telemetry.isTelemetryObject(child)) {
+        return false;
+      }
+      return true;
     });
     openmct.telemetry.addProvider(new CompsTelemetryProvider(openmct, compsManagerPool));
     openmct.objectViews.addProvider(new CompsViewProvider(openmct, compsManagerPool));

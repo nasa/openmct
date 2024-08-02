@@ -19,23 +19,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import CompsManager from './CompsManager.js';
 
 export default class CompsTelemetryProvider {
-  #telemetryObjects = {};
-  #telemetryCollections = {};
-  #composition = [];
   #openmct = null;
   #sharedWorker = null;
+  #compsManagerPool = null;
+  #lastUniqueID = 1;
+  #requestPromises = {};
+  #subscriptionCallbacks = {};
 
-  constructor(openmct) {
+  constructor(openmct, compsManagerPool) {
     this.#openmct = openmct;
-  }
-
-  #removeTelemetryObject(telemetryObject) {
-    const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-    delete this.#telemetryObjects[keyString];
-    this.#telemetryCollections[keyString]?.destroy();
-    delete this.#telemetryCollections[keyString];
+    this.#compsManagerPool = compsManagerPool;
+    this.#startSharedWorker();
   }
 
   isTelemetryObject(domainObject) {
@@ -50,26 +47,55 @@ export default class CompsTelemetryProvider {
     return domainObject.type === 'comps';
   }
 
+  #getCallbackID() {
+    return this.#lastUniqueID++;
+  }
+
   // eslint-disable-next-line require-await
   async request(domainObject, options) {
-    // get the telemetry from the collections
-    const telmetryToSend = {};
-    Object.keys(this.#telemetryCollections).forEach((keyString) => {
-      telmetryToSend[keyString] = this.#telemetryCollections[keyString].getAll(
-        domainObject,
-        options
-      );
-    });
-    this.#sharedWorker.port.postMessage({
-      type: 'calculate',
-      data: telmetryToSend,
-      expression: 'a + b'
+    const specificCompsManager = CompsManager.getCompsManager(
+      domainObject,
+      this.#openmct,
+      this.#compsManagerPool
+    );
+    await specificCompsManager.load();
+    const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
+    console.debug('🏟️ Telemetry for comps:', telemetryForComps);
+    const expression = specificCompsManager.getExpression();
+    // need to create callbackID with a promise for future execution
+    return new Promise((resolve, reject) => {
+      const callbackID = this.#getCallbackID();
+      this.#requestPromises[callbackID] = { resolve, reject };
+      this.#sharedWorker.port.postMessage({
+        type: 'calculateRequest',
+        telemetryForComps,
+        expression,
+        callbackID
+      });
     });
   }
 
   subscribe(domainObject, callback) {
-    // TODO: add to listener list and return a function to remove it
-    return () => {};
+    const specificCompsManager = CompsManager.getCompsManager(
+      domainObject,
+      this.#openmct,
+      this.#compsManagerPool
+    );
+    const callbackID = this.#getCallbackID();
+    this.#subscriptionCallbacks[callbackID] = callback;
+    specificCompsManager.on('underlyingTelemetryUpdated', (newTelemetry) => {
+      const expression = specificCompsManager.getExpression();
+      this.#sharedWorker.port.postMessage({
+        type: 'calculateSubscription',
+        telemetryForComps: newTelemetry,
+        expression,
+        callbackID
+      });
+    });
+    return () => {
+      specificCompsManager.off('calculationUpdated', callback);
+      delete this.#subscriptionCallbacks[callbackID];
+    };
   }
 
   #startSharedWorker() {
@@ -86,13 +112,6 @@ export default class CompsTelemetryProvider {
     // send an initial message to the worker
     this.#sharedWorker.port.postMessage({ type: 'init' });
 
-    // for testing, try a message adding two numbers
-    this.#sharedWorker.port.postMessage({
-      type: 'calculate',
-      data: [{ a: 1, b: 2 }],
-      expression: 'a + b'
-    });
-
     this.#openmct.on('destroy', () => {
       this.#sharedWorker.port.close();
     });
@@ -100,6 +119,15 @@ export default class CompsTelemetryProvider {
 
   onSharedWorkerMessage(event) {
     console.log('📝 Shared worker message:', event.data);
+    const { type, result, callbackID } = event.data;
+    if (type === 'calculationSubscriptionResult') {
+      this.#subscriptionCallbacks[callbackID](result);
+    } else if (type === 'calculationRequestResult') {
+      this.#requestPromises[callbackID].resolve(result);
+      delete this.#requestPromises[callbackID];
+    } else if (type === 'error') {
+      console.error('❌ Shared worker error:', event.data);
+    }
   }
 
   onSharedWorkerMessageError(event) {
