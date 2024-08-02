@@ -64,14 +64,14 @@ test.describe('Restricted Notebook', () => {
     ]);
 
     // has been deleted
-    expect(await restrictedNotebookTreeObject.count()).toEqual(0);
+    await expect(restrictedNotebookTreeObject).toHaveCount(0);
   });
 
   test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
     await enterTextEntry(page, TEST_TEXT);
 
     const commitButton = page.locator('button:has-text("Commit Entries")');
-    expect(await commitButton.count()).toEqual(1);
+    await expect(commitButton).toHaveCount(1);
   });
 });
 
@@ -120,14 +120,14 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     const newPageElement = page.getByText(TEST_TEXT_NAME);
     const newPageCount = await newPageElement.count();
     await newPageElement.press('Enter'); // exit contenteditable state
-    expect.soft(newPageCount).toEqual(1);
+    expect(newPageCount).toEqual(1);
 
     // enter test text
     await enterTextEntry(page, TEST_TEXT);
 
     // expect new page to be lockable
     const commitButton = page.getByRole('button', { name: ' Commit Entries' });
-    expect.soft(await commitButton.count()).toEqual(1);
+    await expect(commitButton).toHaveCount(1);
 
     // Click the context menu button for the new page
     await page.getByTitle('Open context menu').click();
@@ -138,7 +138,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
     // deleted page, should no longer exist
     const deletedPageElement = page.getByText(TEST_TEXT_NAME);
-    expect(await deletedPageElement.count()).toEqual(0);
+    await expect(deletedPageElement).toHaveCount(0);
   });
 });
 

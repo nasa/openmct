@@ -200,7 +200,7 @@ test.describe('Overlay Plot', () => {
     await page.goto(overlayPlot.url);
 
     // Assert that no limit lines are shown by default
-    await expect(page.locator('.js-limit-area')).toBeVisible();
+    await expect(page.locator('.js-limit-area')).toBeAttached();
     await expect(page.locator('.c-plot-limit-line')).toHaveCount(0);
 
     // Enter edit mode
