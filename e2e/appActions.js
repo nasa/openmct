@@ -164,7 +164,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
   await page.getByLabel('Title', { exact: true }).fill(name);
 
   // Upload buffer from memory
-  await page.getByRole('button', { name: 'Select File...' }).setInputFiles({
+  await page.getByLabel('Select File...').setInputFiles({
     name: 'plan.txt',
     mimeType: 'text/plain',
     buffer: Buffer.from(JSON.stringify(json))

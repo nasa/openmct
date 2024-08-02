@@ -70,11 +70,16 @@ test.describe('Main Tree', () => {
       page2.goto('./', { waitUntil: 'domcontentloaded' })
     ]);
 
+    await Promise.all([
+      page.waitForURL('**/browse/mine?**'),
+      page2.waitForURL('**/browse/mine?**')
+    ]);
+
     const page1Folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder'
     });
 
-    await page.getByLabel('Expand My Items folder').click();
+    await page2.getByLabel('Expand My Items folder').click();
 
     await expect(
       page2
@@ -99,11 +104,16 @@ test.describe('Main Tree', () => {
       page2.goto('./', { waitUntil: 'domcontentloaded' })
     ]);
 
+    await Promise.all([
+      page.waitForURL('**/browse/mine?**'),
+      page2.waitForURL('**/browse/mine?**')
+    ]);
+
     const page1Folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder'
     });
 
-    await page.getByLabel('Expand My Items folder').click();
+    await page2.getByLabel('Expand My Items folder').click();
     await expect(
       page2
         .getByRole('tree', { name: 'Main Tree' })
