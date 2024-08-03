@@ -216,7 +216,7 @@ test.describe('Grand Search', () => {
 
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  batched request for latest telemetry using the bulk API
-    expect(networkRequests).toHaveLength(1);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(1);
 
     await expect(page.getByRole('list', { name: 'Object Results' })).toContainText('Clock A');
   });

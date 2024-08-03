@@ -75,6 +75,7 @@ test.describe('Example Imagery Object', () => {
     const backgroundImage = page.getByLabel('Focused Image Element');
     await backgroundImage.click({
       button: 'right',
+      // Need force option here due to annotation overlay which blocks playwright's click
       // eslint-disable-next-line playwright/no-force-option
       force: true
     });
