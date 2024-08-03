@@ -500,7 +500,7 @@ test.describe('Display Layout', () => {
     await page.waitForLoadState('domcontentloaded');
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  a single batched request for annotations
-    expect(networkRequests).toHaveLength(1);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(1);
 
     await setRealTimeMode(page);
 
@@ -512,7 +512,7 @@ test.describe('Display Layout', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // In real time mode, we don't fetch annotations at all
-    expect(networkRequests).toHaveLength(0);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(0);
   });
 });
 

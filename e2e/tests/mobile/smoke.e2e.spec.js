@@ -62,7 +62,7 @@ test.describe('Smoke tests for @mobile', () => {
   test('Verify that user can change time conductor @mobile', async ({ page }) => {
     //Collapse Browse Pane to get more Time Conductor space
     await page.getByLabel('Collapse Browse Pane').click();
-    //Open Time Conductor and change to Real Time Mode and set offset hour by 1 hour
+    // Open Time Conductor and change to Real Time Mode and set offset hour by 1 hour
     // Disabling line because we're intentionally obscuring the text
     // eslint-disable-next-line playwright/no-force-option
     await page.getByLabel('Time Conductor Mode').click({ force: true });
