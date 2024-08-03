@@ -44,11 +44,13 @@ test.describe('Visual - Time Strip @a11y', () => {
     });
     await createPlanFromJSON(page, {
       json: examplePlanSmall2,
-      parent: timeStrip.uuid
+      parent: timeStrip.uuid,
+      name: 'examplePlanSmall2'
     });
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
-      parent: timeStrip.uuid
+      parent: timeStrip.uuid,
+      name: 'Sine Wave Generator'
     });
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
