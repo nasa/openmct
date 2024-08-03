@@ -223,6 +223,19 @@ test.describe('AppActions', () => {
     const locatorTreeCollapsedItems = locatorTree.locator('role=treeitem[expanded=false]');
     await expect(locatorTreeCollapsedItems).toHaveCount(0);
   });
+  test('getCanvasPixels', async ({ page }) => {
+    let overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot'
+    });
+
+    await createExampleTelemetryObject(page, overlayPlot.uuid);
+
+    await page.goto(overlayPlot.url);
+    //Get pixel data from Canvas
+    const plotPixels = await getCanvasPixels(page, 'canvas');
+    const plotPixelSize = plotPixels.length;
+    expect(plotPixelSize).toBeGreaterThan(0);
+  });
   test('setTimeConductorMode', async ({ page }) => {
     await test.step('setFixedTimeMode', async () => {
       await setFixedTimeMode(page);
