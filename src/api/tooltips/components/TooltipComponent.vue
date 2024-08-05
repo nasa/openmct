@@ -25,11 +25,12 @@ at runtime from the About dialog for additional information.
     class="c-menu c-tooltip-wrapper"
     :style="toolTipLocationStyle"
     role="tooltip"
+    aria-labelledby="tooltip-text"
     aria-live="polite"
   >
-    <div class="c-tooltip">
+    <span id="tooltip-text" class="c-tooltip">
       {{ toolTipText }}
-    </div>
+    </span>
   </div>
 </template>
 

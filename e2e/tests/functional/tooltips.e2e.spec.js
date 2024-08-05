@@ -373,34 +373,43 @@ test.describe('Verify tooltips', () => {
   });
 
   test('display tooltip path for telemetry table names', async ({ page }) => {
-    // set endBound to 10 seconds after start bound to ensure that the telemetry doesn't change
-    // const url = page.url();
-    // const parsedUrl = new URL(url.replace('#', '!'));
-    // const startBound = Number(parsedUrl.searchParams.get('tc.startBound'));
-    // const tenSecondsInMilliseconds = 10 * 1000;
-    // const endBound = startBound + tenSecondsInMilliseconds;
-    // parsedUrl.searchParams.set('tc.endBound', endBound);
-    // await page.goto(parsedUrl.href.replace('!', '#'));
-
     await createDomainObjectWithDefaults(page, {
       type: 'Telemetry Table',
       name: 'Test Telemetry Table'
     });
 
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '.c-telemetry-table');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '.c-telemetry-table');
+    await page
+      .getByLabel(`Navigate to ${sineWaveObject1.name}`)
+      .dragTo(page.locator('.c-telemetry-table'));
+    await page
+      .getByLabel(`Preview ${sineWaveObject3.name}`)
+      .dragTo(page.locator('.c-telemetry-table'));
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Confirm that telemetry rows exist for SWG 1 and 3 and are in view
+    await expect(page.getByLabel('name table cell SWG 1').first()).toBeInViewport();
+    await expect(page.getByLabel('name table cell SWG 3').first()).toBeInViewport();
+
+    // Pause to prevent more telemetry from streaming in
+    await page.getByLabel('Pause').click();
+
     await page.keyboard.down('Control');
+    // Hover over SWG3 in Telemetry Table
+    await page.getByLabel('name table cell SWG 3').first().hover();
+    await expect(page.getByRole('tooltip', { name: sineWaveObject3.path })).toBeVisible();
 
-    //Hover over SWG3 in Telemetry Table
-    await page.locator('.noselect').getByText('SWG 3').first().hover();
-    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
+    // Release Control Key
+    await page.keyboard.up('Control');
+    // Hover somewhere else so the tooltip goes away
+    await page.getByLabel('Navigate to Test Telemetry Table').hover();
+    await expect(page.getByRole('tooltip')).toBeHidden();
 
-    //Hover over SWG1 in Telemetry Table
-    await page.locator('.noselect').getByText('SWG 1').first().hover();
-    await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject1.path);
+    await page.keyboard.down('Control');
+    // Hover over SWG1 in Telemetry Table
+    await page.getByLabel('name table cell SWG 1').first().hover();
+    await expect(page.getByRole('tooltip', { name: sineWaveObject1.path })).toBeVisible();
   });
 
   test('display tooltip path for recently viewed items', async ({ page }) => {
