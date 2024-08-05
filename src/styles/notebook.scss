@@ -591,51 +591,6 @@
 
     [class*='__item-description'] {
       min-width: 200px;
-    &__name,
-    &__link {
-        // Holds __link and __context-available
-        display: flex;
-        align-items: center;
-    }
-
-    &__link {
-        flex: 1 1 auto;
-
-        &:before {
-            display: block;
-            font-size: 1em;
-            margin-right: $interiorMarginSm;
-        }
-    }
-
-    &__context-available {
-        font-size: 0.7em;
-        margin-left: $interiorMarginSm;
-    }
-
-    &__snap-thumb {
-        @include snapThumb();
-    }
-
-    &__actions {
-        margin: $interiorMarginSm;
-    }
-
-    &__actions-menu {
-        width: 55vh;
-        max-width: 500px;
-        height: 130px;
-        z-index: 70;
-
-        [class*='__icon'] {
-            filter: $colorKeyFilter;
-            margin: 0%;
-            height: 4vh;
-        }
-
-        [class*='__item-description'] {
-            min-width: 200px;
-        }
     }
   }
 }
