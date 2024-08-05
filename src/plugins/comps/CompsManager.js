@@ -7,6 +7,7 @@ export default class CompsManager extends EventEmitter {
   #telemetryObjects = {};
   #telemetryCollections = {};
   #managerLoadedPromise;
+  #dataFrame = {};
 
   constructor(openmct, domainObject) {
     super();
@@ -47,10 +48,9 @@ export default class CompsManager extends EventEmitter {
     return underlyingTelemetry;
   }
 
-  #telemetryProcessor = (telemetryObjects) => {
-    // new data!
-    console.debug(`🎉 new data!`, telemetryObjects);
-    this.emit('underlyingTelemetryUpdated', telemetryObjects);
+  #telemetryProcessor = (newTelemetry, keyString) => {
+    console.debug(`🎉 new data for ${keyString}!`, newTelemetry);
+    this.emit('underlyingTelemetryUpdated', { [keyString]: newTelemetry });
   };
 
   #clearData() {
@@ -68,7 +68,9 @@ export default class CompsManager extends EventEmitter {
     this.#telemetryCollections[keyString] =
       this.#openmct.telemetry.requestCollection(telemetryObject);
 
-    this.#telemetryCollections[keyString].on('add', this.#telemetryProcessor);
+    this.#telemetryCollections[keyString].on('add', (data) => {
+      this.#telemetryProcessor(data, keyString);
+    });
     this.#telemetryCollections[keyString].on('clear', this.#clearData);
     await this.#telemetryCollections[keyString].load();
   };

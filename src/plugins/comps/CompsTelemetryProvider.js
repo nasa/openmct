@@ -76,6 +76,18 @@ export default class CompsTelemetryProvider {
     });
   }
 
+  #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
+    const expression = specificCompsManager.getExpression();
+    const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
+    this.#sharedWorker.port.postMessage({
+      type: 'calculateSubscription',
+      telemetryForComps,
+      newTelemetry,
+      expression,
+      callbackID
+    });
+  }
+
   subscribe(domainObject, callback) {
     const specificCompsManager = CompsManager.getCompsManager(
       domainObject,
@@ -85,13 +97,7 @@ export default class CompsTelemetryProvider {
     const callbackID = this.#getCallbackID();
     this.#subscriptionCallbacks[callbackID] = callback;
     specificCompsManager.on('underlyingTelemetryUpdated', (newTelemetry) => {
-      const expression = specificCompsManager.getExpression();
-      this.#sharedWorker.port.postMessage({
-        type: 'calculateSubscription',
-        telemetryForComps: newTelemetry,
-        expression,
-        callbackID
-      });
+      this.#computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID);
     });
     return () => {
       specificCompsManager.off('calculationUpdated', callback);
