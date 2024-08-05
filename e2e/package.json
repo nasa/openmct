@@ -19,7 +19,7 @@
     "@percy/playwright": "1.0.4",
     "@playwright/test": "1.45.2",
     "@axe-core/playwright": "4.8.5",
-    "sinon": "17.0.0"
+    "sinon": "18.0.0"
   },
   "author": {
     "name": "National Aeronautics and Space Administration",
