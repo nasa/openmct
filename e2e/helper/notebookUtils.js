@@ -63,7 +63,7 @@ async function dragAndDropEmbed(page, notebookObject) {
   // Expand the tree to reveal the notebook
   await page.getByLabel('Show selected item in tree').click();
   // Drag and drop the SWG into the notebook
-  await page.dragAndDrop(`text=${swg.name}`, NOTEBOOK_DROP_AREA);
+  await page.getByLabel(`Navigate to ${swg.name}`).dragTo(page.locator(NOTEBOOK_DROP_AREA));
   await commitEntry(page);
 }
 
@@ -84,6 +84,7 @@ async function startAndAddRestrictedNotebookObject(page) {
     path: fileURLToPath(new URL('./addInitRestrictedNotebook.js', import.meta.url))
   });
   await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.waitForURL('**/browse/mine?**');
 
   return createDomainObjectWithDefaults(page, {
     type: CUSTOM_NAME,
