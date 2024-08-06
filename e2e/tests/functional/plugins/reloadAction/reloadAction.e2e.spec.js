@@ -77,7 +77,7 @@ test.describe('Reload action', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   });
 
-  test('can reload display layout and its children @clock', async ({ page }) => {
+  test('can reload display layout and its children', async ({ page }) => {
     const beforeReloadAlphaTelemetryValue = page
       .getByLabel('Alpha Table table content')
       .getByLabel('wavelengths table cell')

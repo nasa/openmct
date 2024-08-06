@@ -64,22 +64,17 @@ test.describe('Timer', () => {
 
 test.describe('Timer with target date @clock', () => {
   test.beforeEach(async ({ page }) => {
+    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createDomainObjectWithDefaults(page, { type: 'timer' });
-  });
-
-  // Override clock
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
   });
 
   test('Can count down to a target date', async ({ page }) => {
     // Set the target date to 2024-11-24 03:30:00
     await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
+
     await page.getByPlaceholder('YYYY-MM-DD').fill('2024-11-24');
     await page.locator('input[name="hour"]').fill('3');
     await page.locator('input[name="min"]').fill('30');
