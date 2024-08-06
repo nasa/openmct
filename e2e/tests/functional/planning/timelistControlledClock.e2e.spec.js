@@ -22,7 +22,7 @@
 
 /*
 Collection of Time List tests set to run with browser clock manipulate made possible with the
-clockOptions plugin fixture.
+page.clock() API.
 */
 
 import fs from 'fs';
@@ -98,13 +98,9 @@ const COUNTDOWN = Object.freeze({
 });
 
 test.describe('Time List with controlled clock @clock', () => {
-  test.use({
-    clockOptions: {
-      now: getEarliestStartTime(examplePlanSmall3),
-      shouldAdvanceTime: true
-    }
-  });
   test.beforeEach(async ({ page }) => {
+    await page.clock.setSystemTime(getEarliestStartTime(examplePlanSmall3));
+    await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Create Time List
     const timelist = await createDomainObjectWithDefaults(page, {
@@ -174,16 +170,10 @@ test.describe('Time List with controlled clock @clock', () => {
 });
 
 test.describe('Activity progress when activity is in the future @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.start - 1,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    const firstActivity = getFirstActivity(examplePlanSmall1);
+    await page.clock.setSystemTime(firstActivity.start - 1);
+    await page.clock.resume();
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 
@@ -197,16 +187,12 @@ test.describe('Activity progress when activity is in the future @clock', () => {
 });
 
 test.describe('Activity progress when now is between start and end of the activity @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
   test.beforeEach(async ({ page }) => {
+    const firstActivity = getFirstActivity(examplePlanSmall1);
+    await page.clock.setSystemTime(firstActivity.start + 50000);
+    await page.clock.resume();
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-  });
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.start + 50000,
-      shouldAdvanceTime: true
-    }
   });
 
   test('progress pie is partially filled', async ({ page }) => {
@@ -218,16 +204,11 @@ test.describe('Activity progress when now is between start and end of the activi
 });
 
 test.describe('Activity progress when now is after end of the activity @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.end + 10000,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    const firstActivity = getFirstActivity(examplePlanSmall1);
+    await page.clock.setSystemTime(firstActivity.end + 10000);
+    await page.clock.resume();
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 

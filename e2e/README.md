@@ -490,7 +490,7 @@ For best practices with regards to mocking network responses, see our [couchdb.e
 The following contains a list of tips and tricks which don't exactly fit into a FAQ or Best Practices doc.
 
 - (Advanced) Overriding the Browser's Clock
-It is possible to override the browser's clock in order to control time-based elements. Since this can cause unwanted behavior (i.e. Tree not rendering), only use this sparingly. To do this, use the `page.clock()` API as such:
+It is possible to override the browser's clock in order to control time-based elements. Since this can cause unwanted behavior -- i.e. Tree not rendering -- only use this sparingly. Use the `page.clock()` API as such:
 
 ```js
 import { test, expect } from '../../pluginFixtures.js';
@@ -508,8 +508,6 @@ test.describe('foo test suite @clock', () => {
     /// ...
   });
   ```
-
-  More info and options for `overrideClock` can be found in [baseFixtures.js](baseFixtures.js)
 
 - Working with multiple pages
 There are instances where multiple browser pages will needed to verify multi-page or multi-tab application behavior. Make sure to use the `@2p` annotation as well as name each page appropriately: i.e. `page1` and `page2` or `tab1` and `tab2` depending on the intended use case. Generally pages should be used unless testing `sharedWorker` code, specifically.
