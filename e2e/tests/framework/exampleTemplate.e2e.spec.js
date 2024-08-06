@@ -66,7 +66,7 @@ test.describe('Example - Renaming Timer Object', () => {
     timer = await createDomainObjectWithDefaults(page, { type: 'Timer' });
 
     // Assert the object to be created and check its name in the title
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(timer.name);
+    await expect(page.getByRole('main')).toContainText(timer.name);
   });
 
   /**
@@ -81,7 +81,7 @@ test.describe('Example - Renaming Timer Object', () => {
     await renameTimerFrom3DotMenu(page, timer.url, newObjectName);
 
     // Assert that the name has changed in the browser bar to the value we assigned above
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
+    await expect(page.getByRole('main')).toContainText(newObjectName);
   });
 
   test('An existing Timer object can be renamed twice', async ({ page }) => {
@@ -91,13 +91,13 @@ test.describe('Example - Renaming Timer Object', () => {
     await renameTimerFrom3DotMenu(page, timer.url, newObjectName);
 
     // Assert that the name has changed in the browser bar to the value we assigned above
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName);
+    await expect(page.getByRole('main')).toContainText(newObjectName);
 
     // Rename the Timer object again
     await renameTimerFrom3DotMenu(page, timer.url, newObjectName2);
 
     // Assert that the name has changed in the browser bar to the second value
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(newObjectName2);
+    await expect(page.getByRole('main')).toContainText(newObjectName2);
   });
 
   /**
@@ -117,7 +117,7 @@ test.describe('Example - Renaming Timer Object', () => {
  * The next most important concept in our testing is working with telemetry objects. Telemetry is at the core of Open MCT
  * and we have developed a great pattern for working with it.
  */
-test.describe('Advanced: Working with telemetry objects', () => {
+test.describe('Advanced Example - Working with telemetry objects', () => {
   let displayLayout;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -135,7 +135,7 @@ test.describe('Advanced: Working with telemetry objects', () => {
     //Now you can directly navigate to the displayLayout created in the beforeEach with the embedded telemetry
     await page.goto(displayLayout.url);
     //Expect the created Telemetry Object to be visible when directly navigating to the displayLayout
-    await expect(page.getByTitle('Sine')).toBeVisible();
+    await expect(page.getByLabel('Alpha-numeric telemetry name')).toBeVisible();
   });
 });
 
@@ -153,18 +153,14 @@ test.describe('Advanced: Working with telemetry objects', () => {
  * @param {string} newNameForTimer New name for object
  */
 async function renameTimerFrom3DotMenu(page, timerUrl, newNameForTimer) {
-  // Navigate to the timer object
+  // Navigate to the timer object directly
   await page.goto(timerUrl);
 
-  // Click on 3 Dot Menu
-  await page.locator('button[title="More actions"]').click();
-
-  // Click text=Edit Properties...
-  await page.locator('text=Edit Properties...').click();
+  await page.getByLabel('More actions').click();
+  await page.getByLabel('Edit Properties...').click();
 
   // Rename the timer object
-  await page.locator('text=Properties Title Notes >> input[type="text"]').fill(newNameForTimer);
+  await page.getByLabel('Title', { exact: true }).fill(newNameForTimer);
 
-  // Click Ok button to Save
-  await page.locator('button:has-text("OK")').click();
+  await page.getByLabel('Save').click();
 }

@@ -24,8 +24,8 @@ import { fileURLToPath } from 'url';
 import {
   createDomainObjectWithDefaults,
   navigateToObjectWithFixedTimeBounds,
-  setFixedTimeMode,
   setFixedIndependentTimeConductorBounds,
+  setFixedTimeMode,
   setRealTimeMode,
   setStartOffset
 } from '../../../../appActions.js';
