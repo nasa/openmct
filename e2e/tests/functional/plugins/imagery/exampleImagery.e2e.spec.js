@@ -363,7 +363,7 @@ test.describe('Example Imagery in Display Layout @clock', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
 
     // Go to baseURL
@@ -529,7 +529,7 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -574,7 +574,7 @@ test.describe('Example Imagery in Tabs View @clock', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
