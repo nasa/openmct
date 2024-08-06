@@ -27,13 +27,9 @@ import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
 
 test.describe('Visual - Display Layout @clock', () => {
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
-  });
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     const parentLayout = await createDomainObjectWithDefaults(page, {

@@ -97,9 +97,11 @@ const COUNTDOWN = Object.freeze({
   SECONDS: 5
 });
 
+const FIRST_ACTIVITY_SMALL_1 = getFirstActivity(examplePlanSmall1);
+
 test.describe('Time List with controlled clock @clock', () => {
   test.beforeEach(async ({ page }) => {
-    await page.clock.setSystemTime(getEarliestStartTime(examplePlanSmall3));
+    await page.clock.install({ time: getEarliestStartTime(examplePlanSmall3) });
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Create Time List
@@ -171,8 +173,7 @@ test.describe('Time List with controlled clock @clock', () => {
 
 test.describe('Activity progress when activity is in the future @clock', () => {
   test.beforeEach(async ({ page }) => {
-    const firstActivity = getFirstActivity(examplePlanSmall1);
-    await page.clock.setSystemTime(firstActivity.start - 1);
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.start - 1 });
     await page.clock.resume();
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
@@ -188,8 +189,7 @@ test.describe('Activity progress when activity is in the future @clock', () => {
 
 test.describe('Activity progress when now is between start and end of the activity @clock', () => {
   test.beforeEach(async ({ page }) => {
-    const firstActivity = getFirstActivity(examplePlanSmall1);
-    await page.clock.setSystemTime(firstActivity.start + 50000);
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.start + 50000 });
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
@@ -205,8 +205,7 @@ test.describe('Activity progress when now is between start and end of the activi
 
 test.describe('Activity progress when now is after end of the activity @clock', () => {
   test.beforeEach(async ({ page }) => {
-    const firstActivity = getFirstActivity(examplePlanSmall1);
-    await page.clock.setSystemTime(firstActivity.end + 10000);
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.end + 10000 });
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
