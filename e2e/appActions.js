@@ -228,7 +228,9 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 }
 
 /**
- * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds.
+ * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds. Note: does not set
+ * default view type.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string} url The url to the domainObject
  * @param {string | number} start The starting time bound in milliseconds since epoch
@@ -241,9 +243,13 @@ async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
 }
 
 /**
- * Navigates directly to a given object url, in real-time mode.
+ * Navigates directly to a given object url, in real-time mode. Note: does not set
+ * default view type.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string} url The url to the domainObject
+ * @param {string | number} start The start offset in milliseconds
+ * @param {string | number} end The end offset in milliseconds
  */
 async function navigateToObjectWithRealTime(page, url, start = '1800000', end = '30000') {
   await page.goto(
@@ -343,10 +349,11 @@ async function _isInEditMode(page, identifier) {
 
 /**
  * Set the time conductor mode to either fixed timespan or realtime mode.
+ * @private
  * @param {import('@playwright/test').Page} page
  * @param {boolean} [isFixedTimespan=true] true for fixed timespan mode, false for realtime mode; default is true
  */
-async function setTimeConductorMode(page, isFixedTimespan = true) {
+async function _setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
@@ -367,7 +374,7 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
  * @param {import('@playwright/test').Page} page
  */
 async function setFixedTimeMode(page) {
-  await setTimeConductorMode(page, true);
+  await _setTimeConductorMode(page, true);
 }
 
 /**
@@ -375,7 +382,7 @@ async function setFixedTimeMode(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function setRealTimeMode(page) {
-  await setTimeConductorMode(page, false);
+  await _setTimeConductorMode(page, false);
 }
 
 /**
@@ -497,19 +504,20 @@ async function setTimeConductorBounds(page, { submitChanges = true, ...bounds })
 }
 
 /**
- * Set the independent time conductor bounds in fixed time mode
+ * Set the bounds of the visible conductor in fixed time mode.
+ * Requires that page already has an independent time conductor in view.
  * @param {import('@playwright/test').Page} page
- * @param {string} startDate
- * @param {string} endDate
+ * @param {string} start - The start date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
+ * @param {string} end - The end date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
  */
-async function setIndependentTimeConductorBounds(page, { start, end }) {
+async function setFixedIndependentTimeConductorBounds(page, { start, end }) {
   // Activate Independent Time Conductor
   await page.getByLabel('Enable Independent Time Conductor').click();
 
   // Bring up the time conductor popup
   await page.getByLabel('Independent Time Conductor Settings').click();
   await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
-  await setTimeBounds(page, start, end);
+  await _setTimeBounds(page, start, end);
 
   await page.keyboard.press('Enter');
 }
@@ -518,10 +526,10 @@ async function setIndependentTimeConductorBounds(page, { start, end }) {
  * Set the bounds of the visible conductor in fixed time mode
  * @private
  * @param {import('@playwright/test').Page} page
- * @param {string} startDate
- * @param {string} endDate
+ * @param {string} start - The start date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
+ * @param {string} end - The end date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
  */
-async function setTimeBounds(page, startDate, endDate) {
+async function _setTimeBounds(page, startDate, endDate) {
   if (startDate) {
     // Fill start time
     await page
@@ -632,7 +640,7 @@ export {
   navigateToObjectWithRealTime,
   setEndOffset,
   setFixedTimeMode,
-  setIndependentTimeConductorBounds,
+  setFixedIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,

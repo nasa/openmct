@@ -24,7 +24,10 @@
 Testsuite for plot autoscale.
 */
 
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  navigateToObjectWithFixedTimeBounds
+} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 test.use({
   viewport: {
@@ -51,9 +54,7 @@ test.describe('Autoscale', () => {
     });
 
     // Switch to fixed time, start: 2022-03-28 22:00:00.000 UTC, end: 2022-03-28 22:00:30.000 UTC
-    await page.goto(
-      `${overlayPlot.url}?tc.mode=fixed&tc.startBound=1648591200000&tc.endBound=1648591230000&tc.timeSystem=utc&view=plot-overlay`
-    );
+    await navigateToObjectWithFixedTimeBounds(page, overlayPlot.url, 1648591200000, 1648591230000);
 
     await testYTicks(page, ['-1.00', '-0.50', '0.00', '0.50', '1.00']);
 

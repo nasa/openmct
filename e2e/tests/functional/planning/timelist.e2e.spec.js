@@ -21,7 +21,11 @@
  *****************************************************************************/
 import fs from 'fs';
 
-import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createPlanFromJSON,
+  navigateToObjectWithFixedTimeBounds
+} from '../../../appActions.js';
 import { expect, test } from '../../../pluginFixtures.js';
 
 const examplePlanSmall1 = JSON.parse(
@@ -59,9 +63,7 @@ test.describe('Time List', () => {
       const endBound = lastActivity.end;
 
       // Switch to fixed time mode with all plan events within the bounds
-      await page.goto(
-        `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
-      );
+      await navigateToObjectWithFixedTimeBounds(page, timelist.url, startBound, endBound);
 
       // Verify all events are displayed
       const eventCount = await page.getByRole('row').count();
@@ -124,9 +126,7 @@ test("View a timelist in expanded view, verify all the activities are displayed 
     const endBound = lastActivity.end;
 
     // Switch to fixed time mode with all plan events within the bounds
-    await page.goto(
-      `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
-    );
+    await navigateToObjectWithFixedTimeBounds(page, timelist.url, startBound, endBound);
 
     // Change the object to edit mode
     await page.getByRole('button', { name: 'Edit Object' }).click();

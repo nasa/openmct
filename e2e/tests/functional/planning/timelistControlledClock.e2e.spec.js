@@ -27,7 +27,11 @@ clockOptions plugin fixture.
 
 import fs from 'fs';
 
-import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createPlanFromJSON,
+  navigateToObjectWithRealTime
+} from '../../../appActions.js';
 import {
   createTimelistWithPlanAndSetActivityInProgress,
   getEarliestStartTime,
@@ -115,9 +119,7 @@ test.describe('Time List with controlled clock @clock', () => {
     });
 
     // Navigate to the Time List in real-time mode
-    await page.goto(
-      `${timelist.url}?tc.mode=local&tc.startDelta=900000&tc.endDelta=1800000&tc.timeSystem=utc&view=grid`
-    );
+    await navigateToObjectWithRealTime(page, timelist.url, 900000, 1800000);
 
     //Expand the viewport to show the entire time list
     await page.getByLabel('Collapse Inspect Pane').click();

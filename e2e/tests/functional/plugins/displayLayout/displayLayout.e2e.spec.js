@@ -25,7 +25,7 @@ import {
   createDomainObjectWithDefaults,
   navigateToObjectWithFixedTimeBounds,
   setFixedTimeMode,
-  setIndependentTimeConductorBounds,
+  setFixedIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset
 } from '../../../../appActions.js';
@@ -423,7 +423,7 @@ test.describe('Display Layout', () => {
 
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
-    await setIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
+    await setFixedIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();

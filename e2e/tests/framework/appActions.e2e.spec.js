@@ -32,7 +32,7 @@ import {
   navigateToObjectWithRealTime,
   setEndOffset,
   setFixedTimeMode,
-  setIndependentTimeConductorBounds,
+  setFixedIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
@@ -41,7 +41,7 @@ import {
 import { assertPlanActivities, setBoundsToSpanAllActivities } from '../../helper/planningUtils.js';
 import { expect, test } from '../../pluginFixtures.js';
 
-test.describe('AppActions', () => {
+test.describe('AppActions @framework', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
@@ -236,6 +236,33 @@ test.describe('AppActions', () => {
     const plotPixelSize = plotPixels.length;
     expect(plotPixelSize).toBeGreaterThan(0);
   });
+  test('navigateToObjectWithFixedTimeBounds', async ({ page }) => {
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+    //Navigate without explicit bounds
+    await navigateToObjectWithFixedTimeBounds(page, exampleTelemetry.url);
+    await expect(page.getByLabel('Start bounds:')).toBeVisible();
+    await expect(page.getByLabel('End bounds:')).toBeVisible();
+    //Navigate with explicit bounds
+    await navigateToObjectWithFixedTimeBounds(
+      page,
+      exampleTelemetry.url,
+      1693592063607,
+      1693593893607
+    );
+    await expect(page.getByLabel('Start bounds: 2023-09-01 18:')).toBeVisible();
+    await expect(page.getByLabel('End bounds: 2023-09-01 18:44:')).toBeVisible();
+  });
+  test('navigateToObjectWithRealTime', async ({ page }) => {
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+    //Navigate without explicit bounds
+    await navigateToObjectWithRealTime(page, exampleTelemetry.url);
+    await expect(page.getByLabel('Start offset:')).toBeVisible();
+    await expect(page.getByLabel('End offset: 00:00:')).toBeVisible();
+    //Navigate with explicit bounds
+    await navigateToObjectWithRealTime(page, exampleTelemetry.url, 1693592063607, 1693593893607);
+    await expect(page.getByLabel('Start offset: 18:14:')).toBeVisible();
+    await expect(page.getByLabel('End offset: 18:44:')).toBeVisible();
+  });
   test('setTimeConductorMode', async ({ page }) => {
     await test.step('setFixedTimeMode', async () => {
       await setFixedTimeMode(page);
@@ -285,5 +312,27 @@ test.describe('AppActions', () => {
     });
     await expect(page.getByLabel('Start bounds: 2024-01-01 00:00:00')).toBeVisible();
     await expect(page.getByLabel('End bounds: 2024-01-02 23:59:59')).toBeVisible();
+  });
+  test('setFixedIndependentTimeConductorBounds', async ({ page }) => {
+    // Create a Display Layout
+    const displayLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout'
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Example Imagery',
+      parent: displayLayout.uuid
+    });
+
+    const startDate = '2021-12-30 01:01:00.000Z';
+    const endDate = '2021-12-30 01:11:00.000Z';
+    await setFixedIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
+
+    // check image date
+    await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
+
+    // flip it off
+    await page.getByRole('switch').click();
+    // timestamp shouldn't be in the past anymore
+    await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
   });
 });

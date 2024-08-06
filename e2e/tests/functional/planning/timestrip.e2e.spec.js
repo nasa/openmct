@@ -23,7 +23,8 @@
 import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
-  setIndependentTimeConductorBounds
+  navigateToObjectWithFixedTimeBounds,
+  setFixedIndependentTimeConductorBounds
 } from '../../../appActions.js';
 import { expect, test } from '../../../pluginFixtures.js';
 
@@ -111,9 +112,7 @@ test.describe('Time Strip', () => {
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
       // Switch to fixed time mode with all plan events within the bounds
-      await page.goto(
-        `${timestrip.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=time-strip.view`
-      );
+      await navigateToObjectWithFixedTimeBounds(page, timestrip.url, startBound, endBound);
 
       // Verify all events are displayed
       const eventCount = await page.locator('.activity-bounds').count();
@@ -131,7 +130,7 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await setIndependentTimeConductorBounds(page, {
+      await setFixedIndependentTimeConductorBounds(page, {
         start: startBoundString,
         end: endBoundString
       });
@@ -163,7 +162,7 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await setIndependentTimeConductorBounds(page, {
+      await setFixedIndependentTimeConductorBounds(page, {
         start: startBoundString,
         end: endBoundString
       });

@@ -7,8 +7,13 @@ module.exports = {
   },
   overrides: [
     {
-      //Apply Best Practices to externalFixtures
-      files: ['appActions.js', 'baseFixtures.js', 'pluginFixtures.js'],
+      //Apply Best Practices to externalFixtures and exampleTemplate.e2e.spec.js
+      files: [
+        'appActions.js',
+        'baseFixtures.js',
+        'pluginFixtures.js',
+        '**/exampleTemplate.e2e.spec.js'
+      ],
       rules: {
         'playwright/no-raw-locators': 'error',
         'playwright/no-nth-methods': 'error',

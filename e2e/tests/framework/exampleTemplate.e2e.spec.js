@@ -44,7 +44,7 @@
  */
 
 // Structure: Some standard Imports. Please update the required pathing.
-import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { createDomainObjectWithDefaults, createExampleTelemetryObject } from '../../appActions.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 /**
@@ -53,7 +53,7 @@ import { expect, test } from '../../pluginFixtures.js';
  *  If your test runtime exceeds 5 minutes or 500 lines, it's likely that it will need to be split.
  *
  */
-test.describe('Renaming Timer Object', () => {
+test.describe('Example - Renaming Timer Object', () => {
   // Top-level declaration of the Timer object created in beforeEach().
   // We can then use this throughout the entire test suite.
   let timer;
@@ -128,11 +128,8 @@ test.describe('Advanced: Working with telemetry objects', () => {
       name: 'Display Layout with Embedded SWG'
     });
     // Create Telemetry object within the parent object created above
-    await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      name: 'Telemetry',
-      parent: displayLayout.uuid //reference the display layout in the creation process
-    });
+    //reference the display layout in the creation process
+    await createExampleTelemetryObject(page, displayLayout.uuid);
   });
   test('Can directly navigate to a Display Layout with embedded telemetry', async ({ page }) => {
     //Now you can directly navigate to the displayLayout created in the beforeEach with the embedded telemetry

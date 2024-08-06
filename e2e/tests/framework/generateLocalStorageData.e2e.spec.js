@@ -36,7 +36,7 @@ import { fileURLToPath } from 'url';
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
-  setIndependentTimeConductorBounds,
+  setFixedIndependentTimeConductorBounds,
   setTimeConductorBounds
 } from '../../appActions.js';
 import { MISSION_TIME } from '../../constants.js';
@@ -112,7 +112,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 
     await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
 
-    await setIndependentTimeConductorBounds(page, {
+    await setFixedIndependentTimeConductorBounds(page, {
       start: '2024-11-12 19:11:11.000Z',
       end: '2024-11-12 20:11:11.000Z'
     });

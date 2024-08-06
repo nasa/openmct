@@ -225,13 +225,13 @@ Current list of test tags:
 |:-:|-|
 |`@mobile` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
 |`@a11y` | Test case or test suite to execute playwright-axe accessibility checks and generate a11y reports.|
-|`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
 |`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
 |`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB). See [note](#utilizing-localstorage)|
 |`@snapshot` | Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.|
 |`@2p` | Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.|
 |`@generatedata` | Indicates that a test is used to generate testdata or test the generated test data. Usually to be associated with localstorage, but this may grow over time.|
 |`@clock` | A test which modifies the clock. These have expanded out of the visual tests and into the functional tests.
+|`@framework` | A test for open mct e2e capabilities. This is primarily to ensure we don't break projects which depend on sourcing this project's fixtures like appActions.js.
 
 ### Continuous Integration
 

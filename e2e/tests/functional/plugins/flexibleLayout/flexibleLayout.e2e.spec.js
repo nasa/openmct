@@ -24,7 +24,7 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  setIndependentTimeConductorBounds
+  setFixedIndependentTimeConductorBounds
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -248,7 +248,7 @@ test.describe('Flexible Layout', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // flip on independent time conductor
-    await setIndependentTimeConductorBounds(page, {
+    await setFixedIndependentTimeConductorBounds(page, {
       start: '2021-12-30 01:01:00.000Z',
       end: '2021-12-30 01:11:00.000Z'
     });
