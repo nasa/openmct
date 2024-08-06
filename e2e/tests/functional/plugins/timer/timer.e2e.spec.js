@@ -38,13 +38,11 @@ test.describe('Timer', () => {
       description: 'https://github.com/nasa/openmct/issues/4313'
     });
 
-    const timerUrl = timer.url;
-
     await test.step('From the tree context menu', async () => {
-      await triggerTimerContextMenuAction(page, timerUrl, 'Start');
-      await triggerTimerContextMenuAction(page, timerUrl, 'Pause');
-      await triggerTimerContextMenuAction(page, timerUrl, 'Restart at 0');
-      await triggerTimerContextMenuAction(page, timerUrl, 'Stop');
+      await triggerTimerContextMenuAction(page, timer.url, 'Start');
+      await triggerTimerContextMenuAction(page, timer.url, 'Pause');
+      await triggerTimerContextMenuAction(page, timer.url, 'Restart at 0');
+      await triggerTimerContextMenuAction(page, timer.url, 'Stop');
     });
 
     await test.step('From the 3dot menu', async () => {
@@ -64,7 +62,7 @@ test.describe('Timer', () => {
 
 test.describe('Timer with target date @clock', () => {
   test.beforeEach(async ({ page }) => {
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createDomainObjectWithDefaults(page, { type: 'timer' });
