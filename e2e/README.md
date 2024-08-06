@@ -498,7 +498,7 @@ import { test, expect } from '../../pluginFixtures.js';
 test.describe('foo test suite @clock', () => {
   test.beforeEach(async ({ page }) => {
     //Set clock time
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
     //Navigate to page with new clock
     await page.goto('./', { waitUntil: 'domcontentloaded' });

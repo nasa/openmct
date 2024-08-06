@@ -47,7 +47,7 @@ test.describe('baseFixtures tests', () => {
   }) => {
     test.fail();
     //Set clock time
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
