@@ -559,12 +559,13 @@ async function _setTimeBounds(page, startDate, endDate) {
  * all plots on the page and waits up to the default timeout for the class to be
  * attached to each plot.
  * @param {import('@playwright/test').Page} page
+ * @param {number} [timeout] Provide a custom timeout in milliseconds to override the default timeout
  */
-async function waitForPlotsToRender(page) {
+async function waitForPlotsToRender(page, { timeout } = {}) {
   //eslint-disable-next-line playwright/no-raw-locators
   const plotLocator = page.locator('.gl-plot');
   for (const plot of await plotLocator.all()) {
-    await expect(plot).toHaveClass(/js-series-data-loaded/);
+    await expect(plot).toHaveClass(/js-series-data-loaded/, { timeout });
   }
 }
 

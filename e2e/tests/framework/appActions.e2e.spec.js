@@ -335,4 +335,20 @@ test.describe('AppActions @framework', () => {
     // timestamp shouldn't be in the past anymore
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
   });
+  test.fail('waitForPlotsToRender', async ({ page }) => {
+    // Create a SWG
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator'
+    });
+    // Edit the SWG
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+    // Set loading delay to 10 seconds
+    await page.getByLabel('Loading Delay (ms)', { exact: true }).fill('10000');
+    await page.getByLabel('Save').click();
+    // Reload the page
+    await page.reload();
+    // Expect this step to fail
+    await waitForPlotsToRender(page, { timeout: 1000 });
+  });
 });
