@@ -482,19 +482,10 @@
     "composables",
     "countup",
     "darkmatter",
-    "Undeletes"
+    "Undeletes",
+    "SSSZ"
   ],
-  "dictionaries": [
-    "npm",
-    "softwareTerms",
-    "node",
-    "html",
-    "css",
-    "bash",
-    "en_US",
-    "en-gb",
-    "misc"
-  ],
+  "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [
     "package.json",
     "dist/**",

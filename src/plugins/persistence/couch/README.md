@@ -55,7 +55,7 @@ docker stop couch-couchdb-1;docker rm couch-couchdb-1;docker volume rm couch_cou
 
 ## macOS
 
-We highly recommend using the CouchDB `docker compose` method of installation, thoughit is still possible to install CouchDB through other means.
+We highly recommend using the CouchDB `docker compose` method of installation, though it is still possible to install CouchDB through other means.
 
 ### Installing CouchDB
 
