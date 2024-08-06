@@ -47,7 +47,7 @@ const overlayPlotName = 'Overlay Plot with Telemetry Object';
 test.describe('Generate Visual Test Data @localStorage @generatedata @clock', () => {
   test.beforeEach(async ({ page }) => {
     // Override the clock
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
