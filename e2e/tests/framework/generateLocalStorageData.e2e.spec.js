@@ -45,14 +45,10 @@ import { expect, test } from '../../pluginFixtures.js';
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata @clock', () => {
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    // Override the clock
+    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.resume();
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
