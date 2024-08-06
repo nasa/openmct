@@ -27,12 +27,28 @@ relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions ma
 */
 
 import { test } from '../../baseFixtures.js';
+import { MISSION_TIME } from '../../constants.js';
 
 test.describe('baseFixtures tests', () => {
   //Skip this test for now https://github.com/nasa/openmct/issues/6785
   test('Verify that tests fail if console.error is thrown', async ({ page }) => {
     test.fail();
     //Go to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    //Verify that ../fixtures.js detects console log errors
+    await Promise.all([
+      page.evaluate(() => console.error('This should result in a failure')),
+      page.waitForEvent('console') // always wait for the event to happen while triggering it!
+    ]);
+  });
+  test('Verify that tests fail if console.error is thrown with clock override @clock', async ({
+    page
+  }) => {
+    test.fail();
+    //Set clock time
+    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     //Verify that ../fixtures.js detects console log errors
