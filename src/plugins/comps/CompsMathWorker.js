@@ -7,12 +7,12 @@ onconnect = function (e) {
   port.onmessage = function (event) {
     console.debug('🧮 Comps Math Worker message:', event);
     try {
-      const { type, callbackID, telemetryForComps, newTelemetry, expression } = event.data;
+      const { type, callbackID, telemetryForComps, expression } = event.data;
       if (type === 'calculateRequest') {
         const result = calculateRequest(telemetryForComps, expression);
         port.postMessage({ type: 'calculationRequestResult', callbackID, result });
       } else if (type === 'calculateSubscription') {
-        const result = calculateSubscription(telemetryForComps, newTelemetry, expression);
+        const result = calculateSubscription(telemetryForComps, expression);
         if (result.length) {
           port.postMessage({ type: 'calculationSubscriptionResult', callbackID, result });
         }
@@ -37,41 +37,8 @@ function getFullDataFrame(telemetryForComps) {
   return dataFrame;
 }
 
-function getReducedDataFrame(telemetryForComps, newTelemetry) {
-  const reducedDataFrame = {};
-  const fullDataFrame = getFullDataFrame(telemetryForComps);
-  // we can assume (due to telemetryCollections) that newTelmetry has at most one key
-  const newTelemetryKey = Object.keys(newTelemetry)[0];
-  const newTelmetryData = newTelemetry[newTelemetryKey];
-  // initalize maps for other telemetry
-  Object.keys(telemetryForComps).forEach((key) => {
-    if (key !== newTelemetryKey) {
-      reducedDataFrame[key] = new Map();
-    }
-  });
-  reducedDataFrame[newTelemetryKey] = new Map(
-    Object.values(newTelmetryData).map((item) => {
-      return [item.utc, item];
-    })
-  );
-
-  // march through the new telemetry and look for corresponding telemetry in the other dataset
-  newTelmetryData.forEach((value) => {
-    const newTelemetryUtc = value.utc;
-    Object.keys(telemetryForComps).forEach((otherKey) => {
-      if (otherKey !== newTelemetryKey) {
-        const otherDataSet = fullDataFrame[otherKey];
-        if (otherDataSet.has(newTelemetryUtc)) {
-          reducedDataFrame[otherKey].set(newTelemetryUtc, otherDataSet.get(newTelemetryUtc));
-        }
-      }
-    });
-  });
-  return reducedDataFrame;
-}
-
-function calculateSubscription(telemetryForComps, newTelemetry, expression) {
-  const dataFrame = getReducedDataFrame(telemetryForComps, newTelemetry);
+function calculateSubscription(telemetryForComps, expression) {
+  const dataFrame = getFullDataFrame(telemetryForComps);
   return calculate(dataFrame, expression);
 }
 

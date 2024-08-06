@@ -78,11 +78,11 @@ export default class CompsTelemetryProvider {
 
   #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
     const expression = specificCompsManager.getExpression();
-    const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
+    const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
+    console.debug('🏟️ created new Data frame:', telemetryForComps);
     this.#sharedWorker.port.postMessage({
       type: 'calculateSubscription',
       telemetryForComps,
-      newTelemetry,
       expression,
       callbackID
     });
@@ -127,7 +127,7 @@ export default class CompsTelemetryProvider {
   onSharedWorkerMessage(event) {
     console.log('📝 Shared worker message:', event.data);
     const { type, result, callbackID } = event.data;
-    if (type === 'calculationSubscriptionResult') {
+    if (type === 'calculationSubscriptionResult' && this.#subscriptionCallbacks[callbackID]) {
       this.#subscriptionCallbacks[callbackID](result);
     } else if (type === 'calculationRequestResult') {
       this.#requestPromises[callbackID].resolve(result);

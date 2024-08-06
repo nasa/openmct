@@ -31,6 +31,42 @@ export default class CompsManager extends EventEmitter {
     }
   }
 
+  getFullDataFrame(newTelemetry) {
+    const dataFrame = {};
+    // can assume on data item
+    const newTelemetryKey = Object.keys(newTelemetry)[0];
+    const newTelemetryData = newTelemetry[newTelemetryKey];
+    const otherTelemetryKeys = Object.keys(this.#telemetryCollections).filter(
+      (keyString) => keyString !== newTelemetryKey
+    );
+    // initialize the data frame with the new telemetry data
+    dataFrame[newTelemetryKey] = newTelemetryData;
+    // initialize the other telemetry data
+    otherTelemetryKeys.forEach((keyString) => {
+      dataFrame[keyString] = [];
+    });
+
+    // march through the new telemetry data and add data to the frame from the other telemetry objects
+    // using LOCF
+
+    newTelemetryData.forEach((newDatum) => {
+      otherTelemetryKeys.forEach((otherKeyString) => {
+        const otherCollection = this.#telemetryCollections[otherKeyString];
+        let insertionPointForNewData = otherCollection._sortedIndex(newDatum);
+        const otherCollectionData = otherCollection.getAll();
+        if (insertionPointForNewData && insertionPointForNewData >= otherCollectionData.length) {
+          insertionPointForNewData = otherCollectionData.length - 1;
+        }
+        // get the closest datum to the new datum
+        const closestDatum = otherCollectionData[insertionPointForNewData];
+        if (closestDatum) {
+          dataFrame[otherKeyString].push(closestDatum);
+        }
+      });
+    });
+    return dataFrame;
+  }
+
   #removeTelemetryObject = (telemetryObject) => {
     console.debug('❌ CompsManager: removeTelemetryObject', telemetryObject);
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
