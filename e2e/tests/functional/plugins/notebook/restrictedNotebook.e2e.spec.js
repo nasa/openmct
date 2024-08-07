@@ -55,7 +55,7 @@ test.describe('Restricted Notebook', () => {
     // Click Remove Text
     await page.locator('li[role="menuitem"]:has-text("Remove")').click();
 
-    // Click 'OK' on confirmation window
+    // Click 'Ok' on confirmation window
     await page.locator('button:has-text("OK")').click();
 
     // has been deleted

@@ -73,7 +73,7 @@ test.describe('Gauge', () => {
         )
       )
       .toBeVisible();
-    await page.getByLabel('Save').click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Navigate to the gauge and verify that the new SWG
     // appears in the elements pool and the old one is gone
@@ -98,7 +98,7 @@ test.describe('Gauge', () => {
         )
       )
       .toBeVisible();
-    await page.getByLabel('Save').click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Verify that the elements pool shows no elements
     await expect(page.locator('text="No contained elements"')).toBeVisible();

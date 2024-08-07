@@ -41,11 +41,10 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await page.getByRole('button', { name: 'Create' }).click();
-
-    await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
-
-    await page.getByLabel('Save').click();
+    const conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: 'Unnamed Condition Set'
+    });
 
     //Save localStorage for future test execution
     await context.storageState({
@@ -55,7 +54,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     });
 
     //Set object identifier from url
-    conditionSetUrl = page.url();
+    conditionSetUrl = conditionSet.url;
 
     await page.close();
   });
@@ -86,7 +85,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     await page.reload({ waitUntil: 'domcontentloaded' });
 
     //Re-verify after reload
-    await expect.soft(page.getByRole('main')).toContainText('Unnamed Condition Set');
+    await expect(page.getByRole('main')).toContainText('Unnamed Condition Set');
 
     //Assertions on loaded Condition Set in Inspector
     await expect(
@@ -100,9 +99,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     await page.goto(conditionSetUrl, { waitUntil: 'domcontentloaded' });
 
     //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
 
     //Update the Condition Set properties
     // Click Edit Button
@@ -535,7 +532,7 @@ test.describe('Condition Set Composition', () => {
       .getByLabel(`${exampleTelemetry.name} Context Menu`)
       .getByRole('menuitem', { name: 'Remove' })
       .click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     await page
       .getByLabel(`Navigate to ${conditionSet.name} conditionSet Object`, { exact: true })

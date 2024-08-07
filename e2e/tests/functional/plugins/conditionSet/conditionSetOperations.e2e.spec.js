@@ -351,7 +351,7 @@ test.describe('Condition Set Composition', () => {
       .getByLabel(`${exampleTelemetry.name} Context Menu`)
       .getByRole('menuitem', { name: 'Remove' })
       .click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     await page
       .getByLabel(`Navigate to ${conditionSet.name} conditionSet Object`, { exact: true })

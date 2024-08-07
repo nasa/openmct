@@ -276,7 +276,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 
     // Clear Recently Viewed
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     //Save localStorage for future test execution
     await context.storageState({
       path: fileURLToPath(

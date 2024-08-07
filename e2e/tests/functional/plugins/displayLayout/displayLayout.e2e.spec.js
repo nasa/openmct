@@ -543,7 +543,7 @@ async function removeLayoutObject(page, layoutObject) {
     // eslint-disable-next-line playwright/no-force-option
     .click({ force: true });
   await page.getByTitle('Delete the selected object').click();
-  await page.getByRole('button', { name: 'OK', exact: true }).click();
+  await page.getByRole('button', { name: 'Ok', exact: true }).click();
 }
 
 /**
@@ -562,10 +562,10 @@ async function addLayoutObject(page, layoutName, layoutObject) {
     .click();
   if (layoutObject === 'Text') {
     await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
-    await page.getByText('OK').click();
+    await page.getByText('Ok').click();
   } else if (layoutObject === 'Image') {
     await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
-    await page.getByText('OK').click();
+    await page.getByText('Ok').click();
   }
 }
 

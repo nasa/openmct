@@ -87,7 +87,7 @@ test.describe('Smoke tests for @mobile', () => {
     //Remove First Object to bring up confirmation dialog
     await page.getByLabel('View menu items').nth(1).click();
     await page.getByLabel('Remove').click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'Ok' }).click();
     //Verify that the object is removed
     await expect(page.getByLabel('Child Layout 1 Layout')).toBeVisible();
     await expect(page.getByLabel('Child Layout 2 Layout')).toHaveCount(0);

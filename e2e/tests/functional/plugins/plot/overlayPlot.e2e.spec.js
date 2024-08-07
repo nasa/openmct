@@ -351,7 +351,7 @@ test.describe('Overlay Plot', () => {
     await expect(swgAElementsPoolItem).toBeVisible();
     await swgAElementsPoolItem.click({ button: 'right' });
     await page.getByRole('menuitem', { name: 'Remove' }).click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     await expect(swgAElementsPoolItem).toBeHidden();
 
     await page.getByRole('button', { name: 'Save' }).click();

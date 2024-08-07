@@ -82,7 +82,7 @@ test.describe('Stacked Plot', () => {
       .getByRole('menuitem')
       .filter({ hasText: /Remove/ })
       .click();
-    await page.getByRole('button').filter({ hasText: 'OK' }).click();
+    await page.getByRole('button').filter({ hasText: 'Ok' }).click();
 
     await expect(page.locator('#inspector-elements-tree .js-elements-pool__item')).toHaveCount(2);
 

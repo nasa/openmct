@@ -78,7 +78,7 @@ test.describe('Plot Rendering', () => {
     // click on synchronize with time conductor
     await page.getByTitle('Synchronize Time Conductor').click();
 
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     //confirm that you're now in fixed mode with the correct range
     await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
