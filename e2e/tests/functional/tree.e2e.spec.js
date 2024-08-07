@@ -122,27 +122,27 @@ test.describe('Main Tree', () => {
   });
 
   test('Renaming an object reorders the tree', async ({ page }) => {
-    await createDomainObjectWithDefaults(page, {
+    const foo = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'Foo'
     });
 
-    await createDomainObjectWithDefaults(page, {
+    const bar = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'Bar'
     });
 
-    await createDomainObjectWithDefaults(page, {
+    const baz = await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'Baz'
     });
 
-    const clock1 = await createDomainObjectWithDefaults(page, {
+    let clock1 = await createDomainObjectWithDefaults(page, {
       type: 'Clock',
       name: 'aaa'
     });
 
-    await createDomainObjectWithDefaults(page, {
+    const www = await createDomainObjectWithDefaults(page, {
       type: 'Clock',
       name: 'www'
     });
@@ -151,35 +151,35 @@ test.describe('Main Tree', () => {
     await page.getByLabel('Expand My Items folder').click();
 
     await test.step('Reorders objects with the same tree depth', async () => {
-      await getAndAssertTreeItems(page, ['aaa', 'Bar', 'Baz', 'Foo', 'www']);
-      await renameObjectFromContextMenu(page, clock1.url, 'zzz');
-      await getAndAssertTreeItems(page, ['Bar', 'Baz', 'Foo', 'www', 'zzz']);
+      await getAndAssertTreeItems(page, ['My Items', 'aaa', 'Bar', 'Baz', 'Foo', 'www']);
+      clock1.name = 'zzz';
+      await renameObjectFromContextMenu(page, clock1.url, clock1.name);
+      await getAndAssertTreeItems(page, ['My Items', 'Bar', 'Baz', 'Foo', 'www', 'zzz']);
     });
 
     await test.step('Reorders links to objects as well as original objects', async () => {
-      await page.click('role=treeitem[name=/Bar/]');
-      await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-      await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
-      await page.click('role=treeitem[name=/Baz/]');
-      await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-      await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
-      await page.click('role=treeitem[name=/Foo/]');
-      await page.dragAndDrop('role=treeitem[name=/www/]', '.c-object-view');
-      await page.dragAndDrop('role=treeitem[name=/zzz/]', '.c-object-view');
+      await page.getByLabel(`Navigate to ${bar.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${baz.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.locator('.c-object-view'));
+      await page.goto(foo.url);
+      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.locator('.c-object-view'));
       // Expand the unopened folders
       await page.getByLabel(`Expand Bar folder`).click();
       await page.getByLabel(`Expand Baz folder`).click();
       await page.getByLabel(`Expand Foo folder`).click();
 
-      await renameObjectFromContextMenu(page, clock1.url, '___');
+      clock1.name = '___';
+      await renameObjectFromContextMenu(page, clock1.url, clock1.name);
+      await expect(page.getByLabel('Navigate to ' + clock1.name)).toHaveCount(2);
       await getAndAssertTreeItems(page, [
+        'My Items',
         '___',
         'Bar',
-        '___',
-        'www',
         'Baz',
-        '___',
-        'www',
         'Foo',
         '___',
         'www',
@@ -228,11 +228,9 @@ test.describe('Main Tree', () => {
  * @param {Array<string>} expected
  */
 async function getAndAssertTreeItems(page, expected) {
-  const treeItems = page.locator('[role="treeitem"]');
-  const allTexts = await treeItems.allInnerTexts();
-  // Get rid of root folder ('My Items') as its position will not change
-  allTexts.shift();
-  expect(allTexts).toEqual(expected);
+  const treeItems = page.getByRole('treeitem');
+  await expect(treeItems).toHaveCount(expected.length);
+  await expect(treeItems).toHaveText(expected, { useInnerText: true });
 }
 
 /**
@@ -243,11 +241,10 @@ async function getAndAssertTreeItems(page, expected) {
  */
 async function renameObjectFromContextMenu(page, url, newName) {
   await openObjectTreeContextMenu(page, url);
-  await page.locator('li:text("Edit Properties")').click();
+  await page.getByLabel('Edit Properties...').click();
   const nameInput = page.getByLabel('Title', { exact: true });
-  await nameInput.fill('');
   await nameInput.fill(newName);
-  await page.locator('[aria-label="Save"]').click();
+  await page.getByLabel('Save').click();
 }
 
 /**
