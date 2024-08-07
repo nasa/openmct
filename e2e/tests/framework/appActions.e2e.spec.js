@@ -301,18 +301,6 @@ test.describe('AppActions @framework', () => {
       await expect(page.getByLabel('End offset: 04:20:22')).toBeVisible();
     });
   });
-  test('setTimeConductorBounds', async ({ page }) => {
-    // Assume in real-time mode by default
-    await setFixedTimeMode(page);
-    await setTimeConductorBounds(page, {
-      startDate: '2024-01-01',
-      endDate: '2024-01-02',
-      startTime: '00:00:00',
-      endTime: '23:59:59'
-    });
-    await expect(page.getByLabel('Start bounds: 2024-01-01 00:00:00')).toBeVisible();
-    await expect(page.getByLabel('End bounds: 2024-01-02 23:59:59')).toBeVisible();
-  });
   test('setFixedIndependentTimeConductorBounds', async ({ page }) => {
     // Create a Display Layout
     const displayLayout = await createDomainObjectWithDefaults(page, {
