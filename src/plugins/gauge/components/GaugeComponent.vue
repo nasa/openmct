@@ -25,7 +25,6 @@
     class="c-gauge__wrapper js-gauge-wrapper"
     :class="gaugeClasses"
     :title="gaugeTitle"
-    :aria-label="`${domainObject.name}`"
     :aria-valuemin="rangeLow"
     :aria-valuemax="rangeHigh"
     :aria-valuenow="curVal"
