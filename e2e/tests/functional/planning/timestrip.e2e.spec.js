@@ -104,10 +104,12 @@ test.describe('Time Strip', () => {
 
       await page.goto(timestrip.url);
       // Expand the tree to show the plan
-      await page.click("button[title='Show selected item in tree']");
-      await page.dragAndDrop(`role=treeitem[name=/${createdPlan.name}/]`, '.c-object-view');
-      await page.click("button[title='Save']");
-      await page.click("li[title='Save and Finish Editing']");
+      await page.getByLabel('Show selected item in tree').click();
+      await page
+        .getByLabel(`Navigate to ${createdPlan.name}`)
+        .dragTo(page.getByLabel('Object View'));
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
       const startBound = testPlan.TEST_GROUP[0].start;
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
@@ -148,9 +150,9 @@ test.describe('Time Strip', () => {
       expect(objectName).toBe(createdTimeStrip.name);
 
       // Drag the existing Plan onto the newly created Time Strip, and save.
-      await page.dragAndDrop(`role=treeitem[name=/${plan.name}/]`, '.c-object-view');
-      await page.click("button[title='Save']");
-      await page.click("li[title='Save and Finish Editing']");
+      await page.getByLabel(`Navigate to ${plan.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
       // All events should be displayed at this point because the
       // initial independent context bounds will match the global bounds

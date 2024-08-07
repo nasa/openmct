@@ -145,14 +145,13 @@ async function triggerTimerContextMenuAction(page, timerUrl, action) {
  */
 async function triggerTimer3dotMenuAction(page, action) {
   const menuAction = `.c-menu ul li >> text="${action}"`;
-  const threeDotMenuButton = 'button[title="More actions"]';
   let isActionAvailable = false;
   let iterations = 0;
   // Dismiss/open the 3dot menu until the action is available
   // or a maximum number of iterations is reached
   while (!isActionAvailable && iterations <= 20) {
-    await page.click('.c-object-view');
-    await page.click(threeDotMenuButton);
+    await page.getByLabel('Object View').click();
+    await page.getByLabel('More actions').click();
     isActionAvailable = await page.locator(menuAction).isVisible();
     iterations++;
   }
@@ -169,7 +168,7 @@ async function triggerTimer3dotMenuAction(page, action) {
 async function triggerTimerViewAction(page, action) {
   await page.locator('.c-timer').hover({ trial: true });
   const buttonTitle = buttonTitleFromAction(action);
-  await page.click(`button[title="${buttonTitle}"]`);
+  await page.getByLabel(buttonTitle, { exact: true }).click();
   assertTimerStateAfterAction(page, action);
 }
 

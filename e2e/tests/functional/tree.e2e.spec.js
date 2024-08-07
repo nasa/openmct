@@ -158,15 +158,15 @@ test.describe('Main Tree', () => {
     });
 
     await test.step('Reorders links to objects as well as original objects', async () => {
-      await page.getByLabel(`Navigate to ${bar.name}`).dragTo(page.locator('.c-object-view'));
-      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.locator('.c-object-view'));
-      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.locator('.c-object-view'));
-      await page.getByLabel(`Navigate to ${baz.name}`).dragTo(page.locator('.c-object-view'));
-      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.locator('.c-object-view'));
-      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${bar.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel(`Navigate to ${baz.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.getByLabel('Object View'));
       await page.goto(foo.url);
-      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.locator('.c-object-view'));
-      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.locator('.c-object-view'));
+      await page.getByLabel(`Navigate to ${www.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel(`Navigate to ${clock1.name}`).dragTo(page.getByLabel('Object View'));
       // Expand the unopened folders
       await page.getByLabel(`Expand Bar folder`).click();
       await page.getByLabel(`Expand Baz folder`).click();
