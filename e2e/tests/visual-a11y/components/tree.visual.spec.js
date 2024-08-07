@@ -71,14 +71,14 @@ test.describe('Visual - Tree Pane', () => {
     await page.getByLabel('Expand My Items folder').click();
 
     await page.goto(foo.url);
-    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.getByLabel('Navigate to A Clock').dragTo(page.getByLabel('Object View'));
+    await page.getByLabel('Navigate to Z Clock').dragTo(page.getByLabel('Object View'));
     await page.goto(bar.url);
-    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.getByLabel('Navigate to A Clock').dragTo(page.getByLabel('Object View'));
+    await page.getByLabel('Navigate to Z Clock').dragTo(page.getByLabel('Object View'));
     await page.goto(baz.url);
-    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.getByLabel('Navigate to A Clock').dragTo(page.getByLabel('Object View'));
+    await page.getByLabel('Navigate to Z Clock').dragTo(page.getByLabel('Object View'));
 
     await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
       scope: treePane
