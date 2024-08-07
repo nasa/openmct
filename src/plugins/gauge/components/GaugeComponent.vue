@@ -20,6 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
+  <!-- TODO: Better a11y for Gauges. See https://github.com/nasa/openmct/issues/7790 -->
   <div
     ref="gaugeWrapper"
     class="c-gauge__wrapper js-gauge-wrapper"
