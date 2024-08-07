@@ -138,6 +138,7 @@ $filterHov: brightness(1.3) contrast(1.5); // Tree, location items
 $filterHovSubtle: brightness(1.2) contrast(1.2);
 $colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
+$colorSelectedGlow: rgba($colorKey, 0);
 
 // Body constants
 $bodyBg: $colorBodyBg;
@@ -232,6 +233,7 @@ $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $interiorMarginObjectFrameVertical: 0px;
 $interiorMarginObjectFrameHorizontal: 3px;
+$layoutCornerSize: 0px;
 
 // Missing Items
 $filterItemMissing: contrast(0.2);
@@ -517,6 +519,7 @@ $colorItemTreeVC: $colorDisclosureCtrl;
 $colorItemTreeVCHover: $colorDisclosureCtrlHov;
 $colorItemTreeNewNode: rgba($colorBodyFg, 0.7);
 $shdwItemTreeIcon: none;
+$colorItemTreeShdw: none;
 
 // Layout frame controls
 $frameControlsColorFg: white;
@@ -552,6 +555,7 @@ $splitterCollapsedBtnColorBg: #222;
 $splitterCollapsedBtnColorFg: #555;
 $splitterCollapsedBtnColorBgHov: $colorKey;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
+$splitterCollapsedBtnColorShdw: rgba($colorKeyFg, 0) 0 0 6px 1px;
 
 // Mobile
 $colorMobilePaneLeft: pushBack($colorBodyBg, 2%);

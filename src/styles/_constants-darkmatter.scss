@@ -75,7 +75,6 @@ $numericFont: 'Chakra Petch', sans-serif;
 }
 
 @mixin telemetryView() {
-  border: 1px solid $colorBodyFg;
   border-radius: $controlCr;
 }
 
@@ -99,7 +98,7 @@ $numericFont: 'Chakra Petch', sans-serif;
   background-repeat: no-repeat;
   background-size: 35px 35px;
   border-radius: $interiorMarginLg;
-  box-shadow: 0px 0px 20px 2px rgb(140 140 140 / 20%);
+  box-shadow: 0px 0px 8px 4px rgb(140 140 140 / 24%);
 }
 
 // Functions
@@ -143,7 +142,7 @@ $colorKeyFilter: invert(36%) sepia(10%) saturate(2512%) hue-rotate(170deg) brigh
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
   contrast(100%);
 $colorKeySelectedBg: $colorKey;
-$uiColor: #0093ff; // Resize bars, splitter bars, etc.
+$uiColor: lighten($colorKey, 10%); // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorInteriorBorderNotebook: rgba($colorBodyFg, 0.5);
 $colorA: #ccc;
@@ -151,7 +150,8 @@ $colorAHov: #fff;
 $filterHov: brightness(1.3) contrast(1.5); // Tree, location items
 $filterHovSubtle: brightness(1.2) contrast(1.2);
 $colorSelectedBg: rgba($colorKey, 0.3);
-$colorSelectedFg: pullForward($colorBodyFg, 20%);
+$colorSelectedFg: darken($colorBodyFg, 0.8);
+$colorSelectedGlow: rgba($colorKeyFg, 0.58); // Glow around selected item
 
 // Body constants
 $bodyBg: $colorBodyBg url('../ui/layout/assets/images/darkmatter-bg.png') no-repeat center 85%; // Reference: https://science.nasa.gov/wp-content/uploads/2023/08/s2-1280.jpg?w=4096&format=webp
@@ -212,7 +212,7 @@ $colorPausedFg: #333;
 
 // Time Colors
 $colorTimeCommonFg: #eee;
-$colorTimeFixed: #59554c;
+$colorTimeFixed: #5e594d;
 $colorTimeFixedBg: $colorTimeFixed;
 $colorTimeFixedFg: #eee;
 $colorTimeFixedFgSubtle: #b2aa98;
@@ -235,17 +235,18 @@ $colorTimeRealtimeBtnFgMajor: #fff;
 $colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
 $colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
 $timeConductorAxisHoverFilter: brightness(1.2);
-$timeConductorActiveBg: $colorKey;
+$timeConductorActiveBg: $colorBodyBg;
 $timeConductorActivePanBg: #226074;
 
 // Browse
 $browseFrameColor: pullForward($colorBodyBg, 10%);
 $browseFrameBorder: 1px solid rgb(89, 89, 89, 0.4); // Frames in Disp and Flex Layouts when frame is showing
-$browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
+$browseSelectableShdwHov: rgba($colorBodyFg, 0) 0 0 3px;
 $browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
 $filterItemHoverFg: brightness(1.2) contrast(1.1);
 $interiorMarginObjectFrameVertical: 10px;
 $interiorMarginObjectFrameHorizontal: 10px;
+$layoutCornerSize: 5px;
 
 // Missing Items
 $filterItemMissing: brightness(0.6) grayscale(1);
@@ -337,7 +338,7 @@ $shdwSelect: rgba(black, 0.5) 0 0.5px 3px;
 $controlDisabledOpacity: 0.2;
 
 // Menus
-$colorMenuBg: rgba($colorBodyBg, 0.6);
+$colorMenuBg: rgba($colorBodyBg, 0.8);
 $colorMenuFg: $colorBodyFg;
 $colorMenuIc: $colorKey;
 $filterMenu: brightness(1.4);
@@ -383,17 +384,17 @@ $formInputH: 22px;
 $formRowCtrlsH: 14px;
 
 // Inspector
-$colorInspectorBg: pullForward($colorBodyBg, 5%);
+$colorInspectorBg: $colorBodyBg;
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: $colorBodyFg;
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
-$colorInspectorSectionHeaderBg: rgba($colorBodyBg, 0.75);
-$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
+$colorInspectorSectionHeaderBg: pullForward($colorBodyBg, 0.9);
+$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 80%);
 
 // Tabs
-$colorTabBg: $colorBodyBg;
+$colorTabBg: #2c2c34;
 $colorTabFg: $colorBodyFgEm;
-$colorTabCurrentBg: rgba($colorKey, 0.71);
+$colorTabCurrentBg: radial-gradient(circle, rgba($colorKey, 0.8) 58%, rgba(0, 59, 156, 1) 100%);
 $colorTabCurrentFg: $colorBodyFgEm;
 $colorTabsBaseline: $colorBodyBg;
 
@@ -463,7 +464,7 @@ $shdwItemText: none;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
-$colorTabHeaderBg: #575757;
+$colorTabHeaderBg: #2e2e2e;
 $colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
@@ -496,13 +497,13 @@ $colorGaugeLimitLow: $colorGaugeLimitHigh;
 $colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
-$gaugeMeterValueShadow: rgba(255, 255, 255, 0.5);
+$gaugeMeterValueShadow: rgba(255, 255, 255, 0.1);
 // TODO: This is some code regarding how we can make Gauges include a border or glow. We may need to revisit this.
 // padding: 5%;
 // background: radial-gradient(circle, transparent 0%, transparent 65%, rgba(255, 255, 255,0.4) 64%, rgba(255,255,255,0) 70%)
 
 // Time Strip and Lists
-$colorPastBg: #444;
+$colorPastBg: rgba(#444, 0.5);
 $colorPastFg: pushBack($colorBodyFg, 10%);
 $colorPastFgEm: $colorBodyFg;
 $colorCurrentBg: #666;
@@ -513,7 +514,7 @@ $colorFutureBg: $colorPastBg;
 $colorFutureFg: $colorCurrentFg;
 $colorFutureFgEm: $colorCurrentFgEm;
 $colorFutureBorder: $colorCurrentBorder;
-$colorInProgressBg: $colorTimeRealtimeBg;
+$colorInProgressBg: rgba($colorTimeRealtimeBg, 0.6);
 $colorInProgressFg: $colorTimeRealtimeFgSubtle;
 $colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
@@ -536,6 +537,7 @@ $colorItemTreeVC: $colorDisclosureCtrl;
 $colorItemTreeVCHover: $colorDisclosureCtrlHov;
 $colorItemTreeNewNode: rgba($colorBodyFg, 0.7);
 $shdwItemTreeIcon: none;
+$colorItemTreeShdw: rgba($colorKeyFg, 0.3) 0 0px 10px;
 
 // Layout frame controls
 $frameControlsColorFg: white;
@@ -547,10 +549,10 @@ $colorThumbHoverBg: $colorItemTreeHoverBg;
 
 // Scrollbar
 $scrollbarTrackSize: 7px;
-$scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
-$scrollbarTrackColorBg: rgba(#000, 0.2);
-$scrollbarThumbColor: pushBack($colorBodyBg, 50%);
-$scrollbarThumbColorHov: $colorKey;
+$scrollbarTrackShdw: rgba(#ffffff, 0.4) 0 1px 2px;
+$scrollbarTrackColorBg: rgba($colorKey, 0.2);
+$scrollbarThumbColor: darken($colorKeyBg, 15%);
+$scrollbarThumbColorHov: pushBack($colorKeyBg, 20%);
 $scrollbarThumbColorMenu: pullForward($colorMenuBg, 10%);
 $scrollbarThumbColorMenuHov: pullForward($scrollbarThumbColorMenu, 2%);
 
@@ -559,18 +561,19 @@ $splitterHandleD: 2px;
 $splitterD: $splitterHandleD;
 $splitterHandleHitMargin: 4px;
 $colorSplitterBaseBg: $colorBodyBg;
-$colorSplitterBg: pullForward($colorBodyBg, 10%);
+$colorSplitterBg: pullForward($colorBodyBg, 15%);
 $colorSplitterFg: $colorBodyBg;
-$colorSplitterHover: $uiColor;
+$colorSplitterHover: $colorKey;
 $colorSplitterActive: $colorKey;
 $splitterBtnD: (16px, 35px); // height, width
 $splitterBtnColorBg: $colorBtnBg;
 $splitterBtnColorFg: #999;
 $splitterBtnLabelColorFg: #9d9d9d;
 $splitterCollapsedBtnColorBg: #222;
-$splitterCollapsedBtnColorFg: #555;
-$splitterCollapsedBtnColorBgHov: $colorKey;
+$splitterCollapsedBtnColorFg: #8b8b8b;
+$splitterCollapsedBtnColorBgHov: $colorKeyBg;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
+$splitterCollapsedBtnColorShdw: rgba($colorKeyFg, 0.2);
 
 // Mobile
 $colorMobilePaneLeft: pushBack($colorBodyBg, 2%);
