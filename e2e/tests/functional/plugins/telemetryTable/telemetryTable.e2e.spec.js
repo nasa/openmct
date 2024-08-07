@@ -155,8 +155,7 @@ test.describe('Telemetry Table', () => {
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).toContain('Roger');
+      await expect(cell).toHaveText(/Roger/);
     }
 
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
@@ -170,12 +169,11 @@ test.describe('Telemetry Table', () => {
     expect(cells).toHaveLength(0);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).not.toContain('Dodger');
+      await expect(cell).not.toHaveText(/Dodger/);
     }
 
     // Click pause button
-    await page.click('button[title="Pause"]');
+    await page.getByLabel('Pause').click();
   });
 
   test('Supports filtering using Regex', async ({ page }) => {
@@ -201,8 +199,7 @@ test.describe('Telemetry Table', () => {
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).toContain('Roger');
+      await expect(cell).toHaveText(/Roger/);
     }
 
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
@@ -216,12 +213,11 @@ test.describe('Telemetry Table', () => {
     expect(cells).toHaveLength(0);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).not.toContain('Dodger');
+      await expect(cell).not.toHaveText(/Dodger/);
     }
 
     // Click pause button
-    await page.click('button[title="Pause"]');
+    await page.getByLabel('Pause').click();
   });
 });
 

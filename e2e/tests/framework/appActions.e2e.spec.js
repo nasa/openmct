@@ -215,7 +215,7 @@ test.describe('AppActions @framework', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
-    await page.click(`li[role='menuitem']:text("Clock")`);
+    await page.getByRole('menuitem', { name: 'Clock' }).click();
     await expandEntireTree(page, 'Create Modal Tree');
     const locatorTree = page.getByRole('tree', {
       name: 'Create Modal Tree'

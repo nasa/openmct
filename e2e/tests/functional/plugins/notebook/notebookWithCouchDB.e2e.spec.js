@@ -55,7 +55,7 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
       // Waits for the next request with the specified url
       page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
       // Triggers the request
-      page.click('[aria-label="Add Page"]')
+      page.getByLabel('Add Page').click()
     ]);
     // Ensures that there are no other network requests
     await page.waitForLoadState('domcontentloaded');
@@ -120,8 +120,8 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(12);
 
     // Add two more pages
-    await page.click('[aria-label="Add Page"]');
-    await page.click('[aria-label="Add Page"]');
+    await page.getByLabel('Add Page').click();
+    await page.getByLabel('Add Page').click();
 
     // Add three entries
     await nbUtils.enterTextEntry(page, 'First Entry');

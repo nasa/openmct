@@ -354,19 +354,19 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     await nbUtils.enterTextEntry(page, 'First Entry');
-    await page.hover('text="First Entry"');
-    await page.click('button[title="Delete this entry"]');
-    await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
-    await expect(page.locator('text="First Entry"')).toBeHidden();
+    await page.getByLabel('Notebook Entry', { exact: true }).hover();
+    await page.getByLabel('Delete this entry').click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    await expect(page.getByText('First Entry')).toBeHidden();
     await nbUtils.enterTextEntry(page, 'Another First Entry');
     await nbUtils.enterTextEntry(page, 'Second Entry');
     await nbUtils.enterTextEntry(page, 'Third Entry');
-    await page.hover('[aria-label="Notebook Entry"] >> nth=2');
-    await page.click('button[title="Delete this entry"] >> nth=2');
-    await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
-    await expect(page.locator('text="Third Entry"')).toBeHidden();
-    await expect(page.locator('text="Another First Entry"')).toBeVisible();
-    await expect(page.locator('text="Second Entry"')).toBeVisible();
+    await page.getByLabel('Notebook Entry', { exact: true }).nth(2).hover();
+    await page.getByLabel('Delete this entry').nth(2).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    await expect(page.getByText('Third Entry')).toBeHidden();
+    await expect(page.getByText('Another First Entry')).toBeVisible();
+    await expect(page.getByText('Second Entry')).toBeVisible();
   });
   test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({
     page

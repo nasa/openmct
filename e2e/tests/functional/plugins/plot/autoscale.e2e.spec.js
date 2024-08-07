@@ -70,7 +70,7 @@ test.describe('Autoscale', () => {
     await page.getByLabel('Y Axis 1 Maximum value').fill('2');
 
     // save
-    await page.click('button[title="Save"]');
+    await page.getByLabel('Save').click();
     await Promise.all([
       page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
       //Wait for Save Banner to appear

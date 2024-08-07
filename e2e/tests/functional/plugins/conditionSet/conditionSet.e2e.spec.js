@@ -45,7 +45,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
 
     await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
 
-    await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
+    await page.getByLabel('Save').click();
 
     //Save localStorage for future test execution
     await context.storageState({

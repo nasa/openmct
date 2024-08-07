@@ -72,7 +72,7 @@ test.describe('Scatter Plot', () => {
         )
       )
       .toBeVisible();
-    await page.click('text=Ok');
+    await page.getByLabel('Save').click();
 
     // Navigate to the scatter plot and verify that the new SWG
     // appears in the elements pool and the old one is gone
@@ -99,7 +99,7 @@ test.describe('Scatter Plot', () => {
         )
       )
       .toBeVisible();
-    await page.click('text=Ok');
+    await page.getByLabel('Save').click();
 
     // Verify that the elements pool shows no elements
     await expect(page.locator('text="No contained elements"')).toBeVisible();

@@ -52,8 +52,8 @@ test.describe('Overlay Plot', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
 
     // navigate to plot series color palette
-    await page.click('.l-browse-bar__actions__edit');
-    await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Expand Sine Wave Generator:').click();
     await page.locator('.c-click-swatch--menu').click();
     await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
     // gets color for swatch located in legend

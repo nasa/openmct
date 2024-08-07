@@ -73,7 +73,7 @@ test.describe('Gauge', () => {
         )
       )
       .toBeVisible();
-    await page.click('text=Ok');
+    await page.getByLabel('Save').click();
 
     // Navigate to the gauge and verify that the new SWG
     // appears in the elements pool and the old one is gone
@@ -98,7 +98,7 @@ test.describe('Gauge', () => {
         )
       )
       .toBeVisible();
-    await page.click('text=Ok');
+    await page.getByLabel('Save').click();
 
     // Verify that the elements pool shows no elements
     await expect(page.locator('text="No contained elements"')).toBeVisible();
@@ -112,11 +112,11 @@ test.describe('Gauge', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
-    await page.click(`li[role='menuitem']:text("Gauge")`);
+    await page.getByRole('menuitem', { name: 'Gauge' }).click();
     // FIXME: We need better selectors for these custom form controls
     const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
-    await displayCurrentValueSwitch.setChecked(false);
-    await page.click('button[aria-label="Save"]');
+    await displayCurrentValueSwitch.uncheck();
+    await page.getByLabel('Save').click();
 
     // TODO: Verify changes in the UI
   });
@@ -128,12 +128,12 @@ test.describe('Gauge', () => {
 
     // Create the gauge with defaults
     await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    await page.click('button[title="More actions"]');
-    await page.click('li[role="menuitem"]:has-text("Edit Properties")');
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     // FIXME: We need better selectors for these custom form controls
     const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
-    await displayCurrentValueSwitch.setChecked(false);
-    await page.click('button[aria-label="Save"]');
+    await displayCurrentValueSwitch.uncheck();
+    await page.getByLabel('Save').click();
 
     // TODO: Verify changes in the UI
   });
