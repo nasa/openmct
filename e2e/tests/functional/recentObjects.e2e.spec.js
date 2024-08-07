@@ -95,7 +95,7 @@ test.describe('Recent Objects', () => {
     ).toBeGreaterThan(0);
     expect(recentObjectsList.getByRole('listitem', { name: folderA.name })).toBeTruthy();
 
-    await page.click('button[title="Show selected item in tree"]');
+    await page.getByLabel('Show selected item in tree').click();
     // Delete the folder via the left tree pane treeitem context menu
     await page
       .getByRole('treeitem', { name: new RegExp(folderA.name) })

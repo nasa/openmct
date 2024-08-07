@@ -80,7 +80,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
-    page.click('button[title="Show selected item in tree"]');
+    await page.getByLabel('Show selected item in tree').click();
     // Add the Alpha & Beta Sine Wave Generator to the Condition Set and save changes
     const treePane = page.getByRole('tree', {
       name: 'Main Tree'
