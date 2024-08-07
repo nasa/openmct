@@ -25,6 +25,7 @@ This suite is dedicated to tests which verify that tooltips are displayed correc
 */
 
 import { createDomainObjectWithDefaults, expandEntireTree } from '../../appActions.js';
+import { MISSION_TIME } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Verify tooltips', () => {
@@ -372,7 +373,9 @@ test.describe('Verify tooltips', () => {
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
-  test('display tooltip path for telemetry table names', async ({ page }) => {
+  test('display tooltip path for telemetry table names @clock', async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
     await createDomainObjectWithDefaults(page, {
       type: 'Telemetry Table',
       name: 'Test Telemetry Table'
@@ -380,10 +383,8 @@ test.describe('Verify tooltips', () => {
 
     await page
       .getByLabel(`Navigate to ${sineWaveObject1.name}`)
-      .dragTo(page.locator('.c-telemetry-table'));
-    await page
-      .getByLabel(`Preview ${sineWaveObject3.name}`)
-      .dragTo(page.locator('.c-telemetry-table'));
+      .dragTo(page.getByLabel('Object View'));
+    await page.getByLabel(`Preview ${sineWaveObject3.name}`).dragTo(page.getByLabel('Object View'));
 
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
@@ -393,7 +394,9 @@ test.describe('Verify tooltips', () => {
     await expect(page.getByLabel('name table cell SWG 3').first()).toBeInViewport();
 
     // Pause to prevent more telemetry from streaming in
-    await page.getByLabel('Pause').click();
+    await page.clock.pauseAt(MISSION_TIME + 30 * 1000);
+    // Run for 30 seconds to allow SOME telemetry to stream in
+    await page.clock.runFor(30 * 1000);
 
     await page.keyboard.down('Control');
     // Hover over SWG3 in Telemetry Table
