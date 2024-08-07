@@ -272,7 +272,7 @@ export default {
           'This action will clear the Recently Viewed Objects list. Are you sure you want to continue?',
         buttons: [
           {
-            label: 'OK',
+            label: 'Ok',
             callback: () => {
               localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
               Object.values(this.nameChangeListeners).forEach((unlisten) => {

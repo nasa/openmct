@@ -1808,7 +1808,7 @@ export default {
           message: message,
           buttons: [
             {
-              label: 'OK',
+              label: 'Ok',
               callback: () => {
                 dialog.dismiss();
                 this.synchronizeTimeConductor();

@@ -454,7 +454,7 @@ export default {
             message: 'This item is already in layout and will not be added again.',
             buttons: [
               {
-                label: 'OK',
+                label: 'Ok',
                 callback: function () {
                   prompt.dismiss();
                 }
