@@ -36,7 +36,7 @@ import { fileURLToPath } from 'url';
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
-  setIndependentTimeConductorBounds,
+  setFixedIndependentTimeConductorBounds,
   setTimeConductorBounds
 } from '../../appActions.js';
 import { MISSION_TIME } from '../../constants.js';
@@ -45,14 +45,10 @@ import { expect, test } from '../../pluginFixtures.js';
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata @clock', () => {
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    // Override the clock
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
@@ -112,7 +108,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 
     await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
 
-    await setIndependentTimeConductorBounds(page, {
+    await setFixedIndependentTimeConductorBounds(page, {
       start: '2024-11-12 19:11:11.000Z',
       end: '2024-11-12 20:11:11.000Z'
     });
@@ -211,11 +207,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.
@@ -274,7 +266,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
       page.waitForNavigation(),
       page.locator('text=OK').click(),
       //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // focus the overlay plot
@@ -284,7 +276,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 
     // Clear Recently Viewed
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     //Save localStorage for future test execution
     await context.storageState({
       path: fileURLToPath(
@@ -307,11 +299,7 @@ test.describe('Validate Overlay Plot with Telemetry Object @localStorage @genera
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.
@@ -352,11 +340,7 @@ test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorag
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(plotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.

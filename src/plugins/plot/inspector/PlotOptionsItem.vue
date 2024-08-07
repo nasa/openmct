@@ -137,9 +137,8 @@ export default {
     },
     ariaLabelExpandCollapse() {
       const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
-      const type = this.series.domainObject.type ? ` ${this.series.domainObject.type}` : '';
 
-      return `${this.expanded ? 'Collapse' : 'Expand'}${name}${type}`;
+      return `${this.expanded ? 'Collapse' : 'Expand'}${name} Plot Series Options`;
     },
     isAliasClass() {
       let cssClass = '';

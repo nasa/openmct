@@ -85,15 +85,8 @@ test.describe('Plot Controls', () => {
     await page.getByLabel('Y Axis 1 Maximum value').fill('1');
 
     // save
-    await page.click('button[title="Save"]');
-    await Promise.all([
-      page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
-      //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
-    ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // hover over plot for plot controls
     await page.getByLabel('Plot Canvas').hover();
     // click on pause control

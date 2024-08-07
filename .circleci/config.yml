@@ -93,7 +93,7 @@ jobs:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
     parameters:
-      suite: #stable or full
+      suite: #ci or full
         type: string
     executor: pw-focal-development
     parallelism: 7
@@ -162,7 +162,7 @@ jobs:
       - run: npx playwright@1.45.2 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
-          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          docker compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB
@@ -253,8 +253,8 @@ workflows:
           name: node18-chrome
           node-version: lts/hydrogen
       - e2e-test:
-          name: e2e-stable
-          suite: stable
+          name: e2e-ci
+          suite: ci
       - e2e-mobile
       - visual-a11y:
           name: visual-a11y-ci

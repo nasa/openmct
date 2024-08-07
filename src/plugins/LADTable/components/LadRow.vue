@@ -30,6 +30,7 @@
   >
     <td
       ref="tableCell"
+      scope="row"
       aria-label="lad name"
       class="js-first-data"
       @mouseover.ctrl="showToolTip"

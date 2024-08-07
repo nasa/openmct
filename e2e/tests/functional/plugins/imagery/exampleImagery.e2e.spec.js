@@ -75,6 +75,7 @@ test.describe('Example Imagery Object', () => {
     const backgroundImage = page.getByLabel('Focused Image Element');
     await backgroundImage.click({
       button: 'right',
+      // Need force option here due to annotation overlay which blocks playwright's click
       // eslint-disable-next-line playwright/no-force-option
       force: true
     });
@@ -351,8 +352,8 @@ test.describe('Example Imagery Object', () => {
   });
 
   test('Uses low fetch priority', async ({ page }) => {
-    const priority = await page.locator('.js-imageryView-image').getAttribute('fetchpriority');
-    expect(priority).toBe('low');
+    const priority = page.locator('.js-imageryView-image');
+    await expect(priority).toHaveAttribute('fetchpriority', 'low');
   });
 });
 
@@ -362,7 +363,7 @@ test.describe('Example Imagery in Display Layout @clock', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
 
     // Go to baseURL
@@ -447,6 +448,8 @@ test.describe('Example Imagery in Display Layout @clock', () => {
     await page.locator('div[title="Resize object width"] > input').click();
     await page.locator('div[title="Resize object width"] > input').fill('50');
 
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
+
     await performImageryViewOperationsAndAssert(page, displayLayout);
   });
 
@@ -528,7 +531,7 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -543,6 +546,8 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
 
     // Navigate back to Flexible Layout
     await page.goto(flexibleLayout.url);
+    // Wait for image thumbnail auto-scroll to complete
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
 
   test('Can double-click on the image to view large image', async ({ page }) => {
@@ -573,7 +578,7 @@ test.describe('Example Imagery in Tabs View @clock', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
-    await page.clock.setSystemTime(MISSION_TIME);
+    await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -586,25 +591,21 @@ test.describe('Example Imagery in Tabs View @clock', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     // Click text=Example Imagery
-    await page.click('li[role="menuitem"]:has-text("Example Imagery")');
+    await page.getByRole('menuitem', { name: 'Example Imagery' }).click();
 
     // Clear and set Image load delay to minimum value
     await page.locator('input[type="number"]').clear();
     await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
 
-    // Click text=OK
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle' }),
-      page.click('button:has-text("OK")'),
-      //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
-    ]);
+    await page.getByLabel('Save').click();
 
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(
       'Unnamed Example Imagery'
     );
 
     await page.goto(tabsView.url);
+    // Wait for image thumbnail auto-scroll to complete
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
   test('Imagery View operations @clock', async ({ page }) => {
     await performImageryViewOperationsAndAssert(page, tabsView);
@@ -836,8 +837,7 @@ async function assertBackgroundImageUrlFromBackgroundCss(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function panZoomAndAssertImageProperties(page) {
-  const imageryHintsText = await page.locator('.c-imagery__hints').innerText();
-  expect(expectedAltText).toEqual(imageryHintsText);
+  await expect(page.locator('.c-imagery__hints')).toContainText(expectedAltText);
   const zoomedBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
   const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
   const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
@@ -1056,7 +1056,6 @@ async function createImageryViewWithShortDelay(page, { name, parent }) {
 /**
  * @param {import('@playwright/test').Page} page
  */
-// eslint-disable-next-line require-await
 async function waitForZoomAndPanTransitions(page) {
   // Wait for image to stabilize
   await page.getByLabel('Focused Image Element').hover({ trial: true });

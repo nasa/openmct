@@ -29,15 +29,14 @@ import { MISSION_TIME, VISUAL_FIXED_URL } from '../../../constants.js';
 const inspectorPane = '.l-shell__pane-inspector';
 
 test.describe('Visual - Inspector @ally @clock', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
-  });
   test.use({
-    storageState: 'test-data/overlay_plot_with_delay_storage.json',
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
+    storageState: 'test-data/overlay_plot_with_delay_storage.json'
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {

@@ -38,7 +38,7 @@ const notebookFilePath = 'test-data/PerformanceNotebook.json';
 test.describe('Performance tests', () => {
   test.beforeEach(async ({ page, browser }, testInfo) => {
     // Go to baseURL
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Click a:has-text("My Items")
     await page.locator('a:has-text("My Items")').click({
@@ -110,20 +110,19 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('search-entered'));
     //Search Result Appears and is clicked
     await Promise.all([
-      page.waitForNavigation(),
       page.locator('a:has-text("Performance Notebook")').first().click(),
       page.evaluate(() => window.performance.mark('click-search-result'))
     ]);
 
-    await page.waitForSelector('.c-tree__item c-tree-and-search__loading loading', {
-      state: 'hidden'
-    });
+    await page
+      .locator('.c-tree__item c-tree-and-search__loading loading')
+      .waitFor({ state: 'hidden' });
     await page.evaluate(() => window.performance.mark('search-spinner-gone'));
 
-    await page.waitForSelector('.l-browse-bar__object-name', { state: 'visible' });
+    await page.locator('.l-browse-bar__object-name').waitFor({ state: 'visible' });
     await page.evaluate(() => window.performance.mark('object-title-appears'));
 
-    await page.waitForSelector('.c-notebook__entry >> nth=0', { state: 'visible' });
+    await page.locator('.c-notebook__entry >> nth=0').waitFor({ state: 'visible' });
     await page.evaluate(() => window.performance.mark('notebook-entry-appears'));
 
     // Click Add new Notebook Entry
@@ -139,9 +138,9 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('notebook-search-start'));
     await page.locator('.c-notebook__search >> input').fill('Existing Entry');
     await page.evaluate(() => window.performance.mark('notebook-search-filled'));
-    await page.waitForSelector('text=Search Results (3)', { state: 'visible' });
+    await page.locator('text=Search Results (3)').waitFor({ state: 'visible' });
     await page.evaluate(() => window.performance.mark('notebook-search-processed'));
-    await page.waitForSelector('.c-notebook__entry >> nth=2', { state: 'visible' });
+    await page.locator('.c-notebook__entry >> nth=2').waitFor({ state: 'visible' });
     await page.evaluate(() => window.performance.mark('notebook-search-processed'));
 
     //Clear Search
@@ -154,7 +153,7 @@ test.describe('Performance tests', () => {
     await page.locator('div.c-ne__time-and-content').last().hover();
     await page.locator('button[title="Delete this entry"]').last().click();
     await page.locator('button:has-text("Ok")').click();
-    await page.waitForSelector('.c-notebook__entry >> nth=3', { state: 'detached' });
+    await page.locator('.c-notebook__entry >> nth=3').waitFor({ state: 'detached' });
     await page.evaluate(() => window.performance.mark('new-notebook-entry-deleted'));
 
     //await client.send('HeapProfiler.enable');

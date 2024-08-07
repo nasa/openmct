@@ -24,8 +24,8 @@ import { fileURLToPath } from 'url';
 import {
   createDomainObjectWithDefaults,
   navigateToObjectWithFixedTimeBounds,
+  setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
-  setIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset
 } from '../../../../appActions.js';
@@ -75,18 +75,12 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     const TEST_FIXED_END_TIME = TEST_FIXED_START_TIME + 3600000; // 2024-11-11 20:11:11.000Z
 
     // Verify the ITC has the expected initial bounds
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('Start bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_START_BOUNDS);
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('End bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_END_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
 
     // Update the global fixed bounds to 2024-11-11 19:11:11.000Z / 2024-11-11 20:11:11.000Z
     const url = page.url().split('?')[0];
@@ -98,18 +92,12 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     );
 
     // ITC bounds should still match the initial ITC bounds
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('Start bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_START_BOUNDS);
-    expect(
-      await page
-        .getByLabel('Child Overlay Plot 1 Frame Controls')
-        .getByLabel('End bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_END_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
 
     // Open the Child Overlay Plot 1 in a new tab
     await page.getByLabel('View menu items').click();
@@ -120,28 +108,22 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     await newPage.waitForLoadState('domcontentloaded');
 
     // Verify that the global time conductor bounds in the new page match the updated global bounds
-    expect(
-      await newPage.getByLabel('Global Time Conductor').getByLabel('Start bounds').textContent()
-    ).toEqual(NEW_GLOBAL_START_BOUNDS);
-    expect(
-      await newPage.getByLabel('Global Time Conductor').getByLabel('End bounds').textContent()
-    ).toEqual(NEW_GLOBAL_END_BOUNDS);
+    await expect(newPage.getByLabel('Global Time Conductor').getByLabel('Start bounds')).toHaveText(
+      NEW_GLOBAL_START_BOUNDS
+    );
+    await expect(newPage.getByLabel('Global Time Conductor').getByLabel('End bounds')).toHaveText(
+      NEW_GLOBAL_END_BOUNDS
+    );
 
     // Verify that the ITC is enabled in the new page
     await expect(newPage.getByLabel('Disable Independent Time Conductor')).toBeVisible();
     // Verify that the ITC bounds in the new page match the original ITC bounds
-    expect(
-      await newPage
-        .getByLabel('Independent Time Conductor Panel')
-        .getByLabel('Start bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_START_BOUNDS);
-    expect(
-      await newPage
-        .getByLabel('Independent Time Conductor Panel')
-        .getByLabel('End bounds')
-        .textContent()
-    ).toEqual(INIT_ITC_END_BOUNDS);
+    await expect(
+      newPage.getByLabel('Independent Time Conductor Panel').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      newPage.getByLabel('Independent Time Conductor Panel').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
   });
 });
 
@@ -174,17 +156,17 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
   test('can add/remove Image to a single layout', async ({ page }) => {
     const layoutObject = 'Image';
     await test.step("Add and remove image element from the parent's layout", async () => {
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
       await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(1);
       await removeLayoutObject(page, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
     });
     await test.step("Add and remove image from the child's layout", async () => {
       await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(1);
       await removeLayoutObject(page, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
     });
   });
   test(`can add/remove Box to a single layout`, async ({ page }) => {
@@ -253,20 +235,17 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the  Display Layout is the most recent value
     // from the Sine Wave Generator
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
-    const formattedTelemetryValue = getTelemValuePromise;
-    const displayLayoutValuePromise = await page.waitForSelector(
-      `text="${formattedTelemetryValue}"`
-    );
-    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
+    const formattedTelemetryValue = await getTelemValuePromise;
+    await expect(page.getByText(formattedTelemetryValue)).toBeVisible();
+    const displayLayoutValue = await page.getByText(formattedTelemetryValue).textContent();
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
@@ -298,24 +277,21 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
-    await setStartOffset(page, { mins: '1' });
+    await setStartOffset(page, { startMins: '1' });
     await setFixedTimeMode(page);
 
     // On getting data, check if the value found in the Display Layout is the most recent value
     // from the Sine Wave Generator
-    const formattedTelemetryValue = getTelemValuePromise;
-    const displayLayoutValuePromise = await page.waitForSelector(
-      `text="${formattedTelemetryValue}"`
-    );
-    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const formattedTelemetryValue = await getTelemValuePromise;
+    await expect(page.getByText(formattedTelemetryValue)).toBeVisible();
+    const displayLayoutValue = await page.getByText(formattedTelemetryValue).textContent();
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
@@ -340,8 +316,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -382,8 +357,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -428,8 +402,7 @@ test.describe('Display Layout', () => {
     const exampleImageryTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(exampleImageryObject.name)
     });
-    let layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await exampleImageryTreeItem.dragTo(layoutGridHolder);
+    await exampleImageryTreeItem.dragTo(page.getByLabel('Layout Grid'));
 
     //adjust so that we can see the independent time conductor toggle
     // Adjust object height
@@ -445,7 +418,7 @@ test.describe('Display Layout', () => {
 
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
-    await setIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
+    await setFixedIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -485,9 +458,8 @@ test.describe('Display Layout', () => {
       name: new RegExp(sineWaveObject.name)
     });
 
-    let layoutGridHolder = page.locator('.l-layout__grid-holder');
     // eslint-disable-next-line playwright/no-force-option
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'), { force: true });
 
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
@@ -495,14 +467,13 @@ test.describe('Display Layout', () => {
     const anotherSineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(anotherSineWaveObject.name)
     });
-    layoutGridHolder = page.locator('.l-layout__grid-holder');
     // eslint-disable-next-line playwright/no-force-option
-    await anotherSineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+    await anotherSineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'), { force: true });
 
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
 
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Time to inspect some network traffic
@@ -519,10 +490,10 @@ test.describe('Display Layout', () => {
     await page.reload();
 
     // wait for annotations requests to be batched and requested
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  a single batched request for annotations
-    expect(networkRequests.length).toBe(1);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(1);
 
     await setRealTimeMode(page);
 
@@ -531,15 +502,15 @@ test.describe('Display Layout', () => {
     await page.reload();
 
     // wait for annotations to not load (if we have any, we've got a problem)
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // In real time mode, we don't fetch annotations at all
-    expect(networkRequests.length).toBe(0);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(0);
   });
 });
 
 async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LAYOUT_NAME) {
-  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);
   await addLayoutObject(page, DISPLAY_LAYOUT_NAME, layoutObject);
   expect(
     await page
@@ -549,7 +520,7 @@ async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LA
       .count()
   ).toBe(1);
   await removeLayoutObject(page, layoutObject);
-  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);
 }
 
 /**
@@ -565,7 +536,7 @@ async function removeLayoutObject(page, layoutObject) {
     // eslint-disable-next-line playwright/no-force-option
     .click({ force: true });
   await page.getByTitle('Delete the selected object').click();
-  await page.getByRole('button', { name: 'OK', exact: true }).click();
+  await page.getByRole('button', { name: 'Ok', exact: true }).click();
 }
 
 /**
@@ -584,10 +555,10 @@ async function addLayoutObject(page, layoutName, layoutObject) {
     .click();
   if (layoutObject === 'Text') {
     await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
-    await page.getByText('OK').click();
+    await page.getByText('Ok').click();
   } else if (layoutObject === 'Image') {
     await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
-    await page.getByText('OK').click();
+    await page.getByText('Ok').click();
   }
 }
 

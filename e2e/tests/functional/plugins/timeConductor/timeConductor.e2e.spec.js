@@ -281,29 +281,3 @@ test.describe('Global Time Conductor', () => {
     // select an option and verify the offsets are updated correctly
   });
 });
-
-test.describe('Time Conductor History', () => {
-  test('shows milliseconds on hover @unstable', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/4386'
-    });
-    // Navigate to Open MCT in Fixed Time Mode, UTC Time System
-    // with startBound at 2022-01-01 00:00:00.000Z
-    // and endBound at 2022-01-01 00:00:00.200Z
-    await page.goto(
-      './#/browse/mine?view=grid&tc.mode=fixed&tc.startBound=1640995200000&tc.endBound=1640995200200&tc.timeSystem=utc&hideInspector=true'
-    );
-    await page.getByRole('button', { name: 'Time Conductor Settings' }).click();
-    await page.getByRole('button', { name: 'Time Conductor History' }).hover({ trial: true });
-    await page.getByRole('button', { name: 'Time Conductor History' }).click();
-
-    // Validate history item format
-    const historyItem = page.locator('text="2022-01-01 00:00:00 + 200ms"');
-    await expect(historyItem).toBeEnabled();
-    await expect(historyItem).toHaveAttribute(
-      'title',
-      '2022-01-01 00:00:00.000 - 2022-01-01 00:00:00.200'
-    );
-  });
-});

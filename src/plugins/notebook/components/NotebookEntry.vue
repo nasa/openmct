@@ -49,6 +49,7 @@
           <button
             class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
             title="Delete this entry"
+            aria-label="Delete this entry"
             tabindex="-1"
             @click.stop.prevent="deleteEntry"
           ></button>

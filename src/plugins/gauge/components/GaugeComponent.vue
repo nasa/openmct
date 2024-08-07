@@ -20,18 +20,23 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
+  <!-- TODO: Better a11y for Gauges. See https://github.com/nasa/openmct/issues/7790 -->
   <div
     ref="gaugeWrapper"
     class="c-gauge__wrapper js-gauge-wrapper"
     :class="gaugeClasses"
-    :aria-label="gaugeTitle"
     :title="gaugeTitle"
+    :aria-valuemin="rangeLow"
+    :aria-valuemax="rangeHigh"
+    :aria-valuenow="curVal"
+    :aria-valuetext="`Current value: ${curVal}`"
   >
     <template v-if="typeDial">
       <svg
         ref="gauge"
         class="c-gauge c-dial"
         viewBox="0 0 10 10"
+        role="meter"
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
@@ -233,7 +238,7 @@
     </template>
 
     <template v-if="typeMeter">
-      <div class="c-meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
+      <div class="c-meter" role="meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
         <div v-if="displayMinMax" class="c-gauge__range c-meter__range js-gauge-meter-range">
           <div class="c-meter__range__high">{{ rangeHigh }}</div>
           <div class="c-meter__range__low">{{ rangeLow }}</div>

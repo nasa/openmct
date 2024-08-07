@@ -82,7 +82,7 @@ test.describe('Stacked Plot', () => {
       .getByRole('menuitem')
       .filter({ hasText: /Remove/ })
       .click();
-    await page.getByRole('button').filter({ hasText: 'OK' }).click();
+    await page.getByRole('button').filter({ hasText: 'Ok' }).click();
 
     await expect(page.locator('#inspector-elements-tree .js-elements-pool__item')).toHaveCount(2);
 
@@ -239,7 +239,7 @@ test.describe('Stacked Plot', () => {
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
     // Expand config for the series
-    await page.getByLabel('Expand Sine Wave Generator').click();
+    await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
 
     // turn off alarm markers
     await page.getByLabel('Alarm Markers').uncheck();
@@ -256,8 +256,7 @@ test.describe('Stacked Plot', () => {
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
 
     // Expand config for the series
-    //TODO Fix this locator
-    await page.getByLabel('Expand Sine Wave Generator A generator').click();
+    await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
 
     // Assert that alarm markers are still turned off
     await expect(
@@ -277,7 +276,7 @@ test.describe('Stacked Plot', () => {
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
-    let legendProperties = await page.locator('[aria-label="Legend Properties"]');
+    const legendProperties = page.getByLabel('Legend Properties');
     await legendProperties.locator('[title="Display legends per sub plot."]~div input').uncheck();
 
     await assertAggregateLegendIsVisible(page);
@@ -356,11 +355,9 @@ async function assertAggregateLegendIsVisible(page) {
   // Wait for plot series data to load
   await waitForPlotsToRender(page);
   // Wait for plot legend to be shown
-  await page.waitForSelector('.js-stacked-plot-legend', { state: 'attached' });
+  await expect(page.locator('.js-stacked-plot-legend')).toBeVisible();
   // There should be 3 legend items
-  expect(
-    await page
-      .locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
-      .count()
-  ).toBe(3);
+  await expect(
+    page.locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
+  ).toHaveCount(3);
 }
