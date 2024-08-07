@@ -252,7 +252,6 @@ async function getScrollPosition(page, top = true) {
     scrollHeight: node.scrollHeight
   }));
 
-  // eslint-disable-next-line playwright/no-conditional-in-test
   if (top) {
     return scrollTop;
   } else {

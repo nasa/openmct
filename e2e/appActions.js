@@ -269,7 +269,6 @@ async function expandEntireTree(page, treeName = 'Main Tree') {
   const treeLocator = page.getByRole('tree', {
     name: treeName
   });
-  //eslint-disable-next-line playwright/no-raw-locators
   const collapsedTreeItems = treeLocator
     .getByRole('treeitem', {
       expanded: false

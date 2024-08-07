@@ -1056,7 +1056,6 @@ async function createImageryViewWithShortDelay(page, { name, parent }) {
 /**
  * @param {import('@playwright/test').Page} page
  */
-// eslint-disable-next-line require-await
 async function waitForZoomAndPanTransitions(page) {
   // Wait for image to stabilize
   await page.getByLabel('Focused Image Element').hover({ trial: true });
