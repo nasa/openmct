@@ -235,8 +235,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -278,8 +277,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -318,8 +316,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -360,8 +357,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -406,8 +402,7 @@ test.describe('Display Layout', () => {
     const exampleImageryTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(exampleImageryObject.name)
     });
-    let layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await exampleImageryTreeItem.dragTo(layoutGridHolder);
+    await exampleImageryTreeItem.dragTo(page.getByLabel('Layout Grid'));
 
     //adjust so that we can see the independent time conductor toggle
     // Adjust object height
@@ -463,9 +458,8 @@ test.describe('Display Layout', () => {
       name: new RegExp(sineWaveObject.name)
     });
 
-    let layoutGridHolder = page.locator('.l-layout__grid-holder');
     // eslint-disable-next-line playwright/no-force-option
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'), { force: true });
 
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
@@ -473,14 +467,13 @@ test.describe('Display Layout', () => {
     const anotherSineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(anotherSineWaveObject.name)
     });
-    layoutGridHolder = page.locator('.l-layout__grid-holder');
     // eslint-disable-next-line playwright/no-force-option
-    await anotherSineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+    await anotherSineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'), { force: true });
 
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
 
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Time to inspect some network traffic

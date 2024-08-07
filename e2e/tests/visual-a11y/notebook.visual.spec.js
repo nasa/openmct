@@ -100,7 +100,9 @@ test.describe('Visual - Notebook @a11y', () => {
 
     await page.goto(notebook.url);
 
-    await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+    await page
+      .getByLabel('Navigate to Dropped Overlay Plot')
+      .dragTo(page.getByLabel('To start a new entry, click here or drag and drop any object'));
 
     await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
   });

@@ -92,9 +92,9 @@ test.describe('Verify tooltips', () => {
 
     // Add the Sine Wave Generator to the LAD table and save changes.
     //TODO Follow up with https://github.com/nasa/openmct/issues/7773
-    await page.dragAndDrop(`text=${sineWaveObject1.name}`, '#lad-table-drop-area');
-    await page.dragAndDrop(`text=${sineWaveObject2.name}`, '#lad-table-drop-area');
-    await page.dragAndDrop(`text=${sineWaveObject3.name}`, '#lad-table-drop-area');
+    await page.getByLabel(`Preview ${sineWaveObject1.name}`).dragTo(page.getByLabel('Object View'));
+    await page.getByLabel(`Preview ${sineWaveObject2.name}`).dragTo(page.getByLabel('Object View'));
+    await page.getByLabel(`Preview ${sineWaveObject3.name}`).dragTo(page.getByLabel('Object View'));
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -220,7 +220,7 @@ test.describe('Verify tooltips', () => {
     // Edit Stacked Plot
     await page.getByLabel('Edit Object').click();
 
-    await page.dragAndDrop(`text=${sineWaveObject2.name}`, '.c-plot--stacked.holder');
+    await page.getByLabel(`Preview ${sineWaveObject2.name}`).dragTo(page.getByLabel('Object View'));
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -355,7 +355,10 @@ test.describe('Verify tooltips', () => {
 
     await page.getByLabel('Navigate to SWG 3 generator').dragTo(page.getByRole('meter'));
     await page.keyboard.down('Control');
-    await page.getByRole('meter').hover({ position: { x: 0, y: 0 } });
+    // FIXME: We shouldn't need a `force: true` here, but the parent
+    // element blocks
+    // eslint-disable-next-line playwright/no-force-option
+    await page.getByRole('meter').hover({ position: { x: 0, y: 0 }, force: true });
     await expect(page.getByRole('tooltip')).toHaveText(sineWaveObject3.path);
   });
 
@@ -441,18 +444,16 @@ test.describe('Verify tooltips', () => {
     });
     // Edit Overlay Plot
     await page.getByLabel('Edit Object').click();
-    await page.dragAndDrop(
-      `text=${sineWaveObject1.name}`,
-      '.c-object-view.is-object-type-time-strip'
-    );
-    await page.dragAndDrop(
-      `text=${sineWaveObject2.name}`,
-      '.c-object-view.is-object-type-time-strip'
-    );
-    await page.dragAndDrop(
-      `text=${sineWaveObject3.name}`,
-      '.c-object-view.is-object-type-time-strip'
-    );
+    await page
+      .getByLabel(`Preview ${sineWaveObject1.name}`)
+      .dragTo(page.getByLabel('Test Time Strip Object View'));
+    await page
+      .getByLabel(`Preview ${sineWaveObject2.name}`)
+      .dragTo(page.getByLabel('Test Time Strip Object View'));
+    await page
+      .getByLabel(`Preview ${sineWaveObject3.name}`)
+      .dragTo(page.getByLabel('Test Time Strip Object View'));
+
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 

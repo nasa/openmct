@@ -66,13 +66,11 @@ test.describe('Gauge', () => {
     });
 
     // Verify that the 'Replace telemetry source' modal appears and accept it
-    await expect
-      .soft(
-        page.locator(
-          'text=This action will replace the current telemetry source. Do you want to continue?'
-        )
+    await expect(
+      page.getByText(
+        'This action will replace the current telemetry source. Do you want to continue?'
       )
-      .toBeVisible();
+    ).toBeVisible();
     await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Navigate to the gauge and verify that the new SWG
@@ -80,24 +78,22 @@ test.describe('Gauge', () => {
     await page.goto(gauge.url);
     await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Elements' }).click();
-    await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
-    await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
+    await expect(page.getByLabel(`Preview ${swg1.name}`)).toBeHidden();
+    await expect(page.getByLabel(`Preview ${swg2.name}`)).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).click();
 
     // Right click on the new SWG in the elements pool and delete it
-    await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({
+    await page.getByLabel(`Preview ${swg2.name}`).click({
       button: 'right'
     });
-    await page.locator('li[title="Remove this object from its containing object."]').click();
+    await page.getByLabel('Remove').click();
 
     // Verify that the 'Remove object' confirmation modal appears and accept it
-    await expect
-      .soft(
-        page.locator(
-          'text=Warning! This action will remove this object. Are you sure you want to continue?'
-        )
+    await expect(
+      page.getByText(
+        'Warning! This action will remove this object. Are you sure you want to continue?'
       )
-      .toBeVisible();
+    ).toBeVisible();
     await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Verify that the elements pool shows no elements

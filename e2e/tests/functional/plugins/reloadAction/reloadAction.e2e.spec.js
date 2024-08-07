@@ -65,15 +65,21 @@ test.describe('Reload action', () => {
 
     await page.getByLabel('Edit Object', { exact: true }).click();
 
-    await page.dragAndDrop(`text='Alpha Table'`, '.l-layout__grid-holder', {
-      targetPosition: { x: 0, y: 0 }
-    });
+    await page
+      .getByLabel('Main Tree')
+      .getByLabel(`Preview ${alphaTable.name}`)
+      .dragTo(page.getByLabel('Layout Grid'), {
+        targetPosition: { x: 0, y: 0 }
+      });
 
-    await page.dragAndDrop(`text='Beta Table'`, '.l-layout__grid-holder', {
-      targetPosition: { x: 0, y: 250 }
-    });
+    await page
+      .getByLabel('Main Tree')
+      .getByLabel(`Preview ${betaTable.name}`)
+      .dragTo(page.getByLabel('Layout Grid'), {
+        targetPosition: { x: 0, y: 250 }
+      });
 
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   });
 
