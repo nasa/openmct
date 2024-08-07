@@ -544,6 +544,8 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
 
     // Navigate back to Flexible Layout
     await page.goto(flexibleLayout.url);
+    // Wait for image thumbnail auto-scroll to complete
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
 
   test('Can double-click on the image to view large image', async ({ page }) => {
