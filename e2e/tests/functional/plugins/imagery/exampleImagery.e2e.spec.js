@@ -448,6 +448,8 @@ test.describe('Example Imagery in Display Layout @clock', () => {
     await page.locator('div[title="Resize object width"] > input').click();
     await page.locator('div[title="Resize object width"] > input').fill('50');
 
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
+
     await performImageryViewOperationsAndAssert(page, displayLayout);
   });
 
