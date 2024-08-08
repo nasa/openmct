@@ -21,7 +21,19 @@
 -->
 
 <template>
-  <div class="u-contents">This is the comps view</div>
+  <div class="c-cs" aria-label="Derived Telemetry">
+    <section class="c-cs__current-output c-section">
+      <div class="c-cs__content c-cs__current-output-value">
+        <span class="c-cs__current-output-value__label">Current Output</span>
+        <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
+          <template v-if="currentCompOutput">
+            {{ currentCompOutput }}
+          </template>
+          <template v-else> --- </template>
+        </span>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script setup>

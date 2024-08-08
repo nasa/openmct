@@ -94,7 +94,7 @@ export default class CompsManager extends EventEmitter {
   }
 
   getExpression() {
-    return 'a + b';
+    return 'a * b ';
   }
 
   #addTelemetryObject = async (telemetryObject) => {
