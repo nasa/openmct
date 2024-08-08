@@ -20,6 +20,13 @@ module.exports = {
         'playwright/no-get-by-title': 'error',
         'playwright/prefer-comparison-matcher': 'error'
       }
+    },
+    {
+      // Disable no-raw-locators for .contract.perf.spec.js files until https://github.com/grafana/xk6-browser/issues/1226
+      files: ['**/*.contract.perf.spec.js'],
+      rules: {
+        'playwright/no-raw-locators': 'off'
+      }
     }
   ]
 };

@@ -8,8 +8,8 @@ executors:
       - image: mcr.microsoft.com/playwright:v1.45.2-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
-      PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
-      PERCY_LOGLEVEL: 'debug' # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
+      PERCY_POSTINSTALL_BROWSER: "true" # Needed to store the percy browser in cache deps
+      PERCY_LOGLEVEL: "debug" # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
       PERCY_PARALLEL_TOTAL: 2
   ubuntu:
     machine:
@@ -17,7 +17,7 @@ executors:
       docker_layer_caching: true
 commands:
   build_and_install:
-    description: 'All steps used to build and install.'
+    description: "All steps used to build and install."
     parameters:
       node-version:
         type: string
@@ -27,7 +27,7 @@ commands:
           node-version: << parameters.node-version >>
       - node/install-packages
   generate_and_store_version_and_filesystem_artifacts:
-    description: 'Track important packages and files'
+    description: "Track important packages and files"
     steps:
       - run: |
           [[ $EUID -ne 0 ]] && (sudo mkdir -p /tmp/artifacts && sudo chmod 777 /tmp/artifacts) || (mkdir -p /tmp/artifacts && chmod 777 /tmp/artifacts)
@@ -38,7 +38,7 @@ commands:
       - store_artifacts:
           path: /tmp/artifacts/
   generate_e2e_code_cov_report:
-    description: 'Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test'
+    description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
     parameters:
       suite:
         type: string
@@ -102,7 +102,7 @@ jobs:
           node-version: lts/hydrogen
       - when: #Only install chrome-beta when running the 'full' suite to save $$$
           condition:
-            equal: ['full', <<parameters.suite>>]
+            equal: ["full", <<parameters.suite>>]
           steps:
             - run: npx playwright install chrome-beta
       - run:
@@ -259,6 +259,8 @@ workflows:
       - visual-a11y:
           name: visual-a11y-ci
           suite: ci
+      - perf-test
+      - mem-test
 
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
@@ -282,7 +284,7 @@ workflows:
       - e2e-couchdb
     triggers:
       - schedule:
-          cron: '0 0 * * *'
+          cron: "0 0 * * *"
           filters:
             branches:
               only:
