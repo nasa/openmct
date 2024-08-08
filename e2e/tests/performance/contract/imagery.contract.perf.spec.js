@@ -164,10 +164,10 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('background-image-visible'));
 
     // Get Current number of images in thumbstrip
-    await expect(page.getByLabel('Image thumbnail from').last()).toBeInViewport();
-    const thumbCount = await page.getByLabel('Image thumbnail from').count();
+    await expect(page.locator('.c-imagery__thumb').last()).toBeInViewport();
+    const thumbCount = await page.locator('.c-imagery__thumb').count();
     console.log('number of thumbs rendered ' + thumbCount);
-    await page.getByLabel('Image thumbnail from').last().click();
+    await page.locator('.c-imagery__thumb').last().click();
 
     //Get ResourceTiming of all jpg resources
     const resourceTimingJson2 = await page.evaluate(() =>
