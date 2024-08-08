@@ -35,7 +35,6 @@
  * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
  * @property {string} [name] the desired name of the created domain object.
  * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
- * @property {Record<string, string>} [customParameters] any additional parameters to be passed to the domain object's form. E.g. '[aria-label="Data Rate (hz)"]': {'0.1'}
  */
 
 /**
@@ -62,14 +61,14 @@ import { v4 as genUuid } from 'uuid';
  * This common function creates a domain object with the default options. It is the preferred way of creating objects
  * in the e2e suite when uninterested in properties of the objects themselves.
  *
- * @param {import('@playwright/test').Page} page
- * @param {CreateObjectOptions} options
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {Object} options - Options for creating the domain object.
+ * @param {string} options.type - The type of domain object to create (e.g., "Sine Wave Generator").
+ * @param {string} [options.name] - The desired name of the created domain object.
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [options.parent='mine'] - The Identifier or uuid of the parent object. Defaults to 'mine' folder
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(
-  page,
-  { type, name, parent = 'mine', customParameters = {} }
-) {
+async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -86,32 +85,18 @@ async function createDomainObjectWithDefaults(
   // Click the object specified by 'type'-- case insensitive
   await page.getByRole('menuitem', { name: new RegExp(`^${type}$`, 'i') }).click();
 
-  // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.locator('form[name="mctForm"] .first input[type="text"]');
-  await nameInput.fill('');
-  await nameInput.fill(name);
+  // Fill in the name of the object
+  await page.getByLabel('Title', { exact: true }).fill('');
+  await page.getByLabel('Title', { exact: true }).fill(name);
 
   if (page.testNotes) {
     // Fill the "Notes" section with information about the
     // currently running test and its project.
-    const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
-    await notesInput.fill(page.testNotes);
+    // eslint-disable-next-line playwright/no-raw-locators
+    await page.locator('#notes-textarea').fill(page.testNotes);
   }
 
-  // If there are any further parameters, fill them in
-  for (const [key, value] of Object.entries(customParameters)) {
-    const input = page.locator(`form[name="mctForm"] ${key}`);
-    await input.fill('');
-    await input.fill(value);
-  }
-
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    await page.getByRole('button', { name: 'Save' }).click(),
-    // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
+  await page.getByRole('button', { name: 'Save' }).click();
 
   // Wait until the URL is updated
   await page.waitForURL(`**/${parent}/*`);
@@ -151,61 +136,41 @@ async function createNotification(page, createNotificationOptions) {
 }
 
 /**
- * Expand an item in the tree by a given object name.
+ * Create a Plan object from JSON with the provided options. Must be used with a json based plan.
+ * Please check appActions.e2e.spec.js for an example of how to use this function.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string} name
- */
-async function expandTreePaneItemByName(page, name) {
-  const treePane = page.getByRole('tree', {
-    name: 'Main Tree'
-  });
-  const treeItem = treePane.locator(`role=treeitem[expanded=false][name=/${name}/]`);
-  const expandTriangle = treeItem.locator('.c-disclosure-triangle');
-  await expandTriangle.click();
-}
-
-/**
- * Create a Plan object from JSON with the provided options.
- * @param {import('@playwright/test').Page} page
- * @param {*} options
+ * @param {Object} json
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
-  if (!name) {
-    name = `Plan:${genUuid()}`;
-  }
-
   const parentUrl = await getHashUrlToDomainObject(page, parent);
 
   // Navigate to the parent object. This is necessary to create the object
   // in the correct location, such as a folder, layout, or plot.
   await page.goto(`${parentUrl}`);
 
-  // Click the Create button
   await page.getByRole('button', { name: 'Create' }).click();
 
-  // Click 'Plan' menu option
-  await page.click(`li:text("Plan")`);
+  await page.getByRole('menuitem', { name: 'Plan' }).click();
 
-  // Modify the name input field of the domain object to accept 'name'
-  const nameInput = page.getByLabel('Title', { exact: true });
-  await nameInput.fill('');
-  await nameInput.fill(name);
+  // Fill in the name of the object or generate a random one
+  if (!name) {
+    name = `Plan:${genUuid()}`;
+  }
+  await page.getByLabel('Title', { exact: true }).fill('');
+  await page.getByLabel('Title', { exact: true }).fill(name);
 
   // Upload buffer from memory
-  await page.locator('input#fileElem').setInputFiles({
+  await page.getByLabel('Select File...').setInputFiles({
     name: 'plan.txt',
     mimeType: 'text/plain',
     buffer: Buffer.from(JSON.stringify(json))
   });
 
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    page.click('[aria-label="Save"]'),
-    // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
+  await page.getByLabel('Save').click();
 
   // Wait until the URL is updated
   await page.waitForURL(`**/${parent}/*`);
@@ -233,10 +198,10 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 
   await page.getByRole('button', { name: 'Create' }).click();
 
-  await page.locator('li:has-text("Sine Wave Generator")').click();
+  await page.getByRole('menuitem', { name: 'Sine Wave Generator' }).click();
 
   const name = 'VIPER Rover Heading';
-  await page.getByRole('dialog').locator('input[type="text"]').fill(name);
+  await page.getByLabel('Title', { exact: true }).fill(name);
 
   // Fill out the fields with default values
   await page.getByRole('spinbutton', { name: 'Period' }).fill('10');
@@ -263,7 +228,9 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 }
 
 /**
- * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds.
+ * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds. Note: does not set
+ * default view type.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string} url The url to the domainObject
  * @param {string | number} start The starting time bound in milliseconds since epoch
@@ -276,9 +243,13 @@ async function navigateToObjectWithFixedTimeBounds(page, url, start, end) {
 }
 
 /**
- * Navigates directly to a given object url, in real-time mode.
+ * Navigates directly to a given object url, in real-time mode. Note: does not set
+ * default view type.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string} url The url to the domainObject
+ * @param {string | number} start The start offset in milliseconds
+ * @param {string | number} end The end offset in milliseconds
  */
 async function navigateToObjectWithRealTime(page, url, start = '1800000', end = '30000') {
   await page.goto(
@@ -287,22 +258,10 @@ async function navigateToObjectWithRealTime(page, url, start = '1800000', end = 
 }
 
 /**
- * Open the given `domainObject`'s context menu from the object tree.
- * Expands the path to the object and scrolls to it if necessary.
+ * Expands the entire object tree (every expandable tree item). Can be used to
+ * ensure that the tree is fully expanded before performing actions on objects.
+ * Can be applied to either the main tree or the create modal tree.
  *
- * @param {import('@playwright/test').Page} page
- * @param {string} url the url to the object
- */
-async function openObjectTreeContextMenu(page, url) {
-  await page.goto(url);
-  await page.getByLabel('Show selected item in tree').click();
-  await page.locator('.is-navigated-object').click({
-    button: 'right'
-  });
-}
-
-/**
- * Expands the entire object tree (every expandable tree item).
  * @param {import('@playwright/test').Page} page
  * @param {"Main Tree" | "Create Modal Tree"} [treeName="Main Tree"]
  */
@@ -314,9 +273,10 @@ async function expandEntireTree(page, treeName = 'Main Tree') {
     .getByRole('treeitem', {
       expanded: false
     })
-    .locator('span.c-disclosure-triangle.is-enabled');
+    .getByLabel(/Expand/);
 
   while ((await collapsedTreeItems.count()) > 0) {
+    //eslint-disable-next-line playwright/no-nth-methods
     await collapsedTreeItems.nth(0).click();
 
     // FIXME: Replace hard wait with something event-driven.
@@ -388,10 +348,11 @@ async function _isInEditMode(page, identifier) {
 
 /**
  * Set the time conductor mode to either fixed timespan or realtime mode.
+ * @private
  * @param {import('@playwright/test').Page} page
  * @param {boolean} [isFixedTimespan=true] true for fixed timespan mode, false for realtime mode; default is true
  */
-async function setTimeConductorMode(page, isFixedTimespan = true) {
+async function _setTimeConductorMode(page, isFixedTimespan = true) {
   // Click 'mode' button
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
   await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
@@ -412,7 +373,7 @@ async function setTimeConductorMode(page, isFixedTimespan = true) {
  * @param {import('@playwright/test').Page} page
  */
 async function setFixedTimeMode(page) {
-  await setTimeConductorMode(page, true);
+  await _setTimeConductorMode(page, true);
 }
 
 /**
@@ -420,7 +381,7 @@ async function setFixedTimeMode(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function setRealTimeMode(page) {
-  await setTimeConductorMode(page, false);
+  await _setTimeConductorMode(page, false);
 }
 
 /**
@@ -542,19 +503,20 @@ async function setTimeConductorBounds(page, { submitChanges = true, ...bounds })
 }
 
 /**
- * Set the independent time conductor bounds in fixed time mode
+ * Set the bounds of the visible conductor in fixed time mode.
+ * Requires that page already has an independent time conductor in view.
  * @param {import('@playwright/test').Page} page
- * @param {string} startDate
- * @param {string} endDate
+ * @param {string} start - The start date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
+ * @param {string} end - The end date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
  */
-async function setIndependentTimeConductorBounds(page, { start, end }) {
+async function setFixedIndependentTimeConductorBounds(page, { start, end }) {
   // Activate Independent Time Conductor
   await page.getByLabel('Enable Independent Time Conductor').click();
 
   // Bring up the time conductor popup
   await page.getByLabel('Independent Time Conductor Settings').click();
-  await expect(page.locator('.itc-popout')).toBeInViewport();
-  await setTimeBounds(page, start, end);
+  await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
+  await _setTimeBounds(page, start, end);
 
   await page.keyboard.press('Enter');
 }
@@ -563,10 +525,10 @@ async function setIndependentTimeConductorBounds(page, { start, end }) {
  * Set the bounds of the visible conductor in fixed time mode
  * @private
  * @param {import('@playwright/test').Page} page
- * @param {string} startDate
- * @param {string} endDate
+ * @param {string} start - The start date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
+ * @param {string} end - The end date in 'YYYY-MM-DD HH:mm:ss.SSSZ' format
  */
-async function setTimeBounds(page, startDate, endDate) {
+async function _setTimeBounds(page, startDate, endDate) {
   if (startDate) {
     // Fill start time
     await page
@@ -596,11 +558,13 @@ async function setTimeBounds(page, startDate, endDate) {
  * all plots on the page and waits up to the default timeout for the class to be
  * attached to each plot.
  * @param {import('@playwright/test').Page} page
+ * @param {number} [timeout] Provide a custom timeout in milliseconds to override the default timeout
  */
-async function waitForPlotsToRender(page) {
+async function waitForPlotsToRender(page, { timeout } = {}) {
+  //eslint-disable-next-line playwright/no-raw-locators
   const plotLocator = page.locator('.gl-plot');
   for (const plot of await plotLocator.all()) {
-    await expect(plot).toHaveClass(/js-series-data-loaded/);
+    await expect(plot).toHaveClass(/js-series-data-loaded/, { timeout });
   }
 }
 
@@ -665,41 +629,20 @@ async function getCanvasPixels(page, canvasSelector) {
   );
 }
 
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- * @param {string} url
- * @param {string} newName
- */
-async function renameObjectFromContextMenu(page, url, newName) {
-  await openObjectTreeContextMenu(page, url);
-  await page.click('li:text("Edit Properties")');
-  const nameInput = page.getByLabel('Title', { exact: true });
-  await nameInput.fill('');
-  await nameInput.fill(newName);
-  await page.click('[aria-label="Save"]');
-}
-
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
   createPlanFromJSON,
   expandEntireTree,
-  expandTreePaneItemByName,
   getCanvasPixels,
-  getFocusedObjectUuid,
-  getHashUrlToDomainObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
-  openObjectTreeContextMenu,
-  renameObjectFromContextMenu,
   setEndOffset,
+  setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
-  setIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
-  setTimeConductorMode,
   waitForPlotsToRender
 };

@@ -175,9 +175,8 @@ export default {
   computed: {
     ariaLabelValue() {
       const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
-      const type = this.series.domainObject.type ? ` ${this.series.domainObject.type}` : '';
 
-      return `${this.expanded ? 'Collapse' : 'Expand'}${name}${type}`;
+      return `${this.expanded ? 'Collapse' : 'Expand'}${name} Plot Series Options`;
     },
     colorPalette() {
       return this.series.collection.palette.groups();

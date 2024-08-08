@@ -5,9 +5,8 @@ const config = {
     browser: true,
     es2024: true,
     jasmine: true,
-    node: true,
-    worker: true,
-    serviceworker: true
+    amd: true,
+    node: true
   },
   globals: {
     _: 'readonly',

@@ -11,18 +11,18 @@ coverage:
         informational: true
   precision: 2
   round: down
-  range: '66...100'
+  range: "66...100"
 
 flags:
   unit:
     carryforward: false
-  e2e-stable:
+  e2e-ci:
     carryforward: false
   e2e-full:
     carryforward: true
 
 comment:
-  layout: 'diff,flags,files,footer'
+  layout: "diff,flags,files,footer"
   behavior: default
   require_changes: false
   show_carryforward_flags: true

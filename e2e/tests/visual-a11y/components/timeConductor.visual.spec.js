@@ -33,13 +33,9 @@ import {
 } from '../../../constants.js';
 
 test.describe('Visual - Time Conductor', () => {
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: false
-    }
-  });
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.pauseAt(MISSION_TIME);
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
@@ -87,7 +83,7 @@ test.describe('Visual - Time Conductor', () => {
   test(
     'Visual - Time Conductor Axis Resized @clock @snapshot',
     { annotation: [{ type: 'issue', description: 'https://github.com/nasa/openmct/issues/7623' }] },
-    async ({ page, tick }) => {
+    async ({ page }) => {
       const VISUAL_REALTIME_WITH_PANES = VISUAL_REALTIME_URL.replace(
         'hideTree=true',
         'hideTree=false'
@@ -108,7 +104,7 @@ test.describe('Visual - Time Conductor', () => {
       await page.getByLabel('Collapse Browse Pane').click();
 
       // manually tick the clock to trigger the resize / re-render
-      await tick(1000 * 2);
+      await page.clock.runFor(1000 * 2);
 
       const mask = [];
 

@@ -34,7 +34,7 @@ jobs:
       - run: npm ci --no-audit --progress=false
 
       - name: Run E2E Tests (Repeated 10 Times)
-        run: npm run test:e2e:stable -- --retries=0 --repeat-each=10 --max-failures=50
+        run: npm run test:e2e:ci -- --retries=0 --repeat-each=10 --max-failures=50
 
       - name: Archive test results
         if: success() || failure()

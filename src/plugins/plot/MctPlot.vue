@@ -88,9 +88,15 @@
               <button
                 class="c-button icon-minus"
                 title="Zoom out"
+                aria-label="Zoom out"
                 @click="zoom('out', 0.2)"
               ></button>
-              <button class="c-button icon-plus" title="Zoom in" @click="zoom('in', 0.2)"></button>
+              <button
+                class="c-button icon-plus"
+                title="Zoom in"
+                aria-label="Zoom in"
+                @click="zoom('in', 0.2)"
+              ></button>
             </div>
             <div
               v-if="plotHistory.length && !options.compact"
@@ -98,12 +104,14 @@
             >
               <button
                 class="c-button icon-arrow-left"
-                title="Restore previous pan/zoom"
+                title="Restore previous pan and zoom"
+                aria-label="Restore previous pan and zoom"
                 @click="back()"
               ></button>
               <button
                 class="c-button icon-reset"
-                title="Reset pan/zoom"
+                title="Reset pan and zoom"
+                aria-label="Reset pan and zoom"
                 @click="resumeRealtimeData()"
               ></button>
             </div>
@@ -115,12 +123,14 @@
                 v-if="!isFrozen"
                 class="c-button icon-pause"
                 title="Pause incoming real-time data"
+                aria-label="Pause incoming real-time data"
                 @click="pause()"
               ></button>
               <button
                 v-if="isFrozen"
                 class="c-button icon-arrow-right pause-play is-paused"
                 title="Resume displaying real-time data"
+                aria-label="Resume displaying real-time data"
                 @click="resumeRealtimeData()"
               ></button>
             </div>
@@ -128,6 +138,7 @@
               <button
                 class="c-button icon-clock"
                 title="Synchronize Time Conductor"
+                aria-label="Synchronize Time Conductor"
                 @click="showSynchronizeDialog()"
               ></button>
             </div>
@@ -136,12 +147,14 @@
                 class="c-button icon-crosshair"
                 :class="{ 'is-active': cursorGuide }"
                 title="Toggle cursor guides"
+                aria-label="Toggle cursor guides"
                 @click="toggleCursorGuide"
               ></button>
               <button
                 class="c-button"
                 :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
                 title="Toggle grid lines"
+                aria-label="Toggle grid lines"
                 @click="toggleGridLines"
               ></button>
             </div>
@@ -1795,7 +1808,7 @@ export default {
           message: message,
           buttons: [
             {
-              label: 'OK',
+              label: 'Ok',
               callback: () => {
                 dialog.dismiss();
                 this.synchronizeTimeConductor();

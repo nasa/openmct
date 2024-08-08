@@ -45,25 +45,23 @@ test.describe('Form Validation Behavior', () => {
     await page.getByRole('menuitem', { name: 'Folder' }).click();
 
     // Fill in empty string into title and trigger validation with 'Tab'
-    await page.click('text=Properties Title Notes >> input[type="text"]');
-    await page.fill('text=Properties Title Notes >> input[type="text"]', '');
-    await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
+    await page.getByLabel('Title', { exact: true }).fill('');
+    await page.getByLabel('Title', { exact: true }).press('Tab');
 
     //Required Field Form Validation
-    await expect(page.locator('button:has-text("OK")')).toBeDisabled();
+    await expect(page.getByLabel('Save')).toBeDisabled();
     await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/invalid/);
 
     //Correct Form Validation for missing title and trigger validation with 'Tab'
-    await page.click('text=Properties Title Notes >> input[type="text"]');
-    await page.fill('text=Properties Title Notes >> input[type="text"]', TEST_FOLDER);
-    await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
+    await page.getByLabel('Title', { exact: true }).fill(TEST_FOLDER);
+    await page.getByLabel('Title', { exact: true }).press('Tab');
 
     //Required Field Form Validation is corrected
-    await expect(page.locator('button:has-text("OK")')).toBeEnabled();
+    await expect(page.getByLabel('Save')).toBeEnabled();
     await expect(page.locator('.c-form-row__state-indicator').first()).not.toHaveClass(/invalid/);
 
     //Finish Creating Domain Object
-    await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
+    await page.getByLabel('Save').click();
 
     //Verify that the Domain Object has been created with the corrected title property
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(TEST_FOLDER);
@@ -87,8 +85,8 @@ test.describe('Form File Input Behavior', () => {
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    const type = await page.locator('#file-input-type').textContent();
-    await expect(type).toBe(`"string"`);
+    const type = page.locator('#file-input-type');
+    await expect(type).toHaveText(`"string"`);
   });
 
   test('Can select an image file type', async ({ page }) => {
@@ -101,8 +99,8 @@ test.describe('Form File Input Behavior', () => {
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    const type = await page.locator('#file-input-type').textContent();
-    await expect(type).toBe(`"object"`);
+    const type = page.locator('#file-input-type');
+    await expect(type).toHaveText(`"object"`);
   });
 });
 
@@ -123,11 +121,11 @@ test.describe('Persistence operations @addInit', () => {
 
     await page.getByRole('button', { name: 'Create' }).click();
 
-    await page.click('text=Condition Set');
+    await page.getByRole('menuitem', { name: 'Condition Set' }).click();
 
     await page.locator('form[name="mctForm"] >> text=Persistence Testing').click();
 
-    const okButton = page.locator('button:has-text("OK")');
+    const okButton = page.getByLabel('Save');
     await expect(okButton).toBeDisabled();
   });
 });
@@ -158,14 +156,12 @@ test.describe('Persistence operations @couchdb', () => {
     });
 
     // Open the edit form for the clock object
-    await page.click('button[title="More actions"]');
-    await page.click('li[title="Edit properties of this object."]');
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
 
     // Modify the display format from default 12hr -> 24hr and click 'Save'
-    await page
-      .locator('select[aria-label="12 or 24 hour clock"]')
-      .selectOption({ value: 'clock24' });
-    await page.click('button[aria-label="Save"]');
+    await page.getByLabel('12 or 24 hour clock').selectOption({ value: 'clock24' });
+    await page.getByLabel('Save').click();
 
     await expect
       .poll(() => putRequestCount, {
@@ -188,8 +184,8 @@ test.describe('Persistence operations @couchdb', () => {
 
     // Both pages: Go to baseURL
     await Promise.all([
-      page.goto('./', { waitUntil: 'networkidle' }),
-      page2.goto('./', { waitUntil: 'networkidle' })
+      page.goto('./', { waitUntil: 'domcontentloaded' }),
+      page2.goto('./', { waitUntil: 'domcontentloaded' })
     ]);
 
     //Slow down the test a bit
@@ -202,14 +198,14 @@ test.describe('Persistence operations @couchdb', () => {
 
     // Both pages: Click the Create button
     await Promise.all([
-      page.click('button:has-text("Create")'),
-      page2.click('button:has-text("Create")')
+      page.getByRole('button', { name: 'Create' }).click(),
+      page2.getByRole('button', { name: 'Create' }).click()
     ]);
 
     // Both pages: Click "Clock" in the Create menu
     await Promise.all([
-      page.click(`li[role='menuitem']:text("Clock")`),
-      page2.click(`li[role='menuitem']:text("Clock")`)
+      page.getByRole('menuitem', { name: 'Clock' }).click(),
+      page2.getByRole('menuitem', { name: 'Clock' }).click()
     ]);
 
     // Generate unique names for both objects
@@ -236,9 +232,9 @@ test.describe('Persistence operations @couchdb', () => {
     // conditions for a conflict error from the first page.
     await Promise.all([
       page2.waitForLoadState(),
-      page2.click('[aria-label="Save"]'),
+      page2.getByLabel('Save').click(),
       // Wait for Save Banner to appear
-      page2.waitForSelector('.c-message-banner__message')
+      page2.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // Close Page 2, we're done with it.
@@ -249,9 +245,9 @@ test.describe('Persistence operations @couchdb', () => {
     // the composition of the parent folder.
     await Promise.all([
       page.waitForLoadState(),
-      page.click('[aria-label="Save"]'),
+      page.getByLabel('Save').click(),
       // Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // Page 1: Verify that the conflict has occurred and an error notification is displayed.
