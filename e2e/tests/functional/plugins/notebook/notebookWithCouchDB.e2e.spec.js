@@ -30,14 +30,21 @@ import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Notebook Tests with CouchDB @couchdb', () => {
   let testNotebook;
-
+  let notebookElementsRequests = [];
   test.beforeEach(async ({ page }) => {
-    //Navigate to baseURL
+    let findResponse;
+    // Collect all request events to count and assert after notebook action
+    notebookElementsRequests = [];
+    page.on('request', (request) => notebookElementsRequests.push(request));
+    // Navigate to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    // Create Notebook
-    testNotebook = await createDomainObjectWithDefaults(page, { type: 'Notebook' });
-    await page.goto(testNotebook.url, { waitUntil: 'domcontentloaded' });
+    // Create Notebook and wait for final CouchDB response after navigation
+    [testNotebook, findResponse] = await Promise.allSettled([
+      createDomainObjectWithDefaults(page, { type: 'Notebook' }),
+      page.waitForResponse('**/_find')
+    ]);
+    expect(findResponse.status).toBe('fulfilled');
   });
 
   test('Inspect Notebook Entry Network Requests', async ({ page }) => {
@@ -46,30 +53,34 @@ test.describe('Notebook Tests with CouchDB @couchdb', () => {
     // Expand sidebar
     await page.locator('.c-notebook__toggle-nav-button').click();
 
-    // Collect all request events to count and assert after notebook action
-    let notebookElementsRequests = [];
-    page.on('request', (request) => notebookElementsRequests.push(request));
+    notebookElementsRequests.splice(0, notebookElementsRequests.length);
+    const pagePutRequest = page.waitForRequest(
+      (req) => req.url().includes(`/openmct/${testNotebook.uuid}`) && req.method() === 'PUT'
+    );
+    const pagePostRequest = page.waitForRequest(
+      (req) => req.url().includes('/openmct/_all_docs?include_docs=true') && req.method() === 'POST'
+    );
+    // Clicking Add Page generates
+    await page.getByLabel('Add Page').click();
+    const [notebookUrlRequest] = await Promise.allSettled([pagePutRequest, pagePostRequest]);
+    expect(notebookUrlRequest.status).toBe('fulfilled');
 
-    //Clicking Add Page generates
-    let [notebookUrlRequest] = await Promise.all([
-      // Waits for the next request with the specified url
-      page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
-      // Triggers the request
-      page.getByLabel('Add Page').click()
-    ]);
-    // Ensures that there are no other network requests
-    await page.waitForLoadState('domcontentloaded');
-
-    // Assert that only two requests are made
+    // Assert that only one PUT request is made
+    // and that at least one POST request is made
     // Network Requests are:
-    // 1) The actual POST to create the page
-    expect(notebookElementsRequests).toHaveLength(1);
+    // 1) The actual PUT request to create the page
+    // 2) The shared worker event from 👆 POST request
+    expect(notebookElementsRequests.filter((req) => req.method() === 'PUT')).toHaveLength(1);
+    // Depending on the order of test runs and how many objects are currently in the database,
+    // the number of POST requests can vary due to batching. So check that we have at least one.
+    expect(
+      notebookElementsRequests.filter((req) => req.method() === 'POST').length
+    ).toBeGreaterThanOrEqual(1);
 
     // Assert on request object
-    expect(notebookUrlRequest.postDataJSON().metadata.name).toBe(testNotebook.name);
-    expect(notebookUrlRequest.postDataJSON().model.persisted).toBeGreaterThanOrEqual(
-      notebookUrlRequest.postDataJSON().model.modified
-    );
+    const requestData = JSON.parse(notebookUrlRequest.value.postData());
+    expect(requestData.metadata.name).toBe(testNotebook.name);
+    expect(requestData.model.persisted).toBeGreaterThanOrEqual(requestData.model.modified);
 
     // Add an entry
     // Network Requests are:
