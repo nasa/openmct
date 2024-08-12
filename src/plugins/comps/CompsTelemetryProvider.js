@@ -51,27 +51,30 @@ export default class CompsTelemetryProvider {
     return this.#lastUniqueID++;
   }
 
-  // eslint-disable-next-line require-await
-  async request(domainObject, options) {
-    const specificCompsManager = CompsManager.getCompsManager(
-      domainObject,
-      this.#openmct,
-      this.#compsManagerPool
-    );
-    await specificCompsManager.load();
+  request(domainObject, options) {
     return new Promise((resolve, reject) => {
-      const callbackID = this.#getCallbackID();
-      const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
-      const expression = specificCompsManager.getExpression();
-      // need to create callbackID with a promise for future execution
-      console.debug('🏟️ 1 Telemetry for comps:', telemetryForComps);
-      console.debug('🏟️ 2 Telemetry for comps:', specificCompsManager.requestUnderlyingTelemetry());
-      this.#requestPromises[callbackID] = { resolve, reject };
-      this.#sharedWorker.port.postMessage({
-        type: 'calculateRequest',
-        telemetryForComps,
-        expression,
-        callbackID
+      const specificCompsManager = CompsManager.getCompsManager(
+        domainObject,
+        this.#openmct,
+        this.#compsManagerPool
+      );
+      specificCompsManager.load().then(() => {
+        console.debug('📚 specific comp is ready');
+        const callbackID = this.#getCallbackID();
+        const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
+        const expression = specificCompsManager.getExpression();
+        console.debug('🏟️ 1 Telemetry for comps:', telemetryForComps);
+        console.debug(
+          '🏟️ 2 Telemetry for comps:',
+          specificCompsManager.requestUnderlyingTelemetry()
+        );
+        this.#requestPromises[callbackID] = { resolve, reject };
+        this.#sharedWorker.port.postMessage({
+          type: 'calculateRequest',
+          telemetryForComps,
+          expression,
+          callbackID
+        });
       });
     });
   }
@@ -79,7 +82,7 @@ export default class CompsTelemetryProvider {
   #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
     const expression = specificCompsManager.getExpression();
     const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
-    console.debug('🏟️ created new Data frame:', telemetryForComps);
+    // console.debug('🏟️ created new Data frame:', telemetryForComps);
     this.#sharedWorker.port.postMessage({
       type: 'calculateSubscription',
       telemetryForComps,
@@ -125,11 +128,12 @@ export default class CompsTelemetryProvider {
   }
 
   onSharedWorkerMessage(event) {
-    console.log('📝 Shared worker message:', event.data);
     const { type, result, callbackID } = event.data;
     if (type === 'calculationSubscriptionResult' && this.#subscriptionCallbacks[callbackID]) {
+      console.log('📝 Shared worker subscription message:', event.data);
       this.#subscriptionCallbacks[callbackID](result);
-    } else if (type === 'calculationRequestResult') {
+    } else if (type === 'calculationRequestResult' && this.#requestPromises[callbackID]) {
+      console.log('📝 Shared worker request message:', event.data);
       this.#requestPromises[callbackID].resolve(result);
       delete this.#requestPromises[callbackID];
     } else if (type === 'error') {

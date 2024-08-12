@@ -28,7 +28,7 @@ export default function CompsPlugin() {
 
   return function install(openmct) {
     openmct.types.addType('comps', {
-      name: 'Comps',
+      name: 'Derived Telemetry',
       key: 'comps',
       description:
         'Add one or more telemetry objects, apply a mathematical operation to them, and republish the result as a new telemetry object.',

@@ -33,11 +33,45 @@
         </span>
       </div>
     </section>
+    <section id="telemetryReferenceSection" aria-label="Derived Telemetry References">
+      <div class="c-cs__header c-section__header">
+        <div class="c-cs__header-label c-section__label">Telemetry References</div>
+      </div>
+      <div
+        :class="[
+          'c-cs__test-data__controls c-cdef__controls',
+          { disabled: !telemetryObjectLength }
+        ]"
+      >
+        <label class="c-toggle-switch">
+          <input type="checkbox" :checked="testDataApplied" @change="applyTestData" />
+          <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
+          <span class="c-toggle-switch__label">Apply Test Values</span>
+        </label>
+      </div>
+      <div class="c-cs__content">
+        <div
+          v-show="isEditing"
+          class="hint"
+          :class="{ 's-status-icon-warning-lo': !telemetryObjectLength }"
+        >
+          <template v-if="!telemetryObjectLength"
+            >Drag telemetry into Telemetry References to add variables for an expression</template
+          >
+        </div>
+      </div>
+    </section>
+    <section id="expressionSection" aria-label="Derived Telemetry Expression">
+      <div class="c-cs__header c-section__header">
+        <div class="c-cs__header-label c-section__label">Expression</div>
+      </div>
+      <div class="c-cs__content"></div>
+    </section>
   </div>
 </template>
 
 <script setup>
-import { inject, onBeforeUnmount, onMounted } from 'vue';
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 import CompsManager from '../CompsManager';
 
@@ -45,10 +79,40 @@ const openmct = inject('openmct');
 const domainObject = inject('domainObject');
 const compsManagerPool = inject('compsManagerPool');
 const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsManagerPool);
+const currentCompOutput = ref(null);
+const telemetryObjectLength = ref(0);
+const testDataApplied = ref(false);
 
-onMounted(() => {
-  console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
+let outputTelemetryCollection;
+
+defineProps({
+  isEditing: { type: Boolean, required: true }
 });
 
-onBeforeUnmount(() => {});
+onMounted(async () => {
+  console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
+  outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
+  outputTelemetryCollection.on('add', (data) => {
+    telemetryProcessor(data);
+  });
+  outputTelemetryCollection.on('clear', clearData);
+  await outputTelemetryCollection.load();
+  await compsManager.load();
+  telemetryObjectLength.value = Object.keys(compsManager.getTelemetryObjects()).length;
+});
+
+function applyTestData() {}
+
+function telemetryProcessor(data) {
+  // new data will come in as array, so just take the last element
+  currentCompOutput.value = data[data.length - 1]?.output;
+}
+
+function clearData() {
+  currentCompOutput.value = null;
+}
+
+onBeforeUnmount(() => {
+  outputTelemetryCollection.destroy();
+});
 </script>

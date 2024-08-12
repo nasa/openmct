@@ -90,10 +90,12 @@ export default class TelemetryCollection extends EventEmitter {
     this._watchTimeSystem();
     this._watchTimeModeChange();
 
-    this._requestHistoricalTelemetry();
+    const historicalTelemetryLoadedPromise = this._requestHistoricalTelemetry();
     this._initiateSubscriptionTelemetry();
 
     this.loaded = true;
+
+    return historicalTelemetryLoadedPromise;
   }
 
   /**
@@ -155,6 +157,7 @@ export default class TelemetryCollection extends EventEmitter {
         options
       );
       historicalData = await historicalProvider.request(this.domainObject, modifiedOptions);
+      console.debug('👴 Requesting historical telemetry data...', historicalData);
     } catch (error) {
       if (error.name !== 'AbortError') {
         console.error('Error requesting telemetry data...');
