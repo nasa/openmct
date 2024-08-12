@@ -401,7 +401,6 @@ export default {
       this.openmct.telemetry
         .request(telemetryObject, options)
         .then((data) => {
-          console.log(data);
           data.forEach((datum) => {
             this.addDataToGraph(telemetryObject, datum, axisMetadata);
           });
