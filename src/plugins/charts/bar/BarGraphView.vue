@@ -257,7 +257,8 @@ export default {
 
       return {
         end,
-        start
+        start,
+        size: 1
       };
     },
     loadComposition() {
@@ -400,6 +401,7 @@ export default {
       this.openmct.telemetry
         .request(telemetryObject, options)
         .then((data) => {
+          console.log(data);
           data.forEach((datum) => {
             this.addDataToGraph(telemetryObject, datum, axisMetadata);
           });
