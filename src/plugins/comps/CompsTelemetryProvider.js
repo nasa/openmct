@@ -68,6 +68,7 @@ export default class CompsTelemetryProvider {
           '🏟️ 2 Telemetry for comps:',
           specificCompsManager.requestUnderlyingTelemetry()
         );
+        console.debug('🏟️ expression:', expression);
         this.#requestPromises[callbackID] = { resolve, reject };
         this.#sharedWorker.port.postMessage({
           type: 'calculateRequest',

@@ -65,7 +65,17 @@
       <div class="c-cs__header c-section__header">
         <div class="c-cs__header-label c-section__label">Expression</div>
       </div>
-      <div class="c-cs__content"></div>
+      <div class="c-cs__content">
+        <div v-if="!isEditing">{{ domainObject.configuration.expression }}</div>
+        <div v-else>
+          <textarea
+            v-model="domainObject.configuration.expression"
+            class="c-cs__expression__input"
+            placeholder="Enter an expression"
+            @change="compsManager.persist"
+          ></textarea>
+        </div>
+      </div>
     </section>
   </div>
 </template>

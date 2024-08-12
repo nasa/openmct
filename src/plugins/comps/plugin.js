@@ -35,7 +35,12 @@ export default function CompsPlugin() {
       creatable: true,
       cssClass: 'icon-telemetry',
       initialize: function (domainObject) {
-        domainObject.configuration = {};
+        domainObject.configuration = {
+          comps: {
+            expression: '',
+            parameters: []
+          }
+        };
         domainObject.composition = [];
         domainObject.telemetry = {};
       }

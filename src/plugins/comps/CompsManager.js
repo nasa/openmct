@@ -24,6 +24,14 @@ export default class CompsManager extends EventEmitter {
     this.#telemetryLoadedPromises = [];
   }
 
+  persist() {
+    this.#openmct.objects.mutate(
+      this.#domainObject,
+      'configuration.comps',
+      this.#domainObject.configuration.comps
+    );
+  }
+
   getTelemetryObjects() {
     return this.#telemetryObjects;
   }
@@ -132,7 +140,7 @@ export default class CompsManager extends EventEmitter {
   }
 
   getExpression() {
-    return 'a + b ';
+    return this.#domainObject.configuration.expression;
   }
 
   #waitForDebounce() {
