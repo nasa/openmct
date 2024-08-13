@@ -40,7 +40,7 @@
       <div
         :class="[
           'c-cs__test-data__controls c-cdef__controls',
-          { disabled: !telemetryObjectLength }
+          { disabled: !domainObject.configuration.comps.parameters }
         ]"
       >
         <label class="c-toggle-switch">
@@ -51,11 +51,18 @@
       </div>
       <div class="c-cs__content">
         <div
-          v-show="isEditing"
           class="hint"
-          :class="{ 's-status-icon-warning-lo': !telemetryObjectLength }"
+          :class="{ 's-status-icon-warning-lo': !domainObject.configuration.comps.parameters }"
         >
-          <template v-if="!telemetryObjectLength"
+          <div
+            v-for="parameter in domainObject.configuration.comps.parameters"
+            :key="parameter.key"
+          >
+            <div class="c-cs__telemetry-reference">
+              <span class="c-cs__telemetry-reference__label">{{ parameter.name }}</span>
+            </div>
+          </div>
+          <template v-if="!domainObject.configuration.comps.parameters"
             >Drag telemetry into Telemetry References to add variables for an expression</template
           >
         </div>
@@ -66,10 +73,10 @@
         <div class="c-cs__header-label c-section__label">Expression</div>
       </div>
       <div class="c-cs__content">
-        <div v-if="!isEditing">{{ domainObject.configuration.expression }}</div>
+        <div v-if="!isEditing">{{ domainObject.configuration.comps.expression }}</div>
         <div v-else>
           <textarea
-            v-model="domainObject.configuration.expression"
+            v-model="domainObject.configuration.comps.expression"
             class="c-cs__expression__input"
             placeholder="Enter an expression"
             @change="compsManager.persist"
@@ -90,7 +97,6 @@ const domainObject = inject('domainObject');
 const compsManagerPool = inject('compsManagerPool');
 const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsManagerPool);
 const currentCompOutput = ref(null);
-const telemetryObjectLength = ref(0);
 const testDataApplied = ref(false);
 
 let outputTelemetryCollection;
@@ -108,7 +114,6 @@ onMounted(async () => {
   outputTelemetryCollection.on('clear', clearData);
   await outputTelemetryCollection.load();
   await compsManager.load();
-  telemetryObjectLength.value = Object.keys(compsManager.getTelemetryObjects()).length;
 });
 
 function applyTestData() {}

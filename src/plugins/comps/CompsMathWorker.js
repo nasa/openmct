@@ -1,5 +1,6 @@
 import { evaluate } from 'mathjs';
 
+// eslint-disable-next-line no-undef
 onconnect = function (e) {
   const port = e.ports[0];
   console.debug('🧮 Comps Math Worker connected');
@@ -52,6 +53,9 @@ function calculate(dataFrame, expression) {
   // Iterate over the first dataset and check for matching utc in the other dataset
   const firstDataSet = Object.values(dataFrame)[0];
   const secondDataSet = Object.values(dataFrame)[1];
+  if (!firstDataSet || !secondDataSet) {
+    return sumResults;
+  }
 
   for (const [utc, item1] of firstDataSet.entries()) {
     if (secondDataSet.has(utc)) {

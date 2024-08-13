@@ -18,10 +18,30 @@ export default class CompsManager extends EventEmitter {
     this.#domainObject = domainObject;
   }
 
-  async load() {
-    await this.#loadComposition();
-    await Promise.all(this.#telemetryLoadedPromises);
-    this.#telemetryLoadedPromises = [];
+  addParameter(keyString) {
+    const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    this.#domainObject.configuration.comps.parameters.push({
+      keyString,
+      name: `New_Parameter_${random4Digit}`,
+      valueToUse: 'sin',
+      testValue: 0
+    });
+    this.persist();
+  }
+
+  deleteParameter(keyString) {
+    this.#domainObject.configuration.comps.parameters =
+      this.#domainObject.configuration.comps.parameters.filter(
+        (parameter) => parameter.keyString !== keyString
+      );
+    // if there are no parameters referencing this parameter keyString, remove the telemetry object too
+    const parameterExists = this.#domainObject.configuration.comps.parameters.some(
+      (parameter) => parameter.keyString === keyString
+    );
+    if (!parameterExists) {
+      this.#composition.remove(this.#telemetryObjects[keyString]);
+    }
+    this.persist();
   }
 
   persist() {
@@ -30,6 +50,12 @@ export default class CompsManager extends EventEmitter {
       'configuration.comps',
       this.#domainObject.configuration.comps
     );
+  }
+
+  async load() {
+    await this.#loadComposition();
+    await Promise.all(this.#telemetryLoadedPromises);
+    this.#telemetryLoadedPromises = [];
   }
 
   getTelemetryObjects() {
@@ -167,6 +193,15 @@ export default class CompsManager extends EventEmitter {
     const telemetryLoadedPromise = this.#telemetryCollections[keyString].load();
     this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
     console.debug('📢 CompsManager: loaded telemetry collection', keyString);
+
+    // check to see if we have a corresponding parameter
+    // if not, add one
+    const parameterExists = this.#domainObject.configuration.comps.parameters.some(
+      (parameter) => parameter.keyString === keyString
+    );
+    if (!parameterExists) {
+      this.addParameter(keyString);
+    }
   };
 
   static getCompsManager(domainObject, openmct, compsManagerPool) {
