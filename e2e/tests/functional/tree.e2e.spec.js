@@ -28,7 +28,7 @@ test.describe('Main Tree', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Creating a child object within a folder and immediately opening it shows the created object in the tree @couchdb', async ({
+  test('Creating a child object within a folder and immediately opening it shows the created object in the tree @couchdb @network', async ({
     page
   }) => {
     test.info().annotations.push({
@@ -88,7 +88,7 @@ test.describe('Main Tree', () => {
     ).toBeVisible();
   });
 
-  test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @couchdb @2p', async ({
+  test('Creating a child object on one tab and expanding its parent on the other shows the correct composition @couchdb @network @2p', async ({
     page
   }) => {
     test.info().annotations.push({
@@ -187,7 +187,7 @@ test.describe('Main Tree', () => {
       ]);
     });
   });
-  test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb', async ({
+  test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb @network', async ({
     page
   }) => {
     let requestWasAborted = false;
