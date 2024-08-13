@@ -168,7 +168,7 @@ test.describe('Grand Search', () => {
     await expect(page.getByText('No results found')).toBeVisible();
   });
 
-  test('Validate single object in search result @couchdb', async ({ page }) => {
+  test('Validate single object in search result @couchdb @network', async ({ page }) => {
     // Create a folder object
     const folderName = uuid();
     await createDomainObjectWithDefaults(page, {
@@ -191,7 +191,7 @@ test.describe('Grand Search', () => {
     await expect(searchResults).toContainText(folderName);
   });
 
-  test('Search results are debounced @couchdb', async ({ page }) => {
+  test('Search results are debounced @couchdb @network', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6179'
@@ -221,7 +221,9 @@ test.describe('Grand Search', () => {
     await expect(page.getByRole('list', { name: 'Object Results' })).toContainText('Clock A');
   });
 
-  test('Slowly typing after search debounce will abort requests @couchdb', async ({ page }) => {
+  test('Slowly typing after search debounce will abort requests @couchdb @network', async ({
+    page
+  }) => {
     let requestWasAborted = false;
     await createObjectsForSearch(page);
     page.on('requestfailed', (request) => {
