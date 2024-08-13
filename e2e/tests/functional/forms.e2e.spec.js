@@ -130,7 +130,7 @@ test.describe('Persistence operations @addInit', () => {
   });
 });
 
-test.describe('Persistence operations @network', () => {
+test.describe('Persistence operations @couchdb @network', () => {
   test.use({ failOnConsoleError: false });
   test('Editing object properties should generate a single persistence operation', async ({
     page
@@ -170,7 +170,7 @@ test.describe('Persistence operations @network', () => {
       })
       .toEqual(1);
   });
-  test('Can create an object after a conflict error @network @2p', async ({
+  test('Can create an object after a conflict error @couchdb @network @2p', async ({
     page,
     openmctConfig
   }) => {
