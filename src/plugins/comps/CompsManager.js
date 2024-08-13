@@ -29,6 +29,10 @@ export default class CompsManager extends EventEmitter {
     this.persist();
   }
 
+  getDomainObjectForParameter(keyString) {
+    return this.#telemetryObjects[keyString];
+  }
+
   deleteParameter(keyString) {
     this.#domainObject.configuration.comps.parameters =
       this.#domainObject.configuration.comps.parameters.filter(

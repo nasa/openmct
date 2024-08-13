@@ -54,12 +54,31 @@
           class="hint"
           :class="{ 's-status-icon-warning-lo': !domainObject.configuration.comps.parameters }"
         >
-          <div
-            v-for="parameter in domainObject.configuration.comps.parameters"
-            :key="parameter.key"
-          >
+          <div v-for="parameter in parameters" :key="parameter.name">
             <div class="c-cs__telemetry-reference">
-              <span class="c-cs__telemetry-reference__label">{{ parameter.name }}</span>
+              <input
+                v-model="parameter.name"
+                class="c-cs__telemetry-reference__label"
+                @change="compsManager.persist"
+              />
+              <ObjectPath
+                :domain-object="compsManager.getDomainObjectForParameter(parameter.keyString)"
+              />
+              {{ compsManager.getDomainObjectForParameter(parameter.keyString).name }}
+              <!-- drop down to select value from telemetry -->
+              <select
+                v-model="parameter.value"
+                class="c-cs__telemetry-reference__value"
+                @change="compsManager.persist"
+              >
+                <option
+                  v-for="parameterValueOption in compsManager.getDomainObjectForParameter(
+                    parameter.keyString
+                  )"
+                  :key="parameterValueOption"
+                  :value="parameterValueOption"
+                />
+              </select>
             </div>
           </div>
           <template v-if="!domainObject.configuration.comps.parameters"
@@ -88,8 +107,9 @@
 </template>
 
 <script setup>
-import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
+import ObjectPath from '../../../ui/components/ObjectPath.vue';
 import CompsManager from '../CompsManager';
 
 const openmct = inject('openmct');
@@ -98,6 +118,7 @@ const compsManagerPool = inject('compsManagerPool');
 const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsManagerPool);
 const currentCompOutput = ref(null);
 const testDataApplied = ref(false);
+const parameters = ref(null);
 
 let outputTelemetryCollection;
 
@@ -105,7 +126,7 @@ defineProps({
   isEditing: { type: Boolean, required: true }
 });
 
-onMounted(async () => {
+onBeforeMount(async () => {
   console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
   outputTelemetryCollection.on('add', (data) => {
@@ -114,6 +135,7 @@ onMounted(async () => {
   outputTelemetryCollection.on('clear', clearData);
   await outputTelemetryCollection.load();
   await compsManager.load();
+  parameters.value = domainObject.configuration.comps.parameters;
 });
 
 function applyTestData() {}
