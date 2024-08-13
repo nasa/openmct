@@ -55,30 +55,26 @@
           :class="{ 's-status-icon-warning-lo': !domainObject.configuration.comps.parameters }"
         >
           <div v-for="parameter in parameters" :key="parameter.name">
-            <div class="c-cs__telemetry-reference">
-              <input
-                v-model="parameter.name"
-                class="c-cs__telemetry-reference__label"
-                @change="compsManager.persist"
-              />
+            <div>
+              Reference
+              <input v-model="parameter.name" @change="compsManager.persist" />
               <ObjectPath
-                :domain-object="compsManager.getDomainObjectForParameter(parameter.keyString)"
+                :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
               />
-              {{ compsManager.getDomainObjectForParameter(parameter.keyString).name }}
+              {{ compsManager.getTelemetryObjectForParameter(parameter.keyString).name }}
               <!-- drop down to select value from telemetry -->
-              <select
-                v-model="parameter.value"
-                class="c-cs__telemetry-reference__value"
-                @change="compsManager.persist"
-              >
+              <select v-model="parameter.valueToUse" @change="persistParameters">
                 <option
-                  v-for="parameterValueOption in compsManager.getDomainObjectForParameter(
+                  v-for="parameterValueOption in compsManager.getMetaDataValuesForParameter(
                     parameter.keyString
                   )"
-                  :key="parameterValueOption"
-                  :value="parameterValueOption"
-                />
+                  :key="parameterValueOption.key"
+                  :value="parameterValueOption.key"
+                >
+                  {{ parameterValueOption.name }}
+                </option>
               </select>
+              <input v-model="parameter.testValue" @change="compsManager.persist" />
             </div>
           </div>
           <template v-if="!domainObject.configuration.comps.parameters"
@@ -92,13 +88,12 @@
         <div class="c-cs__header-label c-section__label">Expression</div>
       </div>
       <div class="c-cs__content">
-        <div v-if="!isEditing">{{ domainObject.configuration.comps.expression }}</div>
-        <div v-else>
+        <div>
           <textarea
-            v-model="domainObject.configuration.comps.expression"
+            v-model="expression"
             class="c-cs__expression__input"
             placeholder="Enter an expression"
-            @change="compsManager.persist"
+            @change="persistExpression"
           ></textarea>
         </div>
       </div>
@@ -119,6 +114,7 @@ const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsMa
 const currentCompOutput = ref(null);
 const testDataApplied = ref(false);
 const parameters = ref(null);
+const expression = ref(null);
 
 let outputTelemetryCollection;
 
@@ -135,8 +131,19 @@ onBeforeMount(async () => {
   outputTelemetryCollection.on('clear', clearData);
   await outputTelemetryCollection.load();
   await compsManager.load();
-  parameters.value = domainObject.configuration.comps.parameters;
+  parameters.value = compsManager.getParameters();
+  expression.value = compsManager.getExpression();
 });
+
+function persistParameters() {
+  domainObject.configuration.comps.parameters = parameters.value;
+  compsManager.persist();
+}
+
+function persistExpression() {
+  domainObject.configuration.comps.expression = expression.value;
+  compsManager.persist();
+}
 
 function applyTestData() {}
 

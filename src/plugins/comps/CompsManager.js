@@ -29,8 +29,25 @@ export default class CompsManager extends EventEmitter {
     this.persist();
   }
 
-  getDomainObjectForParameter(keyString) {
+  getParameters() {
+    const parameters = this.#domainObject.configuration.comps.parameters;
+    const parametersWithTimeKey = parameters.map((parameter) => {
+      return {
+        ...parameter,
+        timeKey: this.#telemetryCollections[parameter.keyString]?.timeKey
+      };
+    });
+    return parametersWithTimeKey;
+  }
+
+  getTelemetryObjectForParameter(keyString) {
     return this.#telemetryObjects[keyString];
+  }
+
+  getMetaDataValuesForParameter(keyString) {
+    const telemetryObject = this.getTelemetryObjectForParameter(keyString);
+    const metaData = this.#openmct.telemetry.getMetadata(telemetryObject);
+    return metaData.valueMetadatas;
   }
 
   deleteParameter(keyString) {
@@ -52,6 +69,10 @@ export default class CompsManager extends EventEmitter {
     this.#openmct.objects.mutate(
       this.#domainObject,
       'configuration.comps',
+      this.#domainObject.configuration.comps
+    );
+    console.debug(
+      `📦 CompsManager: persisted domain object`,
       this.#domainObject.configuration.comps
     );
   }
@@ -170,7 +191,7 @@ export default class CompsManager extends EventEmitter {
   }
 
   getExpression() {
-    return this.#domainObject.configuration.expression;
+    return this.#domainObject.configuration.comps.expression;
   }
 
   #waitForDebounce() {

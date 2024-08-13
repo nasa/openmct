@@ -59,21 +59,16 @@ export default class CompsTelemetryProvider {
         this.#compsManagerPool
       );
       specificCompsManager.load().then(() => {
-        console.debug('📚 specific comp is ready');
         const callbackID = this.#getCallbackID();
         const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
         const expression = specificCompsManager.getExpression();
-        console.debug('🏟️ 1 Telemetry for comps:', telemetryForComps);
-        console.debug(
-          '🏟️ 2 Telemetry for comps:',
-          specificCompsManager.requestUnderlyingTelemetry()
-        );
-        console.debug('🏟️ expression:', expression);
+        const parameters = specificCompsManager.getParameters();
         this.#requestPromises[callbackID] = { resolve, reject };
         this.#sharedWorker.port.postMessage({
           type: 'calculateRequest',
           telemetryForComps,
           expression,
+          parameters,
           callbackID
         });
       });
@@ -83,11 +78,12 @@ export default class CompsTelemetryProvider {
   #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
     const expression = specificCompsManager.getExpression();
     const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
-    // console.debug('🏟️ created new Data frame:', telemetryForComps);
+    const parameters = specificCompsManager.getParameters();
     this.#sharedWorker.port.postMessage({
       type: 'calculateSubscription',
       telemetryForComps,
       expression,
+      parameters,
       callbackID
     });
   }
@@ -120,7 +116,6 @@ export default class CompsTelemetryProvider {
     this.#sharedWorker.port.onmessageerror = this.onSharedWorkerMessageError.bind(this);
     this.#sharedWorker.port.start();
 
-    // send an initial message to the worker
     this.#sharedWorker.port.postMessage({ type: 'init' });
 
     this.#openmct.on('destroy', () => {
@@ -131,10 +126,10 @@ export default class CompsTelemetryProvider {
   onSharedWorkerMessage(event) {
     const { type, result, callbackID } = event.data;
     if (type === 'calculationSubscriptionResult' && this.#subscriptionCallbacks[callbackID]) {
-      console.log('📝 Shared worker subscription message:', event.data);
+      console.debug('📝 Shared worker subscription message:', event.data);
       this.#subscriptionCallbacks[callbackID](result);
     } else if (type === 'calculationRequestResult' && this.#requestPromises[callbackID]) {
-      console.log('📝 Shared worker request message:', event.data);
+      console.debug('📝 Shared worker request message:', event.data);
       this.#requestPromises[callbackID].resolve(result);
       delete this.#requestPromises[callbackID];
     } else if (type === 'error') {

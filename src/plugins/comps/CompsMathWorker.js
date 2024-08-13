@@ -8,12 +8,12 @@ onconnect = function (e) {
   port.onmessage = function (event) {
     console.debug('🧮 Comps Math Worker message:', event);
     try {
-      const { type, callbackID, telemetryForComps, expression } = event.data;
+      const { type, callbackID, telemetryForComps, expression, parameters } = event.data;
       if (type === 'calculateRequest') {
-        const result = calculateRequest(telemetryForComps, expression);
+        const result = calculateRequest(telemetryForComps, parameters, expression);
         port.postMessage({ type: 'calculationRequestResult', callbackID, result });
       } else if (type === 'calculateSubscription') {
-        const result = calculateSubscription(telemetryForComps, expression);
+        const result = calculateSubscription(telemetryForComps, parameters, expression);
         if (result.length) {
           port.postMessage({ type: 'calculationSubscriptionResult', callbackID, result });
         }
@@ -38,31 +38,48 @@ function getFullDataFrame(telemetryForComps) {
   return dataFrame;
 }
 
-function calculateSubscription(telemetryForComps, expression) {
+function calculateSubscription(telemetryForComps, parameters, expression) {
   const dataFrame = getFullDataFrame(telemetryForComps);
-  return calculate(dataFrame, expression);
+  return calculate(dataFrame, parameters, expression);
 }
 
-function calculateRequest(telemetryForComps, expression) {
+function calculateRequest(telemetryForComps, parameters, expression) {
   const dataFrame = getFullDataFrame(telemetryForComps);
-  return calculate(dataFrame, expression);
+  return calculate(dataFrame, parameters, expression);
 }
 
-function calculate(dataFrame, expression) {
+function calculate(dataFrame, parameters, expression) {
   const sumResults = [];
-  // Iterate over the first dataset and check for matching utc in the other dataset
-  const firstDataSet = Object.values(dataFrame)[0];
-  const secondDataSet = Object.values(dataFrame)[1];
-  if (!firstDataSet || !secondDataSet) {
+  // ensure all parameter keyStrings have corresponding telemetry data
+  if (!expression) {
     return sumResults;
   }
-
-  for (const [utc, item1] of firstDataSet.entries()) {
-    if (secondDataSet.has(utc)) {
-      const item2 = secondDataSet.get(utc);
-      const output = evaluate(expression, { a: item1.sin, b: item2.sin });
-      sumResults.push({ utc, output });
+  // take the first parameter keyString as the reference
+  const referenceParameter = parameters[0];
+  const otherParameters = parameters.slice(1);
+  // iterate over the reference telemetry data
+  const referenceTelemetry = dataFrame[referenceParameter.keyString];
+  referenceTelemetry.forEach((referenceTelemetryItem) => {
+    const scope = {
+      [referenceParameter.name]: referenceTelemetryItem[referenceParameter.valueToUse]
+    };
+    const referenceTime = referenceTelemetryItem[referenceParameter.timeKey];
+    // iterate over the other parameters to set the scope
+    let missingData = false;
+    otherParameters.forEach((parameter) => {
+      const otherDataFrame = dataFrame[parameter.keyString];
+      const otherTelemetry = otherDataFrame.get(referenceTime);
+      if (!otherTelemetry) {
+        missingData = true;
+        return;
+      }
+      scope[parameter.name] = otherTelemetry[parameter.valueToUse];
+    });
+    if (missingData) {
+      return;
     }
-  }
+    const output = evaluate(expression, scope);
+    sumResults.push({ [referenceParameter.timeKey]: referenceTime, output });
+  });
   return sumResults;
 }
