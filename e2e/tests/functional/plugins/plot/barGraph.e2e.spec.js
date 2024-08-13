@@ -29,7 +29,7 @@ import { v4 as uuid } from 'uuid';
 import {createDomainObjectWithDefaults} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
-test.describe('Bar Graph', () => {
+test.describe.only('Bar Graph', () => {
   let barGraph;
 
   test.beforeEach(async ({ page }) => {
@@ -54,7 +54,7 @@ test.describe('Bar Graph', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
 
     const requestOption = await getRequestOptionPromise;
-    await expect(requestOption).toBe(1);
+    await expect(requestOption).toBe('latest');
 
   });
 });
@@ -76,7 +76,7 @@ async function addTelemetryInterceptor(page) {
           return true;
         },
         invoke: (request) => {
-          window.getRequestOption(request.size);
+          window.getRequestOption(request.strategy);
           return request;
         }
       };
