@@ -429,7 +429,7 @@ test.describe('Display Layout', () => {
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
   });
 
-  test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb', async ({
+  test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb @network', async ({
     page
   }) => {
     await setFixedTimeMode(page);
