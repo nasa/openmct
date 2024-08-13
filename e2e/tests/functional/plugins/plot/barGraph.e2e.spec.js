@@ -26,10 +26,10 @@
 
 import { v4 as uuid } from 'uuid';
 
-import {createDomainObjectWithDefaults} from '../../../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
-test.describe.only('Bar Graph', () => {
+test.describe('Bar Graph', () => {
   let barGraph;
 
   test.beforeEach(async ({ page }) => {
@@ -42,7 +42,7 @@ test.describe.only('Bar Graph', () => {
 
   test('Requests a single historical datum', async ({ page }) => {
     // Create a sine wave generator within the bar graph
-    const swg1 = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: `swg-${uuid()}`,
       parent: barGraph.uuid
@@ -55,10 +55,8 @@ test.describe.only('Bar Graph', () => {
 
     const requestOption = await getRequestOptionPromise;
     await expect(requestOption).toBe('latest');
-
   });
 });
-
 
 /**
  * Util for returning the size option for telemetry requests
@@ -66,11 +64,11 @@ test.describe.only('Bar Graph', () => {
  */
 async function addTelemetryInterceptor(page) {
   const getRequestOptionPromise = new Promise((resolve) =>
-      page.exposeFunction('getRequestOption', resolve)
+    page.exposeFunction('getRequestOption', resolve)
   );
 
-  await page.evaluate(async () => {
-    const requestOptionsChecker = () => {
+  await page.evaluate(() => {
+    function requestOptionsChecker() {
       return {
         appliesTo: () => {
           return true;
