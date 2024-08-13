@@ -34,7 +34,7 @@ import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
-test.describe('Notebook Tests with CouchDB @couchdb', () => {
+test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
   let testNotebook;
 
   test.beforeEach(async ({ page }) => {
