@@ -32,7 +32,7 @@ export default class CompsTelemetryProvider {
   constructor(openmct, compsManagerPool) {
     this.#openmct = openmct;
     this.#compsManagerPool = compsManagerPool;
-    this.#startSharedWorker();
+    this.#openmct.on('start', this.#startSharedWorker.bind(this));
   }
 
   isTelemetryObject(domainObject) {
@@ -124,16 +124,18 @@ export default class CompsTelemetryProvider {
   }
 
   onSharedWorkerMessage(event) {
-    const { type, result, callbackID } = event.data;
+    const { type, result, callbackID, error } = event.data;
     if (type === 'calculationSubscriptionResult' && this.#subscriptionCallbacks[callbackID]) {
       console.debug('📝 Shared worker subscription message:', event.data);
       this.#subscriptionCallbacks[callbackID](result);
     } else if (type === 'calculationRequestResult' && this.#requestPromises[callbackID]) {
       console.debug('📝 Shared worker request message:', event.data);
-      this.#requestPromises[callbackID].resolve(result);
+      if (error) {
+        this.#requestPromises[callbackID].reject(error);
+      } else {
+        this.#requestPromises[callbackID].resolve(result);
+      }
       delete this.#requestPromises[callbackID];
-    } else if (type === 'error') {
-      console.error('❌ Shared worker error:', event.data);
     }
   }
 

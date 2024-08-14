@@ -54,28 +54,26 @@
           class="hint"
           :class="{ 's-status-icon-warning-lo': !domainObject.configuration.comps.parameters }"
         >
-          <div v-for="parameter in parameters" :key="parameter.name">
-            <div>
-              Reference
-              <input v-model="parameter.name" @change="compsManager.persist" />
-              <ObjectPath
-                :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
-              />
-              {{ compsManager.getTelemetryObjectForParameter(parameter.keyString).name }}
-              <!-- drop down to select value from telemetry -->
-              <select v-model="parameter.valueToUse" @change="persistParameters">
-                <option
-                  v-for="parameterValueOption in compsManager.getMetaDataValuesForParameter(
-                    parameter.keyString
-                  )"
-                  :key="parameterValueOption.key"
-                  :value="parameterValueOption.key"
-                >
-                  {{ parameterValueOption.name }}
-                </option>
-              </select>
-              <input v-model="parameter.testValue" @change="compsManager.persist" />
-            </div>
+          <div v-for="parameter in parameters" :key="parameter.name" class="telemery-reference">
+            Reference
+            <input v-model="parameter.name" @change="persistParameters" />
+            <ObjectPath
+              :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
+            />
+            {{ compsManager.getTelemetryObjectForParameter(parameter.keyString).name }}
+            <!-- drop down to select value from telemetry -->
+            <select v-model="parameter.valueToUse" @change="persistParameters">
+              <option
+                v-for="parameterValueOption in compsManager.getMetaDataValuesForParameter(
+                  parameter.keyString
+                )"
+                :key="parameterValueOption.key"
+                :value="parameterValueOption.key"
+              >
+                {{ parameterValueOption.name }}
+              </option>
+            </select>
+            <input v-model="parameter.testValue" @change="persistParameters" />
           </div>
           <template v-if="!domainObject.configuration.comps.parameters"
             >Drag telemetry into Telemetry References to add variables for an expression</template
@@ -129,20 +127,20 @@ onBeforeMount(async () => {
     telemetryProcessor(data);
   });
   outputTelemetryCollection.on('clear', clearData);
-  await outputTelemetryCollection.load();
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
+  outputTelemetryCollection.load();
 });
 
 function persistParameters() {
   domainObject.configuration.comps.parameters = parameters.value;
-  compsManager.persist();
+  compsManager.persist(domainObject);
 }
 
 function persistExpression() {
   domainObject.configuration.comps.expression = expression.value;
-  compsManager.persist();
+  compsManager.persist(domainObject);
 }
 
 function applyTestData() {}

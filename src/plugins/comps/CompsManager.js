@@ -26,7 +26,7 @@ export default class CompsManager extends EventEmitter {
       valueToUse: 'sin',
       testValue: 0
     });
-    this.persist();
+    this.persist(this.#domainObject);
   }
 
   getParameters() {
@@ -65,15 +65,15 @@ export default class CompsManager extends EventEmitter {
     this.persist();
   }
 
-  persist() {
+  persist(passedDomainObject) {
     this.#openmct.objects.mutate(
       this.#domainObject,
       'configuration.comps',
-      this.#domainObject.configuration.comps
+      passedDomainObject.configuration.comps
     );
     console.debug(
       `📦 CompsManager: persisted domain object`,
-      this.#domainObject.configuration.comps
+      passedDomainObject.configuration.comps
     );
   }
 
@@ -133,9 +133,9 @@ export default class CompsManager extends EventEmitter {
     return dataFrame;
   }
 
-  #removeTelemetryObject = (telemetryObject) => {
-    console.debug('❌ CompsManager: removeTelemetryObject', telemetryObject);
-    const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
+  #removeTelemetryObject = (telemetryObjectIdentifier) => {
+    console.debug('❌ CompsManager: removeTelemetryObject', telemetryObjectIdentifier);
+    const keyString = this.#openmct.objects.makeKeyString(telemetryObjectIdentifier);
     delete this.#telemetryObjects[keyString];
     this.#telemetryCollections[keyString]?.destroy();
     delete this.#telemetryCollections[keyString];

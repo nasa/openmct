@@ -7,24 +7,28 @@ onconnect = function (e) {
 
   port.onmessage = function (event) {
     console.debug('🧮 Comps Math Worker message:', event);
+    const { type, callbackID, telemetryForComps, expression, parameters } = event.data;
+    let responseType = 'unknown';
+    let error = null;
+    let result = [];
     try {
-      const { type, callbackID, telemetryForComps, expression, parameters } = event.data;
       if (type === 'calculateRequest') {
-        const result = calculateRequest(telemetryForComps, parameters, expression);
-        port.postMessage({ type: 'calculationRequestResult', callbackID, result });
+        responseType = 'calculationRequestResult';
+        result = calculateRequest(telemetryForComps, parameters, expression);
       } else if (type === 'calculateSubscription') {
-        const result = calculateSubscription(telemetryForComps, parameters, expression);
-        if (result.length) {
-          port.postMessage({ type: 'calculationSubscriptionResult', callbackID, result });
-        }
+        responseType = 'calculationSubscriptionResult';
+        result = calculateSubscription(telemetryForComps, parameters, expression);
       } else if (type === 'init') {
         port.postMessage({ type: 'ready' });
+        return;
       } else {
         throw new Error('Invalid message type');
       }
-    } catch (error) {
-      port.postMessage({ type: 'error', error });
+    } catch (errorInCalculation) {
+      error = errorInCalculation;
+      console.error('🧮 Comps Math Worker error:', errorInCalculation);
     }
+    port.postMessage({ type: responseType, callbackID, result, error });
   };
 };
 
