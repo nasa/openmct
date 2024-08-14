@@ -32,23 +32,24 @@ onconnect = function (e) {
   };
 };
 
-function getFullDataFrame(telemetryForComps) {
+function getFullDataFrame(telemetryForComps, parameters) {
   const dataFrame = {};
   Object.keys(telemetryForComps).forEach((key) => {
+    const parameter = parameters.find((p) => p.keyString === key);
     const dataSet = telemetryForComps[key];
-    const telemetryMap = new Map(dataSet.map((item) => [item.utc, item]));
+    const telemetryMap = new Map(dataSet.map((item) => [item[parameter.timeKey], item]));
     dataFrame[key] = telemetryMap;
   });
   return dataFrame;
 }
 
 function calculateSubscription(telemetryForComps, parameters, expression) {
-  const dataFrame = getFullDataFrame(telemetryForComps);
+  const dataFrame = getFullDataFrame(telemetryForComps, parameters);
   return calculate(dataFrame, parameters, expression);
 }
 
 function calculateRequest(telemetryForComps, parameters, expression) {
-  const dataFrame = getFullDataFrame(telemetryForComps);
+  const dataFrame = getFullDataFrame(telemetryForComps, parameters);
   return calculate(dataFrame, parameters, expression);
 }
 

@@ -125,7 +125,11 @@ export default class CompsTelemetryProvider {
 
   onSharedWorkerMessage(event) {
     const { type, result, callbackID, error } = event.data;
-    if (type === 'calculationSubscriptionResult' && this.#subscriptionCallbacks[callbackID]) {
+    if (
+      type === 'calculationSubscriptionResult' &&
+      this.#subscriptionCallbacks[callbackID] &&
+      result.length
+    ) {
       console.debug('📝 Shared worker subscription message:', event.data);
       this.#subscriptionCallbacks[callbackID](result);
     } else if (type === 'calculationRequestResult' && this.#requestPromises[callbackID]) {

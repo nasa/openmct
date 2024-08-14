@@ -18,12 +18,14 @@ export default class CompsManager extends EventEmitter {
     this.#domainObject = domainObject;
   }
 
-  addParameter(keyString) {
+  addParameter(telemetryObject) {
+    const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
+    const metaData = this.#openmct.telemetry.getMetadata(telemetryObject);
     const random4Digit = Math.floor(1000 + Math.random() * 9000);
     this.#domainObject.configuration.comps.parameters.push({
       keyString,
-      name: `New_Parameter_${random4Digit}`,
-      valueToUse: 'sin',
+      name: `${telemetryObject.name}_${random4Digit}`,
+      valueToUse: metaData.valueMetadatas[0].key,
       testValue: 0
     });
     this.persist(this.#domainObject);
@@ -225,7 +227,7 @@ export default class CompsManager extends EventEmitter {
       (parameter) => parameter.keyString === keyString
     );
     if (!parameterExists) {
-      this.addParameter(keyString);
+      this.addParameter(telemetryObject);
     }
   };
 

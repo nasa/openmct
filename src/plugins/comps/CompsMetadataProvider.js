@@ -21,8 +21,12 @@
  *****************************************************************************/
 
 export default class CompsMetadataProvider {
-  constructor(openmct) {
-    this.openmct = openmct;
+  #openmct = null;
+  #compsManagerPool = null;
+
+  constructor(openmct, compsManagerPool) {
+    this.#openmct = openmct;
+    this.#compsManagerPool = compsManagerPool;
   }
 
   supportsMetadata(domainObject) {
@@ -30,7 +34,7 @@ export default class CompsMetadataProvider {
   }
 
   getDomains(domainObject) {
-    return this.openmct.time.getAllTimeSystems().map(function (ts, i) {
+    return this.#openmct.time.getAllTimeSystems().map(function (ts, i) {
       return {
         key: ts.key,
         name: ts.name,
@@ -43,6 +47,9 @@ export default class CompsMetadataProvider {
   }
 
   getMetadata(domainObject) {
+    const keyString = this.#openmct.objects.makeKeyString(domainObject.identifier);
+    const specificCompsManager = this.#compsManagerPool[keyString];
+    console.debug('📦 CompsMetadataProvider: getMetadata', specificCompsManager);
     return {
       values: this.getDomains().concat([
         {
@@ -52,14 +59,6 @@ export default class CompsMetadataProvider {
           formatString: '%0.2f',
           hints: {
             range: 1
-          }
-        },
-        {
-          key: 'utc',
-          name: 'Time',
-          format: 'utc',
-          hints: {
-            domain: 1
           }
         }
       ])

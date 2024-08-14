@@ -51,7 +51,7 @@ export default function CompsPlugin() {
       }
       return true;
     });
-    openmct.telemetry.addProvider(new CompsMetadataProvider(openmct));
+    openmct.telemetry.addProvider(new CompsMetadataProvider(openmct, compsManagerPool));
     openmct.telemetry.addProvider(new CompsTelemetryProvider(openmct, compsManagerPool));
     openmct.objectViews.addProvider(new CompsViewProvider(openmct, compsManagerPool));
   };
