@@ -50,7 +50,9 @@ export default class CompsMetadataProvider {
     const keyString = this.#openmct.objects.makeKeyString(domainObject.identifier);
     const specificCompsManager = this.#compsManagerPool[keyString];
     console.debug('📦 CompsMetadataProvider: getMetadata', specificCompsManager);
-    return {
+    // if there are any parameters, grab the first one's timeMetaData
+    const timeMetaData = specificCompsManager?.getParameters()[0]?.timeMetaData;
+    const metaDataToReturn = {
       values: this.getDomains().concat([
         {
           key: 'output',
@@ -63,5 +65,12 @@ export default class CompsMetadataProvider {
         }
       ])
     };
+    if (
+      timeMetaData &&
+      metaDataToReturn.values.some((metaDatum) => metaDatum.key === timeMetaData.key)
+    ) {
+      metaDataToReturn.values.push(timeMetaData);
+    }
+    return metaDataToReturn;
   }
 }

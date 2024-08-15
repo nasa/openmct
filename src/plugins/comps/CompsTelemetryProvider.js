@@ -79,6 +79,12 @@ export default class CompsTelemetryProvider {
     const expression = specificCompsManager.getExpression();
     const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
     const parameters = specificCompsManager.getParameters();
+    console.debug(
+      '🧮 Comps Telemetry Provider: sending calculation request',
+      telemetryForComps,
+      expression,
+      parameters
+    );
     this.#sharedWorker.port.postMessage({
       type: 'calculateSubscription',
       telemetryForComps,

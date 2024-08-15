@@ -21,12 +21,18 @@ export default class CompsManager extends EventEmitter {
   addParameter(telemetryObject) {
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
     const metaData = this.#openmct.telemetry.getMetadata(telemetryObject);
+    const specificTelemetryCollection = this.#telemetryCollections[keyString];
+    const specificTimeKey = specificTelemetryCollection.timeKey;
+    const timeMetaData = metaData.valueMetadatas.find(
+      (metaDatum) => metaDatum.key === specificTimeKey
+    );
     const random4Digit = Math.floor(1000 + Math.random() * 9000);
     this.#domainObject.configuration.comps.parameters.push({
       keyString,
       name: `${telemetryObject.name}_${random4Digit}`,
       valueToUse: metaData.valueMetadatas[0].key,
-      testValue: 0
+      testValue: 0,
+      timeMetaData
     });
     this.persist(this.#domainObject);
   }
@@ -184,7 +190,6 @@ export default class CompsManager extends EventEmitter {
 
     // clear it
     this.#clearBatch(keyString);
-    console.debug(`🎉 new data for ${keyString}!`, specificBatchedNewData);
     this.emit('underlyingTelemetryUpdated', { [keyString]: specificBatchedNewData });
   };
 
