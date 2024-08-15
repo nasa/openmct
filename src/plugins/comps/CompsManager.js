@@ -8,6 +8,8 @@ export default class CompsManager extends EventEmitter {
   #telemetryCollections = {};
   #dataFrame = {};
   #telemetryLoadedPromises = [];
+  #loaded = false;
+  #telemetryProcessors = {};
 
   constructor(openmct, domainObject) {
     super();
@@ -83,21 +85,33 @@ export default class CompsManager extends EventEmitter {
   }
 
   async load() {
-    await this.#loadComposition();
-    await Promise.all(this.#telemetryLoadedPromises);
-    this.#telemetryLoadedPromises = [];
+    if (!this.#loaded) {
+      await this.#loadComposition();
+      await Promise.all(this.#telemetryLoadedPromises);
+      this.#telemetryLoadedPromises = [];
+      this.#loaded = true;
+    }
   }
 
   startListeningToUnderlyingTelemetry() {
+    console.debug('🎉 CompsManager: startListeningToUnderlyingTelemetry');
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
       if (!this.#telemetryCollections[keyString].loaded) {
+        const specificTelemetryProcessor = this.#getTelemetryProcessor(keyString);
+        this.#telemetryCollections[keyString].on('add', specificTelemetryProcessor);
+        this.#telemetryCollections[keyString].on('clear', this.#clearData);
         this.#telemetryCollections[keyString].load();
       }
     });
   }
 
   stopListeningToUnderlyingTelemetry() {
+    console.debug('🔇 CompsManager: stopListeningToUnderlyingTelemetry');
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
+      const specificTelemetryProcessor = this.#telemetryProcessors[keyString];
+      delete this.#telemetryProcessors[keyString];
+      this.#telemetryCollections[keyString].off('add', specificTelemetryProcessor);
+      this.#telemetryCollections[keyString].off('clear', this.#clearData);
       this.#telemetryCollections[keyString].destroy();
     });
   }
@@ -112,7 +126,6 @@ export default class CompsManager extends EventEmitter {
       this.#composition.on('add', this.#addTelemetryObject);
       this.#composition.on('remove', this.#removeTelemetryObject);
       await this.#composition.load();
-      console.debug('📚 Composition loaded');
     }
   }
 
@@ -169,6 +182,18 @@ export default class CompsManager extends EventEmitter {
     return underlyingTelemetry;
   }
 
+  #getTelemetryProcessor(keyString) {
+    if (this.#telemetryProcessors[keyString]) {
+      return this.#telemetryProcessors[keyString];
+    }
+
+    const telemetryProcessor = (newTelemetry) => {
+      this.emit('underlyingTelemetryUpdated', { [keyString]: newTelemetry });
+    };
+    this.#telemetryProcessors[keyString] = telemetryProcessor;
+    return telemetryProcessor;
+  }
+
   #telemetryProcessor = (newTelemetry, keyString) => {
     this.emit('underlyingTelemetryUpdated', { [keyString]: newTelemetry });
   };
@@ -187,9 +212,7 @@ export default class CompsManager extends EventEmitter {
     this.#telemetryCollections[keyString] =
       this.#openmct.telemetry.requestCollection(telemetryObject);
 
-    this.#telemetryCollections[keyString].on('add', (data) => {
-      this.#telemetryProcessor(data, keyString);
-    });
+    this.#telemetryCollections[keyString].on('add', this.#getTelemetryProcessor(keyString));
     this.#telemetryCollections[keyString].on('clear', this.#clearData);
     const telemetryLoadedPromise = this.#telemetryCollections[keyString].load();
     this.#telemetryLoadedPromises.push(telemetryLoadedPromise);

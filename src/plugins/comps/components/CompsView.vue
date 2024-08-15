@@ -123,14 +123,18 @@ defineProps({
 onBeforeMount(async () => {
   console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
-  outputTelemetryCollection.on('add', (data) => {
-    telemetryProcessor(data);
-  });
+  outputTelemetryCollection.on('add', telemetryProcessor);
   outputTelemetryCollection.on('clear', clearData);
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
   outputTelemetryCollection.load();
+});
+
+onBeforeUnmount(() => {
+  outputTelemetryCollection.off('add', telemetryProcessor);
+  outputTelemetryCollection.off('clear', clearData);
+  outputTelemetryCollection.destroy();
 });
 
 function persistParameters() {
@@ -153,8 +157,4 @@ function telemetryProcessor(data) {
 function clearData() {
   currentCompOutput.value = null;
 }
-
-onBeforeUnmount(() => {
-  outputTelemetryCollection.destroy();
-});
 </script>

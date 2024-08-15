@@ -53,7 +53,6 @@ export default class CompsMetadataProvider {
       this.#openmct,
       this.#compsManagerPool
     );
-    console.debug('📦 CompsMetadataProvider: getMetadata', specificCompsManager);
     // if there are any parameters, grab the first one's timeMetaData
     const timeMetaData = specificCompsManager?.getParameters()[0]?.timeMetaData;
     const metaDataToReturn = {
