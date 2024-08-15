@@ -88,6 +88,20 @@ export default class CompsManager extends EventEmitter {
     this.#telemetryLoadedPromises = [];
   }
 
+  startListeningToUnderlyingTelemetry() {
+    Object.keys(this.#telemetryCollections).forEach((keyString) => {
+      if (!this.#telemetryCollections[keyString].loaded) {
+        this.#telemetryCollections[keyString].load();
+      }
+    });
+  }
+
+  stopListeningToUnderlyingTelemetry() {
+    Object.keys(this.#telemetryCollections).forEach((keyString) => {
+      this.#telemetryCollections[keyString].destroy();
+    });
+  }
+
   getTelemetryObjects() {
     return this.#telemetryObjects;
   }

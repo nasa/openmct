@@ -105,9 +105,12 @@ export default class CompsTelemetryProvider {
     specificCompsManager.on('underlyingTelemetryUpdated', (newTelemetry) => {
       this.#computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID);
     });
+    specificCompsManager.startListeningToUnderlyingTelemetry();
     return () => {
-      specificCompsManager.off('calculationUpdated', callback);
+      specificCompsManager.off('underlyingTelemetryUpdated', callback);
       delete this.#subscriptionCallbacks[callbackID];
+      // if this is the last subscription, tell the comp manager to stop listening
+      specificCompsManager.stopListeningToUnderlyingTelemetry();
     };
   }
 
