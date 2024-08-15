@@ -7,9 +7,6 @@ export default class CompsManager extends EventEmitter {
   #telemetryObjects = {};
   #telemetryCollections = {};
   #dataFrame = {};
-  #batchedNewData = {};
-  #batchPromises = {};
-  #BATCH_DEBOUNCE_MS = 1;
   #telemetryLoadedPromises = [];
 
   constructor(openmct, domainObject) {
@@ -158,39 +155,8 @@ export default class CompsManager extends EventEmitter {
     return underlyingTelemetry;
   }
 
-  #clearBatch(keyString) {
-    this.#batchedNewData[keyString] = [];
-    this.#batchPromises[keyString] = null;
-  }
-
-  #deferredTelemetryProcessor(newTelemetry, keyString) {
-    // We until the next event loop cycle to "collect" all of the get
-    // requests triggered in this iteration of the event loop
-
-    if (!this.#batchedNewData[keyString]) {
-      this.#batchedNewData[keyString] = [];
-    }
-
-    this.#batchedNewData[keyString].push(newTelemetry[0]);
-
-    if (!this.#batchPromises[keyString]) {
-      this.#batchPromises[keyString] = [];
-
-      this.#batchPromises[keyString] = this.#batchedTelemetryProcessor(
-        this.#batchedNewData[keyString],
-        keyString
-      );
-    }
-  }
-
-  #batchedTelemetryProcessor = async (newTelemetry, keyString) => {
-    await this.#waitForDebounce();
-
-    const specificBatchedNewData = this.#batchedNewData[keyString];
-
-    // clear it
-    this.#clearBatch(keyString);
-    this.emit('underlyingTelemetryUpdated', { [keyString]: specificBatchedNewData });
+  #telemetryProcessor = (newTelemetry, keyString) => {
+    this.emit('underlyingTelemetryUpdated', { [keyString]: newTelemetry });
   };
 
   #clearData() {
@@ -201,17 +167,6 @@ export default class CompsManager extends EventEmitter {
     return this.#domainObject.configuration.comps.expression;
   }
 
-  #waitForDebounce() {
-    let timeoutID;
-    clearTimeout(timeoutID);
-
-    return new Promise((resolve) => {
-      timeoutID = setTimeout(() => {
-        resolve();
-      }, this.#BATCH_DEBOUNCE_MS);
-    });
-  }
-
   #addTelemetryObject = (telemetryObject) => {
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
     this.#telemetryObjects[keyString] = telemetryObject;
@@ -219,7 +174,7 @@ export default class CompsManager extends EventEmitter {
       this.#openmct.telemetry.requestCollection(telemetryObject);
 
     this.#telemetryCollections[keyString].on('add', (data) => {
-      this.#deferredTelemetryProcessor(data, keyString);
+      this.#telemetryProcessor(data, keyString);
     });
     this.#telemetryCollections[keyString].on('clear', this.#clearData);
     const telemetryLoadedPromise = this.#telemetryCollections[keyString].load();
