@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import CompsManager from './CompsManager.js';
 
 export default class CompsMetadataProvider {
   #openmct = null;
@@ -47,8 +48,11 @@ export default class CompsMetadataProvider {
   }
 
   getMetadata(domainObject) {
-    const keyString = this.#openmct.objects.makeKeyString(domainObject.identifier);
-    const specificCompsManager = this.#compsManagerPool[keyString];
+    const specificCompsManager = CompsManager.getCompsManager(
+      domainObject,
+      this.#openmct,
+      this.#compsManagerPool
+    );
     console.debug('📦 CompsMetadataProvider: getMetadata', specificCompsManager);
     // if there are any parameters, grab the first one's timeMetaData
     const timeMetaData = specificCompsManager?.getParameters()[0]?.timeMetaData;

@@ -9,7 +9,7 @@ export default class CompsManager extends EventEmitter {
   #dataFrame = {};
   #batchedNewData = {};
   #batchPromises = {};
-  #BATCH_DEBOUNCE_MS = 100;
+  #BATCH_DEBOUNCE_MS = 1;
   #telemetryLoadedPromises = [];
 
   constructor(openmct, domainObject) {
@@ -23,9 +23,9 @@ export default class CompsManager extends EventEmitter {
     const metaData = this.#openmct.telemetry.getMetadata(telemetryObject);
     const specificTelemetryCollection = this.#telemetryCollections[keyString];
     const specificTimeKey = specificTelemetryCollection.timeKey;
-    const timeMetaData = metaData.valueMetadatas.find(
-      (metaDatum) => metaDatum.key === specificTimeKey
-    );
+    const timeMetaData = metaData.valueMetadatas.find((metaDatum) => {
+      return metaDatum.key === specificTimeKey || metaDatum.source === specificTimeKey;
+    });
     const random4Digit = Math.floor(1000 + Math.random() * 9000);
     this.#domainObject.configuration.comps.parameters.push({
       keyString,
