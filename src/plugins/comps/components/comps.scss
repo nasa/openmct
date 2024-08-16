@@ -23,7 +23,19 @@
 .telemery-reference {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: start;
   align-items: left;
-  padding: 0 10px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.expression-input {
+  width: 100%;
+  margin-right: 10px;
+}
+
+.telemery-reference-variable-input {
+  background-color: $colorBodyBg;
+  color: white;
 }

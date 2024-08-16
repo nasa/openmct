@@ -44,7 +44,7 @@
         ]"
       >
         <label class="c-toggle-switch">
-          <input type="checkbox" :checked="testDataApplied" @change="applyTestData" />
+          <input type="checkbox" :checked="testDataApplied" @change="toggleTestData" />
           <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
           <span class="c-toggle-switch__label">Apply Test Values</span>
         </label>
@@ -56,7 +56,11 @@
         >
           <div v-for="parameter in parameters" :key="parameter.name" class="telemery-reference">
             Reference
-            <input v-model="parameter.name" @change="persistParameters" />
+            <input
+              v-model="parameter.name"
+              class="telemery-reference-variable-input"
+              @change="persistParameters"
+            />
             <ObjectPath
               :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
             />
@@ -73,7 +77,11 @@
                 {{ parameterValueOption.name }}
               </option>
             </select>
-            <input v-model="parameter.testValue" @change="persistParameters" />
+            <input
+              v-model="parameter.testValue"
+              class="telemery-reference-variable-input"
+              @change="persistAndApplyTestData"
+            />
           </div>
           <template v-if="!domainObject.configuration.comps.parameters"
             >Drag telemetry into Telemetry References to add variables for an expression</template
@@ -89,7 +97,7 @@
         <div>
           <textarea
             v-model="expression"
-            class="c-cs__expression__input"
+            class="expression-input"
             placeholder="Enter an expression"
             @change="persistExpression"
           ></textarea>
@@ -100,7 +108,8 @@
 </template>
 
 <script setup>
-import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { evaluate } from 'mathjs';
+import { inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 
 import ObjectPath from '../../../ui/components/ObjectPath.vue';
 import CompsManager from '../CompsManager';
@@ -120,6 +129,13 @@ defineProps({
   isEditing: { type: Boolean, required: true }
 });
 
+watch(
+  () => domainObject.configuration.comps.parameters,
+  (newParameters) => {
+    parameters.value = newParameters;
+  }
+);
+
 onBeforeMount(async () => {
   console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
@@ -128,6 +144,7 @@ onBeforeMount(async () => {
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
+  compsManager.on('parametersUpdated', reloadParameters);
   outputTelemetryCollection.load();
 });
 
@@ -137,9 +154,22 @@ onBeforeUnmount(() => {
   outputTelemetryCollection.destroy();
 });
 
+function reloadParameters() {
+  parameters.value = compsManager.getParameters();
+}
+
 function persistParameters() {
   domainObject.configuration.comps.parameters = parameters.value;
   compsManager.persist(domainObject);
+}
+
+function toggleTestData() {
+  testDataApplied.value = !testDataApplied.value;
+  if (testDataApplied.value) {
+    applyTestData();
+  } else {
+    clearData();
+  }
 }
 
 function persistExpression() {
@@ -147,9 +177,24 @@ function persistExpression() {
   compsManager.persist(domainObject);
 }
 
-function applyTestData() {}
+function persistAndApplyTestData() {
+  persistParameters();
+  applyTestData();
+}
+
+function applyTestData() {
+  const scope = parameters.value.reduce((acc, parameter) => {
+    acc[parameter.name] = parameter.testValue;
+    return acc;
+  }, {});
+  const testOutput = evaluate(expression.value, scope);
+  currentCompOutput.value = testOutput;
+}
 
 function telemetryProcessor(data) {
+  if (testDataApplied.value) {
+    return;
+  }
   // new data will come in as array, so just take the last element
   currentCompOutput.value = data[data.length - 1]?.output;
 }

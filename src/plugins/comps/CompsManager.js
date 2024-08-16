@@ -26,14 +26,25 @@ export default class CompsManager extends EventEmitter {
       return metaDatum.key === specificTimeKey || metaDatum.source === specificTimeKey;
     });
     const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    // in the valuesMetadata, find the first numeric data type
+    const rangeItems = metaData.valueMetadatas.filter(
+      (metaDatum) => metaDatum.hints && metaDatum.hints.range
+    );
+    rangeItems.sort((a, b) => a.hints.range - b.hints.range);
+    let valueToUse = rangeItems[0]?.key;
+    if (!valueToUse) {
+      // if no numeric data type, just use the first one
+      valueToUse = metaData.valueMetadatas[0]?.key;
+    }
     this.#domainObject.configuration.comps.parameters.push({
       keyString,
       name: `${telemetryObject.name}_${random4Digit}`,
-      valueToUse: metaData.valueMetadatas[0].key,
+      valueToUse,
       testValue: 0,
       timeMetaData
     });
     this.persist(this.#domainObject);
+    this.emit('parametersUpdated', keyString);
   }
 
   getParameters() {
@@ -69,7 +80,7 @@ export default class CompsManager extends EventEmitter {
     if (!parameterExists) {
       this.#composition.remove(this.#telemetryObjects[keyString]);
     }
-    this.persist();
+    this.persist(this.#domainObject);
   }
 
   persist(passedDomainObject) {
@@ -171,6 +182,13 @@ export default class CompsManager extends EventEmitter {
     delete this.#telemetryObjects[keyString];
     this.#telemetryCollections[keyString]?.destroy();
     delete this.#telemetryCollections[keyString];
+    // remove all parameters that reference this telemetry object
+    this.#domainObject.configuration.comps.parameters =
+      this.#domainObject.configuration.comps.parameters.filter(
+        (parameter) => parameter.keyString !== keyString
+      );
+    this.persist(this.#domainObject);
+    this.emit('parametersUpdated', keyString);
   };
 
   requestUnderlyingTelemetry() {
