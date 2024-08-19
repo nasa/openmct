@@ -9,12 +9,38 @@ export default class CompsManager extends EventEmitter {
   #dataFrame = {};
   #telemetryLoadedPromises = [];
   #loaded = false;
+  #valid = false;
   #telemetryProcessors = {};
 
   constructor(openmct, domainObject) {
     super();
     this.#openmct = openmct;
     this.#domainObject = domainObject;
+  }
+
+  isValid() {
+    return this.#valid;
+  }
+
+  setValid(valid) {
+    this.#valid = valid;
+  }
+
+  #getNextAlphabeticalParameterName() {
+    const parameters = this.#domainObject.configuration.comps.parameters;
+    const existingNames = new Set(parameters.map((p) => p.name));
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    let suffix = '';
+    while (true) {
+      for (let letter of alphabet) {
+        const proposedName = letter + suffix;
+        if (!existingNames.has(proposedName)) {
+          return proposedName;
+        }
+      }
+      // Increment suffix after exhausting the alphabet
+      suffix = (parseInt(suffix, 10) || 0) + 1;
+    }
   }
 
   addParameter(telemetryObject) {
@@ -25,7 +51,6 @@ export default class CompsManager extends EventEmitter {
     const timeMetaData = metaData.valueMetadatas.find((metaDatum) => {
       return metaDatum.key === specificTimeKey || metaDatum.source === specificTimeKey;
     });
-    const random4Digit = Math.floor(1000 + Math.random() * 9000);
     // in the valuesMetadata, find the first numeric data type
     const rangeItems = metaData.valueMetadatas.filter(
       (metaDatum) => metaDatum.hints && metaDatum.hints.range
@@ -38,12 +63,11 @@ export default class CompsManager extends EventEmitter {
     }
     this.#domainObject.configuration.comps.parameters.push({
       keyString,
-      name: `${telemetryObject.name}_${random4Digit}`,
+      name: `${this.#getNextAlphabeticalParameterName()}`,
       valueToUse,
       testValue: 0,
       timeMetaData
     });
-    this.persist(this.#domainObject);
     this.emit('parametersUpdated', keyString);
   }
 
@@ -80,7 +104,6 @@ export default class CompsManager extends EventEmitter {
     if (!parameterExists) {
       this.#composition.remove(this.#telemetryObjects[keyString]);
     }
-    this.persist(this.#domainObject);
   }
 
   persist(passedDomainObject) {
@@ -101,6 +124,7 @@ export default class CompsManager extends EventEmitter {
       await Promise.all(this.#telemetryLoadedPromises);
       this.#telemetryLoadedPromises = [];
       this.#loaded = true;
+      console.debug('📦 CompsManager: loaded');
     }
   }
 
@@ -138,6 +162,7 @@ export default class CompsManager extends EventEmitter {
       this.#composition.on('remove', this.#removeTelemetryObject);
       await this.#composition.load();
     }
+    console.debug(`📢 CompsManager: composition loaded`);
   }
 
   getFullDataFrame(newTelemetry) {
@@ -225,6 +250,7 @@ export default class CompsManager extends EventEmitter {
   }
 
   #addTelemetryObject = (telemetryObject) => {
+    console.debug(`📢 CompsManager: addTelemetryObject`, telemetryObject);
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
     this.#telemetryObjects[keyString] = telemetryObject;
     this.#telemetryCollections[keyString] =
@@ -244,6 +270,7 @@ export default class CompsManager extends EventEmitter {
     if (!parameterExists) {
       this.addParameter(telemetryObject);
     }
+    console.debug(`📢 CompsManager: done adding telemetry object`, telemetryObject);
   };
 
   static getCompsManager(domainObject, openmct, compsManagerPool) {

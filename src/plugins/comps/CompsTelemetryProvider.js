@@ -58,6 +58,10 @@ export default class CompsTelemetryProvider {
         this.#openmct,
         this.#compsManagerPool
       );
+      if (!specificCompsManager.isValid()) {
+        resolve([]);
+        return;
+      }
       specificCompsManager.load().then(() => {
         const callbackID = this.#getCallbackID();
         const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
@@ -76,6 +80,9 @@ export default class CompsTelemetryProvider {
   }
 
   #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
+    if (!specificCompsManager.isValid()) {
+      return;
+    }
     const expression = specificCompsManager.getExpression();
     const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
     const parameters = specificCompsManager.getParameters();

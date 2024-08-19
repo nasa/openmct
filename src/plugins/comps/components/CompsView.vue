@@ -26,7 +26,7 @@
       <div class="c-cs__content c-cs__current-output-value">
         <span class="c-cs__current-output-value__label">Current Output</span>
         <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
-          <template v-if="currentCompOutput">
+          <template v-if="testDataApplied">
             {{ currentCompOutput }}
           </template>
           <template v-else> --- </template>
@@ -49,7 +49,14 @@
           <span class="c-toggle-switch__label">Apply Test Values</span>
         </label>
       </div>
-      <div class="c-cs__content">
+      <div
+        :class="{ 'is-active-dragging': isDragging }"
+        class="c-cs__content"
+        @drop="drop($event)"
+        @dragover.prevent
+        @dragstart="dragStart($event)"
+        @dragleave="dragLeave($event)"
+      >
         <div
           class="hint"
           :class="{ 's-status-icon-warning-lo': !domainObject.configuration.comps.parameters }"
@@ -64,7 +71,7 @@
             <ObjectPath
               :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
             />
-            {{ compsManager.getTelemetryObjectForParameter(parameter.keyString).name }}
+            {{ compsManager.getTelemetryObjectForParameter(parameter.keyString)?.name }}
             <!-- drop down to select value from telemetry -->
             <select v-model="parameter.valueToUse" @change="persistParameters">
               <option
@@ -102,6 +109,7 @@
             @change="persistExpression"
           ></textarea>
         </div>
+        <div v-show="expressionOutput" class="c-expression-output">{{ expressionOutput }}</div>
       </div>
     </section>
   </div>
@@ -122,6 +130,8 @@ const currentCompOutput = ref(null);
 const testDataApplied = ref(false);
 const parameters = ref(null);
 const expression = ref(null);
+const expressionOutput = ref(null);
+const isDragging = ref(false);
 
 let outputTelemetryCollection;
 
@@ -135,7 +145,6 @@ watch(
     parameters.value = newParameters;
   }
 );
-
 onBeforeMount(async () => {
   console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
@@ -153,6 +162,19 @@ onBeforeUnmount(() => {
   outputTelemetryCollection.off('clear', clearData);
   outputTelemetryCollection.destroy();
 });
+
+function drop(event) {
+  isDragging.value = false;
+  console.debug('🚀 CompsView: drop', event);
+}
+
+function dragStart(event) {
+  isDragging.value = true;
+}
+
+function dragLeave(event) {
+  isDragging.value = false;
+}
 
 function reloadParameters() {
   parameters.value = compsManager.getParameters();
@@ -175,6 +197,9 @@ function toggleTestData() {
 function persistExpression() {
   domainObject.configuration.comps.expression = expression.value;
   compsManager.persist(domainObject);
+  if (testDataApplied.value) {
+    applyTestData();
+  }
 }
 
 function persistAndApplyTestData() {
