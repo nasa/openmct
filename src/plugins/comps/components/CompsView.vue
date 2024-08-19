@@ -87,7 +87,7 @@
             <input
               v-model="parameter.testValue"
               class="telemery-reference-variable-input"
-              @change="persistAndApplyTestData"
+              @change="persistParameters"
             />
           </div>
           <template v-if="!domainObject.configuration.comps.parameters"
@@ -109,7 +109,8 @@
             @change="persistExpression"
           ></textarea>
         </div>
-        <div v-show="expressionOutput" class="c-expression-output">{{ expressionOutput }}</div>
+        <div v-if="expressionOutput" class="c-expression-output-bad">{{ expressionOutput }}</div>
+        <div v-else class="c-expression-output-good">Valid Expression</div>
       </div>
     </section>
   </div>
@@ -155,6 +156,7 @@ onBeforeMount(async () => {
   expression.value = compsManager.getExpression();
   compsManager.on('parametersUpdated', reloadParameters);
   outputTelemetryCollection.load();
+  applyTestData();
 });
 
 onBeforeUnmount(() => {
@@ -183,6 +185,7 @@ function reloadParameters() {
 function persistParameters() {
   domainObject.configuration.comps.parameters = parameters.value;
   compsManager.persist(domainObject);
+  applyTestData();
 }
 
 function toggleTestData() {
@@ -197,13 +200,6 @@ function toggleTestData() {
 function persistExpression() {
   domainObject.configuration.comps.expression = expression.value;
   compsManager.persist(domainObject);
-  if (testDataApplied.value) {
-    applyTestData();
-  }
-}
-
-function persistAndApplyTestData() {
-  persistParameters();
   applyTestData();
 }
 
@@ -212,8 +208,16 @@ function applyTestData() {
     acc[parameter.name] = parameter.testValue;
     return acc;
   }, {});
-  const testOutput = evaluate(expression.value, scope);
-  currentCompOutput.value = testOutput;
+  try {
+    const testOutput = evaluate(expression.value, scope);
+    currentCompOutput.value = testOutput;
+    expressionOutput.value = null;
+  } catch (error) {
+    console.error('👎 Error applying test data', error);
+    currentCompOutput.value = null;
+    compsManager.setValid(false);
+    expressionOutput.value = error.message;
+  }
 }
 
 function telemetryProcessor(data) {

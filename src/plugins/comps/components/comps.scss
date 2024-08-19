@@ -39,3 +39,15 @@
   background-color: $colorBodyBg;
   color: white;
 }
+
+.c-expression-output-good {
+  width: 100%;
+  margin-right: 10px;
+  color: green;
+}
+
+.c-expression-output-bad {
+  width: 100%;
+  margin-right: 10px;
+  color: red;
+}

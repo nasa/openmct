@@ -31,6 +31,7 @@ export default class CompsManager extends EventEmitter {
     const existingNames = new Set(parameters.map((p) => p.name));
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
     let suffix = '';
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       for (let letter of alphabet) {
         const proposedName = letter + suffix;
