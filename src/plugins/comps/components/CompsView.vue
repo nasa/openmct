@@ -184,6 +184,7 @@ function dragLeave(event) {
 
 function reloadParameters() {
   parameters.value = compsManager.getParameters();
+  domainObject.configuration.comps.parameters = parameters.value;
 }
 
 function persistParameters() {
@@ -217,12 +218,10 @@ function applyTestData() {
     currentTestOutput.value = testOutput;
     expressionOutput.value = null;
     compsManager.setValid(true);
-    compsManager.persist(domainObject);
   } catch (error) {
     console.error('👎 Error applying test data', error);
     currentTestOutput.value = null;
     compsManager.setValid(false);
-    compsManager.persist(domainObject);
     expressionOutput.value = error.message;
   }
 }
