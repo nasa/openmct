@@ -26,7 +26,10 @@
       <div class="c-cs__content c-cs__current-output-value">
         <span class="c-cs__current-output-value__label">Current Output</span>
         <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
-          <template v-if="testDataApplied">
+          <template v-if="testDataApplied && currentTestOutput">
+            {{ currentTestOutput }}
+          </template>
+          <template v-else-if="currentCompOutput && !testDataApplied">
             {{ currentCompOutput }}
           </template>
           <template v-else> --- </template>
@@ -128,6 +131,7 @@ const domainObject = inject('domainObject');
 const compsManagerPool = inject('compsManagerPool');
 const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsManagerPool);
 const currentCompOutput = ref(null);
+const currentTestOutput = ref(null);
 const testDataApplied = ref(false);
 const parameters = ref(null);
 const expression = ref(null);
@@ -210,12 +214,15 @@ function applyTestData() {
   }, {});
   try {
     const testOutput = evaluate(expression.value, scope);
-    currentCompOutput.value = testOutput;
+    currentTestOutput.value = testOutput;
     expressionOutput.value = null;
+    compsManager.setValid(true);
+    compsManager.persist(domainObject);
   } catch (error) {
     console.error('👎 Error applying test data', error);
-    currentCompOutput.value = null;
+    currentTestOutput.value = null;
     compsManager.setValid(false);
+    compsManager.persist(domainObject);
     expressionOutput.value = error.message;
   }
 }

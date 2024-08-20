@@ -9,7 +9,6 @@ export default class CompsManager extends EventEmitter {
   #dataFrame = {};
   #telemetryLoadedPromises = [];
   #loaded = false;
-  #valid = false;
   #telemetryProcessors = {};
 
   constructor(openmct, domainObject) {
@@ -19,11 +18,11 @@ export default class CompsManager extends EventEmitter {
   }
 
   isValid() {
-    return this.#valid;
+    return this.#domainObject.configuration.comps.valid;
   }
 
   setValid(valid) {
-    this.#valid = valid;
+    this.#domainObject.configuration.comps.valid = valid;
   }
 
   #getNextAlphabeticalParameterName() {

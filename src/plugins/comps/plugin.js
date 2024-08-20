@@ -38,7 +38,8 @@ export default function CompsPlugin() {
         domainObject.configuration = {
           comps: {
             expression: '',
-            parameters: []
+            parameters: [],
+            valid: false
           }
         };
         domainObject.composition = [];
