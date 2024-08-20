@@ -212,7 +212,6 @@ export default class CompsManager extends EventEmitter {
       this.#domainObject.configuration.comps.parameters.filter(
         (parameter) => parameter.keyString !== keyString
       );
-    this.persist(this.#domainObject);
     this.emit('parametersUpdated', keyString);
   };
 

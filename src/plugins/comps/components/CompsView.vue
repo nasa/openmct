@@ -185,6 +185,7 @@ function dragLeave(event) {
 function reloadParameters() {
   parameters.value = compsManager.getParameters();
   domainObject.configuration.comps.parameters = parameters.value;
+  compsManager.persist(domainObject);
 }
 
 function persistParameters() {
