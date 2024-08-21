@@ -180,6 +180,9 @@ export default {
     myKeyString() {
       console.log(`object changed`);
     },
+    independentTCEnabled() {
+      this.handleIndependentTimeConductorChange();
+    },
     timeContext() {
       const keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
@@ -252,6 +255,7 @@ export default {
         'configuration.useIndependentTime',
         this.independentTCEnabled
       );
+
     },
     setTimeOptions() {
       this.timeOptions = toRaw(this.domainObject.configuration.timeOptions);
