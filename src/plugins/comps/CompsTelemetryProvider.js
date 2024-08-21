@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 import CompsManager from './CompsManager.js';
 
 export default class CompsTelemetryProvider {
@@ -68,13 +69,14 @@ export default class CompsTelemetryProvider {
         const expression = specificCompsManager.getExpression();
         const parameters = specificCompsManager.getParameters();
         this.#requestPromises[callbackID] = { resolve, reject };
-        this.#sharedWorker.port.postMessage({
+        const payload = {
           type: 'calculateRequest',
           telemetryForComps,
           expression,
           parameters,
           callbackID
-        });
+        };
+        this.#sharedWorker.port.postMessage(payload);
       });
     });
   }
@@ -85,20 +87,17 @@ export default class CompsTelemetryProvider {
     }
     const expression = specificCompsManager.getExpression();
     const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
-    const parameters = specificCompsManager.getParameters();
-    console.debug(
-      '🧮 Comps Telemetry Provider: sending calculation request',
-      telemetryForComps,
-      expression,
-      parameters
-    );
-    this.#sharedWorker.port.postMessage({
+    // TODO: this is nasty. instead figure out why a proxy is getting in here
+    const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
+    const payload = {
       type: 'calculateSubscription',
       telemetryForComps,
       expression,
       parameters,
       callbackID
-    });
+    };
+    console.debug('🧮 Comps Telemetry Provider: sending calculation request', payload);
+    this.#sharedWorker.port.postMessage(payload);
   }
 
   subscribe(domainObject, callback) {

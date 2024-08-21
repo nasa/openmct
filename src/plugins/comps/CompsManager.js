@@ -106,16 +106,8 @@ export default class CompsManager extends EventEmitter {
     }
   }
 
-  persist(passedDomainObject) {
-    this.#openmct.objects.mutate(
-      this.#domainObject,
-      'configuration.comps',
-      passedDomainObject.configuration.comps
-    );
-    console.debug(
-      `📦 CompsManager: persisted domain object`,
-      passedDomainObject.configuration.comps
-    );
+  setDomainObject(passedDomainObject) {
+    this.#domainObject = passedDomainObject;
   }
 
   async load() {

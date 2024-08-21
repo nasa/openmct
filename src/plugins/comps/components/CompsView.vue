@@ -41,12 +41,9 @@
         <div class="c-cs__header-label c-section__label">Telemetry References</div>
       </div>
       <div
-        :class="[
-          'c-cs__test-data__controls c-cdef__controls',
-          { disabled: !domainObject.configuration.comps.parameters }
-        ]"
+        :class="['c-cs__test-data__controls c-cdef__controls', { disabled: !parameters?.length }]"
       >
-        <label class="c-toggle-switch">
+        <label v-if="isEditing" class="c-toggle-switch">
           <input type="checkbox" :checked="testDataApplied" @change="toggleTestData" />
           <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
           <span class="c-toggle-switch__label">Apply Test Values</span>
@@ -60,23 +57,21 @@
         @dragstart="dragStart($event)"
         @dragleave="dragLeave($event)"
       >
-        <div
-          class="hint"
-          :class="{ 's-status-icon-warning-lo': !domainObject.configuration.comps.parameters }"
-        >
+        <div class="hint" :class="{ 's-status-icon-warning-lo': !parameters?.length && isEditing }">
           <div v-for="parameter in parameters" :key="parameter.name" class="telemery-reference">
             Reference
             <input
+              v-if="isEditing"
               v-model="parameter.name"
               class="telemery-reference-variable-input"
-              @change="persistParameters"
             />
+            <div v-else>&nbsp;{{ parameter.name }}</div>
             <ObjectPath
               :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
             />
             {{ compsManager.getTelemetryObjectForParameter(parameter.keyString)?.name }}
             <!-- drop down to select value from telemetry -->
-            <select v-model="parameter.valueToUse" @change="persistParameters">
+            <select v-if="isEditing" v-model="parameter.valueToUse" @change="updateParameters">
               <option
                 v-for="parameterValueOption in compsManager.getMetaDataValuesForParameter(
                   parameter.keyString
@@ -87,13 +82,16 @@
                 {{ parameterValueOption.name }}
               </option>
             </select>
+            <div v-else>&nbsp;{{ parameter.valueToUse }}</div>
             <input
+              v-if="isEditing"
               v-model="parameter.testValue"
               class="telemery-reference-variable-input"
-              @change="persistParameters"
+              @change="updateParameters"
             />
+            <div v-else>&nbsp;{{ parameter.testValue }}</div>
           </div>
-          <template v-if="!domainObject.configuration.comps.parameters"
+          <template v-if="!parameters?.length && isEditing"
             >Drag telemetry into Telemetry References to add variables for an expression</template
           >
         </div>
@@ -104,16 +102,25 @@
         <div class="c-cs__header-label c-section__label">Expression</div>
       </div>
       <div class="c-cs__content">
-        <div>
-          <textarea
-            v-model="expression"
-            class="expression-input"
-            placeholder="Enter an expression"
-            @change="persistExpression"
-          ></textarea>
+        <textarea
+          v-if="isEditing"
+          v-model="expression"
+          class="expression-input"
+          placeholder="Enter an expression"
+          @change="updateExpression"
+        ></textarea>
+        <div v-else>
+          {{ expression }}
         </div>
-        <div v-if="expressionOutput" class="c-expression-output-bad">{{ expressionOutput }}</div>
-        <div v-else class="c-expression-output-good">Valid Expression</div>
+        <div v-if="expression && expressionOutput && isEditing" class="c-expression-output-bad">
+          {{ expressionOutput }}
+        </div>
+        <div
+          v-else-if="expression && !expressionOutput && isEditing"
+          class="c-expression-output-good"
+        >
+          Valid Expression
+        </div>
       </div>
     </section>
   </div>
@@ -121,7 +128,7 @@
 
 <script setup>
 import { evaluate } from 'mathjs';
-import { inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
 import ObjectPath from '../../../ui/components/ObjectPath.vue';
 import CompsManager from '../CompsManager';
@@ -144,12 +151,6 @@ defineProps({
   isEditing: { type: Boolean, required: true }
 });
 
-watch(
-  () => domainObject.configuration.comps.parameters,
-  (newParameters) => {
-    parameters.value = newParameters;
-  }
-);
 onBeforeMount(async () => {
   console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
@@ -185,12 +186,12 @@ function dragLeave(event) {
 function reloadParameters() {
   parameters.value = compsManager.getParameters();
   domainObject.configuration.comps.parameters = parameters.value;
-  compsManager.persist(domainObject);
+  compsManager.setDomainObject(domainObject);
 }
 
-function persistParameters() {
+function updateParameters() {
   domainObject.configuration.comps.parameters = parameters.value;
-  compsManager.persist(domainObject);
+  compsManager.setDomainObject(domainObject);
   applyTestData();
 }
 
@@ -203,9 +204,9 @@ function toggleTestData() {
   }
 }
 
-function persistExpression() {
+function updateExpression() {
   domainObject.configuration.comps.expression = expression.value;
-  compsManager.persist(domainObject);
+  compsManager.setDomainObject(domainObject);
   applyTestData();
 }
 
