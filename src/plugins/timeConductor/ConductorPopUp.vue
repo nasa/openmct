@@ -27,11 +27,6 @@
         class="c-conductor__time-system-select"
         title="Sets the Time Conductor's time system."
       />
-      <ConductorHistory
-        v-if="!isIndependent"
-        class="c-conductor__history-select"
-        title="Select and apply previously entered time intervals."
-      />
     </div>
     <ConductorInputsFixed v-if="isFixedTimeMode" @dismiss-inputs-fixed="dismiss" />
     <ConductorInputsRealtime v-else @dismiss-inputs-realtime="dismiss" />
@@ -40,7 +35,6 @@
 
 <script>
 import ConductorClock from './ConductorClock.vue';
-import ConductorHistory from './ConductorHistory.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
 import ConductorMode from './ConductorMode.vue';
@@ -55,7 +49,6 @@ export default {
     IndependentMode,
     IndependentClock,
     ConductorTimeSystem,
-    ConductorHistory,
     ConductorInputsFixed,
     ConductorInputsRealtime
   },
