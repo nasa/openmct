@@ -52,12 +52,6 @@
       :read-only="true"
       :compact="true"
     />
-    <div
-      v-if="independentTCEnabled"
-      role="button"
-      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
-      aria-label="Independent Time Conductor Settings"
-    ></div>
 
     <ConductorPopUp
       v-if="showConductorPopup"
@@ -73,7 +67,7 @@
 </template>
 
 <script>
-import { inject, provide, watch } from 'vue';
+import { inject, provide, toRaw } from 'vue';
 
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
 
@@ -121,22 +115,6 @@ export default {
     const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
     const { offsets } = useClockOffsets(openmct, timeContext);
 
-    watch(timeContext, () => {
-      console.log('context changed setup');
-    });
-
-    watch(() => props.domainObject, () => {
-      console.log('domainObject changed setup');
-    });
-
-    watch(() => props.domainObject.configuration.useIndependentTime, () => {
-      console.log('domainObject configuration changed setup');
-    });
-
-    watch(() => props.objectPath, () => {
-      console.log('objectPath changed setup');
-    });
-
     provide('timeContext', timeContext);
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
@@ -153,10 +131,6 @@ export default {
     provide('getAllClockMetadata', getAllClockMetadata);
     provide('getClockMetadata', getClockMetadata);
 
-    function getReactiveObjectPath() {
-      return props.objectPath;
-    }
-
     return {
       timeContext,
       timeMode,
@@ -172,7 +146,7 @@ export default {
   data() {
     return {
       keyString: this.openmct.objects.makeKeyString(this.domainObject.identifier),
-      independentTCEnabled: this.domainObject.configuration.useIndependentTime === true,
+      independentTCEnabled: this.domainObject.configuration.useIndependentTime === true
     };
   },
   computed: {
@@ -280,10 +254,13 @@ export default {
       );
     },
     setTimeOptions() {
-      this.timeOptions = this.domainObject.configuration.timeOptions ?? {
-        clockOffsets: this.offsets,
-        fixedOffsets: this.bounds
-      };
+      this.timeOptions = toRaw(this.domainObject.configuration.timeOptions);
+      if (!this.timeOptions) {
+        this.timeOptions = {
+          clockOffsets: this.offsets,
+          fixedOffsets: this.bounds
+        };
+      }
 
       if (!this.timeOptions.clock) {
         // can remove openmct.time.getClock() if timeContexts have clock in fixed time
@@ -312,7 +289,7 @@ export default {
       this.updateTimeOptions();
     },
     saveClock() {
-      this.timeOptions.clock = this.clock.key;
+      this.timeOptions.clock = this.clock?.key;
       this.updateTimeOptions();
     },
     updateTimeOptions() {
@@ -322,7 +299,7 @@ export default {
     registerIndependentTimeContext() {
       const bounds = this.timeOptions.fixedOffsets ?? this.bounds;
       const offsets = this.timeOptions.clockOffsets ?? this.offsets;
-      const clockKey = this.timeOptions.clock?.key || this.clock.key;
+      const clockKey = this.timeOptions.clock || this.clock.key;
 
       const independentTimeContextBoundsOrOffsets = this.isFixedTimeMode ? bounds : offsets;
       const independentTimeContextClockKey = this.isFixedTimeMode ? undefined : clockKey;
@@ -336,16 +313,16 @@ export default {
           independentTimeContextClockKey
         );
       } else {
-        if (this.isRealTimeMode) {
-          independentTimeContext.setClock(this.timeOptions.clock);
-        }
+        // if (this.isRealTimeMode) {
+        //   independentTimeContext.setClock(this.timeOptions.clock);
+        // }
 
-        independentTimeContext.setMode(this.timeOptions.mode, independentTimeContextBoundsOrOffsets);
+        // independentTimeContext.setMode(this.timeOptions.mode, independentTimeContextBoundsOrOffsets);
       }
     },
     registerIndependentTimeOffsets() {
       // const timeContext = this.openmct.time.getIndependentContext(this.keyString);
-      const clockKey = this.timeOptions.clock?.key || this.clock.key;
+      const clockKey = this.timeOptions.clock || this.clock.key;
       let offsets;
 
       if (this.isFixedTimeMode) {

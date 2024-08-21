@@ -48,12 +48,11 @@
       @pan-axis="pan"
       @zoom-axis="zoom"
     />
-    <div
-      role="button"
-      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
-      aria-label="Time Conductor Settings"
-    ></div>
-
+    <ConductorHistory
+      v-if="!isIndependent"
+      class="c-conductor__history-select"
+      title="Select and apply previously entered time intervals."
+    />
     <ConductorPopUp
       v-if="showConductorPopup"
       ref="conductorPopup"
@@ -71,6 +70,7 @@ import { inject, provide } from 'vue';
 
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorClock from './ConductorClock.vue';
+import ConductorHistory from './ConductorHistory.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
 import ConductorMode from './ConductorMode.vue';
@@ -90,6 +90,7 @@ export default {
     ConductorTimeSystem,
     ConductorClock,
     ConductorMode,
+    ConductorHistory,
     ConductorInputsRealtime,
     ConductorInputsFixed,
     ConductorAxis,

@@ -24,11 +24,9 @@
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         aria-label="Time Conductor History"
-        class="c-button--menu c-history-button icon-history c-icon-button"
+        class="c-button--minor c-history-button icon-history c-icon-button"
         @click.prevent.stop="showHistoryMenu"
-      >
-        <span class="c-button__label">History</span>
-      </button>
+      />
     </div>
   </div>
 </template>
