@@ -37,12 +37,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - run: npx playwright@1.42.1 install
+      - run: npx playwright@1.45.2 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
-          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          docker compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
           bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh

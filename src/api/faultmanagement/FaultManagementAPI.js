@@ -45,7 +45,7 @@ export default class FaultManagementAPI {
   }
 
   /**
-   * @param {import("../objects/ObjectAPI").DomainObject} domainObject
+   * @param {import('openmct').DomainObject} domainObject
    * @returns {Promise.<FaultAPIResponse[]>}
    */
   request(domainObject) {
@@ -57,7 +57,7 @@ export default class FaultManagementAPI {
   }
 
   /**
-   * @param {import("../objects/ObjectAPI").DomainObject} domainObject
+   * @param {import('openmct').DomainObject} domainObject
    * @param {Function} callback
    * @returns {Function} unsubscribe
    */

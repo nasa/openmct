@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class StartTimerAction {
+const START_TIMER_ACTION_KEY = 'timer.start';
+
+class StartTimerAction {
   constructor(openmct) {
     this.name = 'Start';
-    this.key = 'timer.start';
+    this.key = START_TIMER_ACTION_KEY;
     this.description = 'Start the currently displayed timer';
     this.group = 'view';
     this.cssClass = 'icon-play';
@@ -72,3 +74,7 @@ export default class StartTimerAction {
       : domainObject.type === 'timer' && timerState !== 'started';
   }
 }
+
+export { START_TIMER_ACTION_KEY };
+
+export default StartTimerAction;

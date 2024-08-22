@@ -42,19 +42,21 @@ test.describe('Reload action', () => {
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
-      parent: alphaTable.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.001'
-      }
+      parent: alphaTable.uuid
     });
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: /Edit Properties/ }).click();
+    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('0.001');
+    await page.getByLabel('Save').click();
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
-      parent: betaTable.uuid,
-      customParameters: {
-        '[aria-label="Data Rate (hz)"]': '0.001'
-      }
+      parent: betaTable.uuid
     });
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: /Edit Properties/ }).click();
+    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('0.001');
+    await page.getByLabel('Save').click();
 
     await page.goto(displayLayout.url);
 
@@ -63,20 +65,26 @@ test.describe('Reload action', () => {
 
     await page.getByLabel('Edit Object', { exact: true }).click();
 
-    await page.dragAndDrop(`text='Alpha Table'`, '.l-layout__grid-holder', {
-      targetPosition: { x: 0, y: 0 }
-    });
+    await page
+      .getByLabel('Main Tree')
+      .getByLabel(`Preview ${alphaTable.name}`)
+      .dragTo(page.getByLabel('Layout Grid'), {
+        targetPosition: { x: 0, y: 0 }
+      });
 
-    await page.dragAndDrop(`text='Beta Table'`, '.l-layout__grid-holder', {
-      targetPosition: { x: 0, y: 250 }
-    });
+    await page
+      .getByLabel('Main Tree')
+      .getByLabel(`Preview ${betaTable.name}`)
+      .dragTo(page.getByLabel('Layout Grid'), {
+        targetPosition: { x: 0, y: 250 }
+      });
 
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   });
 
   test('can reload display layout and its children', async ({ page }) => {
-    const beforeReloadAlphaTelemetryValue = await page
+    const beforeReloadAlphaTelemetryValue = page
       .getByLabel('Alpha Table table content')
       .getByLabel('wavelengths table cell')
       .first()

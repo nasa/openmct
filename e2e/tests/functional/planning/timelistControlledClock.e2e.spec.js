@@ -22,12 +22,16 @@
 
 /*
 Collection of Time List tests set to run with browser clock manipulate made possible with the
-clockOptions plugin fixture.
+page.clock() API.
 */
 
 import fs from 'fs';
 
-import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createPlanFromJSON,
+  navigateToObjectWithRealTime
+} from '../../../appActions.js';
 import {
   createTimelistWithPlanAndSetActivityInProgress,
   getEarliestStartTime,
@@ -93,14 +97,12 @@ const COUNTDOWN = Object.freeze({
   SECONDS: 5
 });
 
+const FIRST_ACTIVITY_SMALL_1 = getFirstActivity(examplePlanSmall1);
+
 test.describe('Time List with controlled clock @clock', () => {
-  test.use({
-    clockOptions: {
-      now: getEarliestStartTime(examplePlanSmall3),
-      shouldAdvanceTime: true
-    }
-  });
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: getEarliestStartTime(examplePlanSmall3) });
+    await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Create Time List
     const timelist = await createDomainObjectWithDefaults(page, {
@@ -115,9 +117,7 @@ test.describe('Time List with controlled clock @clock', () => {
     });
 
     // Navigate to the Time List in real-time mode
-    await page.goto(
-      `${timelist.url}?tc.mode=local&tc.startDelta=900000&tc.endDelta=1800000&tc.timeSystem=utc&view=grid`
-    );
+    await navigateToObjectWithRealTime(page, timelist.url, 900000, 1800000);
 
     //Expand the viewport to show the entire time list
     await page.getByLabel('Collapse Inspect Pane').click();
@@ -172,16 +172,9 @@ test.describe('Time List with controlled clock @clock', () => {
 });
 
 test.describe('Activity progress when activity is in the future @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.start - 1,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.start - 1 });
+    await page.clock.resume();
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 
@@ -195,16 +188,11 @@ test.describe('Activity progress when activity is in the future @clock', () => {
 });
 
 test.describe('Activity progress when now is between start and end of the activity @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.start + 50000 });
+    await page.clock.resume();
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-  });
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.start + 50000,
-      shouldAdvanceTime: true
-    }
   });
 
   test('progress pie is partially filled', async ({ page }) => {
@@ -216,16 +204,10 @@ test.describe('Activity progress when now is between start and end of the activi
 });
 
 test.describe('Activity progress when now is after end of the activity @clock', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.end + 10000,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.end + 10000 });
+    await page.clock.resume();
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
 

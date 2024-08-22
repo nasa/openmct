@@ -27,7 +27,6 @@
  * metadata field which contains a subset of information found
  * in the model itself (to support search optimization with
  * CouchDB views.)
- * @memberof platform/persistence/couch
  * @constructor
  * @param {string} id the id under which to store this mode
  * @param {Object} model the model to store

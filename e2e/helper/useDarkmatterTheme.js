@@ -20,18 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
-
-class StoragePersistance {
-  getActiveRole() {
-    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
-  setActiveRole(role) {
-    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
-  }
-  clearActiveRole() {
-    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
-}
-
-export default new StoragePersistance();
+// This should be used to install the Darkmatter theme for Open MCT.
+// e.g.
+// await page.addInitScript({ path: path.join(__dirname, 'useDarkmatterTheme.js') });
+document.addEventListener('DOMContentLoaded', () => {
+  const openmct = window.openmct;
+  openmct.install(openmct.plugins.DarkmatterTheme());
+});

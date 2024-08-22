@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { v4 as uuid } from 'uuid';
 
 import Condition from './Condition.js';
@@ -46,14 +46,6 @@ export default class ConditionManager extends EventEmitter {
       applied: false
     };
     this.initialize();
-
-    this.stopObservingForChanges = this.openmct.objects.observe(
-      this.conditionSetDomainObject,
-      '*',
-      (newDomainObject) => {
-        this.conditionSetDomainObject = newDomainObject;
-      }
-    );
   }
 
   async requestLatestValue(endpoint) {
@@ -517,10 +509,6 @@ export default class ConditionManager extends EventEmitter {
     this.composition.off('remove', this.unsubscribeFromTelemetry, this);
     Object.values(this.subscriptions).forEach((unsubscribe) => unsubscribe());
     delete this.subscriptions;
-
-    if (this.stopObservingForChanges) {
-      this.stopObservingForChanges();
-    }
 
     this.conditions.forEach((condition) => {
       condition.destroy();

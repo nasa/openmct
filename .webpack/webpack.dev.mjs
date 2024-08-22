@@ -39,7 +39,7 @@ export default merge(common, {
         return shouldWrite;
       }
     },
-    watchFiles: ['**/*.css'],
+    watchFiles: ['src/**/*.css', 'example/**/*.css'],
     static: {
       directory: fileURLToPath(new URL('../dist', import.meta.url)),
       publicPath: '/dist',

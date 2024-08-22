@@ -24,7 +24,6 @@
  * A ToolbarRegistry maintains the definitions for toolbars.
  *
  * @interface ToolbarRegistry
- * @memberof module:openmct
  */
 export default function ToolbarRegistry() {
   this.providers = {};
@@ -70,7 +69,6 @@ ToolbarRegistry.prototype.getByProviderKey = function (key) {
  *
  * @param {module:openmct.ToolbarRegistry} provider the provider for this toolbar
  * @method addProvider
- * @memberof module:openmct.ToolbarRegistry#
  */
 ToolbarRegistry.prototype.addProvider = function (provider) {
   const key = provider.key;
@@ -94,14 +92,12 @@ ToolbarRegistry.prototype.addProvider = function (provider) {
  * @property {string} name the human-readable name of this toolbar
  * @property {string} [description] a longer-form description (typically
  *           a single sentence or short paragraph) of this kind of toolbar
- * @memberof module:openmct
  */
 
 /**
  * Checks if this provider can supply toolbar for a selection.
  *
  * @method forSelection
- * @memberof module:openmct.ToolbarProvider#
  * @param {module:openmct.selection} selection
  * @returns {boolean} 'true' if the toolbar applies to the provided selection,
  *          otherwise 'false'.
@@ -111,7 +107,6 @@ ToolbarRegistry.prototype.addProvider = function (provider) {
  * Provides controls that comprise a toolbar.
  *
  * @method toolbar
- * @memberof module:openmct.ToolbarProvider#
  * @param {Object} selection the selection object
  * @returns {Object[]} an array of objects defining controls for the toolbar.
  */

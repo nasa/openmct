@@ -23,17 +23,17 @@
 <template>
   <div ref="plan" class="c-plan c-timeline-holder">
     <template v-if="viewBounds && !options.compact">
-      <swim-lane>
+      <SwimLane>
         <template #label>{{ timeSystem.name }}</template>
         <template #object>
-          <timeline-axis
+          <TimelineAxis
             :bounds="viewBounds"
             :time-system="timeSystem"
             :content-height="height"
             :rendering-engine="renderingEngine"
           />
         </template>
-      </swim-lane>
+      </SwimLane>
     </template>
     <div class="c-plan__contents u-contents">
       <ActivityTimeline

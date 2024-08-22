@@ -22,22 +22,22 @@
 
 <template>
   <div ref="timelineHolder" class="c-timeline-holder">
-    <swim-lane v-for="timeSystemItem in timeSystems" :key="timeSystemItem.timeSystem.key">
+    <SwimLane v-for="timeSystemItem in timeSystems" :key="timeSystemItem.timeSystem.key">
       <template #label>
         {{ timeSystemItem.timeSystem.name }}
       </template>
       <template #object>
-        <timeline-axis
+        <TimelineAxis
           :bounds="timeSystemItem.bounds"
           :time-system="timeSystemItem.timeSystem"
           :content-height="height"
           :rendering-engine="'svg'"
         />
       </template>
-    </swim-lane>
+    </SwimLane>
 
     <div ref="contentHolder" class="c-timeline__objects">
-      <timeline-object-view
+      <TimelineObjectView
         v-for="item in items"
         :key="item.keyString"
         class="c-timeline__content js-timeline__content"
@@ -49,10 +49,12 @@
 
 <script>
 import _ from 'lodash';
+import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import TimelineObjectView from './TimelineObjectView.vue';
 
@@ -69,7 +71,19 @@ export default {
     TimelineAxis,
     SwimLane
   },
-  inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
+  inject: ['openmct', 'domainObject', 'path', 'composition'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      path,
+      openmct
+    );
+
+    return { alignmentData, resetAlignment };
+  },
   data() {
     return {
       items: [],
@@ -80,6 +94,7 @@ export default {
     };
   },
   beforeUnmount() {
+    this.resetAlignment();
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);
@@ -105,7 +120,7 @@ export default {
     addItem(domainObject) {
       let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
       let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-      let objectPath = [domainObject].concat(this.objectPath.slice());
+      let objectPath = [domainObject].concat(this.path.slice());
       let rowCount = 0;
       if (domainObject.type === 'plan') {
         const planData = getValidatedData(domainObject);
@@ -195,7 +210,7 @@ export default {
     setTimeContext() {
       this.stopFollowingTimeContext();
 
-      this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+      this.timeContext = this.openmct.time.getContextForView(this.path);
       this.getTimeSystems();
       this.updateViewBounds();
       this.timeContext.on('boundsChanged', this.updateViewBounds);

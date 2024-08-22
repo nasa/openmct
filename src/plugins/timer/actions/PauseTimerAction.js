@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class PauseTimerAction {
+const PAUSE_TIMER_ACTION_KEY = 'timer.pause';
+
+class PauseTimerAction {
   constructor(openmct) {
     this.name = 'Pause';
-    this.key = 'timer.pause';
+    this.key = PAUSE_TIMER_ACTION_KEY;
     this.description = 'Pause the currently displayed timer';
     this.group = 'view';
     this.cssClass = 'icon-pause';
@@ -59,3 +61,7 @@ export default class PauseTimerAction {
       : domainObject.type === 'timer' && timerState === 'started';
   }
 }
+
+export { PAUSE_TIMER_ACTION_KEY };
+
+export default PauseTimerAction;

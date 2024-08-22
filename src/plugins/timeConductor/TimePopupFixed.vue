@@ -35,7 +35,7 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="Start time"
-          @change="validateAllBounds('startTime')"
+          @input="validateAllBounds('startTime')"
         />
       </div>
 
@@ -50,7 +50,7 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="End time"
-          @change="validateAllBounds('endTime')"
+          @input="validateAllBounds('endTime')"
         />
       </div>
 
@@ -59,7 +59,7 @@
           class="c-button c-button--major icon-check"
           :disabled="isDisabled"
           aria-label="Submit time bounds"
-          @click.prevent="submit"
+          @click.prevent="handleFormSubmission(true)"
         ></button>
         <button
           class="c-button icon-x"
@@ -110,8 +110,10 @@ export default {
       [this.$refs.startTime, this.$refs.endTime].forEach(this.clearValidationForInput);
     },
     clearValidationForInput(input) {
-      input.setCustomValidity('');
-      input.title = '';
+      if (input) {
+        input.setCustomValidity('');
+        input.title = '';
+      }
     },
     setViewFromBounds() {
       const start = this.timeSystemFormatter.format(this.bounds.start);
@@ -135,28 +137,26 @@ export default {
 
       if (dismiss) {
         this.$emit('dismiss');
-
         return false;
       }
     },
-    submit() {
+    handleFormSubmission(shouldDismiss) {
       this.validateAllBounds('startDate');
       this.validateAllBounds('endDate');
-      this.submitForm(!this.isDisabled);
-    },
-    submitForm(dismiss) {
-      // Allow Vue model to catch up to user input.
-      // Submitting form will cause validation messages to display (but only if triggered by button click)
-      this.$nextTick(() => this.setBoundsFromView(dismiss));
+
+      if (!this.isDisabled) {
+        this.setBoundsFromView(shouldDismiss);
+      }
     },
     validateAllBounds(ref) {
+      this.isDisabled = false;
+
       if (!this.areBoundsFormatsValid()) {
+        this.isDisabled = true;
         return false;
       }
 
-      let validationResult = {
-        valid: true
-      };
+      let validationResult = { valid: true };
       const currentInput = this.$refs[ref];
 
       return [this.$refs.startTime, this.$refs.endTime].every((input) => {
@@ -225,7 +225,6 @@ export default {
       } else {
         input.setCustomValidity('');
         input.title = '';
-        this.isDisabled = false;
       }
 
       this.$refs.fixedDeltaInput.reportValidity();

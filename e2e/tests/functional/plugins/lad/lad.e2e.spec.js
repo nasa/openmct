@@ -22,7 +22,7 @@
 
 import {
   createDomainObjectWithDefaults,
-  openObjectTreeContextMenu,
+  navigateToObjectWithRealTime,
   setFixedTimeMode,
   setRealTimeMode,
   setStartOffset
@@ -56,61 +56,61 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure headers are visible initially
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // hide timestamp column
     await page.getByLabel('Timestamp', { exact: true }).uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // hide units & type column
     await page.getByLabel('Units').uncheck();
     await page.getByLabel('Type', { exact: true }).uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // hide WATCH column
     await page.getByLabel('WATCH').uncheck();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and verify they columns are still hidden
-    await page.locator('button[title="Save"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
@@ -118,27 +118,27 @@ test.describe('Testing LAD table configuration', () => {
 
     // show timestamp column
     await page.getByLabel('Timestamp', { exact: true }).check();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and make sure timestamp is still visible
-    await page.locator('button[title="Save"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
@@ -148,27 +148,27 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByLabel('Units').check();
     await page.getByLabel('Type', { exact: true }).check();
     await page.getByLabel('WATCH').check();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and make sure all columns are still visible
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await page.reload();
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
   });
 
   test('When adding something without Units, do not show Units column', async ({ page }) => {
@@ -185,14 +185,14 @@ test.describe('Testing LAD table configuration', () => {
     await page.getByRole('tab', { name: 'LAD Table Configuration' }).click();
 
     // make sure Sine Wave headers are visible initially too
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeVisible();
 
     // save and reload and verify they columns are still hidden
     await page.getByLabel('Save').click();
@@ -201,25 +201,25 @@ test.describe('Testing LAD table configuration', () => {
     // Remove Sine Wave Generator
     openObjectTreeContextMenu(page, sineWaveObject.url);
     await page.getByRole('menuitem', { name: /Remove/ }).click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Ensure Units & Limit columns are gone
     // as Event Generator don't have them
     await page.goto(ladTable.url);
-    await expect(page.getByRole('cell', { name: 'Timestamp', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Type', exact: true })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Units' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WATCH' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'WARNING' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'DISTRESS' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'CRITICAL' })).toBeHidden();
-    await expect(page.getByRole('cell', { name: 'SEVERE' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Type', exact: true })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Units' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WATCH' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit WARNING' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit DISTRESS' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit CRITICAL' })).toBeHidden();
+    await expect(page.getByRole('columnheader', { name: 'Limit SEVERE' })).toBeHidden();
   });
 
   test("LAD Tables don't allow selection of rows but does show context click menus", async ({
     page
   }) => {
-    const cell = await page.locator('.js-first-data');
+    const cell = page.locator('.js-first-data');
     const userSelectable = await cell.evaluate((el) => {
       return window.getComputedStyle(el).getPropertyValue('user-select');
     });
@@ -237,19 +237,21 @@ test.describe('Testing LAD table configuration', () => {
   });
 });
 
-test.describe('Testing LAD table @unstable', () => {
+test.describe('Testing LAD table', () => {
   let sineWaveObject;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await setRealTimeMode(page);
 
     // Create Sine Wave Generator
     sineWaveObject = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Test Sine Wave Generator'
     });
+
+    // Switch to real time mode by navigating directly to the URL
+    await navigateToObjectWithRealTime(page, sineWaveObject.url);
   });
-  test('telemetry value exactly matches latest telemetry value received in real time', async ({
+  test('telemetry value exactly matches latest telemetry value received in realtime mode', async ({
     page
   }) => {
     // Create LAD table
@@ -261,23 +263,23 @@ test.describe('Testing LAD table @unstable', () => {
     await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
-    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    await page.getByLabel('Expand My Items').click();
     // Add the Sine Wave Generator to the LAD table and save changes
-    await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('#lad-table-drop-area'));
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the LAD table is the most recent value
     // from the Sine Wave Generator
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     const subscribeTelemValue = await getTelemValuePromise;
-    const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
-    const ladTableValue = await ladTableValuePromise.textContent();
+    await expect(page.getByLabel('lad value')).toHaveText(subscribeTelemValue);
+    const ladTableValue = await page.getByText(subscribeTelemValue).textContent();
 
-    expect(ladTableValue).toBe(subscribeTelemValue);
+    expect(ladTableValue).toEqual(subscribeTelemValue);
   });
-  test('telemetry value exactly matches latest telemetry value received in fixed time', async ({
+  test('telemetry value exactly matches latest telemetry value received in fixed time mode', async ({
     page
   }) => {
     // Create LAD table
@@ -289,25 +291,23 @@ test.describe('Testing LAD table @unstable', () => {
     await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
-    await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
+    await page.getByLabel('Expand My Items').click();
     // Add the Sine Wave Generator to the LAD table and save changes
-    await page.dragAndDrop('text=Test Sine Wave Generator', '.c-lad-table-wrapper');
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('#lad-table-drop-area'));
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
-    await setStartOffset(page, { mins: '1' });
+    await setRealTimeMode(page);
+    await setStartOffset(page, { startMins: '01' });
     await setFixedTimeMode(page);
 
     // On getting data, check if the value found in the LAD table is the most recent value
     // from the Sine Wave Generator
     const subscribeTelemValue = await getTelemValuePromise;
-    const ladTableValuePromise = await page.waitForSelector(`text="${subscribeTelemValue}"`);
-    const ladTableValue = await ladTableValuePromise.textContent();
-
-    expect(ladTableValue).toBe(subscribeTelemValue);
+    await expect(page.getByLabel('lad value')).toHaveText(subscribeTelemValue);
   });
 });
 
@@ -337,4 +337,19 @@ async function subscribeToTelemetry(page, objectIdentifier) {
   }, objectIdentifier);
 
   return getTelemValuePromise;
+}
+
+/**
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url the url to the object
+ */
+async function openObjectTreeContextMenu(page, url) {
+  await page.goto(url);
+  await page.getByLabel('Show selected item in tree').click();
+  await page.locator('.is-navigated-object').click({
+    button: 'right'
+  });
 }

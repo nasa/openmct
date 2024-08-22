@@ -25,11 +25,11 @@ import { makeKeyString } from '../objects/object-utils.js';
 import CompositionProvider from './CompositionProvider.js';
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').Identifier} Identifier
+ * @typedef {import('openmct').Identifier} Identifier
  */
 
 /**

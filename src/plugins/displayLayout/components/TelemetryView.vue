@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -68,15 +68,18 @@
         </div>
       </div>
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>
+import { COPY_TO_CLIPBOARD_ACTION_KEY } from '@/plugins/displayLayout/actions/CopyToClipboardAction.js';
+import { COPY_TO_NOTEBOOK_ACTION_KEY } from '@/plugins/notebook/actions/CopyToNotebookAction.js';
 import {
   getDefaultNotebook,
   getNotebookSectionAndPage
 } from '@/plugins/notebook/utils/notebook-storage.js';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
+import { VIEW_HISTORICAL_DATA_ACTION_KEY } from '@/ui/preview/ViewHistoricalDataAction.js';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
@@ -85,10 +88,9 @@ import LayoutFrame from './LayoutFrame.vue';
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
 const CONTEXT_MENU_ACTIONS = [
-  'copyToClipboard',
-  'copyToNotebook',
-  'viewHistoricalData',
-  'renderWhenVisible'
+  COPY_TO_CLIPBOARD_ACTION_KEY,
+  COPY_TO_NOTEBOOK_ACTION_KEY,
+  VIEW_HISTORICAL_DATA_ACTION_KEY
 ];
 
 export default {
@@ -386,7 +388,7 @@ export default {
 
       return CONTEXT_MENU_ACTIONS.map((actionKey) => {
         const action = this.openmct.actions.getAction(actionKey);
-        if (action.key === 'copyToNotebook') {
+        if (action.key === COPY_TO_NOTEBOOK_ACTION_KEY) {
           action.name = defaultNotebookName;
         }
 

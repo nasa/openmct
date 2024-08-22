@@ -120,7 +120,7 @@ class ImageExporter {
           message: 'Image was not captured successfully!',
           buttons: [
             {
-              label: 'OK',
+              label: 'Ok',
               emphasis: true,
               callback: function () {
                 errorDialog.dismiss();
