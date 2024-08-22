@@ -32,7 +32,6 @@
         class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-start-date"
       >
         <DatePicker
-          v-if="canSplitDateTime"
           class="c-ctrl-wrapper--menus-right"
           :default-date-time="formattedBounds.startDate"
           @date-selected="startDateSelected"
@@ -68,7 +67,6 @@
         class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-end-date"
       >
         <DatePicker
-          v-if="canSplitDateTime"
           class="c-ctrl-wrapper--menus-left"
           :default-date-time="formattedBounds.endDate"
           @date-selected="endDateSelected"
