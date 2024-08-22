@@ -30,7 +30,6 @@
 import { expect, request, test } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import sinon from 'sinon';
 import { fileURLToPath } from 'url';
 import { v4 as uuid } from 'uuid';
 
@@ -71,82 +70,6 @@ const extendedTest = test.extend({
 
   coveragePath: [istanbulCLIOutput, { option: true }],
   /**
-   * This allows the test to manipulate the browser clock. This is useful for Visual and Snapshot tests which need
-   * the Time Indicator Clock to be in a specific state.
-   *
-   * Warning: Has many limitations and secondary side effects in Open MCT.
-   * 1. The tree component does not render.
-   * 2. page.WaitForNavigation does not trigger.
-   *
-   * Usage:
-   * ```js
-   * test.use({
-   *   clockOptions: {
-   *       now: MISSION_TIME,
-   *       shouldAdvanceTime: true
-   * ```
-   * If clockOptions are provided, will override the default clock with fake timers provided by SinonJS.
-   *
-   * Default: `undefined`
-   *
-   * @see {@link https://github.com/microsoft/playwright/issues/6347 Github RFE}
-   * @see {@link https://github.com/sinonjs/fake-timers/#var-clock--faketimersinstallconfig SinonJS FakeTimers Config}
-   * @type {import('@types/sinonjs__fake-timers').FakeTimerInstallOpts}
-   */
-  clockOptions: [undefined, { option: true }],
-  overrideClock: [
-    async ({ context, clockOptions }, use) => {
-      if (clockOptions !== undefined) {
-        await context.addInitScript({
-          path: fileURLToPath(new URL('../node_modules/sinon/pkg/sinon.js', import.meta.url))
-        });
-        await context.addInitScript((options) => {
-          window.__clock = sinon.useFakeTimers(options);
-        }, clockOptions);
-      }
-
-      await use(context);
-    },
-    {
-      auto: true,
-      scope: 'test'
-    }
-  ],
-  /**
-   * Exposes a function to manually tick the clock. This is useful when overriding the clock to not
-   * tick (`shouldAdvanceTime: false`) for visual tests, as events such as re-renders and router params
-   * updates are clock-driven and must be manually ticked.
-   *
-   * Usage:
-   * ```js
-   * test.describe('Manual Clock Tick', () => {
-   *  test.use({
-   *   clockOptions: {
-   *     now: MISSION_TIME, // Set to the desired time
-   *     shouldAdvanceTime: false // Clock overridden to no longer tick
-   *   }
-   *  });
-   *  test('Visual - Manual Clock Tick', async ({ page, tick }) => {
-   *   // Tick the clock 2 seconds in the future
-   *   await tick(2000);
-   *  });
-   * });
-   * ```
-   *
-   * @param {Object} param0
-   * @param {import('@playwright/test').Page} param0.page
-   * @param {import('@playwright/test').Use} param0.use
-   */
-  tick: async ({ page }, use) => {
-    // eslint-disable-next-line func-style
-    const tick = async (milliseconds) => {
-      await page.evaluate((_milliseconds) => {
-        window.__clock.tick(_milliseconds);
-      }, milliseconds);
-    };
-    await use(tick);
-  },
-  /**
    * Extends the base context class to add codecoverage shim.
    * @see {@link https://github.com/mxschmitt/playwright-test-coverage Github Project}
    */
@@ -184,20 +107,7 @@ const extendedTest = test.extend({
    * Extends the base page class to enable console log error detection.
    * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
    */
-  page: async ({ page, failOnConsoleError, clockOptions }, use) => {
-    // If overriding the clock, we must also override the Date.now()
-    // function in the generatorWorker context. This is necessary
-    // to ensure that example telemetry data is generated for the new clock time.
-    if (clockOptions?.now !== undefined) {
-      page.on('worker', (worker) => {
-        if (worker.url().includes('generatorWorker')) {
-          worker.evaluate((time) => {
-            self.Date.now = () => time;
-          }, clockOptions.now);
-        }
-      });
-    }
-
+  page: async ({ page, failOnConsoleError }, use) => {
     // Capture any console errors during test execution
     const messages = [];
     page.on('console', (msg) => messages.push(msg));
@@ -207,27 +117,11 @@ const extendedTest = test.extend({
     // Assert against console errors during teardown
     if (failOnConsoleError) {
       messages.forEach((msg) =>
+        // eslint-disable-next-line playwright/no-standalone-expect
         expect
           .soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`)
           .not.toEqual('error')
       );
-    }
-  },
-  /**
-   * Extends the base browser class to enable CDP connection definition in playwright.config.js. Once
-   * that RFE is implemented, this function can be removed.
-   * @see {@link https://github.com/microsoft/playwright/issues/8379 Github RFE}
-   */
-  browser: async ({ playwright, browser }, use, workerInfo) => {
-    // Use browserless if configured
-    if (workerInfo.project.name.match(/browserless/)) {
-      const vBrowser = await playwright.chromium.connectOverCDP({
-        endpointURL: 'ws://localhost:3003'
-      });
-      await use(vBrowser);
-    } else {
-      // Use Local Browser for testing.
-      await use(browser);
     }
   }
 });

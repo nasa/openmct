@@ -29,18 +29,13 @@
     <slot></slot>
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
       <div v-if="seriesModels.length" class="u-contents">
-        <y-axis
+        <YAxis
           v-for="(yAxis, index) in yAxesIds"
           :id="yAxis.id"
           :key="`yAxis-${yAxis.id}-${index}`"
-          :has-multiple-left-axes="hasMultipleLeftAxes"
           :position="yAxis.id > 2 ? 'right' : 'left'"
           :class="{ 'plot-yaxis-right': yAxis.id > 2 }"
-          :tick-width="yAxis.tickWidth"
-          :used-tick-width="plotFirstLeftTickWidth"
-          :plot-left-tick-width="yAxis.id > 2 ? yAxis.tickWidth : plotLeftTickWidth"
           @y-key-changed="setYAxisKey"
-          @plot-y-tick-width="onYTickWidthChange"
           @toggle-axis-visibility="toggleSeriesForYAxis"
         />
       </div>
@@ -66,7 +61,6 @@
             :axis-type="'yAxis'"
             :position="'bottom'"
             :axis-id="yAxis.id"
-            @plot-tick-width="onYTickWidthChange"
           />
 
           <div
@@ -74,7 +68,7 @@
             class="gl-plot-chart-wrapper"
             :class="[{ 'alt-pressed': altPressed }]"
           >
-            <mct-chart
+            <MctChart
               :rectangles="rectangles"
               :highlights="highlights"
               :show-limit-line-labels="limitLineLabels"
@@ -94,9 +88,15 @@
               <button
                 class="c-button icon-minus"
                 title="Zoom out"
+                aria-label="Zoom out"
                 @click="zoom('out', 0.2)"
               ></button>
-              <button class="c-button icon-plus" title="Zoom in" @click="zoom('in', 0.2)"></button>
+              <button
+                class="c-button icon-plus"
+                title="Zoom in"
+                aria-label="Zoom in"
+                @click="zoom('in', 0.2)"
+              ></button>
             </div>
             <div
               v-if="plotHistory.length && !options.compact"
@@ -104,12 +104,14 @@
             >
               <button
                 class="c-button icon-arrow-left"
-                title="Restore previous pan/zoom"
+                title="Restore previous pan and zoom"
+                aria-label="Restore previous pan and zoom"
                 @click="back()"
               ></button>
               <button
                 class="c-button icon-reset"
-                title="Reset pan/zoom"
+                title="Reset pan and zoom"
+                aria-label="Reset pan and zoom"
                 @click="resumeRealtimeData()"
               ></button>
             </div>
@@ -121,12 +123,14 @@
                 v-if="!isFrozen"
                 class="c-button icon-pause"
                 title="Pause incoming real-time data"
+                aria-label="Pause incoming real-time data"
                 @click="pause()"
               ></button>
               <button
                 v-if="isFrozen"
                 class="c-button icon-arrow-right pause-play is-paused"
                 title="Resume displaying real-time data"
+                aria-label="Resume displaying real-time data"
                 @click="resumeRealtimeData()"
               ></button>
             </div>
@@ -134,6 +138,7 @@
               <button
                 class="c-button icon-clock"
                 title="Synchronize Time Conductor"
+                aria-label="Synchronize Time Conductor"
                 @click="showSynchronizeDialog()"
               ></button>
             </div>
@@ -142,12 +147,14 @@
                 class="c-button icon-crosshair"
                 :class="{ 'is-active': cursorGuide }"
                 title="Toggle cursor guides"
+                aria-label="Toggle cursor guides"
                 @click="toggleCursorGuide"
               ></button>
               <button
                 class="c-button"
                 :class="{ 'icon-grid-on': gridLines, 'icon-grid-off': !gridLines }"
                 title="Toggle grid lines"
+                aria-label="Toggle grid lines"
                 @click="toggleGridLines"
               ></button>
             </div>
@@ -165,10 +172,7 @@
             class="c-cursor-guide--h js-cursor-guide--h"
           ></div>
         </div>
-        <x-axis
-          v-if="seriesModels.length > 0 && !options.compact"
-          :series-model="seriesModels[0]"
-        />
+        <XAxis v-if="seriesModels.length > 0 && !options.compact" :series-model="seriesModels[0]" />
       </div>
     </div>
   </div>
@@ -178,8 +182,10 @@
 import Flatbush from 'flatbush';
 import _ from 'lodash';
 import { useEventBus } from 'utils/useEventBus';
-import { toRaw } from 'vue';
+import { inject, toRaw } from 'vue';
 
+import { MODES } from '../../api/time/constants';
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import TagEditorClassNames from '../inspectorViews/annotations/tags/TagEditorClassNames.js';
 import XAxis from './axis/XAxis.vue';
 import YAxis from './axis/YAxis.vue';
@@ -200,7 +206,7 @@ export default {
     MctTicks,
     MctChart
   },
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,
@@ -222,16 +228,6 @@ export default {
         return false;
       }
     },
-    parentYTickWidth: {
-      type: Object,
-      default() {
-        return {
-          leftTickWidth: 0,
-          rightTickWidth: 0,
-          hasMultipleLeftAxes: false
-        };
-      }
-    },
     limitLineLabels: {
       type: Object,
       default() {
@@ -251,15 +247,26 @@ export default {
     'grid-lines',
     'loading-complete',
     'loading-updated',
-    'plot-y-tick-width',
     'highlights',
     'lock-highlight-point',
     'status-updated'
   ],
   setup() {
     const { EventBus } = useEventBus();
+
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      objectPath,
+      openmct
+    );
+
     return {
-      EventBus
+      EventBus,
+      alignmentData,
+      resetAlignment
     };
   },
   data() {
@@ -291,15 +298,16 @@ export default {
   },
   computed: {
     xAxisStyle() {
-      const rightAxis = this.yAxesIds.find((yAxis) => yAxis.id > 2);
-      const leftOffset = this.hasMultipleLeftAxes ? 2 * AXES_PADDING : AXES_PADDING;
+      let leftOffset = 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
       let style = {
-        left: `${this.plotLeftTickWidth + leftOffset}px`
+        left: `${this.alignmentData.leftWidth + leftOffset}px`
       };
-      const parentRightAxisWidth = this.parentYTickWidth.rightTickWidth;
 
-      if (parentRightAxisWidth || rightAxis) {
-        style.right = `${(parentRightAxisWidth || rightAxis.tickWidth) + AXES_PADDING}px`;
+      if (this.alignmentData.rightWidth) {
+        style.right = `${this.alignmentData.rightWidth + AXES_PADDING}px`;
       }
 
       return style;
@@ -307,20 +315,16 @@ export default {
     yAxesIds() {
       return this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
     },
-    hasMultipleLeftAxes() {
-      return (
-        this.parentYTickWidth.hasMultipleLeftAxes ||
-        this.yAxes.filter((yAxis) => yAxis.seriesCount > 0 && yAxis.id <= 2).length > 1
-      );
-    },
     isNestedWithinAStackedPlot() {
       const isNavigatedObject = this.openmct.router.isNavigatedObject(
-        [this.domainObject].concat(this.path)
+        [this.domainObject].concat(this.objectPath)
       );
 
       return (
         !isNavigatedObject &&
-        this.path.find((pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked')
+        this.objectPath.find(
+          (pathObject, pathObjIndex) => pathObject.type === 'telemetry.plot.stacked'
+        )
       );
     },
     isFrozen() {
@@ -329,24 +333,6 @@ export default {
     annotationViewingAndEditingAllowed() {
       // only allow annotations viewing/editing if plot is paused or in fixed time mode
       return this.isFrozen || !this.isRealTime;
-    },
-    plotFirstLeftTickWidth() {
-      const firstYAxis = this.yAxes.find((yAxis) => yAxis.id === 1);
-
-      return firstYAxis ? firstYAxis.tickWidth : 0;
-    },
-    plotLeftTickWidth() {
-      let leftTickWidth = 0;
-      this.yAxes.forEach((yAxis) => {
-        if (yAxis.id > 2) {
-          return;
-        }
-
-        leftTickWidth = leftTickWidth + yAxis.tickWidth;
-      });
-      const parentLeftTickWidth = this.parentYTickWidth.leftTickWidth;
-
-      return parentLeftTickWidth || leftTickWidth;
     },
     seriesDataLoaded() {
       return this.pending === 0 && this.loaded;
@@ -380,8 +366,7 @@ export default {
     this.yAxes = [
       {
         id: this.config.yAxis.id,
-        seriesCount: 0,
-        tickWidth: 0
+        seriesCount: 0
       }
     ];
     if (this.config.additionalYAxes) {
@@ -389,8 +374,7 @@ export default {
         this.config.additionalYAxes.map((yAxis) => {
           return {
             id: yAxis.id,
-            seriesCount: 0,
-            tickWidth: 0
+            seriesCount: 0
           };
         })
       );
@@ -424,6 +408,7 @@ export default {
     });
   },
   beforeUnmount() {
+    this.resetAlignment();
     this.abortController.abort();
     this.openmct.selection.off('change', this.updateSelection);
     document.removeEventListener('keydown', this.handleKeyDown);
@@ -548,7 +533,7 @@ export default {
     },
     setTimeContext() {
       this.stopFollowingTimeContext();
-      this.timeContext = this.openmct.time.getContextForView(this.path);
+      this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.followTimeContext();
     },
     followTimeContext() {
@@ -604,14 +589,6 @@ export default {
     updateTicksAndSeriesForYAxis(newAxisId, oldAxisId) {
       this.updateAxisUsageCount(oldAxisId, -1);
       this.updateAxisUsageCount(newAxisId, 1);
-
-      const foundYAxis = this.yAxes.find((yAxis) => yAxis.id === oldAxisId);
-      if (foundYAxis.seriesCount === 0) {
-        this.onYTickWidthChange({
-          width: foundYAxis.tickWidth,
-          yAxisId: foundYAxis.id
-        });
-      }
     },
 
     updateAxisUsageCount(yAxisId, updateCountBy) {
@@ -803,12 +780,12 @@ export default {
         this.synchronizeIfBoundsMatch();
         this.loadMoreData(newRange, true);
       } else {
-        // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
+        // If we're not paused, panning or zooming (time conductor and plot x-axis times are not out of sync)
         // Drop any data that is more than 1x (max-min) before min.
         // Limit these purges to once a second.
         const isPanningOrZooming = this.isTimeOutOfSync;
         const purgeRecords =
-          !isPanningOrZooming && (!this.nextPurge || this.nextPurge < Date.now());
+          !this.isFrozen && !isPanningOrZooming && (!this.nextPurge || this.nextPurge < Date.now());
         if (purgeRecords) {
           const keepRange = {
             min: newRange.min - (newRange.max - newRange.min),
@@ -1015,49 +992,6 @@ export default {
           .forEach((yAxis) => {
             yAxis.scale.domain(displayBounds);
           });
-      }
-    },
-
-    /**
-     * Aggregate widths of all left and right y axes and send them up to any parent plots
-     * @param {Object} tickWidthWithYAxisId - the width and yAxisId of the tick bar
-     * @param fromDifferentObject
-     */
-    onYTickWidthChange(tickWidthWithYAxisId, fromDifferentObject) {
-      const { width, yAxisId } = tickWidthWithYAxisId;
-      if (yAxisId) {
-        const index = this.yAxes.findIndex((yAxis) => yAxis.id === yAxisId);
-        if (fromDifferentObject) {
-          // Always accept tick width if it comes from a different object.
-          this.yAxes[index].tickWidth = width;
-        } else {
-          // Otherwise, only accept tick with if it's larger.
-          const newWidth = Math.max(width, this.yAxes[index].tickWidth);
-          if (width !== this.yAxes[index].tickWidth) {
-            this.yAxes[index].tickWidth = newWidth;
-          }
-        }
-
-        const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        const leftTickWidth = this.yAxes
-          .filter((yAxis) => yAxis.id < 3)
-          .reduce((previous, current) => {
-            return previous + current.tickWidth;
-          }, 0);
-        const rightTickWidth = this.yAxes
-          .filter((yAxis) => yAxis.id > 2)
-          .reduce((previous, current) => {
-            return previous + current.tickWidth;
-          }, 0);
-        this.$emit(
-          'plot-y-tick-width',
-          {
-            hasMultipleLeftAxes: this.hasMultipleLeftAxes,
-            leftTickWidth,
-            rightTickWidth
-          },
-          id
-        );
       }
     },
 
@@ -1310,7 +1244,7 @@ export default {
           item: this.domainObject
         }
       });
-      this.path.forEach((pathObject, index) => {
+      this.objectPath.forEach((pathObject, index) => {
         selection.push({
           element: this.openmct.layout.$refs.browseObject.$el,
           context: {
@@ -1874,7 +1808,7 @@ export default {
           message: message,
           buttons: [
             {
-              label: 'OK',
+              label: 'Ok',
               callback: () => {
                 dialog.dismiss();
                 this.synchronizeTimeConductor();
@@ -1896,7 +1830,7 @@ export default {
 
     synchronizeTimeConductor() {
       const range = this.config.xAxis.get('displayRange');
-      this.timeContext.bounds({
+      this.timeContext.setMode(MODES.fixed, {
         start: range.min,
         end: range.max
       });

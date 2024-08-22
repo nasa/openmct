@@ -45,7 +45,6 @@
  * @param {number[]} dimFactor the dimensions factor
  * @param {number[]} the size of each grid element, in pixels
  * @constructor
- * @memberof platform/features/layout
  */
 export default function LayoutDrag(rawPosition, posFactor, dimFactor, gridSize) {
   this.rawPosition = rawPosition;

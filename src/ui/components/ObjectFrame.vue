@@ -94,7 +94,7 @@
       </div>
     </div>
 
-    <object-view
+    <ObjectView
       ref="objectView"
       class="c-so-view__object-view js-object-view js-notebook-snapshot-item"
       :show-edit-view="showEditView"

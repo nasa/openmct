@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../appActions.js';
@@ -45,23 +44,29 @@ test.describe('Visual - Example Imagery', () => {
       parent: parentLayout.uuid
     });
 
-    // Modify Example Imagery to create a really stable Example Imagery
+    // Modify Example Imagery to create a really stable image which will never let us down
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: 'More actions' }).click();
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     await page
       .locator('#imageLocation-textarea')
       .fill(
-        'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg,https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg'
+        'https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg,https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg'
       );
     await page.getByRole('button', { name: 'Save' }).click();
     await page.reload({ waitUntil: 'domcontentloaded' });
+
+    //Hide the Browse and Inspect panes to make the image more stable
     await page.getByTitle('Collapse Browse Pane').click();
     await page.getByTitle('Collapse Inspect Pane').click();
   });
 
   test('Example Imagery in Fixed Time', async ({ page, theme }) => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
+
+    // Wait for the thumbnails to finish their scroll animation
+    // (Wait until the rightmost thumbnail is in view)
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();
 
@@ -75,6 +80,9 @@ test.describe('Visual - Example Imagery', () => {
   test('Example Imagery in Real Time', async ({ page, theme }) => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
 
+    // Wait for the thumbnails to finish their scroll animation
+    // (Wait until the rightmost thumbnail is in view)
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
     await setRealTimeMode(page, true);
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();

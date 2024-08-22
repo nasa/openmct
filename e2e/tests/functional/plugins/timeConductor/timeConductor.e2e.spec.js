@@ -30,67 +30,79 @@ import {
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Time conductor operations', () => {
-  test('validate start time does not exceeds end time', async ({ page }) => {
+  test('validate start time does not exceed end time', async ({ page }) => {
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     const year = new Date().getFullYear();
 
-    let startDate = 'xxxx-01-01 01:00:00.000Z';
-    startDate = year + startDate.substring(4);
+    // Set initial valid time bounds
+    const startDate = `${year}-01-01`;
+    const startTime = '01:00:00';
+    const endDate = `${year}-01-01`;
+    const endTime = '02:00:00';
+    await setTimeConductorBounds(page, { startDate, startTime, endDate, endTime });
 
-    let endDate = 'xxxx-01-01 02:00:00.000Z';
-    endDate = year + endDate.substring(4);
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-    await setTimeConductorBounds(page, startDate, endDate);
+    // Test invalid start date
+    const invalidStartDate = `${year}-01-02`;
+    await page.getByLabel('Start date').fill(invalidStartDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('Start date').fill(startDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
 
-    // invalid start date
-    startDate = year + 1 + startDate.substring(4);
-    await setTimeConductorBounds(page, startDate);
+    // Test invalid end date
+    const invalidEndDate = `${year - 1}-12-31`;
+    await page.getByLabel('End date').fill(invalidEndDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('End date').fill(endDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
 
-    // Bring up the time conductor popup
-    const timeConductorMode = page.locator('.c-compact-tc');
-    await timeConductorMode.click();
-    const startDateLocator = page.locator('input[type="text"]').first();
-    const endDateLocator = page.locator('input[type="text"]').nth(2);
+    // Test invalid start time
+    const invalidStartTime = '42:00:00';
+    await page.getByLabel('Start time').fill(invalidStartTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('Start time').fill(startTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
 
-    await endDateLocator.click();
+    // Test invalid end time
+    const invalidEndTime = '43:00:00';
+    await page.getByLabel('End time').fill(invalidEndTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('End time').fill(endTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
 
-    const startDateValidityStatus = await startDateLocator.evaluate((element) =>
-      element.checkValidity()
+    // Submit valid time bounds
+    await page.getByLabel('Submit time bounds').click();
+
+    // Verify the submitted time bounds
+    await expect(page.getByLabel('Start bounds')).toHaveText(
+      new RegExp(`${startDate} ${startTime}.000Z`)
     );
-    expect(startDateValidityStatus).not.toBeTruthy();
-
-    // fix to valid start date
-    startDate = year - 1 + startDate.substring(4);
-    await setTimeConductorBounds(page, startDate);
-
-    // invalid end date
-    endDate = year - 2 + endDate.substring(4);
-    await setTimeConductorBounds(page, undefined, endDate);
-
-    await startDateLocator.click();
-
-    const endDateValidityStatus = await endDateLocator.evaluate((element) =>
-      element.checkValidity()
+    await expect(page.getByLabel('End bounds')).toHaveText(
+      new RegExp(`${endDate} ${endTime}.000Z`)
     );
-    expect(endDateValidityStatus).not.toBeTruthy();
   });
 });
 
-// Testing instructions:
-// Try to change the realtime offsets when in realtime (local clock) mode.
-test.describe('Time conductor input fields real-time mode', () => {
-  test('validate input fields in real-time mode', async ({ page }) => {
+test.describe('Global Time Conductor', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('Input field validation: real-time mode', async ({ page }) => {
     const startOffset = {
+      startHours: '01',
+      startMins: '29',
       startSecs: '23'
     };
 
     const endOffset = {
+      endHours: '01',
+      endMins: '30',
       endSecs: '31'
     };
-
-    // Go to baseURL
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Switch to real-time mode
     await setRealTimeMode(page);
@@ -99,13 +111,95 @@ test.describe('Time conductor input fields real-time mode', () => {
     await setStartOffset(page, startOffset);
 
     // Verify time was updated on time offset button
-    await expect(page.locator('.c-compact-tc__setting-value.icon-minus')).toContainText('00:30:23');
+    await expect(page.getByLabel('Start offset: 01:29:23')).toBeVisible();
 
     // Set end time offset
     await setEndOffset(page, endOffset);
 
     // Verify time was updated on preceding time offset button
-    await expect(page.locator('.c-compact-tc__setting-value.icon-plus')).toContainText('00:00:31');
+    await expect(page.getByLabel('End offset: 01:30:31')).toBeVisible();
+
+    // Discard changes and verify that offsets remain unchanged
+    await setStartOffset(page, {
+      startHours: '00',
+      startMins: '30',
+      startSecs: '00',
+      submitChanges: false
+    });
+
+    await expect(page.getByLabel('Start offset: 01:29:23')).toBeVisible();
+    await expect(page.getByLabel('End offset: 01:30:31')).toBeVisible();
+  });
+
+  test('Input field validation: fixed time mode', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7791'
+    });
+    // Switch to fixed time mode
+    await setFixedTimeMode(page);
+
+    // Define valid time bounds for testing
+    const validBounds = {
+      startDate: '2024-04-20',
+      startTime: '00:04:20',
+      endDate: '2024-04-20',
+      endTime: '16:04:20'
+    };
+    // Set valid time conductor bounds ✌️
+    await setTimeConductorBounds(page, validBounds);
+
+    // Verify that the time bounds are set correctly
+    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
+    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
+
+    // Open the Time Conductor Mode popup
+    await page.getByLabel('Time Conductor Mode').click();
+
+    // Test invalid start date
+    const invalidStartDate = '2024-04-21';
+    await page.getByLabel('Start date').fill(invalidStartDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('Start date').fill(validBounds.startDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Test invalid end date
+    const invalidEndDate = '2024-04-19';
+    await page.getByLabel('End date').fill(invalidEndDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('End date').fill(validBounds.endDate);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Test invalid start time
+    const invalidStartTime = '16:04:21';
+    await page.getByLabel('Start time').fill(invalidStartTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('Start time').fill(validBounds.startTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Test invalid end time
+    const invalidEndTime = '00:04:19';
+    await page.getByLabel('End time').fill(invalidEndTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
+    await page.getByLabel('End time').fill(validBounds.endTime);
+    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+
+    // Verify that the time bounds remain unchanged after invalid inputs
+    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
+    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
+
+    // Discard changes and verify that bounds remain unchanged
+    await setTimeConductorBounds(page, {
+      startDate: validBounds.startDate,
+      startTime: '04:20:00',
+      endDate: validBounds.endDate,
+      endTime: '04:20:20',
+      submitChanges: false
+    });
+
+    // Verify that the original time bounds are still displayed after discarding changes
+    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
+    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
   });
 
   /**
@@ -147,14 +241,15 @@ test.describe('Time conductor input fields real-time mode', () => {
     await setRealTimeMode(page);
 
     // Verify updated start time offset persists after mode switch
-    await expect(page.locator('.c-compact-tc__setting-value.icon-minus')).toContainText('00:30:23');
+    await expect(page.getByLabel('Start offset: 00:30:23')).toBeVisible();
 
     // Verify updated end time offset persists after mode switch
-    await expect(page.locator('.c-compact-tc__setting-value.icon-plus')).toContainText('00:00:01');
+    await expect(page.getByLabel('End offset: 00:00:01')).toBeVisible();
 
     // Verify url parameters persist after mode switch
-    expect(page.url()).toContain(`startDelta=${startDelta}`);
-    expect(page.url()).toContain(`endDelta=${endDelta}`);
+    // eslint-disable-next-line no-useless-escape
+    const urlRegex = new RegExp(`.*tc\.startDelta=${startDelta}&tc\.endDelta=${endDelta}.*`);
+    await page.waitForURL(urlRegex);
   });
 
   test.fixme(
@@ -184,31 +279,5 @@ test.describe('Time conductor input fields real-time mode', () => {
   test.fixme('time conductor history allows you to set a realtime offsets', async ({ page }) => {
     // make sure there are realtime history options
     // select an option and verify the offsets are updated correctly
-  });
-});
-
-test.describe('Time Conductor History', () => {
-  test('shows milliseconds on hover @unstable', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/4386'
-    });
-    // Navigate to Open MCT in Fixed Time Mode, UTC Time System
-    // with startBound at 2022-01-01 00:00:00.000Z
-    // and endBound at 2022-01-01 00:00:00.200Z
-    await page.goto(
-      './#/browse/mine?view=grid&tc.mode=fixed&tc.startBound=1640995200000&tc.endBound=1640995200200&tc.timeSystem=utc&hideInspector=true'
-    );
-    await page.getByRole('button', { name: 'Time Conductor Settings' }).click();
-    await page.getByRole('button', { name: 'Time Conductor History' }).hover({ trial: true });
-    await page.getByRole('button', { name: 'Time Conductor History' }).click();
-
-    // Validate history item format
-    const historyItem = page.locator('text="2022-01-01 00:00:00 + 200ms"');
-    await expect(historyItem).toBeEnabled();
-    await expect(historyItem).toHaveAttribute(
-      'title',
-      '2022-01-01 00:00:00.000 - 2022-01-01 00:00:00.200'
-    );
   });
 });

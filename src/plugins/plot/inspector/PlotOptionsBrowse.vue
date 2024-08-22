@@ -20,109 +20,55 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div v-if="loaded" class="js-plot-options-browse">
-    <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
-      <h2 class="--first" title="Plot series display properties in this object">Plot Series</h2>
-      <PlotOptionsItem v-for="series in plotSeries" :key="series.keyString" :series="series" />
-    </ul>
-    <div v-if="plotSeries.length && !isStackedPlotObject" class="grid-properties">
-      <ul
+  <ul v-if="loaded" class="js-plot-options-browse" aria-label="Plot Configuration">
+    <li v-if="showPlotSeries" class="c-tree" aria-labelledby="plot-series-header">
+      <h2 id="plot-series-header" class="--first">Plot Series</h2>
+      <ul aria-label="Plot Series Items" class="l-inspector-part">
+        <PlotOptionsItem v-for="series in plotSeries" :key="series.keyString" :series="series" />
+      </ul>
+    </li>
+    <ul v-if="showYAxisProperties" aria-label="Y Axes" class="l-inspector-part js-yaxis-properties">
+      <li
         v-for="(yAxis, index) in yAxesWithSeries"
         :key="`yAxis-${index}`"
-        class="l-inspector-part js-yaxis-properties"
-        :aria-label="
-          yAxesWithSeries.length > 1 ? `Y Axis ${yAxis.id} Properties` : 'Y Axis Properties'
-        "
+        :aria-labelledby="getYAxisHeaderId(index)"
       >
-        <h2 title="Y axis settings for this object">
+        <h2 :id="getYAxisHeaderId(index)">
           Y Axis {{ yAxesWithSeries.length > 1 ? yAxis.id : '' }}
         </h2>
-        <li class="grid-row">
-          <div class="grid-cell label" title="Manually override how the Y axis is labeled.">
-            Label
-          </div>
-          <div class="grid-cell value">{{ yAxis.label ? yAxis.label : 'Not defined' }}</div>
-        </li>
-        <li class="grid-row">
-          <div class="grid-cell label" title="Enable log mode.">Log mode</div>
-          <div class="grid-cell value">
-            {{ yAxis.logMode ? 'Enabled' : 'Disabled' }}
-          </div>
-        </li>
-        <li class="grid-row">
-          <div
-            class="grid-cell label"
-            title="Automatically scale the Y axis to keep all values in view."
+        <ul class="grid-properties" :aria-label="`Y Axis ${yAxis.id} Properties`">
+          <li
+            v-for="(prop, key) in yAxisProperties(yAxis)"
+            :key="key"
+            :aria-labelledby="getYAxisPropId(index, prop.label)"
+            class="grid-row"
+            role="grid"
           >
-            Auto scale
-          </div>
-          <div class="grid-cell value">
-            {{ yAxis.autoscale ? 'Enabled: ' + yAxis.autoscalePadding : 'Disabled' }}
-          </div>
-        </li>
-        <li v-if="!yAxis.autoscale && yAxis.rangeMin !== ''" class="grid-row">
-          <div class="grid-cell label" title="Minimum Y axis value.">Minimum value</div>
-          <div class="grid-cell value">{{ yAxis.rangeMin }}</div>
-        </li>
-        <li v-if="!yAxis.autoscale && yAxis.rangeMax !== ''" class="grid-row">
-          <div class="grid-cell label" title="Maximum Y axis value.">Maximum value</div>
-          <div class="grid-cell value">{{ yAxis.rangeMax }}</div>
-        </li>
-      </ul>
-    </div>
-    <div v-if="isStackedPlotObject || !isNestedWithinAStackedPlot" class="grid-properties">
-      <ul class="l-inspector-part js-legend-properties">
-        <h2 class="--first" title="Legend settings for this object">Legend</h2>
-        <li v-if="isStackedPlotObject" class="grid-row">
-          <div class="grid-cell label" title="Display legends per sub plot.">
-            Show legend per plot
-          </div>
-          <div class="grid-cell value">{{ showLegendsForChildren ? 'Yes' : 'No' }}</div>
-        </li>
-        <li v-if="showLegendDetails" class="grid-row">
-          <div
-            class="grid-cell label"
-            title="The position of the legend relative to the plot display area."
-          >
-            Position
-          </div>
-          <div class="grid-cell value capitalize">{{ position }}</div>
-        </li>
-        <li v-if="showLegendDetails" class="grid-row">
-          <div class="grid-cell label" title="Hide the legend when the plot is small">
-            Hide when plot small
-          </div>
-          <div class="grid-cell value">{{ hideLegendWhenSmall ? 'Yes' : 'No' }}</div>
-        </li>
-        <li v-if="showLegendDetails" class="grid-row">
-          <div class="grid-cell label" title="Show the legend expanded by default">
-            Expand by Default
-          </div>
-          <div aria-label="Expand by Default" class="grid-cell value">
-            {{ expandByDefault ? 'Yes' : 'No' }}
-          </div>
-        </li>
-        <li v-if="showLegendDetails" class="grid-row">
-          <div class="grid-cell label" title="What to display in the legend when it's collapsed.">
-            Show when collapsed:
-          </div>
-          <div class="grid-cell value">{{ valueToShowWhenCollapsed.replace('nearest', '') }}</div>
-        </li>
-        <li v-if="showLegendDetails" class="grid-row">
-          <div class="grid-cell label" title="What to display in the legend when it's expanded.">
-            Show when expanded:
-          </div>
-          <div class="grid-cell value comma-list">
-            <span v-if="showTimestampWhenExpanded">Timestamp</span>
-            <span v-if="showValueWhenExpanded">Value</span>
-            <span v-if="showMinimumWhenExpanded">Min</span>
-            <span v-if="showMaximumWhenExpanded">Max</span>
-            <span v-if="showUnitsWhenExpanded">Unit</span>
+            <div
+              :id="getYAxisPropId(index, prop.label)"
+              class="grid-cell label"
+              :title="prop.title"
+              role="gridcell"
+            >
+              {{ prop.label }}
+            </div>
+            <div class="grid-cell value" role="gridcell">{{ prop.value }}</div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <li v-if="showLegendProperties" class="grid-properties" aria-label="Legend Configuration">
+      <ul class="l-inspector-part js-legend-properties" aria-labelledby="legend-header">
+        <h2 id="legend-header" class="--first">Legend</h2>
+        <li v-for="(prop, key) in legendProperties" :key="key" class="grid-row">
+          <div class="u-contents" :aria-label="prop.label">
+            <div class="grid-cell label" :title="prop.title">{{ prop.label }}</div>
+            <div class="grid-cell value" :class="prop.class">{{ prop.value }}</div>
           </div>
         </li>
       </ul>
-    </div>
-  </div>
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -173,6 +119,60 @@ export default {
     },
     yAxesWithSeries() {
       return this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
+    },
+    showPlotSeries() {
+      return !this.isStackedPlotObject;
+    },
+    showYAxisProperties() {
+      return this.plotSeries.length && !this.isStackedPlotObject;
+    },
+    showLegendProperties() {
+      return this.isStackedPlotObject || !this.isNestedWithinAStackedPlot;
+    },
+    legendProperties() {
+      const props = {};
+
+      if (this.isStackedPlotObject) {
+        props.showLegendsForChildren = {
+          label: 'Show legend per plot',
+          title: 'Display legends per sub plot.',
+          value: this.showLegendsForChildren ? 'Yes' : 'No'
+        };
+      }
+
+      if (this.showLegendDetails) {
+        Object.assign(props, {
+          position: {
+            label: 'Position',
+            title: 'The position of the legend relative to the plot display area.',
+            value: this.position,
+            class: 'capitalize'
+          },
+          hideLegendWhenSmall: {
+            label: 'Hide when plot small',
+            title: 'Hide the legend when the plot is small',
+            value: this.hideLegendWhenSmall ? 'Yes' : 'No'
+          },
+          expandByDefault: {
+            label: 'Expand by Default',
+            title: 'Show the legend expanded by default',
+            value: this.expandByDefault ? 'Yes' : 'No'
+          },
+          valueToShowWhenCollapsed: {
+            label: 'Show when collapsed:',
+            title: "What to display in the legend when it's collapsed.",
+            value: this.valueToShowWhenCollapsed.replace('nearest', '')
+          },
+          expandedValues: {
+            label: 'Show when expanded:',
+            title: "What to display in the legend when it's expanded.",
+            value: this.getExpandedValues(),
+            class: 'comma-list'
+          }
+        });
+      }
+
+      return props;
     }
   },
   mounted() {
@@ -282,6 +282,76 @@ export default {
       if (foundYAxis) {
         foundYAxis.seriesCount = foundYAxis.seriesCount + updateCount;
       }
+    },
+    getYAxisHeaderId(index) {
+      return `yAxis-${index}-header`;
+    },
+
+    getYAxisPropId(index, label) {
+      return `y-axis-${index}-${label.toLowerCase().replace(' ', '-')}`;
+    },
+
+    yAxisAriaLabel(yAxis) {
+      return this.yAxesWithSeries.length > 1
+        ? `Y Axis ${yAxis.id} Properties`
+        : 'Y Axis Properties';
+    },
+    yAxisProperties(yAxis) {
+      const props = {
+        label: {
+          label: 'Label',
+          title: 'Manually override how the Y axis is labeled.',
+          value: yAxis.label ? yAxis.label : 'Not defined'
+        },
+        logMode: {
+          label: 'Log mode',
+          title: 'Enable log mode.',
+          value: yAxis.logMode ? 'Enabled' : 'Disabled'
+        },
+        autoscale: {
+          label: 'Auto scale',
+          title: 'Automatically scale the Y axis to keep all values in view.',
+          value: yAxis.autoscale ? `Enabled: ${yAxis.autoscalePadding}` : 'Disabled'
+        }
+      };
+
+      if (!yAxis.autoscale) {
+        if (yAxis.rangeMin !== '') {
+          props.rangeMin = {
+            label: 'Minimum value',
+            title: 'Minimum Y axis value.',
+            value: yAxis.rangeMin
+          };
+        }
+        if (yAxis.rangeMax !== '') {
+          props.rangeMax = {
+            label: 'Maximum value',
+            title: 'Maximum Y axis value.',
+            value: yAxis.rangeMax
+          };
+        }
+      }
+
+      return props;
+    },
+    getExpandedValues() {
+      const values = [];
+      if (this.showTimestampWhenExpanded) {
+        values.push('Timestamp');
+      }
+      if (this.showValueWhenExpanded) {
+        values.push('Value');
+      }
+      if (this.showMinimumWhenExpanded) {
+        values.push('Min');
+      }
+      if (this.showMaximumWhenExpanded) {
+        values.push('Max');
+      }
+      if (this.showUnitsWhenExpanded) {
+        values.push('Unit');
+      }
+      return values.join(', ');
     }
   }
 };

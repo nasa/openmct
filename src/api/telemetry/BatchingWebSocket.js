@@ -48,7 +48,6 @@ import installWorker from './WebSocketWorker.js';
  * concerns are not handled on the main event loop. This allows for performant receipt
  * and batching of messages without blocking either the UI or server.
  *
- * @memberof module:openmct.telemetry
  */
 // Shim for Internet Explorer, I mean Safari. It doesn't support requestIdleCallback, but it's in a tech preview, so it will be dropping soon.
 const requestIdleCallback =

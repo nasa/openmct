@@ -28,7 +28,6 @@
  *
  * For internal use by the mobile support bundle.
  *
- * @memberof src/plugins/DeviceClassifier
  * @private
  */
 

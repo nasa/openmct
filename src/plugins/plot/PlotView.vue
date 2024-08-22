@@ -33,30 +33,28 @@
         's-status-timeconductor-unsynced': status === 'timeconductor-unsynced'
       }"
     >
-      <progress-bar
+      <ProgressBar
         v-show="!!loading"
         class="c-telemetry-table__progress-bar"
         :model="{ progressPerc: null }"
       />
-      <mct-plot
+      <MctPlot
         ref="mctPlot"
         :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
         :init-grid-lines="gridLinesProp"
         :init-cursor-guide="cursorGuide"
         :options="options"
         :limit-line-labels="limitLineLabelsProp"
-        :parent-y-tick-width="parentYTickWidth"
         :color-palette="colorPalette"
         @loading-updated="loadingUpdated"
         @status-updated="setStatus"
         @config-loaded="updateReady"
         @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @plot-y-tick-width="onYTickWidthChange"
         @cursor-guide="onCursorGuideChange"
         @grid-lines="onGridLinesChange"
       >
-        <plot-legend
+        <PlotLegend
           v-if="configReady && hideLegend === false"
           :cursor-locked="lockHighlightPoint"
           :highlights="highlights"
@@ -64,7 +62,7 @@
           @expanded="updateExpanded"
           @position="updatePosition"
         />
-      </mct-plot>
+      </MctPlot>
     </div>
   </div>
 </template>
@@ -85,7 +83,7 @@ export default {
     PlotLegend
   },
   mixins: [stalenessMixin],
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     options: {
       type: Object,
@@ -119,16 +117,6 @@ export default {
         return undefined;
       }
     },
-    parentYTickWidth: {
-      type: Object,
-      default() {
-        return {
-          leftTickWidth: 0,
-          rightTickWidth: 0,
-          hasMultipleLeftAxes: false
-        };
-      }
-    },
     hideLegend: {
       type: Boolean,
       default() {
@@ -142,7 +130,6 @@ export default {
     'grid-lines',
     'highlights',
     'config-loaded',
-    'plot-y-tick-width',
     'cursor-guide'
   ],
   data() {
@@ -260,9 +247,6 @@ export default {
     updateReady(ready) {
       this.configReady = ready;
       this.$emit('config-loaded', ...arguments);
-    },
-    onYTickWidthChange() {
-      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
       this.$emit('cursor-guide', ...arguments);

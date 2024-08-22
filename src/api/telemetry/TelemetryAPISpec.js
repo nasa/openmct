@@ -47,7 +47,7 @@ describe('Telemetry API', () => {
     telemetryAPI = new TelemetryAPI(openmct);
   });
 
-  describe('telemetry providers', () => {
+  describe('Telemetry providers', () => {
     let telemetryProvider;
     let domainObject;
 
@@ -706,7 +706,7 @@ describe('Telemetry API', () => {
   });
 });
 
-describe('Telemetery', () => {
+describe('telemetry', () => {
   let openmct;
   let telemetryProvider;
   let telemetryAPI;

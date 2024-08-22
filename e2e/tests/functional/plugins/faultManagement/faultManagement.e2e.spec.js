@@ -62,17 +62,15 @@ test.describe('The Fault Management Plugin using example faults', () => {
     await selectFaultItem(page, 1);
 
     await page.getByRole('tab', { name: 'Config' }).click();
-    const selectedFaultName = await page
-      .locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname')
-      .textContent();
-    const inspectorFaultNameCount = await page
-      .locator(`.c-inspector__properties >> :text("${selectedFaultName}")`)
-      .count();
+
+    const inspectorFaultName = page
+      .getByLabel('Source inspector properties')
+      .getByLabel('inspector property value');
 
     await expect(
       page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').first()
     ).toHaveClass(/is-selected/);
-    expect(inspectorFaultNameCount).toEqual(1);
+    await expect(inspectorFaultName).toHaveCount(1);
   });
 
   test('When selecting multiple faults, no specific fault information is shown in the inspector', async ({
@@ -110,13 +108,13 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     // check it is removed from standard view
     const afterShelvedFault = getFaultByName(page, shelvedFaultName);
-    expect(await afterShelvedFault.count()).toBe(0);
+    await expect(afterShelvedFault).toHaveCount(0);
 
     await changeViewTo(page, 'shelved');
 
     const shelvedViewFault = getFaultByName(page, shelvedFaultName);
 
-    expect(await shelvedViewFault.count()).toBe(1);
+    await expect(shelvedViewFault).toHaveCount(1);
   });
 
   test('Allows you to acknowledge a fault', async ({ page }) => {

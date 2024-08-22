@@ -52,8 +52,8 @@ test.describe('Overlay Plot', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
 
     // navigate to plot series color palette
-    await page.click('.l-browse-bar__actions__edit');
-    await page.locator('li.c-tree__item.menus-to-left .c-disclosure-triangle').click();
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Expand Sine Wave Generator:').click();
     await page.locator('.c-click-swatch--menu').click();
     await page.locator('.c-palette__item[style="background: rgb(255, 166, 61);"]').click();
     // gets color for swatch located in legend
@@ -91,9 +91,9 @@ test.describe('Overlay Plot', () => {
     // Assert that the legend is collapsed by default
     await expect(page.getByLabel('Plot Legend Collapsed')).toBeVisible();
     await expect(page.getByLabel('Plot Legend Expanded')).toBeHidden();
-    await expect(page.getByLabel('Expand by Default')).toHaveText('No');
+    await expect(page.getByLabel('Expand by Default')).toHaveText(/No/);
 
-    expect(await page.getByLabel('Plot Legend Item').count()).toBe(3);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
 
     // Change the legend to expand by default
     await page.getByLabel('Edit Object').click();
@@ -106,7 +106,7 @@ test.describe('Overlay Plot', () => {
     await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
-    await expect(page.getByLabel('Expand by Default')).toHaveText('Yes');
+    await expect(page.getByLabel('Expand by Default')).toHaveText(/Yes/);
     await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
 
     // Assert that the legend is expanded on page load
@@ -116,7 +116,7 @@ test.describe('Overlay Plot', () => {
     await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
     await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
-    await expect(page.getByLabel('Expand by Default')).toHaveText('Yes');
+    await expect(page.getByLabel('Expand by Default')).toHaveText(/Yes/);
     await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
   });
 
@@ -136,23 +136,16 @@ test.describe('Overlay Plot', () => {
     await page.goto(overlayPlot.url);
 
     // Assert that no limit lines are shown by default
-    await page.waitForSelector('.js-limit-area', { state: 'attached' });
-    expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
+    await page.locator('.js-limit-area').waitFor({ state: 'attached' });
+    await expect(page.locator('.c-plot-limit-line')).toHaveCount(0);
 
     // Enter edit mode
     await page.getByLabel('Edit Object').click();
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('[title="Display limit lines"]~div input')
-      .check();
+    await page.getByLabel('Expand Sine Wave Generator:').click();
+    await page.getByLabel('Limit lines').check();
 
     await assertLimitLinesExistAndAreVisible(page);
 
@@ -207,29 +200,21 @@ test.describe('Overlay Plot', () => {
     await page.goto(overlayPlot.url);
 
     // Assert that no limit lines are shown by default
-    await page.waitForSelector('.js-limit-area', { state: 'attached' });
-    expect(await page.locator('.c-plot-limit-line').count()).toBe(0);
+    await expect(page.locator('.js-limit-area')).toBeAttached();
+    await expect(page.locator('.c-plot-limit-line')).toHaveCount(0);
 
     // Enter edit mode
     await page.getByLabel('Edit Object').click();
 
     // Expand the "Sine Wave Generator" plot series options and enable limit lines
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .getByRole('checkbox', { name: 'Limit lines' })
-      .check();
+    await page.getByLabel('Expand Sine Wave Generator:').click();
+    await page.getByLabel('Limit lines').check();
 
     await assertLimitLinesExistAndAreVisible(page);
 
-    // Save (exit edit mode)
-    await page.locator('button[title="Save"]').click();
-    await page.locator('li[title="Save and Finish Editing"]').click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     const initialCoords = await assertLimitLinesExistAndAreVisible(page);
     // Resize the chart container by showing the snapshot pane.
@@ -324,32 +309,26 @@ test.describe('Overlay Plot', () => {
     expect(yAxis3Group.getByRole('listitem').nth(0).getByText(swgB.name)).toBeTruthy();
   });
 
-  test.fixme(
-    'Clicking on an item in the elements pool brings up the plot preview with data points',
-    async ({ page }) => {
-      test.info().annotations.push({
-        type: 'issue',
-        description: 'https://github.com/nasa/openmct/issues/7421'
-      });
+  test('Clicking on an item in the elements pool brings up the plot preview with data points', async ({
+    page
+  }) => {
+    const swgA = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
 
-      const swgA = await createDomainObjectWithDefaults(page, {
-        type: 'Sine Wave Generator',
-        parent: overlayPlot.uuid
-      });
+    await page.goto(overlayPlot.url);
+    // Wait for plot series data to load and be drawn
+    await waitForPlotsToRender(page);
+    await page.getByLabel('Edit Object').click();
 
-      await page.goto(overlayPlot.url);
-      // Wait for plot series data to load and be drawn
-      await waitForPlotsToRender(page);
-      await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Elements' }).click();
 
-      await page.getByRole('tab', { name: 'Elements' }).click();
-
-      await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
-      const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
-      const plotPixelSize = plotPixels.length;
-      expect(plotPixelSize).toBeGreaterThan(0);
-    }
-  );
+    await page.locator(`#inspector-elements-tree >> text=${swgA.name}`).click();
+    const plotPixels = await getCanvasPixels(page, '.js-overlay canvas');
+    const plotPixelSize = plotPixels.length;
+    expect(plotPixelSize).toBeGreaterThan(0);
+  });
 
   test('Can remove an item via the elements pool action menu', async ({ page }) => {
     const swgA = await createDomainObjectWithDefaults(page, {
@@ -372,7 +351,7 @@ test.describe('Overlay Plot', () => {
     await expect(swgAElementsPoolItem).toBeVisible();
     await swgAElementsPoolItem.click({ button: 'right' });
     await page.getByRole('menuitem', { name: 'Remove' }).click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     await expect(swgAElementsPoolItem).toBeHidden();
 
     await page.getByRole('button', { name: 'Save' }).click();
@@ -402,7 +381,7 @@ async function assertLimitLinesExistAndAreVisible(page) {
   // Wait for plot series data to load
   await waitForPlotsToRender(page);
   // Wait for limit lines to be created
-  await page.waitForSelector('.js-limit-area', { state: 'attached' });
+  await page.locator('.js-limit-area').waitFor({ state: 'attached' });
   // There should be 10 limit lines created by default
   await expect(page.locator('.c-plot-limit-line')).toHaveCount(10);
   const limitLineCount = await page.locator('.c-plot-limit-line').count();

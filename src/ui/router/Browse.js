@@ -19,15 +19,36 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-export default class Browse {
+class Browse {
+  /**
+   * @type {number}
+   */
   #navigateCall = 0;
+  /**
+   * @type {Object?}
+   */
   #browseObject = null;
+  /**
+   * @type {Function | undefined}
+   */
   #unobserve = undefined;
+  /**
+   * @type {string | undefined}
+   */
   #currentObjectPath = undefined;
+  /**
+   * @type {boolean}
+   */
   #isRoutingInProgress = false;
+  /**
+   * @type {import('../../../openmct').OpenMCT}
+   */
   #openmct;
 
+  /**
+   *
+   * @param {import('../../../openmct').OpenMCT} openmct
+   */
   constructor(openmct) {
     this.#openmct = openmct;
     this.#openmct.router.route(/^\/browse\/?$/, this.#navigateToFirstChildOfRoot.bind(this));
@@ -165,3 +186,5 @@ export default class Browse {
     this.#navigateToPath(navigatePath, params.view);
   }
 }
+
+export default Browse;

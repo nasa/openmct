@@ -76,7 +76,7 @@
       class="c-tabs-view__object-holder"
       :class="{ 'c-tabs-view__object-holder--hidden': !isCurrent(tab) }"
     >
-      <object-view
+      <ObjectView
         v-if="shouldLoadTab(tab)"
         class="c-tabs-view__object"
         :default-object="tab.domainObject"
@@ -91,7 +91,6 @@ import _ from 'lodash';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import ObjectView from '../../../ui/components/ObjectView.vue';
-import RemoveAction from '../../remove/RemoveAction.js';
 
 const unknownObjectType = {
   definition: {
@@ -171,7 +170,6 @@ export default {
     this.updateCurrentTab = this.updateCurrentTab.bind(this);
     this.openmct.router.on('change:params', this.updateCurrentTab);
 
-    this.RemoveAction = new RemoveAction(this.openmct);
     document.addEventListener('dragstart', this.dragstart);
     document.addEventListener('dragend', this.dragend);
   },
@@ -255,7 +253,7 @@ export default {
         message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
         buttons: [
           {
-            label: 'OK',
+            label: 'Ok',
             emphasis: 'true',
             callback: () => {
               this.composition.remove(childDomainObject);

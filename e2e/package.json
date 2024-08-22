@@ -10,18 +10,18 @@
     }
   },
   "scripts": {
-    "pretest:visual": "npm install",
     "test": "npx playwright test",
     "test:visual": "percy exec"
   },
   "devDependencies": {
-    "@types/sinonjs__fake-timers": "8.1.5",
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
-    "@playwright/test": "1.42.1",
-    "@axe-core/playwright": "4.8.5",
-    "sinon": "17.0.0"
+    "@playwright/test": "1.45.2",
+    "@axe-core/playwright": "4.8.5"
   },
-  "author": "NASA Ames Research Center",
+  "author": {
+    "name": "National Aeronautics and Space Administration",
+    "url": "https://www.nasa.gov"
+  },
   "license": "Apache-2.0"
 }
