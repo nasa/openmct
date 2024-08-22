@@ -190,7 +190,7 @@ function reloadParameters() {
 }
 
 function updateParameters() {
-  domainObject.configuration.comps.parameters = parameters.value;
+  openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
 }
@@ -205,7 +205,7 @@ function toggleTestData() {
 }
 
 function updateExpression() {
-  domainObject.configuration.comps.expression = expression.value;
+  openmct.objects.mutate(domainObject, `configuration.comps.expression`, expression.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
 }
