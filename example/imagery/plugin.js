@@ -150,15 +150,25 @@ function getCompassValues(min, max) {
   return min + Math.random() * (max - min);
 }
 
+/**
+ * @param {ImageryConfiguration} configuration
+ * @returns {string[]}
+ */
 function getImageSamples(configuration) {
   let imageSamples = DEFAULT_IMAGE_SAMPLES;
-  const { imageLocation } = configuration;
 
-  if (imageLocation && imageLocation.length) {
-    imageSamples = imageLocation;
-  }
+  imageSamples = getImageLocations(configuration) ?? imageSamples;
 
   return imageSamples;
+}
+
+/**
+ * @param {ImageryConfiguration} configuration
+ * @returns {string[] | undefined}
+ */
+function getImageLocations(configuration) {
+  const imageLocations = configuration?.imageLocation?.split(',');
+  return imageLocations;
 }
 
 function getImageLoadDelay(domainObject) {
@@ -271,3 +281,16 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
     imageDownloadName
   };
 }
+
+/**
+ * @typedef {import('openmct').DomainObject} DomainObject
+ */
+
+/**
+ * @typedef {Object} ImageryConfiguration
+ * @property {string} imageLocation - Comma-separated list of image URLs
+ * @property {number} imageLoadDelayInMilliSeconds - Delay between image loads in milliseconds
+ * @property {Array<string>} imageSamples - Array of image URLs
+ * @property {Array<Object>} layers - Array of layer objects
+ */
+
