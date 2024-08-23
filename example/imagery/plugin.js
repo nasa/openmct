@@ -146,8 +146,15 @@ export default function () {
   };
 }
 
+/**
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
 function getCompassValues(min, max) {
-  return min + Math.random() * (max - min);
+  // Seed the random value by current time so we can get a consistent value for testing when we mock
+  // the clock
+  return min + Math.random(Date.now()) * (max - min);
 }
 
 /**
