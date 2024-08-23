@@ -176,10 +176,13 @@ function getImageSamples(configuration) {
 
 /**
  * @param {ImageryConfiguration} configuration
- * @returns {string[] | undefined}
+ * @returns {string[]?}
  */
 function getImageLocations(configuration) {
-  const imageLocations = configuration?.imageLocation?.split(',');
+  let imageLocations = null;
+  if (configuration.imageLocation) {
+    imageLocations = configuration.imageLocation.split(',');
+  }
   return imageLocations;
 }
 
