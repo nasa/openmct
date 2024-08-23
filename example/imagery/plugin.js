@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 import DEFAULT_IMAGE_SAMPLES from '@/../example/imagery/exampleImages.js';
 import Layer16x9 from '@/plugins/imagery/layers/example-imagery-layer-16x9.png';
 import LayerSafe from '@/plugins/imagery/layers/example-imagery-layer-safe.png';
@@ -27,8 +28,12 @@ import LayerScale from '@/plugins/imagery/layers/example-imagery-layer-scale.png
 const DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 20000;
 const MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 5000;
 
+/** @type {import('openmct').OpenMCT} */
 let openmctInstance;
 
+/**
+ * @returns {function(import('openmct').OpenMCT): void}
+ */
 export default function () {
   return function install(openmct) {
     openmctInstance = openmct;
@@ -178,6 +183,10 @@ function getImageLocations(configuration) {
   return imageLocations;
 }
 
+/**
+ * @param {DomainObject} domainObject
+ * @returns {number}
+ */
 function getImageLoadDelay(domainObject) {
   const imageLoadDelay = Math.trunc(
     Number(domainObject.configuration.imageLoadDelayInMilliSeconds)
@@ -205,6 +214,10 @@ function getImageLoadDelay(domainObject) {
   return imageLoadDelay;
 }
 
+/**
+ * @param {import('openmct').OpenMCT} openmct
+ * @returns {TelemetryProvider}
+ */
 function getRealtimeProvider(openmct) {
   return {
     supportsSubscribe: (domainObject) => domainObject.type === 'example.imagery',
@@ -223,6 +236,10 @@ function getRealtimeProvider(openmct) {
   };
 }
 
+/**
+ * @param {import('openmct').OpenMCT} openmct
+ * @returns {HistoricalProvider}
+ */
 function getHistoricalProvider(openmct) {
   return {
     supportsRequest: (domainObject, options) => {
@@ -245,6 +262,10 @@ function getHistoricalProvider(openmct) {
   };
 }
 
+/**
+ * @param {import('openmct').OpenMCT} openmct
+ * @returns {LadProvider}
+ */
 function getLadProvider(openmct) {
   return {
     supportsRequest: (domainObject, options) => {
@@ -264,6 +285,13 @@ function getLadProvider(openmct) {
   };
 }
 
+/**
+ * @param {number} timestamp
+ * @param {string} name
+ * @param {string[]} imageSamples
+ * @param {number} delay
+ * @returns {TelemetryDatum}
+ */
 function pointForTimestamp(timestamp, name, imageSamples, delay) {
   const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
   const urlItems = url.split('/');
@@ -301,3 +329,33 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
  * @property {Array<Object>} layers - Array of layer objects
  */
 
+/**
+ * @typedef {Object} TelemetryDatum
+ * @property {string} name
+ * @property {number} utc
+ * @property {number} local
+ * @property {string} url
+ * @property {number} sunOrientation
+ * @property {number} cameraAzimuth
+ * @property {number} heading
+ * @property {Object} transformations
+ * @property {string} imageDownloadName
+ */
+
+/**
+ * @typedef {Object} TelemetryProvider
+ * @property {function(DomainObject): boolean} supportsSubscribe
+ * @property {function(DomainObject, function(TelemetryDatum): void): function(): void} subscribe
+ */
+
+/**
+ * @typedef {Object} HistoricalProvider
+ * @property {function(DomainObject, Object): boolean} supportsRequest
+ * @property {function(DomainObject, Object): Promise<TelemetryDatum[]>} request
+ */
+
+/**
+ * @typedef {Object} LadProvider
+ * @property {function(DomainObject, Object): boolean} supportsRequest
+ * @property {function(DomainObject, Object): Promise<TelemetryDatum[]>} request
+ */
