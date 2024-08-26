@@ -16,7 +16,7 @@
   ],
   "devDependencies": {
     "@babel/eslint-parser": "7.23.3",
-    "@braintree/sanitize-url": "6.0.4",
+    "@braintree/sanitize-url": "7.1.0",
     "@types/d3-axis": "3.0.6",
     "@types/d3-scale": "4.0.8",
     "@types/d3-selection": "3.0.10",
