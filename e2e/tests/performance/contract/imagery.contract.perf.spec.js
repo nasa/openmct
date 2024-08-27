@@ -164,7 +164,7 @@ test.describe('Performance tests', () => {
     await page.evaluate(() => window.performance.mark('background-image-visible'));
 
     // Get Current number of images in thumbstrip
-    await page.locator('.c-imagery__thumb').waitFor({ state: 'visible' });
+    await expect(page.locator('.c-imagery__thumb').last()).toBeInViewport();
     const thumbCount = await page.locator('.c-imagery__thumb').count();
     console.log('number of thumbs rendered ' + thumbCount);
     await page.locator('.c-imagery__thumb').last().click();
