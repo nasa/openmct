@@ -47,14 +47,15 @@ test.describe('Bar Graph', () => {
       name: `swg-${uuid()}`,
       parent: barGraph.uuid
     });
-    const getRequestOptionPromise = addTelemetryInterceptor(page);
+    const getRequestOptionsPromise = addTelemetryInterceptor(page);
 
     // Navigate to the bar graph and verify that
     await page.goto(barGraph.url, { waitUntil: 'domcontentloaded' });
     await page.getByRole('tab', { name: 'Config' }).click();
 
-    const requestOption = await getRequestOptionPromise;
-    await expect(requestOption).toBe('latest');
+    const requestOptions = await getRequestOptionsPromise;
+    await expect(requestOptions.strategy).toBe('latest');
+    await expect(requestOptions.size).toBe(1);
   });
 });
 
@@ -63,8 +64,8 @@ test.describe('Bar Graph', () => {
  * @param {import('@playwright/test').Page} page
  */
 async function addTelemetryInterceptor(page) {
-  const getRequestOptionPromise = new Promise((resolve) =>
-    page.exposeFunction('getRequestOption', resolve)
+  const getRequestOptionsPromise = new Promise((resolve) =>
+    page.exposeFunction('getRequestOptions', resolve)
   );
 
   await page.evaluate(() => {
@@ -74,7 +75,10 @@ async function addTelemetryInterceptor(page) {
           return true;
         },
         invoke: (request) => {
-          window.getRequestOption(request.strategy);
+          window.getRequestOptions({
+            strategy: request.strategy,
+            size: request.size
+          });
           return request;
         }
       };
@@ -82,5 +86,5 @@ async function addTelemetryInterceptor(page) {
     window.openmct.telemetry.addRequestInterceptor(requestOptionsChecker());
   });
 
-  return getRequestOptionPromise;
+  return getRequestOptionsPromise;
 }
