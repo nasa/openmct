@@ -193,7 +193,7 @@ function updateExpression() {
 
 function getValueFormatter() {
   const metaData = openmct.telemetry.getMetadata(domainObject);
-  const outputMetaDatum = metaData.values().find((metaDatum) => metaDatum.key === 'comps-output');
+  const outputMetaDatum = metaData.values().find((metaDatum) => metaDatum.key === 'compsOutput');
   return openmct.telemetry.getValueFormatter(outputMetaDatum);
 }
 

@@ -83,8 +83,8 @@ function calculate(dataFrame, parameters, expression) {
     if (missingData) {
       return;
     }
-    const output = evaluate(expression, scope);
-    sumResults.push({ [referenceParameter.timeKey]: referenceTime, output });
+    const compsOutput = evaluate(expression, scope);
+    sumResults.push({ [referenceParameter.timeKey]: referenceTime, compsOutput });
   });
   return sumResults;
 }
