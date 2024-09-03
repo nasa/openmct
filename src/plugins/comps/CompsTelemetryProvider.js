@@ -82,7 +82,7 @@ export default class CompsTelemetryProvider {
   }
 
   #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
-    if (!specificCompsManager.isValid()) {
+    if (!specificCompsManager.isValid() || !specificCompsManager.isLoaded()) {
       return;
     }
     const expression = specificCompsManager.getExpression();

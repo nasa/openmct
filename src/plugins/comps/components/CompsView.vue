@@ -49,14 +49,7 @@
           <span class="c-toggle-switch__label">Apply Test Values</span>
         </label>
       </div>
-      <div
-        :class="{ 'is-active-dragging': isDragging }"
-        class="c-cs__content"
-        @drop="drop($event)"
-        @dragover.prevent
-        @dragstart="dragStart($event)"
-        @dragleave="dragLeave($event)"
-      >
+      <div class="c-cs__content">
         <div class="hint" :class="{ 's-status-icon-warning-lo': !parameters?.length && isEditing }">
           <div v-for="parameter in parameters" :key="parameter.name" class="telemery-reference">
             Reference
@@ -143,7 +136,7 @@ const testDataApplied = ref(false);
 const parameters = ref(null);
 const expression = ref(null);
 const expressionOutput = ref(null);
-const isDragging = ref(false);
+const outputFormat = ref(null);
 
 let outputTelemetryCollection;
 
@@ -159,6 +152,7 @@ onBeforeMount(async () => {
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
+  outputFormat.value = compsManager.getOutputFormat();
   compsManager.on('parametersUpdated', reloadParameters);
   outputTelemetryCollection.load();
   applyTestData();
@@ -169,19 +163,6 @@ onBeforeUnmount(() => {
   outputTelemetryCollection.off('clear', clearData);
   outputTelemetryCollection.destroy();
 });
-
-function drop(event) {
-  isDragging.value = false;
-  console.debug('🚀 CompsView: drop', event);
-}
-
-function dragStart(event) {
-  isDragging.value = true;
-}
-
-function dragLeave(event) {
-  isDragging.value = false;
-}
 
 function reloadParameters() {
   parameters.value = compsManager.getParameters();
@@ -210,6 +191,12 @@ function updateExpression() {
   applyTestData();
 }
 
+function getValueFormatter() {
+  const metaData = openmct.telemetry.getMetadata(domainObject);
+  const outputMetaDatum = metaData.values().find((metaDatum) => metaDatum.key === 'comps-output');
+  return openmct.telemetry.getValueFormatter(outputMetaDatum);
+}
+
 function applyTestData() {
   const scope = parameters.value.reduce((acc, parameter) => {
     acc[parameter.name] = parameter.testValue;
@@ -217,7 +204,8 @@ function applyTestData() {
   }, {});
   try {
     const testOutput = evaluate(expression.value, scope);
-    currentTestOutput.value = testOutput;
+    const formattedData = getValueFormatter().format(testOutput);
+    currentTestOutput.value = formattedData;
     expressionOutput.value = null;
     compsManager.setValid(true);
   } catch (error) {
@@ -233,7 +221,9 @@ function telemetryProcessor(data) {
     return;
   }
   // new data will come in as array, so just take the last element
-  currentCompOutput.value = data[data.length - 1]?.output;
+  const currentOutput = data[data.length - 1]?.output;
+  const formattedOutput = getValueFormatter().format(currentOutput);
+  currentCompOutput.value = formattedOutput;
 }
 
 function clearData() {

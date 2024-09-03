@@ -110,6 +110,10 @@ export default class CompsManager extends EventEmitter {
     this.#domainObject = passedDomainObject;
   }
 
+  isLoaded() {
+    return this.#loaded;
+  }
+
   async load() {
     if (!this.#loaded) {
       await this.#loadComposition();
@@ -234,6 +238,10 @@ export default class CompsManager extends EventEmitter {
 
   #clearData() {
     console.debug('Clear Data');
+  }
+
+  getOutputFormat() {
+    return this.#domainObject.configuration.comps.outputFormat;
   }
 
   getExpression() {

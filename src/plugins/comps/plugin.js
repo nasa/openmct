@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import CompsInspectorViewProvider from './CompsInspectorViewProvider.js';
 import CompsMetadataProvider from './CompsMetadataProvider.js';
 import CompsTelemetryProvider from './CompsTelemetryProvider.js';
 import CompsViewProvider from './CompsViewProvider.js';
@@ -55,5 +56,6 @@ export default function CompsPlugin() {
     openmct.telemetry.addProvider(new CompsMetadataProvider(openmct, compsManagerPool));
     openmct.telemetry.addProvider(new CompsTelemetryProvider(openmct, compsManagerPool));
     openmct.objectViews.addProvider(new CompsViewProvider(openmct, compsManagerPool));
+    openmct.inspectorViews.addProvider(new CompsInspectorViewProvider(openmct, compsManagerPool));
   };
 }

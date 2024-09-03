@@ -58,10 +58,10 @@ export default class CompsMetadataProvider {
     const metaDataToReturn = {
       values: this.getDomains().concat([
         {
-          key: 'output',
-          source: 'output',
+          key: 'comps-output',
+          source: 'comps-output',
           name: 'Output',
-          formatString: '%0.2f',
+          formatString: specificCompsManager.getOutputFormat(),
           hints: {
             range: 1
           }
