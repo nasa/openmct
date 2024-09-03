@@ -33,7 +33,7 @@
         v-if="domainObject"
         ref="telemetryViewWrapper"
         class="c-telemetry-view u-style-receiver"
-        :class="[itemClasses]"
+        :class="classNames"
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
@@ -151,7 +151,7 @@ export default {
     };
   },
   computed: {
-    itemClasses() {
+    classNames() {
       let classes = [];
 
       if (this.status) {
@@ -160,6 +160,10 @@ export default {
 
       if (this.isStale) {
         classes.push('is-stale');
+      }
+
+      if (this.itemStyle?.isStyleInvisible) {
+        classes.push(this.itemStyle.isStyleInvisible);
       }
 
       return classes;

@@ -29,7 +29,7 @@
     @end-move="endMove"
   >
     <template #content>
-      <div class="c-image-view" :style="style"></div>
+      <div :class="classNames" :style="style"></div>
     </template>
   </LayoutFrame>
 </template>
@@ -92,6 +92,13 @@ export default {
         backgroundImage,
         border
       };
+    },
+    classNames() {
+      let classes = ['c-image-view'];
+      if (this.itemStyle?.isStyleInvisible) {
+        classes.push(this.itemStyle.isStyleInvisible);
+      }
+      return classes;
     }
   },
   watch: {
