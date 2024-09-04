@@ -21,16 +21,17 @@
 -->
 <template>
   <div class="c-ctrl-wrapper">
-    <div
+    <button
       class="c-icon-button c-icon-button--menu"
       :class="options.icon"
       :title="options.title"
+      :aria-label="options.label"
       @click="toggle"
     >
-      <div v-if="options.label" class="c-icon-button__label">
+      <span v-if="options.label" class="c-icon-button__label">
         {{ options.label }}
-      </div>
-    </div>
+      </span>
+    </button>
     <div v-if="open" class="c-menu" role="menu">
       <ul>
         <li
