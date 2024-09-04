@@ -30,7 +30,7 @@
   >
     <template #content>
       <div
-        v-if="domainObject"
+        v-show="domainObject && !itemStyle?.isStyleInvisible"
         ref="telemetryViewWrapper"
         class="c-telemetry-view u-style-receiver"
         :class="classNames"
@@ -160,10 +160,6 @@ export default {
 
       if (this.isStale) {
         classes.push('is-stale');
-      }
-
-      if (this.itemStyle?.isStyleInvisible) {
-        classes.push(this.itemStyle.isStyleInvisible);
       }
 
       return classes;
