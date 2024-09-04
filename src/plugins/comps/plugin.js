@@ -32,9 +32,9 @@ export default function CompsPlugin() {
       name: 'Derived Telemetry',
       key: 'comps',
       description:
-        'Add one or more telemetry objects, apply a mathematical operation to them, and republish the result as a new telemetry object.',
+        'Add one or more telemetry end points, apply a mathematical operation to them, and output the result as new telemetry.',
       creatable: true,
-      cssClass: 'icon-telemetry',
+      cssClass: 'icon-derived-telemetry',
       initialize: function (domainObject) {
         domainObject.configuration = {
           comps: {
