@@ -315,12 +315,10 @@ test.describe('Generate Conditional Styling Data @localStorage @generatedata', (
     await page.getByLabel('Condition Output Type').first().selectOption('String');
     await page.getByLabel('Condition Output String').first().fill('Test Condition Met');
 
-    // Condition: True if sine value >= 0 (roughly half the time)
+    // Condition: True if sine value > 0 (half the time)
     await page.getByLabel('Criterion Telemetry Selection').selectOption(swg.name);
     await page.getByLabel('Criterion Metadata Selection').selectOption('Sine');
-    await page
-      .getByLabel('Criterion Comparison Selection')
-      .selectOption('is greater than or equal to');
+    await page.getByLabel('Criterion Comparison Selection').selectOption('is greater than');
     await page.getByLabel('Criterion Input').first().fill('0');
 
     // Rename default condition
