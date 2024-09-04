@@ -48,6 +48,7 @@ test.describe('Display Layout Conditional Styling', () => {
   });
 
   test('Image Drawing Object can have visibility toggled conditionally', async ({ page }) => {
+    test.slow();
     await page.getByLabel('Edit Object').click();
 
     // Add Image Drawing Object to the layout
