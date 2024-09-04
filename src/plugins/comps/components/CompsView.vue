@@ -51,12 +51,17 @@
       </div>
       <div class="c-cs__content">
         <div class="hint" :class="{ 's-status-icon-warning-lo': !parameters?.length && isEditing }">
-          <div v-for="parameter in parameters" :key="parameter.name" class="telemery-reference">
+          <div
+            v-for="parameter in parameters"
+            :key="parameter.keyString"
+            class="telemery-reference"
+          >
             Reference
             <input
               v-if="isEditing"
               v-model="parameter.name"
               class="telemery-reference-variable-input"
+              @change="updateParameters"
             />
             <div v-else>&nbsp;{{ parameter.name }}</div>
             <ObjectPath
@@ -181,6 +186,7 @@ function reloadParameters() {
 }
 
 function updateParameters() {
+  console.debug('🚀 CompsView: updateParameters', parameters.value);
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
@@ -235,7 +241,7 @@ function telemetryProcessor(data) {
     return;
   }
   // new data will come in as array, so just take the last element
-  const currentOutput = data[data.length - 1]?.output;
+  const currentOutput = data[data.length - 1]?.compsOutput;
   const formattedOutput = getValueFormatter().format(currentOutput);
   currentCompOutput.value = formattedOutput;
 }
