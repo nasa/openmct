@@ -485,9 +485,9 @@ export default class TelemetryCollection extends EventEmitter {
     this.boundedTelemetry = [];
     this.futureBuffer = [];
 
-    this.emit('clear');
+    const telemetryLoadPromise = this._requestHistoricalTelemetry();
 
-    this._requestHistoricalTelemetry();
+    this.emit('clear', telemetryLoadPromise);
   }
 
   /**

@@ -62,7 +62,17 @@
             <ObjectPath
               :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
             />
-            {{ compsManager.getTelemetryObjectForParameter(parameter.keyString)?.name }}
+            <div class="parametery-telemetry">
+              <div
+                class="parameter-telemetry-icon"
+                :class="
+                  getIconForType(compsManager.getTelemetryObjectForParameter(parameter.keyString))
+                "
+              />
+              <div class="parametery-telemetry-name">
+                {{ compsManager.getTelemetryObjectForParameter(parameter.keyString)?.name }}
+              </div>
+            </div>
             <!-- drop down to select value from telemetry -->
             <select v-if="isEditing" v-model="parameter.valueToUse" @change="updateParameters">
               <option
@@ -174,6 +184,10 @@ function updateParameters() {
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
+}
+
+function getIconForType(telemetryObject) {
+  return openmct.types.get(telemetryObject.type).definition.cssClass;
 }
 
 function toggleTestData() {

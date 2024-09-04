@@ -77,17 +77,17 @@ export default class CompsTelemetryProvider {
           callbackID
         };
         this.#sharedWorker.port.postMessage(payload);
+        console.debug('🧮 Comps Telemetry Provider: sending request request (bleh)', payload);
       });
     });
   }
 
   #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
-    if (!specificCompsManager.isValid() || !specificCompsManager.isLoaded()) {
+    if (!specificCompsManager.isReady()) {
       return;
     }
     const expression = specificCompsManager.getExpression();
     const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
-    // TODO: this is nasty. instead figure out why a proxy is getting in here
     const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
     const payload = {
       type: 'calculateSubscription',
@@ -96,7 +96,7 @@ export default class CompsTelemetryProvider {
       parameters,
       callbackID
     };
-    console.debug('🧮 Comps Telemetry Provider: sending calculation request', payload);
+    console.debug('🧮 Comps Telemetry Provider: sending subscription request', payload);
     this.#sharedWorker.port.postMessage(payload);
   }
 
