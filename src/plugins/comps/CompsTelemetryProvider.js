@@ -77,7 +77,10 @@ export default class CompsTelemetryProvider {
           callbackID
         };
         this.#sharedWorker.port.postMessage(payload);
-        console.debug('🧮 Comps Telemetry Provider: sending request request (bleh)', payload);
+        console.debug(
+          '🧮 Comps Telemetry Provider: sending request request (double request!)',
+          payload
+        );
       });
     });
   }
