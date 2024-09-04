@@ -287,7 +287,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 });
 
 test.describe('Generate Conditional Styling Data @localStorage @generatedata', () => {
-  test('Generate basic condition set', async ({ page, context }) => {
+  test.only('Generate basic condition set', async ({ page, context }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Create a Condition Set
     const conditionSet = await createDomainObjectWithDefaults(page, {
@@ -302,7 +302,7 @@ test.describe('Generate Conditional Styling Data @localStorage @generatedata', (
     await page.goto(swg.url);
     await page.getByLabel('More actions').click();
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
-    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('10');
+    await page.getByLabel('Period', { exact: true }).fill('5');
     await page.getByLabel('Save').click();
 
     // Edit the Condition Set
