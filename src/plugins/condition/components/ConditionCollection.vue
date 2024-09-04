@@ -27,14 +27,16 @@
     aria-label="Condition Set Condition Collection"
   >
     <div class="c-cs__header c-section__header">
-      <span
+      <button
         class="c-disclosure-triangle c-tree__item__view-control is-enabled"
         :class="{ 'c-disclosure-triangle--expanded': expanded }"
-        @click="expanded = !expanded"
-      ></span>
+        :aria-expanded="expanded"
+        aria-controls="conditionContent"
+        @click="toggleExpanded"
+      ></button>
       <div class="c-cs__header-label c-section__label">Conditions</div>
     </div>
-    <div v-if="expanded" class="c-cs__content">
+    <div v-if="expanded" id="conditionContent" class="c-cs__content">
       <div
         v-show="isEditing"
         class="hint"
@@ -54,9 +56,10 @@
         v-show="isEditing"
         id="addCondition"
         class="c-button c-button--major icon-plus labeled"
+        aria-labelledby="addConditionButtonLabel"
         @click="addCondition"
       >
-        <span class="c-cs-button__label">Add Condition</span>
+        <span id="addConditionButtonLabel" class="c-cs-button__label">Add Condition</span>
       </button>
 
       <div class="c-cs__conditions-h" :class="{ 'is-active-dragging': isDragging }">

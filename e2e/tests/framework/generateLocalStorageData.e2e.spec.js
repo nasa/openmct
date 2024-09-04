@@ -286,6 +286,57 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
   });
 });
 
+test.describe('Generate Conditional Styling Data @localStorage @generatedata', () => {
+  test('Generate basic condition set', async ({ page, context }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    // Create a Condition Set
+    const conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: 'Test Condition Set'
+    });
+
+    // Create a Telemetry Object (Sine Wave Generator)
+    const swg = await createExampleTelemetryObject(page, conditionSet.uuid);
+
+    // Edit the Telemetry Object to have a 10hz data rate (Gotta go fast!)
+    await page.goto(swg.url);
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
+    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('10');
+    await page.getByLabel('Save').click();
+
+    // Edit the Condition Set
+    await page.goto(conditionSet.url);
+    await page.getByLabel('Edit Object').click();
+
+    // Add a Condition to the Condition Set
+    await page.getByLabel('Add Condition').click();
+    await page.getByLabel('Condition Name Input').first().fill('Test Condition');
+    await page.getByLabel('Condition Output Type').first().selectOption('String');
+    await page.getByLabel('Condition Output String').first().fill('Test Condition Met');
+
+    // Condition: True if sine value >= 0 (roughly half the time)
+    await page.getByLabel('Criterion Telemetry Selection').selectOption(swg.name);
+    await page.getByLabel('Criterion Metadata Selection').selectOption('Sine');
+    await page
+      .getByLabel('Criterion Comparison Selection')
+      .selectOption('is greater than or equal to');
+    await page.getByLabel('Criterion Input').first().fill('0');
+
+    // Rename default condition
+    await page.getByLabel('Condition Output String').nth(1).fill('Test Condition Unmet');
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Save localStorage for future test execution
+    await context.storageState({
+      path: fileURLToPath(
+        new URL('../../../e2e/test-data/condition_set_storage.json', import.meta.url)
+      )
+    });
+  });
+});
+
 test.describe('Validate Overlay Plot with Telemetry Object @localStorage @generatedata', () => {
   test.use({
     storageState: fileURLToPath(
