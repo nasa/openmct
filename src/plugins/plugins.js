@@ -32,6 +32,7 @@ import BarChartPlugin from './charts/bar/plugin.js';
 import ScatterPlotPlugin from './charts/scatter/plugin.js';
 import ClearData from './clearData/plugin.js';
 import Clock from './clock/plugin.js';
+import CompsPlugin from './comps/plugin.js';
 import ConditionPlugin from './condition/plugin.js';
 import ConditionWidgetPlugin from './conditionWidget/plugin.js';
 import CouchDBSearchFolder from './CouchDBSearchFolder/plugin.js';
@@ -86,7 +87,6 @@ import UTCTimeSystem from './utcTimeSystem/plugin.js';
 import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
-import CompsPlugin from './comps/plugin.js';
 
 /**
  * @type {Object}
