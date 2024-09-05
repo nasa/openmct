@@ -21,69 +21,55 @@
 -->
 
 <template>
-  <div class="c-cs" aria-label="Derived Telemetry">
+  <div class="c-comps" aria-label="Derived Telemetry">
     <section class="c-cs__current-output c-section">
       <div class="c-cs__content c-cs__current-output-value">
         <span class="c-cs__current-output-value__label">Current Output</span>
         <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
-          <template
-            v-if="testDataApplied && currentTestOutput !== undefined && currentTestOutput !== null"
-          >
+          <template v-if="testDataApplied && currentTestOutput">
             {{ currentTestOutput }}
           </template>
-          <template
-            v-else-if="
-              !testDataApplied && currentCompOutput !== undefined && currentCompOutput !== null
-            "
-          >
+          <template v-else-if="currentCompOutput && !testDataApplied">
             {{ currentCompOutput }}
           </template>
           <template v-else> --- </template>
         </span>
       </div>
     </section>
-    <section id="telemetryReferenceSection" aria-label="Derived Telemetry References">
+    <section
+      id="telemetryReferenceSection"
+      class="c-comps__section c-comps__refs-and-controls"
+      aria-label="Derived Telemetry References"
+    >
       <div class="c-cs__header c-section__header">
         <div class="c-cs__header-label c-section__label">Telemetry References</div>
       </div>
-      <div
-        :class="['c-cs__test-data__controls c-cdef__controls', { disabled: !parameters?.length }]"
-      >
+
+      <div :class="['c-comps__refs-controls c-cdef__controls', { disabled: !parameters?.length }]">
         <label v-if="isEditing" class="c-toggle-switch">
           <input type="checkbox" :checked="testDataApplied" @change="toggleTestData" />
           <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
           <span class="c-toggle-switch__label">Apply Test Values</span>
         </label>
       </div>
-      <div class="c-cs__content">
-        <div class="hint" :class="{ 's-status-icon-warning-lo': !parameters?.length && isEditing }">
-          <div
-            v-for="parameter in parameters"
-            :key="parameter.keyString"
-            class="telemery-reference"
-          >
-            Reference
-            <input
-              v-if="isEditing"
-              v-model="parameter.name"
-              class="telemery-reference-variable-input"
-              @change="updateParameters"
-            />
-            <div v-else>&nbsp;{{ parameter.name }}</div>
-            <ObjectPath
+      <div class="c-comps__refs">
+        <div v-for="parameter in parameters" :key="parameter.keyString" class="c-comps__ref">
+          <span class="c-test-datum__string">Reference</span>
+          <input
+            v-if="isEditing"
+            v-model="parameter.name"
+            type="text"
+            class="c-input--md"
+            @change="updateParameters"
+          />
+          <div v-else class="--em">{{ parameter.name }}</div>
+          <span class="c-test-datum__string">=</span>
+          <span class="c-comps__path-and-field">
+            <ObjectPathString
               :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
+              :show-object-itself="true"
+              class="--em"
             />
-            <div class="parametery-telemetry">
-              <div
-                class="parameter-telemetry-icon"
-                :class="
-                  getIconForType(compsManager.getTelemetryObjectForParameter(parameter.keyString))
-                "
-              />
-              <div class="parametery-telemetry-name">
-                {{ compsManager.getTelemetryObjectForParameter(parameter.keyString)?.name }}
-              </div>
-            </div>
             <!-- drop down to select value from telemetry -->
             <select v-if="isEditing" v-model="parameter.valueToUse" @change="updateParameters">
               <option
@@ -96,28 +82,36 @@
                 {{ parameterValueOption.name }}
               </option>
             </select>
-            <div v-else>&nbsp;{{ parameter.valueToUse }}</div>
-            <input
-              v-if="isEditing"
-              v-model="parameter.testValue"
-              class="telemery-reference-variable-input"
-              @change="updateParameters"
-            />
-            <div v-else>&nbsp;{{ parameter.testValue }}</div>
-          </div>
-          <template v-if="!parameters?.length && isEditing"
-            >Drag telemetry into Telemetry References to add variables for an expression</template
-          >
+            <div v-else>{{ parameter.valueToUse }}</div>
+          </span>
+
+          <span v-if="isEditing" class="c-test-datum__string">Test value</span>
+          <input
+            v-if="isEditing"
+            v-model="parameter.testValue"
+            type="text"
+            class="c-input--md"
+            @change="updateParameters"
+          />
         </div>
       </div>
     </section>
-    <section id="expressionSection" aria-label="Derived Telemetry Expression">
+    <section
+      id="expressionSection"
+      aria-label="Derived Telemetry Expression"
+      class="c-comps__section c-comps__expression"
+    >
       <div class="c-cs__header c-section__header">
         <div class="c-cs__header-label c-section__label">Expression</div>
       </div>
+
+      <div v-if="!parameters?.length && isEditing" class="hint">
+        Drag in telemetry to add references for an expression.
+      </div>
+
       <div class="c-cs__content">
         <textarea
-          v-if="isEditing"
+          v-if="parameters?.length && isEditing"
           v-model="expression"
           class="expression-input"
           placeholder="Enter an expression"
@@ -142,9 +136,9 @@
 
 <script setup>
 import { evaluate } from 'mathjs';
-import { inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
-import ObjectPath from '../../../ui/components/ObjectPath.vue';
+import ObjectPathString from '../../../ui/components/ObjectPathString.vue';
 import CompsManager from '../CompsManager';
 
 const openmct = inject('openmct');
@@ -161,8 +155,11 @@ const outputFormat = ref(null);
 
 let outputTelemetryCollection;
 
-const props = defineProps({
-  isEditing: { type: Boolean, required: true }
+defineProps({
+  isEditing: {
+    type: Boolean,
+    required: true
+  }
 });
 
 onBeforeMount(async () => {
@@ -185,16 +182,6 @@ onBeforeUnmount(() => {
   outputTelemetryCollection.destroy();
 });
 
-watch(
-  () => props.isEditing,
-  (editMode) => {
-    console.debug(`📢 Edit mode is: ${editMode}`);
-    if (!editMode) {
-      testDataApplied.value = false;
-    }
-  }
-);
-
 function reloadParameters() {
   parameters.value = compsManager.getParameters();
   domainObject.configuration.comps.parameters = parameters.value;
@@ -206,10 +193,6 @@ function updateParameters() {
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
-}
-
-function getIconForType(telemetryObject) {
-  return openmct.types.get(telemetryObject.type).definition.cssClass;
 }
 
 function toggleTestData() {
