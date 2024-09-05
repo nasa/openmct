@@ -256,13 +256,13 @@ export default class TableRowCollection extends EventEmitter {
    *
    * // Sort by telemetry value
    * collection.sortBy({
-   *  key: 'value', direction: ORDER.ASCENDING
+   *  key: 'value', direction: 'asc'
    * });
    *
    * // Sort by ms since epoch
    * collection.sort({
    *  key: 'timestamp.ms',
-   *  direction: ORDER.ASCENDING
+   *  direction: 'asc'
    * });
    *
    * // Sort by 'text' attribute, descending
