@@ -47,15 +47,25 @@
 
       <div :class="['c-comps__refs-controls c-cdef__controls', { disabled: !parameters?.length }]">
         <label v-if="isEditing" class="c-toggle-switch">
-          <input type="checkbox" :checked="testDataApplied" @change="toggleTestData" />
+          <input type="checkbox" :checked="testDataApplied" @change="toggleTestData"/>
           <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
           <span class="c-toggle-switch__label">Apply Test Values</span>
         </label>
       </div>
       <div class="c-comps__refs">
-        <div v-for="parameter in parameters" :key="parameter.name" class="c-comps__ref">
+        <div
+          v-for="parameter in parameters"
+          :key="parameter.keyString"
+          class="c-comps__ref"
+        >
           <span class="c-test-datum__string">Reference</span>
-          <input v-if="isEditing" v-model="parameter.name" type="text" class="c-input--md" />
+          <input
+            v-if="isEditing"
+            v-model="parameter.name"
+            type="text"
+            class="c-input--md"
+            @change="updateParameters"
+          />
           <div v-else class="--em">{{ parameter.name }}</div>
           <span class="c-test-datum__string">=</span>
           <span class="c-comps__path-and-field">
@@ -129,8 +139,8 @@
 </template>
 
 <script setup>
-import { evaluate } from 'mathjs';
-import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import {evaluate} from 'mathjs';
+import {inject, onBeforeMount, onBeforeUnmount, ref} from 'vue';
 
 import ObjectPath from '../../../ui/components/ObjectPathString.vue';
 import CompsManager from '../CompsManager';
@@ -183,6 +193,7 @@ function reloadParameters() {
 }
 
 function updateParameters() {
+  console.debug('🚀 CompsView: updateParameters', parameters.value);
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
@@ -237,7 +248,7 @@ function telemetryProcessor(data) {
     return;
   }
   // new data will come in as array, so just take the last element
-  const currentOutput = data[data.length - 1]?.output;
+  const currentOutput = data[data.length - 1]?.compsOutput;
   const formattedOutput = getValueFormatter().format(currentOutput);
   currentCompOutput.value = formattedOutput;
 }
