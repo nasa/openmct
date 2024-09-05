@@ -173,11 +173,11 @@ onBeforeMount(async () => {
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
   outputTelemetryCollection.on('add', telemetryProcessor);
   outputTelemetryCollection.on('clear', clearData);
+  compsManager.on('parametersAdded', reloadParameters);
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
   outputFormat.value = compsManager.getOutputFormat();
-  compsManager.on('parametersUpdated', reloadParameters);
   outputTelemetryCollection.load();
   applyTestData();
 });
@@ -191,21 +191,27 @@ onBeforeUnmount(() => {
 watch(
   () => props.isEditing,
   (editMode) => {
-    console.debug(`📢 Edit mode is: ${editMode}`);
     if (!editMode) {
       testDataApplied.value = false;
     }
   }
 );
 
-function reloadParameters() {
-  parameters.value = compsManager.getParameters();
-  domainObject.configuration.comps.parameters = parameters.value;
-  compsManager.setDomainObject(domainObject);
+function reloadParameters(passedDomainObject) {
+  // Because this is triggered by a composition change, we have
+  // to defer mutation of our domain object, otherwise we might
+  // mutate an outdated version of the domain object.
+  setTimeout(function () {
+    console.debug('🚀 CompsView: parameter added', passedDomainObject);
+    domainObject.configuration.comps.parameters = passedDomainObject.configuration.comps.parameters;
+    parameters.value = domainObject.configuration.comps.parameters;
+    openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
+    compsManager.setDomainObject(domainObject);
+    applyTestData();
+  });
 }
 
 function updateParameters() {
-  console.debug('🚀 CompsView: updateParameters', parameters.value);
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
@@ -233,6 +239,9 @@ function getValueFormatter() {
 }
 
 function applyTestData() {
+  if (!expression.value || !parameters.value) {
+    return;
+  }
   const scope = parameters.value.reduce((acc, parameter) => {
     acc[parameter.name] = parameter.testValue;
     return acc;

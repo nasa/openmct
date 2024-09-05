@@ -11,6 +11,8 @@ export default class CompsManager extends EventEmitter {
   #loaded = false;
   #compositionLoaded = false;
   #telemetryProcessors = {};
+  // make id random 4 digit number
+  #id = Math.floor(Math.random() * 9000) + 1000;
 
   constructor(openmct, domainObject) {
     super();
@@ -70,7 +72,7 @@ export default class CompsManager extends EventEmitter {
       testValue: 0,
       timeMetaData
     });
-    this.emit('parametersUpdated', keyString);
+    this.emit('parametersAdded', this.#domainObject);
   }
 
   getParameters() {
@@ -129,20 +131,25 @@ export default class CompsManager extends EventEmitter {
     }
   }
 
-  startListeningToUnderlyingTelemetry() {
+  async startListeningToUnderlyingTelemetry() {
     console.debug('🎉 CompsManager: startListeningToUnderlyingTelemetry');
+    this.#loaded = false;
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
       if (!this.#telemetryCollections[keyString].loaded) {
-        const specificTelemetryProcessor = this.#getTelemetryProcessor(keyString);
-        this.#telemetryCollections[keyString].on('add', specificTelemetryProcessor);
+        this.#telemetryCollections[keyString].on('add', this.#getTelemetryProcessor(keyString));
         this.#telemetryCollections[keyString].on('clear', this.clearData);
-        this.#telemetryCollections[keyString].load();
+        const telemetryLoadedPromise = this.#telemetryCollections[keyString].load();
+        this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
       }
     });
+    await Promise.all(this.#telemetryLoadedPromises);
+    this.#telemetryLoadedPromises = [];
+    this.#loaded = true;
   }
 
   stopListeningToUnderlyingTelemetry() {
     console.debug('🔇 CompsManager: stopListeningToUnderlyingTelemetry');
+    this.#loaded = false;
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
       const specificTelemetryProcessor = this.#telemetryProcessors[keyString];
       delete this.#telemetryProcessors[keyString];
