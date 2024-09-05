@@ -106,7 +106,6 @@ export default class CompsManager extends EventEmitter {
       (parameter) => parameter.keyString === keyString
     );
     if (!parameterExists) {
-      this.#composition.remove(this.#telemetryObjects[keyString]);
       this.emit('parameterRemoved', this.#domainObject);
     }
   }
@@ -217,11 +216,7 @@ export default class CompsManager extends EventEmitter {
     this.#telemetryCollections[keyString]?.destroy();
     delete this.#telemetryCollections[keyString];
     // remove all parameters that reference this telemetry object
-    this.#domainObject.configuration.comps.parameters =
-      this.#domainObject.configuration.comps.parameters.filter(
-        (parameter) => parameter.keyString !== keyString
-      );
-    this.emit('parametersUpdated', keyString);
+    this.deleteParameter(keyString);
   };
 
   requestUnderlyingTelemetry() {
