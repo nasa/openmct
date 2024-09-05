@@ -21,14 +21,6 @@ export default class CompsManager extends EventEmitter {
     this.clearData = this.clearData.bind(this);
   }
 
-  isValid() {
-    return this.#domainObject.configuration.comps.valid;
-  }
-
-  setValid(valid) {
-    this.#domainObject.configuration.comps.valid = valid;
-  }
-
   #getNextAlphabeticalParameterName() {
     const parameters = this.#domainObject.configuration.comps.parameters;
     const existingNames = new Set(parameters.map((p) => p.name));
@@ -115,7 +107,7 @@ export default class CompsManager extends EventEmitter {
   }
 
   isReady() {
-    return this.isValid() && this.#loaded;
+    return this.#loaded;
   }
 
   async load() {

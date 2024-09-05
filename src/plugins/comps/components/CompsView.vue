@@ -246,7 +246,13 @@ function applyTestData() {
     return;
   }
   const scope = parameters.value.reduce((acc, parameter) => {
-    acc[parameter.name] = parameter.testValue;
+    // try to parse the test value as JSON
+    try {
+      const parsedValue = JSON.parse(parameter.testValue);
+      acc[parameter.name] = parsedValue;
+    } catch (error) {
+      acc[parameter.name] = parameter.testValue;
+    }
     return acc;
   }, {});
   try {
@@ -254,11 +260,9 @@ function applyTestData() {
     const formattedData = getValueFormatter().format(testOutput);
     currentTestOutput.value = formattedData;
     expressionOutput.value = null;
-    compsManager.setValid(true);
   } catch (error) {
     console.error('👎 Error applying test data', error);
     currentTestOutput.value = null;
-    compsManager.setValid(false);
     expressionOutput.value = error.message;
   }
 }
