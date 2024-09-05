@@ -173,7 +173,8 @@ onBeforeMount(async () => {
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
   outputTelemetryCollection.on('add', telemetryProcessor);
   outputTelemetryCollection.on('clear', clearData);
-  compsManager.on('parametersAdded', reloadParameters);
+  compsManager.on('parameterAdded', reloadParameters);
+  compsManager.on('parameterRemoved', reloadParameters);
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
@@ -185,6 +186,8 @@ onBeforeMount(async () => {
 onBeforeUnmount(() => {
   outputTelemetryCollection.off('add', telemetryProcessor);
   outputTelemetryCollection.off('clear', clearData);
+  compsManager.off('parameterAdded', reloadParameters);
+  compsManager.off('parameterRemoved', reloadParameters);
   outputTelemetryCollection.destroy();
 });
 

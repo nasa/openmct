@@ -72,7 +72,7 @@ export default class CompsManager extends EventEmitter {
       testValue: 0,
       timeMetaData
     });
-    this.emit('parametersAdded', this.#domainObject);
+    this.emit('parameterAdded', this.#domainObject);
   }
 
   getParameters() {
@@ -107,6 +107,7 @@ export default class CompsManager extends EventEmitter {
     );
     if (!parameterExists) {
       this.#composition.remove(this.#telemetryObjects[keyString]);
+      this.emit('parameterRemoved', this.#domainObject);
     }
   }
 
