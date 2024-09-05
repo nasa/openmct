@@ -31,7 +31,7 @@ export default class ConditionSetViewProvider {
     this.openmct = openmct;
     this.name = 'Comps View';
     this.key = 'comps.view';
-    this.cssClass = 'icon-telemetry';
+    this.cssClass = 'icon-derived-telemetry';
     this.compsManagerPool = compsManagerPool;
   }
 
