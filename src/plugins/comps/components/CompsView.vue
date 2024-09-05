@@ -26,10 +26,16 @@
       <div class="c-cs__content c-cs__current-output-value">
         <span class="c-cs__current-output-value__label">Current Output</span>
         <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
-          <template v-if="testDataApplied && currentTestOutput">
+          <template
+            v-if="testDataApplied && currentTestOutput !== undefined && currentTestOutput !== null"
+          >
             {{ currentTestOutput }}
           </template>
-          <template v-else-if="currentCompOutput && !testDataApplied">
+          <template
+            v-else-if="
+              !testDataApplied && currentCompOutput !== undefined && currentCompOutput !== null
+            "
+          >
             {{ currentCompOutput }}
           </template>
           <template v-else> --- </template>
@@ -136,7 +142,7 @@
 
 <script setup>
 import { evaluate } from 'mathjs';
-import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 
 import ObjectPathString from '../../../ui/components/ObjectPathString.vue';
 import CompsManager from '../CompsManager';
@@ -155,7 +161,7 @@ const outputFormat = ref(null);
 
 let outputTelemetryCollection;
 
-defineProps({
+const props = defineProps({
   isEditing: {
     type: Boolean,
     required: true
@@ -181,6 +187,16 @@ onBeforeUnmount(() => {
   outputTelemetryCollection.off('clear', clearData);
   outputTelemetryCollection.destroy();
 });
+
+watch(
+  () => props.isEditing,
+  (editMode) => {
+    console.debug(`📢 Edit mode is: ${editMode}`);
+    if (!editMode) {
+      testDataApplied.value = false;
+    }
+  }
+);
 
 function reloadParameters() {
   parameters.value = compsManager.getParameters();
