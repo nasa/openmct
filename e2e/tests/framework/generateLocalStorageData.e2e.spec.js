@@ -287,7 +287,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 });
 
 test.describe('Generate Conditional Styling Data @localStorage @generatedata', () => {
-  test.only('Generate basic condition set', async ({ page, context }) => {
+  test('Generate basic condition set', async ({ page, context }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Create a Condition Set
     const conditionSet = await createDomainObjectWithDefaults(page, {
