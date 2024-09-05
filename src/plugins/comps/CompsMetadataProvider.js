@@ -34,7 +34,7 @@ export default class CompsMetadataProvider {
     return domainObject.type === 'comps';
   }
 
-  getDomains(domainObject) {
+  getDefaultDomains(domainObject) {
     return this.#openmct.time.getAllTimeSystems().map(function (ts, i) {
       return {
         key: ts.key,
@@ -56,7 +56,7 @@ export default class CompsMetadataProvider {
     // if there are any parameters, grab the first one's timeMetaData
     const timeMetaData = specificCompsManager?.getParameters()[0]?.timeMetaData;
     const metaDataToReturn = {
-      values: this.getDomains().concat([
+      values: [
         {
           key: 'compsOutput',
           source: 'compsOutput',
@@ -66,13 +66,13 @@ export default class CompsMetadataProvider {
             range: 1
           }
         }
-      ])
+      ]
     };
-    if (
-      timeMetaData &&
-      metaDataToReturn.values.some((metaDatum) => metaDatum.key === timeMetaData.key)
-    ) {
+    if (timeMetaData) {
       metaDataToReturn.values.push(timeMetaData);
+    } else {
+      const defaultDomains = this.getDefaultDomains(domainObject);
+      metaDataToReturn.values.push(...defaultDomains);
     }
     return metaDataToReturn;
   }

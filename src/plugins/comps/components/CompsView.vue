@@ -26,10 +26,16 @@
       <div class="c-cs__content c-cs__current-output-value">
         <span class="c-cs__current-output-value__label">Current Output</span>
         <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
-          <template v-if="testDataApplied && currentTestOutput">
+          <template
+            v-if="testDataApplied && currentTestOutput !== undefined && currentTestOutput !== null"
+          >
             {{ currentTestOutput }}
           </template>
-          <template v-else-if="currentCompOutput && !testDataApplied">
+          <template
+            v-else-if="
+              !testDataApplied && currentCompOutput !== undefined && currentCompOutput !== null
+            "
+          >
             {{ currentCompOutput }}
           </template>
           <template v-else> --- </template>
@@ -136,7 +142,7 @@
 
 <script setup>
 import { evaluate } from 'mathjs';
-import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 
 import ObjectPathString from '../../../ui/components/ObjectPathString.vue';
 import CompsManager from '../CompsManager';
@@ -155,7 +161,7 @@ const outputFormat = ref(null);
 
 let outputTelemetryCollection;
 
-defineProps({
+const props = defineProps({
   isEditing: {
     type: Boolean,
     required: true
@@ -167,11 +173,12 @@ onBeforeMount(async () => {
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
   outputTelemetryCollection.on('add', telemetryProcessor);
   outputTelemetryCollection.on('clear', clearData);
+  compsManager.on('parameterAdded', reloadParameters);
+  compsManager.on('parameterRemoved', reloadParameters);
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
   outputFormat.value = compsManager.getOutputFormat();
-  compsManager.on('parametersUpdated', reloadParameters);
   outputTelemetryCollection.load();
   applyTestData();
 });
@@ -179,17 +186,35 @@ onBeforeMount(async () => {
 onBeforeUnmount(() => {
   outputTelemetryCollection.off('add', telemetryProcessor);
   outputTelemetryCollection.off('clear', clearData);
+  compsManager.off('parameterAdded', reloadParameters);
+  compsManager.off('parameterRemoved', reloadParameters);
   outputTelemetryCollection.destroy();
 });
 
-function reloadParameters() {
-  parameters.value = compsManager.getParameters();
-  domainObject.configuration.comps.parameters = parameters.value;
-  compsManager.setDomainObject(domainObject);
+watch(
+  () => props.isEditing,
+  (editMode) => {
+    if (!editMode) {
+      testDataApplied.value = false;
+    }
+  }
+);
+
+function reloadParameters(passedDomainObject) {
+  // Because this is triggered by a composition change, we have
+  // to defer mutation of our domain object, otherwise we might
+  // mutate an outdated version of the domain object.
+  setTimeout(function () {
+    console.debug('🚀 CompsView: parameter added', passedDomainObject);
+    domainObject.configuration.comps.parameters = passedDomainObject.configuration.comps.parameters;
+    parameters.value = domainObject.configuration.comps.parameters;
+    openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
+    compsManager.setDomainObject(domainObject);
+    applyTestData();
+  });
 }
 
 function updateParameters() {
-  console.debug('🚀 CompsView: updateParameters', parameters.value);
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
@@ -217,6 +242,9 @@ function getValueFormatter() {
 }
 
 function applyTestData() {
+  if (!expression.value || !parameters.value) {
+    return;
+  }
   const scope = parameters.value.reduce((acc, parameter) => {
     acc[parameter.name] = parameter.testValue;
     return acc;

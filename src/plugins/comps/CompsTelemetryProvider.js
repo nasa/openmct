@@ -29,6 +29,8 @@ export default class CompsTelemetryProvider {
   #lastUniqueID = 1;
   #requestPromises = {};
   #subscriptionCallbacks = {};
+  // id is random 4 digit number
+  #id = Math.floor(Math.random() * 9000) + 1000;
 
   constructor(openmct, compsManagerPool) {
     this.#openmct = openmct;
@@ -67,7 +69,11 @@ export default class CompsTelemetryProvider {
         const callbackID = this.#getCallbackID();
         const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
         const expression = specificCompsManager.getExpression();
-        const parameters = specificCompsManager.getParameters();
+        const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
+        if (!expression || !parameters) {
+          resolve([]);
+          return;
+        }
         this.#requestPromises[callbackID] = { resolve, reject };
         const payload = {
           type: 'calculateRequest',
@@ -85,13 +91,16 @@ export default class CompsTelemetryProvider {
     });
   }
 
-  #computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID) {
+  #computeOnNewTelemetry(specificCompsManager, callbackID, newTelemetry) {
     if (!specificCompsManager.isReady()) {
       return;
     }
     const expression = specificCompsManager.getExpression();
     const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
     const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
+    if (!expression || !parameters) {
+      return;
+    }
     const payload = {
       type: 'calculateSubscription',
       telemetryForComps,
@@ -111,12 +120,19 @@ export default class CompsTelemetryProvider {
     );
     const callbackID = this.#getCallbackID();
     this.#subscriptionCallbacks[callbackID] = callback;
-    specificCompsManager.on('underlyingTelemetryUpdated', (newTelemetry) => {
-      this.#computeOnNewTelemetry(specificCompsManager, newTelemetry, callbackID);
-    });
+    const boundComputeOnNewTelemetry = this.#computeOnNewTelemetry.bind(
+      this,
+      specificCompsManager,
+      callbackID
+    );
+    specificCompsManager.on('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
     specificCompsManager.startListeningToUnderlyingTelemetry();
+    console.debug(
+      `🧮 Comps Telemetry Provider: subscribed to comps. Now have ${Object.keys(this.#subscriptionCallbacks).length} listener`,
+      this.#subscriptionCallbacks
+    );
     return () => {
-      specificCompsManager.off('underlyingTelemetryUpdated', callback);
+      specificCompsManager.off('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
       delete this.#subscriptionCallbacks[callbackID];
       // if this is the last subscription, tell the comp manager to stop listening
       specificCompsManager.stopListeningToUnderlyingTelemetry();

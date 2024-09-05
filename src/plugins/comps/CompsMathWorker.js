@@ -74,7 +74,7 @@ function calculate(dataFrame, parameters, expression) {
     otherParameters.forEach((parameter) => {
       const otherDataFrame = dataFrame[parameter.keyString];
       const otherTelemetry = otherDataFrame.get(referenceTime);
-      if (!otherTelemetry) {
+      if (otherTelemetry === undefined && otherTelemetry === null) {
         missingData = true;
         return;
       }
