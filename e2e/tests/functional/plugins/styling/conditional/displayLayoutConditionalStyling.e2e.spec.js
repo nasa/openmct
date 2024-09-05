@@ -28,8 +28,8 @@ import {
 } from '../../../../../appActions.js';
 import { expect, test } from '../../../../../pluginFixtures.js';
 
-const RICK_JPG =
-  'https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg';
+const TINY_IMAGE_BASE64 =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
 
 test.describe('Display Layout Conditional Styling', () => {
   test.use({
@@ -53,7 +53,7 @@ test.describe('Display Layout Conditional Styling', () => {
     // Add Image Drawing Object to the layout
     await page.getByLabel('Add Drawing Object').click();
     await page.getByLabel('Image').click();
-    await page.getByLabel('Image URL').fill(RICK_JPG);
+    await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
     await page.getByText('Ok').click();
 
     // Use the "Test Condition Set" for conditional styling on the image
