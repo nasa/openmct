@@ -47,17 +47,13 @@
 
       <div :class="['c-comps__refs-controls c-cdef__controls', { disabled: !parameters?.length }]">
         <label v-if="isEditing" class="c-toggle-switch">
-          <input type="checkbox" :checked="testDataApplied" @change="toggleTestData"/>
+          <input type="checkbox" :checked="testDataApplied" @change="toggleTestData" />
           <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
           <span class="c-toggle-switch__label">Apply Test Values</span>
         </label>
       </div>
       <div class="c-comps__refs">
-        <div
-          v-for="parameter in parameters"
-          :key="parameter.keyString"
-          class="c-comps__ref"
-        >
+        <div v-for="parameter in parameters" :key="parameter.keyString" class="c-comps__ref">
           <span class="c-test-datum__string">Reference</span>
           <input
             v-if="isEditing"
@@ -69,7 +65,7 @@
           <div v-else class="--em">{{ parameter.name }}</div>
           <span class="c-test-datum__string">=</span>
           <span class="c-comps__path-and-field">
-            <ObjectPath
+            <ObjectPathString
               :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
               :show-object-itself="true"
               class="--em"
@@ -139,10 +135,10 @@
 </template>
 
 <script setup>
-import {evaluate} from 'mathjs';
-import {inject, onBeforeMount, onBeforeUnmount, ref} from 'vue';
+import { evaluate } from 'mathjs';
+import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
-import ObjectPath from '../../../ui/components/ObjectPathString.vue';
+import ObjectPathString from '../../../ui/components/ObjectPathString.vue';
 import CompsManager from '../CompsManager';
 
 const openmct = inject('openmct');
@@ -198,10 +194,6 @@ function updateParameters() {
   compsManager.setDomainObject(domainObject);
   applyTestData();
 }
-
-// function getIconForType(telemetryObject) {
-//   return openmct.types.get(telemetryObject.type).definition.cssClass;
-// }
 
 function toggleTestData() {
   testDataApplied.value = !testDataApplied.value;
