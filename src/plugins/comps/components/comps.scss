@@ -19,32 +19,66 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+.c-comps {
+  .is-editing & {
+    padding: $interiorMargin;
+  }
 
-.telemery-reference {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: start;
-  align-items: left;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  &__refs-and-controls {
+
+  }
+
+  &__section,
+  &__refs {
+    display: flex;
+    flex-direction: column;
+    gap: $interiorMarginSm;
+  }
+
+  &__ref {
+    @include discreteItem();
+    display: grid;
+    gap: $interiorMargin;
+    grid-template-columns: max-content max-content min-content 1fr;
+    padding: $interiorMargin;
+    line-height: 170%; // Aligns text with controls like selects
+
+    //&__definition,
+    //&__test-value {
+    //  display: flex;
+    //  align-items: flex-start;
+    //  gap: $interiorMargin;
+    //}
+    //
+    //&__definition {
+    //}
+    //
+    //&__test-value {
+    //
+    //}
+  }
+
+  &__path-and-field {
+    align-items: start;
+    display: flex;
+    gap: $interiorMargin;
+  }
+
+  &__expression {
+    textarea {
+      resize: vertical;
+    }
+
+  }
+
+  .--em {
+    color: $colorBodyFgEm;
+    //font-weight: bold;
+  }
 }
 
-.parametery-telemetry {
-  display: flex;
-  flex-direction: row;
-}
 
-.expression-input {
-  width: 100%;
-  margin-right: 10px;
-}
-
-.telemery-reference-variable-input {
-  background-color: $colorBodyBg;
-  color: white;
-}
-
+/************************************ OLD */
 .c-expression-output-good {
   width: 100%;
   margin-right: 10px;

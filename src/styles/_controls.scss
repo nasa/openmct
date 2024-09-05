@@ -417,6 +417,11 @@ textarea {
     width: 40px;
   }
 
+  &--md {
+    // Smallish inputs, like numerics or short text
+    width: 80px;
+  }
+
   &--autocomplete {
     &__wrapper {
       display: flex;
