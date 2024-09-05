@@ -61,10 +61,6 @@ export default class CompsTelemetryProvider {
         this.#openmct,
         this.#compsManagerPool
       );
-      if (!specificCompsManager.isValid()) {
-        resolve([]);
-        return;
-      }
       specificCompsManager.load().then(() => {
         const callbackID = this.#getCallbackID();
         const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
@@ -169,7 +165,8 @@ export default class CompsTelemetryProvider {
     } else if (type === 'calculationRequestResult' && this.#requestPromises[callbackID]) {
       console.debug('📝 Shared worker request message:', event.data);
       if (error) {
-        this.#requestPromises[callbackID].reject(error);
+        console.error('📝 Error calculating request:', event.data);
+        this.#requestPromises[callbackID].resolve([]);
       } else {
         this.#requestPromises[callbackID].resolve(result);
       }
