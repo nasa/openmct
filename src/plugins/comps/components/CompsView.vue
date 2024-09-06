@@ -22,10 +22,10 @@
 
 <template>
   <div class="c-comps" aria-label="Derived Telemetry">
-    <section class="c-cs__current-output c-section">
-      <div class="c-cs__content c-cs__current-output-value">
-        <span class="c-cs__current-output-value__label">Current Output</span>
-        <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
+    <section class="c-section c-comps-output">
+      <div class="c-output-featured">
+        <span class="c-output-featured__label">Current Output</span>
+        <span class="c-output-featured__value" aria-label="Current Output Value">
           <template
             v-if="testDataApplied && currentTestOutput !== undefined && currentTestOutput !== null"
           >
@@ -115,27 +115,30 @@
         Drag in telemetry to add references for an expression.
       </div>
 
-      <div class="c-cs__content">
-        <textarea
-          v-if="parameters?.length && isEditing"
-          v-model="expression"
-          class="expression-input"
-          placeholder="Enter an expression"
-          @change="updateExpression"
-        ></textarea>
-        <div v-else>
+      <textarea
+        v-if="parameters?.length && isEditing"
+        v-model="expression"
+        class="c-comps__expression-value"
+        placeholder="Enter an expression"
+        @change="updateExpression"
+      ></textarea>
+      <div v-else>
+        <div class="c-comps__expression-value">
           {{ expression }}
         </div>
-        <div v-if="expression && expressionOutput && isEditing" class="c-expression-output-bad">
-          {{ expressionOutput }}
-        </div>
-        <div
-          v-else-if="expression && !expressionOutput && isEditing"
-          class="c-expression-output-good"
-        >
-          Valid Expression
-        </div>
       </div>
+      <span
+        v-if="expression && expressionOutput"
+        class="icon-alert-triangle c-comps__expression-msg --bad"
+      >
+        Invalid: {{ expressionOutput }}
+      </span>
+      <span
+        v-else-if="expression && !expressionOutput && isEditing"
+        class="c-comps__expression-msg --good"
+      >
+        Expression valid
+      </span>
     </section>
   </div>
 </template>

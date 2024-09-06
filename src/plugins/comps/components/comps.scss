@@ -19,13 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+@mixin expressionMsg($fg, $bg) {
+  $op: 0.4;
+  color: rgba($fg, $op * 1.5);
+  background: rgba($bg, $op);
+}
+
 .c-comps {
+  display: flex;
+  flex-direction: column;
+  gap: $interiorMarginLg;
+
   .is-editing & {
     padding: $interiorMargin;
   }
 
-  &__refs-and-controls {
+  &__output {
+    display: flex;
+    align-items: baseline;
+    gap: $interiorMargin;
 
+    &-label {
+      flex: 0 0 auto;
+      text-transform: uppercase;
+    }
+
+    &-value {
+      flex: 0 1 auto;
+    }
   }
 
   &__section,
@@ -42,20 +63,6 @@
     grid-template-columns: max-content max-content min-content 1fr;
     padding: $interiorMargin;
     line-height: 170%; // Aligns text with controls like selects
-
-    //&__definition,
-    //&__test-value {
-    //  display: flex;
-    //  align-items: flex-start;
-    //  gap: $interiorMargin;
-    //}
-    //
-    //&__definition {
-    //}
-    //
-    //&__test-value {
-    //
-    //}
   }
 
   &__path-and-field {
@@ -65,28 +72,41 @@
   }
 
   &__expression {
-    textarea {
-      resize: vertical;
+    *[class*=value] {
+      font-family: monospace;
+      //font-size: 1.1em;
+      resize: vertical; // Only applies to textarea
+    }
+    div[class*=value] {
+      padding: $interiorMargin;
+    }
+  }
+
+  &__expression-msg {
+    @include expressionMsg($colorOkFg, $colorOk);
+    border-radius: $basicCr;
+    display: flex; // Creates hanging indent from :before icon
+    padding: $interiorMarginSm $interiorMarginLg $interiorMarginSm $interiorMargin;
+    //text-wrap: normal;
+    max-width: max-content;
+
+    &:before {
+      content: $glyph-icon-check;
+      font-family: symbolsfont;
+      margin-right: $interiorMarginSm;
     }
 
+    &.--bad {
+      @include expressionMsg($colorErrorFg, $colorError);
+
+      &:before {
+        content: $glyph-icon-alert-triangle;
+      }
+    }
   }
 
   .--em {
     color: $colorBodyFgEm;
     //font-weight: bold;
   }
-}
-
-
-/************************************ OLD */
-.c-expression-output-good {
-  width: 100%;
-  margin-right: 10px;
-  color: green;
-}
-
-.c-expression-output-bad {
-  width: 100%;
-  margin-right: 10px;
-  color: red;
 }
