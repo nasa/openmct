@@ -64,6 +64,7 @@
           <input
             v-if="isEditing"
             v-model="parameter.name"
+            :aria-label="`Reference Name Input for ${parameter.name}`"
             type="text"
             class="c-input--md"
             @change="updateParameters"
@@ -95,6 +96,7 @@
           <input
             v-if="isEditing"
             v-model="parameter.testValue"
+            :aria-label="`Reference Test Value for ${parameter.name}`"
             type="text"
             class="c-input--md"
             @change="updateParameters"
@@ -123,7 +125,7 @@
         @change="updateExpression"
       ></textarea>
       <div v-else>
-        <div class="c-comps__expression-value">
+        <div class="c-comps__expression-value" aria-label="Expression">
           {{ expression }}
         </div>
       </div>
@@ -172,7 +174,6 @@ const props = defineProps({
 });
 
 onBeforeMount(async () => {
-  console.debug('🚀 CompsView: onMounted with compsManager', compsManager);
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
   outputTelemetryCollection.on('add', telemetryProcessor);
   outputTelemetryCollection.on('clear', clearData);
@@ -208,7 +209,6 @@ function reloadParameters(passedDomainObject) {
   // to defer mutation of our domain object, otherwise we might
   // mutate an outdated version of the domain object.
   setTimeout(function () {
-    console.debug('🚀 CompsView: parameter added', passedDomainObject);
     domainObject.configuration.comps.parameters = passedDomainObject.configuration.comps.parameters;
     parameters.value = domainObject.configuration.comps.parameters;
     openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
@@ -264,7 +264,6 @@ function applyTestData() {
     currentTestOutput.value = formattedData;
     expressionOutput.value = null;
   } catch (error) {
-    console.error('👎 Error applying test data', error);
     currentTestOutput.value = null;
     expressionOutput.value = error.message;
   }

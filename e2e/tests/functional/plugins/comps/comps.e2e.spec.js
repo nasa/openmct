@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
-import { test } from '../../../../pluginFixtures.js';
+import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Comps', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,8 +28,8 @@ test.describe('Comps', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Can add and remove telemetry sources', async ({ page }) => {
-    // Create the gauge with defaults
+  test('Basic Functionality Works', async ({ page }) => {
+    // Create the comps with defaults
     const comp = await createDomainObjectWithDefaults(page, { type: 'Derived Telemetry' });
 
     // Create a sine wave generator within the comp
@@ -38,6 +38,43 @@ test.describe('Comps', () => {
       parent: comp.uuid
     });
 
+    // Check that expressions can be edited
     await page.goto(comp.url);
+    await page.getByLabel('Edit Object').click();
+    await page.getByPlaceholder('Enter an expression').fill('a*2');
+    await page.getByText('Current Output').click();
+    await expect(page.getByText('Expression valid')).toBeVisible();
+
+    // Check that expressions are marked invalid
+    await page.getByLabel('Reference Name Input for a').fill('b');
+    await page.getByText('Current Output').click();
+    await expect(page.getByText('Invalid: Undefined symbol a')).toBeVisible();
+
+    // Check that test data works
+    await page.getByPlaceholder('Enter an expression').fill('b*2');
+    await page.getByLabel('Reference Test Value for b').fill('5');
+    await page.getByLabel('Apply Test Data').click();
+    let testValue = await page.getByLabel('Current Output Value').textContent();
+    expect(testValue).toBe('10');
+
+    // Check that real data works
+    await page.getByLabel('Apply Test Data').click();
+    await setRealTimeMode(page);
+    testValue = await page.getByLabel('Current Output Value').textContent();
+    expect(testValue).not.toBe('10');
+    // should be a number
+    expect(parseFloat(testValue)).not.toBeNaN();
+
+    // Check that the comps are saved
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    const expression = await page.getByLabel('Expression', { exact: true }).textContent();
+    expect(expression).toBe('b*2');
+
+    // Check that comps work after being saved
+    testValue = await page.getByLabel('Current Output Value').textContent();
+    expect(testValue).not.toBe('10');
+    // should be a number
+    expect(parseFloat(testValue)).not.toBeNaN();
   });
 });

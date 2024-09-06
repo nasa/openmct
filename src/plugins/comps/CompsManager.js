@@ -119,12 +119,10 @@ export default class CompsManager extends EventEmitter {
       await Promise.all(this.#telemetryLoadedPromises);
       this.#telemetryLoadedPromises = [];
       this.#loaded = true;
-      console.debug('📦 CompsManager: loaded');
     }
   }
 
   async startListeningToUnderlyingTelemetry() {
-    console.debug('🎉 CompsManager: startListeningToUnderlyingTelemetry');
     this.#loaded = false;
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
       if (!this.#telemetryCollections[keyString].loaded) {
@@ -140,7 +138,6 @@ export default class CompsManager extends EventEmitter {
   }
 
   stopListeningToUnderlyingTelemetry() {
-    console.debug('🔇 CompsManager: stopListeningToUnderlyingTelemetry');
     this.#loaded = false;
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
       const specificTelemetryProcessor = this.#telemetryProcessors[keyString];
@@ -162,7 +159,6 @@ export default class CompsManager extends EventEmitter {
       this.#composition.on('remove', this.#removeTelemetryObject);
       await this.#composition.load();
     }
-    console.debug(`📢 CompsManager: composition loaded`);
   }
 
   getFullDataFrame(newTelemetry) {
@@ -202,7 +198,6 @@ export default class CompsManager extends EventEmitter {
   }
 
   #removeTelemetryObject = (telemetryObjectIdentifier) => {
-    console.debug('❌ CompsManager: removeTelemetryObject', telemetryObjectIdentifier);
     const keyString = this.#openmct.objects.makeKeyString(telemetryObjectIdentifier);
     delete this.#telemetryObjects[keyString];
     this.#telemetryCollections[keyString]?.destroy();
@@ -237,7 +232,6 @@ export default class CompsManager extends EventEmitter {
   };
 
   clearData(telemetryLoadedPromise) {
-    console.debug('💨 Clear Data fired, need to wait for all telemetry collections to load');
     this.#loaded = false;
     this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
   }
@@ -251,7 +245,6 @@ export default class CompsManager extends EventEmitter {
   }
 
   #addTelemetryObject = (telemetryObject) => {
-    console.debug(`📢 CompsManager: addTelemetryObject`, telemetryObject);
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
     this.#telemetryObjects[keyString] = telemetryObject;
     this.#telemetryCollections[keyString] =
@@ -261,7 +254,6 @@ export default class CompsManager extends EventEmitter {
     this.#telemetryCollections[keyString].on('clear', this.clearData);
     const telemetryLoadedPromise = this.#telemetryCollections[keyString].load();
     this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
-    console.debug('📢 CompsManager: loaded telemetry collection', keyString);
 
     // check to see if we have a corresponding parameter
     // if not, add one
@@ -271,7 +263,6 @@ export default class CompsManager extends EventEmitter {
     if (!parameterExists) {
       this.addParameter(telemetryObject);
     }
-    console.debug(`📢 CompsManager: done adding telemetry object`, telemetryObject);
   };
 
   static getCompsManager(domainObject, openmct, compsManagerPool) {

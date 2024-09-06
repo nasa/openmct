@@ -3,10 +3,8 @@ import { evaluate } from 'mathjs';
 // eslint-disable-next-line no-undef
 onconnect = function (e) {
   const port = e.ports[0];
-  console.debug('🧮 Comps Math Worker connected');
 
   port.onmessage = function (event) {
-    console.debug('🧮 Comps Math Worker message:', event);
     const { type, callbackID, telemetryForComps, expression, parameters } = event.data;
     let responseType = 'unknown';
     let error = null;
@@ -26,7 +24,6 @@ onconnect = function (e) {
       }
     } catch (errorInCalculation) {
       error = errorInCalculation;
-      console.error('🧮 Comps Math Worker error:', errorInCalculation);
     }
     port.postMessage({ type: responseType, callbackID, result, error });
   };

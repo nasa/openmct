@@ -79,10 +79,6 @@ export default class CompsTelemetryProvider {
           callbackID
         };
         this.#sharedWorker.port.postMessage(payload);
-        console.debug(
-          '🧮 Comps Telemetry Provider: sending request request (double request!)',
-          payload
-        );
       });
     });
   }
@@ -104,7 +100,6 @@ export default class CompsTelemetryProvider {
       parameters,
       callbackID
     };
-    console.debug('🧮 Comps Telemetry Provider: sending subscription request', payload);
     this.#sharedWorker.port.postMessage(payload);
   }
 
@@ -123,10 +118,6 @@ export default class CompsTelemetryProvider {
     );
     specificCompsManager.on('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
     specificCompsManager.startListeningToUnderlyingTelemetry();
-    console.debug(
-      `🧮 Comps Telemetry Provider: subscribed to comps. Now have ${Object.keys(this.#subscriptionCallbacks).length} listener`,
-      this.#subscriptionCallbacks
-    );
     return () => {
       specificCompsManager.off('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
       delete this.#subscriptionCallbacks[callbackID];
@@ -160,10 +151,8 @@ export default class CompsTelemetryProvider {
       this.#subscriptionCallbacks[callbackID] &&
       result.length
     ) {
-      console.debug('📝 Shared worker subscription message:', event.data);
       this.#subscriptionCallbacks[callbackID](result);
     } else if (type === 'calculationRequestResult' && this.#requestPromises[callbackID]) {
-      console.debug('📝 Shared worker request message:', event.data);
       if (error) {
         console.error('📝 Error calculating request:', event.data);
         this.#requestPromises[callbackID].resolve([]);
