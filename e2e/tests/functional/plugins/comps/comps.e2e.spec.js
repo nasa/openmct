@@ -76,5 +76,18 @@ test.describe('Comps', () => {
     expect(testValue).not.toBe('10');
     // should be a number
     expect(parseFloat(testValue)).not.toBeNaN();
+
+    // Check that output format can be changed
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Output Format').click();
+    await page.getByLabel('Output Format').fill('%d');
+    await page.getByRole('tab', { name: 'Config' }).click();
+    // Ensure we only have one digit
+    await expect(page.getByLabel('Current Output Value')).toHaveText(/^-1$|^0$|^1$/);
+    // And that it persists post save
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Current Output Value')).toHaveText(/^-1$|^0$|^1$/);
   });
 });
