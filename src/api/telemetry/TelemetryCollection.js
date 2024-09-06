@@ -115,7 +115,6 @@ export default class TelemetryCollection extends EventEmitter {
     }
 
     this.removeAllListeners();
-    console.debug('🔥 Telemetry Collection destroyed', this.domainObject?.identifier?.key);
     this.loaded = false;
   }
 
@@ -187,10 +186,6 @@ export default class TelemetryCollection extends EventEmitter {
     const options = { ...this.options };
     //We always want to receive all available values in telemetry tables.
     options.strategy = this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH;
-    console.debug(
-      '🔊 Telemetry Collection Subscribing to telemetry data...',
-      this.domainObject?.identifier?.key
-    );
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,
       (datum) => this._processNewTelemetry(datum),

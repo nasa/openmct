@@ -45,6 +45,7 @@ export default class ConditionSetViewProvider {
     let _destroy = null;
     const domainObject = selection[0][0].context.item;
     const openmct = this.openmct;
+    const compsManagerPool = this.compsManagerPool;
 
     return {
       show: function (element) {
@@ -57,7 +58,7 @@ export default class ConditionSetViewProvider {
             provide: {
               openmct,
               domainObject,
-              compsManagerPool: this.compsManagerPool
+              compsManagerPool
             },
             template: '<comps-inspector-view></comps-inspector-view>'
           },

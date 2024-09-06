@@ -236,6 +236,11 @@ export default class CompsManager extends EventEmitter {
     this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
   }
 
+  setOutputFormat(outputFormat) {
+    this.#domainObject.configuration.comps.outputFormat = outputFormat;
+    this.emit('outputFormatChanged', outputFormat);
+  }
+
   getOutputFormat() {
     return this.#domainObject.configuration.comps.outputFormat;
   }

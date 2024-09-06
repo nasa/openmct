@@ -45,6 +45,8 @@
 <script setup>
 import { inject, onBeforeMount, onBeforeUnmount, ref } from 'vue';
 
+import CompsManager from '../CompsManager';
+
 const isEditing = ref(false);
 const inputFormatValue = ref('');
 
@@ -68,6 +70,7 @@ function toggleEdit(passedIsEditing) {
 
 function changeInputFormat() {
   openmct.objects.mutate(domainObject, `configuration.comps.outputFormat`, inputFormatValue.value);
-  compsManagerPool.setDomainObject(domainObject);
+  const compsManager = CompsManager.getCompsManager(domainObject, openmct, compsManagerPool);
+  compsManager.setOutputFormat(inputFormatValue.value);
 }
 </script>

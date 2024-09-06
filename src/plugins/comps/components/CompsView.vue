@@ -179,6 +179,7 @@ onBeforeMount(async () => {
   outputTelemetryCollection.on('clear', clearData);
   compsManager.on('parameterAdded', reloadParameters);
   compsManager.on('parameterRemoved', reloadParameters);
+  compsManager.on('outputFormatChanged', updateOutputFormat);
   await compsManager.load();
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
@@ -192,6 +193,7 @@ onBeforeUnmount(() => {
   outputTelemetryCollection.off('clear', clearData);
   compsManager.off('parameterAdded', reloadParameters);
   compsManager.off('parameterRemoved', reloadParameters);
+  compsManager.off('outputFormatChanged', updateOutputFormat);
   outputTelemetryCollection.destroy();
 });
 
@@ -203,6 +205,12 @@ watch(
     }
   }
 );
+
+function updateOutputFormat() {
+  outputFormat.value = compsManager.getOutputFormat();
+  // delete the metadata cache so that the new output format is used
+  openmct.telemetry.removeMetadataFromCache(domainObject);
+}
 
 function reloadParameters(passedDomainObject) {
   // Because this is triggered by a composition change, we have
