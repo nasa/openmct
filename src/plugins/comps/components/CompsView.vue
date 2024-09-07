@@ -71,7 +71,10 @@
           />
           <div v-else class="--em">{{ parameter.name }}</div>
           <span class="c-test-datum__string">=</span>
-          <span class="c-comps__path-and-field">
+          <span
+            class="c-comps__path-and-field"
+            :aria-label="`Reference ${parameter.name} Object Path`"
+          >
             <ObjectPathString
               :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
               :show-object-itself="true"

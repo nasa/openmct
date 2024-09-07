@@ -24,7 +24,7 @@
   <div
     v-if="orderedPath.length"
     class="c-object-path-string"
-    :aria-label="`${domainObject.name}`"
+    :aria-label="`${domainObject.name} Object Path`"
     role="navigation"
   >
     {{ orderedPathStr }}
@@ -32,8 +32,6 @@
 </template>
 
 <script>
-// import ObjectLabel from './ObjectLabel.vue';
-
 export default {
   inject: ['openmct'],
   props: {
@@ -115,7 +113,6 @@ export default {
 
       this.orderedPath.forEach((pathObject) => {
         this.orderedPathStr = this.orderedPathStr.concat('/').concat(pathObject.domainObject.name);
-        // this.addNameListenerFor(pathObject.domainObject);
       });
     }
   },

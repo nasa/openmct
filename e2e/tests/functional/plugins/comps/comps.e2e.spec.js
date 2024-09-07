@@ -28,12 +28,19 @@ test.describe('Comps', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Basic Functionality Works', async ({ page }) => {
+  test('Basic Functionality Works', async ({ page, openmctConfig }) => {
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'Folder'
+    });
+
     // Create the comps with defaults
-    const comp = await createDomainObjectWithDefaults(page, { type: 'Derived Telemetry' });
+    const comp = await createDomainObjectWithDefaults(page, {
+      type: 'Derived Telemetry',
+      parent: folder.uuid
+    });
 
     // Create a sine wave generator within the comp
-    await createDomainObjectWithDefaults(page, {
+    const sineWaveGenerator1 = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       parent: comp.uuid
     });
@@ -65,11 +72,21 @@ test.describe('Comps', () => {
     // should be a number
     expect(parseFloat(testValue)).not.toBeNaN();
 
+    // Check that object path is correct
+    const { myItemsFolderName } = openmctConfig;
+    let objectPath = await page.getByLabel(`${sineWaveGenerator1.name} Object Path`).textContent();
+    const expectedObjectPath = `/${myItemsFolderName}/${folder.name}/${comp.name}/${sineWaveGenerator1.name}`;
+    expect(objectPath).toBe(expectedObjectPath);
+
     // Check that the comps are saved
     await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     const expression = await page.getByLabel('Expression', { exact: true }).textContent();
     expect(expression).toBe('b*2');
+
+    // Check that object path is still correct after save
+    objectPath = await page.getByLabel(`${sineWaveGenerator1.name} Object Path`).textContent();
+    expect(objectPath).toBe(expectedObjectPath);
 
     // Check that comps work after being saved
     testValue = await page.getByLabel('Current Output Value').textContent();
