@@ -20,22 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import installWorker from './WebSocketWorker.js';
-/**
- * Describes the strategy to be used when batching WebSocket messages
- *
- * @typedef BatchingStrategy
- * @property {Function} shouldBatchMessage a function that accepts a single
- * argument - the raw message received from the websocket. Every message
- * received will be evaluated against this function so it should be performant.
- * Note also that this function is executed in a worker, so it must be
- * completely self-contained with no external dependencies. The function
- * should return `true` if the message should be batched, and `false` if not.
- * @property {Function} getBatchIdFromMessage a function that accepts a
- * single argument - the raw message received from the websocket. Only messages
- * where `shouldBatchMessage` has evaluated to true will be passed into this
- * function. The function should return a unique value on which to batch the
- * messages. For example a telemetry, channel, or parameter identifier.
- */
+
 /**
  * Provides a reliable and convenient WebSocket abstraction layer that handles
  * a lot of boilerplate common to managing WebSocket connections such as:
@@ -54,16 +39,18 @@ const requestIdleCallback =
   // eslint-disable-next-line compat/compat
   window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
 const ONE_SECOND = 1000;
-const FIVE_SECONDS = 5 * ONE_SECOND;
+//const TEN_SECONDS = 10 * ONE_SECOND;
 
 class BatchingWebSocket extends EventTarget {
   #worker;
   #openmct;
   #showingRateLimitNotification;
-  #maxBatchSize;
+  #maxBufferSize;
   #applicationIsInitializing;
   #maxBatchWait;
   #firstBatchReceived;
+  #lastBatchReceived;
+  #peakBufferSize = Number.NEGATIVE_INFINITY;
 
   constructor(openmct) {
     super();
@@ -74,7 +61,7 @@ class BatchingWebSocket extends EventTarget {
     this.#worker = new Worker(workerUrl);
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
-    this.#maxBatchSize = Number.POSITIVE_INFINITY;
+    this.#maxBufferSize = Number.POSITIVE_INFINITY;
     this.#maxBatchWait = ONE_SECOND;
     this.#applicationIsInitializing = true;
     this.#firstBatchReceived = false;
@@ -90,19 +77,12 @@ class BatchingWebSocket extends EventTarget {
       { once: true }
     );
 
-    openmct.once('start', () => {
-      // An idle callback is a pretty good indication that a complex display is done loading. At that point set the batch size more conservatively.
-      // Force it after 5 seconds if it hasn't happened yet.
-      requestIdleCallback(
-        () => {
-          this.#applicationIsInitializing = false;
-          this.setMaxBatchSize(this.#maxBatchSize);
-        },
-        {
-          timeout: FIVE_SECONDS
-        }
-      );
-    });
+    // openmct.once('start', () => {
+    //   setTimeout(() => {
+    //     this.#applicationIsInitializing = false;
+    //     this.setMaxBufferSize(this.#maxBufferSize);
+    //   }, TEN_SECONDS);
+    // });
   }
 
   /**
@@ -137,24 +117,6 @@ class BatchingWebSocket extends EventTarget {
   }
 
   /**
-   * Set the strategy used to both decide which raw messages to batch, and how to group
-   * them.
-   * @param {BatchingStrategy} strategy The batching strategy to use when evaluating
-   * raw messages from the WebSocket.
-   */
-  setBatchingStrategy(strategy) {
-    const serializedStrategy = {
-      shouldBatchMessage: strategy.shouldBatchMessage.toString(),
-      getBatchIdFromMessage: strategy.getBatchIdFromMessage.toString()
-    };
-
-    this.#worker.postMessage({
-      type: 'setBatchingStrategy',
-      serializedStrategy
-    });
-  }
-
-  /**
    * @param {number} maxBatchSize the maximum length of a batch of messages. For example,
    * the maximum number of telemetry values to batch before dropping them
    * Note that this is a fail-safe that is only invoked if performance drops to the
@@ -167,20 +129,21 @@ class BatchingWebSocket extends EventTarget {
    * size and rate is 10 and 1000 respectively. Ideally you would add some margin, so
    * 15 would probably be a better batch size.
    */
-  setMaxBatchSize(maxBatchSize) {
-    this.#maxBatchSize = maxBatchSize;
-    if (!this.#applicationIsInitializing) {
-      this.#sendMaxBatchSizeToWorker(this.#maxBatchSize);
-    }
+  setMaxBufferSize(maxBatchSize) {
+    this.#maxBufferSize = maxBatchSize;
+    // if (!this.#applicationIsInitializing) {
+    //   this.#sendMaxBufferSizeToWorker(this.#maxBufferSize);
+    // }
+    this.#sendMaxBufferSizeToWorker(this.#maxBufferSize);
   }
   setMaxBatchWait(wait) {
     this.#maxBatchWait = wait;
     this.#sendBatchWaitToWorker(this.#maxBatchWait);
   }
-  #sendMaxBatchSizeToWorker(maxBatchSize) {
+  #sendMaxBufferSizeToWorker(maxBufferSize) {
     this.#worker.postMessage({
-      type: 'setMaxBatchSize',
-      maxBatchSize
+      type: 'setMaxBufferSize',
+      maxBufferSize
     });
   }
 
@@ -203,9 +166,36 @@ class BatchingWebSocket extends EventTarget {
 
   #routeMessageToHandler(message) {
     if (message.data.type === 'batch') {
-      this.start = Date.now();
       const batch = message.data.batch;
-      if (batch.dropped === true && !this.#showingRateLimitNotification) {
+      const now = performance.now();
+      const elapsed = (now - this.#lastBatchReceived) / 1000;
+      this.#lastBatchReceived = now;
+
+      let currentBufferLength = message.data.currentBufferLength;
+      let maxBufferSize = message.data.maxBufferSize;
+      let parameterCount = batch.length;
+      if (this.#peakBufferSize < currentBufferLength) {
+        this.#peakBufferSize = currentBufferLength;
+      }
+
+      if (this.#openmct.performance !== undefined) {
+        this.#openmct.performance.measurements.set(
+          'Parameters/s',
+          Math.floor(parameterCount / elapsed)
+        );
+        this.#openmct.performance.measurements.set(
+          'Buff. Util. (bytes)',
+          `${currentBufferLength} / ${maxBufferSize}`
+        );
+        this.#openmct.performance.measurements.set(
+          'Peak Buff. Util. (bytes)',
+          `${this.#peakBufferSize} / ${maxBufferSize}`
+        );
+      }
+
+      this.start = Date.now();
+      const dropped = message.data.dropped;
+      if (dropped === true && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
           'Telemetry dropped due to client rate limiting.',
           { hint: 'Refresh individual telemetry views to retrieve dropped telemetry if needed.' }
@@ -240,8 +230,6 @@ class BatchingWebSocket extends EventTarget {
             console.warn(`Event loop is too busy to process batch.`);
             this.#waitUntilIdleAndRequestNextBatch(batch);
           } else {
-            // After ingesting a telemetry batch, wait until the event loop is idle again before
-            // informing the worker we are ready for another batch.
             this.#readyForNextBatch();
           }
         } else {

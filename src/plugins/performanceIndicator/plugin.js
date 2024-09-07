@@ -23,10 +23,16 @@ export default function PerformanceIndicator() {
   return function install(openmct) {
     let frames = 0;
     let lastCalculated = performance.now();
-    const indicator = openmct.indicators.simpleIndicator();
+    openmct.performance = {
+      measurements: new Map()
+    };
 
+    const indicator = openmct.indicators.simpleIndicator();
+    indicator.key = 'performance-indicator';
     indicator.text('~ fps');
     indicator.statusClass('s-status-info');
+    indicator.on('click', showOverlay);
+
     openmct.indicators.add(indicator);
 
     let rafHandle = requestAnimationFrame(incrementFrames);
@@ -57,6 +63,59 @@ export default function PerformanceIndicator() {
       } else {
         indicator.statusClass('s-status-error');
       }
+    }
+
+    function showOverlay() {
+      const overlayStylesText = `
+          #c-performance-indicator--overlay {
+            background-color:rgba(0,0,0,0.5);
+            position: absolute;
+            width: 300px;
+            left: calc(50% - 300px);
+          }
+      `;
+      const overlayMarkup = `
+        <div id="c-performance-indicator--overlay">
+          <table id="c-performance-indicator--table">
+            <tr class="c-performance-indicator--row"><td class="c-performance-indicator--measurement-name"></td><td class="c-performance-indicator--measurement-value"></td></tr>
+          </table>
+        </div>
+      `;
+      const overlayTemplate = document.createElement('div');
+      overlayTemplate.innerHTML = overlayMarkup;
+      const overlay = overlayTemplate.cloneNode(true);
+      overlay.querySelector('.c-performance-indicator--row').remove();
+      const overlayStyles = document.createElement('style');
+      overlayStyles.appendChild(document.createTextNode(overlayStylesText));
+
+      document.head.appendChild(overlayStyles);
+      document.body.appendChild(overlay);
+
+      indicator.off('click', showOverlay);
+
+      const interval = setInterval(() => {
+        overlay.querySelector('#c-performance-indicator--table').innerHTML = '';
+
+        for (const [name, value] of openmct.performance.measurements.entries()) {
+          const newRow = overlayTemplate
+            .querySelector('.c-performance-indicator--row')
+            .cloneNode(true);
+          newRow.querySelector('.c-performance-indicator--measurement-name').innerText = name;
+          newRow.querySelector('.c-performance-indicator--measurement-value').innerText = value;
+          overlay.querySelector('#c-performance-indicator--table').appendChild(newRow);
+        }
+      }, 1000);
+
+      indicator.on(
+        'click',
+        () => {
+          overlayStyles.remove();
+          overlay.remove();
+          indicator.on('click', showOverlay);
+          clearInterval(interval);
+        },
+        { once: true, capture: true }
+      );
     }
   };
 }
