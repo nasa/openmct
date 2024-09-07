@@ -217,8 +217,8 @@ export default function installWorker() {
         case 'setMaxBufferSize':
           this.#messageBatcher.setMaxBufferSize(message.data.maxBufferSize);
           break;
-        case 'setMaxBatchWait':
-          this.#messageBatcher.setMaxBatchWait(message.data.maxBatchWait);
+        case 'setThrottleRate':
+          this.#messageBatcher.setThrottleRate(message.data.throttleRate);
           break;
         default:
           throw new Error(`Unknown message type: ${type}`);
@@ -251,7 +251,7 @@ export default function installWorker() {
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
-      this.setMaxBatchWait(ONE_SECOND);
+      this.setThrottleRate(ONE_SECOND);
     }
     #resetBatch() {
       //this.#batch = {};
@@ -278,8 +278,8 @@ export default function installWorker() {
     setMaxBufferSize(maxBufferSize) {
       this.#maxBufferSize = maxBufferSize;
     }
-    setMaxBatchWait(maxBatchWait) {
-      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), maxBatchWait);
+    setThrottleRate(throttleRate) {
+      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), throttleRate);
     }
     /**
      * Indicates that client code is ready to receive the next batch of

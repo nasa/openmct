@@ -47,7 +47,7 @@ class BatchingWebSocket extends EventTarget {
   #showingRateLimitNotification;
   #maxBufferSize;
   #applicationIsInitializing;
-  #maxBatchWait;
+  #throttleRate;
   #firstBatchReceived;
   #lastBatchReceived;
   #peakBufferSize = Number.NEGATIVE_INFINITY;
@@ -62,7 +62,7 @@ class BatchingWebSocket extends EventTarget {
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
     this.#maxBufferSize = Number.POSITIVE_INFINITY;
-    this.#maxBatchWait = ONE_SECOND;
+    this.#throttleRate = ONE_SECOND;
     this.#applicationIsInitializing = true;
     this.#firstBatchReceived = false;
 
@@ -76,13 +76,6 @@ class BatchingWebSocket extends EventTarget {
       },
       { once: true }
     );
-
-    // openmct.once('start', () => {
-    //   setTimeout(() => {
-    //     this.#applicationIsInitializing = false;
-    //     this.setMaxBufferSize(this.#maxBufferSize);
-    //   }, TEN_SECONDS);
-    // });
   }
 
   /**
@@ -136,9 +129,9 @@ class BatchingWebSocket extends EventTarget {
     // }
     this.#sendMaxBufferSizeToWorker(this.#maxBufferSize);
   }
-  setMaxBatchWait(wait) {
-    this.#maxBatchWait = wait;
-    this.#sendBatchWaitToWorker(this.#maxBatchWait);
+  setThrottleRate(throttleRate) {
+    this.#throttleRate = throttleRate;
+    this.#sendThrottleRateToWorker(this.#throttleRate);
   }
   #sendMaxBufferSizeToWorker(maxBufferSize) {
     this.#worker.postMessage({
@@ -147,10 +140,10 @@ class BatchingWebSocket extends EventTarget {
     });
   }
 
-  #sendBatchWaitToWorker(maxBatchWait) {
+  #sendThrottleRateToWorker(throttleRate) {
     this.#worker.postMessage({
-      type: 'setMaxBatchWait',
-      maxBatchWait
+      type: 'setThrottleRate',
+      throttleRate
     });
   }
 
@@ -233,13 +226,13 @@ class BatchingWebSocket extends EventTarget {
             this.#readyForNextBatch();
           }
         } else {
-          if (waitedFor > ONE_SECOND) {
+          if (waitedFor > this.#throttleRate) {
             console.warn(`Warning, batch processing took ${waitedFor}ms`);
           }
           this.#readyForNextBatch();
         }
       },
-      { timeout: ONE_SECOND }
+      { timeout: this.#throttleRate }
     );
   }
 }
