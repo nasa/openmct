@@ -1082,7 +1082,7 @@ export default {
     paused(state) {
       this.isPaused = Boolean(state);
 
-      if (!state) {
+      if (!this.isPaused) {
         this.previousFocusedImage = null;
         this.setFocusedImage(this.nextImageIndex);
         this.autoScroll = true;
