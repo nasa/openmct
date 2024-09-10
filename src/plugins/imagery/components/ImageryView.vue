@@ -620,7 +620,7 @@ export default {
           if (matchIndex > -1) {
             this.setFocusedImage(matchIndex);
           } else {
-            this.paused();
+            this.paused(false);
           }
         }
 
