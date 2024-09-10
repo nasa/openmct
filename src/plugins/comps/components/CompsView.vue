@@ -45,10 +45,12 @@
     <section
       id="telemetryReferenceSection"
       class="c-comps__section c-comps__refs-and-controls"
-      aria-label="Derived Telemetry References"
+      aria-describedby="telemetryReferences"
     >
       <div class="c-cs__header c-section__header">
-        <div class="c-cs__header-label c-section__label">Telemetry References</div>
+        <div id="telemetryReferences" class="c-cs__header-label c-section__label">
+          Telemetry References
+        </div>
       </div>
 
       <div :class="['c-comps__refs-controls c-cdef__controls', { disabled: !parameters?.length }]">
@@ -107,11 +109,7 @@
         </div>
       </div>
     </section>
-    <section
-      id="expressionSection"
-      aria-label="Derived Telemetry Expression"
-      class="c-comps__section c-comps__expression"
-    >
+    <section id="expressionSection" class="c-comps__section c-comps__expression">
       <div class="c-cs__header c-section__header">
         <div class="c-cs__header-label c-section__label">Expression</div>
       </div>

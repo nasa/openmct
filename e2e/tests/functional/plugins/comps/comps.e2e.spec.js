@@ -19,7 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createExampleTelemetryObject,
+  setRealTimeMode
+} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Comps', () => {
@@ -39,11 +43,7 @@ test.describe('Comps', () => {
       parent: folder.uuid
     });
 
-    // Create a sine wave generator within the comp
-    const sineWaveGenerator1 = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      parent: comp.uuid
-    });
+    const telemetryObject = await createExampleTelemetryObject(page, comp.uuid);
 
     // Check that expressions can be edited
     await page.goto(comp.url);
@@ -74,8 +74,8 @@ test.describe('Comps', () => {
 
     // Check that object path is correct
     const { myItemsFolderName } = openmctConfig;
-    let objectPath = await page.getByLabel(`${sineWaveGenerator1.name} Object Path`).textContent();
-    const expectedObjectPath = `/${myItemsFolderName}/${folder.name}/${comp.name}/${sineWaveGenerator1.name}`;
+    let objectPath = await page.getByLabel(`${telemetryObject.name} Object Path`).textContent();
+    const expectedObjectPath = `/${myItemsFolderName}/${folder.name}/${comp.name}/${telemetryObject.name}`;
     expect(objectPath).toBe(expectedObjectPath);
 
     // Check that the comps are saved
@@ -85,7 +85,7 @@ test.describe('Comps', () => {
     expect(expression).toBe('b*2');
 
     // Check that object path is still correct after save
-    objectPath = await page.getByLabel(`${sineWaveGenerator1.name} Object Path`).textContent();
+    objectPath = await page.getByLabel(`${telemetryObject.name} Object Path`).textContent();
     expect(objectPath).toBe(expectedObjectPath);
 
     // Check that comps work after being saved
