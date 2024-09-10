@@ -1,6 +1,6 @@
 {
   "name": "openmct-e2e",
-  "version": "4.0.0-next",
+  "version": "4.1.0-next",
   "description": "The Open MCT e2e framework",
   "type": "module",
   "module": "index.js",
