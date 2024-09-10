@@ -22,6 +22,7 @@
 import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
+import { ORDER } from '../constants.js';
 /**
  * @constructor
  */
@@ -208,7 +209,7 @@ export default class TableRowCollection extends EventEmitter {
     const val1 = this.getValueForSortColumn(row1);
     const val2 = this.getValueForSortColumn(row2);
 
-    if (this.sortOptions.direction === 'asc') {
+    if (this.sortOptions.direction === ORDER.ASCENDING) {
       return val1 <= val2 ? row1 : row2;
     } else {
       return val1 >= val2 ? row1 : row2;
@@ -373,7 +374,7 @@ export default class TableRowCollection extends EventEmitter {
 
   getRows() {
     if (this.rowLimit && this.rows.length > this.rowLimit) {
-      if (this.sortOptions.direction === 'desc') {
+      if (this.sortOptions.direction === ORDER.DESCENDING) {
         return this.rows.slice(0, this.rowLimit);
       } else {
         return this.rows.slice(-this.rowLimit);

@@ -34,9 +34,9 @@
       }"
       @click="onClick"
     >
-      <div v-if="options.label" class="c-icon-button__label">
+      <span v-if="options.label" class="c-icon-button__label">
         {{ options.label }}
-      </div>
+      </span>
     </div>
   </div>
 </template>
