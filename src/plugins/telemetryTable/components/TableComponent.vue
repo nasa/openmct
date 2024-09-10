@@ -296,6 +296,7 @@ import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import { useResizeObserver } from '../../../ui/composables/resize.js';
+import { MODE, ORDER } from '../constants.js';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -713,7 +714,7 @@ export default {
     sortBy(columnKey) {
       let timeSystemKey = this.openmct.time.getTimeSystem().key;
 
-      if (this.telemetryMode === 'performance' && columnKey !== timeSystemKey) {
+      if (this.telemetryMode === MODE.PERFORMANCE && columnKey !== timeSystemKey) {
         this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Sort', () => {
           this.initiateSort(columnKey);
         });
@@ -724,15 +725,15 @@ export default {
     initiateSort(columnKey) {
       // If sorting by the same column, flip the sort direction.
       if (this.sortOptions.key === columnKey) {
-        if (this.sortOptions.direction === 'asc') {
-          this.sortOptions.direction = 'desc';
+        if (this.sortOptions.direction === ORDER.ASCENDING) {
+          this.sortOptions.direction = ORDER.DESCENDING;
         } else {
-          this.sortOptions.direction = 'asc';
+          this.sortOptions.direction = ORDER.ASCENDING;
         }
       } else {
         this.sortOptions = {
           key: columnKey,
-          direction: 'desc'
+          direction: ORDER.DESCENDING
         };
       }
 
@@ -751,7 +752,7 @@ export default {
       }
     },
     shouldAutoScroll() {
-      if (this.sortOptions.direction === 'desc') {
+      if (this.sortOptions.direction === ORDER.DESCENDING) {
         return false;
       }
 
@@ -844,7 +845,7 @@ export default {
       return justTheData;
     },
     exportAllDataAsCSV() {
-      if (this.telemetryMode === 'performance') {
+      if (this.telemetryMode === MODE.PERFORMANCE) {
         this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Export', () => {
           const data = this.getTableRowData();
 
@@ -1226,7 +1227,8 @@ export default {
       });
     },
     updateTelemetryMode() {
-      this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
+      this.telemetryMode =
+        this.telemetryMode === MODE.UNLIMITED ? MODE.PERFORMANCE : MODE.UNLIMITED;
 
       if (this.persistModeChange) {
         this.table.configuration.setTelemetryMode(this.telemetryMode);
@@ -1236,7 +1238,7 @@ export default {
 
       const timeSystemKey = this.openmct.time.getTimeSystem().key;
 
-      if (this.telemetryMode === 'performance' && this.sortOptions.key !== timeSystemKey) {
+      if (this.telemetryMode === MODE.PERFORMANCE && this.sortOptions.key !== timeSystemKey) {
         this.openmct.notifications.info(
           'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
         );

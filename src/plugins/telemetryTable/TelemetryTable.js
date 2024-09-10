@@ -25,6 +25,7 @@ import _ from 'lodash';
 
 import StalenessUtils from '../../utils/staleness.js';
 import TableRowCollection from './collections/TableRowCollection.js';
+import { MODE, ORDER } from './constants.js';
 import TelemetryTableColumn from './TelemetryTableColumn.js';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration.js';
 import TelemetryTableNameColumn from './TelemetryTableNameColumn.js';
@@ -119,7 +120,7 @@ export default class TelemetryTable extends EventEmitter {
       this.rowLimit = rowLimit;
     }
 
-    if (this.telemetryMode === 'performance') {
+    if (this.telemetryMode === MODE.PERFORMANCE) {
       this.tableRows.setLimit(this.rowLimit);
     } else {
       this.tableRows.removeLimit();
@@ -135,7 +136,7 @@ export default class TelemetryTable extends EventEmitter {
     //If no persisted sort order, default to sorting by time system, descending.
     sortOptions = sortOptions || {
       key: this.openmct.time.getTimeSystem().key,
-      direction: 'desc'
+      direction: ORDER.DESCENDING
     };
 
     this.updateRowLimit();
@@ -172,10 +173,9 @@ export default class TelemetryTable extends EventEmitter {
     this.removeTelemetryCollection(keyString);
 
     let sortOptions = this.configuration.getConfiguration().sortOptions;
-    requestOptions.order =
-      sortOptions?.direction ?? (this.telemetryMode === 'performance' ? 'desc' : 'asc');
+    requestOptions.order = sortOptions?.direction ?? ORDER.DESCENDING; // default to descending
 
-    if (this.telemetryMode === 'performance') {
+    if (this.telemetryMode === MODE.PERFORMANCE) {
       requestOptions.size = this.rowLimit;
       requestOptions.enforceSize = true;
     }
