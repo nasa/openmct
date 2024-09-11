@@ -39,7 +39,6 @@ const requestIdleCallback =
   // eslint-disable-next-line compat/compat
   window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
 const ONE_SECOND = 1000;
-//const TEN_SECONDS = 10 * ONE_SECOND;
 
 class BatchingWebSocket extends EventTarget {
   #worker;
@@ -124,9 +123,6 @@ class BatchingWebSocket extends EventTarget {
    */
   setMaxBufferSize(maxBatchSize) {
     this.#maxBufferSize = maxBatchSize;
-    // if (!this.#applicationIsInitializing) {
-    //   this.#sendMaxBufferSizeToWorker(this.#maxBufferSize);
-    // }
     this.#sendMaxBufferSizeToWorker(this.#maxBufferSize);
   }
   setThrottleRate(throttleRate) {
