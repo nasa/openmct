@@ -21,9 +21,15 @@
  *****************************************************************************/
 import installWorker from './WebSocketWorker.js';
 
+// Shim for Internet Explorer, I mean Safari. It doesn't support requestIdleCallback, but it's in a tech preview, so it will be available soon.
+const requestIdleCallback =
+  // eslint-disable-next-line compat/compat
+  window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
+const ONE_SECOND = 1000;
+
 /**
- * Provides a reliable and convenient WebSocket abstraction layer that handles
- * a lot of boilerplate common to managing WebSocket connections such as:
+ * Provides a WebSocket abstraction layer that handles a lot of boilerplate common
+ * to managing WebSocket connections such as:
  * - Establishing a WebSocket connection to a server
  * - Reconnecting on error, with a fallback strategy
  * - Queuing messages so that clients can send messages without concern for the current
@@ -34,12 +40,6 @@ import installWorker from './WebSocketWorker.js';
  * and batching of messages without blocking either the UI or server.
  *
  */
-// Shim for Internet Explorer, I mean Safari. It doesn't support requestIdleCallback, but it's in a tech preview, so it will be dropping soon.
-const requestIdleCallback =
-  // eslint-disable-next-line compat/compat
-  window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
-const ONE_SECOND = 1000;
-
 class BatchingWebSocket extends EventTarget {
   #worker;
   #openmct;
@@ -51,6 +51,9 @@ class BatchingWebSocket extends EventTarget {
   #lastBatchReceived;
   #peakBufferSize = Number.NEGATIVE_INFINITY;
 
+  /**
+   * @param {import('openmct.js').OpenMCT} openmct
+   */
   constructor(openmct) {
     super();
     // Install worker, register listeners etc.
@@ -109,17 +112,21 @@ class BatchingWebSocket extends EventTarget {
   }
 
   /**
-   * @param {number} maxBatchSize the maximum length of a batch of messages. For example,
-   * the maximum number of telemetry values to batch before dropping them
+   * @param {number} maxBufferSize the maximum length of the receive buffer in characters.
    * Note that this is a fail-safe that is only invoked if performance drops to the
    * point where Open MCT cannot keep up with the amount of telemetry it is receiving.
    * In this event it will sacrifice the oldest telemetry in the batch in favor of the
    * most recent telemetry. The user will be informed that telemetry has been dropped.
    *
-   * This should be set appropriately for the expected data rate. eg. If telemetry
-   * is received at 10Hz for each telemetry point, then a minimal combination of batch
-   * size and rate is 10 and 1000 respectively. Ideally you would add some margin, so
-   * 15 would probably be a better batch size.
+   * This should be set appropriately for the expected data rate. eg. If typical usage
+   * sees 2000 messages arriving at a client per second, with an average message size
+   * of 500 bytes, then 2000 * 500 = 1000000 characters will be right on the limit.
+   * In this scenario, a buffer size of 1500000 character might be more appropriate
+   * to allow some overhead for bursty telemetry, and temporary UI load during page
+   * load.
+   *
+   * The PerformanceIndicator plugin (openmct.plugins.PerformanceIndicator) gives
+   * statistics on buffer utilization. It can be used to scale the buffer appropriately.
    */
   setMaxBufferSize(maxBatchSize) {
     this.#maxBufferSize = maxBatchSize;
