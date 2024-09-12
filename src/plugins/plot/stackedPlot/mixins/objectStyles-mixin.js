@@ -128,36 +128,31 @@ export default {
       }
     },
     updateStyle(styleObj) {
-      let elemToStyle = this.getStyleReceiver();
+      const elemToStyle = this.getStyleReceiver();
 
-      if (!styleObj || elemToStyle === undefined) {
+      if (!styleObj || !elemToStyle) {
         return;
       }
 
-      let keys = Object.keys(styleObj);
+      // handle visibility separately
+      if (styleObj.isStyleInvisible !== undefined) {
+        elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
+        delete styleObj.isStyleInvisible;
+      }
 
-      keys.forEach((key) => {
-        if (elemToStyle) {
-          if (typeof styleObj[key] === 'string' && styleObj[key].indexOf('__no_value') > -1) {
-            if (elemToStyle.style[key]) {
-              elemToStyle.style[key] = '';
-            }
-          } else {
-            if (
-              !styleObj.isStyleInvisible &&
-              elemToStyle.classList.contains(STYLE_CONSTANTS.isStyleInvisible)
-            ) {
-              elemToStyle.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
-            } else if (
-              styleObj.isStyleInvisible &&
-              !elemToStyle.classList.contains(styleObj.isStyleInvisible)
-            ) {
-              elemToStyle.classList.add(styleObj.isStyleInvisible);
-            }
-
-            elemToStyle.style[key] = styleObj[key];
+      // build style string
+      const styleString = Object.entries(styleObj)
+        .map(([key, value]) => {
+          if (typeof value === 'string' && value.includes('__no_value')) {
+            return `${key}: ;`; // removes the property
           }
-        }
+          return `${key}: ${value};`;
+        })
+        .join(' ');
+
+      // apply styles in one operation
+      requestAnimationFrame(() => {
+        elemToStyle.style.cssText += styleString;
       });
     }
   }
