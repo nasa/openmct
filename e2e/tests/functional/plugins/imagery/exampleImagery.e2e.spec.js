@@ -668,8 +668,9 @@ test.describe('Example Imagery in Time Strip', () => {
  * 3. Can pan the image using the pan hotkey + mouse drag
  * 4. Clicking on the left arrow button pauses imagery and moves to the previous image
  * 5. Imagery is updated as new images stream in, regardless of pause status
- * 6. Old images are discarded when new images stream in
- * 7. Image brightness/contrast can be adjusted by dragging the sliders
+ * 6. Old images are discarded when their timestamps fall out of bounds
+ * 7. Multiple images can be discarded when their timestamps fall out of bounds
+ * 8. Image brightness/contrast can be adjusted by dragging the sliders
  * @param {import('@playwright/test').Page} page
  */
 async function performImageryViewOperationsAndAssert(page, layoutObject) {
@@ -745,6 +746,23 @@ async function performImageryViewOperationsAndAssert(page, layoutObject) {
   await page.clock.fastForward(IMAGE_LOAD_DELAY);
   await page.clock.resume();
   await expect(page.getByLabel(lastImageTimestamp)).toBeHidden();
+
+  // go way forward in time to ensure multiple images are discarded
+  const IMAGES_TO_DISCARD_COUNT = 5;
+
+  const lastImageToDiscard = page.getByLabel('Image thumbnail from').nth(IMAGES_TO_DISCARD_COUNT - 1);
+  const lastImageToDiscardTimestamp = await lastImageToDiscard.getAttribute('title');
+  expect(lastImageToDiscardTimestamp).not.toBeNull();
+
+  const imageAfterLastImageToDiscard = page.getByLabel('Image thumbnail from').nth(IMAGES_TO_DISCARD_COUNT);
+  const imageAfterLastImageToDiscardTimestamp = await imageAfterLastImageToDiscard.getAttribute('title');
+  expect(imageAfterLastImageToDiscardTimestamp).not.toBeNull();
+
+  await page.clock.fastForward(IMAGE_LOAD_DELAY * IMAGES_TO_DISCARD_COUNT);
+  await page.clock.resume();
+
+  await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
+  await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
 
   //Get background-image url from background-image css prop
   await assertBackgroundImageUrlFromBackgroundCss(page);
