@@ -73,13 +73,11 @@ export default class ConditionManager extends EventEmitter {
 
     const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
     const telemetryMetaData = metadata ? metadata.valueMetadatas : [];
+    const telemetryProcessor = this.telemetryReceived.bind(this, telemetryObject);
 
-    this.telemetryObjects[keyString] = { ...telemetryObject, telemetryMetaData };
+    this.telemetryObjects[keyString] = Object.assign({}, telemetryObject, { telemetryMetaData });
 
-    this.telemetryCollections[keyString].on(
-      'add',
-      this.telemetryReceived.bind(this, telemetryObject)
-    );
+    this.telemetryCollections[keyString].on('add', telemetryProcessor);
     this.telemetryCollections[keyString].load();
 
     this.updateConditionTelemetryObjects();
@@ -94,6 +92,8 @@ export default class ConditionManager extends EventEmitter {
     this.telemetryCollections[keyString].destroy();
     this.telemetryCollections[keyString] = null;
     this.telemetryObjects[keyString] = null;
+    delete this.telemetryCollections[keyString];
+    delete this.telemetryObjects[keyString];
     this.removeConditionTelemetryObjects();
 
     //force re-computation of condition set result as we might be in a state where
