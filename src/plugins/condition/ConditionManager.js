@@ -399,10 +399,12 @@ export default class ConditionManager extends EventEmitter {
     return this.openmct.time.getBounds().end >= currentTimestamp;
   }
 
-  telemetryReceived(endpoint, datum) {
+  telemetryReceived(endpoint, data) {
     if (!this.isTelemetryUsed(endpoint)) {
       return;
     }
+
+    const datum = data[0];
 
     const normalizedDatum = this.createNormalizedDatum(datum, endpoint);
     const timeSystemKey = this.openmct.time.getTimeSystem().key;
