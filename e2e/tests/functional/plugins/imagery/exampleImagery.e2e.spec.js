@@ -750,12 +750,17 @@ async function performImageryViewOperationsAndAssert(page, layoutObject) {
   // go way forward in time to ensure multiple images are discarded
   const IMAGES_TO_DISCARD_COUNT = 5;
 
-  const lastImageToDiscard = page.getByLabel('Image thumbnail from').nth(IMAGES_TO_DISCARD_COUNT - 1);
+  const lastImageToDiscard = page
+    .getByLabel('Image thumbnail from')
+    .nth(IMAGES_TO_DISCARD_COUNT - 1);
   const lastImageToDiscardTimestamp = await lastImageToDiscard.getAttribute('title');
   expect(lastImageToDiscardTimestamp).not.toBeNull();
 
-  const imageAfterLastImageToDiscard = page.getByLabel('Image thumbnail from').nth(IMAGES_TO_DISCARD_COUNT);
-  const imageAfterLastImageToDiscardTimestamp = await imageAfterLastImageToDiscard.getAttribute('title');
+  const imageAfterLastImageToDiscard = page
+    .getByLabel('Image thumbnail from')
+    .nth(IMAGES_TO_DISCARD_COUNT);
+  const imageAfterLastImageToDiscardTimestamp =
+    await imageAfterLastImageToDiscard.getAttribute('title');
   expect(imageAfterLastImageToDiscardTimestamp).not.toBeNull();
 
   await page.clock.fastForward(IMAGE_LOAD_DELAY * IMAGES_TO_DISCARD_COUNT);
