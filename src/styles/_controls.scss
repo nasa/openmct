@@ -714,12 +714,19 @@ select {
   height: 120px;
   width: 500px;
 
+  body.mobile & { 
+      height: 50vh;
+      width: 50vw;
+  }
   .c-super-menu__menu {
     flex: 1 1 30%;
   }
 
   .c-super-menu__item-description {
     flex: 1 1 70%;
+    body.mobile & { // We don't want the descriptions that appear on hover for mobile. 
+      display: none;
+    }
 
     [class*='__icon'] {
       display: none !important;
