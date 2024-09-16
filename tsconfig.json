@@ -23,10 +23,6 @@
     "src/api/**/*.js"
   ],
   "exclude": [
-    "e2e",
-    "node_modules",
-    "dist",
-    "**/*Spec.js",
-    "openmct/e2e"
+    "**/*Spec.js"
   ]
 }
