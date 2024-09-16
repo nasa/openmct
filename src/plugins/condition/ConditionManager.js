@@ -77,11 +77,13 @@ export default class ConditionManager extends EventEmitter {
 
     const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
     const telemetryMetaData = metadata ? metadata.valueMetadatas : [];
-    const telemetryProcessor = this.telemetryReceived.bind(this, telemetryObject);
 
-    this.telemetryObjects[keyString] = Object.assign({}, telemetryObject, { telemetryMetaData });
+    this.telemetryObjects[keyString] = { ...telemetryObject, telemetryMetaData };
 
-    this.telemetryCollections[keyString].on('add', telemetryProcessor);
+    this.telemetryCollections[keyString].on(
+      'add',
+      this.telemetryReceived.bind(this, telemetryObject)
+    );
     this.telemetryCollections[keyString].load();
 
     this.updateConditionTelemetryObjects();
