@@ -17,7 +17,7 @@
     "noImplicitAny": false,
     "outFile": "dist/types/index.d.ts",
     "module": "NodeNext",
-    "moduleResolution": "nodenext"
+    "moduleResolution": "NodeNext"
   },
   "include": [
     "src/api/**/*.js"
