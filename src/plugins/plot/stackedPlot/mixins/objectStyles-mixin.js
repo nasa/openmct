@@ -137,22 +137,17 @@ export default {
       // handle visibility separately
       if (styleObj.isStyleInvisible !== undefined) {
         elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
-        delete styleObj.isStyleInvisible;
+        styleObj.isStyleInvisible = null;
       }
 
-      // build style string
-      const styleString = Object.entries(styleObj)
-        .map(([key, value]) => {
-          if (typeof value === 'string' && value.includes('__no_value')) {
-            return `${key}: ;`; // removes the property
-          }
-          return `${key}: ${value};`;
-        })
-        .join(' ');
-
-      // apply styles in one operation
       requestAnimationFrame(() => {
-        elemToStyle.style.cssText += styleString;
+        Object.entries(styleObj).forEach(([key, value]) => {
+          if (typeof value !== 'string' || !value.includes('__no_value')) {
+            elemToStyle.style[key] = value;
+          } else {
+            elemToStyle.style[key] = ''; // remove the property
+          }
+        });
       });
     }
   }
