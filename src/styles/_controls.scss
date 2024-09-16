@@ -595,7 +595,7 @@ select {
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
-  display: inline-block;
+  @include textViews();
   color: $colorKey;
 
   &--button {
@@ -603,13 +603,14 @@ select {
   }
 }
 
-.c-so-view--hyperlink.c-so-view--no-frame {
-  .c-hyperlink--button {
+.c-so-view--no-frame {
+  .c-hyperlink {
     @include abs();
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+
+    &--button {
+      padding: 0;
+      justify-content: center;
+    }
   }
 
   .c-so-view__frame-controls {
