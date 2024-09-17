@@ -769,17 +769,17 @@ describe('the plugin', function () {
       await onAddCalledPromise;
 
       // Simulate the passage of time and no data received
-      setTimeout(() => {
-        expect(mockListener).toHaveBeenCalledWith({
-          output: 'Any old telemetry',
-          id: {
-            namespace: '',
-            key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
-          },
-          conditionId: '39584410-cbf9-499e-96dc-76f27e69885d',
-          utc: undefined
-        });
-      }, 400);
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(mockListener).toHaveBeenCalledWith({
+        output: 'Any old telemetry',
+        id: {
+          namespace: '',
+          key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
+        },
+        conditionId: '39584410-cbf9-499e-96dc-76f27e69885d',
+        utc: undefined
+      });
     });
 
     it('should not evaluate as old when telemetry is received in the allotted time', async () => {
