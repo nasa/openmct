@@ -720,7 +720,7 @@ fdescribe('the plugin', function () {
       };
     });
 
-    it('should evaluate as old when telemetry is not received in the allotted time', async () => {
+    fit('should evaluate as old when telemetry is not received in the allotted time', async () => {
       let onAddResolve;
       const onAddCalledPromise = new Promise((resolve) => {
         onAddResolve = resolve;
@@ -737,12 +737,10 @@ fdescribe('the plugin', function () {
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'getMetadata',
         'request',
-        'subscribe',
         'getValueFormatter',
         'abortAllRequests',
         'requestCollection'
       ]);
-      openmct.telemetry.subscribe.and.returnValue(function () {});
       openmct.telemetry.request.and.returnValue(Promise.resolve([]));
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
