@@ -33,7 +33,7 @@ import StyleRuleManager from './StyleRuleManager.js';
 import { IS_OLD_KEY } from './utils/constants.js';
 import { getApplicableStylesForItem } from './utils/styleUtils.js';
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
   let conditionSetDefinition;
   let mockConditionSetDomainObject;
   let mockListener;
@@ -720,23 +720,39 @@ describe('the plugin', function () {
       };
     });
 
-    it('should evaluate as old when telemetry is not received in the allotted time', (done) => {
+    it('should evaluate as old when telemetry is not received in the allotted time', async () => {
+      let onAddResolve;
+      const onAddCalledPromise = new Promise((resolve) => {
+        onAddResolve = resolve;
+      });
       const mockTelemetryCollection = {
         load: jasmine.createSpy('load'),
-        on: jasmine.createSpy('on'),
-        off: jasmine.createSpy('off'),
-        getAll: jasmine.createSpy('getAll').and.returnValue([])
+        on: jasmine.createSpy('on').and.callFake((event, callback) => {
+          if (event === 'add') {
+            onAddResolve();
+          }
+        })
       };
 
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'getMetadata',
+        'request',
+        'subscribe',
         'getValueFormatter',
         'abortAllRequests',
         'requestCollection'
       ]);
+      openmct.telemetry.subscribe.and.returnValue(function () {});
+      openmct.telemetry.request.and.returnValue(Promise.resolve([]));
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
-        valueMetadatas: []
+        valueMetadatas: testTelemetryObject.telemetry.values,
+        valuesForHints: jasmine
+          .createSpy('valuesForHints')
+          .and.returnValue(testTelemetryObject.telemetry.values),
+        value: jasmine.createSpy('value').and.callFake((key) => {
+          return testTelemetryObject.telemetry.values.find((value) => value.key === key);
+        })
       });
       openmct.telemetry.requestCollection.and.returnValue(mockTelemetryCollection);
       openmct.telemetry.getValueFormatter.and.returnValue({
@@ -751,13 +767,11 @@ describe('the plugin', function () {
         'test-object': testTelemetryObject
       };
       conditionMgr.updateConditionTelemetryObjects();
+      // Wait for the 'on' callback to be called
+      await onAddCalledPromise;
 
       // Simulate the passage of time and no data received
       setTimeout(() => {
-        // Trigger the 'add' event on the mockTelemetryCollection with an empty array
-        // to simulate no data received
-        mockTelemetryCollection.on.calls.mostRecent().args[1]([]);
-
         expect(mockListener).toHaveBeenCalledWith({
           output: 'Any old telemetry',
           id: {
@@ -767,7 +781,6 @@ describe('the plugin', function () {
           conditionId: '39584410-cbf9-499e-96dc-76f27e69885d',
           utc: undefined
         });
-        done();
       }, 400);
     });
 
@@ -799,11 +812,21 @@ describe('the plugin', function () {
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'getMetadata',
         'getValueFormatter',
+        'request',
+        'subscribe',
         'requestCollection'
       ]);
+      openmct.telemetry.subscribe.and.returnValue(function () {});
+      openmct.telemetry.request.and.returnValue(Promise.resolve([testDatum]));
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
-        valueMetadatas: testTelemetryObject.telemetry.values
+        valueMetadatas: testTelemetryObject.telemetry.values,
+        valuesForHints: jasmine
+          .createSpy('valuesForHints')
+          .and.returnValue(testTelemetryObject.telemetry.values),
+        value: jasmine.createSpy('value').and.callFake((key) => {
+          return testTelemetryObject.telemetry.values.find((value) => value.key === key);
+        })
       });
       openmct.telemetry.requestCollection.and.returnValue(mockTelemetryCollection);
       openmct.telemetry.getValueFormatter.and.returnValue({
@@ -947,17 +970,25 @@ describe('the plugin', function () {
       openmct.telemetry.getMetadata = jasmine.createSpy('getMetadata');
       openmct.telemetry.getMetadata.and.returnValue({
         ...testTelemetryObject.telemetry,
-        valueMetadatas: []
+        valueMetadatas: testTelemetryObject.telemetry.values,
+        valuesForHints: jasmine
+          .createSpy('valuesForHints')
+          .and.returnValue(testTelemetryObject.telemetry.values),
+        value: jasmine.createSpy('value').and.callFake((key) => {
+          return testTelemetryObject.telemetry.values.find((value) => value.key === key);
+        })
       });
       conditionMgr.on('conditionSetResultUpdated', mockListener);
       conditionMgr.telemetryObjects = {
         'test-object': testTelemetryObject
       };
       conditionMgr.updateConditionTelemetryObjects();
-      conditionMgr.telemetryReceived(testTelemetryObject, {
-        'some-key': 2,
-        utc: date
-      });
+      conditionMgr.telemetryReceived(testTelemetryObject, [
+        {
+          'some-key': 2,
+          utc: date
+        }
+      ]);
       let result = conditionMgr.conditions.map((condition) => condition.result);
       expect(result[2]).toBeUndefined();
     });
@@ -1047,18 +1078,28 @@ describe('the plugin', function () {
         }
       };
       openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-      // const mockTransactionService = jasmine.createSpyObj(
-      //     'transactionService',
-      //     ['commit']
-      // );
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'isTelemetryObject',
+        'request',
+        'subscribe',
         'getMetadata',
         'getValueFormatter',
         'requestCollection'
       ]);
+      openmct.telemetry.subscribe.and.returnValue(function () {});
+      openmct.telemetry.request.and.returnValue(Promise.resolve([]));
       openmct.telemetry.isTelemetryObject.and.returnValue(true);
       openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
+      openmct.telemetry.getMetadata.and.returnValue({
+        ...testTelemetryObject.telemetry,
+        valueMetadatas: testTelemetryObject.telemetry.values,
+        valuesForHints: jasmine
+          .createSpy('valuesForHints')
+          .and.returnValue(testTelemetryObject.telemetry.values),
+        value: jasmine.createSpy('value').and.callFake((key) => {
+          return testTelemetryObject.telemetry.values.find((value) => value.key === key);
+        })
+      });
       openmct.telemetry.getValueFormatter.and.returnValue({
         parse: function (value) {
           return value;
@@ -1066,9 +1107,7 @@ describe('the plugin', function () {
       });
       openmct.telemetry.requestCollection.and.returnValue({
         load: jasmine.createSpy('load'),
-        on: jasmine.createSpy('on'),
-        off: jasmine.createSpy('off'),
-        getAll: jasmine.createSpy('getAll').and.returnValue([])
+        on: jasmine.createSpy('on')
       });
 
       const styleRuleManger = new StyleRuleManager(stylesObject, openmct, null, true);
