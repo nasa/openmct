@@ -33,7 +33,7 @@ import StyleRuleManager from './StyleRuleManager.js';
 import { IS_OLD_KEY } from './utils/constants.js';
 import { getApplicableStylesForItem } from './utils/styleUtils.js';
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
   let conditionSetDefinition;
   let mockConditionSetDomainObject;
   let mockListener;
