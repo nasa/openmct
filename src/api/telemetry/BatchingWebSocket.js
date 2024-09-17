@@ -21,10 +21,34 @@
  *****************************************************************************/
 import installWorker from './WebSocketWorker.js';
 
-// Shim for Internet Explorer, I mean Safari. It doesn't support requestIdleCallback, but it's in a tech preview, so it will be available soon.
-const requestIdleCallback =
+/**
+ * @typedef RequestIdleCallbackOptions
+ * @prop {Number} timeout If the number of milliseconds represented by this
+ * parameter has elapsed and the callback has not already been called, invoke
+ *  the callback.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback
+ */
+
+/**
+ * Mocks requestIdleCallback for Safari using setTimeout. Functionality will be
+ * identical to setTimeout in Safari, which is to fire the callback function
+ * after the provided timeout period.
+ *
+ * In browsers that support requestIdleCallback, this const is just a
+ * pointer to the native function.
+ *
+ * @param {Function} callback a callback to be invoked during the next idle period, or
+ * after the specified timeout
+ * @param {RequestIdleCallbackOptions} options
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback
+ *
+ */
+function requestIdleCallbackPolyfill(callback, options) {
   // eslint-disable-next-line compat/compat
-  window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
+  return window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
+}
+const requestIdleCallback = requestIdleCallbackPolyfill;
+
 const ONE_SECOND = 1000;
 
 /**
