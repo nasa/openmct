@@ -20,6 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/** @type {ShelveDuration[]} */
+const DEFAULT_SHELVE_DURATIONS = [
+  {
+    name: '5 Minutes',
+    value: 300000
+  },
+  {
+    name: '10 Minutes',
+    value: 600000
+  },
+  {
+    name: '15 Minutes',
+    value: 900000
+  },
+  {
+    name: 'Indefinite',
+    value: null
+  }
+];
+
 export default class FaultManagementAPI {
   /**
    * @param {import("openmct").OpenMCT} openmct
@@ -85,7 +105,22 @@ export default class FaultManagementAPI {
   shelveFault(fault, shelveData) {
     return this.provider.shelveFault(fault, shelveData);
   }
+
+  /**
+   * Retrieves the available shelve durations from the provider, or the default durations if the
+   * provider does not provide any.
+   * @returns {ShelveDuration[]}
+   */
+  getShelveDurations() {
+    return this.provider?.getShelveDurations() ?? DEFAULT_SHELVE_DURATIONS;
+  }
 }
+
+/**
+ * @typedef {Object} ShelveDuration
+ * @property {string} name - The name of the shelve duration
+ * @property {number|null} value - The value of the shelve duration in milliseconds, or null for indefinite
+ */
 
 /**
  * @typedef {Object} TriggerValueInfo
