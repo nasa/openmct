@@ -41,16 +41,16 @@
       <StatusIndicators />
       <button
         class="l-shell__head__button c-icon-button"
-        :class="headCanWrap ? 'icon-list-view' : 'icon-3-dots'"
-        :aria-label="`Click to ${headCanWrap ? 'prevent wrapping' : 'wrap'} items`"
-        :title="`Click to ${headCanWrap ? 'prevent wrapping' : 'wrap'} items`"
+        :class="headCanWrap ? 'icon-multiline' : 'icon-singleline'"
+        :aria-label="`Display as ${headCanWrap ? 'multiple lines' : 'single line'}`"
+        :title="`Display as ${headCanWrap ? 'multiple lines' : 'single line'}`"
         @click="toggleHeadWrapping"
       ></button>
       <button
         class="l-shell__head__collapse-button c-icon-button"
         :class="headExpanded ? 'icon-items-collapse' : 'icon-items-expand'"
-        :aria-label="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
-        :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
+        :aria-label="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
+        :title="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
         @click="toggleShellHead"
       ></button>
       <NotificationBanner />
