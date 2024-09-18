@@ -17,7 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-shell__head-section l-shell__indicators">
+  <div ref="indicators" class="l-shell__head-section l-shell__indicators">
     <component
       :is="indicator.value.vueComponent"
       v-for="indicator in sortedIndicators"
@@ -33,7 +33,8 @@ export default {
   inject: ['openmct'],
   data() {
     return {
-      indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef)
+      indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef),
+      indicatorsOverflowing: false
     };
   },
   computed: {
@@ -45,8 +46,13 @@ export default {
       return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
     }
   },
+  mounted() {
+    this.checkOverflow();
+    window.addEventListener('resize', this.checkOverflow);
+  },
   beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
+    window.removeEventListener('resize', this.checkOverflow);
   },
   created() {
     this.openmct.indicators.on('addIndicator', this.addIndicator);
@@ -54,6 +60,15 @@ export default {
   methods: {
     addIndicator(indicator) {
       this.indicators.push(shallowRef(indicator));
+    },
+    checkOverflow() {
+      const element = this.$refs.indicators;
+      const sizes = {
+        spaceNeeded: element.scrollWidth,
+        spaceAvail: element.clientWidth
+      };
+      this.indicatorsOverflowing = sizes.spaceNeeded > sizes.spaceAvail;
+      console.log('checkOverflow', this.indicatorsOverflowing, sizes.spaceNeeded, sizes.spaceAvail);
     }
   }
 };
