@@ -33,7 +33,7 @@
       :class="{
         'l-shell__head--expanded': headExpanded,
         'l-shell__head--minify-indicators': !headExpanded,
-        'l-shell__head--can-wrap': headCanWrap
+        'l-shell__head--indicators-single-line': !indicatorsMultiline
       }"
     >
       <CreateButton class="l-shell__create-button" />
@@ -41,10 +41,10 @@
       <StatusIndicators />
       <button
         class="l-shell__head__button c-icon-button"
-        :class="headCanWrap ? 'icon-multiline' : 'icon-singleline'"
-        :aria-label="`Display as ${headCanWrap ? 'multiple lines' : 'single line'}`"
-        :title="`Display as ${headCanWrap ? 'multiple lines' : 'single line'}`"
-        @click="toggleHeadWrapping"
+        :class="indicatorsMultiline ? 'icon-singleline' : 'icon-multiline'"
+        :aria-label="`Display as ${indicatorsMultiline ? 'single line' : 'multiple lines'}`"
+        :title="`Display as ${indicatorsMultiline ? 'single line' : 'multiple lines'}`"
+        @click="toggleIndicatorsMultiline"
       ></button>
       <button
         class="l-shell__head__collapse-button c-icon-button"
@@ -206,10 +206,10 @@ export default {
   data: function () {
     let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
     let headExpanded = true;
-    let headCanWrap = false;
+    let indicatorsMultiline = false;
     if (storedHeadProps) {
       headExpanded = JSON.parse(storedHeadProps).expanded;
-      headCanWrap = JSON.parse(storedHeadProps).wrapping;
+      indicatorsMultiline = JSON.parse(storedHeadProps).multiline;
     }
 
     return {
@@ -221,7 +221,7 @@ export default {
       triggerSync: false,
       triggerReset: false,
       headExpanded,
-      headCanWrap,
+      indicatorsMultiline,
       isResizing: false,
       disableClearButton: false
     };
@@ -279,13 +279,13 @@ export default {
         })
       );
     },
-    toggleHeadWrapping() {
-      this.headCanWrap = !this.headCanWrap;
+    toggleIndicatorsMultiline() {
+      this.indicatorsMultiline = !this.indicatorsMultiline;
 
       window.localStorage.setItem(
         'openmct-shell-head',
         JSON.stringify({
-          wrapping: this.headCanWrap
+          multiline: this.indicatorsMultiline
         })
       );
     },

@@ -280,18 +280,22 @@
   }
 
   &__indicators {
+    // Style as multiline by default
+    display: flex;
     flex-wrap: wrap;
     font-size: 11px;
+    min-height: 24px;
     justify-content: flex-end;
 
-    .l-shell__head--expanded & {
-    }
-
-    .l-shell__head--can-wrap & {
-      // Force elements to wrap down when width constrained
-      background: rgba(deeppink, 0.4);
-      height: 24px;
+    .l-shell__head--indicators-single-line & {
+      flex-wrap: nowrap;
+      justify-content: flex-start; // Overflow detection doesn't work with flex-end.
+      max-height: 24px;
       overflow: hidden;
+
+      > *:first-child {
+        margin-left: auto; // Mimics justify-content: flex-end when in single line mode.
+      }
     }
   }
 
