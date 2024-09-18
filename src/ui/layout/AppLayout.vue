@@ -32,19 +32,23 @@
       class="l-shell__head"
       :class="{
         'l-shell__head--expanded': headExpanded,
-        'l-shell__head--minify-indicators': !headExpanded
+        'l-shell__head--minify-indicators': !headExpanded,
+        'l-shell__head--can-wrap': headCanWrap
       }"
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
       <StatusIndicators />
       <button
+        class="l-shell__head__button c-icon-button"
+        :class="headCanWrap ? 'icon-list-view' : 'icon-3-dots'"
+        :aria-label="`Click to ${headCanWrap ? 'prevent wrapping' : 'wrap'} items`"
+        :title="`Click to ${headCanWrap ? 'prevent wrapping' : 'wrap'} items`"
+        @click="toggleHeadWrapping"
+      ></button>
+      <button
         class="l-shell__head__collapse-button c-icon-button"
-        :class="
-          headExpanded
-            ? 'l-shell__head__collapse-button--collapse'
-            : 'l-shell__head__collapse-button--expand'
-        "
+        :class="headExpanded ? 'icon-items-collapse' : 'icon-items-expand'"
         :aria-label="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         @click="toggleShellHead"
@@ -201,8 +205,10 @@ export default {
   data: function () {
     let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
     let headExpanded = true;
+    let headCanWrap = false;
     if (storedHeadProps) {
       headExpanded = JSON.parse(storedHeadProps).expanded;
+      headCanWrap = JSON.parse(storedHeadProps).wrapping;
     }
 
     return {
@@ -214,6 +220,7 @@ export default {
       triggerSync: false,
       triggerReset: false,
       headExpanded,
+      headCanWrap,
       isResizing: false,
       disableClearButton: false
     };
@@ -268,6 +275,16 @@ export default {
         'openmct-shell-head',
         JSON.stringify({
           expanded: this.headExpanded
+        })
+      );
+    },
+    toggleHeadWrapping() {
+      this.headCanWrap = !this.headCanWrap;
+
+      window.localStorage.setItem(
+        'openmct-shell-head',
+        JSON.stringify({
+          wrapping: this.headCanWrap
         })
       );
     },
