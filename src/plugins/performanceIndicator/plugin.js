@@ -30,6 +30,7 @@ export default function PerformanceIndicator() {
     const indicator = openmct.indicators.simpleIndicator();
     indicator.key = 'performance-indicator';
     indicator.text('~ fps');
+    indicator.description('Performance Indicator');
     indicator.statusClass('s-status-info');
     indicator.on('click', showOverlay);
 
@@ -75,7 +76,7 @@ export default function PerformanceIndicator() {
           }
       `;
       const overlayMarkup = `
-        <div id="c-performance-indicator--overlay">
+        <div id="c-performance-indicator--overlay" aria-label="Performance Overlay">
           <table id="c-performance-indicator--table">
             <tr class="c-performance-indicator--row"><td class="c-performance-indicator--measurement-name"></td><td class="c-performance-indicator--measurement-value"></td></tr>
           </table>
