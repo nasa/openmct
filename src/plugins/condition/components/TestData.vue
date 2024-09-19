@@ -63,7 +63,7 @@
                   :key="index"
                   :value="telemetryOption.identifier"
                 >
-                  {{ telemetryOption.name }}
+                  {{ telemetryPaths[index] || telemetryOption.name }}
                 </option>
               </select>
             </span>
@@ -147,7 +147,8 @@ export default {
       expanded: true,
       isApplied: false,
       testInputs: [],
-      telemetryMetadataOptions: {}
+      telemetryMetadataOptions: {},
+      telemetryPaths: []
     };
   },
   watch: {
@@ -200,6 +201,10 @@ export default {
           this.telemetryMetadataOptions[id] = [];
         }
       });
+      this.telemetry.forEach(async (telemetryOption, index) => {
+        const telemetryPath = await this.getFullTelemetryPath(telemetryOption);
+        this.telemetryPaths[index] = telemetryPath;
+      });
     },
     addTestInput(testInput) {
       this.testInputs.push(
@@ -244,6 +249,22 @@ export default {
         applied: this.isApplied,
         conditionTestInputs: this.testInputs
       });
+    },
+    async getFullTelemetryPath(telemetry) {
+      const keyStringForObject = this.openmct.objects.makeKeyString(telemetry.identifier);
+      const originalPathObjects = await this.openmct.objects.getOriginalPath(
+        keyStringForObject,
+        []
+      );
+
+      const telemetryPath = originalPathObjects.reverse().map((pathObject) => {
+        if (pathObject.type !== 'root') {
+          return pathObject.name;
+        }
+        return undefined;
+      });
+
+      return telemetryPath.join('/');
     }
   }
 };

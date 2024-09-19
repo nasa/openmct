@@ -99,13 +99,13 @@
               @change="setOutputValue"
             >
               <option v-for="option in outputOptions" :key="option" :value="option">
-                {{ initCap(option) }}
+                {{ option }}
               </option>
             </select>
           </span>
           <span class="c-cdef__control">
             <input
-              v-if="selectedOutputSelection === outputOptions[2]"
+              v-if="selectedOutputSelection === outputOptions[3]"
               v-model="condition.configuration.output"
               aria-label="Condition Output String"
               class="t-condition-name-input"
@@ -113,8 +113,41 @@
               @change="persist"
             />
           </span>
+          <span v-if="selectedOutputSelection === 'telemetry value'" class="c-cdef__control">
+            <select
+              v-model="condition.configuration.outputTelemetry"
+              aria-label="Output Telemetry Selection"
+              @change="persist"
+            >
+              <option value="">- Select Telemetry -</option>
+              <option
+                v-for="telemetryOption in telemetry"
+                :key="openmct.objects.makeKeyString(telemetryOption.identifier)"
+                :value="openmct.objects.makeKeyString(telemetryOption.identifier)"
+              >
+                {{ telemetryOption.path }}
+              </option>
+            </select>
+          </span>
+          <span v-if="condition.configuration.outputTelemetry" class="c-cdef__control">
+            <select
+              v-model="condition.configuration.outputMetadata"
+              aria-label="Output Telemetry Metadata Selection"
+              @change="persist"
+            >
+              <option value="">- Select Field -</option>
+              <option
+                v-for="(option, index) in telemetryMetadataOptions[
+                  condition.configuration.outputTelemetry
+                ]"
+                :key="index"
+                :value="option.key"
+              >
+                {{ option.name }}
+              </option>
+            </select>
+          </span>
         </span>
-
         <div v-if="!condition.isDefault" class="c-cdef__match-and-criteria">
           <span class="c-cdef__separator c-row-separator"></span>
           <span class="c-cdef__label">Match</span>
@@ -181,7 +214,12 @@
         <span class="c-condition__name">
           {{ condition.configuration.name }}
         </span>
-        <span class="c-condition__output"> Output: {{ condition.configuration.output }} </span>
+        <span class="c-condition__output">
+          Output:
+          {{
+            condition.configuration.output === undefined ? 'none' : condition.configuration.output
+          }}
+        </span>
       </div>
       <div class="c-condition__summary">
         <ConditionDescription :show-label="false" :condition="condition" />
@@ -250,10 +288,11 @@ export default {
       expanded: true,
       trigger: 'all',
       selectedOutputSelection: '',
-      outputOptions: ['false', 'true', 'string'],
+      outputOptions: ['none', 'false', 'true', 'string', 'telemetry value'],
       criterionIndex: 0,
       draggingOver: false,
-      isDefault: this.condition.isDefault
+      isDefault: this.condition.isDefault,
+      telemetryMetadataOptions: {}
     };
   },
   computed: {
@@ -287,26 +326,51 @@ export default {
       return false;
     }
   },
+  watch: {
+    condition: {
+      handler() {
+        if (this.condition.configuration.output !== 'telemetry value') {
+          this.condition.configuration.outputTelemetry = null;
+          this.condition.configuration.outputMetadata = null;
+        }
+      },
+      deep: true
+    },
+    isEditing(newValue, oldValue) {
+      if (newValue === true) {
+        this.initializeMetadata();
+      }
+    }
+  },
   unmounted() {
     this.destroy();
   },
   mounted() {
     this.setOutputSelection();
+    this.initializeMetadata();
   },
   methods: {
     setOutputSelection() {
       let conditionOutput = this.condition.configuration.output;
       if (conditionOutput) {
-        if (conditionOutput !== 'false' && conditionOutput !== 'true') {
+        if (
+          conditionOutput !== 'false' &&
+          conditionOutput !== 'true' &&
+          conditionOutput !== 'telemetry value'
+        ) {
           this.selectedOutputSelection = 'string';
         } else {
           this.selectedOutputSelection = conditionOutput;
         }
+      } else if (conditionOutput === undefined) {
+        this.selectedOutputSelection = 'none';
       }
     },
     setOutputValue() {
       if (this.selectedOutputSelection === 'string') {
         this.condition.configuration.output = '';
+      } else if (this.selectedOutputSelection === 'none') {
+        this.condition.configuration.output = undefined;
       } else {
         this.condition.configuration.output = this.selectedOutputSelection;
       }
@@ -401,6 +465,24 @@ export default {
     },
     initCap(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    initializeMetadata() {
+      this.telemetry.forEach((telemetryObject) => {
+        const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+        if (telemetryMetadata) {
+          this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+        } else {
+          this.telemetryMetadataOptions[id] = [];
+        }
+      });
+    },
+    getId(identifier) {
+      if (identifier) {
+        return this.openmct.objects.makeKeyString(identifier);
+      }
+
+      return [];
     }
   }
 };
