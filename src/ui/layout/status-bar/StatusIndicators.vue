@@ -60,12 +60,12 @@ export default {
       return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
     }
   },
-  watch: {
-    contentUpdated() {
-      // console.log('content updated');
-      // this.checkOverflow();
-    }
-  },
+  // watch: {
+  //   contentUpdated() {
+  //     console.log('content updated');
+  //     this.checkOverflow();
+  //   }
+  // },
   mounted() {
     if (this.listenForOverflow) {
       window.addEventListener('load', this.checkOverflow);
