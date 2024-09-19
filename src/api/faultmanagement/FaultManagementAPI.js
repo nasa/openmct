@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /** @type {ShelveDuration[]} */
-const DEFAULT_SHELVE_DURATIONS = [
+export const DEFAULT_SHELVE_DURATIONS = [
   {
     name: '5 Minutes',
     value: 300000
