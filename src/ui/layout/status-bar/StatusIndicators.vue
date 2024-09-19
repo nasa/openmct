@@ -33,16 +33,13 @@ import { shallowRef } from 'vue';
 export default {
   inject: ['openmct'],
   props: {
-    contentUpdated: {
-      type: String,
+    headExpanded: {
+      type: Boolean,
       required: true
     },
-    listenForOverflow: {
+    indicatorsMultiline: {
       type: Boolean,
-      required: false,
-      default() {
-        return false;
-      }
+      required: true
     }
   },
   emits: ['indicators-overflowing'],
@@ -60,34 +57,30 @@ export default {
       return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
     }
   },
-  // watch: {
-  //   contentUpdated() {
-  //     console.log('content updated');
-  //     this.checkOverflow();
-  //   }
-  // },
+  watch: {
+    headExpanded() {
+      this.checkOverflowNextTick();
+    },
+    indicatorsMultiline() {
+      if (!this.indicatorsMultiline) {
+        window.addEventListener('resize', this.checkOverflow);
+      } else {
+        window.removeEventListener('resize', this.checkOverflow);
+      }
+      this.checkOverflowNextTick();
+    }
+  },
   mounted() {
-    if (this.listenForOverflow) {
+    if (!this.indicatorsMultiline) {
+      // `load` listener is necessary because the width of the Indicators has to be eval'd after other components have loaded.
       window.addEventListener('load', this.checkOverflow);
       window.addEventListener('resize', this.checkOverflow);
     }
   },
   beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
-    if (this.listenForOverflow) {
-      window.removeEventListener('load', this.checkOverflow);
-      window.removeEventListener('resize', this.checkOverflow);
-    }
-  },
-  updated() {
-    // console.log('updated');
-    if (this.listenForOverflow) {
-      window.addEventListener('resize', this.checkOverflow);
-      this.checkOverflow();
-    } else {
-      window.removeEventListener('resize', this.checkOverflow);
-      this.checkOverflow();
-    }
+    window.removeEventListener('load', this.checkOverflow);
+    window.removeEventListener('resize', this.checkOverflow);
   },
   created() {
     this.openmct.indicators.on('addIndicator', this.addIndicator);
@@ -99,6 +92,11 @@ export default {
     checkOverflow() {
       const element = this.$refs.indicators;
       this.$emit('indicators-overflowing', element.scrollWidth > element.clientWidth);
+    },
+    checkOverflowNextTick() {
+      this.$nextTick(() => {
+        this.checkOverflow();
+      });
     }
   }
 };

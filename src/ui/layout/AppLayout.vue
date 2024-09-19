@@ -40,8 +40,8 @@
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
       <StatusIndicators
-        :listen-for-overflow="!indicatorsMultiline"
-        :content-updated="headExpanded || indicatorsMultiline"
+        :head-expanded="headExpanded"
+        :indicators-multiline="indicatorsMultiline"
         @indicators-overflowing="indicatorsOverflowUpdate"
       />
       <button
@@ -282,13 +282,13 @@ export default {
     },
     toggleShellHead() {
       this.headExpanded = !this.headExpanded;
-      this.setLocalStorage();
+      this.setLocalStorageShellHead();
     },
     toggleIndicatorsMultiline() {
       this.indicatorsMultiline = !this.indicatorsMultiline;
-      this.setLocalStorage();
+      this.setLocalStorageShellHead();
     },
-    setLocalStorage() {
+    setLocalStorageShellHead() {
       window.localStorage.setItem(
         'openmct-shell-head',
         JSON.stringify({
@@ -346,7 +346,6 @@ export default {
       this.disableClearButton = isDisabled;
     },
     indicatorsOverflowUpdate(isOverflowing) {
-      console.log('indicatorsOverflowUpdate', isOverflowing);
       this.indicatorsOverflowing = isOverflowing;
     }
   }
