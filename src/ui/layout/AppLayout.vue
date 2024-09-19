@@ -52,7 +52,7 @@
         @click="toggleIndicatorsMultiline"
       ></button>
       <button
-        class="l-shell__head__collapse-button c-icon-button"
+        class="l-shell__head__button"
         :class="headExpanded ? 'icon-items-collapse' : 'icon-items-expand'"
         :aria-label="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
         :title="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
@@ -211,7 +211,7 @@ export default {
   data: function () {
     let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
     let headExpanded = true;
-    let indicatorsMultiline = false;
+    let indicatorsMultiline = true;
     if (storedHeadProps) {
       headExpanded = JSON.parse(storedHeadProps).expanded;
       indicatorsMultiline = JSON.parse(storedHeadProps).multiline;
@@ -283,20 +283,17 @@ export default {
     },
     toggleShellHead() {
       this.headExpanded = !this.headExpanded;
-
-      window.localStorage.setItem(
-        'openmct-shell-head',
-        JSON.stringify({
-          expanded: this.headExpanded
-        })
-      );
+      this.setLocalStorage();
     },
     toggleIndicatorsMultiline() {
       this.indicatorsMultiline = !this.indicatorsMultiline;
-
+      this.setLocalStorage();
+    },
+    setLocalStorage() {
       window.localStorage.setItem(
         'openmct-shell-head',
         JSON.stringify({
+          expanded: this.headExpanded,
           multiline: this.indicatorsMultiline
         })
       );
