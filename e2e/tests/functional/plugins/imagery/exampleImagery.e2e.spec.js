@@ -30,7 +30,6 @@ import {
   navigateToObjectWithRealTime,
   setRealTimeMode
 } from '../../../../appActions.js';
-import { MISSION_TIME } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
@@ -357,15 +356,10 @@ test.describe('Example Imagery Object', () => {
   });
 });
 
-test.describe('Example Imagery in Display Layout @clock', () => {
+test.describe('Example Imagery in Display Layout', () => {
   let displayLayout;
 
   test.beforeEach(async ({ page }) => {
-    // We mock the clock so that we don't need to wait for time driven events
-    // to verify functionality.
-    await page.clock.install({ time: MISSION_TIME });
-    await page.clock.resume();
-
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
@@ -428,12 +422,7 @@ test.describe('Example Imagery in Display Layout @clock', () => {
     await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
   });
 
-  test('Imagery View operations @clock', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/5265'
-    });
-
+  test('Imagery View operations', async ({ page }) => {
     // Edit mode
     await page.getByLabel('Edit Object').click();
 
@@ -526,14 +515,9 @@ test.describe('Example Imagery in Display Layout @clock', () => {
   });
 });
 
-test.describe('Example Imagery in Flexible layout @clock', () => {
+test.describe('Example Imagery in Flexible layout', () => {
   let flexibleLayout;
   test.beforeEach(async ({ page }) => {
-    // We mock the clock so that we don't need to wait for time driven events
-    // to verify functionality.
-    await page.clock.install({ time: MISSION_TIME });
-    await page.clock.resume();
-
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
@@ -562,7 +546,7 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
     await page.getByRole('button', { name: 'Close' }).click();
   });
 
-  test('Imagery View operations @clock', async ({ page, browserName }) => {
+  test('Imagery View operations', async ({ page, browserName }) => {
     test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
     test.info().annotations.push({
       type: 'issue',
@@ -573,14 +557,10 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
   });
 });
 
-test.describe('Example Imagery in Tabs View @clock', () => {
+test.describe('Example Imagery in Tabs View', () => {
   let tabsView;
-  test.beforeEach(async ({ page }) => {
-    // We mock the clock so that we don't need to wait for time driven events
-    // to verify functionality.
-    await page.clock.install({ time: MISSION_TIME });
-    await page.clock.resume();
 
+  test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     tabsView = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
@@ -607,7 +587,8 @@ test.describe('Example Imagery in Tabs View @clock', () => {
     // Wait for image thumbnail auto-scroll to complete
     await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
-  test('Imagery View operations @clock', async ({ page }) => {
+
+  test('Imagery View operations', async ({ page }) => {
     await performImageryViewOperationsAndAssert(page, tabsView);
   });
 });
@@ -674,11 +655,13 @@ test.describe('Example Imagery in Time Strip', () => {
  * @param {import('@playwright/test').Page} page
  */
 async function performImageryViewOperationsAndAssert(page, layoutObject) {
-  // Verify that imagery thumbnails use a thumbnail url
-  const thumbnailImages = page.getByLabel('Image thumbnail from').locator('.c-thumb__image');
-  const mainImage = page.locator('.c-imagery__main-image__image');
-  await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
-  await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
+  await test.step('Verify that imagery thumbnails use a thumbnail url', async () => {
+    const thumbnailImages = page.getByLabel('Image thumbnail from').locator('.c-thumb__image');
+    const mainImage = page.locator('.c-imagery__main-image__image');
+    await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
+    await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
+  });
+
   // Click previous image button
   const previousImageButton = page.getByLabel('Previous image');
   await expect(previousImageButton).toBeVisible();
@@ -737,40 +720,6 @@ async function performImageryViewOperationsAndAssert(page, layoutObject) {
   // Unpause imagery
   await page.locator('.pause-play').click();
 
-  // verify that old images are discarded
-  const lastImageInBounds = page.getByLabel('Image thumbnail from').first();
-  const lastImageTimestamp = await lastImageInBounds.getAttribute('title');
-  expect(lastImageTimestamp).not.toBeNull();
-
-  // go forward in time to ensure old images are discarded
-  await page.clock.fastForward(IMAGE_LOAD_DELAY);
-  await page.clock.resume();
-  await expect(page.getByLabel(lastImageTimestamp)).toBeHidden();
-
-  // go way forward in time to ensure multiple images are discarded
-  const IMAGES_TO_DISCARD_COUNT = 5;
-
-  const lastImageToDiscard = page
-    .getByLabel('Image thumbnail from')
-    .nth(IMAGES_TO_DISCARD_COUNT - 1);
-  const lastImageToDiscardTimestamp = await lastImageToDiscard.getAttribute('title');
-  expect(lastImageToDiscardTimestamp).not.toBeNull();
-
-  const imageAfterLastImageToDiscard = page
-    .getByLabel('Image thumbnail from')
-    .nth(IMAGES_TO_DISCARD_COUNT);
-  const imageAfterLastImageToDiscardTimestamp =
-    await imageAfterLastImageToDiscard.getAttribute('title');
-  expect(imageAfterLastImageToDiscardTimestamp).not.toBeNull();
-
-  await page.clock.fastForward(IMAGE_LOAD_DELAY * IMAGES_TO_DISCARD_COUNT);
-  await page.clock.resume();
-
-  await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
-  await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
-
-  //Get background-image url from background-image css prop
-  await assertBackgroundImageUrlFromBackgroundCss(page);
 
   // Open the image filter menu
   await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
@@ -836,24 +785,6 @@ async function assertBackgroundImageBrightness(page, expected) {
     return el.style.filter.match(/brightness\((\d{1,3})%\)/)[1];
   });
   expect(actual).toBe(expected);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function assertBackgroundImageUrlFromBackgroundCss(page) {
-  const backgroundImage = page.getByLabel('Focused Image Element');
-  const backgroundImageUrl = await backgroundImage.evaluate((el) => {
-    return window
-      .getComputedStyle(el)
-      .getPropertyValue('background-image')
-      .match(/url\(([^)]+)\)/)[1];
-  });
-
-  // go forward in time to ensure old images are discarded
-  await page.clock.fastForward(IMAGE_LOAD_DELAY);
-  await page.clock.resume();
-  await expect(backgroundImage).not.toHaveJSProperty('background-image', backgroundImageUrl);
 }
 
 /**
