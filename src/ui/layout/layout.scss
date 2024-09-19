@@ -276,6 +276,10 @@
         margin-left: auto; // Mimics justify-content: flex-end when in single line mode.
       }
     }
+
+    &.--is-overflowing {
+      background: rgba(deeppink, 0.1);
+    }
   }
 
   /******************************* MAIN AREA */
