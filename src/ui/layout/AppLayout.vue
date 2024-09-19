@@ -33,15 +33,20 @@
       :class="{
         'l-shell__head--expanded': headExpanded,
         'l-shell__head--minify-indicators': !headExpanded,
-        'l-shell__head--indicators-single-line': !indicatorsMultiline
+        'l-shell__head--indicators-single-line': !indicatorsMultiline,
+        '--indicators-overflowing': indicatorsOverflowing
       }"
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
-      <StatusIndicators />
+      <StatusIndicators
+        :listen-for-overflow="!indicatorsMultiline"
+        :content-updated="headExpanded || indicatorsMultiline"
+        @indicators-overflowing="indicatorsOverflowUpdate"
+      />
       <button
-        class="l-shell__head__button c-icon-button"
-        :class="indicatorsMultiline ? 'icon-singleline' : 'icon-multiline'"
+        class="l-shell__head__button"
+        :class="[indicatorsMultilineCssClass, indicatorsOverflowingCssClass]"
         :aria-label="`Display as ${indicatorsMultiline ? 'single line' : 'multiple lines'}`"
         :title="`Display as ${indicatorsMultiline ? 'single line' : 'multiple lines'}`"
         @click="toggleIndicatorsMultiline"
@@ -222,6 +227,7 @@ export default {
       triggerReset: false,
       headExpanded,
       indicatorsMultiline,
+      indicatorsOverflowing: false,
       isResizing: false,
       disableClearButton: false
     };
@@ -232,6 +238,12 @@ export default {
     },
     resizingClass() {
       return this.isResizing ? 'l-shell__resizing' : '';
+    },
+    indicatorsMultilineCssClass() {
+      return this.indicatorsMultiline ? 'icon-singleline' : 'icon-multiline';
+    },
+    indicatorsOverflowingCssClass() {
+      return this.indicatorsOverflowing ? 'c-button c-button--major' : 'c-icon-button';
     }
   },
   mounted() {
@@ -336,6 +348,10 @@ export default {
     },
     setClearButtonDisabled(isDisabled) {
       this.disableClearButton = isDisabled;
+    },
+    indicatorsOverflowUpdate(isOverflowing) {
+      console.log('indicatorsOverflowUpdate', isOverflowing);
+      this.indicatorsOverflowing = isOverflowing;
     }
   }
 };
