@@ -29,12 +29,26 @@
 
 <script>
 import { shallowRef } from 'vue';
+
 export default {
   inject: ['openmct'],
+  props: {
+    contentUpdated: {
+      type: String,
+      required: true
+    },
+    listenForOverflow: {
+      type: Boolean,
+      required: false,
+      default() {
+        return false;
+      }
+    }
+  },
+  emits: ['indicators-overflowing'],
   data() {
     return {
-      indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef),
-      indicatorsOverflowing: false
+      indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef)
     };
   },
   computed: {
@@ -46,13 +60,34 @@ export default {
       return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
     }
   },
+  watch: {
+    contentUpdated() {
+      // console.log('content updated');
+      // this.checkOverflow();
+    }
+  },
   mounted() {
-    this.checkOverflow();
-    window.addEventListener('resize', this.checkOverflow);
+    if (this.listenForOverflow) {
+      window.addEventListener('load', this.checkOverflow);
+      window.addEventListener('resize', this.checkOverflow);
+    }
   },
   beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
-    window.removeEventListener('resize', this.checkOverflow);
+    if (this.listenForOverflow) {
+      window.removeEventListener('load', this.checkOverflow);
+      window.removeEventListener('resize', this.checkOverflow);
+    }
+  },
+  updated() {
+    // console.log('updated');
+    if (this.listenForOverflow) {
+      window.addEventListener('resize', this.checkOverflow);
+      this.checkOverflow();
+    } else {
+      window.removeEventListener('resize', this.checkOverflow);
+      this.checkOverflow();
+    }
   },
   created() {
     this.openmct.indicators.on('addIndicator', this.addIndicator);
@@ -63,12 +98,7 @@ export default {
     },
     checkOverflow() {
       const element = this.$refs.indicators;
-      const sizes = {
-        spaceNeeded: element.scrollWidth,
-        spaceAvail: element.clientWidth
-      };
-      this.indicatorsOverflowing = sizes.spaceNeeded > sizes.spaceAvail;
-      console.log('checkOverflow', this.indicatorsOverflowing, sizes.spaceNeeded, sizes.spaceAvail);
+      this.$emit('indicators-overflowing', element.scrollWidth > element.clientWidth);
     }
   }
 };
