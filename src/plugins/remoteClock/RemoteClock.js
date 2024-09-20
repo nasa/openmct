@@ -154,10 +154,12 @@ export default class RemoteClock extends DefaultClock {
     const waitForInitialTick = (resolve) => {
       if (this.lastTick > 0) {
         const offsets = this.openmct.time.getClockOffsets();
+        // Don't ever resolve, this triggers the bug.
+        /*
         resolve({
           start: this.lastTick + offsets.start,
           end: this.lastTick + offsets.end
-        });
+        });*/
       } else {
         setTimeout(() => waitForInitialTick(resolve), 100);
       }
