@@ -34,13 +34,14 @@ import {
 } from '../../../../appActions.js';
 import { MISSION_TIME } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+import {
+  createImageryViewWithShortDelay,
+  FIVE_MINUTES,
+  IMAGE_LOAD_DELAY,
+  THIRTY_SECONDS
+} from './imageryUtils.js';
 
-const IMAGE_LOAD_DELAY = 5 * 1000;
-const FIVE_MINUTES = 1000 * 60 * 5;
-const THIRTY_SECONDS = 1000 * 30;
-
-test.describe('Example Imagery Object @clock', () => {
-  let exampleImagery;
+test.describe('Example Imagery Object', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
@@ -72,16 +73,16 @@ test.describe('Example Imagery Object @clock', () => {
     // set realtime mode
     await setRealTimeMode(page);
     await setStartOffset(page, { startMins: '05' });
-
-    // Wait for image thumbnail auto-scroll to complete
-    await page.getByLabel('Resume automatic scrolling of image thumbnails').click();
-    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
 
-  test('Imagery View operations @clock', async ({ page }) => {
+  test('Imagery Time Bounding @clock', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5265'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7825'
     });
 
     // verify that old images are discarded
@@ -115,13 +116,14 @@ test.describe('Example Imagery Object @clock', () => {
 
     await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
     await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
+  });
 
-    //Get background-image url from background-image css prop
-    // await assertBackgroundImageUrlFromBackgroundCss(page);
+  test('Get background-image url from background-image css prop @clock', async ({ page }) => {
+    await assertBackgroundImageUrlFromBackgroundCss(page);
   });
 });
 
-test.describe('Example Imagery in Display Layout @clock', () => {
+test.describe('Example Imagery in Display Layout', () => {
   let displayLayout;
 
   test.beforeEach(async ({ page }) => {
@@ -150,10 +152,14 @@ test.describe('Example Imagery in Display Layout @clock', () => {
     );
   });
 
-  test('Imagery View operations @clock', async ({ page }) => {
+  test('Imagery Time Bounding @clock', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5265'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7825'
     });
 
     // Edit mode
@@ -203,14 +209,16 @@ test.describe('Example Imagery in Display Layout @clock', () => {
 
     await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
     await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
+  });
 
-    //Get background-image url from background-image css prop
+  test('Get background-image url from background-image css prop @clock', async ({ page }) => {
     await assertBackgroundImageUrlFromBackgroundCss(page);
   });
 });
 
-test.describe('Example Imagery in Flexible layout @clock', () => {
+test.describe('Example Imagery in Flexible layout', () => {
   let flexibleLayout;
+
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
@@ -239,11 +247,15 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
     await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
 
-  test('Imagery View operations', async ({ page, browserName }) => {
+  test('Imagery Time Bounding @clock', async ({ page, browserName }) => {
     test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5326'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7825'
     });
 
     // verify that old images are discarded
@@ -277,14 +289,16 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
 
     await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
     await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
+  });
 
-    //Get background-image url from background-image css prop
+  test('Get background-image url from background-image css prop @clock', async ({ page }) => {
     await assertBackgroundImageUrlFromBackgroundCss(page);
   });
 });
 
-test.describe('Example Imagery in Tabs View @clock', () => {
-  let tabsView;
+test.describe('Example Imagery in Tabs View', () => {
+  let timeStripObject;
+
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
@@ -293,8 +307,8 @@ test.describe('Example Imagery in Tabs View @clock', () => {
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    tabsView = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
-    await page.goto(tabsView.url);
+    timeStripObject = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
+    await page.goto(timeStripObject.url);
 
     /* Create Example Imagery with minimum Image Load Delay */
     // Click the Create button
@@ -314,16 +328,20 @@ test.describe('Example Imagery in Tabs View @clock', () => {
     );
 
     // set realtime mode
-    await navigateToObjectWithRealTime(page, tabsView.url, `${FIVE_MINUTES}`, `${THIRTY_SECONDS}`);
+    await navigateToObjectWithRealTime(page, timeStripObject.url, `${FIVE_MINUTES}`, `${THIRTY_SECONDS}`);
 
     // Wait for image thumbnail auto-scroll to complete
     await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
 
-  test('Imagery View operations @clock', async ({ page }) => {
+  test('Imagery Time Bounding @clock', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5265'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7825'
     });
 
     // verify that old images are discarded
@@ -357,29 +375,95 @@ test.describe('Example Imagery in Tabs View @clock', () => {
 
     await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
     await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
+  });
 
-    //Get background-image url from background-image css prop
+  test('Get background-image url from background-image css prop @clock', async ({ page }) => {
     await assertBackgroundImageUrlFromBackgroundCss(page);
   });
 });
 
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function createImageryViewWithShortDelay(page, { name, parent }) {
-  await createDomainObjectWithDefaults(page, {
-    name,
-    type: 'Example Imagery',
-    parent
+test.describe('Example Imagery in Time Strip', () => {
+  let timeStripObject;
+
+  test.beforeEach(async ({ page }) => {
+    // We mock the clock so that we don't need to wait for time driven events
+    // to verify functionality.
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
+
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    timeStripObject = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
+    await page.goto(timeStripObject.url);
+
+    /* Create Example Imagery with minimum Image Load Delay */
+    // Click the Create button
+    await page.getByRole('button', { name: 'Create' }).click();
+
+    // Click text=Example Imagery
+    await page.getByRole('menuitem', { name: 'Example Imagery' }).click();
+
+    // Clear and set Image load delay to minimum value
+    await page.locator('input[type="number"]').clear();
+    await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
+
+    await page.getByLabel('Save').click();
+
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+      'Unnamed Example Imagery'
+    );
+
+    // set realtime mode
+    await navigateToObjectWithRealTime(
+      page,
+      timeStripObject.url,
+      `${FIVE_MINUTES}`,
+      `${THIRTY_SECONDS}`
+    );
+
+    // Wait for image thumbnail auto-scroll to complete
+    await expect(page.getByLabel('wrapper-').last()).toBeInViewport();
   });
 
-  await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-  await page.getByLabel('More actions').click();
-  await page.getByLabel('Edit Properties').click();
-  // Clear and set Image load delay to minimum value
-  await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
-  await page.getByLabel('Save').click();
-}
+  test('Imagery Time Bounding @clock', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/5265'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7825'
+    });
+
+    // verify that old images are discarded
+    const lastImageInBounds = page.getByLabel('wrapper-').first();
+    const lastImageTimestamp = await lastImageInBounds.getAttribute('aria-label');
+    expect(lastImageTimestamp).not.toBeNull();
+
+    // go forward in time to ensure old images are discarded
+    await page.clock.fastForward(IMAGE_LOAD_DELAY);
+    await page.clock.resume();
+    await expect(page.getByLabel(lastImageTimestamp)).toBeHidden();
+
+    // go way forward in time to ensure multiple images are discarded
+    const IMAGES_TO_DISCARD_COUNT = 5;
+
+    const lastImageToDiscard = page.getByLabel('wrapper-').nth(IMAGES_TO_DISCARD_COUNT - 1);
+    const lastImageToDiscardTimestamp = await lastImageToDiscard.getAttribute('aria-label');
+    expect(lastImageToDiscardTimestamp).not.toBeNull();
+
+    const imageAfterLastImageToDiscard = page.getByLabel('wrapper-').nth(IMAGES_TO_DISCARD_COUNT);
+    const imageAfterLastImageToDiscardTimestamp =
+      await imageAfterLastImageToDiscard.getAttribute('aria-label');
+    expect(imageAfterLastImageToDiscardTimestamp).not.toBeNull();
+
+    await page.clock.fastForward(IMAGE_LOAD_DELAY * IMAGES_TO_DISCARD_COUNT);
+    await page.clock.resume();
+
+    await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
+    await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
+  });
+});
 
 /**
  * @param {import('@playwright/test').Page} page

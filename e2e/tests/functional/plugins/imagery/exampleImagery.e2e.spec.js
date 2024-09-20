@@ -31,14 +31,18 @@ import {
   setRealTimeMode
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+import {
+  createImageryViewWithShortDelay,
+  FIVE_MINUTES,
+  IMAGE_LOAD_DELAY,
+  MOUSE_WHEEL_DELTA_Y,
+  THIRTY_SECONDS
+} from './imageryUtils.js';
+
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
-const IMAGE_LOAD_DELAY = 5 * 1000;
-const MOUSE_WHEEL_DELTA_Y = 120;
-const FIVE_MINUTES = 1000 * 60 * 5;
-const THIRTY_SECONDS = 1000 * 30;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
@@ -720,7 +724,6 @@ async function performImageryViewOperationsAndAssert(page, layoutObject) {
   // Unpause imagery
   await page.locator('.pause-play').click();
 
-
   // Open the image filter menu
   await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
 
@@ -872,62 +875,66 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
  * @param {import('@playwright/test').Page} page
  */
 async function buttonZoomOnImageAndAssert(page) {
-  // Lock the zoom and pan so it doesn't reset if a new image comes in
-  await page.getByLabel('Focused Image Element').hover({ trial: true });
-  const lockButton = page.getByRole('button', {
-    name: 'Lock current zoom and pan across all images'
-  });
-  if (!(await lockButton.isVisible())) {
+  await test.step('Can zoom using buttons', async () => {
+    // Lock the zoom and pan so it doesn't reset if a new image comes in
     await page.getByLabel('Focused Image Element').hover({ trial: true });
-  }
-  await lockButton.click();
+    const lockButton = page.getByRole('button', {
+      name: 'Lock current zoom and pan across all images'
+    });
 
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(1) translate(0px, 0px)'
-  );
+    await lockButton.isVisible();
+    // if (!(await lockButton.isVisible())) {
+    //   await page.getByLabel('Focused Image Element').hover({ trial: true });
+    // }
+    await lockButton.click();
 
-  // Get initial image dimensions
-  const initialBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(1) translate(0px, 0px)'
+    );
 
-  // Zoom in twice via button
-  await zoomIntoImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(2) translate(0px, 0px)'
-  );
-  await zoomIntoImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(3) translate(0px, 0px)'
-  );
+    // Get initial image dimensions
+    const initialBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
 
-  // Get and assert zoomed in image dimensions
-  const zoomedInBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-  expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
-  expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
+    // Zoom in twice via button
+    await zoomIntoImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(2) translate(0px, 0px)'
+    );
+    await zoomIntoImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(3) translate(0px, 0px)'
+    );
 
-  // Zoom out once via button
-  await zoomOutOfImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(2) translate(0px, 0px)'
-  );
+    // Get and assert zoomed in image dimensions
+    const zoomedInBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
+    expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
-  // Get and assert zoomed out image dimensions
-  const zoomedOutBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-  expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
-  expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
+    // Zoom out once via button
+    await zoomOutOfImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(2) translate(0px, 0px)'
+    );
 
-  // Zoom out again via button, assert against the initial image dimensions
-  await zoomOutOfImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(1) translate(0px, 0px)'
-  );
+    // Get and assert zoomed out image dimensions
+    const zoomedOutBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
+    expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
 
-  const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-  expect(finalBoundingBox).toEqual(initialBoundingBox);
+    // Zoom out again via button, assert against the initial image dimensions
+    await zoomOutOfImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(1) translate(0px, 0px)'
+    );
+
+    const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    expect(finalBoundingBox).toEqual(initialBoundingBox);
+  });
 }
 
 /**
@@ -987,24 +994,6 @@ async function resetImageryPanAndZoom(page) {
   await waitForZoomAndPanTransitions(page);
   await expect(page.getByText('Alt drag to pan')).toBeHidden();
   await expect(page.locator('.c-thumb__viewable-area')).toBeHidden();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function createImageryViewWithShortDelay(page, { name, parent }) {
-  await createDomainObjectWithDefaults(page, {
-    name,
-    type: 'Example Imagery',
-    parent
-  });
-
-  await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-  await page.getByLabel('More actions').click();
-  await page.getByLabel('Edit Properties').click();
-  // Clear and set Image load delay to minimum value
-  await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
-  await page.getByLabel('Save').click();
 }
 
 /**
