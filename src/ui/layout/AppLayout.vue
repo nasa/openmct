@@ -208,13 +208,15 @@ export default {
   },
   inject: ['openmct'],
   data: function () {
-    let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
-    let headExpanded = true;
-    let indicatorsMultiline = true;
-    if (storedHeadProps) {
-      headExpanded = JSON.parse(storedHeadProps).expanded;
-      indicatorsMultiline = JSON.parse(storedHeadProps).multiline;
-    }
+    const DEFAULT_HEAD_EXPANDED = true;
+    const DEFAULT_INDICATORS_MULTILINE = true;
+
+    const storedHeadProps = JSON.parse(localStorage.getItem('openmct-shell-head'));
+    const storedHeadExpanded = storedHeadProps?.expanded;
+    const storedIndicatorsMultiline = storedHeadProps?.multiline;
+
+    const headExpanded = storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED;
+    const indicatorsMultiline = storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE;
 
     return {
       fullScreen: false,
