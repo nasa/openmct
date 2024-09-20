@@ -190,6 +190,8 @@ import GrandSearch from './search/GrandSearch.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 import StatusIndicators from './status-bar/StatusIndicators.vue';
 
+const SHELL_HEAD_LOCAL_STORAGE_KEY = 'openmct-shell-head';
+
 export default {
   components: {
     Inspector,
@@ -211,12 +213,21 @@ export default {
     const DEFAULT_HEAD_EXPANDED = true;
     const DEFAULT_INDICATORS_MULTILINE = true;
 
-    const storedHeadProps = JSON.parse(localStorage.getItem('openmct-shell-head'));
-    const storedHeadExpanded = storedHeadProps?.expanded;
-    const storedIndicatorsMultiline = storedHeadProps?.multiline;
+    const storedHeadProps = localStorage.getItem(SHELL_HEAD_LOCAL_STORAGE_KEY);
+    const storedHeadPropsObject = JSON.parse(storedHeadProps);
+    const storedHeadExpanded = storedHeadPropsObject?.expanded;
+    const storedIndicatorsMultiline = storedHeadPropsObject?.multiline;
 
     const headExpanded = storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED;
     const indicatorsMultiline = storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE;
+
+    const initialHeadProps = JSON.stringify({
+      expanded: headExpanded,
+      multiline: indicatorsMultiline
+    });
+    if (initialHeadProps !== storedHeadProps) {
+      localStorage.setItem(SHELL_HEAD_LOCAL_STORAGE_KEY, initialHeadProps);
+    }
 
     return {
       fullScreen: false,
@@ -291,8 +302,8 @@ export default {
       this.setLocalStorageShellHead();
     },
     setLocalStorageShellHead() {
-      window.localStorage.setItem(
-        'openmct-shell-head',
+      localStorage.setItem(
+        SHELL_HEAD_LOCAL_STORAGE_KEY,
         JSON.stringify({
           expanded: this.headExpanded,
           multiline: this.indicatorsMultiline
