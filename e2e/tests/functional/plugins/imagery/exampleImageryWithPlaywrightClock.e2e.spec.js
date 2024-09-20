@@ -29,31 +29,95 @@ It uses https://playwright.dev/docs/clock to have control over time
 import {
   createDomainObjectWithDefaults,
   navigateToObjectWithRealTime,
-  setRealTimeMode
+  setRealTimeMode,
+  setStartOffset
 } from '../../../../appActions.js';
-
 import { MISSION_TIME } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
-const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
 const IMAGE_LOAD_DELAY = 5 * 1000;
 const FIVE_MINUTES = 1000 * 60 * 5;
 const THIRTY_SECONDS = 1000 * 30;
 
 test.describe('Example Imagery Object @clock', () => {
+  let exampleImagery;
   test.beforeEach(async ({ page }) => {
+    // We mock the clock so that we don't need to wait for time driven events
+    // to verify functionality.
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
+
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     // Create a default 'Example Imagery' object
-    const exampleImagery = await createDomainObjectWithDefaults(page, { type: 'Example Imagery' });
+    // Click the Create button
+    await page.getByRole('button', { name: 'Create' }).click();
+
+    // Click text=Example Imagery
+    await page.getByRole('menuitem', { name: 'Example Imagery' }).click();
+
+    // Clear and set Image load delay to minimum value
+    await page.locator('input[type="number"]').clear();
+    await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
+
+    await page.getByLabel('Save').click();
 
     // Verify that the created object is focused
-    await expect(page.locator('.l-browse-bar__object-name')).toContainText(exampleImagery.name);
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(
+      'Unnamed Example Imagery'
+    );
     await page.getByLabel('Focused Image Element').hover({ trial: true });
 
+    // set realtime mode
+    await setRealTimeMode(page);
+    await setStartOffset(page, { startMins: '05' });
+
     // Wait for image thumbnail auto-scroll to complete
+    await page.getByLabel('Resume automatic scrolling of image thumbnails').click();
     await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
+  });
+
+  test('Imagery View operations @clock', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/5265'
+    });
+
+    // verify that old images are discarded
+    const lastImageInBounds = page.getByLabel('Image thumbnail from').first();
+    const lastImageTimestamp = await lastImageInBounds.getAttribute('title');
+    expect(lastImageTimestamp).not.toBeNull();
+
+    // go forward in time to ensure old images are discarded
+    await page.clock.fastForward(IMAGE_LOAD_DELAY);
+    await page.clock.resume();
+    await expect(page.getByLabel(lastImageTimestamp)).toBeHidden();
+
+    // go way forward in time to ensure multiple images are discarded
+    const IMAGES_TO_DISCARD_COUNT = 5;
+
+    const lastImageToDiscard = page
+      .getByLabel('Image thumbnail from')
+      .nth(IMAGES_TO_DISCARD_COUNT - 1);
+    const lastImageToDiscardTimestamp = await lastImageToDiscard.getAttribute('title');
+    expect(lastImageToDiscardTimestamp).not.toBeNull();
+
+    const imageAfterLastImageToDiscard = page
+      .getByLabel('Image thumbnail from')
+      .nth(IMAGES_TO_DISCARD_COUNT);
+    const imageAfterLastImageToDiscardTimestamp =
+      await imageAfterLastImageToDiscard.getAttribute('title');
+    expect(imageAfterLastImageToDiscardTimestamp).not.toBeNull();
+
+    await page.clock.fastForward(IMAGE_LOAD_DELAY * IMAGES_TO_DISCARD_COUNT);
+    await page.clock.resume();
+
+    await expect(page.getByLabel(lastImageToDiscardTimestamp)).toBeHidden();
+    await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
+
+    //Get background-image url from background-image css prop
+    // await assertBackgroundImageUrlFromBackgroundCss(page);
   });
 });
 
@@ -232,7 +296,7 @@ test.describe('Example Imagery in Tabs View @clock', () => {
     tabsView = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
     await page.goto(tabsView.url);
 
-    /* Create Sine Wave Generator with minimum Image Load Delay */
+    /* Create Example Imagery with minimum Image Load Delay */
     // Click the Create button
     await page.getByRole('button', { name: 'Create' }).click();
 
