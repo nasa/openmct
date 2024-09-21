@@ -324,10 +324,12 @@ export default class ConditionManager extends EventEmitter {
   }
 
   getHistoricalData() {
+    if (!this.conditionSetDomainObject.configuration.shouldFetchHistorical) {
+      return [];
+    }
     const historicalTelemetry = new HistoricalTelemetryProvider(
       this.openmct,
       this.telemetryObjects,
-      this.compositionLoad,
       this.conditions,
       this.conditionSetDomainObject
     );

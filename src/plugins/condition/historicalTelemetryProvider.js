@@ -1,8 +1,7 @@
 export default class HistoricalTelemetryProvider {
-  constructor(openmct, telemetryObjects, compositionLoad, conditions, conditionSetDomainObject) {
+  constructor(openmct, telemetryObjects, conditions, conditionSetDomainObject) {
     this.openmct = openmct;
     this.telemetryObjects = telemetryObjects;
-    this.compositionLoad = compositionLoad;
     this.bounds = { start: null, end: null };
     this.telemetryList = [];
     this.conditions = conditions;
@@ -130,6 +129,50 @@ export default class HistoricalTelemetryProvider {
     return historicalTelemetryDateMap;
   }
 
+  async sortTelemetriesInWorker(historicalTelemetriesPool) {
+    const sortedTelemetries = await this.startWorker('sortTelemetries', {
+      historicalTelemetriesPool
+    });
+    return sortedTelemetries;
+  }
+
+  async startWorker(type, data) {
+    // eslint-disable-next-line no-undef
+    const workerUrl = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}historicalTelemetryWorker.js`;
+    const worker = new Worker(workerUrl);
+
+    try {
+      const result = await this.getDataFromWorker(worker, type, data);
+      return result;
+    } catch (error) {
+      console.error('Error in condition manager getHistoricalData:', error);
+      throw error;
+    } finally {
+      worker.terminate();
+    }
+  }
+
+  getDataFromWorker(worker, type, data) {
+    return new Promise((resolve, reject) => {
+      worker.onmessage = (e) => {
+        if (e.data.type === 'result') {
+          resolve(e.data.data);
+        } else if (e.data.type === 'error') {
+          reject(new Error(e.data.error));
+        }
+      };
+
+      worker.onerror = (error) => {
+        reject(error);
+      };
+
+      worker.postMessage({
+        type,
+        data
+      });
+    });
+  }
+
   evaluateConditionsByDate(historicalTelemetryDateMap, conditionCollectionMap) {
     const outputTelemetryDateMap = new Map();
     historicalTelemetryDateMap.forEach((historicalTelemetryMap, timestamp) => {
@@ -177,7 +220,6 @@ export default class HistoricalTelemetryProvider {
             condition,
             conditionCollectionMap
           );
-          console.log(conditionOutput.value);
           outputTelemetryDateMap.set(timestamp, conditionOutput);
         }
       });
@@ -186,8 +228,6 @@ export default class HistoricalTelemetryProvider {
   }
 
   async getHistoricalInputsByDate() {
-    console.log('getHistoricalInputsByDate');
-    console.log(this.conditions);
     const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
 
     const {
@@ -197,7 +237,8 @@ export default class HistoricalTelemetryProvider {
       conditionCollectionMap
     } = await this.getAllTelemetries(conditionCollection);
 
-    const historicalTelemetryDateMap = this.sortTelemetriesByDate(historicalTelemetriesPool);
+    const historicalTelemetryDateMap =
+      await this.sortTelemetriesInWorker(historicalTelemetriesPool);
     const outputTelemetryDateMap = this.evaluateConditionsByDate(
       historicalTelemetryDateMap,
       conditionCollectionMap
@@ -222,15 +263,10 @@ export default class HistoricalTelemetryProvider {
 
   async getHistoricalData() {
     console.log('getHistoricalData');
-    await this.compositionLoad;
     this.setTimeBounds(this.openmct.time.getBounds());
     const outputTelemetryMap = await this.getHistoricalInputsByDate();
     const formattedOutputTelemetry = this.formatOutputData(outputTelemetryMap);
-    // const firstObjectKey = this.historicalTelemetryPoolMap.keys().next().value;
-    // const firstObjectValue = this.historicalTelemetryPoolMap.values().next().value;
-    // const formattedHistoricalData = this.formatHistoricalData(firstObjectKey, firstObjectValue);
     console.log(formattedOutputTelemetry);
-    // console.log(formattedHistoricalData);
     return formattedOutputTelemetry;
   }
 
@@ -247,28 +283,5 @@ export default class HistoricalTelemetryProvider {
       });
     });
     return outputTelemetryList;
-  }
-
-  simpleTelemetryList(outputTelemetryMap) {
-    const outputTelemetryList = [];
-    outputTelemetryMap.forEach((outputMetadata, timestamp) => {
-      const { value } = outputMetadata;
-      outputTelemetryList.push(value);
-    });
-    return outputTelemetryList;
-  }
-
-  formatHistoricalData(historicalDataKey, telemetryDetails) {
-    const formattedData = [];
-    const { domainObject, historicalTelemetry } = telemetryDetails;
-    historicalTelemetry.forEach((value) => {
-      formattedData.push({
-        id: domainObject.identifier,
-        output: value.sin,
-        conditionId: historicalDataKey,
-        utc: value.utc
-      });
-    });
-    return formattedData;
   }
 }
