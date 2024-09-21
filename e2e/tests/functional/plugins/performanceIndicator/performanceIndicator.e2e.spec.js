@@ -25,39 +25,43 @@ test.describe('The performance indicator', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => {
+      const openmct = window.openmct;
       openmct.install(openmct.plugins.PerformanceIndicator());
     });
   });
 
-  test('can be installed', async ({ page }) => {
-    const performanceIndicator = await page.getByLabel('Performance Indicator');
+  test('can be installed', ({ page }) => {
+    const performanceIndicator = page.getByTitle('Performance Indicator');
     expect(performanceIndicator).toBeDefined();
   });
 
   test('Shows a numerical FPS value', async ({ page }) => {
-    //We need to wait at least 1s to establish an average fps
+    //Frames Per Second. We need to wait at least 1 second to get a value.
     await page.waitForTimeout(1000);
-    const performanceIndicator = await page.getByLabel('Performance Indicator');
-    expect(performanceIndicator).toHaveText(/\d\d? fps/);
+    const performanceIndicator = page.getByTitle('Performance Indicator');
+    await expect(performanceIndicator).toHaveText(/\d\d? fps/);
   });
 
-  test('Supports showing optional extended performance information in an overlay for debugging', async ({ page }) => {
+  test('Supports showing optional extended performance information in an overlay for debugging', async ({
+    page
+  }) => {
     const performanceMeasurementLabel = 'Some measurement';
     const performanceMeasurementValue = 'Some value';
 
-    await page.evaluate(({performanceMeasurementLabel, performanceMeasurementValue}) => {
-      openmct.performance.measurements.set(
-        performanceMeasurementLabel,
-        performanceMeasurementValue
-      );
-    }, {performanceMeasurementLabel, performanceMeasurementValue});
-    const performanceIndicator = await page.getByLabel("Performance Indicator");
+    await page.evaluate(
+      ({ performanceMeasurementLabel: label, performanceMeasurementValue: value }) => {
+        const openmct = window.openmct;
+        openmct.performance.measurements.set(label, value);
+      },
+      { performanceMeasurementLabel, performanceMeasurementValue }
+    );
+    const performanceIndicator = page.getByTitle('Performance Indicator');
     await performanceIndicator.click();
     //Performance overlay is a crude debugging tool, it's evaluated once per second.
     await page.waitForTimeout(1000);
-    const performanceOverlay = await page.getByLabel("Performance Overlay");
+    const performanceOverlay = page.getByTitle('Performance Overlay');
     console.log(performanceOverlay.textContent());
-    expect(performanceOverlay).toHaveText(new RegExp(`${performanceMeasurementLabel}.*`));
-    expect(performanceOverlay).toHaveText(new RegExp(`.*${performanceMeasurementValue}`));
+    await expect(performanceOverlay).toHaveText(new RegExp(`${performanceMeasurementLabel}.*`));
+    await expect(performanceOverlay).toHaveText(new RegExp(`.*${performanceMeasurementValue}`));
   });
 });

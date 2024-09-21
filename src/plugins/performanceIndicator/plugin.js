@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+const PERFORMANCE_OVERLAY_RENDER_INTERVAL = 1000;
+
 export default function PerformanceIndicator() {
   return function install(openmct) {
     let frames = 0;
@@ -76,7 +78,7 @@ export default function PerformanceIndicator() {
           }
       `;
       const overlayMarkup = `
-        <div id="c-performance-indicator--overlay" aria-label="Performance Overlay">
+        <div id="c-performance-indicator--overlay" title="Performance Overlay">
           <table id="c-performance-indicator--table">
             <tr class="c-performance-indicator--row"><td class="c-performance-indicator--measurement-name"></td><td class="c-performance-indicator--measurement-value"></td></tr>
           </table>
@@ -105,7 +107,7 @@ export default function PerformanceIndicator() {
           newRow.querySelector('.c-performance-indicator--measurement-value').innerText = value;
           overlay.querySelector('#c-performance-indicator--table').appendChild(newRow);
         }
-      }, 1000);
+      }, PERFORMANCE_OVERLAY_RENDER_INTERVAL);
 
       indicator.on(
         'click',
