@@ -17,7 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="indicators" class="l-shell__head-section l-shell__indicators">
+  <div ref="indicatorsContainer" class="l-shell__head-section l-shell__indicators">
     <component
       :is="indicator.value.vueComponent"
       v-for="indicator in sortedIndicators"
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { shallowRef } from 'vue';
+import { defineExpose, onMounted, ref, shallowRef } from 'vue';
 
 export default {
   inject: ['openmct'],
@@ -43,6 +43,15 @@ export default {
     }
   },
   emits: ['indicators-overflowing'],
+  setup() {
+    const indicatorsContainer = ref(null);
+
+    onMounted(() => {
+      console.log(indicatorsContainer);
+    });
+
+    defineExpose({ indicatorsContainer });
+  },
   data() {
     return {
       indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef)
@@ -90,7 +99,7 @@ export default {
       this.indicators.push(shallowRef(indicator));
     },
     checkOverflow() {
-      const element = this.$refs.indicators;
+      const element = this.$refs.indicatorsContainer;
       this.$emit('indicators-overflowing', element.scrollWidth > element.clientWidth);
     },
     checkOverflowNextTick() {

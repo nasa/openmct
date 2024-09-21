@@ -40,6 +40,7 @@
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
       <StatusIndicators
+        ref="indicatorsComponent"
         :head-expanded="headExpanded"
         :indicators-multiline="indicatorsMultiline"
         @indicators-overflowing="indicatorsOverflowUpdate"
@@ -189,8 +190,9 @@ import RecentObjectsList from './RecentObjectsList.vue';
 import GrandSearch from './search/GrandSearch.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 import StatusIndicators from './status-bar/StatusIndicators.vue';
-
+import { useObserveOverflow } from './useOverflowToggle.js';
 const SHELL_HEAD_LOCAL_STORAGE_KEY = 'openmct-shell-head';
+import { onMounted, ref } from 'vue';
 
 export default {
   components: {
@@ -209,7 +211,19 @@ export default {
     RecentObjectsList
   },
   inject: ['openmct'],
-  data: function () {
+  setup() {
+    const indicatorsComponent = ref(null);
+
+    const { isOverflowing, observeOverflow, unObserveOverflow } = useObserveOverflow(undefined, indicatorsComponent, 'indicatorsContainer');
+
+    return {
+      indicatorsComponent,
+      isOverflowing,
+      observeOverflow,
+      unObserveOverflow
+    };
+  },
+  data() {
     const DEFAULT_HEAD_EXPANDED = true;
     const DEFAULT_INDICATORS_MULTILINE = true;
 
@@ -258,7 +272,13 @@ export default {
       return this.indicatorsOverflowing ? 'c-button c-button--major' : 'c-icon-button';
     }
   },
+  watch: {
+    isOverflowing() {
+      console.log(this.isOverflowing);
+    }
+  },
   mounted() {
+    this.observeOverflow();
     this.openmct.editor.on('isEditing', (isEditing) => {
       this.isEditing = isEditing;
     });
