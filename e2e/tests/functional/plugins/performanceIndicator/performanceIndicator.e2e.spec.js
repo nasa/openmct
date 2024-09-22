@@ -39,8 +39,7 @@ test.describe('The performance indicator', () => {
     // Frames Per Second. We need to wait at least 1 second to get a value.
     // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1000);
-    const performanceIndicator = page.getByTitle('Performance Indicator');
-    await expect(performanceIndicator).toHaveText(/\d\d? fps/);
+    await expect(page.getByTitle('Performance Indicator')).toHaveText(/\d\d? fps/);
   });
 
   test('Supports showing optional extended performance information in an overlay for debugging', async ({
@@ -62,8 +61,12 @@ test.describe('The performance indicator', () => {
     // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(1000);
     const performanceOverlay = page.getByTitle('Performance Overlay');
-    console.log(performanceOverlay.textContent());
+    await expect(performanceOverlay).toBeVisible();
     await expect(performanceOverlay).toHaveText(new RegExp(`${performanceMeasurementLabel}.*`));
     await expect(performanceOverlay).toHaveText(new RegExp(`.*${performanceMeasurementValue}`));
+
+    //Confirm that it disappears if we click on it again.
+    await performanceIndicator.click();
+    await expect(performanceOverlay).not.toBeVisible();
   });
 });
