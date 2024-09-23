@@ -187,7 +187,7 @@ import RecentObjectsList from './RecentObjectsList.vue';
 import GrandSearch from './search/GrandSearch.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 import StatusIndicators from './status-bar/StatusIndicators.vue';
-import { useObserveOverflow } from './useOverflowToggle.js';
+import { useOverflowObserver } from './useOverflowToggle.js';
 
 const SHELL_HEAD_LOCAL_STORAGE_KEY = 'openmct-shell-head';
 const DEFAULT_HEAD_EXPANDED = true;
@@ -229,7 +229,7 @@ export default {
       localStorage.setItem(SHELL_HEAD_LOCAL_STORAGE_KEY, initialHeadProps);
     }
 
-    const { isOverflowing, observeOverflow, unObserveOverflow } = useObserveOverflow(
+    const { isOverflowing, observeOverflow, unObserveOverflow } = useOverflowObserver(
       indicatorsComponent,
       'indicatorsContainer'
     );

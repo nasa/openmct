@@ -34,7 +34,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
  * @param {string} childRef the ref name of the child component
  * @returns { isOverflowing, observeOverflow, unObserveOverflow }
  */
-export function useObserveOverflow(component, childRef) {
+export function useOverflowObserver(component, childRef) {
   let observer;
   let element;
 
