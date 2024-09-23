@@ -21,7 +21,12 @@
 -->
 
 <template>
-  <div class="c-fault-mgmt__list data-selectable" :class="classesFromState">
+  <div
+    role="listitem"
+    :aria-label="listItemAriaLabel"
+    class="c-fault-mgmt__list data-selectable"
+    :class="classesFromState"
+  >
     <div class="c-fault-mgmt-item c-fault-mgmt__list-checkbox">
       <input
         type="checkbox"
@@ -33,8 +38,7 @@
     <div class="c-fault-mgmt-item">
       <div
         class="c-fault-mgmt__list-severity"
-        :aria-label="fault.severity"
-        :title="fault.severity"
+        :aria-label="severityAriaLabel"
         :class="['is-severity-' + severity]"
       ></div>
     </div>
@@ -98,7 +102,7 @@ export default {
   emits: ['acknowledge-selected', 'shelve-selected', 'toggle-selected', 'clear-all-selected'],
   computed: {
     checkBoxAriaLabel() {
-      return `Select fault: ${this.fault.name}`;
+      return `Select fault: ${this.fault.name || 'Unknown'} in ${this.fault.namespace || 'Unknown'}`;
     },
     classesFromState() {
       const exclusiveStates = [
@@ -165,6 +169,12 @@ export default {
       classname += SEVERITY_CLASS[triggerValueInfo.monitoringResult] || '';
 
       return classname.trim();
+    },
+    listItemAriaLabel() {
+      return `Fault ${this.fault.name || 'Unknown'} with severity ${this.fault.severity || 'Unknown'} in ${this.fault.namespace || 'Unknown'}`;
+    },
+    severityAriaLabel() {
+      return `Severity: ${this.fault.severity || 'Unknown'}`;
     }
   },
   methods: {
