@@ -31,9 +31,10 @@
     <template #content>
       <div
         v-if="domainObject"
+        v-show="showTelemetry"
         ref="telemetryViewWrapper"
         class="c-telemetry-view u-style-receiver"
-        :class="[itemClasses]"
+        :class="classNames"
         :style="styleObject"
         :data-font-size="item.fontSize"
         :data-font="item.font"
@@ -151,7 +152,10 @@ export default {
     };
   },
   computed: {
-    itemClasses() {
+    showTelemetry() {
+      return this.isEditing || !this.itemStyle?.isStyleInvisible;
+    },
+    classNames() {
       let classes = [];
 
       if (this.status) {

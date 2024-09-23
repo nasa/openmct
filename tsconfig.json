@@ -4,6 +4,7 @@
  */
 {
   "compilerOptions": {
+    "target": "ES6",
     "baseUrl": "./",
     "allowJs": true,
     "checkJs": false,
@@ -14,14 +15,14 @@
     "esModuleInterop": true,
     "noImplicitOverride": true,
     "noImplicitAny": false,
-    "outFile": "dist/types/index.d.ts"
+    "outFile": "dist/types/index.d.ts",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": [
     "src/api/**/*.js"
   ],
   "exclude": [
-    "node_modules",
-    "dist",
     "**/*Spec.js"
   ]
 }

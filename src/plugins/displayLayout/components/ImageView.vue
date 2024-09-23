@@ -29,7 +29,7 @@
     @end-move="endMove"
   >
     <template #content>
-      <div class="c-image-view" :style="style"></div>
+      <div v-show="showImage" aria-label="Image View" class="c-image-view" :style="style"></div>
     </template>
   </LayoutFrame>
 </template>
@@ -76,6 +76,9 @@ export default {
   },
   emits: ['move', 'end-move'],
   computed: {
+    showImage() {
+      return this.isEditing || !this.itemStyle?.isStyleInvisible;
+    },
     style() {
       let backgroundImage = 'url(' + this.item.url + ')';
       let border = '1px solid ' + this.item.stroke;
