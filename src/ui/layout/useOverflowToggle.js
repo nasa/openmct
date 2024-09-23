@@ -20,42 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { computed, onMounted, ref, watchEffect } from 'vue';
+/**
+ * @typedef {Boolean} isOverflowing whether the element is overflowing (scrollWidth > clientWidth)
+ * @typedef {Function} observeOverflow observe the element of a child component for overflow
+ * @typedef {Function} unObserveOverflow unobserve the element of a child component for overflow
+ */
 
-export function useObserveOverflow(openmct, component, childRef) {
-  const element = ref(null);
-  const width = ref(0);
-  const scrollWidth = ref(0);
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+
+/**
+ * Observes the overflow of a child component
+ * @param {import('vue').Component} component the parent component
+ * @param {string} childRef the ref name of the child component
+ * @returns { isOverflowing, observeOverflow, unObserveOverflow }
+ */
+export function useObserveOverflow(component, childRef) {
+  let observer;
+  let element;
+
+  const width = ref(null);
+  const scrollWidth = ref(null);
   const isOverflowing = computed(() => scrollWidth.value > width.value);
 
   onMounted(() => {
-    console.log(component);
-    // element.value = component.value[childRef].value;
-    console.log(element);
+    observer = new ResizeObserver((entries) => {
+      width.value = entries[0].target.clientWidth;
+      scrollWidth.value = entries[0].target.scrollWidth;
+    });
+
+    element = component.value.$refs[childRef];
   });
 
-  watchEffect(() => {
-    if (component.value) {
-      console.log('here');
-      console.log(component.value.$refs[childRef]);
-      element.value = component.value.$refs[childRef];
-      console.log(element);
-    }
+  onUnmounted(() => {
+    observer.disconnect();
   });
 
   function observeOverflow() {
-    window.addEventListener('resize', updateWidths);
+    observer.observe(element);
   }
 
   function unObserveOverflow() {
-    window.removeEventListener('resize', updateWidths);
-  }
-
-  function updateWidths() {
-    if (element.value) {
-      width.value = element.value.clientWidth;
-      scrollWidth.value = element.value.scrollWidth;
-    }
+    width.value = null;
+    scrollWidth.value = null;
+    observer.unobserve(element);
   }
 
   return {

@@ -34,17 +34,12 @@
         'l-shell__head--expanded': headExpanded,
         'l-shell__head--minify-indicators': !headExpanded,
         'l-shell__head--indicators-single-line': !indicatorsMultiline,
-        '--indicators-overflowing': indicatorsOverflowing
+        '--indicators-overflowing': isOverflowing
       }"
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
-      <StatusIndicators
-        ref="indicatorsComponent"
-        :head-expanded="headExpanded"
-        :indicators-multiline="indicatorsMultiline"
-        @indicators-overflowing="indicatorsOverflowUpdate"
-      />
+      <StatusIndicators ref="indicatorsComponent" />
       <button
         class="l-shell__head__button"
         :class="[indicatorsMultilineCssClass, indicatorsOverflowingCssClass]"
@@ -177,6 +172,8 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import ObjectView from '../components/ObjectView.vue';
 import Inspector from '../inspector/InspectorPanel.vue';
 import Toolbar from '../toolbar/ToolbarContainer.vue';
@@ -191,8 +188,10 @@ import GrandSearch from './search/GrandSearch.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 import StatusIndicators from './status-bar/StatusIndicators.vue';
 import { useObserveOverflow } from './useOverflowToggle.js';
+
 const SHELL_HEAD_LOCAL_STORAGE_KEY = 'openmct-shell-head';
-import { onMounted, ref } from 'vue';
+const DEFAULT_HEAD_EXPANDED = true;
+const DEFAULT_INDICATORS_MULTILINE = true;
 
 export default {
   components: {
@@ -212,37 +211,39 @@ export default {
   },
   inject: ['openmct'],
   setup() {
-    const indicatorsComponent = ref(null);
-
-    const { isOverflowing, observeOverflow, unObserveOverflow } = useObserveOverflow(undefined, indicatorsComponent, 'indicatorsContainer');
-
-    return {
-      indicatorsComponent,
-      isOverflowing,
-      observeOverflow,
-      unObserveOverflow
-    };
-  },
-  data() {
-    const DEFAULT_HEAD_EXPANDED = true;
-    const DEFAULT_INDICATORS_MULTILINE = true;
-
     const storedHeadProps = localStorage.getItem(SHELL_HEAD_LOCAL_STORAGE_KEY);
     const storedHeadPropsObject = JSON.parse(storedHeadProps);
     const storedHeadExpanded = storedHeadPropsObject?.expanded;
     const storedIndicatorsMultiline = storedHeadPropsObject?.multiline;
 
-    const headExpanded = storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED;
-    const indicatorsMultiline = storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE;
+    const indicatorsComponent = ref(null);
+    const headExpanded = ref(storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED);
+    const indicatorsMultiline = ref(storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE);
 
     const initialHeadProps = JSON.stringify({
-      expanded: headExpanded,
-      multiline: indicatorsMultiline
+      expanded: headExpanded.value,
+      multiline: indicatorsMultiline.value
     });
+
     if (initialHeadProps !== storedHeadProps) {
       localStorage.setItem(SHELL_HEAD_LOCAL_STORAGE_KEY, initialHeadProps);
     }
 
+    const { isOverflowing, observeOverflow, unObserveOverflow } = useObserveOverflow(
+      indicatorsComponent,
+      'indicatorsContainer'
+    );
+
+    return {
+      indicatorsComponent,
+      isOverflowing,
+      observeOverflow,
+      unObserveOverflow,
+      headExpanded,
+      indicatorsMultiline
+    };
+  },
+  data() {
     return {
       fullScreen: false,
       conductorComponent: undefined,
@@ -251,9 +252,6 @@ export default {
       actionCollection: undefined,
       triggerSync: false,
       triggerReset: false,
-      headExpanded,
-      indicatorsMultiline,
-      indicatorsOverflowing: false,
       isResizing: false,
       disableClearButton: false
     };
@@ -269,16 +267,24 @@ export default {
       return this.indicatorsMultiline ? 'icon-singleline' : 'icon-multiline';
     },
     indicatorsOverflowingCssClass() {
-      return this.indicatorsOverflowing ? 'c-button c-button--major' : 'c-icon-button';
+      return this.isOverflowing ? 'c-button c-button--major' : 'c-icon-button';
     }
   },
   watch: {
-    isOverflowing() {
-      console.log(this.isOverflowing);
+    headExpanded() {
+      this.setLocalStorageShellHead();
+    },
+    indicatorsMultiline() {
+      this.setLocalStorageShellHead();
+
+      if (this.indicatorsMultiline) {
+        this.unObserveOverflow();
+      } else {
+        this.observeOverflow();
+      }
     }
   },
   mounted() {
-    this.observeOverflow();
     this.openmct.editor.on('isEditing', (isEditing) => {
       this.isEditing = isEditing;
     });
@@ -315,11 +321,9 @@ export default {
     },
     toggleShellHead() {
       this.headExpanded = !this.headExpanded;
-      this.setLocalStorageShellHead();
     },
     toggleIndicatorsMultiline() {
       this.indicatorsMultiline = !this.indicatorsMultiline;
-      this.setLocalStorageShellHead();
     },
     setLocalStorageShellHead() {
       localStorage.setItem(
@@ -377,9 +381,6 @@ export default {
     },
     setClearButtonDisabled(isDisabled) {
       this.disableClearButton = isDisabled;
-    },
-    indicatorsOverflowUpdate(isOverflowing) {
-      this.indicatorsOverflowing = isOverflowing;
     }
   }
 };

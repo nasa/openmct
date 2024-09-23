@@ -28,27 +28,12 @@
 </template>
 
 <script>
-import { defineExpose, onMounted, ref, shallowRef } from 'vue';
+import { defineExpose, ref, shallowRef } from 'vue';
 
 export default {
   inject: ['openmct'],
-  props: {
-    headExpanded: {
-      type: Boolean,
-      required: true
-    },
-    indicatorsMultiline: {
-      type: Boolean,
-      required: true
-    }
-  },
-  emits: ['indicators-overflowing'],
   setup() {
     const indicatorsContainer = ref(null);
-
-    onMounted(() => {
-      console.log(indicatorsContainer);
-    });
 
     defineExpose({ indicatorsContainer });
   },
@@ -66,30 +51,8 @@ export default {
       return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
     }
   },
-  watch: {
-    headExpanded() {
-      this.checkOverflowNextTick();
-    },
-    indicatorsMultiline() {
-      if (!this.indicatorsMultiline) {
-        window.addEventListener('resize', this.checkOverflow);
-      } else {
-        window.removeEventListener('resize', this.checkOverflow);
-      }
-      this.checkOverflowNextTick();
-    }
-  },
-  mounted() {
-    if (!this.indicatorsMultiline) {
-      // `load` listener is necessary because the width of the Indicators has to be eval'd after other components have loaded.
-      window.addEventListener('load', this.checkOverflow);
-      window.addEventListener('resize', this.checkOverflow);
-    }
-  },
   beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
-    window.removeEventListener('load', this.checkOverflow);
-    window.removeEventListener('resize', this.checkOverflow);
   },
   created() {
     this.openmct.indicators.on('addIndicator', this.addIndicator);
@@ -97,15 +60,6 @@ export default {
   methods: {
     addIndicator(indicator) {
       this.indicators.push(shallowRef(indicator));
-    },
-    checkOverflow() {
-      const element = this.$refs.indicatorsContainer;
-      this.$emit('indicators-overflowing', element.scrollWidth > element.clientWidth);
-    },
-    checkOverflowNextTick() {
-      this.$nextTick(() => {
-        this.checkOverflow();
-      });
     }
   }
 };
