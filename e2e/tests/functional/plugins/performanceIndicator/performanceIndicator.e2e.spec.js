@@ -67,6 +67,6 @@ test.describe('The performance indicator', () => {
 
     //Confirm that it disappears if we click on it again.
     await performanceIndicator.click();
-    await expect(performanceOverlay).not.toBeVisible();
+    await expect(performanceOverlay).toBeHidden();
   });
 });
