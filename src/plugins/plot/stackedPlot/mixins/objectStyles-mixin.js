@@ -128,36 +128,26 @@ export default {
       }
     },
     updateStyle(styleObj) {
-      let elemToStyle = this.getStyleReceiver();
+      const elemToStyle = this.getStyleReceiver();
 
-      if (!styleObj || elemToStyle === undefined) {
+      if (!styleObj || !elemToStyle) {
         return;
       }
 
-      let keys = Object.keys(styleObj);
+      // handle visibility separately
+      if (styleObj.isStyleInvisible !== undefined) {
+        elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
+        styleObj.isStyleInvisible = null;
+      }
 
-      keys.forEach((key) => {
-        if (elemToStyle) {
-          if (typeof styleObj[key] === 'string' && styleObj[key].indexOf('__no_value') > -1) {
-            if (elemToStyle.style[key]) {
-              elemToStyle.style[key] = '';
-            }
+      requestAnimationFrame(() => {
+        Object.entries(styleObj).forEach(([key, value]) => {
+          if (typeof value !== 'string' || !value.includes('__no_value')) {
+            elemToStyle.style[key] = value;
           } else {
-            if (
-              !styleObj.isStyleInvisible &&
-              elemToStyle.classList.contains(STYLE_CONSTANTS.isStyleInvisible)
-            ) {
-              elemToStyle.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
-            } else if (
-              styleObj.isStyleInvisible &&
-              !elemToStyle.classList.contains(styleObj.isStyleInvisible)
-            ) {
-              elemToStyle.classList.add(styleObj.isStyleInvisible);
-            }
-
-            elemToStyle.style[key] = styleObj[key];
+            elemToStyle.style[key] = ''; // remove the property
           }
-        }
+        });
       });
     }
   }
