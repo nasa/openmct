@@ -47,7 +47,7 @@ function requestIdleCallbackPolyfill(callback, options) {
   // eslint-disable-next-line compat/compat
   return window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
 }
-const requestIdleCallback = requestIdleCallbackPolyfill;
+const requestIdleCallback = requestIdleCallbackPolyfill();
 
 const ONE_SECOND = 1000;
 
