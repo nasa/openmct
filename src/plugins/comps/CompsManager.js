@@ -8,6 +8,7 @@ export default class CompsManager extends EventEmitter {
   #telemetryCollections = {};
   #dataFrame = {};
   #telemetryLoadedPromises = [];
+  #telemetryOptions = {};
   #loaded = false;
   #compositionLoaded = false;
   #telemetryProcessors = {};
@@ -110,8 +111,9 @@ export default class CompsManager extends EventEmitter {
     return this.#loaded;
   }
 
-  async load() {
+  async load(telemetryOptions) {
     if (!this.#compositionLoaded) {
+      this.#telemetryOptions = telemetryOptions;
       await this.#loadComposition();
       this.#compositionLoaded = true;
     }
@@ -206,7 +208,7 @@ export default class CompsManager extends EventEmitter {
     this.deleteParameter(keyString);
   };
 
-  requestUnderlyingTelemetry() {
+  requestUnderlyingTelemetry(options) {
     const underlyingTelemetry = {};
     Object.keys(this.#telemetryCollections).forEach((collectionKey) => {
       const collection = this.#telemetryCollections[collectionKey];
@@ -252,8 +254,10 @@ export default class CompsManager extends EventEmitter {
   #addTelemetryObject = (telemetryObject) => {
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
     this.#telemetryObjects[keyString] = telemetryObject;
-    this.#telemetryCollections[keyString] =
-      this.#openmct.telemetry.requestCollection(telemetryObject);
+    this.#telemetryCollections[keyString] = this.#openmct.telemetry.requestCollection(
+      telemetryObject,
+      this.#telemetryOptions
+    );
 
     this.#telemetryCollections[keyString].on('add', this.#getTelemetryProcessor(keyString));
     this.#telemetryCollections[keyString].on('clear', this.clearData);

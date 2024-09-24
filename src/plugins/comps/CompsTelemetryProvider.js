@@ -61,7 +61,7 @@ export default class CompsTelemetryProvider {
         this.#openmct,
         this.#compsManagerPool
       );
-      specificCompsManager.load().then(() => {
+      specificCompsManager.load(options).then(() => {
         const callbackID = this.#getCallbackID();
         const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
         const expression = specificCompsManager.getExpression();
