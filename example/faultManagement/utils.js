@@ -65,8 +65,8 @@ export function acknowledgeFault(fault) {
 export function randomFaults(staticFaults, count = 5) {
   let faults = [];
 
-  for (let x = 1, y = count + 1; x < y; x++) {
-    faults.push(getRandom.fault(x, staticFaults));
+  for (let i = 1; i <= count; i++) {
+    faults.push(getRandom.fault(i, staticFaults));
   }
 
   return faults;
