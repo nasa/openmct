@@ -647,7 +647,7 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
 
         // eslint-disable-next-line playwright/prefer-web-first-assertions
         expect(style).toBe(expectedStyle);
-      }).toPass({ timeout });
+      }).toPass({ timeout }); // timeout allows for the style to be applied
     }
 
     let checkCount = 0;
