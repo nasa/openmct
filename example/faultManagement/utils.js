@@ -13,7 +13,8 @@ const getRandom = {
 
       val = num;
       severity = SEVERITIES[severityIndex - 1];
-      time = num;
+      // Subtract `num` from the timestamp so that the faults are in order
+      time = 14159040000 - num; // Mon, 21 Jul 1969 02:56:00 GMT 🌔👨‍🚀👨‍🚀👨‍🚀
     }
 
     return {
