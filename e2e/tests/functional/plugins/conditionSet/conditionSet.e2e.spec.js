@@ -29,7 +29,8 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject
+  createExampleTelemetryObject,
+  setRealTimeMode
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -328,15 +329,15 @@ test.describe('Basic Condition Set Use', () => {
     const firstCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=0'
     );
-    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    await firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
     const firstCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=0'
     );
-    firstCriterionMetadata.selectOption({ label: 'Sine' });
+    await firstCriterionMetadata.selectOption({ label: 'Sine' });
     const firstCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=0'
     );
-    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
+    await firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
     const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
     await firstCriterionInput.fill('0');
 
@@ -344,17 +345,17 @@ test.describe('Basic Condition Set Use', () => {
     const secondCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=1'
     );
-    secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    await secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
 
     const secondCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=1'
     );
-    secondCriterionMetadata.selectOption({ label: 'Sine' });
+    await secondCriterionMetadata.selectOption({ label: 'Sine' });
 
     const secondCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=1'
     );
-    secondCriterionComparison.selectOption({ label: 'is less than' });
+    await secondCriterionComparison.selectOption({ label: 'is less than' });
 
     const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
     await secondCriterionInput.fill('0');
@@ -412,15 +413,15 @@ test.describe('Basic Condition Set Use', () => {
     const firstCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=0'
     );
-    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    await firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
     const firstCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=0'
     );
-    firstCriterionMetadata.selectOption({ label: 'Sine' });
+    await firstCriterionMetadata.selectOption({ label: 'Sine' });
     const firstCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=0'
     );
-    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
+    await firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
     const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
     await firstCriterionInput.fill('0');
 
@@ -545,5 +546,127 @@ test.describe('Condition Set Composition', () => {
         .getByRole('listitem', { name: exampleTelemetry.name })
         .count()
     ).toEqual(0);
+  });
+});
+
+test.describe('Conditionally Styling, using a Condition Set', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('Conditional styling, using a Condition Set, will style correctly based on the output', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7840'
+    });
+
+    // Create Condition Set, State Generator, and Display Layout
+    const conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: 'Test Condition Set'
+    });
+    const stateGenerator = await createDomainObjectWithDefaults(page, {
+      type: 'State Generator',
+      name: 'One Second State Generator'
+    });
+    const displayLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
+    });
+
+    // edit the state generator to have a 1 second update rate
+    await page.goto(stateGenerator.url);
+    await page.getByTitle('More actions').click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
+    await page.getByLabel('State Duration (seconds)', { exact: true }).fill('1');
+    await page.getByLabel('Save').click();
+
+    // set up the condition set to use the state generator
+    await page.goto(conditionSet.url);
+
+    // Expand the 'My Items' folder in the left tree
+    await page.getByLabel('Show selected item in tree').click();
+
+    // Add the State Generator to the Condition Set
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
+    const stateGeneratorTreeItem = treePane.getByRole('treeitem', {
+      name: stateGenerator.name
+    });
+    const conditionCollection = page.locator('#conditionCollection');
+    await stateGeneratorTreeItem.dragTo(conditionCollection);
+
+    // Add the Criterion
+    await page.getByLabel('Add Condition').click();
+    const firstCriterionTelemetry = page.getByLabel('Criterion Telemetry Selection');
+    await firstCriterionTelemetry.selectOption({ label: stateGenerator.name });
+    const firstCriterionMetadata = page.getByLabel('Criterion Metadata Selection');
+    await firstCriterionMetadata.selectOption({ label: 'State' });
+    const firstCriterionComparison = page.getByLabel('Criterion Comparison Selection');
+    await firstCriterionComparison.selectOption({ label: 'is' });
+    await page.getByLabel('Condition Name Input').first().fill('OFF');
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // set up the display layout
+    await page.goto(displayLayout.url);
+    const displayLayoutDropTarget = page.getByLabel(`${displayLayout.name} Layout`, {
+      exact: true
+    });
+    await stateGeneratorTreeItem.dragTo(displayLayoutDropTarget, {
+      targetPosition: { x: 20, y: 100 }
+    });
+    await page.getByLabel('Test Display Layout Layout Grid').click(); // click off of the alphanumeric
+    await page.getByLabel('Add Drawing Object').click();
+    await page.getByText('Box').click();
+
+    // set up conditional styling
+    await page.getByRole('tab', { name: 'Styles' }).click();
+    await page.getByRole('button', { name: 'Use Conditional Styling...' }).click();
+    await page.getByLabel('Modal Overlay').getByLabel('Expand My Items folder').click();
+    await page.getByLabel('Modal Overlay').getByLabel(`Preview ${conditionSet.name}`).click();
+    await page.getByText('Ok').click();
+    await page.getByLabel('Set background color').first().click();
+    await page.getByLabel('#ff0000').click();
+    await page.getByLabel('Save', { exact: true }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    await setRealTimeMode(page);
+
+    const redBG = 'background-color: rgb(255, 0, 0);';
+    const defaultBG = 'background-color: rgb(102, 102, 102);';
+    const textElement = page.getByLabel('Alpha-numeric telemetry value').locator('div:first-child');
+    const styledElement = page.getByLabel('Box', { exact: true });
+
+    async function waitForStyleChange(element, expectedStyle, timeout = 0) {
+      await expect(async () => {
+        const style = await element.getAttribute('style');
+
+        // eslint-disable-next-line playwright/prefer-web-first-assertions
+        expect(style).toBe(expectedStyle);
+      }).toPass({ timeout });
+    }
+
+    let checkCount = 0;
+    const maxChecks = 10;
+
+    while (checkCount < maxChecks) {
+      // Wait for the text to become 'OFF'
+      await expect(textElement).toHaveText('OFF', { timeout: 2000 });
+
+      // Check if the style becomes red when text is 'OFF'
+      await waitForStyleChange(styledElement, redBG);
+
+      // Wait for the text to become 'ON'
+      await expect(textElement).toHaveText('ON', { timeout: 2000 });
+
+      // Check if the style is not red when text is 'ON'
+      await waitForStyleChange(styledElement, defaultBG);
+
+      checkCount++;
+    }
   });
 });
