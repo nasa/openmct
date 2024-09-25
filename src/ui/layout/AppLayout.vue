@@ -172,7 +172,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import ObjectView from '../components/ObjectView.vue';
 import Inspector from '../inspector/InspectorPanel.vue';
@@ -187,7 +187,6 @@ import RecentObjectsList from './RecentObjectsList.vue';
 import GrandSearch from './search/GrandSearch.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 import StatusIndicators from './status-bar/StatusIndicators.vue';
-import { useOverflowObserver } from './useOverflowObserver.js';
 
 const SHELL_HEAD_LOCAL_STORAGE_KEY = 'openmct-shell-head';
 const DEFAULT_HEAD_EXPANDED = true;
@@ -211,14 +210,25 @@ export default {
   },
   inject: ['openmct'],
   setup() {
+    let resizeObserver;
+    let element;
+
     const storedHeadProps = localStorage.getItem(SHELL_HEAD_LOCAL_STORAGE_KEY);
     const storedHeadPropsObject = JSON.parse(storedHeadProps);
     const storedHeadExpanded = storedHeadPropsObject?.expanded;
     const storedIndicatorsMultiline = storedHeadPropsObject?.multiline;
 
+    // template ref of StatusIndicators component
     const indicatorsComponent = ref(null);
+
+    const width = ref(null);
+    const scrollWidth = ref(null);
     const headExpanded = ref(storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED);
     const indicatorsMultiline = ref(storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE);
+
+    const isOverflowing = computed(
+      () => !indicatorsMultiline.value && scrollWidth.value > width.value
+    );
 
     const initialHeadProps = JSON.stringify({
       expanded: headExpanded.value,
@@ -229,16 +239,37 @@ export default {
       localStorage.setItem(SHELL_HEAD_LOCAL_STORAGE_KEY, initialHeadProps);
     }
 
-    const { isOverflowing, observeOverflow, unObserveOverflow } = useOverflowObserver(
-      indicatorsComponent,
-      'indicatorsContainer'
-    );
+    onMounted(() => {
+      resizeObserver = new ResizeObserver((entries) => {
+        width.value = entries[0].target.clientWidth;
+        scrollWidth.value = entries[0].target.scrollWidth;
+      });
+
+      // indicatorsContainer is a template ref inside of indicatorsComponent 
+      element = indicatorsComponent.value.$refs.indicatorsContainer;
+
+      if (!indicatorsMultiline.value) {
+        observeIndicatorsOverflow();
+      }
+    });
+
+    onUnmounted(() => {
+      resizeObserver.disconnect();
+    });
+
+    function observeIndicatorsOverflow() {
+      resizeObserver.observe(element);
+    }
+
+    function unObserveIndicatorsOverflow() {
+      resizeObserver.unobserve(element);
+    }
 
     return {
       indicatorsComponent,
       isOverflowing,
-      observeOverflow,
-      unObserveOverflow,
+      observeIndicatorsOverflow,
+      unObserveIndicatorsOverflow,
       headExpanded,
       indicatorsMultiline
     };
@@ -268,20 +299,6 @@ export default {
     },
     indicatorsOverflowingCssClass() {
       return this.isOverflowing ? 'c-button c-button--major' : 'c-icon-button';
-    }
-  },
-  watch: {
-    headExpanded() {
-      this.setLocalStorageShellHead();
-    },
-    indicatorsMultiline() {
-      this.setLocalStorageShellHead();
-
-      if (this.indicatorsMultiline) {
-        this.unObserveOverflow();
-      } else {
-        this.observeOverflow();
-      }
     }
   },
   mounted() {
@@ -321,9 +338,17 @@ export default {
     },
     toggleShellHead() {
       this.headExpanded = !this.headExpanded;
+      this.setLocalStorageShellHead();
     },
     toggleIndicatorsMultiline() {
       this.indicatorsMultiline = !this.indicatorsMultiline;
+      this.setLocalStorageShellHead();
+
+      if (this.indicatorsMultiline) {
+        this.unObserveIndicatorsOverflow();
+      } else {
+        this.observeIndicatorsOverflow();
+      }
     },
     setLocalStorageShellHead() {
       localStorage.setItem(
