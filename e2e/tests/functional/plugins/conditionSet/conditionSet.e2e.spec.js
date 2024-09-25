@@ -329,33 +329,33 @@ test.describe('Basic Condition Set Use', () => {
     const firstCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=0'
     );
-    await firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
     const firstCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=0'
     );
-    await firstCriterionMetadata.selectOption({ label: 'Sine' });
+    firstCriterionMetadata.selectOption({ label: 'Sine' });
     const firstCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=0'
     );
-    await firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
+    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
     const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
-    await firstCriterionInput.fill('0');
+    firstCriterionInput.fill('0');
 
     // Modify First Criterion
     const secondCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=1'
     );
-    await secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
 
     const secondCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=1'
     );
-    await secondCriterionMetadata.selectOption({ label: 'Sine' });
+    secondCriterionMetadata.selectOption({ label: 'Sine' });
 
     const secondCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=1'
     );
-    await secondCriterionComparison.selectOption({ label: 'is less than' });
+    secondCriterionComparison.selectOption({ label: 'is less than' });
 
     const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
     await secondCriterionInput.fill('0');
@@ -413,15 +413,15 @@ test.describe('Basic Condition Set Use', () => {
     const firstCriterionTelemetry = page.locator(
       '[aria-label="Criterion Telemetry Selection"] >> nth=0'
     );
-    await firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
     const firstCriterionMetadata = page.locator(
       '[aria-label="Criterion Metadata Selection"] >> nth=0'
     );
-    await firstCriterionMetadata.selectOption({ label: 'Sine' });
+    firstCriterionMetadata.selectOption({ label: 'Sine' });
     const firstCriterionComparison = page.locator(
       '[aria-label="Criterion Comparison Selection"] >> nth=0'
     );
-    await firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
+    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
     const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
     await firstCriterionInput.fill('0');
 
