@@ -29,8 +29,8 @@ import {
   getFaultName,
   getFaultNamespace,
   getFaultTriggerTime,
-  navigateToFaultManagementWithExample,
   navigateToFaultManagementWithoutExample,
+  navigateToFaultManagementWithStaticExample,
   selectFaultItem,
   shelveFault,
   shelveMultipleFaults,
@@ -40,7 +40,7 @@ import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('The Fault Management Plugin using example faults', () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToFaultManagementWithExample(page);
+    await navigateToFaultManagementWithStaticExample(page);
   });
 
   test('Shows a criticality icon for every fault', async ({ page }) => {
