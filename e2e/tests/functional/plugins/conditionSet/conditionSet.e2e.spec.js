@@ -339,7 +339,7 @@ test.describe('Basic Condition Set Use', () => {
     );
     firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
     const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
-    firstCriterionInput.fill('0');
+    await firstCriterionInput.fill('0');
 
     // Modify First Criterion
     const secondCriterionTelemetry = page.locator(
