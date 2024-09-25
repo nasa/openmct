@@ -1,4 +1,5 @@
 import { EventEmitter } from 'eventemitter3';
+import _ from 'lodash';
 
 export default class CompsManager extends EventEmitter {
   #openmct;
@@ -112,20 +113,23 @@ export default class CompsManager extends EventEmitter {
   }
 
   async load(telemetryOptions) {
+    // if our options change, we need to reload the composition
+    if (!_.isEqual(telemetryOptions, this.#telemetryOptions) && this.#loaded) {
+      this.#destroy();
+    }
+    this.#telemetryOptions = telemetryOptions;
     if (!this.#compositionLoaded) {
-      this.#telemetryOptions = telemetryOptions;
       await this.#loadComposition();
       this.#compositionLoaded = true;
     }
     if (!this.#loaded) {
-      await Promise.all(this.#telemetryLoadedPromises);
+      await this.startListeningToUnderlyingTelemetry();
       this.#telemetryLoadedPromises = [];
       this.#loaded = true;
     }
   }
 
   async startListeningToUnderlyingTelemetry() {
-    this.#loaded = false;
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
       if (!this.#telemetryCollections[keyString].loaded) {
         this.#telemetryCollections[keyString].on('add', this.#getTelemetryProcessor(keyString));
@@ -136,7 +140,15 @@ export default class CompsManager extends EventEmitter {
     });
     await Promise.all(this.#telemetryLoadedPromises);
     this.#telemetryLoadedPromises = [];
-    this.#loaded = true;
+  }
+
+  #destroy() {
+    this.stopListeningToUnderlyingTelemetry();
+    this.#composition = null;
+    this.#telemetryCollections = {};
+    this.#compositionLoaded = false;
+    this.#loaded = false;
+    this.#telemetryObjects = {};
   }
 
   stopListeningToUnderlyingTelemetry() {
@@ -208,7 +220,7 @@ export default class CompsManager extends EventEmitter {
     this.deleteParameter(keyString);
   };
 
-  requestUnderlyingTelemetry(options) {
+  requestUnderlyingTelemetry() {
     const underlyingTelemetry = {};
     Object.keys(this.#telemetryCollections).forEach((collectionKey) => {
       const collection = this.#telemetryCollections[collectionKey];
@@ -258,11 +270,6 @@ export default class CompsManager extends EventEmitter {
       telemetryObject,
       this.#telemetryOptions
     );
-
-    this.#telemetryCollections[keyString].on('add', this.#getTelemetryProcessor(keyString));
-    this.#telemetryCollections[keyString].on('clear', this.clearData);
-    const telemetryLoadedPromise = this.#telemetryCollections[keyString].load();
-    this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
 
     // check to see if we have a corresponding parameter
     // if not, add one
