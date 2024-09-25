@@ -236,7 +236,6 @@
     display: grid;
     grid-template-columns: min-content 1fr 3fr repeat(4, min-content);
     grid-column-gap: $interiorMargin;
-    min-height: 34px;
     padding: $interiorMargin $interiorMargin + 2;
 
     .l-shell__head__button {
@@ -284,13 +283,12 @@
     display: flex;
     flex-wrap: wrap;
     font-size: 11px;
-    min-height: 24px;
+    min-height: 25px;
     justify-content: flex-end;
 
     .l-shell__head--indicators-single-line & {
       flex-wrap: nowrap;
       justify-content: flex-start; // Overflow detection doesn't work with flex-end.
-      max-height: 24px;
       overflow: hidden;
 
       > *:first-child {
