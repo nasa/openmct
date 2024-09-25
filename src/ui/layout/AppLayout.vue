@@ -42,9 +42,9 @@
       <StatusIndicators ref="indicatorsComponent" />
       <button
         class="l-shell__head__button"
-        :class="[indicatorsMultilineCssClass, indicatorsOverflowingCssClass]"
-        :aria-label="`Display as ${indicatorsMultiline ? 'single line' : 'multiple lines'}`"
-        :title="`Display as ${indicatorsMultiline ? 'single line' : 'multiple lines'}`"
+        :class="indicatorsMultilineCssClass"
+        :aria-label="indicatorsMultilineLabel"
+        :title="indicatorsMultilineLabel"
         @click="toggleIndicatorsMultiline"
       ></button>
       <button
@@ -172,7 +172,7 @@
 </template>
 
 <script>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 
 import ObjectView from '../components/ObjectView.vue';
 import Inspector from '../inspector/InspectorPanel.vue';
@@ -226,9 +226,18 @@ export default {
     const headExpanded = ref(storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED);
     const indicatorsMultiline = ref(storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE);
 
-    const isOverflowing = computed(
-      () => !indicatorsMultiline.value && scrollWidth.value > width.value
-    );
+    const isOverflowing = computed(() => scrollWidth.value > width.value);
+    const indicatorsMultilineCssClass = computed(() => {
+      const multilineClass = indicatorsMultiline.value ? 'icon-singleline' : 'icon-multiline';
+      const overflowingClass =
+        isOverflowing.value && !indicatorsMultiline.value
+          ? 'c-button c-button--major'
+          : 'c-icon-button';
+      return `${multilineClass} ${overflowingClass}`;
+    });
+    const indicatorsMultilineLabel = computed(() => {
+      return `Display as ${indicatorsMultiline.value ? 'single line' : 'multiple lines'}`;
+    });
 
     const initialHeadProps = JSON.stringify({
       expanded: headExpanded.value,
@@ -245,7 +254,7 @@ export default {
         scrollWidth.value = entries[0].target.scrollWidth;
       });
 
-      // indicatorsContainer is a template ref inside of indicatorsComponent 
+      // indicatorsContainer is a template ref inside of indicatorsComponent
       element = indicatorsComponent.value.$refs.indicatorsContainer;
 
       if (!indicatorsMultiline.value) {
@@ -265,13 +274,52 @@ export default {
       resizeObserver.unobserve(element);
     }
 
+    function checkIndicatorsElementWidths() {
+      if (!indicatorsMultiline.value) {
+        width.value = element.clientWidth;
+        scrollWidth.value = element.scrollWidth;
+      }
+    }
+
+    async function toggleShellHead() {
+      headExpanded.value = !headExpanded.value;
+      setLocalStorageShellHead();
+
+      // nextTick is used because the element width on toggle is updated using css
+      await nextTick();
+      checkIndicatorsElementWidths();
+    }
+
+    function toggleIndicatorsMultiline() {
+      indicatorsMultiline.value = !indicatorsMultiline.value;
+      setLocalStorageShellHead();
+
+      if (indicatorsMultiline.value) {
+        unObserveIndicatorsOverflow();
+      } else {
+        observeIndicatorsOverflow();
+      }
+    }
+
+    function setLocalStorageShellHead() {
+      localStorage.setItem(
+        SHELL_HEAD_LOCAL_STORAGE_KEY,
+        JSON.stringify({
+          expanded: headExpanded.value,
+          multiline: indicatorsMultiline.value
+        })
+      );
+    }
+
     return {
       indicatorsComponent,
       isOverflowing,
-      observeIndicatorsOverflow,
-      unObserveIndicatorsOverflow,
       headExpanded,
-      indicatorsMultiline
+      indicatorsMultiline,
+      indicatorsMultilineCssClass,
+      indicatorsMultilineLabel,
+      toggleIndicatorsMultiline,
+      toggleShellHead
     };
   },
   data() {
@@ -293,12 +341,6 @@ export default {
     },
     resizingClass() {
       return this.isResizing ? 'l-shell__resizing' : '';
-    },
-    indicatorsMultilineCssClass() {
-      return this.indicatorsMultiline ? 'icon-singleline' : 'icon-multiline';
-    },
-    indicatorsOverflowingCssClass() {
-      return this.isOverflowing ? 'c-button c-button--major' : 'c-icon-button';
     }
   },
   mounted() {
@@ -335,29 +377,6 @@ export default {
       } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
       }
-    },
-    toggleShellHead() {
-      this.headExpanded = !this.headExpanded;
-      this.setLocalStorageShellHead();
-    },
-    toggleIndicatorsMultiline() {
-      this.indicatorsMultiline = !this.indicatorsMultiline;
-      this.setLocalStorageShellHead();
-
-      if (this.indicatorsMultiline) {
-        this.unObserveIndicatorsOverflow();
-      } else {
-        this.observeIndicatorsOverflow();
-      }
-    },
-    setLocalStorageShellHead() {
-      localStorage.setItem(
-        SHELL_HEAD_LOCAL_STORAGE_KEY,
-        JSON.stringify({
-          expanded: this.headExpanded,
-          multiline: this.indicatorsMultiline
-        })
-      );
     },
     fullScreenToggle() {
       if (this.fullScreen) {
