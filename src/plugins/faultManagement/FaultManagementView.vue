@@ -225,14 +225,14 @@ export default {
         false
       );
     },
-    async toggleAcknowledgeSelected() {
-      const title = this.getAcknowledgeTitle(this.selectedFaults);
+    async toggleAcknowledgeSelected(faults = this.selectedFaults) {
+      const title = this.getAcknowledgeTitle(faults);
 
       const formStructure = this.getAcknowledgeFormStructure(title);
 
       try {
         const data = await this.openmct.forms.showForm(formStructure);
-        this.acknowledgeFaults(this.selectedFaults, data);
+        this.acknowledgeFaults(faults, data);
       } catch (err) {
         console.error(err);
       } finally {
