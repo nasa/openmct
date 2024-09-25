@@ -216,12 +216,20 @@ export default class TelemetryCollection extends EventEmitter {
     let hasDataBeforeStartBound = false;
     let size = this.options.size;
     let enforceSize = size !== undefined && this.options.enforceSize;
+    // prioritize request bounds over time context bounds
+    let boundsToUse = this.lastBounds;
+    if (this.options.start) {
+      boundsToUse.start = this.options.start;
+    }
+    if (this.options.end) {
+      boundsToUse.end = this.options.end;
+    }
 
     // loop through, sort and dedupe
     for (let datum of data) {
       parsedValue = this.parseTime(datum);
-      beforeStartOfBounds = parsedValue < this.lastBounds.start;
-      afterEndOfBounds = parsedValue > this.lastBounds.end;
+      beforeStartOfBounds = parsedValue < boundsToUse.start;
+      afterEndOfBounds = parsedValue > boundsToUse.end;
 
       if (
         !afterEndOfBounds &&

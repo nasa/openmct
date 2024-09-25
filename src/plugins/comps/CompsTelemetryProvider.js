@@ -117,7 +117,7 @@ export default class CompsTelemetryProvider {
       callbackID
     );
     specificCompsManager.on('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
-    specificCompsManager.startListeningToUnderlyingTelemetry();
+    specificCompsManager.load();
     return () => {
       specificCompsManager.off('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
       delete this.#subscriptionCallbacks[callbackID];
