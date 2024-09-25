@@ -44,8 +44,14 @@ import installWorker from './WebSocketWorker.js';
  *
  */
 function requestIdleCallbackPolyfill(callback, options) {
-  // eslint-disable-next-line compat/compat
-  return window.requestIdleCallback ?? ((fn, { timeout }) => setTimeout(fn, timeout));
+  return (
+    // eslint-disable-next-line compat/compat
+    window.requestIdleCallback ??
+    ((fn, { timeout }) =>
+      setTimeout(() => {
+        fn({ didTimeout: false });
+      }, timeout))
+  );
 }
 const requestIdleCallback = requestIdleCallbackPolyfill();
 
