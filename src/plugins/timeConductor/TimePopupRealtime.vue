@@ -118,6 +118,7 @@
           max="59"
           title="Enter 0 - 59"
           step="1"
+          aria-label="End offset minutes"
           @change="validate()"
           @keyup="validate()"
           @focusin="selectAll($event)"

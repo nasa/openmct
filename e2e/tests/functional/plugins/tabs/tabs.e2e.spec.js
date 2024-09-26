@@ -114,8 +114,8 @@ test.describe('Tabs View CRUD', () => {
     await page.getByLabel('Edit Object').click();
     await page.getByLabel('More actions').click();
     await page.getByLabel('Edit Properties...').click();
-    await expect(await page.getByLabel('Eager Load Tabs')).not.toBeChecked();
+    await expect(page.getByLabel('Eager Load Tabs')).not.toBeChecked();
     await page.getByLabel('Eager Load Tabs').setChecked(true);
-    await expect(await page.getByLabel('Eager Load Tabs')).toBeChecked();
+    await expect(page.getByLabel('Eager Load Tabs')).toBeChecked();
   });
 });

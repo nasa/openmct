@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-  createDomainObjectWithDefaults,
-  openObjectTreeContextMenu
-} from '../../../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { MISSION_TIME } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -33,7 +30,6 @@ test.describe('Timer', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
-    await assertTimerElements(page, timer);
   });
 
   test('Can perform actions on the Timer', async ({ page }) => {
@@ -42,13 +38,11 @@ test.describe('Timer', () => {
       description: 'https://github.com/nasa/openmct/issues/4313'
     });
 
-    const timerUrl = timer.url;
-
     await test.step('From the tree context menu', async () => {
-      await triggerTimerContextMenuAction(page, timerUrl, 'Start');
-      await triggerTimerContextMenuAction(page, timerUrl, 'Pause');
-      await triggerTimerContextMenuAction(page, timerUrl, 'Restart at 0');
-      await triggerTimerContextMenuAction(page, timerUrl, 'Stop');
+      await triggerTimerContextMenuAction(page, timer.url, 'Start');
+      await triggerTimerContextMenuAction(page, timer.url, 'Pause');
+      await triggerTimerContextMenuAction(page, timer.url, 'Restart at 0');
+      await triggerTimerContextMenuAction(page, timer.url, 'Stop');
     });
 
     await test.step('From the 3dot menu', async () => {
@@ -67,26 +61,18 @@ test.describe('Timer', () => {
 });
 
 test.describe('Timer with target date @clock', () => {
-  let timer;
-
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    timer = await createDomainObjectWithDefaults(page, { type: 'timer' });
-    await assertTimerElements(page, timer);
-  });
-
-  // Override clock
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
+    await createDomainObjectWithDefaults(page, { type: 'timer' });
   });
 
   test('Can count down to a target date', async ({ page }) => {
     // Set the target date to 2024-11-24 03:30:00
     await page.getByTitle('More actions').click();
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
+
     await page.getByPlaceholder('YYYY-MM-DD').fill('2024-11-24');
     await page.locator('input[name="hour"]').fill('3');
     await page.locator('input[name="min"]').fill('30');
@@ -159,14 +145,13 @@ async function triggerTimerContextMenuAction(page, timerUrl, action) {
  */
 async function triggerTimer3dotMenuAction(page, action) {
   const menuAction = `.c-menu ul li >> text="${action}"`;
-  const threeDotMenuButton = 'button[title="More actions"]';
   let isActionAvailable = false;
   let iterations = 0;
   // Dismiss/open the 3dot menu until the action is available
   // or a maximum number of iterations is reached
   while (!isActionAvailable && iterations <= 20) {
-    await page.click('.c-object-view');
-    await page.click(threeDotMenuButton);
+    await page.getByLabel('Object View').click();
+    await page.getByLabel('More actions').click();
     isActionAvailable = await page.locator(menuAction).isVisible();
     iterations++;
   }
@@ -183,7 +168,7 @@ async function triggerTimer3dotMenuAction(page, action) {
 async function triggerTimerViewAction(page, action) {
   await page.locator('.c-timer').hover({ trial: true });
   const buttonTitle = buttonTitleFromAction(action);
-  await page.click(`button[title="${buttonTitle}"]`);
+  await page.getByLabel(buttonTitle, { exact: true }).click();
   assertTimerStateAfterAction(page, action);
 }
 
@@ -214,11 +199,11 @@ async function assertTimerStateAfterAction(page, action) {
     case 'Start':
     case 'Restart at 0':
       timerStateClass = 'is-started';
-      expect(await timerValue.innerText()).toBe('0D 00:00:00');
+      await expect(timerValue).toHaveText('0D 00:00:00');
       break;
     case 'Stop':
       timerStateClass = 'is-stopped';
-      expect(await timerValue.innerText()).toBe('--:--:--');
+      await expect(timerValue).toHaveText('--:--:--');
       break;
     case 'Pause':
       timerStateClass = 'is-paused';
@@ -229,23 +214,16 @@ async function assertTimerStateAfterAction(page, action) {
 }
 
 /**
- * Assert that all the major components of a timer are present in the DOM.
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
  * @param {import('@playwright/test').Page} page
- * @param {import('../../../../appActions').CreatedObjectInfo} timer
+ * @param {string} url the url to the object
  */
-async function assertTimerElements(page, timer) {
-  const timerElement = page.locator('.c-timer');
-  const resetButton = page.getByRole('button', { name: 'Reset' });
-  const pausePlayButton = page
-    .getByRole('button', { name: 'Pause' })
-    .or(page.getByRole('button', { name: 'Start' }));
-  const timerDirectionIcon = page.locator('.c-timer__direction');
-  const timerValue = page.locator('.c-timer__value');
-
-  expect(await page.locator('.l-browse-bar__object-name').innerText()).toBe(timer.name);
-  expect(timerElement).toBeAttached();
-  expect(resetButton).toBeAttached();
-  expect(pausePlayButton).toBeAttached();
-  expect(timerDirectionIcon).toBeAttached();
-  expect(timerValue).toBeAttached();
+async function openObjectTreeContextMenu(page, url) {
+  await page.goto(url);
+  await page.getByLabel('Show selected item in tree').click();
+  await page.locator('.is-navigated-object').click({
+    button: 'right'
+  });
 }

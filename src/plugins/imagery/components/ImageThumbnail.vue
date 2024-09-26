@@ -28,8 +28,10 @@
       selected: selected,
       'real-time': realTime
     }"
-    :aria-label="image.formattedTime"
+    :aria-label="ariaLabel"
     :title="image.formattedTime"
+    role="button"
+    tabindex="0"
     @click="handleClick"
   >
     <a class="c-thumb__image-wrapper" href="" :download="image.imageDownloadName" @click.prevent>
@@ -94,6 +96,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return `Image thumbnail from ${this.image.formattedTime}${this.showAnnotationIndicator ? ', has annotations' : ''}`;
+    },
     viewableAreaStyle() {
       if (!this.viewableArea || !this.imgWidth || !this.imgHeight) {
         return null;

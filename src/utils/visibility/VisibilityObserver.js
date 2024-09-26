@@ -23,10 +23,27 @@
 /**
  * Optimizes `requestAnimationFrame` calls to only execute when the element is visible in the viewport.
  */
-export default class VisibilityObserver {
+class VisibilityObserver {
+  /**
+   * @type {HTMLElement | null}
+   */
   #element;
+  /**
+   * @type {IntersectionObserver | null}
+   */
   #observer;
+  /**
+   * @type {(() => void) | null}
+   */
   lastUnfiredFunc;
+  /**
+   * @type {boolean | null}
+   */
+  isIntersecting;
+  /**
+   * @type {boolean}
+   */
+  calledOnce;
 
   /**
    * Constructs a VisibilityObserver instance to manage visibility-based requestAnimationFrame calls.
@@ -49,9 +66,21 @@ export default class VisibilityObserver {
     this.renderWhenVisible = this.renderWhenVisible.bind(this);
   }
 
-  #observerCallback = ([entry]) => {
-    if (entry.target === this.#element) {
-      this.isIntersecting = entry.isIntersecting;
+  /**
+   * @returns {boolean}
+   */
+  #inOverlay() {
+    return this.#element?.closest('.js-overlay');
+  }
+
+  #observerCallback = (entries) => {
+    const entry = entries[0];
+    if (entry && entry.target === this.#element) {
+      if (this.#inOverlay() && !entry.isIntersecting) {
+        this.isIntersecting = true;
+      } else {
+        this.isIntersecting = entry.isIntersecting;
+      }
       if (this.isIntersecting && this.lastUnfiredFunc) {
         window.requestAnimationFrame(this.lastUnfiredFunc);
         this.lastUnfiredFunc = null;
@@ -64,27 +93,38 @@ export default class VisibilityObserver {
    * If the element is not visible, the function is stored and called when the element becomes visible.
    * Note that if called multiple times while not visible, only the last execution is stored and executed.
    *
-   * @param {Function} func - The function to execute.
+   * @param {() => void} func - The function to execute.
    * @returns {boolean} True if the function was executed immediately, false otherwise.
    */
   renderWhenVisible(func) {
-    if (this.isIntersecting) {
-      window.requestAnimationFrame(func);
-      return true;
-    } else {
+    if (!this.calledOnce) {
+      this.calledOnce = true;
+      if (!this.#observer || !this.#element) {
+        this.lastUnfiredFunc = func;
+        return false;
+      }
+      this.#observer.observe(this.#element);
+    } else if (!this.isIntersecting) {
       this.lastUnfiredFunc = func;
       return false;
     }
+    window.requestAnimationFrame(func);
+    return true;
   }
 
   /**
    * Stops observing the element for visibility changes and cleans up resources to prevent memory leaks.
    */
   destroy() {
-    this.#observer.unobserve(this.#element);
+    if (this.#observer && this.#element) {
+      this.#observer.unobserve(this.#element);
+    }
+
     this.#element = null;
     this.isIntersecting = null;
     this.#observer = null;
     this.lastUnfiredFunc = null;
   }
 }
+
+export default VisibilityObserver;

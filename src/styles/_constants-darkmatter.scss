@@ -1,0 +1,603 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2024, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/************************************************** DARKMATTER THEME*/
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap'); // Header font, Roboto Condensed. This is an alternative to the DIN Alt font, which is not available on Google Fonts.
+@import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap'); // Body Font, Exo
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch&family=Roboto+Condensed&display=swap'); // Temporary numeric font, Chakra Petch (need to import local font instead).
+$heroFont: 'Teko', sans-serif;
+$headerFont: 'Cabin Condensed', sans-serif;
+$bodyFont: 'Exo', sans-serif;
+$numericFont: 'Chakra Petch', sans-serif;
+
+@mixin heroFont($size: 1em) {
+  font-family: $heroFont;
+  font-size: $size;
+}
+
+@mixin headerFont($size: 1em) {
+  font-family: $headerFont;
+  font-size: $size;
+}
+
+@mixin bodyFont($size: 1em) {
+  font-family: $bodyFont;
+  font-size: $size;
+}
+
+@mixin numericFont($size: 1em) {
+  font-family: $numericFont;
+  font-size: $size;
+}
+
+@mixin discreteItem() {
+  background: $colorDiscreteItemBg;
+  border: none;
+  border-radius: $controlCr;
+
+  .c-input-inline:hover {
+    background: $colorBodyBg;
+  }
+
+  &--current-match {
+    background: $colorDiscreteItemCurrentBg;
+  }
+}
+
+@mixin discreteItemInnerElem() {
+  border: 1px solid rgba(#fff, 0.1);
+  border-radius: $controlCr;
+}
+
+@mixin themedButton($c: $colorBtnBg) {
+  background: radial-gradient(rgba($c, 1), rgba($c, 0.7));
+  box-shadow: rgba(black, 0.5) 0 0.5px 2px;
+}
+
+@mixin telemetryView() {
+  border: 1px solid $colorBodyFg;
+  border-radius: $controlCr;
+}
+
+@mixin browseFrameBorder() {
+  // Used on main object container to add highlighted corners to non-hidden frames.
+  border-image: radial-gradient(circle, #575757, #6c6c6c, #818181, #979797, #aeaeae);
+  border-style: solid;
+  padding: 10px;
+  $browseFrameCornerWidth: 4px;
+  background:
+    linear-gradient(to right, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 0 0,
+    linear-gradient(to right, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 0 100%,
+    linear-gradient(to left, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 100% 0,
+    linear-gradient(to left, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 100% 100%,
+    linear-gradient(to bottom, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 0 0,
+    linear-gradient(to bottom, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 100% 0,
+    linear-gradient(to top, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 0 100%,
+    linear-gradient(to top, $browseFrameCornerColor, transparent $browseFrameCornerWidth) 100% 100%,
+    rgb(0, 0, 0, 0.4);
+
+  background-repeat: no-repeat;
+  background-size: 35px 35px;
+  border-radius: $interiorMarginLg;
+  box-shadow: 0px 0px 20px 2px rgb(140 140 140 / 20%);
+}
+
+// Functions
+@function buttonBg($c: $colorBtnBg) {
+  @return radial-gradient(rgba($colorBodyBg, 1), rgba($colorBodyBg, 0.6));
+}
+
+@function pullForward($val, $amt) {
+  @return lighten($val, $amt);
+}
+
+@function pushBack($val, $amt) {
+  @return darken($val, $amt);
+}
+
+/**************************************************** CONSTANTS */
+$fontBaseSize: 12px;
+$smallCr: 2px;
+$controlCr: 3px;
+$basicCr: 4px;
+$shdwBtns: rgba(black, 0.2) 0 1px 2px;
+$shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
+
+// Base colors
+$colorBodyBg: #17171b;
+$colorBodyBgSubtle: pullForward($colorBodyBg, 5%);
+$colorBodyBgSubtleHov: pullForward($colorBodyBg, 10%);
+$colorBodyFg: #aaaaaa;
+$colorBodyFgSubtle: #9c9c9c;
+$colorBodyFgEm: #fff;
+$colorGenBg: #222;
+$colorHeadBg: rgba($colorBodyBg, 0.5);
+$colorHeadFg: $colorBodyFg;
+$colorKey: #1c67e3;
+$colorKeyBg: #015fca;
+$colorKeyFg: #fff; // Darker version of colorKey for use in major buttons
+$colorKeyHov: lighten($colorKey, 10%);
+$colorKeyBgHov: lighten($colorKeyBg, 10%);
+$colorKeyFilter: invert(36%) sepia(10%) saturate(2512%) hue-rotate(170deg) brightness(100%)
+  contrast(200%);
+$colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%)
+  contrast(100%);
+$colorKeySelectedBg: $colorKey;
+$uiColor: #0093ff; // Resize bars, splitter bars, etc.
+$colorInteriorBorder: rgba($colorBodyFg, 0.2);
+$colorInteriorBorderNotebook: rgba($colorBodyFg, 0.5);
+$colorA: #ccc;
+$colorAHov: #fff;
+$filterHov: brightness(1.3) contrast(1.5); // Tree, location items
+$filterHovSubtle: brightness(1.2) contrast(1.2);
+$colorSelectedBg: rgba($colorKey, 0.3);
+$colorSelectedFg: pullForward($colorBodyFg, 20%);
+
+// Body constants
+$bodyBg: $colorBodyBg url('../ui/layout/assets/images/darkmatter-bg.png') no-repeat center 85%; // Reference: https://science.nasa.gov/wp-content/uploads/2023/08/s2-1280.jpg?w=4096&format=webp
+$bodyBgSize: cover;
+$bodySize: 100vh;
+
+// Object labels
+$objectLabelTypeIconOpacity: 0.9;
+$objectLabelNameColorFg: $colorBodyFgEm;
+
+// Layout
+$shellMainPad: 4px 0;
+$shellPanePad: $interiorMargin, 7px;
+$drawerBg: lighten($colorBodyBg, 5%);
+$drawerFg: lighten($colorBodyFg, 5%);
+$sideBarBg: $drawerBg;
+$sideBarHeaderBg: rgba($colorBodyFg, 0.1);
+$sideBarHeaderFg: rgba($colorBodyFg, 0.7);
+
+// Status colors, mainly used for messaging and item ancillary symbols
+$colorStatusFg: #888;
+$colorStatusDefault: #ccc;
+$colorStatusInfo: #60ba7b;
+$colorStatusInfoFilter: invert(58%) sepia(44%) saturate(405%) hue-rotate(85deg) brightness(102%)
+  contrast(92%);
+$colorStatusAlert: #ffb66c;
+$colorStatusAlertFilter: invert(78%) sepia(26%) saturate(1160%) hue-rotate(324deg) brightness(107%)
+  contrast(101%);
+$colorStatusError: #da0004;
+$colorStatusErrorFilter: invert(10%) sepia(96%) saturate(4360%) hue-rotate(351deg) brightness(111%)
+  contrast(115%);
+$colorStatusBtnBg: #666; // Where is this used?
+$colorStatusPartialBg: #3f5e8b;
+$colorStatusCompleteBg: #457638;
+$colorAlert: #ff8a0d;
+$colorAlertFg: #fff;
+$colorError: #ff3c00;
+$colorErrorFg: #fff;
+$colorWarningHi: #990000;
+$colorWarningHiFg: #ff9594;
+$colorWarningLo: #ff9900;
+$colorWarningLoFg: #523400;
+$colorDiagnostic: #a4b442;
+$colorDiagnosticFg: #39461a;
+$colorCommand: #3693bd;
+$colorCommandFg: #fff;
+$colorInfo: #2294a2;
+$colorInfoFg: #fff;
+$colorOk: #33cc33;
+$colorOkFg: #fff;
+$colorFilterBg: #44449c;
+$colorFilterFg: #8984e9;
+$colorFilter: $colorFilterFg; // Standalone against $colorBodyBg
+
+// States
+$colorPausedBg: #ff9900;
+$colorPausedFg: #333;
+
+// Time Colors
+$colorTimeCommonFg: #eee;
+$colorTimeFixed: #59554c;
+$colorTimeFixedBg: $colorTimeFixed;
+$colorTimeFixedFg: #eee;
+$colorTimeFixedFgSubtle: #b2aa98;
+$colorTimeFixedHov: pullForward($colorTimeFixed, 5%);
+$colorTimeFixedSubtle: pushBack($colorTimeFixed, 20%);
+$colorTimeFixedBtnBg: pullForward($colorTimeFixed, 5%);
+$colorTimeFixedBtnFg: $colorTimeFixedFgSubtle;
+$colorTimeFixedBtnBgMajor: #a09375;
+$colorTimeFixedBtnFgMajor: #fff;
+$colorTimeRealtime: #445890;
+$colorTimeRealtimeBg: $colorTimeRealtime;
+$colorTimeRealtimeFg: #eee;
+$colorTimeRealtimeFgSubtle: #88b0ff;
+$colorTimeRealtimeHov: pullForward($colorTimeRealtime, 5%);
+$colorTimeRealtimeSubtle: pushBack($colorTimeRealtime, 20%);
+$colorTimeRealtimeBtnBg: pullForward($colorTimeRealtime, 5%);
+$colorTimeRealtimeBtnFg: $colorTimeRealtimeFgSubtle;
+$colorTimeRealtimeBtnBgMajor: #588ffa;
+$colorTimeRealtimeBtnFgMajor: #fff;
+$colorTOI: $colorBodyFg; // was $timeControllerToiLineColor
+$colorTOIHov: $colorTimeRealtime; // was $timeControllerToiLineColorHov
+$timeConductorAxisHoverFilter: brightness(1.2);
+$timeConductorActiveBg: $colorKey;
+$timeConductorActivePanBg: #226074;
+
+// Browse
+$browseFrameColor: pullForward($colorBodyBg, 10%);
+$browseFrameBorder: 1px solid rgb(89, 89, 89, 0.4); // Frames in Disp and Flex Layouts when frame is showing
+$browseSelectableShdwHov: rgba($colorBodyFg, 0.3) 0 0 3px;
+$browseSelectedBorder: 1px solid rgba($colorBodyFg, 0.4);
+$filterItemHoverFg: brightness(1.2) contrast(1.1);
+$interiorMarginObjectFrameVertical: 10px;
+$interiorMarginObjectFrameHorizontal: 10px;
+
+// Missing Items
+$filterItemMissing: brightness(0.6) grayscale(1);
+$opacityMissing: 0.5;
+$borderMissing: 1px dashed $colorAlert !important;
+$browseFrameCornerColor: $colorKey 4px; //Color used for the corners of frames
+
+// Edit
+$editUIColor: $uiColor; // Base color
+$editUIColorBg: $editUIColor;
+$editUIColorFg: #fff;
+$editUIColorHov: pullForward(
+  saturate($uiColor, 10%),
+  10%
+); // Hover color when $editUIColor is applied as a base color
+$editUIBaseColor: #344b8d; // Base color, toolbar bg
+$editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
+$editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
+$editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
+$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
+$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
+$editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
+$editUIGridColorFg: rgba(#000, 0.1); // Grid lines in layout editing area
+$editDimensionsColor: #6a5ea6;
+$editFrameColor: $browseFrameColor; // Solid or dotted border applied to non-selected frames in a layout; move-bar on frame hover
+$editFrameBorder: 1px dotted $editFrameColor;
+$editFrameColorHov: $editUIColor; // Solid border hover on frames; hover should not be applied to selected objects
+$editFrameBorderHov: 1px solid $editFrameColorHov; // Hover on selectable frames
+$editFrameColorSelected: #ffefc2; // Border of selected frames while editing
+$editFrameColorHandleBg: $colorBodyBg; // Resize handle 'offset' color to make handle standout
+$editFrameColorHandleFg: $editFrameColorSelected; // Resize handle main color
+$editFrameSelectedShdw: rgba(black, 0.4) 0 1px 5px 1px;
+$editFrameMovebarColorBg: $editFrameColor; // Movebar bg color
+$editFrameMovebarColorFg: pullForward(
+  $editFrameMovebarColorBg,
+  20%
+); // Grippy lines, container size text
+$editFrameHovMovebarColorBg: pullForward($editFrameMovebarColorBg, 10%); // Hover style
+$editFrameHovMovebarColorFg: pullForward($editFrameMovebarColorFg, 10%);
+$editFrameSelectedMovebarColorBg: pullForward($editFrameMovebarColorBg, 15%); // Selected style
+$editFrameSelectedMovebarColorFg: pullForward($editFrameMovebarColorFg, 15%);
+$editFrameMovebarH: 10px; // Height of move bar in layout frame
+$editMarqueeBorder: 1px dashed $editFrameColorSelected;
+$editFrameSelectedBorder: $editMarqueeBorder; // Selected frame element
+
+// Icons
+$colorIconAlias: #4af6f3;
+$colorIconAliasForKeyFilter: #aaa;
+
+// Holders
+$colorTabsHolderBg: rgba(black, 0.2);
+
+// Buttons and Controls
+$colorBtnBg: pullForward($colorBodyBg, 20%);
+$colorBtnBgHov: pullForward($colorBtnBg, 10%);
+$shdwBtnHov: inset rgba(white, 10%) 0 0 0 100px;
+$colorBtnFg: pullForward($colorBodyFg, 100%);
+$colorBtnReverseFg: pullForward($colorBtnFg, 10%);
+$colorBtnReverseBg: pullForward($colorBtnBg, 10%);
+$colorBtnFgHov: $colorBtnFg;
+$colorBtnMajorBg: $colorKey;
+$colorBtnMajorBgHov: $colorKeyHov;
+$colorBtnMajorFg: $colorKeyFg;
+$colorBtnMajorFgHov: pushBack($colorBtnMajorFg, 10%);
+$colorBtnCautionBg: $colorStatusAlert;
+$colorBtnCautionBgHov: #f1504e;
+$colorBtnCautionFg: $colorBtnBg;
+$colorBtnActiveBg: $colorOk;
+$colorBtnActiveFg: $colorOkFg;
+$colorBtnSelectedBg: $colorSelectedBg;
+$colorBtnSelectedFg: $colorSelectedFg;
+$colorClickIconButton: $colorKey;
+$colorClickIconButtonBgHov: rgba($colorKey, 0.3);
+$colorClickIconButtonFgHov: $colorKeyHov;
+$colorDropHint: $colorKey;
+$colorDropHintBg: pushBack($colorDropHint, 10%);
+$colorDropHintBgHov: $colorDropHint;
+$colorDropHintFg: pullForward($colorDropHint, 40%);
+$colorDisclosureCtrl: rgba($colorBodyFg, 0.5);
+$colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
+$btnStdH: 24px;
+$colorCursorGuide: rgba(white, 0.6);
+$shdwCursorGuide: rgba(black, 0.4) 0 0 2px;
+$colorLocalControlOvrBg: rgba($colorBodyBg, 0.8);
+$colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
+$colorSelectFg: $colorBtnFg;
+$colorSelectArw: lighten($colorBtnBg, 20%);
+$shdwSelect: rgba(black, 0.5) 0 0.5px 3px;
+$controlDisabledOpacity: 0.2;
+
+// Menus
+$colorMenuBg: rgba($colorBodyBg, 0.6);
+$colorMenuFg: $colorBodyFg;
+$colorMenuIc: $colorKey;
+$filterMenu: brightness(1.4);
+$colorMenuHovBg: rgba($colorKey, 0.5);
+$colorMenuHovFg: $colorBodyFgEm;
+$colorMenuHovIc: $colorMenuHovFg;
+$colorMenuElementHilite: pullForward($colorMenuBg, 10%);
+$shdwMenu: rgba(black, 0.8) 0 2px 10px;
+$shdwMenuInner: inset 0 0 0 1px rgba(white, 0.2);
+$shdwMenuText: none;
+$menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
+
+// Palettes and Swatches
+$paletteItemBorderOuterColorSelected: black;
+$paletteItemBorderInnerColorSelected: white;
+$paletteItemBorderInnerColor: rgba($paletteItemBorderOuterColorSelected, 0.3);
+$mixedSettingBg: (transparent rgba($editUIBaseColorHov, 0.7)); // Used in .c-click-icon--mixed
+$mixedSettingBgSize: 5px;
+
+// Forms
+$colorCheck: $colorKey;
+$colorFormRequired: $colorKey;
+$colorFormValid: $colorOk;
+$colorFormError: #990000;
+$colorFormInvalid: #ff2200;
+$colorFormFieldErrorBg: $colorFormError;
+$colorFormFieldErrorFg: rgba(#fff, 0.6);
+$colorFormLines: rgba(#000, 0.2);
+$colorFormSectionHeaderBg: rgba(#000, 0.1);
+$colorFormSectionHeaderFg: rgba($colorBodyFg, 0.8);
+$colorInputBg: rgba(rgb(70, 70, 70), 0.3);
+$colorInputBgHov: rgba(black, 0.1);
+$colorInputFg: $colorBodyFg;
+$colorFormText: pushBack($colorBodyFg, 10%);
+$colorInputIcon: pushBack($colorBodyFg, 25%);
+$colorFieldHint: pullForward($colorBodyFg, 40%);
+$shdwInput: inset rgba(black, 0.4) 0 0 1px;
+$shdwInputHov: inset rgba(black, 0.7) 0 0 2px;
+$shdwInputFoc: inset rgba(black, 0.8) 0 0.25px 3px;
+$formTBPad: $interiorMargin;
+$formLRPad: $interiorMargin;
+$formInputH: 22px;
+$formRowCtrlsH: 14px;
+
+// Inspector
+$colorInspectorBg: pullForward($colorBodyBg, 5%);
+$colorInspectorFg: $colorBodyFg;
+$colorInspectorPropName: $colorBodyFg;
+$colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
+$colorInspectorSectionHeaderBg: rgba($colorBodyBg, 0.75);
+$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
+
+// Tabs
+$colorTabBg: $colorBodyBg;
+$colorTabFg: $colorBodyFgEm;
+$colorTabCurrentBg: rgba($colorKey, 0.71);
+$colorTabCurrentFg: $colorBodyFgEm;
+$colorTabsBaseline: $colorBodyBg;
+
+// Overlay
+$colorOvrBlocker: rgba(black, 0.8);
+$overlayCr: $interiorMargin;
+
+// Indicator colors
+$colorIndicatorAvailable: $colorKey;
+$colorIndicatorDisabled: #555555;
+$colorIndicatorOn: $colorOk;
+$colorIndicatorOff: #777777;
+$colorIndicatorBgHov: rgba($colorHeadFg, 0.1);
+$colorIndicatorMenuBg: $colorHeadBg;
+$colorIndicatorMenuBgShdw: rgba(white, 0.6) 0 0 6px;
+$colorIndicatorMenuFg: $colorHeadFg;
+$colorIndicatorMenuFgHov: pullForward($colorHeadFg, 10%);
+
+// Staleness
+$colorTelemStale: cyan;
+$colorTelemStaleFg: #002a2a;
+$styleTelemStale: italic;
+
+// Limits
+$colorLimitYellowBg: #b18b05;
+$colorLimitYellowFg: #feeeb5;
+$colorLimitYellowIc: #fdc707;
+$colorLimitOrangeBg: #b36b00;
+$colorLimitOrangeFg: #ffe0b2;
+$colorLimitOrangeIc: #ff9900;
+$colorLimitRedBg: #b60109;
+$colorLimitRedFg: #ffa489;
+$colorLimitRedIc: #ff4222;
+$colorLimitPurpleBg: #891bb3;
+$colorLimitPurpleFg: #edbeff;
+$colorLimitPurpleIc: #c327ff;
+$colorLimitCyanBg: #4ba6b3;
+$colorLimitCyanFg: #d3faff;
+$colorLimitCyanIc: #6bedff;
+
+// Events
+$colorEventPurpleFg: #ab8fff;
+$colorEventRedFg: #ff9999;
+$colorEventOrangeFg: #ff8800;
+$colorEventYellowFg: #ffdb63;
+$colorEventPurpleBg: #31204a;
+$colorEventRedBg: #3c1616;
+$colorEventOrangeBg: #3e2a13;
+$colorEventYellowBg: #3e3316;
+
+// Bubble colors
+$colorInfoBubbleBg: #dddddd;
+$colorInfoBubbleFg: #666;
+$colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
+$colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
+
+// Items
+$colorItemBg: buttonBg($colorBtnBg);
+$colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
+$colorListItemBg: transparent;
+$colorListItemBgHov: rgba($colorKey, 0.1);
+$colorItemFg: $colorBtnFg;
+$colorItemFgDetails: $colorBodyFgSubtle;
+$shdwItemText: none;
+
+// Tabular
+$colorTabBorder: pullForward($colorBodyBg, 10%);
+$colorTabBodyBg: $colorBodyBg;
+$colorTabBodyFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBg: #575757;
+$colorTabHeaderFg: $colorBodyFg;
+$colorTabHeaderBorder: $colorBodyBg;
+$colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
+$colorTabGroupHeaderFg: pushBack($colorTabHeaderFg, 10%);
+$colorSummaryBg: #2c2c2c;
+$colorSummaryFg: rgba($colorBodyFg, 0.7);
+$colorSummaryFgEm: $colorBodyFg;
+
+// Plot
+$colorPlotBg: rgba(black, 0.1);
+$colorPlotFg: $colorBodyFg;
+$colorPlotHash: $colorPlotFg;
+$opacityPlotHash: 0.2;
+$stylePlotHash: dashed;
+$colorPlotAreaBorder: $colorInteriorBorder;
+$colorPlotLabelFg: pushBack($colorPlotFg, 20%);
+$legendHoverValueBg: rgba($colorBodyFg, 0.2);
+$legendTableHeadBg: $colorTabHeaderBg;
+$colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
+
+// Gauges
+$colorGaugeBase: $colorKeyBg;
+$colorGaugeBg: rgba($colorGaugeBase, 0.35); // Gauge radial area background, meter background
+$colorGaugeValue: $colorKeyBg; // Gauge value graphic (radial sweep, bar) color
+$colorGaugeTextValue: #fff; // Radial gauge text value
+$colorGaugeMeterTextValue: #fff; // Meter text value, overlaid on value bar
+$colorGaugeRange: $colorBodyFg; // Range text color
+$colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.5);
+$colorGaugeLimitLow: $colorGaugeLimitHigh;
+$colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
+$transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
+$marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
+$gaugeMeterValueShadow: rgba(255, 255, 255, 0.5);
+// TODO: This is some code regarding how we can make Gauges include a border or glow. We may need to revisit this.
+// padding: 5%;
+// background: radial-gradient(circle, transparent 0%, transparent 65%, rgba(255, 255, 255,0.4) 64%, rgba(255,255,255,0) 70%)
+
+// Time Strip and Lists
+$colorPastBg: #444;
+$colorPastFg: pushBack($colorBodyFg, 10%);
+$colorPastFgEm: $colorBodyFg;
+$colorCurrentBg: #666;
+$colorCurrentFg: $colorBodyFg;
+$colorCurrentFgEm: $colorBodyFgEm;
+$colorCurrentBorder: $colorBodyBg;
+$colorFutureBg: $colorPastBg;
+$colorFutureFg: $colorCurrentFg;
+$colorFutureFgEm: $colorCurrentFgEm;
+$colorFutureBorder: $colorCurrentBorder;
+$colorInProgressBg: $colorTimeRealtimeBg;
+$colorInProgressFg: $colorTimeRealtimeFgSubtle;
+$colorInProgressFgEm: $colorTimeRealtimeFg;
+$colorGanttSelectedBorder: rgba(#fff, 0.3);
+
+// Tree
+$colorTreeBg: transparent;
+$colorItemTreeHoverBg: rgba(#fff, 0.1);
+$colorItemTreeHoverFg: #fff;
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: $colorItemTreeIcon;
+$colorItemTreeFg: #ccc;
+$colorItemTreeSelectedBg: $colorSelectedBg;
+$colorItemTreeSelectedFg: $colorItemTreeHoverFg;
+$filterItemTreeSelected: $filterHov;
+$colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
+$colorItemTreeEditingBg: pushBack($editUIColor, 20%);
+$colorItemTreeEditingFg: $editUIColor;
+$colorItemTreeEditingIcon: $editUIColor;
+$colorItemTreeVC: $colorDisclosureCtrl;
+$colorItemTreeVCHover: $colorDisclosureCtrlHov;
+$colorItemTreeNewNode: rgba($colorBodyFg, 0.7);
+$shdwItemTreeIcon: none;
+
+// Layout frame controls
+$frameControlsColorFg: white;
+$frameControlsColorBg: $colorKey;
+$frameControlsShdw: $shdwMenu;
+
+// Images
+$colorThumbHoverBg: $colorItemTreeHoverBg;
+
+// Scrollbar
+$scrollbarTrackSize: 7px;
+$scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
+$scrollbarTrackColorBg: rgba(#000, 0.2);
+$scrollbarThumbColor: pushBack($colorBodyBg, 50%);
+$scrollbarThumbColorHov: $colorKey;
+$scrollbarThumbColorMenu: pullForward($colorMenuBg, 10%);
+$scrollbarThumbColorMenuHov: pullForward($scrollbarThumbColorMenu, 2%);
+
+// Splitter
+$splitterHandleD: 2px;
+$splitterD: $splitterHandleD;
+$splitterHandleHitMargin: 4px;
+$colorSplitterBaseBg: $colorBodyBg;
+$colorSplitterBg: pullForward($colorBodyBg, 10%);
+$colorSplitterFg: $colorBodyBg;
+$colorSplitterHover: $uiColor;
+$colorSplitterActive: $colorKey;
+$splitterBtnD: (16px, 35px); // height, width
+$splitterBtnColorBg: $colorBtnBg;
+$splitterBtnColorFg: #999;
+$splitterBtnLabelColorFg: #9d9d9d;
+$splitterCollapsedBtnColorBg: #222;
+$splitterCollapsedBtnColorFg: #555;
+$splitterCollapsedBtnColorBgHov: $colorKey;
+$splitterCollapsedBtnColorFgHov: $colorKeyFg;
+
+// Mobile
+$colorMobilePaneLeft: pushBack($colorBodyBg, 2%);
+$colorMobilePaneLeftTreeItemBg: rgba($colorBodyFg, 0.1);
+$colorMobilePaneLeftTreeItemFg: $colorItemTreeFg;
+$colorMobileSelectListTreeItemBg: rgba(#000, 0.05);
+
+// About Screen
+$colorAboutLink: #9bb5ff;
+
+// Loading
+$colorLoadingFg: #776ba2;
+$colorLoadingBg: rgba($colorLoadingFg, 0.1);
+
+// Transitions
+$transInTime: 50ms;
+$transOutTime: 250ms;
+$transIn: all $transInTime ease-in-out;
+$transOut: all $transOutTime ease-in-out;
+$transInTransform: transform $transInTime ease-in-out;
+$transOutTransform: transform $transOutTime ease-in-out;
+$transInBounce: all 200ms cubic-bezier(0.47, 0.01, 0.25, 1.5);
+$transInBounceBig: all 300ms cubic-bezier(0.2, 1.6, 0.6, 3);
+
+// Discrete items
+$createBtnTextTransform: uppercase;
+$colorDiscreteItemBg: rgba($colorBodyFg, 0.1);
+$colorDiscreteItemBgHov: rgba($colorBodyFg, 0.2);
+$colorDiscreteItemCurrentBg: rgba($colorOk, 0.3);
+$scrollContainer: $colorBodyBg;

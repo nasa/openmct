@@ -133,7 +133,7 @@ emphasis on testing.
     Multi-user testing, involving as many users as
     is feasible, plus development team. Open-ended; should verify
     completed work from this sprint using the sprint branch, test 
-    exploratorily for regressions, et cetera.
+    exploratory for regressions, et cetera.
   * [__Long-Duration Test.__](testing/plan.md#long-duration-testing) A
     test to verify that the software remains
     stable after running for longer durations. May include some
