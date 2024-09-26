@@ -39,9 +39,9 @@ import {
   FIVE_MINUTES,
   IMAGE_LOAD_DELAY,
   THIRTY_SECONDS
-} from './imageryUtils.js';
+} from '../../../../helper/imageryUtils.js';
 
-test.describe('Example Imagery Object', () => {
+test.describe('Example Imagery Object with Controlled Clock @clock', () => {
   test.beforeEach(async ({ page }) => {
     // We mock the clock so that we don't need to wait for time driven events
     // to verify functionality.
@@ -75,7 +75,7 @@ test.describe('Example Imagery Object', () => {
     await setStartOffset(page, { startMins: '05' });
   });
 
-  test('Imagery Time Bounding @clock', async ({ page }) => {
+  test('Imagery Time Bounding', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5265'
@@ -118,12 +118,12 @@ test.describe('Example Imagery Object', () => {
     await expect(page.getByLabel(imageAfterLastImageToDiscardTimestamp)).toBeVisible();
   });
 
-  test('Get background-image url from background-image css prop @clock', async ({ page }) => {
+  test('Get background-image url from background-image css prop', async ({ page }) => {
     await assertBackgroundImageUrlFromBackgroundCss(page);
   });
 });
 
-test.describe('Example Imagery in Display Layout', () => {
+test.describe('Example Imagery in Display Layout with Controlled Clock @clock', () => {
   let displayLayout;
 
   test.beforeEach(async ({ page }) => {
@@ -152,7 +152,7 @@ test.describe('Example Imagery in Display Layout', () => {
     );
   });
 
-  test('Imagery Time Bounding @clock', async ({ page }) => {
+  test('Imagery Time Bounding', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/5265'
@@ -216,7 +216,7 @@ test.describe('Example Imagery in Display Layout', () => {
   });
 });
 
-test.describe('Example Imagery in Flexible layout', () => {
+test.describe('Example Imagery in Flexible layout with Controlled Clock @clock', () => {
   let flexibleLayout;
 
   test.beforeEach(async ({ page }) => {
@@ -296,7 +296,7 @@ test.describe('Example Imagery in Flexible layout', () => {
   });
 });
 
-test.describe('Example Imagery in Tabs View', () => {
+test.describe('Example Imagery in Tabs View with Controlled Clock @clock', () => {
   let timeStripObject;
 
   test.beforeEach(async ({ page }) => {
@@ -382,7 +382,7 @@ test.describe('Example Imagery in Tabs View', () => {
   });
 });
 
-test.describe('Example Imagery in Time Strip', () => {
+test.describe('Example Imagery in Time Strip with Controlled Clock @clock', () => {
   let timeStripObject;
 
   test.beforeEach(async ({ page }) => {

@@ -37,7 +37,7 @@ import {
   IMAGE_LOAD_DELAY,
   MOUSE_WHEEL_DELTA_Y,
   THIRTY_SECONDS
-} from './imageryUtils.js';
+} from '../../../../helper/imageryUtils.js';
 
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];

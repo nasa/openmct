@@ -1,5 +1,5 @@
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
-import { expect } from '../../../../pluginFixtures.js';
+import { createDomainObjectWithDefaults } from '../appActions.js';
+import { expect } from '../pluginFixtures.js';
 
 const IMAGE_LOAD_DELAY = 5 * 1000;
 const FIVE_MINUTES = 1000 * 60 * 5;
