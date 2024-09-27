@@ -257,7 +257,9 @@ export default {
 
       return {
         end,
-        start
+        start,
+        size: 1,
+        strategy: 'latest'
       };
     },
     loadComposition() {
