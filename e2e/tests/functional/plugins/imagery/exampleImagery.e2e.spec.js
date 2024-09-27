@@ -30,7 +30,6 @@ import {
   navigateToObjectWithRealTime,
   setRealTimeMode
 } from '../../../../appActions.js';
-import { expect, test } from '../../../../pluginFixtures.js';
 import {
   createImageryViewWithShortDelay,
   FIVE_MINUTES,
@@ -38,6 +37,7 @@ import {
   MOUSE_WHEEL_DELTA_Y,
   THIRTY_SECONDS
 } from '../../../../helper/imageryUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
