@@ -17,7 +17,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="indicators" class="l-shell__head-section l-shell__indicators">
+  <div ref="indicatorsContainer" class="l-shell__head-section l-shell__indicators">
     <component
       :is="indicator.value.vueComponent"
       v-for="indicator in sortedIndicators"
@@ -28,21 +28,15 @@
 </template>
 
 <script>
-import { shallowRef } from 'vue';
+import { defineExpose, ref, shallowRef } from 'vue';
 
 export default {
   inject: ['openmct'],
-  props: {
-    headExpanded: {
-      type: Boolean,
-      required: true
-    },
-    indicatorsMultiline: {
-      type: Boolean,
-      required: true
-    }
+  setup() {
+    const indicatorsContainer = ref(null);
+
+    defineExpose({ indicatorsContainer });
   },
-  emits: ['indicators-overflowing'],
   data() {
     return {
       indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef)
@@ -57,30 +51,8 @@ export default {
       return [...this.indicators].sort((a, b) => b.value.priority - a.value.priority);
     }
   },
-  watch: {
-    headExpanded() {
-      this.checkOverflowNextTick();
-    },
-    indicatorsMultiline() {
-      if (!this.indicatorsMultiline) {
-        window.addEventListener('resize', this.checkOverflow);
-      } else {
-        window.removeEventListener('resize', this.checkOverflow);
-      }
-      this.checkOverflowNextTick();
-    }
-  },
-  mounted() {
-    if (!this.indicatorsMultiline) {
-      // `load` listener is necessary because the width of the Indicators has to be eval'd after other components have loaded.
-      window.addEventListener('load', this.checkOverflow);
-      window.addEventListener('resize', this.checkOverflow);
-    }
-  },
   beforeUnmount() {
     this.openmct.indicators.off('addIndicator', this.addIndicator);
-    window.removeEventListener('load', this.checkOverflow);
-    window.removeEventListener('resize', this.checkOverflow);
   },
   created() {
     this.openmct.indicators.on('addIndicator', this.addIndicator);
@@ -88,15 +60,6 @@ export default {
   methods: {
     addIndicator(indicator) {
       this.indicators.push(shallowRef(indicator));
-    },
-    checkOverflow() {
-      const element = this.$refs.indicators;
-      this.$emit('indicators-overflowing', element.scrollWidth > element.clientWidth);
-    },
-    checkOverflowNextTick() {
-      this.$nextTick(() => {
-        this.checkOverflow();
-      });
     }
   }
 };
