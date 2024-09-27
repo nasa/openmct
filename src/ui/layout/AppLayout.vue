@@ -33,8 +33,7 @@
       :class="{
         'l-shell__head--expanded': headExpanded,
         'l-shell__head--minify-indicators': !headExpanded,
-        'l-shell__head--indicators-single-line': !indicatorsMultiline,
-        '--indicators-overflowing': isOverflowing
+        'l-shell__head--indicators-single-line': !indicatorsMultiline
       }"
     >
       <CreateButton class="l-shell__create-button" />
