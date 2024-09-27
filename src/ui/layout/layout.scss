@@ -213,27 +213,14 @@
     align-items: center;
     background: $colorHeadBg;
     display: grid;
-    grid-template-columns: min-content 1fr 3fr repeat(3, min-content);
+    grid-template-columns: min-content 1fr 3fr repeat(4, min-content);
     grid-column-gap: $interiorMargin;
-    min-height: 34px;
     padding: $interiorMargin $interiorMargin + 2;
 
-    .l-shell__head__collapse-button {
+    .l-shell__head__button {
       color: $colorBtnMajorBg;
       flex: 0 0 auto;
       font-size: 0.9em;
-
-      &--collapse {
-        &:before {
-          content: $glyph-icon-items-collapse;
-        }
-      }
-
-      &--expand {
-        &:before {
-          content: $glyph-icon-items-expand;
-        }
-      }
     }
 
     &-section {
@@ -271,14 +258,21 @@
   }
 
   &__indicators {
+    // Style as multiline by default
+    display: flex;
     flex-wrap: wrap;
     font-size: 11px;
+    min-height: 25px;
     justify-content: flex-end;
 
-    .l-shell__head--expanded & {
-      // Force elements to wrap down when width constrained
-      height: 24px;
+    .l-shell__head--indicators-single-line & {
+      flex-wrap: nowrap;
+      justify-content: flex-start; // Overflow detection doesn't work with flex-end.
       overflow: hidden;
+
+      > *:first-child {
+        margin-left: auto; // Mimics justify-content: flex-end when in single line mode.
+      }
     }
   }
 

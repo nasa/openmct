@@ -32,21 +32,25 @@
       class="l-shell__head"
       :class="{
         'l-shell__head--expanded': headExpanded,
-        'l-shell__head--minify-indicators': !headExpanded
+        'l-shell__head--minify-indicators': !headExpanded,
+        'l-shell__head--indicators-single-line': !indicatorsMultiline
       }"
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
-      <StatusIndicators />
+      <StatusIndicators ref="indicatorsComponent" />
       <button
-        class="l-shell__head__collapse-button c-icon-button"
-        :class="
-          headExpanded
-            ? 'l-shell__head__collapse-button--collapse'
-            : 'l-shell__head__collapse-button--expand'
-        "
-        :aria-label="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
-        :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
+        class="l-shell__head__button"
+        :class="indicatorsMultilineCssClass"
+        :aria-label="indicatorsMultilineLabel"
+        :title="indicatorsMultilineLabel"
+        @click="toggleIndicatorsMultiline"
+      ></button>
+      <button
+        class="l-shell__head__button"
+        :class="headExpanded ? 'icon-items-collapse' : 'icon-items-expand'"
+        :aria-label="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
+        :title="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
         @click="toggleShellHead"
       ></button>
       <NotificationBanner />
@@ -167,6 +171,8 @@
 </template>
 
 <script>
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
+
 import ObjectView from '../components/ObjectView.vue';
 import Inspector from '../inspector/InspectorPanel.vue';
 import Toolbar from '../toolbar/ToolbarContainer.vue';
@@ -180,6 +186,10 @@ import RecentObjectsList from './RecentObjectsList.vue';
 import GrandSearch from './search/GrandSearch.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 import StatusIndicators from './status-bar/StatusIndicators.vue';
+
+const SHELL_HEAD_LOCAL_STORAGE_KEY = 'openmct-shell-head';
+const DEFAULT_HEAD_EXPANDED = true;
+const DEFAULT_INDICATORS_MULTILINE = true;
 
 export default {
   components: {
@@ -198,13 +208,120 @@ export default {
     RecentObjectsList
   },
   inject: ['openmct'],
-  data: function () {
-    let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
-    let headExpanded = true;
-    if (storedHeadProps) {
-      headExpanded = JSON.parse(storedHeadProps).expanded;
+  setup() {
+    let resizeObserver;
+    let element;
+
+    const storedHeadProps = localStorage.getItem(SHELL_HEAD_LOCAL_STORAGE_KEY);
+    const storedHeadPropsObject = JSON.parse(storedHeadProps);
+    const storedHeadExpanded = storedHeadPropsObject?.expanded;
+    const storedIndicatorsMultiline = storedHeadPropsObject?.multiline;
+
+    // template ref of StatusIndicators component
+    const indicatorsComponent = ref(null);
+
+    const width = ref(null);
+    const scrollWidth = ref(null);
+    const headExpanded = ref(storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED);
+    const indicatorsMultiline = ref(storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE);
+
+    const isOverflowing = computed(() => scrollWidth.value > width.value);
+    const indicatorsMultilineCssClass = computed(() => {
+      const multilineClass = indicatorsMultiline.value ? 'icon-singleline' : 'icon-multiline';
+      const overflowingClass =
+        isOverflowing.value && !indicatorsMultiline.value
+          ? 'c-button c-button--major'
+          : 'c-icon-button';
+      return `${multilineClass} ${overflowingClass}`;
+    });
+    const indicatorsMultilineLabel = computed(() => {
+      return `Display as ${indicatorsMultiline.value ? 'single line' : 'multiple lines'}`;
+    });
+
+    const initialHeadProps = JSON.stringify({
+      expanded: headExpanded.value,
+      multiline: indicatorsMultiline.value
+    });
+
+    if (initialHeadProps !== storedHeadProps) {
+      localStorage.setItem(SHELL_HEAD_LOCAL_STORAGE_KEY, initialHeadProps);
     }
 
+    onMounted(() => {
+      resizeObserver = new ResizeObserver((entries) => {
+        width.value = entries[0].target.clientWidth;
+        scrollWidth.value = entries[0].target.scrollWidth;
+      });
+
+      // indicatorsContainer is a template ref inside of indicatorsComponent
+      element = indicatorsComponent.value.$refs.indicatorsContainer;
+
+      if (!indicatorsMultiline.value) {
+        observeIndicatorsOverflow();
+      }
+    });
+
+    onUnmounted(() => {
+      resizeObserver.disconnect();
+    });
+
+    function observeIndicatorsOverflow() {
+      resizeObserver.observe(element);
+    }
+
+    function unObserveIndicatorsOverflow() {
+      resizeObserver.unobserve(element);
+    }
+
+    function checkIndicatorsElementWidths() {
+      if (!indicatorsMultiline.value) {
+        width.value = element.clientWidth;
+        scrollWidth.value = element.scrollWidth;
+      }
+    }
+
+    async function toggleShellHead() {
+      headExpanded.value = !headExpanded.value;
+      setLocalStorageShellHead();
+
+      // nextTick is used because the element width on toggle is updated using css
+      await nextTick();
+      checkIndicatorsElementWidths();
+    }
+
+    function toggleIndicatorsMultiline() {
+      indicatorsMultiline.value = !indicatorsMultiline.value;
+      setLocalStorageShellHead();
+
+      if (indicatorsMultiline.value) {
+        unObserveIndicatorsOverflow();
+      } else {
+        observeIndicatorsOverflow();
+      }
+    }
+
+    function setLocalStorageShellHead() {
+      localStorage.setItem(
+        SHELL_HEAD_LOCAL_STORAGE_KEY,
+        JSON.stringify({
+          expanded: headExpanded.value,
+          multiline: indicatorsMultiline.value
+        })
+      );
+    }
+
+    return {
+      indicatorsComponent,
+      isOverflowing,
+      headExpanded,
+      indicatorsMultiline,
+      indicatorsMultilineCssClass,
+      indicatorsMultilineLabel,
+      toggleIndicatorsMultiline,
+      toggleShellHead
+    };
+  },
+  data() {
     return {
       fullScreen: false,
       conductorComponent: undefined,
@@ -213,7 +330,6 @@ export default {
       actionCollection: undefined,
       triggerSync: false,
       triggerReset: false,
-      headExpanded,
       isResizing: false,
       disableClearButton: false
     };
@@ -260,16 +376,6 @@ export default {
       } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
       }
-    },
-    toggleShellHead() {
-      this.headExpanded = !this.headExpanded;
-
-      window.localStorage.setItem(
-        'openmct-shell-head',
-        JSON.stringify({
-          expanded: this.headExpanded
-        })
-      );
     },
     fullScreenToggle() {
       if (this.fullScreen) {
