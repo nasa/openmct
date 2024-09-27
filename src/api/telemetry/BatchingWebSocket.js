@@ -75,7 +75,6 @@ class BatchingWebSocket extends EventTarget {
   #openmct;
   #showingRateLimitNotification;
   #maxBufferSize;
-  #applicationIsInitializing;
   #throttleRate;
   #firstBatchReceived;
   #lastBatchReceived;
@@ -95,7 +94,6 @@ class BatchingWebSocket extends EventTarget {
     this.#showingRateLimitNotification = false;
     this.#maxBufferSize = Number.POSITIVE_INFINITY;
     this.#throttleRate = ONE_SECOND;
-    this.#applicationIsInitializing = true;
     this.#firstBatchReceived = false;
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
@@ -205,10 +203,12 @@ class BatchingWebSocket extends EventTarget {
       }
 
       if (this.#openmct.performance !== undefined) {
-        this.#openmct.performance.measurements.set(
-          'Parameters/s',
-          Math.floor(parameterCount / elapsed)
-        );
+        if (!isNaN(elapsed)) {
+          this.#openmct.performance.measurements.set(
+            'Parameters/s',
+            Math.floor(parameterCount / elapsed)
+          );
+        }
         this.#openmct.performance.measurements.set(
           'Buff. Util. (bytes)',
           `${currentBufferLength} / ${maxBufferSize}`
