@@ -33,13 +33,13 @@ import {
   setStartOffset
 } from '../../../../appActions.js';
 import { MISSION_TIME } from '../../../../constants.js';
-import { expect, test } from '../../../../pluginFixtures.js';
 import {
   createImageryViewWithShortDelay,
   FIVE_MINUTES,
   IMAGE_LOAD_DELAY,
   THIRTY_SECONDS
 } from '../../../../helper/imageryUtils.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Example Imagery Object with Controlled Clock @clock', () => {
   test.beforeEach(async ({ page }) => {
@@ -328,7 +328,12 @@ test.describe('Example Imagery in Tabs View with Controlled Clock @clock', () =>
     );
 
     // set realtime mode
-    await navigateToObjectWithRealTime(page, timeStripObject.url, `${FIVE_MINUTES}`, `${THIRTY_SECONDS}`);
+    await navigateToObjectWithRealTime(
+      page,
+      timeStripObject.url,
+      `${FIVE_MINUTES}`,
+      `${THIRTY_SECONDS}`
+    );
 
     // Wait for image thumbnail auto-scroll to complete
     await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
