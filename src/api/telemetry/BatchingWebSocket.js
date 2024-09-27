@@ -192,7 +192,6 @@ class BatchingWebSocket extends EventTarget {
     if (message.data.type === 'batch') {
       const batch = message.data.batch;
       const now = performance.now();
-      this.#lastBatchReceived = now;
 
       let currentBufferLength = message.data.currentBufferLength;
       let maxBufferSize = message.data.maxBufferSize;
@@ -204,6 +203,7 @@ class BatchingWebSocket extends EventTarget {
       if (this.#openmct.performance !== undefined) {
         if (!isNaN(this.#lastBatchReceived)) {
           const elapsed = (now - this.#lastBatchReceived) / 1000;
+          this.#lastBatchReceived = now;
           this.#openmct.performance.measurements.set(
             'Parameters/s',
             Math.floor(parameterCount / elapsed)
