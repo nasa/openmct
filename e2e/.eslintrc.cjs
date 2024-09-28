@@ -27,6 +27,12 @@ module.exports = {
       rules: {
         'playwright/no-raw-locators': 'off'
       }
+    },
+    {
+      files: ['**/*.visual.spec.js'],
+      rules: {
+        'playwright/no-networkidle': 'off' //https://github.com/nasa/openmct/issues/7549
+      }
     }
   ]
 };
