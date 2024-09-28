@@ -164,6 +164,13 @@ class BatchingWebSocket extends EventTarget {
     this.#throttleRate = throttleRate;
     this.#sendThrottleRateToWorker(this.#throttleRate);
   }
+  setPriorityMessagePattern(priorityMessagePattern) {
+    this.#worker.postMessage({
+      type: 'setPriorityMessagePattern',
+      priorityMessagePattern
+    });
+  }
+
   #sendMaxBufferSizeToWorker(maxBufferSize) {
     this.#worker.postMessage({
       type: 'setMaxBufferSize',

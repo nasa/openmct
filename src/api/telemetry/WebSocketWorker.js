@@ -220,6 +220,9 @@ export default function installWorker() {
         case 'setThrottleRate':
           this.#messageBatcher.setThrottleRate(message.data.throttleRate);
           break;
+        case 'priorityMessagePattern':
+          this.#messageBatcher.setPriorityMessagePattern(message.data.priorityMessagePattern);
+          break;
         default:
           throw new Error(`Unknown message type: ${type}`);
       }
@@ -244,6 +247,7 @@ export default function installWorker() {
     #readyForNextBatch;
     #worker;
     #throttledSendNextBatch;
+    #priorityMessagePattern;
 
     constructor(worker) {
       // No dropping telemetry unless we're explicitly told to.
@@ -264,15 +268,28 @@ export default function installWorker() {
       this.#buffer.push(message);
       this.#currentBufferLength += message.length;
 
-      while (this.#currentBufferLength > this.#maxBufferSize) {
-        const droppedMessage = this.#buffer.shift();
-        this.#currentBufferLength -= droppedMessage.length;
-        this.#dropped = true;
+      for (
+        let i = 0;
+        this.#currentBufferLength > this.#maxBufferSize && i < this.#buffer.length;
+        i++
+      ) {
+        const messageToConsider = this.#buffer[i];
+        if (this.#shouldDrop(messageToConsider)) {
+          this.#buffer.splice(i, 1);
+          this.#currentBufferLength -= messageToConsider.length;
+          this.#dropped = true;
+        }
       }
 
       if (this.#readyForNextBatch) {
         this.#throttledSendNextBatch();
       }
+    }
+
+    #shouldDrop(message) {
+      return (
+        this.#priorityMessagePattern !== undefined && this.#priorityMessagePattern.test(message)
+      );
     }
 
     setMaxBufferSize(maxBufferSize) {
@@ -312,6 +329,9 @@ export default function installWorker() {
     }
     #hasData() {
       return this.#currentBufferLength > 0;
+    }
+    setPriorityMessagePattern(priorityMessagePattern) {
+      this.#priorityMessagePattern = new RegExp(priorityMessagePattern, 'm');
     }
   }
 
