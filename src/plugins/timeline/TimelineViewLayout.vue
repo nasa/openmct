@@ -99,6 +99,7 @@ export default {
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);
     this.stopFollowingTimeContext();
+    this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
   },
   mounted() {
