@@ -220,8 +220,8 @@ export default function installWorker() {
         case 'setThrottleRate':
           this.#messageBatcher.setThrottleRate(message.data.throttleRate);
           break;
-        case 'setPriorityMessagePattern':
-          this.#messageBatcher.setPriorityMessagePattern(message.data.priorityMessagePattern);
+        case 'setThrottleMessagePattern':
+          this.#messageBatcher.setThrottleMessagePattern(message.data.throttleMessagePattern);
           break;
         default:
           throw new Error(`Unknown message type: ${type}`);
@@ -247,7 +247,7 @@ export default function installWorker() {
     #readyForNextBatch;
     #worker;
     #throttledSendNextBatch;
-    #priorityMessagePattern;
+    #throttleMessagePattern;
 
     constructor(worker) {
       // No dropping telemetry unless we're explicitly told to.
@@ -274,7 +274,7 @@ export default function installWorker() {
         i++
       ) {
         const messageToConsider = this.#buffer[i];
-        if (this.#shouldDrop(messageToConsider)) {
+        if (this.#shouldThrottle(messageToConsider)) {
           this.#buffer.splice(i, 1);
           this.#currentBufferLength -= messageToConsider.length;
           this.#dropped = true;
@@ -286,9 +286,9 @@ export default function installWorker() {
       }
     }
 
-    #shouldDrop(message) {
+    #shouldThrottle(message) {
       return (
-        this.#priorityMessagePattern !== undefined && this.#priorityMessagePattern.test(message)
+        this.#throttleMessagePattern !== undefined && this.#throttleMessagePattern.test(message)
       );
     }
 
@@ -330,8 +330,8 @@ export default function installWorker() {
     #hasData() {
       return this.#currentBufferLength > 0;
     }
-    setPriorityMessagePattern(priorityMessagePattern) {
-      this.#priorityMessagePattern = new RegExp(priorityMessagePattern, 'm');
+    setThrottleMessagePattern(priorityMessagePattern) {
+      this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
     }
   }
 
