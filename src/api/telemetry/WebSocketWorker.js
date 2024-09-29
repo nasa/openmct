@@ -220,7 +220,7 @@ export default function installWorker() {
         case 'setThrottleRate':
           this.#messageBatcher.setThrottleRate(message.data.throttleRate);
           break;
-        case 'priorityMessagePattern':
+        case 'setPriorityMessagePattern':
           this.#messageBatcher.setPriorityMessagePattern(message.data.priorityMessagePattern);
           break;
         default:
