@@ -1,12 +1,50 @@
 import debounce from 'p-debounce';
+import { parseArgs } from 'util';
+
+const {
+  values: { couchUrl, database, lock, unlock, startObjectKeystring, user, pass }
+} = parseArgs({
+  options: {
+    couchUrl: {
+      type: 'string',
+      default: 'http://127.0.0.1:5984'
+    },
+    database: {
+      type: 'string',
+      short: 'd',
+      default: 'openmct'
+    },
+    lock: {
+      type: 'boolean',
+      short: 'l'
+    },
+    unlock: {
+      type: 'boolean',
+      short: 'u'
+    },
+    startObjectKeystring: {
+      type: 'string',
+      short: 'o',
+      default: 'mine'
+    },
+    user: {
+      type: 'string'
+    },
+    pass: {
+      type: 'string'
+    }
+  }
+});
 
 const BATCH_SIZE = 100;
-const startObjectKeystring = 'mine';
-const locked = true;
-const couchUrl = 'http://localhost:5984';
-const database = 'openmct';
-const user = 'admin';
-const password = 'password';
+
+if (!unlock && !lock) {
+  throw new Error('Either -l or -u option is required');
+}
+
+const locked = lock === true;
+console.info(`Connecting to ${couchUrl}/${database}`);
+console.info(`${locked ? 'Locking' : 'Unlocking'} all children of ${startObjectKeystring}`);
 const startObjectIdentifier = keystringToIdentifier(startObjectKeystring);
 const documentBatch = [];
 const debouncedPersistBatch = debounce(persistBatch, 200);
@@ -20,7 +58,7 @@ function processObjectTreeFrom(parentObjectIdentifier) {
     if (document !== undefined) {
       if (!alreadySeen.has(document._id)) {
         alreadySeen.add(document._id);
-        //2. Lock object
+        //2. Lock or unlock object
         document.model.locked = locked;
         document.model.disallowUnlock = locked;
         //3. Push document to a batch
@@ -69,7 +107,11 @@ function persistBatchIfNeeded() {
 
 async function persistBatch() {
   const headers = new Headers();
-  headers.set('Authorization', 'Basic ' + Buffer.from(`${user}:${password}`).toString('base64'));
+
+  if (user !== undefined) {
+    headers.set('Authorization', 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64'));
+  }
+
   headers.set('Content-Type', 'application/json');
 
   const body = {
@@ -92,7 +134,7 @@ async function persistBatch() {
   const objectReplies = json;
 
   if (response.status === 200 || response.status === 201) {
-    console.log(`Successfully updated ${body.docs.length} objects...`);
+    console.log(`Successfully ${locked ? 'locked' : 'unlocked'} ${body.docs.length} objects...`);
   } else {
     console.log(`Error updating objects`);
   }
