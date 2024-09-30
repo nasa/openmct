@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 const SEVERITIES = ['WATCH', 'WARNING', 'CRITICAL'];
+const MOONWALK_TIMESTAMP = 14159040000;
 const NAMESPACE = '/Example/fault-';
 const getRandom = {
   severity: () => SEVERITIES[Math.floor(Math.random() * 3)],
@@ -36,7 +37,7 @@ const getRandom = {
       val = num;
       severity = SEVERITIES[severityIndex - 1];
       // Subtract `num` from the timestamp so that the faults are in order
-      time = 14159040000 - num; // Mon, 21 Jul 1969 02:56:00 GMT 🌔👨‍🚀👨‍🚀👨‍🚀
+      time = MOONWALK_TIMESTAMP - num; // Mon, 21 Jul 1969 02:56:00 GMT 🌔👨‍🚀👨‍🚀👨‍🚀
     }
 
     return {
