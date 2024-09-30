@@ -116,8 +116,7 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   /**
-   * This will start the requests for historical and realtime data,
-   * as well as setting up initial values and watchers
+   * @returns {Array} All bounded telemetry
    */
   getAll() {
     return this.boundedTelemetry;
