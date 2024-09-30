@@ -43,6 +43,11 @@ function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForB
       // Get the activeClock from the Global Time Context
       /** @type {import("../../api/time/TimeContext").default} */
       const { activeClock } = openmct.time;
+      const timeContext = request?.timeContext ?? openmct.time;
+
+      if (request.strategy === 'latest' && timeContext.isRealTime()) {
+        return false;
+      }
 
       return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
     },
