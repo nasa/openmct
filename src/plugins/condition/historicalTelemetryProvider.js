@@ -43,6 +43,7 @@ export default class HistoricalTelemetryProvider {
     const conditionConfiguration = conditionCollectionMap.get(condition.id)?.configuration;
     const { outputTelemetry, outputMetadata } = conditionConfiguration;
     let output = {};
+    output.result = true;
     if (outputTelemetry) {
       const outputTelemetryID = this.openmct.objects.makeKeyString(outputTelemetry);
       const outputTelemetryData = telemetryData.get(outputTelemetryID);
@@ -203,9 +204,11 @@ export default class HistoricalTelemetryProvider {
           const { outputTelemetry, outputMetadata, output } = conditionConfiguration;
           if (isDefault) {
             const conditionOutput = {
+              condition,
               telemetry: null,
               value: output,
-              condition
+              result: false,
+              isDefault: true
             };
             outputTelemetryDateMap.set(timestamp, conditionOutput);
           }
@@ -274,12 +277,14 @@ export default class HistoricalTelemetryProvider {
     const outputTelemetryList = [];
     const domainObject = this.conditionSetDomainObject;
     outputTelemetryMap.forEach((outputMetadata, timestamp) => {
-      const { condition, telemetry, value } = outputMetadata;
+      const { condition, telemetry, value, result, isDefault } = outputMetadata;
       outputTelemetryList.push({
         conditionId: condition.id,
         id: domainObject.identifier,
         output: value,
-        utc: timestamp
+        utc: timestamp,
+        result,
+        isDefault
       });
     });
     return outputTelemetryList;

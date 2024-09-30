@@ -474,14 +474,15 @@ export default class ConditionManager extends EventEmitter {
     });
   }
 
-  emitConditionSetResult(currentCondition, timestamp, outputValue) {
+  emitConditionSetResult(currentCondition, timestamp, outputValue, result) {
     this.emit(
       'conditionSetResultUpdated',
       Object.assign(
         {
-          output: outputValue,
           id: this.conditionSetDomainObject.identifier,
-          conditionId: currentCondition.id
+          conditionId: currentCondition.id,
+          output: outputValue,
+          result
         },
         timestamp
       )
@@ -509,6 +510,10 @@ export default class ConditionManager extends EventEmitter {
 
   async processCondition(timestamp, telemetryObject, telemetryData) {
     const currentCondition = this.getCurrentCondition();
+    const conditionDetails = this.conditions.filter(
+      (condition) => condition.id === currentCondition.id
+    )?.[0];
+    const conditionResult = currentCondition?.isDefault ? false : conditionDetails?.result;
     let telemetryValue = currentCondition.configuration.output;
     if (currentCondition?.configuration?.outputTelemetry) {
       const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
@@ -539,7 +544,7 @@ export default class ConditionManager extends EventEmitter {
       }
     }
 
-    this.emitConditionSetResult(currentCondition, timestamp, telemetryValue);
+    this.emitConditionSetResult(currentCondition, timestamp, telemetryValue, conditionResult);
   }
 
   getTestData(metadatum) {
