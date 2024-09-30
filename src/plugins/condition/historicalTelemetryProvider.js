@@ -15,14 +15,6 @@ export default class HistoricalTelemetryProvider {
     this.bounds = bounds;
   }
 
-  refreshAllHistoricalTelemetries() {
-    const refreshPromises = [];
-    for (const [, value] of Object.entries(this.telemetryObjects)) {
-      refreshPromises.push(this.refreshHistoricalTelemetry(value));
-    }
-    return Promise.all(refreshPromises);
-  }
-
   async refreshHistoricalTelemetry(domainObject, identifier) {
     console.log('refreshHistoricalTelemetry');
     if (!domainObject && identifier) {

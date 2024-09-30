@@ -352,18 +352,12 @@ export default {
   methods: {
     setOutputSelection() {
       let conditionOutput = this.condition.configuration.output;
-      if (conditionOutput) {
-        if (
-          conditionOutput !== 'false' &&
-          conditionOutput !== 'true' &&
-          conditionOutput !== 'telemetry value'
-        ) {
-          this.selectedOutputSelection = 'string';
-        } else {
-          this.selectedOutputSelection = conditionOutput;
-        }
-      } else if (conditionOutput === undefined) {
+      if (conditionOutput === undefined) {
         this.selectedOutputSelection = 'none';
+      } else if (['false', 'true', 'telemetry value'].includes(conditionOutput)) {
+        this.selectedOutputSelection = conditionOutput;
+      } else {
+        this.selectedOutputSelection = 'string';
       }
     },
     setOutputValue() {

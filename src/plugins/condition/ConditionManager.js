@@ -24,7 +24,7 @@ import { EventEmitter } from 'eventemitter3';
 import { v4 as uuid } from 'uuid';
 
 import Condition from './Condition.js';
-import HistoricalTelemetryProvider from './historicalTelemetryProvider.js';
+import HistoricalTelemetryProvider from './HistoricalTelemetryProvider.js';
 import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
