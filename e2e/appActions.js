@@ -117,6 +117,22 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 }
 
 /**
+ * Retrieves the properties of an OpenMCT domain object by its identifier.
+ *
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {string | identifier - The identifier or UUID of the domain object.
+ * @returns {Promise<Object>} An object containing the properties of the domain object.
+ */
+async function getDomainObject(page, identifier) {
+  const domainObject = await page.evaluate(async (objIdentifier) => {
+    const object = await window.openmct.objects.get(objIdentifier);
+    return object;
+  }, identifier);
+
+  return domainObject;
+}
+
+/**
  * Generate a notification with the given options.
  * @param {import('@playwright/test').Page} page
  * @param {CreateNotificationOptions} createNotificationOptions
@@ -636,6 +652,7 @@ export {
   createPlanFromJSON,
   expandEntireTree,
   getCanvasPixels,
+  getDomainObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
   setEndOffset,

@@ -50,12 +50,23 @@ export default class ConditionSetMetadataProvider {
       };
     });
 
+    const resultEnum = [
+      {
+        string: 'true',
+        value: true
+      },
+      {
+        string: 'false',
+        value: false
+      }
+    ];
+
     return {
       values: this.getDomains().concat([
         {
-          key: 'state',
+          key: 'output',
           source: 'output',
-          name: 'State',
+          name: 'Value',
           format: 'enum',
           enumerations: enumerations,
           hints: {
@@ -63,9 +74,11 @@ export default class ConditionSetMetadataProvider {
           }
         },
         {
-          key: 'output',
-          name: 'Value',
-          format: 'string',
+          key: 'result',
+          source: 'result',
+          name: 'Result',
+          format: 'enum',
+          enumerations: resultEnum,
           hints: {
             range: 2
           }
