@@ -1,4 +1,5 @@
 import debounce from 'p-debounce';
+import {Sema} from 'async-sema';
 import { parseArgs } from 'util';
 
 const {
@@ -35,6 +36,13 @@ const {
     }
   }
 });
+
+const semaphore = new Sema(
+  100, // Allow 100 concurrent async calls
+  {
+    capacity: 100 // Prealloc space for 1000 tokens
+  }
+);
 
 const BATCH_SIZE = 100;
 
@@ -76,6 +84,7 @@ function processObjectTreeFrom(parentObjectIdentifier) {
 }
 
 async function fetchDocument(identifierOrKeystring) {
+  await semaphore.acquire();
   let keystring;
   let identifier;
   if (typeof identifierOrKeystring === 'object') {
@@ -88,6 +97,8 @@ async function fetchDocument(identifierOrKeystring) {
 
   const url = `${couchUrl}/${database}/${keystring}`;
   const response = await fetch(url);
+
+  await semaphore.release();
 
   if (response.status === 200) {
     return response.json();
