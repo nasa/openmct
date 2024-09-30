@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import raf from 'utils/raf';
+
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
@@ -134,13 +136,13 @@ export default {
         return;
       }
 
-      // handle visibility separately
-      if (styleObj.isStyleInvisible !== undefined) {
-        elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
-        styleObj.isStyleInvisible = null;
-      }
+      raf(() => {
+        // handle visibility separately
+        if (styleObj.isStyleInvisible !== undefined) {
+          elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
+          styleObj.isStyleInvisible = null;
+        }
 
-      requestAnimationFrame(() => {
         Object.entries(styleObj).forEach(([key, value]) => {
           if (typeof value !== 'string' || !value.includes('__no_value')) {
             elemToStyle.style[key] = value;
