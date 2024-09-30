@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "description": "CouchDB persistence plugin for Open MCT",
     "dependencies": {
-        "@cloudant/couchbackup": "2.9.9"
+        "@cloudant/couchbackup": "2.9.9",
+        "p-debounce": "^4.0.0"
     },
     "scripts": {
         "backup:openmct": "npx couchbackup -u http://admin:password@127.0.0.1:5984/ -d openmct -o openmct-couch-backup.txt",

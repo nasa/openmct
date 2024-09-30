@@ -159,5 +159,8 @@
   "license": "Apache-2.0",
   "keywords": [
     "nasa"
-  ]
+  ],
+  "dependencies": {
+    "p-debounce": "^4.0.0"
+  }
 }
