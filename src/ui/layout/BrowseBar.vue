@@ -36,7 +36,7 @@
           ref="objectName"
           class="l-browse-bar__object-name c-object-label__name"
           :class="{ 'c-input-inline': isPersistable }"
-          :contenteditable="isPersistable"
+          :contenteditable="isNameEditable"
           @blur="updateName"
           @keydown.enter.prevent
           @keyup.enter.prevent="updateNameOnEnterKeyPress"
@@ -78,7 +78,7 @@
         ></button>
 
         <button
-          v-if="isViewEditable & !isEditing"
+          v-if="shouldShowLock"
           :aria-label="lockedOrUnlockedTitle"
           :title="lockedOrUnlockedTitle"
           :class="{
@@ -180,6 +180,14 @@ export default {
     };
   },
   computed: {
+    isNameEditable() {
+      return this.isPersistable && !this.domainObject.locked
+    },
+    shouldShowLock() {
+      return (
+        (this.domainObject && this.domainObject.locked) || (this.isViewEditable && !this.isEditing)
+      );
+    },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
     },
@@ -422,7 +430,9 @@ export default {
       delete this.actionCollection;
     },
     toggleLock(flag) {
-      this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+      if (!this.domainObject.disallowUnlock) {
+        this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+      }
     },
     setStatus(status) {
       this.status = status;
