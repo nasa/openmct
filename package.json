@@ -72,6 +72,7 @@
     "moment-timezone": "0.5.41",
     "npm-run-all2": "6.1.2",
     "nyc": "15.1.0",
+    "p-debounce": "4.0.0",
     "painterro": "1.2.87",
     "plotly.js-basic-dist-min": "2.29.1",
     "plotly.js-gl2d-dist-min": "2.20.0",
@@ -159,8 +160,5 @@
   "license": "Apache-2.0",
   "keywords": [
     "nasa"
-  ],
-  "dependencies": {
-    "p-debounce": "^4.0.0"
-  }
+  ]
 }
