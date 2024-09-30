@@ -7,14 +7,18 @@ function sortTelemetriesByDate(historicalTelemetriesPool) {
     const { identifier } = domainObject;
     const telemetryIdentifier = makeKeyString(identifier);
     historicalTelemetry.forEach((historicalTelemetryItem) => {
-      if (!historicalTelemetryDateMap.get(historicalTelemetryItem.utc)) {
+      let telemetryTimestamp = historicalTelemetryItem.utc;
+      if (historicalTelemetryItem.timestamp) {
+        telemetryTimestamp = new Date(historicalTelemetryItem.timestamp)?.getTime();
+      }
+      if (!historicalTelemetryDateMap.get(telemetryTimestamp)) {
         const telemetryMap = new Map();
         telemetryMap.set(telemetryIdentifier, historicalTelemetryItem);
-        historicalTelemetryDateMap.set(historicalTelemetryItem.utc, telemetryMap);
+        historicalTelemetryDateMap.set(telemetryTimestamp, telemetryMap);
       } else {
-        const telemetryMap = historicalTelemetryDateMap.get(historicalTelemetryItem.utc);
+        const telemetryMap = historicalTelemetryDateMap.get(telemetryTimestamp);
         telemetryMap.set(telemetryIdentifier, historicalTelemetryItem);
-        historicalTelemetryDateMap.set(historicalTelemetryItem.utc, telemetryMap);
+        historicalTelemetryDateMap.set(telemetryTimestamp, telemetryMap);
       }
     });
   });
