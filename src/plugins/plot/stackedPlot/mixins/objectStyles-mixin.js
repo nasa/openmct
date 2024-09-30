@@ -34,6 +34,7 @@ export default {
   },
   mounted() {
     this.objectStyles = this.getObjectStyleForItem(this.childObject.configuration);
+    this.updateStyle = raf(this.updateStyle);
     this.initObjectStyles();
   },
   beforeUnmount() {
@@ -135,21 +136,18 @@ export default {
       if (!styleObj || !elemToStyle) {
         return;
       }
+      // handle visibility separately
+      if (styleObj.isStyleInvisible !== undefined) {
+        elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
+        styleObj.isStyleInvisible = null;
+      }
 
-      raf(() => {
-        // handle visibility separately
-        if (styleObj.isStyleInvisible !== undefined) {
-          elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
-          styleObj.isStyleInvisible = null;
+      Object.entries(styleObj).forEach(([key, value]) => {
+        if (typeof value !== 'string' || !value.includes('__no_value')) {
+          elemToStyle.style[key] = value;
+        } else {
+          elemToStyle.style[key] = ''; // remove the property
         }
-
-        Object.entries(styleObj).forEach(([key, value]) => {
-          if (typeof value !== 'string' || !value.includes('__no_value')) {
-            elemToStyle.style[key] = value;
-          } else {
-            elemToStyle.style[key] = ''; // remove the property
-          }
-        });
       });
     }
   }
