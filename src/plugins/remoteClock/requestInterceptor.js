@@ -44,7 +44,7 @@ function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForB
       /** @type {import("../../api/time/TimeContext").default} */
       const { activeClock } = openmct.time;
 
-      return request?.size !== 1 && activeClock?.key === 'remote-clock' && !remoteClockLoaded;
+      return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
     },
     /**
      * Invokes the interceptor to modify the request.
