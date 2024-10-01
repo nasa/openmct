@@ -113,7 +113,7 @@
               @change="persist"
             />
           </span>
-          <span v-if="selectedOutputSelection === 'telemetry value'" class="c-cdef__control">
+          <span v-if="selectedOutputSelection === TELEMETRY_VALUE" class="c-cdef__control">
             <select
               v-model="condition.configuration.outputTelemetry"
               aria-label="Output Telemetry Selection"
@@ -233,6 +233,7 @@ import { v4 as uuid } from 'uuid';
 
 import { TRIGGER, TRIGGER_LABEL } from '@/plugins/condition/utils/constants';
 
+import { TELEMETRY_VALUE } from '../utils/constants.js';
 import ConditionDescription from './ConditionDescription.vue';
 import Criterion from './CriterionItem.vue';
 
@@ -288,7 +289,7 @@ export default {
       expanded: true,
       trigger: 'all',
       selectedOutputSelection: '',
-      outputOptions: ['none', 'false', 'true', 'string', 'telemetry value'],
+      outputOptions: ['none', 'false', 'true', 'string', TELEMETRY_VALUE],
       criterionIndex: 0,
       draggingOver: false,
       isDefault: this.condition.isDefault,
@@ -329,7 +330,7 @@ export default {
   watch: {
     condition: {
       handler() {
-        if (this.condition.configuration.output !== 'telemetry value') {
+        if (this.condition.configuration.output !== TELEMETRY_VALUE) {
           this.condition.configuration.outputTelemetry = null;
           this.condition.configuration.outputMetadata = null;
         }
@@ -352,18 +353,12 @@ export default {
   methods: {
     setOutputSelection() {
       let conditionOutput = this.condition.configuration.output;
-      if (conditionOutput) {
-        if (
-          conditionOutput !== 'false' &&
-          conditionOutput !== 'true' &&
-          conditionOutput !== 'telemetry value'
-        ) {
-          this.selectedOutputSelection = 'string';
-        } else {
-          this.selectedOutputSelection = conditionOutput;
-        }
-      } else if (conditionOutput === undefined) {
+      if (conditionOutput === undefined) {
         this.selectedOutputSelection = 'none';
+      } else if (['false', 'true', TELEMETRY_VALUE].includes(conditionOutput)) {
+        this.selectedOutputSelection = conditionOutput;
+      } else {
+        this.selectedOutputSelection = 'string';
       }
     },
     setOutputValue() {

@@ -15,14 +15,6 @@ export default class HistoricalTelemetryProvider {
     this.bounds = bounds;
   }
 
-  refreshAllHistoricalTelemetries() {
-    const refreshPromises = [];
-    for (const [, value] of Object.entries(this.telemetryObjects)) {
-      refreshPromises.push(this.refreshHistoricalTelemetry(value));
-    }
-    return Promise.all(refreshPromises);
-  }
-
   async refreshHistoricalTelemetry(domainObject, identifier) {
     console.log('refreshHistoricalTelemetry');
     if (!domainObject && identifier) {
@@ -201,7 +193,7 @@ export default class HistoricalTelemetryProvider {
           const conditionDetails = conditionCollectionMap.get(id);
           const { isDefault } = conditionDetails;
           const conditionConfiguration = conditionDetails?.configuration;
-          const { outputTelemetry, outputMetadata, output } = conditionConfiguration;
+          const { output } = conditionConfiguration;
           if (isDefault) {
             const conditionOutput = {
               condition,
@@ -277,7 +269,7 @@ export default class HistoricalTelemetryProvider {
     const outputTelemetryList = [];
     const domainObject = this.conditionSetDomainObject;
     outputTelemetryMap.forEach((outputMetadata, timestamp) => {
-      const { condition, telemetry, value, result, isDefault } = outputMetadata;
+      const { condition, value, result, isDefault } = outputMetadata;
       outputTelemetryList.push({
         conditionId: condition.id,
         id: domainObject.identifier,

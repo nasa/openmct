@@ -63,7 +63,7 @@
                   :key="index"
                   :value="telemetryOption.identifier"
                 >
-                  {{ telemetryPaths[index] || telemetryOption.name }}
+                  {{ telemetryOption.path || telemetryOption.name }}
                 </option>
               </select>
             </span>
@@ -200,10 +200,6 @@ export default {
         } else {
           this.telemetryMetadataOptions[id] = [];
         }
-      });
-      this.telemetry.forEach(async (telemetryOption, index) => {
-        const telemetryPath = await this.getFullTelemetryPath(telemetryOption);
-        this.telemetryPaths[index] = telemetryPath;
       });
     },
     addTestInput(testInput) {
