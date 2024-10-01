@@ -253,6 +253,10 @@ export default class TelemetryAPI {
       options.domain = this.openmct.time.getTimeSystem().key;
     }
 
+    if (!Object.hasOwn(options, 'timeContext')) {
+      options.timeContext = this.openmct.time;
+    }
+
     return options;
   }
 
