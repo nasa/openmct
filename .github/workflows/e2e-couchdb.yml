@@ -51,6 +51,9 @@ jobs:
         env:
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
         run: npm run test:e2e:couchdb
+      
+      - name: Generate Code Coverage Report
+        run: npm run cov:e2e:report
 
       - name: Publish Results to Codecov.io
         uses: codecov/codecov-action@v4
