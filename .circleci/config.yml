@@ -58,7 +58,7 @@ commands:
             shasum -a 256 -c codecov.SHA256SUM
 
             # Make the codecov executable
-            sudo chmod +x codecov
+            [[ $EUID -ne 0 ]] && sudo chmod +x codecov || chmod +x codecov
             ./codecov --help
   generate_e2e_code_cov_report:
     description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
