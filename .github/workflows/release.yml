@@ -1,0 +1,116 @@
+# GitHub Actions Workflow for Automated Releases
+
+name: Automated Release Workflow
+
+on:
+  schedule:
+    # Nightly builds at 6 PM PST every day
+    - cron: '0 2 * * *'
+  release:
+    types:
+      - created
+      - published
+
+jobs:
+  nightly-build:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    name: Nightly Build and Release
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/iron' # Specify your Node.js version
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Bump Version for Nightly
+        id: bump_version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          DATE=$(date +%Y%m%d)
+          NIGHTLY_VERSION=$(echo $PACKAGE_VERSION | awk -F. -v OFS=. '{$NF+=1; print}')-nightly-$DATE
+          echo "NIGHTLY_VERSION=${NIGHTLY_VERSION}" >> $GITHUB_ENV
+
+      - name: Update package.json
+        run: |
+          npm version $NIGHTLY_VERSION --no-git-tag-version
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to $NIGHTLY_VERSION for nightly build"
+
+      - name: Push Changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      - name: Build Project
+        run: npm run build:prod
+
+      - name: Publish Nightly to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm publish --access public --tag nightly
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  prerelease-build:
+    if: github.event.release.prerelease == true
+    runs-on: ubuntu-latest
+    name: Pre-release (Beta) Build and Publish
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16' # Specify your Node.js version
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build:prod
+
+      - name: Publish Beta to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm publish --access public --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  stable-release-build:
+    if: github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    name: Stable Release Build and Publish
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16' # Specify your Node.js version
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build:prod
+
+      - name: Publish to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
