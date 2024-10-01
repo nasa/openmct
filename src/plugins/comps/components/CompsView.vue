@@ -175,7 +175,11 @@ const props = defineProps({
 });
 
 onBeforeMount(async () => {
-  outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject);
+  const telemetryOptions = {
+    size: 1,
+    strategy: 'latest'
+  };
+  outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject, telemetryOptions);
   outputTelemetryCollection.on('add', telemetryProcessor);
   outputTelemetryCollection.on('clear', clearData);
   compsManager.on('parameterAdded', reloadParameters);
