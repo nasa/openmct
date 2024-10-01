@@ -44,11 +44,9 @@ export default class CompsManager extends EventEmitter {
   addParameter(telemetryObject) {
     const keyString = this.#openmct.objects.makeKeyString(telemetryObject.identifier);
     const metaData = this.#openmct.telemetry.getMetadata(telemetryObject);
-    const specificTelemetryCollection = this.#telemetryCollections[keyString];
-    const specificTimeKey = specificTelemetryCollection.timeKey;
-    const timeMetaData = metaData.valueMetadatas.find((metaDatum) => {
-      return metaDatum.key === specificTimeKey || metaDatum.source === specificTimeKey;
-    });
+    const timeSystem = this.#openmct.time.getTimeSystem();
+    const domains = metaData?.valuesForHints(['domain']);
+    const timeMetaData = domains.find((d) => d.key === timeSystem.key);
     // in the valuesMetadata, find the first numeric data type
     const rangeItems = metaData.valueMetadatas.filter(
       (metaDatum) => metaDatum.hints && metaDatum.hints.range
