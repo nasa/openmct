@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding conditionSets. Note: this
-suite is sharing state between tests which is considered an anti-pattern. Implementing in this way to
-demonstrate some playwright for test developers. This pattern should not be re-used in other CRUD suites.
+This test suite is dedicated to tests which verify the basic operations surrounding conditionSets and styling
 */
 
 import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
