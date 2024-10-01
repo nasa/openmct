@@ -25,6 +25,7 @@ import { v4 as uuid } from 'uuid';
 
 import Condition from './Condition.js';
 import HistoricalTelemetryProvider from './HistoricalTelemetryProvider.js';
+import { TELEMETRY_VALUE } from './utils/constants.js';
 import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
@@ -392,7 +393,7 @@ export default class ConditionManager extends EventEmitter {
 
     const currentCondition = this.getCurrentConditionLAD(conditionResults);
     let output = currentCondition?.configuration?.output;
-    if (output === 'telemetry value') {
+    if (output === TELEMETRY_VALUE) {
       const { outputTelemetry, outputMetadata } = currentCondition.configuration;
       const outputTelemetryObject = await this.openmct.objects.get(outputTelemetry);
       const telemetryOptions = {
