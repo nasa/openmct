@@ -1,5 +1,5 @@
 export default class HistoricalTelemetryProvider {
-  constructor(openmct, telemetryObjects, conditions, conditionSetDomainObject) {
+  constructor(openmct, telemetryObjects, conditions, conditionSetDomainObject, options) {
     this.openmct = openmct;
     this.telemetryObjects = telemetryObjects;
     this.bounds = { start: null, end: null };
@@ -9,6 +9,7 @@ export default class HistoricalTelemetryProvider {
     this.historicalTelemetryPoolMap = new Map();
     this.historicalTelemetryDateMap = new Map();
     this.index = 0;
+    this.options = options;
   }
 
   setTimeBounds(bounds) {
@@ -21,7 +22,7 @@ export default class HistoricalTelemetryProvider {
       domainObject = await this.openmct.objects.get(identifier);
     }
     const id = this.openmct.objects.makeKeyString(domainObject.identifier);
-    const telemetryOptions = { ...this.bounds };
+    const telemetryOptions = { ...this.bounds, ...this.options };
     const historicalTelemetry = await this.openmct.telemetry.request(
       domainObject,
       telemetryOptions
