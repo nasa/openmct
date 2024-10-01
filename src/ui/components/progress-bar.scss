@@ -21,10 +21,10 @@
 
   &__bar {
     background: $colorProgressBar;
-    @include abs();
     transform-origin: left;
 
     &.--indeterminate {
+      @include abs();
       animation: progressIndeterminate 1.5s ease-in infinite;
     }
   }
