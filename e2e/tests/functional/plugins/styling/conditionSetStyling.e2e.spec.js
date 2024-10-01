@@ -60,7 +60,7 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
     });
   });
 
-  test.only('Conditional styling, using a Condition Set, will style correctly based on the output', async ({
+  test('Conditional styling, using a Condition Set, will style correctly based on the output', async ({
     page
   }) => {
     test.info().annotations.push({
