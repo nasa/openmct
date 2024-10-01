@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import raf from 'utils/raf';
-
 import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
@@ -34,7 +32,6 @@ export default {
   },
   mounted() {
     this.objectStyles = this.getObjectStyleForItem(this.childObject.configuration);
-    this.updateStyle = raf(this.updateStyle);
     this.initObjectStyles();
   },
   beforeUnmount() {
