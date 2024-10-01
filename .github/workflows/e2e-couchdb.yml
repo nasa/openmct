@@ -53,9 +53,13 @@ jobs:
         run: npm run test:e2e:couchdb
 
       - name: Publish Results to Codecov.io
-        env:
-          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
-        run: npm run cov:e2e:full:publish
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/e2e/lcov.info
+          flags: e2e-full
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Archive test results
         if: success() || failure()
