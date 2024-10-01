@@ -29,8 +29,7 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject,
-  setRealTimeMode
+  createExampleTelemetryObject
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
