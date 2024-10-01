@@ -36,6 +36,7 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
   const STATE_CHANGE_INTERVAL = '1';
 
   test.beforeEach(async ({ page }) => {
+    // Install the clock and set the time to the mission time such that the state generator will be controllable
     await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -60,7 +61,7 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
     });
   });
 
-  test('Conditional styling, using a Condition Set, will style correctly based on the output', async ({
+  test('Conditional styling, using a Condition Set, will style correctly based on the output @clock', async ({
     page
   }) => {
     test.info().annotations.push({
@@ -121,7 +122,7 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
 
     await setRealTimeMode(page);
 
-    //Pause at a time when the state generator is 'OFF'
+    //Pause at a time when the state generator is 'OFF' which is 20 minutes in the future
     await page.clock.pauseAt(new Date(1732414800000));
 
     const redBG = 'background-color: rgb(255, 0, 0);';
@@ -129,26 +130,32 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
     const textElement = page.getByLabel('Alpha-numeric telemetry value').locator('div:first-child');
     const styledElement = page.getByLabel('Box', { exact: true });
 
+    // Check if the style is red when text is 'OFF'
     await expect(textElement).toHaveText('OFF');
     await waitForStyleChange(styledElement, redBG);
 
     // Fast forward to the next state change
     await page.clock.fastForward(STATE_CHANGE_INTERVAL * 1000);
 
-    await expect(textElement).toHaveText('ON', { timeout: 2000 });
-
     // Check if the style is not red when text is 'ON'
+    await expect(textElement).toHaveText('ON');
     await waitForStyleChange(styledElement, defaultBG);
   });
 });
 
+/**
+ * Wait for the style of an element to change to the expected style.
+ * @param {import('@playwright/test').Locator} element - The element to check.
+ * @param {string} expectedStyle - The expected style to wait for.
+ * @param {number} timeout - The timeout in milliseconds.
+ */
 async function waitForStyleChange(element, expectedStyle, timeout = 0) {
   await expect(async () => {
     const style = await element.getAttribute('style');
 
     // eslint-disable-next-line playwright/prefer-web-first-assertions
     expect(style).toBe(expectedStyle);
-  }).toPass({ timeout }); // timeout allows for the style to be applied
+  }).toPass({ timeout: 1000 }); // timeout allows for the style to be applied
 }
 
 /**
