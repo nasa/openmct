@@ -461,7 +461,7 @@ $colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid o
 $colorGaugeRange: $colorBodyFg; // Range text color
 $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.4);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
-$colorGaugeNeedle: rgba(#fff, 0);
+$colorGaugeNeedle: $colorGaugeValue; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, 0);

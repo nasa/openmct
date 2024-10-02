@@ -370,6 +370,7 @@ export default {
     createImageWrapper(index, image, showImagePlaceholders) {
       const id = `${ID_PREFIX}${image.time}`;
       let imageWrapper = document.createElement('div');
+      imageWrapper.ariaLabel = id;
       imageWrapper.classList.add(IMAGE_WRAPPER_CLASS);
       imageWrapper.style.left = `${this.xScale(image.time)}px`;
       this.setNSAttributesForElement(imageWrapper, {
