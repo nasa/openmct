@@ -45,6 +45,7 @@ function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForB
       const { activeClock } = openmct.time;
       const timeContext = request?.timeContext ?? openmct.time;
 
+      // this type of request does not rely on clock having bounds
       if (request.strategy === 'latest' && timeContext.isRealTime()) {
         return false;
       }
