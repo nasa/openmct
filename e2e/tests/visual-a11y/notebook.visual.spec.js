@@ -98,7 +98,7 @@ test.describe('Visual - Notebook @a11y', () => {
 
     await page.getByLabel('Expand My Items folder').click();
 
-    await page.goto(notebook.url);
+    await page.goto(notebook.url, { waitUntil: 'networkidle' });
 
     await page
       .getByLabel('Navigate to Dropped Overlay Plot')
