@@ -25,7 +25,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-image: url('../ui/layout/assets/images/bg-splash.jpg');
+  background-image: var(--splash-image-url);
   margin-top: 30px; // Don't overlap with close "X" button
 
   &:before,
@@ -33,7 +33,7 @@
     background-position: center;
     background-repeat: no-repeat;
     position: absolute;
-    background-image: url('../ui/layout/assets/images/logo-openmct-shdw.svg');
+    background-image: var(--openmct-shadow-logo);
     background-size: contain;
     content: '';
   }
@@ -42,7 +42,7 @@
     // NASA logo, dude
     $w: 5%;
     $m: 10px;
-    background-image: url('../ui/layout/assets/images/logo-nasa.svg');
+    background-image: var(--nasa-logo);
     top: $m;
     right: auto;
     bottom: auto;

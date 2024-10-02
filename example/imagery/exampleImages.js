@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// Note: This darkmatter theme is in Beta and is not yet ready for prime time. It needs some more tweaking.
 
-import BackgroundImage from '../../ui/layout/assets/images/darkmatter-bg.png';
-import { installTheme } from './installTheme.js';
+/**
+ * Import all *.jpg files from the images folder, add to an array
+ * and export for use in the plugin.
+ */
+const imagesContext = require.context('@/../example/imagery/images', false, /\.jpg$/);
+const imageArray = imagesContext.keys().map((key) => imagesContext(key));
 
-export default function plugin() {
-  return function install(openmct) {
-    installTheme(openmct, 'darkmatter');
-    document.documentElement.style.setProperty('--darkmatter-bg-url', `url(${BackgroundImage})`);
-  };
-}
+export default imageArray;

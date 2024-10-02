@@ -20,31 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const DEFAULT_IMAGE_SAMPLES = [
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18732.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18733.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18734.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18735.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18736.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18737.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18738.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18739.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18740.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18741.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18742.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18743.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18744.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18745.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18746.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18747.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18748.jpg'
-];
+import DEFAULT_IMAGE_SAMPLES from '@/../example/imagery/exampleImages.js';
+import Layer16x9 from '@/plugins/imagery/layers/example-imagery-layer-16x9.png';
+import LayerSafe from '@/plugins/imagery/layers/example-imagery-layer-safe.png';
+import LayerScale from '@/plugins/imagery/layers/example-imagery-layer-scale.png';
+
 const DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 20000;
 const MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 5000;
 
+/** @type {import('openmct').OpenMCT} */
 let openmctInstance;
 
+/**
+ * @returns {function(import('openmct').OpenMCT): void}
+ */
 export default function () {
   return function install(openmct) {
     openmctInstance = openmct;
@@ -94,15 +83,15 @@ export default function () {
               },
               layers: [
                 {
-                  source: 'dist/imagery/example-imagery-layer-16x9.png',
+                  source: Layer16x9,
                   name: '16:9'
                 },
                 {
-                  source: 'dist/imagery/example-imagery-layer-safe.png',
+                  source: LayerSafe,
                   name: 'Safe'
                 },
                 {
-                  source: 'dist/imagery/example-imagery-layer-scale.png',
+                  source: LayerScale,
                   name: 'Scale'
                 }
               ]
@@ -162,24 +151,45 @@ export default function () {
   };
 }
 
+/**
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
 function getCompassValues(min, max) {
-  return min + Math.random() * (max - min);
+  // Seed the random value by current time so we can get a consistent value for testing when we mock
+  // the clock
+  return min + Math.random(Date.now()) * (max - min);
 }
 
+/**
+ * @param {ImageryConfiguration} configuration
+ * @returns {string[]}
+ */
 function getImageSamples(configuration) {
   let imageSamples = DEFAULT_IMAGE_SAMPLES;
 
-  if (configuration.imageLocation && configuration.imageLocation.length) {
-    imageSamples = getImageUrlListFromConfig(configuration);
-  }
+  imageSamples = getImageLocations(configuration) ?? imageSamples;
 
   return imageSamples;
 }
 
-function getImageUrlListFromConfig(configuration) {
-  return configuration.imageLocation.split(',');
+/**
+ * @param {ImageryConfiguration} configuration
+ * @returns {string[]?}
+ */
+function getImageLocations(configuration) {
+  let imageLocations = null;
+  if (configuration.imageLocation) {
+    imageLocations = configuration.imageLocation.split(',');
+  }
+  return imageLocations;
 }
 
+/**
+ * @param {DomainObject} domainObject
+ * @returns {number}
+ */
 function getImageLoadDelay(domainObject) {
   const imageLoadDelay = Math.trunc(
     Number(domainObject.configuration.imageLoadDelayInMilliSeconds)
@@ -207,6 +217,10 @@ function getImageLoadDelay(domainObject) {
   return imageLoadDelay;
 }
 
+/**
+ * @param {import('openmct').OpenMCT} openmct
+ * @returns {TelemetryProvider}
+ */
 function getRealtimeProvider(openmct) {
   return {
     supportsSubscribe: (domainObject) => domainObject.type === 'example.imagery',
@@ -225,6 +239,10 @@ function getRealtimeProvider(openmct) {
   };
 }
 
+/**
+ * @param {import('openmct').OpenMCT} openmct
+ * @returns {HistoricalProvider}
+ */
 function getHistoricalProvider(openmct) {
   return {
     supportsRequest: (domainObject, options) => {
@@ -247,6 +265,10 @@ function getHistoricalProvider(openmct) {
   };
 }
 
+/**
+ * @param {import('openmct').OpenMCT} openmct
+ * @returns {LadProvider}
+ */
 function getLadProvider(openmct) {
   return {
     supportsRequest: (domainObject, options) => {
@@ -266,6 +288,13 @@ function getLadProvider(openmct) {
   };
 }
 
+/**
+ * @param {number} timestamp
+ * @param {string} name
+ * @param {string[]} imageSamples
+ * @param {number} delay
+ * @returns {TelemetryDatum}
+ */
 function pointForTimestamp(timestamp, name, imageSamples, delay) {
   const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
   const urlItems = url.split('/');
@@ -290,3 +319,46 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
     imageDownloadName
   };
 }
+
+/**
+ * @typedef {import('openmct').DomainObject} DomainObject
+ */
+
+/**
+ * @typedef {Object} ImageryConfiguration
+ * @property {string} imageLocation - Comma-separated list of image URLs
+ * @property {number} imageLoadDelayInMilliSeconds - Delay between image loads in milliseconds
+ * @property {Array<string>} imageSamples - Array of image URLs
+ * @property {Array<Object>} layers - Array of layer objects
+ */
+
+/**
+ * @typedef {Object} TelemetryDatum
+ * @property {string} name
+ * @property {number} utc
+ * @property {number} local
+ * @property {string} url
+ * @property {number} sunOrientation
+ * @property {number} cameraAzimuth
+ * @property {number} heading
+ * @property {Object} transformations
+ * @property {string} imageDownloadName
+ */
+
+/**
+ * @typedef {Object} TelemetryProvider
+ * @property {function(DomainObject): boolean} supportsSubscribe
+ * @property {function(DomainObject, function(TelemetryDatum): void): function(): void} subscribe
+ */
+
+/**
+ * @typedef {Object} HistoricalProvider
+ * @property {function(DomainObject, Object): boolean} supportsRequest
+ * @property {function(DomainObject, Object): Promise<TelemetryDatum[]>} request
+ */
+
+/**
+ * @typedef {Object} LadProvider
+ * @property {function(DomainObject, Object): boolean} supportsRequest
+ * @property {function(DomainObject, Object): Promise<TelemetryDatum[]>} request
+ */
