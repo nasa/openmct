@@ -121,12 +121,14 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
     await setRealTimeMode(page);
 
     //Pause at a time when the state generator is 'OFF' which is 20 minutes in the future
-    await page.clock.pauseAt(new Date(1732414800000));
+    await page.clock.pauseAt(new Date(MISSION_TIME + 1200000));
 
     const redBG = 'background-color: rgb(255, 0, 0);';
     const defaultBG = 'background-color: rgb(102, 102, 102);';
     const textElement = page.getByLabel('Alpha-numeric telemetry value').locator('div:first-child');
     const styledElement = page.getByLabel('Box', { exact: true });
+
+    await page.clock.resume();
 
     // Check if the style is red when text is 'OFF'
     await expect(textElement).toHaveText('OFF');
