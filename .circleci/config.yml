@@ -5,7 +5,7 @@ orbs:
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.45.2-focal
+      - image: mcr.microsoft.com/playwright:v1.47.2-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       PERCY_POSTINSTALL_BROWSER: "true" # Needed to store the percy browser in cache deps
@@ -37,6 +37,29 @@ commands:
           ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
+  download_verify_codecov_cli:
+    description: 'Download and verify Codecov CLI'
+    steps:
+      - run:
+          name: Download and verify Codecov CLI
+          command: |
+            # Download Codecov CLI
+            curl -Os https://cli.codecov.io/latest/linux/codecov
+
+            # Import Codecov's GPG key
+            curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+
+            # Download and verify the SHA256SUM and its signature
+            curl -Os https://cli.codecov.io/latest/linux/codecov.SHA256SUM
+            curl -Os https://cli.codecov.io/latest/linux/codecov.SHA256SUM.sig
+            gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+
+            # Verify the checksum
+            shasum -a 256 -c codecov.SHA256SUM
+
+            # Make the codecov executable
+            [[ $EUID -ne 0 ]] && sudo chmod +x codecov || chmod +x codecov
+            ./codecov --help
   generate_e2e_code_cov_report:
     description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
     parameters:
@@ -44,7 +67,15 @@ commands:
         type: string
     steps:
       - run: npm run cov:e2e:report || true
-      - run: npm run cov:e2e:<<parameters.suite>>:publish
+      - download_verify_codecov_cli
+      - run:
+          name: Upload coverage report to Codecov
+          command: |
+            ./codecov --verbose upload-process --disable-search \
+              -t $CODECOV_TOKEN \
+              -n 'e2e-<<parameters.suite>>'-${CIRCLE_WORKFLOW_ID} \
+              -F e2e-<<parameters.suite>> \
+              -f ./coverage/e2e/lcov.info
 jobs:
   npm-audit:
     parameters:
@@ -81,7 +112,15 @@ jobs:
             mkdir -p dist/reports/tests/
             TESTFILES=$(circleci tests glob "src/**/*Spec.js")
             echo "$TESTFILES" | circleci tests run --command="xargs npm run test" --verbose
-      - run: npm run cov:unit:publish
+      - download_verify_codecov_cli
+      - run:
+          name: Upload coverage report to Codecov
+          command: |
+            ./codecov --verbose upload-process --disable-search \
+              -t $CODECOV_TOKEN \
+              -n 'unit-test'-${CIRCLE_WORKFLOW_ID} \
+              -F unit \
+              -f ./coverage/unit/lcov.info
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
@@ -159,7 +198,7 @@ jobs:
     steps:
       - build_and_install:
           node-version: lts/hydrogen
-      - run: npx playwright@1.45.2 install #Necessary for bare ubuntu machine
+      - run: npx playwright@1.47.2 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
           docker compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
