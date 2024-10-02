@@ -55,8 +55,10 @@
 
 <script>
 import { scaleLinear, scaleUtc } from 'd3-scale';
+import { computed, onMounted, ref } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+import { useResizeObserver } from '@/ui/composables/resize.js';
 
 import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
 import PlanViewConfiguration from '../PlanViewConfiguration.js';
@@ -98,6 +100,23 @@ export default {
       }
     }
   },
+  setup() {
+    const plan = ref(null);
+    const { size, startObserving } = useResizeObserver();
+
+    const elementWidth = computed(() => size.width);
+    const elementHeight = computed(() => size.height);
+
+    onMounted(() => {
+      startObserving(plan.value);
+    });
+
+    return {
+      plan,
+      elementWidth,
+      elementHeight
+    };
+  },
   data() {
     return {
       activityGroups: [],
@@ -106,7 +125,6 @@ export default {
       planData: {},
       swimlaneVisibility: {},
       clipActivityNames: false,
-      height: 0,
       rowHeight: ROW_HEIGHT
     };
   },
@@ -119,11 +137,32 @@ export default {
           (group) => this.swimlaneVisibility[group.heading] === true
         );
       }
+    },
+    width() {
+      if (this.elementWidth) {
+        return this.elementWidth;
+      }
+
+      const parent = this.$el?.closest('.is-object-type-time-strip');
+
+      return parent?.getBoundingClientRect().width - 200 || 0;
+    },
+    height() {
+      if (this.elementHeight) {
+        return this.elementHeight;
+      }
+
+      const parent = this.$el?.closest('.is-object-type-time-strip');
+
+      return parent?.getBoundingClientRect().height || 0;
     }
   },
   watch: {
     clipActivityNames() {
       this.setScaleAndGenerateActivities();
+    },
+    width() {
+      this.updateViewBounds();
     }
   },
   mounted() {
@@ -140,17 +179,12 @@ export default {
 
     const canvas = document.createElement('canvas');
     this.canvasContext = canvas.getContext('2d');
-    this.setDimensions();
     this.setTimeContext();
     this.handleConfigurationChange(this.configuration);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
     this.loadComposition();
-
-    this.resizeObserver = new ResizeObserver(this.resize);
-    this.resizeObserver.observe(this.$refs.plan);
   },
   beforeUnmount() {
-    this.resizeObserver.disconnect();
     this.stopFollowingTimeContext();
     if (this.unlisten) {
       this.unlisten();
@@ -273,47 +307,6 @@ export default {
     removeFromComposition(domainObject) {
       this.composition.remove(domainObject);
     },
-    resize() {
-      let clientWidth = this.getClientWidth();
-      let clientHeight = this.getClientHeight();
-      if (clientWidth !== this.width) {
-        this.setDimensions();
-        this.updateViewBounds();
-      }
-
-      if (clientHeight !== this.height) {
-        this.setDimensions();
-      }
-    },
-    getClientWidth() {
-      let clientWidth = this.$refs.plan.clientWidth;
-
-      if (!clientWidth) {
-        //this is a hack - need a better way to find the parent of this component
-        let parent = this.getParent();
-        if (parent) {
-          clientWidth = parent.getBoundingClientRect().width;
-        }
-      }
-
-      return clientWidth - 200;
-    },
-    getParent() {
-      //this is a hack - need a better way to find the parent of this component
-      return this.$el.closest('.is-object-type-time-strip');
-    },
-    getClientHeight() {
-      let clientHeight = this.$refs.plan.clientHeight;
-
-      if (!clientHeight) {
-        let parent = this.getParent();
-        if (parent) {
-          clientHeight = parent.getBoundingClientRect().height;
-        }
-      }
-
-      return clientHeight;
-    },
     updateViewBounds(bounds) {
       if (bounds) {
         this.viewBounds = bounds;
@@ -334,10 +327,6 @@ export default {
       if (this.xScale) {
         this.generateActivities();
       }
-    },
-    setDimensions() {
-      this.width = this.getClientWidth();
-      this.height = this.getClientHeight();
     },
     setScale(timeSystem) {
       if (!this.width) {
