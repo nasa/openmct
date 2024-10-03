@@ -22,29 +22,28 @@
 <template>
   <TimePopupRealtime
     v-if="readOnly === false"
-    :offsets="offsets"
+    :offsets="formattedOffsets"
     @focus="$event.target.select()"
-    @update="timePopUpdate"
     @dismiss="dismiss"
   />
   <div v-else class="c-compact-tc__setting-wrapper">
     <div
       v-if="!compact"
       class="c-compact-tc__setting-value icon-minus u-fade-truncate--lg --no-sep"
-      :aria-label="`Start offset: ${offsets.start}`"
-      :title="`Start offset: ${offsets.start}`"
+      :aria-label="`Start offset: ${formattedOffsets.start}`"
+      :title="`Start offset: ${formattedOffsets.start}`"
     >
-      {{ offsets.start }}
+      {{ formattedOffsets.start }}
     </div>
     <div v-if="!compact" class="c-compact-tc__bounds__start-end-sep icon-arrows-right-left"></div>
     <div
       v-if="!compact"
       class="c-compact-tc__setting-value icon-plus u-fade-truncate--lg"
       :class="{ '--no-sep': compact }"
-      :aria-label="`End offset: ${offsets.end}`"
-      :title="`End offset: ${offsets.end}`"
+      :aria-label="`End offset: ${formattedOffsets.end}`"
+      :title="`End offset: ${formattedOffsets.end}`"
     >
-      {{ offsets.end }}
+      {{ formattedOffsets.end }}
     </div>
     <div
       class="c-compact-tc__setting-value icon-clock c-compact-tc__current-update u-fade-truncate--lg --no-sep"
@@ -58,31 +57,21 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import TimePopupRealtime from './TimePopupRealtime.vue';
-
-const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
   components: {
     TimePopupRealtime
   },
-  inject: ['openmct'],
+  inject: [
+    'openmct',
+    'bounds',
+    'clock',
+    'offsets',
+    'timeSystemFormatter',
+    'timeSystemDurationFormatter'
+  ],
   props: {
-    objectPath: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
-    inputBounds: {
-      type: Object,
-      default() {
-        return undefined;
-      }
-    },
     readOnly: {
       type: Boolean,
       default() {
@@ -96,167 +85,34 @@ export default {
       }
     }
   },
-  emits: ['offsets-updated', 'dismiss-inputs-realtime'],
+  emits: ['dismiss-inputs-realtime'],
   data() {
-    const timeSystem = this.openmct.time.getTimeSystem();
-    const durationFormatter = this.getFormatter(
-      timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
-    );
-    const timeFormatter = this.getFormatter(timeSystem.timeFormat);
-    const bounds = this.bounds ?? this.openmct.time.getBounds();
-    const offsets = this.offsets ?? this.openmct.time.getClockOffsets();
-    const currentValue = this.openmct.time.getClock()?.currentValue();
-
     return {
-      showTCInputStart: false,
-      showTCInputEnd: false,
-      durationFormatter,
-      timeFormatter,
-      bounds: {
-        start: bounds.start,
-        end: bounds.end
-      },
-      offsets: {
-        start: offsets && durationFormatter.format(Math.abs(offsets.start)),
-        end: offsets && durationFormatter.format(Math.abs(offsets.end))
-      },
-      formattedBounds: {
-        start: timeFormatter.format(bounds.start),
-        end: timeFormatter.format(bounds.end)
-      },
-      currentValue,
-      formattedCurrentValue: timeFormatter.format(currentValue),
-      isUTCBased: timeSystem.isUTCBased
+      currentValue: this.clock.currentValue()
     };
   },
-  watch: {
-    objectPath: {
-      handler(newPath, oldPath) {
-        if (newPath === oldPath) {
-          return;
-        }
-
-        this.setTimeContext();
-      },
-      deep: true
+  computed: {
+    formattedOffsets() {
+      return {
+        start: this.timeSystemDurationFormatter.format(Math.abs(this.offsets.start)),
+        end: this.timeSystemDurationFormatter.format(Math.abs(this.offsets.end))
+      };
     },
-    inputBounds: {
-      handler(newBounds) {
-        this.handleNewBounds(newBounds);
-      },
-      deep: true
+    formattedCurrentValue() {
+      return this.timeSystemFormatter.format(this.currentValue);
     }
   },
-  mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300, {
-      leading: true,
-      trailing: false
-    });
-    this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
-    this.setTimeContext();
-  },
-  beforeUnmount() {
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
-    this.stopFollowingTime();
+  watch: {
+    bounds() {
+      this.updateCurrentValue();
+    }
   },
   methods: {
-    followTime() {
-      const bounds = this.timeContext
-        ? this.timeContext.getBounds()
-        : this.openmct.time.getBounds();
-      const offsets = this.timeContext
-        ? this.timeContext.getClockOffsets()
-        : this.openmct.time.getClockOffsets();
-
-      this.handleNewBounds(bounds);
-      this.setViewFromOffsets(offsets);
-
-      if (this.timeContext) {
-        this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
-        this.timeContext.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
-      } else {
-        this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
-        this.openmct.time.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
-      }
-    },
-    stopFollowingTime() {
-      if (this.timeContext) {
-        this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
-        this.timeContext.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
-      } else {
-        this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
-        this.openmct.time.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
-      }
-    },
-    setTimeContext() {
-      this.stopFollowingTime();
-      this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-      this.followTime();
-    },
-    handleNewBounds(bounds, isTick) {
-      if (this.timeContext.isRealTime() || !isTick) {
-        this.setBounds(bounds);
-        this.setViewFromBounds(bounds);
-        this.updateCurrentValue();
-      }
-    },
-    setViewFromOffsets(offsets) {
-      if (offsets) {
-        this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
-        this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
-      }
-    },
-    setBounds(bounds) {
-      this.bounds = bounds;
-    },
-    setViewFromBounds(bounds) {
-      this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-      this.formattedBounds.end = this.timeFormatter.format(bounds.end);
-    },
     updateCurrentValue() {
-      const currentValue = this.timeContext.getClock().currentValue();
-
-      if (currentValue !== undefined) {
-        this.setCurrentValue(currentValue);
-      }
-    },
-    setCurrentValue(value) {
-      this.currentValue = value;
-      this.formattedCurrentValue = this.timeFormatter.format(value);
-    },
-    setTimeSystem(timeSystem) {
-      this.timeSystem = timeSystem;
-      this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
-      this.durationFormatter = this.getFormatter(
-        timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
-      );
-      this.isUTCBased = timeSystem.isUTCBased;
-    },
-    getFormatter(key) {
-      return this.openmct.telemetry.getValueFormatter({
-        format: key
-      }).formatter;
-    },
-    timePopUpdate({ start, end }) {
-      this.offsets.start = [start.hours, start.minutes, start.seconds].join(':');
-      this.offsets.end = [end.hours, end.minutes, end.seconds].join(':');
-      this.setOffsetsFromView();
-    },
-    setOffsetsFromView() {
-      let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
-      let endOffset = this.durationFormatter.parse(this.offsets.end);
-
-      this.$emit('offsets-updated', {
-        start: startOffset,
-        end: endOffset
-      });
+      this.currentValue = this.clock.currentValue();
     },
     dismiss() {
       this.$emit('dismiss-inputs-realtime');
-    },
-    copy(object) {
-      return JSON.parse(JSON.stringify(object));
     }
   }
 };

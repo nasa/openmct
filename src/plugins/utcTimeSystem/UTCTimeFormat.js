@@ -32,12 +32,13 @@ import moment from 'moment';
 export default class UTCTimeFormat {
   constructor() {
     this.key = 'utc';
-    this.DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSS';
+    this.DATE_DELIMITER = ' ';
+    this.DATE_FORMAT = `YYYY-MM-DD${this.DATE_DELIMITER}HH:mm:ss.SSS`;
     this.DATE_FORMATS = {
       PRECISION_DEFAULT: this.DATE_FORMAT,
       PRECISION_DEFAULT_WITH_ZULU: this.DATE_FORMAT + 'Z',
-      PRECISION_SECONDS: 'YYYY-MM-DD HH:mm:ss',
-      PRECISION_MINUTES: 'YYYY-MM-DD HH:mm',
+      PRECISION_SECONDS: `YYYY-MM-DD${this.DATE_DELIMITER}HH:mm:ss`,
+      PRECISION_MINUTES: `YYYY-MM-DD${this.DATE_DELIMITER}HH:mm`,
       PRECISION_DAYS: 'YYYY-MM-DD',
       PRECISION_SECONDS_TIME_ONLY: 'HH:mm:ss',
       PRECISION_MINUTES_TIME_ONLY: 'HH:mm'
@@ -84,5 +85,9 @@ export default class UTCTimeFormat {
 
   validate(text) {
     return moment.utc(text, Object.values(this.DATE_FORMATS), true).isValid();
+  }
+
+  getDelimiter() {
+    return this.DATE_DELIMITER;
   }
 }

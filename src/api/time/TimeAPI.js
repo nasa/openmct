@@ -134,30 +134,30 @@ class TimeAPI extends GlobalTimeContext {
 
   /**
    * Get or set an independent time context which follows the TimeAPI timeSystem,
-   * but with different offsets for a given domain object
-   * @param {string} key The identifier key of the domain object these offsets are set for
-   * @param {ClockOffsets | TimeConductorBounds} value This maintains a sliding time window of a fixed width that automatically updates
-   * @param {key | string} clockKey the real time clock key currently in use
+   * but with different bounds for a given domain object
+   * @param {string} keyString The keyString identifier of the domain object these offsets are set for
+   * @param {TimeConductorBounds | ClockOffsets} boundsOrOffsets either bounds if in fixed mode, or offsets if in realtime mode
+   * @param {string} clockKey the key for the real time clock to use
    */
-  addIndependentContext(key, value, clockKey) {
-    let timeContext = this.getIndependentContext(key);
+  addIndependentContext(keyString, boundsOrOffsets, clockKey) {
+    let timeContext = this.getIndependentContext(keyString);
 
     //stop following upstream time context since the view has it's own
     timeContext.resetContext();
 
     if (clockKey) {
       timeContext.setClock(clockKey);
-      timeContext.setMode(REALTIME_MODE_KEY, value);
+      timeContext.setMode(REALTIME_MODE_KEY, boundsOrOffsets);
     } else {
-      timeContext.setMode(FIXED_MODE_KEY, value);
+      timeContext.setMode(FIXED_MODE_KEY, boundsOrOffsets);
     }
 
     // Notify any nested views to update, pass in the viewKey so that particular view can skip getting an upstream context
-    this.emit('refreshContext', key);
+    this.emit('refreshContext', keyString);
 
     return () => {
       //follow any upstream time context
-      this.emit('removeOwnContext', key);
+      this.emit('removeOwnContext', keyString);
     };
   }
 
