@@ -185,11 +185,10 @@ onBeforeMount(async () => {
   compsManager.on('parameterAdded', reloadParameters);
   compsManager.on('parameterRemoved', reloadParameters);
   compsManager.on('outputFormatChanged', updateOutputFormat);
-  await compsManager.load();
+  await outputTelemetryCollection.load(telemetryOptions); // will implicitly load compsManager
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
   outputFormat.value = compsManager.getOutputFormat();
-  outputTelemetryCollection.load();
   applyTestData();
 });
 

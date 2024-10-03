@@ -63,7 +63,9 @@ export default class CompsTelemetryProvider {
       );
       specificCompsManager.load(options).then(() => {
         const callbackID = this.#getCallbackID();
-        const telemetryForComps = specificCompsManager.requestUnderlyingTelemetry();
+        const telemetryForComps = JSON.parse(
+          JSON.stringify(specificCompsManager.requestUnderlyingTelemetry())
+        );
         const expression = specificCompsManager.getExpression();
         const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
         if (!expression || !parameters) {
@@ -78,6 +80,11 @@ export default class CompsTelemetryProvider {
           parameters,
           callbackID
         };
+        console.debug(
+          `📝 Requesting calculation for ${domainObject.name} with callback ID ${callbackID}:`,
+          options,
+          payload
+        );
         this.#sharedWorker.port.postMessage(payload);
       });
     });
@@ -117,12 +124,22 @@ export default class CompsTelemetryProvider {
       callbackID
     );
     specificCompsManager.on('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
-    specificCompsManager.load();
+    const telemetryOptions = {
+      strategy: 'latest',
+      size: 1
+    };
+    specificCompsManager.load(telemetryOptions);
+    console.debug(
+      `📝 Starting subscription for ${domainObject.name} with callback ID ${callbackID}`
+    );
     return () => {
-      specificCompsManager.off('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
       delete this.#subscriptionCallbacks[callbackID];
-      // if this is the last subscription, tell the comp manager to stop listening
+      console.debug(
+        `🛑 Stopping subscription for ${domainObject.name} with callback ID ${callbackID}. We now have ${Object.keys(this.#subscriptionCallbacks).length} subscribers`,
+        this.#subscriptionCallbacks
+      );
       specificCompsManager.stopListeningToUnderlyingTelemetry();
+      specificCompsManager.off('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
     };
   }
 
@@ -157,6 +174,7 @@ export default class CompsTelemetryProvider {
         console.error('📝 Error calculating request:', event.data);
         this.#requestPromises[callbackID].resolve([]);
       } else {
+        console.debug(`🧮 Calculation request result for ${callbackID}:`, result);
         this.#requestPromises[callbackID].resolve(result);
       }
       delete this.#requestPromises[callbackID];

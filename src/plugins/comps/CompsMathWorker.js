@@ -31,7 +31,7 @@ onconnect = function (e) {
 
 function getFullDataFrame(telemetryForComps, parameters) {
   const dataFrame = {};
-  Object.keys(telemetryForComps).forEach((key) => {
+  Object.keys(telemetryForComps)?.forEach((key) => {
     const parameter = parameters.find((p) => p.keyString === key);
     const dataSet = telemetryForComps[key];
     const telemetryMap = new Map(dataSet.map((item) => [item[parameter.timeKey], item]));
@@ -61,7 +61,7 @@ function calculate(dataFrame, parameters, expression) {
   const otherParameters = parameters.slice(1);
   // iterate over the reference telemetry data
   const referenceTelemetry = dataFrame[referenceParameter.keyString];
-  referenceTelemetry.forEach((referenceTelemetryItem) => {
+  referenceTelemetry?.forEach((referenceTelemetryItem) => {
     const scope = {
       [referenceParameter.name]: referenceTelemetryItem[referenceParameter.valueToUse]
     };
