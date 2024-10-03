@@ -350,6 +350,7 @@ export default {
   },
   mounted() {
     this.setOutputSelection();
+    this.initializeMetadata();
   },
   methods: {
     setOutputSelection() {
