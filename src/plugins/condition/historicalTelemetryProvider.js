@@ -41,7 +41,7 @@ export default class HistoricalTelemetryProvider {
       const outputTelemetryID = this.openmct.objects.makeKeyString(outputTelemetry);
       const outputTelemetryData = telemetryData.get(outputTelemetryID);
       output.telemetry = outputTelemetryData;
-      output.value = outputTelemetryData[outputMetadata];
+      output.value = outputTelemetryData?.[outputMetadata] || undefined;
       output.condition = condition;
     } else if (conditionConfiguration?.output) {
       output.telemetry = null;
