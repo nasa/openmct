@@ -328,14 +328,16 @@ export default class ConditionManager extends EventEmitter {
     if (!this.conditionSetDomainObject.configuration.shouldFetchHistorical) {
       return [];
     }
-    const historicalTelemetry = new HistoricalTelemetryProvider(
+    let historicalTelemetry = new HistoricalTelemetryProvider(
       this.openmct,
       this.telemetryObjects,
       this.conditions,
       this.conditionSetDomainObject,
       options
     );
-    return historicalTelemetry.getHistoricalData();
+    const historicalData = historicalTelemetry.getHistoricalData();
+    historicalTelemetry = null;
+    return historicalData;
   }
 
   getCurrentConditionLAD(conditionResults) {
@@ -428,18 +430,6 @@ export default class ConditionManager extends EventEmitter {
       if (condition.isTelemetryUsed(id)) {
         return true;
       }
-    }
-
-    const conditionTelemetries = [];
-    const conditions = this.conditionSetDomainObject.configuration.conditionCollection;
-    conditions.forEach((condition) => {
-      if (condition?.configuration?.outputTelemetry) {
-        conditionTelemetries.push(condition?.configuration?.outputTelemetry);
-      }
-    });
-
-    if (conditionTelemetries.includes(id)) {
-      return true;
     }
 
     return false;
