@@ -243,7 +243,7 @@ async function createStableStateTelemetry(page, parent = 'mine') {
     name: 'Stable State Generator'
   });
   // edit the state generator to have a 1 second update rate
-  await page.getByTitle('More actions').click();
+  await page.getByLabel('More actions').click();
   await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
   await page.getByLabel('State Duration (seconds)', { exact: true }).fill('2');
   await page.getByLabel('Save').click();
