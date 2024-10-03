@@ -62,6 +62,9 @@ export default class TelemetryCollection extends EventEmitter {
     this.futureBuffer = [];
     this.parseTime = undefined;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+    if (!Object.hasOwn(options, 'timeContext')) {
+      options.timeContext = this.openmct.time;
+    }
     this.options = options;
     this.unsubscribe = undefined;
     this.pageState = undefined;
