@@ -7,14 +7,11 @@ export default class CompsManager extends EventEmitter {
   #composition;
   #telemetryObjects = {};
   #telemetryCollections = {};
-  #dataFrame = {};
   #telemetryLoadedPromises = [];
   #telemetryOptions = {};
   #loaded = false;
   #compositionLoaded = false;
   #telemetryProcessors = {};
-  // make id random 4 digit number
-  #id = Math.floor(Math.random() * 9000) + 1000;
 
   constructor(openmct, domainObject) {
     super();
@@ -111,8 +108,11 @@ export default class CompsManager extends EventEmitter {
   }
 
   async load(telemetryOptions) {
-    // if our options change, we need to reload the composition
     if (!_.isEqual(telemetryOptions, this.#telemetryOptions) && this.#loaded) {
+      console.debug(
+        `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change`,
+        telemetryOptions
+      );
       this.#destroy();
     }
     this.#telemetryOptions = telemetryOptions;
@@ -121,13 +121,13 @@ export default class CompsManager extends EventEmitter {
       this.#compositionLoaded = true;
     }
     if (!this.#loaded) {
-      await this.startListeningToUnderlyingTelemetry();
+      await this.#startListeningToUnderlyingTelemetry();
       this.#telemetryLoadedPromises = [];
       this.#loaded = true;
     }
   }
 
-  async startListeningToUnderlyingTelemetry() {
+  async #startListeningToUnderlyingTelemetry() {
     Object.keys(this.#telemetryCollections).forEach((keyString) => {
       if (!this.#telemetryCollections[keyString].loaded) {
         this.#telemetryCollections[keyString].on('add', this.#getTelemetryProcessor(keyString));

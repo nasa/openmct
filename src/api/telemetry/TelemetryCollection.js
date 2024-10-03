@@ -73,6 +73,10 @@ export default class TelemetryCollection extends EventEmitter {
     this.isStrategyLatest = this.options.strategy === 'latest';
     this.dataOutsideTimeBounds = false;
     this.modeChanged = false;
+
+    console.debug(
+      `🫙 Created telemetry for ${this.domainObject.name} with bounds ${options.start} and ${options.end}`
+    );
   }
 
   /**
@@ -86,6 +90,16 @@ export default class TelemetryCollection extends EventEmitter {
 
     this._setTimeSystem(this.options.timeContext.getTimeSystem());
     this.lastBounds = this.options.timeContext.getBounds();
+    // prioritize passed options over time bounds
+    if (this.options.start) {
+      this.lastBounds.start = this.options.start;
+    }
+    if (this.options.end) {
+      this.lastBounds.end = this.options.end;
+    }
+    console.debug(
+      `🫙 Bounds for collection are start ${this.lastBounds.start} and end ${this.lastBounds.end}`
+    );
     this._watchBounds();
     this._watchTimeSystem();
     this._watchTimeModeChange();
@@ -215,20 +229,13 @@ export default class TelemetryCollection extends EventEmitter {
     let hasDataBeforeStartBound = false;
     let size = this.options.size;
     let enforceSize = size !== undefined && this.options.enforceSize;
-    // prioritize request bounds over time context bounds
-    let boundsToUse = this.lastBounds;
-    if (this.options.start) {
-      boundsToUse.start = this.options.start;
-    }
-    if (this.options.end) {
-      boundsToUse.end = this.options.end;
-    }
+    console.debug(`🫙 Bounds are telemetry are currently`, this.lastBounds);
 
     // loop through, sort and dedupe
     for (let datum of data) {
       parsedValue = this.parseTime(datum);
-      beforeStartOfBounds = parsedValue < boundsToUse.start;
-      afterEndOfBounds = parsedValue > boundsToUse.end;
+      beforeStartOfBounds = parsedValue < this.lastBounds.start;
+      afterEndOfBounds = parsedValue > this.lastBounds.end;
 
       if (
         !afterEndOfBounds &&
@@ -334,6 +341,10 @@ export default class TelemetryCollection extends EventEmitter {
       this._reset();
       return;
     }
+
+    console.debug(
+      `🫙 Bounds CHANGED for ${this.domainObject.name} are start ${bounds.start} and end ${bounds.end}`
+    );
 
     let startChanged = this.lastBounds.start !== bounds.start;
     let endChanged = this.lastBounds.end !== bounds.end;
