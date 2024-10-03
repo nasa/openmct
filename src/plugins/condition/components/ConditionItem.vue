@@ -113,7 +113,7 @@
               @change="persist"
             />
           </span>
-          <span v-if="selectedOutputSelection === TELEMETRY_VALUE" class="c-cdef__control">
+          <span v-if="selectedOutputSelection === telemetryValueString" class="c-cdef__control">
             <select
               v-model="condition.configuration.outputTelemetry"
               aria-label="Output Telemetry Selection"
@@ -289,6 +289,7 @@ export default {
       expanded: true,
       trigger: 'all',
       selectedOutputSelection: '',
+      telemetryValueString: TELEMETRY_VALUE,
       outputOptions: ['none', 'false', 'true', 'string', TELEMETRY_VALUE],
       criterionIndex: 0,
       draggingOver: false,
@@ -337,10 +338,11 @@ export default {
       },
       deep: true
     },
-    isEditing(newValue, oldValue) {
-      if (newValue === true) {
+    telemetry: {
+      handler() {
         this.initializeMetadata();
-      }
+      },
+      deep: true
     }
   },
   unmounted() {
@@ -348,7 +350,6 @@ export default {
   },
   mounted() {
     this.setOutputSelection();
-    this.initializeMetadata();
   },
   methods: {
     setOutputSelection() {
