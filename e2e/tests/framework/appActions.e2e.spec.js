@@ -26,8 +26,10 @@ import {
   createExampleTelemetryObject,
   createNotification,
   createPlanFromJSON,
+  createStableStateTelemetry,
   expandEntireTree,
   getCanvasPixels,
+  linkParameterToObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
   setEndOffset,
@@ -338,5 +340,24 @@ test.describe('AppActions @framework', () => {
     await page.reload();
     // Expect this step to fail
     await waitForPlotsToRender(page, { timeout: 1000 });
+  });
+  test('createStableStateTelemetry', async ({ page }) => {
+    const stableStateTelemetry = await createStableStateTelemetry(page);
+    expect(stableStateTelemetry.name).toBe('Stable State Generator');
+    expect(stableStateTelemetry.url).toBe(`./#/browse/mine/${stableStateTelemetry.uuid}`);
+    expect(stableStateTelemetry.uuid).toBeDefined();
+  });
+  test('linkParameterToObject', async ({ page }) => {
+    const displayLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display Layout'
+    });
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+
+    await linkParameterToObject(page, exampleTelemetry.name, displayLayout.name);
+    await page.goto(displayLayout.url);
+    await expect(page.getByRole('main').getByText('Test Display Layout')).toBeVisible();
+    await expandEntireTree(page);
+    await expect(page.getByLabel('Navigate to VIPER Rover').first()).toBeVisible();
   });
 });
