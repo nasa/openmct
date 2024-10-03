@@ -342,14 +342,14 @@ export default class TelemetryCollection extends EventEmitter {
       return;
     }
 
-    console.debug(
-      `🫙 Bounds CHANGED for ${this.domainObject.name} are start ${bounds.start} and end ${bounds.end}`
-    );
-
     let startChanged = this.lastBounds.start !== bounds.start;
     let endChanged = this.lastBounds.end !== bounds.end;
 
     this.lastBounds = bounds;
+
+    // delete start/end if they are defined in options as we've got new bounds
+    delete this.options.start;
+    delete this.options.end;
 
     if (isTick) {
       if (this.timeKey === undefined) {
