@@ -184,7 +184,7 @@ export default class TelemetryCollection extends EventEmitter {
       return;
     }
 
-    this._processNewTelemetry(historicalData);
+    this._processNewTelemetry(historicalData, false);
   }
 
   /**
@@ -200,7 +200,7 @@ export default class TelemetryCollection extends EventEmitter {
     options.strategy = this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH;
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,
-      (datum) => this._processNewTelemetry(datum),
+      (datum) => this._processNewTelemetry(datum, true),
       options
     );
   }
@@ -211,9 +211,10 @@ export default class TelemetryCollection extends EventEmitter {
    *
    * @param  {(Object|Object[])} telemetryData - telemetry data object or
    * array of telemetry data objects
+   * @param  {boolean} isSubscriptionData - `true` if the telemetry data is new subscription data,
    * @private
    */
-  _processNewTelemetry(telemetryData) {
+  _processNewTelemetry(telemetryData, isSubscriptionData = false) {
     if (telemetryData === undefined) {
       return;
     }
@@ -228,16 +229,29 @@ export default class TelemetryCollection extends EventEmitter {
     let hasDataBeforeStartBound = false;
     let size = this.options.size;
     let enforceSize = size !== undefined && this.options.enforceSize;
+    const boundsToUse = this.lastBounds;
+    if (!isSubscriptionData && this.options.start) {
+      boundsToUse.start = this.options.start;
+    }
+    if (!isSubscriptionData && this.options.end) {
+      boundsToUse.end = this.options.end;
+    }
 
     // loop through, sort and dedupe
     for (let datum of data) {
       parsedValue = this.parseTime(datum);
-      beforeStartOfBounds = parsedValue < this.lastBounds.start;
-      afterEndOfBounds = parsedValue > this.lastBounds.end;
+      beforeStartOfBounds = parsedValue < boundsToUse.start;
+      afterEndOfBounds = parsedValue > boundsToUse.end;
 
       if (beforeStartOfBounds) {
         console.debug(
-          `🫙 Datum is before start of bounds: ${new Date(parsedValue).toISOString()} < ${new Date(this.lastBounds.start).toISOString()}`,
+          `🫙 Datum is BEFORE start of bounds: ${new Date(parsedValue).toISOString()} < ${new Date(this.lastBounds.start).toISOString()}`,
+          this.options
+        );
+      }
+      if (afterEndOfBounds) {
+        console.debug(
+          `🫙 Datum is AFTER start of bounds: ${new Date(parsedValue).toISOString()} < ${new Date(this.lastBounds.start).toISOString()}`,
           this.options
         );
       }
@@ -352,14 +366,6 @@ export default class TelemetryCollection extends EventEmitter {
 
     this.lastBounds = bounds;
 
-    // delete start/end if they are defined in options as we've got new bounds
-    if (!isTick && startChanged) {
-      delete this.options.start;
-    }
-    if (!isTick && endChanged) {
-      delete this.options.end;
-    }
-
     if (isTick) {
       if (this.timeKey === undefined) {
         return;
@@ -427,7 +433,10 @@ export default class TelemetryCollection extends EventEmitter {
         this.emit('add', added, [this.boundedTelemetry.length]);
       }
     } else {
-      // user bounds change, reset
+      // user bounds change, reset and remove initial requested bounds (we're using new bounds)
+      delete this.options?.start;
+      delete this.options?.end;
+      this.lastBounds = bounds;
       this._reset();
     }
   }
