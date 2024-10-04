@@ -73,10 +73,6 @@ export default class TelemetryCollection extends EventEmitter {
     this.isStrategyLatest = this.options.strategy === 'latest';
     this.dataOutsideTimeBounds = false;
     this.modeChanged = false;
-
-    console.debug(
-      `🫙 Created telemetry for ${this.domainObject.name} with bounds ${new Date(options.start).toISOString()} and ${new Date(options.end).toISOString()}`
-    );
   }
 
   /**
