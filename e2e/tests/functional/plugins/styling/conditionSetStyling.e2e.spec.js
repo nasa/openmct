@@ -23,7 +23,11 @@
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets and styling
 */
 
-import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  linkParameterToObject,
+  setRealTimeMode
+} from '../../../../appActions.js';
 import { MISSION_TIME } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -92,7 +96,7 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
     await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    await searchAndLinkParameterToObject(page, stateGenerator.name, displayLayout.name);
+    await linkParameterToObject(page, stateGenerator.name, displayLayout.name);
 
     //Add a box to the display layout
     await page.goto(displayLayout.url, { waitUntil: 'domcontentloaded' });
@@ -156,22 +160,4 @@ async function waitForStyleChange(element, expectedStyle, timeout = 0) {
     // eslint-disable-next-line playwright/prefer-web-first-assertions
     expect(style).toBe(expectedStyle);
   }).toPass({ timeout: 1000 }); // timeout allows for the style to be applied
-}
-
-/**
- * Search for telemetry and link it to an object. objectName should come from the domainObject.name function.
- * @param {import('@playwright/test').Page} page
- * @param {string} parameterName
- * @param {string} objectName
- */
-async function searchAndLinkParameterToObject(page, parameterName, objectName) {
-  await page.getByRole('searchbox', { name: 'Search Input' }).click();
-  await page.getByRole('searchbox', { name: 'Search Input' }).fill(parameterName);
-  await page.getByLabel('Object Results').getByText(parameterName).click();
-  await page.getByLabel('More actions').click();
-  await page.getByLabel('Create Link').click();
-  await page.getByLabel('Modal Overlay').getByLabel('Search Input').click();
-  await page.getByLabel('Modal Overlay').getByLabel('Search Input').fill(objectName);
-  await page.getByLabel('Modal Overlay').getByLabel(`Navigate to ${objectName}`).click();
-  await page.getByLabel('Save').click();
 }
