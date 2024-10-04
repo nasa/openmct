@@ -64,7 +64,7 @@ export default class ConditionSetMetadataProvider {
     return {
       values: this.getDomains().concat([
         {
-          key: 'output',
+          key: 'value',
           source: 'output',
           name: 'Value',
           format: 'enum',
