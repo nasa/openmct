@@ -110,7 +110,7 @@ export default class CompsManager extends EventEmitter {
   async load(telemetryOptions) {
     if (!_.isEqual(telemetryOptions, this.#telemetryOptions) && this.#loaded) {
       console.debug(
-        `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change`,
+        `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change. New bounds are: ${new Date(telemetryOptions.start).toISOString()} to ${new Date(telemetryOptions.end).toISOString()}`,
         telemetryOptions
       );
       this.#destroy();

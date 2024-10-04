@@ -75,7 +75,7 @@ export default class TelemetryCollection extends EventEmitter {
     this.modeChanged = false;
 
     console.debug(
-      `🫙 Created telemetry for ${this.domainObject.name} with bounds ${options.start} and ${options.end}`
+      `🫙 Created telemetry for ${this.domainObject.name} with bounds ${new Date(options.start).toISOString()} and ${new Date(options.end).toISOString()}`
     );
   }
 
@@ -98,7 +98,7 @@ export default class TelemetryCollection extends EventEmitter {
       this.lastBounds.end = this.options.end;
     }
     console.debug(
-      `🫙 Bounds for collection are start ${this.lastBounds.start} and end ${this.lastBounds.end}`
+      `🫙 Bounds for collection are start ${new Date(this.lastBounds.start).toISOString()} and end ${new Date(this.lastBounds.end).toISOString()}`
     );
     this._watchBounds();
     this._watchTimeSystem();
@@ -144,6 +144,9 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   async _requestHistoricalTelemetry() {
+    console.debug(
+      `🫙 Requesting historical telemetry with start ${new Date(this.lastBounds.start).toISOString()} and end ${new Date(this.lastBounds.end).toISOString()}}`
+    );
     let options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
     const historicalProvider = this.openmct.telemetry.findRequestProvider(
       this.domainObject,
@@ -229,13 +232,19 @@ export default class TelemetryCollection extends EventEmitter {
     let hasDataBeforeStartBound = false;
     let size = this.options.size;
     let enforceSize = size !== undefined && this.options.enforceSize;
-    console.debug(`🫙 Bounds are telemetry are currently`, this.lastBounds);
 
     // loop through, sort and dedupe
     for (let datum of data) {
       parsedValue = this.parseTime(datum);
       beforeStartOfBounds = parsedValue < this.lastBounds.start;
       afterEndOfBounds = parsedValue > this.lastBounds.end;
+
+      if (beforeStartOfBounds) {
+        console.debug(
+          `🫙 Datum is before start of bounds: ${new Date(parsedValue).toISOString()} < ${new Date(this.lastBounds.start).toISOString()}`,
+          this.options
+        );
+      }
 
       if (
         !afterEndOfBounds &&
@@ -348,8 +357,12 @@ export default class TelemetryCollection extends EventEmitter {
     this.lastBounds = bounds;
 
     // delete start/end if they are defined in options as we've got new bounds
-    delete this.options.start;
-    delete this.options.end;
+    if (!isTick && startChanged) {
+      delete this.options.start;
+    }
+    if (!isTick && endChanged) {
+      delete this.options.end;
+    }
 
     if (isTick) {
       if (this.timeKey === undefined) {
