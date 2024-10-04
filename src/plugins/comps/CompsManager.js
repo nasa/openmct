@@ -108,9 +108,9 @@ export default class CompsManager extends EventEmitter {
   }
 
   async load(telemetryOptions) {
-    if (!_.isEqual(telemetryOptions, this.#telemetryOptions) && this.#loaded) {
+    if (!_.isEqual(telemetryOptions, this.#telemetryOptions)) {
       console.debug(
-        `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change`,
+        `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change.`,
         telemetryOptions
       );
       this.#destroy();

@@ -250,7 +250,8 @@ export default {
                   ...persistedSeriesConfig.series
                 }
               ],
-              yAxis: persistedSeriesConfig.yAxis
+              yAxis: persistedSeriesConfig.yAxis,
+              ...this.childObject.configuration
             }
           },
           openmct: this.openmct,
