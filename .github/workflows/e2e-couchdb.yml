@@ -37,7 +37,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - run: npx playwright@1.45.2 install
+      - run: npx playwright@1.47.2 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
@@ -51,11 +51,18 @@ jobs:
         env:
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
         run: npm run test:e2e:couchdb
+      
+      - name: Generate Code Coverage Report
+        run: npm run cov:e2e:report
 
       - name: Publish Results to Codecov.io
-        env:
-          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
-        run: npm run cov:e2e:full:publish
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/e2e/lcov.info
+          flags: e2e-full
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Archive test results
         if: success() || failure()
