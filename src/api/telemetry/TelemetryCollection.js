@@ -62,10 +62,7 @@ export default class TelemetryCollection extends EventEmitter {
     this.futureBuffer = [];
     this.parseTime = undefined;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-    if (!Object.hasOwn(options, 'timeContext')) {
-      options.timeContext = this.openmct.time;
-    }
-    this.options = options;
+    this.options = openmct.telemetry.standardizeRequestOptions(options);
     this.unsubscribe = undefined;
     this.pageState = undefined;
     this.lastBounds = undefined;
@@ -127,7 +124,7 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   async _requestHistoricalTelemetry() {
-    let options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
+    const options = { ...this.options };
     const historicalProvider = this.openmct.telemetry.findRequestProvider(
       this.domainObject,
       options
