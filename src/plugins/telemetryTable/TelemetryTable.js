@@ -445,7 +445,13 @@ export default class TelemetryTable extends EventEmitter {
 
   sortBy(sortOptions) {
     this.sortOptions = sortOptions;
-    this.tableRows.sortBy(this.sortOptions);
+
+    if (this.telemetryMode === MODE.PERFORMANCE) {
+      this.tableRows.setSortOptions(this.sortOptions);
+      this.clearAndResubscribe();
+    } else {
+      this.tableRows.sortBy(this.sortOptions);
+    }
 
     if (this.openmct.editor.isEditing()) {
       let configuration = this.configuration.getConfiguration();

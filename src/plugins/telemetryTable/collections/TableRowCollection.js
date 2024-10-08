@@ -273,7 +273,7 @@ export default class TableRowCollection extends EventEmitter {
    */
   sortBy(sortOptions) {
     if (arguments.length > 0) {
-      this.sortOptions = sortOptions;
+      this.setSortOptions(sortOptions);
       this.rows = _.orderBy(
         this.rows,
         (row) => row.getParsedValue(sortOptions.key),
@@ -284,6 +284,10 @@ export default class TableRowCollection extends EventEmitter {
 
     // Return duplicate to avoid direct modification of underlying object
     return Object.assign({}, this.sortOptions);
+  }
+
+  setSortOptions(sortOptions) {
+    this.sortOptions = sortOptions;
   }
 
   setColumnFilter(columnKey, filter) {
