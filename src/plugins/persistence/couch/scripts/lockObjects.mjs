@@ -111,13 +111,10 @@ function processObjectTreeFrom(parentObjectIdentifier) {
 
 async function fetchDocument(identifierOrKeystring) {
   let keystring;
-  let identifier;
   if (typeof identifierOrKeystring === 'object') {
-    identifier = identifierOrKeystring;
-    keystring = identifierToKeystring(identifier);
+    keystring = identifierToKeystring(identifierOrKeystring);
   } else {
     keystring = identifierOrKeystring;
-    identifier = keystringToIdentifier(keystring);
   }
 
   try {
