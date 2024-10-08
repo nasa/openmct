@@ -231,30 +231,20 @@ export default class TelemetryAPI {
    * @returns {TelemetryRequestOptions} the options, with defaults filled in
    */
   standardizeRequestOptions(options = {}) {
-    if (!Object.hasOwn(options, 'start')) {
-      const bounds = options.timeContext?.getBounds();
-      if (bounds?.start) {
-        options.start = options.timeContext.getBounds().start;
-      } else {
-        options.start = this.openmct.time.getBounds().start;
-      }
-    }
-
-    if (!Object.hasOwn(options, 'end')) {
-      const bounds = options.timeContext?.getBounds();
-      if (bounds?.end) {
-        options.end = options.timeContext.getBounds().end;
-      } else {
-        options.end = this.openmct.time.getBounds().end;
-      }
+    if (!Object.hasOwn(options, 'timeContext')) {
+      options.timeContext = this.openmct.time;
     }
 
     if (!Object.hasOwn(options, 'domain')) {
-      options.domain = this.openmct.time.getTimeSystem().key;
+      options.domain = options.timeContext.getTimeSystem().key;
     }
 
-    if (!Object.hasOwn(options, 'timeContext')) {
-      options.timeContext = this.openmct.time;
+    if (!Object.hasOwn(options, 'start')) {
+      options.start = options.timeContext.getBounds().start;
+    }
+
+    if (!Object.hasOwn(options, 'end')) {
+      options.end = options.timeContext.getBounds().end;
     }
 
     return options;
