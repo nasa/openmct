@@ -1,6 +1,9 @@
-import debounce from 'p-debounce';
-import {Sema} from 'async-sema';
+import http from 'http';
+import nano from 'nano';
 import { parseArgs } from 'util';
+
+const COUCH_URL = process.env.OPENMCT_COUCH_URL || 'http://127.0.0.1:5984';
+const COUCH_DB_NAME = process.env.OPENMCT_DATABASE_NAME || 'openmct';
 
 const {
   values: { couchUrl, database, lock, unlock, startObjectKeystring, user, pass }
@@ -8,12 +11,12 @@ const {
   options: {
     couchUrl: {
       type: 'string',
-      default: 'http://127.0.0.1:5984'
+      default: COUCH_URL
     },
     database: {
       type: 'string',
       short: 'd',
-      default: 'openmct'
+      default: COUCH_DB_NAME
     },
     lock: {
       type: 'boolean',
@@ -37,54 +40,70 @@ const {
   }
 });
 
-const semaphore = new Sema(
-  100, // Allow 100 concurrent async calls
-  {
-    capacity: 100 // Prealloc space for 1000 tokens
-  }
-);
-
 const BATCH_SIZE = 100;
+const SOCKET_POOL_SIZE = 100;
+
+const locked = lock === true;
+console.info(`Connecting to ${couchUrl}/${database}`);
+console.info(`${locked ? 'Locking' : 'Unlocking'} all children of ${startObjectKeystring}`);
+
+const poolingAgent = new http.Agent({
+  keepAlive: true,
+  maxSockets: SOCKET_POOL_SIZE
+});
+
+const db = nano({
+  url: couchUrl,
+  requestDefaults: {
+    agent: poolingAgent
+  }
+}).use(database);
+db.auth(user, pass);
 
 if (!unlock && !lock) {
   throw new Error('Either -l or -u option is required');
 }
 
-const locked = lock === true;
-console.info(`Connecting to ${couchUrl}/${database}`);
-console.info(`${locked ? 'Locking' : 'Unlocking'} all children of ${startObjectKeystring}`);
 const startObjectIdentifier = keystringToIdentifier(startObjectKeystring);
 const documentBatch = [];
-const debouncedPersistBatch = debounce(persistBatch, 200);
 const alreadySeen = new Set();
+let updatedDocumentCount = 0;
 
 await processObjectTreeFrom(startObjectIdentifier);
+//Persist final batch
+await persistBatch();
+console.log(`Processed ${updatedDocumentCount} documents`);
 
 function processObjectTreeFrom(parentObjectIdentifier) {
   //1. Fetch document for identifier;
-  return fetchDocument(parentObjectIdentifier).then((document) => {
-    if (document !== undefined) {
-      if (!alreadySeen.has(document._id)) {
-        alreadySeen.add(document._id);
-        //2. Lock or unlock object
-        document.model.locked = locked;
-        document.model.disallowUnlock = locked;
-        //3. Push document to a batch
-        documentBatch.push(document);
-        //4. Persist batch if necessary, reporting failures
-        persistBatchIfNeeded();
-        //5. Repeat for each composee
-        const composition = document.model.composition || [];
-        composition.forEach((composee) => {
-          processObjectTreeFrom(composee);
-        });
+  return fetchDocument(parentObjectIdentifier)
+    .then(async (document) => {
+      if (document !== undefined) {
+        if (!alreadySeen.has(document._id)) {
+          alreadySeen.add(document._id);
+          //2. Lock or unlock object
+          document.model.locked = locked;
+          document.model.disallowUnlock = locked;
+          //3. Push document to a batch
+          documentBatch.push(document);
+          //4. Persist batch if necessary, reporting failures
+          await persistBatchIfNeeded();
+          //5. Repeat for each composee
+          const composition = document.model.composition || [];
+          return Promise.all(
+            composition.map((composee) => {
+              return processObjectTreeFrom(composee);
+            })
+          );
+        }
       }
-    }
-  });
+    })
+    .catch((error) => {
+      console.log(`Error ${error}`);
+    });
 }
 
 async function fetchDocument(identifierOrKeystring) {
-  await semaphore.acquire();
   let keystring;
   let identifier;
   if (typeof identifierOrKeystring === 'object') {
@@ -95,68 +114,50 @@ async function fetchDocument(identifierOrKeystring) {
     identifier = keystringToIdentifier(keystring);
   }
 
-  const url = `${couchUrl}/${database}/${keystring}`;
-  const response = await fetch(url);
+  try {
+    const document = await db.get(keystring);
 
-  await semaphore.release();
-
-  if (response.status === 200) {
-    return response.json();
-  } else {
+    return document;
+  } catch (error) {
     return undefined;
   }
 }
 
 function persistBatchIfNeeded() {
   if (documentBatch.length >= BATCH_SIZE) {
-    persistBatch();
+    return persistBatch();
   } else {
-    //Final batch will be < 100 in length, so make sure we always persist one final time
-    debouncedPersistBatch();
+    //Noop - batch is not big enough yet
+    return;
   }
 }
 
 async function persistBatch() {
-  const headers = new Headers();
+  try {
+    const localBatch = [].concat(documentBatch);
 
-  if (user !== undefined) {
-    headers.set('Authorization', 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64'));
-  }
+    //Immediately clear the shared batch array. This asynchronous process is non-blocking, and
+    //we don't want to try and persist the same batch multiple times while we are waiting for
+    //the subsequent bulk operation to complete.
+    updatedDocumentCount += documentBatch.length;
 
-  headers.set('Content-Type', 'application/json');
+    documentBatch.splice(0, documentBatch.length);
+    const response = await db.bulk({ docs: localBatch });
 
-  const body = {
-    docs: []
-  };
-
-  while (documentBatch.length > 0) {
-    const document = documentBatch.shift();
-    body.docs.push(document);
-  }
-
-  const url = `${couchUrl}/${database}/_bulk_docs`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body)
-  });
-
-  const json = await response.json();
-  const objectReplies = json;
-
-  if (response.status === 200 || response.status === 201) {
-    console.log(`Successfully ${locked ? 'locked' : 'unlocked'} ${body.docs.length} objects...`);
-  } else {
-    console.log(`Error updating objects`);
-  }
-
-  objectReplies.forEach((or) => {
-    if (or.ok !== true) {
-      console.log(`Failed: ${JSON.stringify(or)}`);
+    if (response instanceof Array) {
+      response.forEach((r) => {
+        console.info(JSON.stringify(r));
+      });
     } else {
-      console.log(`Success: ${JSON.stringify(or)}`);
+      console.info(JSON.stringify(response));
     }
-  });
+  } catch (error) {
+    if (error instanceof Array) {
+      error.forEach((e) => console.error(JSON.stringify(e)));
+    } else {
+      console.error(`${error.statusCode} - ${error.reason}`);
+    }
+  }
 }
 
 function keystringToIdentifier(keystring) {
