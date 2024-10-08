@@ -53,6 +53,11 @@ export default class TelemetryTable extends EventEmitter {
     this.outstandingRequests = 0;
     this.stalenessSubscription = {};
 
+    this.sortOptions = {
+      key: this.openmct.time.getTimeSystem().key,
+      direction: ORDER.DESCENDING
+    };
+
     this.addTelemetryObject = this.addTelemetryObject.bind(this);
     this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
     this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
@@ -131,17 +136,14 @@ export default class TelemetryTable extends EventEmitter {
     this.tableRows = new TableRowCollection();
 
     //Fetch any persisted default sort
-    let sortOptions = this.configuration.getConfiguration().sortOptions;
+    let configSortOptions = this.configuration.getConfiguration().sortOptions;
 
-    //If no persisted sort order, default to sorting by time system, descending.
-    sortOptions = sortOptions || {
-      key: this.openmct.time.getTimeSystem().key,
-      direction: ORDER.DESCENDING
-    };
+    //If no persisted sort order, use the in-memory sort options
+    this.sortOptions = configSortOptions || this.sortOptions;
 
     this.updateRowLimit();
 
-    this.tableRows.sortBy(sortOptions);
+    this.tableRows.sortBy(this.sortOptions);
     this.tableRows.on('resetRowsFromAllData', this.resetRowsFromAllData);
   }
 
@@ -442,11 +444,12 @@ export default class TelemetryTable extends EventEmitter {
   }
 
   sortBy(sortOptions) {
-    this.tableRows.sortBy(sortOptions);
+    this.sortOptions = sortOptions;
+    this.tableRows.sortBy(this.sortOptions);
 
     if (this.openmct.editor.isEditing()) {
       let configuration = this.configuration.getConfiguration();
-      configuration.sortOptions = sortOptions;
+      configuration.sortOptions = this.sortOptions;
       this.configuration.updateConfiguration(configuration);
     }
   }
