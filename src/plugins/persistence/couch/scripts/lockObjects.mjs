@@ -84,6 +84,12 @@ function processObjectTreeFrom(parentObjectIdentifier) {
           //2. Lock or unlock object
           document.model.locked = locked;
           document.model.disallowUnlock = locked;
+
+          if (locked) {
+            document.model.lockedBy = 'script';
+          } else {
+            delete document.model.lockedBy;
+          }
           //3. Push document to a batch
           documentBatch.push(document);
           //4. Persist batch if necessary, reporting failures

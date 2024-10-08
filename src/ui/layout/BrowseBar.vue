@@ -429,9 +429,26 @@ export default {
       this.actionCollection.off('update', this.updateActionItems);
       delete this.actionCollection;
     },
-    toggleLock(flag) {
+    async toggleLock(flag) {
       if (!this.domainObject.disallowUnlock) {
+        const wasTransactionActive = this.openmct.objects.isTransactionActive();
+        let transaction;
+
+        if (!wasTransactionActive) {
+          transaction = this.openmct.objects.startTransaction();
+        }
+
         this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+        const user = await this.openmct.user.getCurrentUser();
+
+        if (user !== undefined) {
+          this.openmct.objects.mutate(this.domainObject, 'lockedBy', user.id);
+        }
+
+        if (!wasTransactionActive) {
+          await transaction.commit();
+          this.openmct.objects.endTransaction();
+        }
       }
     },
     setStatus(status) {
