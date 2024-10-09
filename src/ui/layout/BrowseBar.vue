@@ -142,6 +142,7 @@
 </template>
 
 <script>
+import User from 'src/api/user/User.js';
 import { toRaw } from 'vue';
 
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
@@ -177,12 +178,13 @@ export default {
       isEditing: this.openmct.editor.isEditing(),
       notebookEnabled: this.openmct.types.get('notebook'),
       statusBarItems: [],
+      currentUsername: '',
       status: ''
     };
   },
   computed: {
     isNameEditable() {
-      return this.isPersistable && !this.domainObject.locked
+      return this.isPersistable && !this.domainObject.locked;
     },
     shouldShowLock() {
       return (
@@ -262,11 +264,23 @@ export default {
       return false;
     },
     lockedOrUnlockedTitle() {
+      let title;
       if (this.domainObject.locked) {
-        return 'Locked for editing - click to unlock.';
+        if (this.currentUsername !== undefined) {
+          title = `Locked for editing by ${this.currentUserName}.`;
+        } else {
+          title = 'Locked for editing.';
+        }
+        if (this.domainObject.disallowUnlock) {
+          title += 'Cannot be unlocked.';
+        } else {
+          title += 'Click to unlock.';
+        }
       } else {
-        return 'Unlocked for editing - click to lock.';
+        title = 'Unlocked for editing, click to lock.';
       }
+
+      return title;
     },
     domainObjectName() {
       return this.domainObject?.name ?? '';
@@ -294,10 +308,20 @@ export default {
     }
   },
   mounted() {
+    /**
+     * @type {import('openmct.js').OpenMCT}
+     */
+    const openmct = this.openmct;
     document.addEventListener('click', this.closeViewAndSaveMenu);
     this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
     window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
-
+    openmct.user.getCurrentUser().then(
+      /**
+       * @param {User} user
+       */ (user) => {
+        this.currentUsername = user.getName();
+      }
+    );
     this.openmct.editor.on('isEditing', (isEditing) => {
       this.isEditing = isEditing;
     });
