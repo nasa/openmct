@@ -276,8 +276,8 @@ function updateAccumulateValues(parameter) {
 }
 
 function updateTestValue(parameter) {
-  if (parameter.accumulateValues && !Array.isArray(parameter.testValue)) {
-    parameter.testValue = [parameter.testValue];
+  if (parameter.accumulateValues && parameter.testValue === '') {
+    parameter.testValue = [];
   }
   updateParameters();
 }
