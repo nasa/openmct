@@ -215,7 +215,62 @@ export default class CompsManager extends EventEmitter {
     );
   }
 
-  getTelemetryForComps(newTelemetry) {
+  #getImputedDataUsingLOCF(datum, telemetryCollection) {
+    const telemetryCollectionData = telemetryCollection.getAll();
+    let insertionPointForNewData = telemetryCollection._sortedIndex(datum);
+    if (insertionPointForNewData && insertionPointForNewData >= telemetryCollectionData.length) {
+      insertionPointForNewData = telemetryCollectionData.length - 1;
+    }
+    // get the closest datum to the new datum
+    const closestDatum = telemetryCollectionData[insertionPointForNewData];
+    // clone the closest datum and replace the time key with the new time
+    const imputedData = {
+      ...closestDatum,
+      [telemetryCollection.timeKey]: datum[telemetryCollection.timeKey]
+    };
+    return imputedData;
+  }
+
+  getDataFrameForRequest() {
+    // Step 1: Collect all unique timestamps from all telemetry collections
+    const allTimestampsSet = new Set();
+
+    Object.values(this.#telemetryCollections).forEach((collection) => {
+      collection.getAll().forEach((dataPoint) => {
+        allTimestampsSet.add(dataPoint.timestamp);
+      });
+    });
+
+    // Convert the set to a sorted array
+    const allTimestamps = Array.from(allTimestampsSet).sort((a, b) => a - b);
+
+    // Step 2: Initialize the result object
+    const telemetryForComps = {};
+
+    // Step 3: Iterate through each telemetry collection to align data
+    Object.keys(this.#telemetryCollections).forEach((keyString) => {
+      const telemetryCollection = this.#telemetryCollections[keyString];
+      const alignedValues = [];
+
+      // Iterate through each common timestamp
+      allTimestamps.forEach((timestamp) => {
+        const timeKey = telemetryCollection.timeKey;
+        const fakeData = { [timeKey]: timestamp };
+        const imputedDatum = this.#getImputedDataUsingLOCF(fakeData, telemetryCollection);
+        if (imputedDatum) {
+          alignedValues.push(imputedDatum);
+        } else {
+          console.debug(`🚨 Missing data for ${keyString} at ${timestamp}`);
+        }
+      });
+
+      telemetryForComps[keyString] = alignedValues;
+    });
+
+    return telemetryForComps;
+  }
+
+  getDataFrameForSubscription(newTelemetry) {
     const telemetryForComps = {};
     const newTelemetryKey = Object.keys(newTelemetry)[0];
     const newTelemetryParameter = this.#getParameterForKeyString(newTelemetryKey);
@@ -247,16 +302,9 @@ export default class CompsManager extends EventEmitter {
     newTelemetryData.forEach((newDatum) => {
       otherTelemetryKeysNotAccumulating.forEach((otherKeyString) => {
         const otherCollection = this.#telemetryCollections[otherKeyString];
-        // otherwise we need to find the closest datum to the new datum
-        let insertionPointForNewData = otherCollection._sortedIndex(newDatum);
-        const otherCollectionData = otherCollection.getAll();
-        if (insertionPointForNewData && insertionPointForNewData >= otherCollectionData.length) {
-          insertionPointForNewData = otherCollectionData.length - 1;
-        }
-        // get the closest datum to the new datum
-        const closestDatum = otherCollectionData[insertionPointForNewData];
-        if (closestDatum) {
-          telemetryForComps[otherKeyString].push(closestDatum);
+        const imputedDatum = this.#getImputedDataUsingLOCF(newDatum, otherCollection);
+        if (imputedDatum) {
+          telemetryForComps[otherKeyString].push(imputedDatum);
         }
       });
     });
@@ -272,7 +320,7 @@ export default class CompsManager extends EventEmitter {
     this.deleteParameter(keyString);
   };
 
-  requestUnderlyingTelemetry() {
+  #requestUnderlyingTelemetry() {
     const underlyingTelemetry = {};
     Object.keys(this.#telemetryCollections).forEach((collectionKey) => {
       const collection = this.#telemetryCollections[collectionKey];

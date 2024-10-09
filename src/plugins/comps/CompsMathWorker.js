@@ -119,6 +119,7 @@ function calculate(dataFrame, parameters, expression) {
       scope[parameter.name] = otherValue;
     });
     if (missingData) {
+      console.debug('🤦‍♂️ Missing data for some parameters, skipping calculation');
       return;
     }
     const value = evaluate(expression, scope);
