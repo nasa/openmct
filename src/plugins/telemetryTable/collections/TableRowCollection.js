@@ -150,13 +150,13 @@ export default class TableRowCollection extends EventEmitter {
   }
 
   insertOrUpdateRows(rowsToAdd, addToBeginning) {
-    rowsToAdd.forEach((row) => {
+    rowsToAdd.forEach((row, addRowsIndex) => {
       const index = this.getInPlaceUpdateIndex(row);
       if (index > -1) {
         this.updateRowInPlace(row, index);
       } else {
         if (addToBeginning) {
-          this.rows.unshift(row);
+          this.rows.splice(addRowsIndex, 0, row);
         } else {
           this.rows.push(row);
         }
