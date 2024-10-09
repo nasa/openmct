@@ -61,6 +61,7 @@ export default class CompsMetadataProvider {
           key: 'compsOutput',
           source: 'compsOutput',
           name: 'Output',
+          derived: true,
           formatString: specificCompsManager.getOutputFormat(),
           hints: {
             range: 1

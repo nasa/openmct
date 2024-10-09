@@ -59,7 +59,8 @@ export default class CompsManager extends EventEmitter {
       name: `${this.#getNextAlphabeticalParameterName()}`,
       valueToUse,
       testValue: 0,
-      timeMetaData
+      timeMetaData,
+      accumulateValues: false
     });
     this.emit('parameterAdded', this.#domainObject);
   }
@@ -173,27 +174,45 @@ export default class CompsManager extends EventEmitter {
     }
   }
 
-  getFullDataFrame(newTelemetry) {
-    const dataFrame = {};
-    // can assume on data item
-    const newTelemetryKey = Object.keys(newTelemetry)[0];
-    const newTelemetryData = newTelemetry[newTelemetryKey];
-    const otherTelemetryKeys = Object.keys(this.#telemetryCollections).filter(
-      (keyString) => keyString !== newTelemetryKey
+  #getParameterForKeyString(keyString) {
+    return this.#domainObject.configuration.comps.parameters.find(
+      (parameter) => parameter.keyString === keyString
     );
-    // initialize the data frame with the new telemetry data
-    dataFrame[newTelemetryKey] = newTelemetryData;
-    // initialize the other telemetry data
+  }
+
+  getTelemetryForComps(newTelemetry) {
+    const telemetryForComps = {};
+    const newTelemetryKey = Object.keys(newTelemetry)[0];
+    const newTelemetryParameter = this.#getParameterForKeyString(newTelemetryKey);
+    const newTelemetryData = newTelemetry[newTelemetryKey];
+    const otherTelemetryKeys = Object.keys(this.#telemetryCollections).slice(0);
+    if (newTelemetryParameter.accumulateValues) {
+      telemetryForComps[newTelemetryKey] = this.#telemetryCollections[newTelemetryKey].getAll();
+    } else {
+      telemetryForComps[newTelemetryKey] = newTelemetryData;
+    }
     otherTelemetryKeys.forEach((keyString) => {
-      dataFrame[keyString] = [];
+      telemetryForComps[keyString] = [];
     });
 
-    // march through the new telemetry data and add data to the frame from the other telemetry objects
-    // using LOCF
+    const otherTelemetryKeysNotAccumulating = otherTelemetryKeys.filter(
+      (keyString) => !this.#getParameterForKeyString(keyString).accumulateValues
+    );
+    const otherTelemetryKeysAccumulating = otherTelemetryKeys.filter(
+      (keyString) => this.#getParameterForKeyString(keyString).accumulateValues
+    );
 
+    // if we're accumulating, just add all the data
+    otherTelemetryKeysAccumulating.forEach((keyString) => {
+      telemetryForComps[keyString] = this.#telemetryCollections[keyString].getAll();
+    });
+
+    // for the others, march through the new telemetry data and add data to the frame from the other telemetry objects
+    // using LOCF
     newTelemetryData.forEach((newDatum) => {
-      otherTelemetryKeys.forEach((otherKeyString) => {
+      otherTelemetryKeysNotAccumulating.forEach((otherKeyString) => {
         const otherCollection = this.#telemetryCollections[otherKeyString];
+        // otherwise we need to find the closest datum to the new datum
         let insertionPointForNewData = otherCollection._sortedIndex(newDatum);
         const otherCollectionData = otherCollection.getAll();
         if (insertionPointForNewData && insertionPointForNewData >= otherCollectionData.length) {
@@ -202,11 +221,11 @@ export default class CompsManager extends EventEmitter {
         // get the closest datum to the new datum
         const closestDatum = otherCollectionData[insertionPointForNewData];
         if (closestDatum) {
-          dataFrame[otherKeyString].push(closestDatum);
+          telemetryForComps[otherKeyString].push(closestDatum);
         }
       });
     });
-    return dataFrame;
+    return telemetryForComps;
   }
 
   #removeTelemetryObject = (telemetryObjectIdentifier) => {

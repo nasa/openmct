@@ -93,9 +93,6 @@ export default class TelemetryCollection extends EventEmitter {
     if (this.options.end) {
       this.lastBounds.end = this.options.end;
     }
-    console.debug(
-      `🫙 Bounds for collection are start ${new Date(this.lastBounds.start).toISOString()} and end ${new Date(this.lastBounds.end).toISOString()}`
-    );
     this._watchBounds();
     this._watchTimeSystem();
     this._watchTimeModeChange();
@@ -140,9 +137,6 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   async _requestHistoricalTelemetry() {
-    console.debug(
-      `🫙 Requesting historical telemetry with start ${new Date(this.lastBounds.start).toISOString()} and end ${new Date(this.lastBounds.end).toISOString()}}`
-    );
     let options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
     const historicalProvider = this.openmct.telemetry.findRequestProvider(
       this.domainObject,
@@ -242,19 +236,6 @@ export default class TelemetryCollection extends EventEmitter {
       parsedValue = this.parseTime(datum);
       beforeStartOfBounds = parsedValue < boundsToUse.start;
       afterEndOfBounds = parsedValue > boundsToUse.end;
-
-      if (beforeStartOfBounds) {
-        console.debug(
-          `🫙 Datum is BEFORE start of bounds: ${new Date(parsedValue).toISOString()} < ${new Date(this.lastBounds.start).toISOString()}`,
-          this.options
-        );
-      }
-      if (afterEndOfBounds) {
-        console.debug(
-          `🫙 Datum is AFTER start of bounds: ${new Date(parsedValue).toISOString()} < ${new Date(this.lastBounds.start).toISOString()}`,
-          this.options
-        );
-      }
 
       if (
         !afterEndOfBounds &&
