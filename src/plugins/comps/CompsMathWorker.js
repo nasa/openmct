@@ -121,8 +121,8 @@ function calculate(dataFrame, parameters, expression) {
     if (missingData) {
       return;
     }
-    const compsOutput = evaluate(expression, scope);
-    sumResults.push({ [referenceParameter.timeKey]: referenceTime, compsOutput });
+    const value = evaluate(expression, scope);
+    sumResults.push({ [referenceParameter.timeKey]: referenceTime, value });
   });
   return sumResults;
 }

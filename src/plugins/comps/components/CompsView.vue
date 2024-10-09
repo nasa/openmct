@@ -299,7 +299,7 @@ function updateExpression() {
 
 function getValueFormatter() {
   const metaData = openmct.telemetry.getMetadata(domainObject);
-  const outputMetaDatum = metaData.values().find((metaDatum) => metaDatum.key === 'compsOutput');
+  const outputMetaDatum = metaData.values().find((metaDatum) => metaDatum.key === 'value');
   return openmct.telemetry.getValueFormatter(outputMetaDatum);
 }
 
@@ -347,7 +347,7 @@ function telemetryProcessor(data) {
     return;
   }
   // new data will come in as array, so just take the last element
-  const currentOutput = data[data.length - 1]?.compsOutput;
+  const currentOutput = data[data.length - 1]?.value;
   const formattedOutput = getValueFormatter().format(currentOutput);
   currentCompOutput.value = formattedOutput;
 }
