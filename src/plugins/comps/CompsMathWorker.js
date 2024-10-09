@@ -13,6 +13,7 @@ onconnect = function (e) {
     try {
       if (type === 'calculateRequest') {
         responseType = 'calculationRequestResult';
+        console.debug(`📫 Received new calculation request with callback ID ${callbackID}`);
         result = calculateRequest(telemetryForComps, parameters, expression);
       } else if (type === 'calculateSubscription') {
         responseType = 'calculationSubscriptionResult';
@@ -86,7 +87,7 @@ function calculate(dataFrame, parameters, expression) {
     if (referenceParameter.sampleSize && referenceParameter.sampleSize > 0) {
       // enforce sample size by ensuring referenceValue has the latest n elements
       // if we don't have at least the sample size, skip this iteration
-      if (referenceValue.length < referenceParameter.sampleSize) {
+      if (!referenceValue.length || referenceValue.length < referenceParameter.sampleSize) {
         return;
       }
       referenceValue = referenceValue.slice(-referenceParameter.sampleSize);
