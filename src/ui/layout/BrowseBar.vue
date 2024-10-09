@@ -148,9 +148,6 @@ import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwit
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
 import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
-// It's used for ts docs further down
-// eslint-disable-next-line no-unused-vars
-import User from '../../api/user/User.js';
 import { SupportedViewTypes } from '../../utils/constants.js';
 import ViewSwitcher from './ViewSwitcher.vue';
 
@@ -180,7 +177,6 @@ export default {
       isEditing: this.openmct.editor.isEditing(),
       notebookEnabled: this.openmct.types.get('notebook'),
       statusBarItems: [],
-      currentUsername: '',
       status: ''
     };
   },
@@ -268,8 +264,8 @@ export default {
     lockedOrUnlockedTitle() {
       let title;
       if (this.domainObject.locked) {
-        if (this.currentUsername !== undefined) {
-          title = `Locked for editing by ${this.currentUsername}. `;
+        if (this.domainObject.lockedBy !== undefined) {
+          title = `Locked for editing by ${this.domainObject.lockedBy}. `;
         } else {
           title = 'Locked for editing. ';
         }
@@ -310,20 +306,9 @@ export default {
     }
   },
   mounted() {
-    /**
-     * @type {import('openmct.js').OpenMCT}
-     */
-    const openmct = this.openmct;
     document.addEventListener('click', this.closeViewAndSaveMenu);
     this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
     window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
-    openmct.user.getCurrentUser().then(
-      /**
-       * @param {User} user
-       */ (user) => {
-        this.currentUsername = user.getName();
-      }
-    );
     this.openmct.editor.on('isEditing', (isEditing) => {
       this.isEditing = isEditing;
     });
