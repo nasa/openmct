@@ -121,7 +121,7 @@
                 v-if="isEditing && parameter.accumulateValues"
                 v-model="parameter.sampleSize"
                 :aria-label="`Sample Size for ${parameter.name}`"
-                type="text"
+                type="number"
                 class="c-input--md"
                 @change="updateParameters"
               />
