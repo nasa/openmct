@@ -1,5 +1,4 @@
 import { EventEmitter } from 'eventemitter3';
-import _ from 'lodash';
 
 export default class CompsManager extends EventEmitter {
   #openmct;
@@ -12,6 +11,8 @@ export default class CompsManager extends EventEmitter {
   #loaded = false;
   #compositionLoaded = false;
   #telemetryProcessors = {};
+  #loadVersion = 0;
+  #currentLoadPromise = null;
 
   constructor(openmct, domainObject) {
     super();
@@ -59,7 +60,9 @@ export default class CompsManager extends EventEmitter {
       name: `${this.#getNextAlphabeticalParameterName()}`,
       valueToUse,
       testValue: 0,
-      timeMetaData
+      timeMetaData,
+      accumulateValues: false,
+      sampleSize: null
     });
     this.emit('parameterAdded', this.#domainObject);
   }
@@ -108,23 +111,56 @@ export default class CompsManager extends EventEmitter {
   }
 
   async load(telemetryOptions) {
-    if (!_.isEqual(telemetryOptions, this.#telemetryOptions)) {
+    // Increment the load version to mark a new load operation
+    const loadVersion = ++this.#loadVersion;
+
+    if (!_.isEqual(this.#telemetryOptions, telemetryOptions)) {
       console.debug(
         `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change.`,
         telemetryOptions
       );
       this.#destroy();
     }
+
     this.#telemetryOptions = telemetryOptions;
-    if (!this.#compositionLoaded) {
-      await this.#loadComposition();
-      this.#compositionLoaded = true;
-    }
-    if (!this.#loaded) {
-      await this.#startListeningToUnderlyingTelemetry();
-      this.#telemetryLoadedPromises = [];
-      this.#loaded = true;
-    }
+
+    // Start the load process and store the promise
+    this.#currentLoadPromise = (async () => {
+      // Load composition if not already loaded
+      if (!this.#compositionLoaded) {
+        await this.#loadComposition();
+        // Check if a newer load has been initiated
+        if (loadVersion !== this.#loadVersion) {
+          console.debug(
+            `🔄 Reloading comps manager in composition wait ${this.#domainObject.name} due to newer load.`
+          );
+          await this.#currentLoadPromise;
+          return;
+        }
+        this.#compositionLoaded = true;
+      }
+
+      // Start listening to telemetry if not already done
+      if (!this.#loaded) {
+        await this.#startListeningToUnderlyingTelemetry();
+        // Check again for newer load
+        if (loadVersion !== this.#loadVersion) {
+          console.debug(
+            `🔄 Reloading comps manager in telemetry wait ${this.#domainObject.name} due to newer load.`
+          );
+          await this.#currentLoadPromise;
+          return;
+        }
+        console.debug(
+          `✅ Comps manager ${this.#domainObject.name} is ready.`,
+          this.#telemetryCollections
+        );
+        this.#loaded = true;
+      }
+    })();
+
+    // Await the load process
+    await this.#currentLoadPromise;
   }
 
   async #startListeningToUnderlyingTelemetry() {
@@ -173,27 +209,45 @@ export default class CompsManager extends EventEmitter {
     }
   }
 
-  getFullDataFrame(newTelemetry) {
-    const dataFrame = {};
-    // can assume on data item
-    const newTelemetryKey = Object.keys(newTelemetry)[0];
-    const newTelemetryData = newTelemetry[newTelemetryKey];
-    const otherTelemetryKeys = Object.keys(this.#telemetryCollections).filter(
-      (keyString) => keyString !== newTelemetryKey
+  #getParameterForKeyString(keyString) {
+    return this.#domainObject.configuration.comps.parameters.find(
+      (parameter) => parameter.keyString === keyString
     );
-    // initialize the data frame with the new telemetry data
-    dataFrame[newTelemetryKey] = newTelemetryData;
-    // initialize the other telemetry data
+  }
+
+  getTelemetryForComps(newTelemetry) {
+    const telemetryForComps = {};
+    const newTelemetryKey = Object.keys(newTelemetry)[0];
+    const newTelemetryParameter = this.#getParameterForKeyString(newTelemetryKey);
+    const newTelemetryData = newTelemetry[newTelemetryKey];
+    const otherTelemetryKeys = Object.keys(this.#telemetryCollections).slice(0);
+    if (newTelemetryParameter.accumulateValues) {
+      telemetryForComps[newTelemetryKey] = this.#telemetryCollections[newTelemetryKey].getAll();
+    } else {
+      telemetryForComps[newTelemetryKey] = newTelemetryData;
+    }
     otherTelemetryKeys.forEach((keyString) => {
-      dataFrame[keyString] = [];
+      telemetryForComps[keyString] = [];
     });
 
-    // march through the new telemetry data and add data to the frame from the other telemetry objects
-    // using LOCF
+    const otherTelemetryKeysNotAccumulating = otherTelemetryKeys.filter(
+      (keyString) => !this.#getParameterForKeyString(keyString).accumulateValues
+    );
+    const otherTelemetryKeysAccumulating = otherTelemetryKeys.filter(
+      (keyString) => this.#getParameterForKeyString(keyString).accumulateValues
+    );
 
+    // if we're accumulating, just add all the data
+    otherTelemetryKeysAccumulating.forEach((keyString) => {
+      telemetryForComps[keyString] = this.#telemetryCollections[keyString].getAll();
+    });
+
+    // for the others, march through the new telemetry data and add data to the frame from the other telemetry objects
+    // using LOCF
     newTelemetryData.forEach((newDatum) => {
-      otherTelemetryKeys.forEach((otherKeyString) => {
+      otherTelemetryKeysNotAccumulating.forEach((otherKeyString) => {
         const otherCollection = this.#telemetryCollections[otherKeyString];
+        // otherwise we need to find the closest datum to the new datum
         let insertionPointForNewData = otherCollection._sortedIndex(newDatum);
         const otherCollectionData = otherCollection.getAll();
         if (insertionPointForNewData && insertionPointForNewData >= otherCollectionData.length) {
@@ -202,11 +256,11 @@ export default class CompsManager extends EventEmitter {
         // get the closest datum to the new datum
         const closestDatum = otherCollectionData[insertionPointForNewData];
         if (closestDatum) {
-          dataFrame[otherKeyString].push(closestDatum);
+          telemetryForComps[otherKeyString].push(closestDatum);
         }
       });
     });
-    return dataFrame;
+    return telemetryForComps;
   }
 
   #removeTelemetryObject = (telemetryObjectIdentifier) => {

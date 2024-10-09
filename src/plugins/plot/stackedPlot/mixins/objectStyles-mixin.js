@@ -133,7 +133,6 @@ export default {
       if (!styleObj || !elemToStyle) {
         return;
       }
-
       // handle visibility separately
       if (styleObj.isStyleInvisible !== undefined) {
         elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);

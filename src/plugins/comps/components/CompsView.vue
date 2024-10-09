@@ -95,6 +95,37 @@
               </option>
             </select>
             <div v-else>{{ parameter.valueToUse }}</div>
+            <div
+              :class="[
+                'c-comps__refs-controls c-cdef__controls',
+                { disabled: !parameters?.length }
+              ]"
+            >
+              <label v-if="isEditing" class="c-toggle-switch">
+                <span class="c-toggle-switch__label">Accumulate Values</span>
+                <input
+                  v-model="parameter.accumulateValues"
+                  type="checkbox"
+                  @change="updateAccumulateValues(parameter)"
+                />
+                <span
+                  class="c-toggle-switch__slider"
+                  aria-label="Toggle Parameter Accumulation"
+                ></span>
+              </label>
+
+              <span v-if="isEditing && parameter.accumulateValues" class="c-test-datum__string"
+                >Sample Size</span
+              >
+              <input
+                v-if="isEditing && parameter.accumulateValues"
+                v-model="parameter.sampleSize"
+                :aria-label="`Sample Size for ${parameter.name}`"
+                type="number"
+                class="c-input--md"
+                @change="updateParameters"
+              />
+            </div>
           </span>
 
           <span v-if="isEditing" class="c-test-datum__string">Test value</span>
@@ -104,7 +135,7 @@
             :aria-label="`Reference Test Value for ${parameter.name}`"
             type="text"
             class="c-input--md"
-            @change="updateParameters"
+            @change="updateTestValue(parameter)"
           />
         </div>
       </div>
@@ -235,6 +266,22 @@ function updateParameters() {
   applyTestData();
 }
 
+function updateAccumulateValues(parameter) {
+  if (parameter.accumulateValues) {
+    parameter.testValue = [''];
+  } else {
+    parameter.testValue = '';
+  }
+  updateParameters();
+}
+
+function updateTestValue(parameter) {
+  if (parameter.accumulateValues && parameter.testValue === '') {
+    parameter.testValue = [];
+  }
+  updateParameters();
+}
+
 function toggleTestData() {
   testDataApplied.value = !testDataApplied.value;
   if (testDataApplied.value) {
@@ -270,6 +317,20 @@ function applyTestData() {
     }
     return acc;
   }, {});
+
+  // see which parameters are misconfigured as non-arrays
+  const misconfiguredParameterNames = parameters.value
+    .filter((parameter) => {
+      return parameter.accumulateValues && !Array.isArray(scope[parameter.name]);
+    })
+    .map((parameter) => parameter.name);
+  if (misconfiguredParameterNames.length) {
+    const misconfiguredParameterNamesString = misconfiguredParameterNames.join(', ');
+    currentTestOutput.value = null;
+    expressionOutput.value = `Reference "${misconfiguredParameterNamesString}" set to accumulating, but test values aren't arrays.`;
+    return;
+  }
+
   try {
     const testOutput = evaluate(expression.value, scope);
     const formattedData = getValueFormatter().format(testOutput);

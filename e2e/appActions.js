@@ -244,6 +244,37 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 }
 
 /**
+ * Create a Stable State Telemetry Object (State Generator) for use in visual tests
+ * and tests against plotting telemetry (e.g. logPlot tests). This will change state every 2 seconds.
+ * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
+ */
+async function createStableStateTelemetry(page, parent = 'mine') {
+  const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+  await page.goto(`${parentUrl}`);
+  const createdObject = await createDomainObjectWithDefaults(page, {
+    type: 'State Generator',
+    name: 'Stable State Generator'
+  });
+  // edit the state generator to have a 1 second update rate
+  await page.getByLabel('More actions').click();
+  await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
+  await page.getByLabel('State Duration (seconds)', { exact: true }).fill('2');
+  await page.getByLabel('Save').click();
+  // Wait until the URL is updated
+  const uuid = await getFocusedObjectUuid(page);
+  const url = await getHashUrlToDomainObject(page, uuid);
+
+  return {
+    name: createdObject.name,
+    uuid,
+    url
+  };
+}
+
+/**
  * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds. Note: does not set
  * default view type.
  *
@@ -645,14 +676,34 @@ async function getCanvasPixels(page, canvasSelector) {
   );
 }
 
+/**
+ * Search for telemetry and link it to an object. objectName should come from the domainObject.name function.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} parameterName
+ * @param {string} objectName
+ */
+async function linkParameterToObject(page, parameterName, objectName) {
+  await page.getByRole('searchbox', { name: 'Search Input' }).click();
+  await page.getByRole('searchbox', { name: 'Search Input' }).fill(parameterName);
+  await page.getByLabel('Object Results').getByText(parameterName).click();
+  await page.getByLabel('More actions').click();
+  await page.getByLabel('Create Link').click();
+  await page.getByLabel('Modal Overlay').getByLabel('Search Input').click();
+  await page.getByLabel('Modal Overlay').getByLabel('Search Input').fill(objectName);
+  await page.getByLabel('Modal Overlay').getByLabel(`Navigate to ${objectName}`).click();
+  await page.getByLabel('Save').click();
+}
+
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
   createPlanFromJSON,
+  createStableStateTelemetry,
   expandEntireTree,
   getCanvasPixels,
   getDomainObject,
+  linkParameterToObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
   setEndOffset,

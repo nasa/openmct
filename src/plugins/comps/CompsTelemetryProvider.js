@@ -95,7 +95,7 @@ export default class CompsTelemetryProvider {
       return;
     }
     const expression = specificCompsManager.getExpression();
-    const telemetryForComps = specificCompsManager.getFullDataFrame(newTelemetry);
+    const telemetryForComps = specificCompsManager.getTelemetryForComps(newTelemetry);
     const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
     if (!expression || !parameters) {
       return;
@@ -103,6 +103,7 @@ export default class CompsTelemetryProvider {
     const payload = {
       type: 'calculateSubscription',
       telemetryForComps,
+      newTelemetry,
       expression,
       parameters,
       callbackID
@@ -134,10 +135,6 @@ export default class CompsTelemetryProvider {
     );
     return () => {
       delete this.#subscriptionCallbacks[callbackID];
-      console.debug(
-        `🛑 Stopping subscription for ${domainObject.name} with callback ID ${callbackID}. We now have ${Object.keys(this.#subscriptionCallbacks).length} subscribers`,
-        this.#subscriptionCallbacks
-      );
       specificCompsManager.stopListeningToUnderlyingTelemetry();
       specificCompsManager.off('underlyingTelemetryUpdated', boundComputeOnNewTelemetry);
     };
