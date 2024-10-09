@@ -269,9 +269,9 @@ export default {
       let title;
       if (this.domainObject.locked) {
         if (this.currentUsername !== undefined) {
-          title = `Locked for editing by ${this.currentUserName}.`;
+          title = `Locked for editing by ${this.currentUsername}. `;
         } else {
-          title = 'Locked for editing.';
+          title = 'Locked for editing. ';
         }
         if (this.domainObject.disallowUnlock) {
           title += 'Cannot be unlocked.';
