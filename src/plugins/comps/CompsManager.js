@@ -110,23 +110,11 @@ export default class CompsManager extends EventEmitter {
     return this.#loaded;
   }
 
-  #haveTelemetryOptionsChanged(telemetryOptions) {
-    return (
-      telemetryOptions.strategy !== this.#telemetryOptions.strategy ||
-      telemetryOptions.size !== this.#telemetryOptions.size ||
-      telemetryOptions.end !== this.#telemetryOptions.end ||
-      telemetryOptions.start !== this.#telemetryOptions.start ||
-      telemetryOptions.duration !== this.#telemetryOptions.duration ||
-      telemetryOptions.filters !== this.#telemetryOptions.filters ||
-      telemetryOptions.domain !== this.#telemetryOptions.domain
-    );
-  }
-
   async load(telemetryOptions) {
     // Increment the load version to mark a new load operation
     const loadVersion = ++this.#loadVersion;
 
-    if (this.#haveTelemetryOptionsChanged(telemetryOptions)) {
+    if (!_.isEqual(this.#telemetryOptions, telemetryOptions)) {
       console.debug(
         `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change.`,
         telemetryOptions
