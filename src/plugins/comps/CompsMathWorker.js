@@ -27,6 +27,7 @@ onconnect = function (e) {
     } catch (errorInCalculation) {
       error = errorInCalculation;
     }
+    console.debug(`📭 Sending response for callback ID ${callbackID}`, result);
     port.postMessage({ type: responseType, callbackID, result, error });
   };
 };

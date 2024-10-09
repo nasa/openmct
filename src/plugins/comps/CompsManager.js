@@ -131,6 +131,10 @@ export default class CompsManager extends EventEmitter {
         await this.#loadComposition();
         // Check if a newer load has been initiated
         if (loadVersion !== this.#loadVersion) {
+          console.debug(
+            `🔄 Reloading comps manager in composition wait ${this.#domainObject.name} due to newer load.`
+          );
+          await this.#currentLoadPromise;
           return;
         }
         this.#compositionLoaded = true;
@@ -141,13 +145,17 @@ export default class CompsManager extends EventEmitter {
         await this.#startListeningToUnderlyingTelemetry();
         // Check again for newer load
         if (loadVersion !== this.#loadVersion) {
+          console.debug(
+            `🔄 Reloading comps manager in telemetry wait ${this.#domainObject.name} due to newer load.`
+          );
+          await this.#currentLoadPromise;
           return;
         }
-        this.#loaded = true;
         console.debug(
           `✅ Comps manager ${this.#domainObject.name} is ready.`,
           this.#telemetryCollections
         );
+        this.#loaded = true;
       }
     })();
 
