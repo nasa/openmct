@@ -69,7 +69,6 @@ const INNER_TEXT_PADDING = 15;
 const TEXT_LEFT_PADDING = 5;
 const ROW_PADDING = 5;
 const SWIMLANE_PADDING = 3;
-const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 22;
 const MAX_TEXT_WIDTH = 300;
 const MIN_ACTIVITY_WIDTH = 2;
@@ -143,13 +142,15 @@ export default {
     this.canvasContext = canvas.getContext('2d');
     this.setDimensions();
     this.setTimeContext();
-    this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
     this.handleConfigurationChange(this.configuration);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
     this.loadComposition();
+
+    this.resizeObserver = new ResizeObserver(this.resize);
+    this.resizeObserver.observe(this.$refs.plan);
   },
   beforeUnmount() {
-    clearInterval(this.resizeTimer);
+    this.resizeObserver.disconnect();
     this.stopFollowingTimeContext();
     if (this.unlisten) {
       this.unlisten();
