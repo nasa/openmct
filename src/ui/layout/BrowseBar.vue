@@ -83,7 +83,8 @@
           :title="lockedOrUnlockedTitle"
           :class="{
             'c-button icon-lock': domainObject.locked,
-            'c-icon-button icon-unlocked': !domainObject.locked
+            'c-icon-button icon-unlocked': !domainObject.locked,
+            'l-browse-bar__lock_button__disallow_unlock': domainObject.disallowUnlock
           }"
           @click="toggleLock(!domainObject.locked)"
         ></button>
