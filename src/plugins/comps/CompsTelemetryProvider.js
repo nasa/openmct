@@ -64,7 +64,7 @@ export default class CompsTelemetryProvider {
       specificCompsManager.load(options).then(() => {
         const callbackID = this.#getCallbackID();
         const telemetryForComps = JSON.parse(
-          JSON.stringify(specificCompsManager.requestUnderlyingTelemetry())
+          JSON.stringify(specificCompsManager.getDataFrameForRequest())
         );
         const expression = specificCompsManager.getExpression();
         const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
@@ -95,7 +95,7 @@ export default class CompsTelemetryProvider {
       return;
     }
     const expression = specificCompsManager.getExpression();
-    const telemetryForComps = specificCompsManager.getTelemetryForComps(newTelemetry);
+    const telemetryForComps = specificCompsManager.getDataFrameForSubscription(newTelemetry);
     const parameters = JSON.parse(JSON.stringify(specificCompsManager.getParameters()));
     if (!expression || !parameters) {
       return;
