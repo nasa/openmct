@@ -167,7 +167,7 @@ add_index_and_views() {
     --data '{
       "_id": "_design/auth",
       "language": "javascript",
-      "validate_doc_update": "function (newDoc, oldDoc, userCtx) {  if (userCtx.roles.indexOf(''_admin'') !== -1) {    return;  } else if (oldDoc === undefined) {    return;  } else if (oldDoc.model.type === ''timer'' || oldDoc.model.type === ''notebook'' || oldDoc.model.type === ''restricted-notebook'') {    if (oldDoc.model.name !== newDoc.model.name) {      throw ({        forbidden: ''Read-only object''      });    } else {      return;    }  } else if (oldDoc.model.locked === true && newDoc.disallowUnlock === true) {    throw ({      forbidden: ''Read-only object''    });  } else {    return;  }}"
+      "validate_doc_update": "function (newDoc, oldDoc, userCtx) {  if (userCtx.roles.indexOf('\''_admin'\'') !== -1) {    return;  } else if (oldDoc === null) {    return;  } else if (oldDoc.model.type === '\''timer'\'' || oldDoc.model.type === '\''notebook'\'' || oldDoc.model.type === '\''restricted-notebook'\'') {    if (oldDoc.model.name !== newDoc.model.name) {      throw ({        forbidden: '\''Read-only object'\''      });    } else {      return;    }  } else if (oldDoc.model.locked === true && oldDoc.model.disallowUnlock === true) {    throw ({      forbidden: '\''Read-only object'\''    });  } else {    return;  }}"
     }')
 
     if [[ $response =~ "\"ok\":true" ]]; then
