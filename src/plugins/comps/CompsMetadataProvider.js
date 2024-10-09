@@ -58,9 +58,8 @@ export default class CompsMetadataProvider {
     const metaDataToReturn = {
       values: [
         {
-          key: 'compsOutput',
-          source: 'compsOutput',
-          name: 'Output',
+          key: 'value',
+          name: 'Value',
           derived: true,
           formatString: specificCompsManager.getOutputFormat(),
           hints: {
