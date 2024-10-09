@@ -102,6 +102,7 @@
               ]"
             >
               <label v-if="isEditing" class="c-toggle-switch">
+                <span class="c-toggle-switch__label">Accumulate Values</span>
                 <input
                   v-model="parameter.accumulateValues"
                   type="checkbox"
@@ -111,8 +112,19 @@
                   class="c-toggle-switch__slider"
                   aria-label="Toggle Parameter Accumulation"
                 ></span>
-                <span class="c-toggle-switch__label">Accumulate Values</span>
               </label>
+
+              <span v-if="isEditing && parameter.accumulateValues" class="c-test-datum__string"
+                >Sample Size</span
+              >
+              <input
+                v-if="isEditing && parameter.accumulateValues"
+                v-model="parameter.sampleSize"
+                :aria-label="`Sample Size for ${parameter.name}`"
+                type="text"
+                class="c-input--md"
+                @change="updateParameters"
+              />
             </div>
           </span>
 

@@ -60,7 +60,8 @@ export default class CompsManager extends EventEmitter {
       valueToUse,
       testValue: 0,
       timeMetaData,
-      accumulateValues: false
+      accumulateValues: false,
+      sampleSize: null
     });
     this.emit('parameterAdded', this.#domainObject);
   }

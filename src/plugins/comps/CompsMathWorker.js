@@ -83,6 +83,14 @@ function calculate(dataFrame, parameters, expression) {
       accumulatedData[referenceParameter.name].push(referenceValue);
       referenceValue = accumulatedData[referenceParameter.name];
     }
+    if (referenceParameter.sampleSize) {
+      // enforce sample size by ensuring referenceValue has the latest n elements
+      // if we don't have at least the sample size, skip this iteration
+      if (referenceValue.length < referenceParameter.sampleSize) {
+        return;
+      }
+      referenceValue = referenceValue.slice(-referenceParameter.sampleSize);
+    }
 
     const scope = {
       [referenceParameter.name]: referenceValue
