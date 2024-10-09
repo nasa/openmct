@@ -135,7 +135,7 @@
             :aria-label="`Reference Test Value for ${parameter.name}`"
             type="text"
             class="c-input--md"
-            @change="updateParameters"
+            @change="updateTestValue(parameter)"
           />
         </div>
       </div>
@@ -271,6 +271,13 @@ function updateAccumulateValues(parameter) {
     parameter.testValue = [''];
   } else {
     parameter.testValue = '';
+  }
+  updateParameters();
+}
+
+function updateTestValue(parameter) {
+  if (parameter.accumulateValues && !Array.isArray(parameter.testValue)) {
+    parameter.testValue = [parameter.testValue];
   }
   updateParameters();
 }
