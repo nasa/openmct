@@ -354,7 +354,10 @@ export default {
     },
     persistCurrentTabIndex(index) {
       //only persist if the domain object is not locked. The object mutate API will deal with whether the object is persistable or not.
-      if (!this.internalDomainObject.locked) {
+      if (
+        this.openmct.objects.isPersistable(this.internalDomainObject.identifier) &&
+        !this.internalDomainObject.locked
+      ) {
         this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
       }
     },
