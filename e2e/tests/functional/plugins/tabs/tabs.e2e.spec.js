@@ -106,7 +106,7 @@ test.describe('Tabs View', () => {
     await swgTab.click();
     await page.getByLabel(`${sineWaveGenerator.name} Object View`).isVisible();
     // navigate away from the tabbed view and back
-    await page.getByLabel('Navigate up to parent').click();
+    await page.getByRole('treeitem', { name: 'My Items' }).click();
     await page.goto(tabsView.url);
     // check that the initial tab is displayed
     const lockedSelectedTab = page.getByLabel(/- selected/);
@@ -118,7 +118,7 @@ test.describe('Tabs View', () => {
     await swgTab.click();
     await page.getByLabel(`${sineWaveGenerator.name} Object View`).isVisible();
     // navigate away from the tabbed view and back
-    await page.getByLabel('Navigate up to parent').click();
+    await page.getByRole('treeitem', { name: 'My Items' }).click();
     await page.goto(tabsView.url);
     // check that the newly selected tab is displayed
     const unlockedSelectedTab = page.getByLabel(/- selected/);
