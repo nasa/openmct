@@ -136,7 +136,7 @@ export default class TelemetryTable extends EventEmitter {
     this.tableRows = new TableRowCollection();
 
     //Fetch any persisted default sort
-    let configSortOptions = this.configuration.getConfiguration().sortOptions;
+    const configSortOptions = this.configuration.getConfiguration().sortOptions;
 
     //If no persisted sort order, use the in-memory sort options
     this.sortOptions = configSortOptions || this.sortOptions;
@@ -175,7 +175,7 @@ export default class TelemetryTable extends EventEmitter {
     this.removeTelemetryCollection(keyString);
 
     let sortOptions = this.configuration.getConfiguration().sortOptions;
-    requestOptions.order = sortOptions?.direction ?? this.sortOptions.direction; // default to descending
+    requestOptions.order = sortOptions?.direction ?? this.sortOptions.direction;
 
     if (this.telemetryMode === MODE.PERFORMANCE) {
       requestOptions.size = this.rowLimit;
