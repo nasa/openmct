@@ -53,11 +53,6 @@ export default class TelemetryTable extends EventEmitter {
     this.outstandingRequests = 0;
     this.stalenessSubscription = {};
 
-    this.sortOptions = {
-      key: this.openmct.time.getTimeSystem().key,
-      direction: ORDER.DESCENDING
-    };
-
     this.addTelemetryObject = this.addTelemetryObject.bind(this);
     this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
     this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
@@ -135,15 +130,11 @@ export default class TelemetryTable extends EventEmitter {
   createTableRowCollections() {
     this.tableRows = new TableRowCollection();
 
-    //Fetch any persisted default sort
-    const configSortOptions = this.configuration.getConfiguration().sortOptions;
-
-    //If no persisted sort order, use the in-memory sort options
-    this.sortOptions = configSortOptions || this.sortOptions;
+    const sortOptions = this.configuration.getSortOptions();
 
     this.updateRowLimit();
 
-    this.tableRows.sortBy(this.sortOptions);
+    this.tableRows.sortBy(sortOptions);
     this.tableRows.on('resetRowsFromAllData', this.resetRowsFromAllData);
   }
 
@@ -174,8 +165,8 @@ export default class TelemetryTable extends EventEmitter {
 
     this.removeTelemetryCollection(keyString);
 
-    let sortOptions = this.configuration.getConfiguration().sortOptions;
-    requestOptions.order = sortOptions?.direction ?? this.sortOptions.direction;
+    let sortOptions = this.configuration.getSortOptions();
+    requestOptions.order = sortOptions.direction;
 
     if (this.telemetryMode === MODE.PERFORMANCE) {
       requestOptions.size = this.rowLimit;
@@ -444,19 +435,13 @@ export default class TelemetryTable extends EventEmitter {
   }
 
   sortBy(sortOptions) {
-    this.sortOptions = sortOptions;
+    this.configuration.setSortOptions(sortOptions);
 
     if (this.telemetryMode === MODE.PERFORMANCE) {
-      this.tableRows.setSortOptions(this.sortOptions);
+      this.tableRows.setSortOptions(sortOptions);
       this.clearAndResubscribe();
     } else {
-      this.tableRows.sortBy(this.sortOptions);
-    }
-
-    if (this.openmct.editor.isEditing()) {
-      let configuration = this.configuration.getConfiguration();
-      configuration.sortOptions = this.sortOptions;
-      this.configuration.updateConfiguration(configuration);
+      this.tableRows.sortBy(sortOptions);
     }
   }
 
