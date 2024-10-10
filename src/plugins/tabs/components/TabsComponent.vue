@@ -38,11 +38,11 @@
         v-for="(tab, index) in tabsList"
         :ref="tab.keyString"
         :key="tab.keyString"
-        :aria-label="`${tab.domainObject.name} tab`"
+        :aria-label="`${tab.domainObject.name} tab${tab.keyString === currentTab.keyString ? ' - selected' : ''}`"
         class="c-tab c-tabs-view__tab js-tab"
         role="tab"
         :class="{
-          'is-current': isCurrent(tab)
+          'is-current': tab.keyString === currentTab.keyString
         }"
         @click="showTab(tab, index)"
         @mouseover.ctrl="showToolTip(tab)"
@@ -74,7 +74,7 @@
       :key="tab.keyString"
       :style="getTabStyles(tab)"
       class="c-tabs-view__object-holder"
-      :class="{ 'c-tabs-view__object-holder--hidden': !isCurrent(tab) }"
+      :class="{ 'c-tabs-view__object-holder--hidden': tab.keyString !== currentTab.keyString }"
     >
       <ObjectView
         v-if="shouldLoadTab(tab)"
