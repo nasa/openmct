@@ -83,11 +83,17 @@
           :title="lockedOrUnlockedTitle"
           :class="{
             'c-button icon-lock': domainObject.locked,
-            'c-icon-button icon-unlocked': !domainObject.locked,
-            'l-browse-bar__lock_button__disallow_unlock': domainObject.disallowUnlock
+            'c-icon-button icon-unlocked': !domainObject.locked
           }"
           @click="toggleLock(!domainObject.locked)"
         ></button>
+
+        <span
+          v-else
+          class="icon-lock"
+          aria-label="Locked for editing, cannot be unlocked."
+          title="Locked for editing, cannot be unlocked."
+        ></span>
 
         <button
           v-if="isViewEditable && !isEditing && !domainObject.locked"
@@ -185,9 +191,13 @@ export default {
       return this.isPersistable && !this.domainObject.locked;
     },
     shouldShowLock() {
-      return (
-        (this.domainObject && this.domainObject.locked) || (this.isViewEditable && !this.isEditing)
-      );
+      if (this.domainObject === undefined) {
+        return false;
+      }
+      if (this.domainObject.disallowUnlock) {
+        return false;
+      }
+      return this.domainObject.locked || (this.isViewEditable && !this.isEditing);
     },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
@@ -269,11 +279,7 @@ export default {
         } else {
           title = 'Locked for editing. ';
         }
-        if (this.domainObject.disallowUnlock) {
-          title += 'Cannot be unlocked.';
-        } else {
-          title += 'Click to unlock.';
-        }
+        title += 'Click to unlock.';
       } else {
         title = 'Unlocked for editing, click to lock.';
       }
