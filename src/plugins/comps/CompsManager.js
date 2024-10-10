@@ -62,7 +62,7 @@ export default class CompsManager extends EventEmitter {
       testValue: 0,
       timeMetaData,
       accumulateValues: false,
-      sampleSize: null
+      sampleSize: 10
     });
     this.emit('parameterAdded', this.#domainObject);
   }

@@ -113,6 +113,9 @@
                   aria-label="Toggle Parameter Accumulation"
                 ></span>
               </label>
+              <div v-if="!isEditing && parameter.accumulateValues">
+                - accumulating values with sample size {{ parameter.sampleSize }}
+              </div>
 
               <span v-if="isEditing && parameter.accumulateValues" class="c-test-datum__string"
                 >Sample Size</span
@@ -207,8 +210,7 @@ const props = defineProps({
 
 onBeforeMount(async () => {
   const telemetryOptions = {
-    size: 1,
-    strategy: 'latest'
+    strategy: 'minmax'
   };
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject, telemetryOptions);
   outputTelemetryCollection.on('add', telemetryProcessor);
