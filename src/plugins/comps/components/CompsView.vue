@@ -113,6 +113,9 @@
                   aria-label="Toggle Parameter Accumulation"
                 ></span>
               </label>
+              <div v-if="!isEditing && parameter.accumulateValues">
+                - accumulating values with sample size {{ parameter.sampleSize }}
+              </div>
 
               <span v-if="isEditing && parameter.accumulateValues" class="c-test-datum__string"
                 >Sample Size</span
@@ -207,8 +210,7 @@ const props = defineProps({
 
 onBeforeMount(async () => {
   const telemetryOptions = {
-    size: 1,
-    strategy: 'latest'
+    strategy: 'minmax'
   };
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject, telemetryOptions);
   outputTelemetryCollection.on('add', telemetryProcessor);
@@ -264,6 +266,7 @@ function updateParameters() {
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
+  reload();
 }
 
 function updateAccumulateValues(parameter) {
@@ -295,6 +298,7 @@ function updateExpression() {
   openmct.objects.mutate(domainObject, `configuration.comps.expression`, expression.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
+  reload();
 }
 
 function getValueFormatter() {
@@ -350,6 +354,11 @@ function telemetryProcessor(data) {
   const currentOutput = data[data.length - 1]?.value;
   const formattedOutput = getValueFormatter().format(currentOutput);
   currentCompOutput.value = formattedOutput;
+}
+
+function reload() {
+  clearData();
+  outputTelemetryCollection._requestHistoricalTelemetry();
 }
 
 function clearData() {

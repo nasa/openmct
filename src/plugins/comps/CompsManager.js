@@ -62,7 +62,7 @@ export default class CompsManager extends EventEmitter {
       testValue: 0,
       timeMetaData,
       accumulateValues: false,
-      sampleSize: null
+      sampleSize: 10
     });
     this.emit('parameterAdded', this.#domainObject);
   }
@@ -347,7 +347,9 @@ export default class CompsManager extends EventEmitter {
 
   clearData(telemetryLoadedPromise) {
     this.#loaded = false;
-    this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
+    if (telemetryLoadedPromise) {
+      this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
+    }
   }
 
   setOutputFormat(outputFormat) {
