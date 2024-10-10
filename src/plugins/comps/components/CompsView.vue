@@ -266,6 +266,7 @@ function updateParameters() {
   openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
+  reload();
 }
 
 function updateAccumulateValues(parameter) {
@@ -297,6 +298,7 @@ function updateExpression() {
   openmct.objects.mutate(domainObject, `configuration.comps.expression`, expression.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
+  reload();
 }
 
 function getValueFormatter() {
@@ -352,6 +354,11 @@ function telemetryProcessor(data) {
   const currentOutput = data[data.length - 1]?.value;
   const formattedOutput = getValueFormatter().format(currentOutput);
   currentCompOutput.value = formattedOutput;
+}
+
+function reload() {
+  clearData();
+  outputTelemetryCollection._requestHistoricalTelemetry();
 }
 
 function clearData() {
