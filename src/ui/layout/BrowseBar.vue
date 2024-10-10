@@ -89,7 +89,7 @@
         ></button>
 
         <span
-          v-else
+          v-else-if="domainObject?.locked"
           class="icon-lock"
           aria-label="Locked for editing, cannot be unlocked."
           title="Locked for editing, cannot be unlocked."
