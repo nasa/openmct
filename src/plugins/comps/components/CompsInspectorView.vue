@@ -33,6 +33,7 @@
               v-model="inputFormatValue"
               type="text"
               class="c-input--flex"
+              placeholder="e.g. %0.2f"
               @change="changeInputFormat()"
             />
           </div>
