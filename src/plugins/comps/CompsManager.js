@@ -345,11 +345,6 @@ export default class CompsManager extends EventEmitter {
     this.emit('underlyingTelemetryUpdated', { [keyString]: newTelemetry });
   };
 
-  reload() {
-    this.#destroy();
-    return this.load(this.#telemetryOptions);
-  }
-
   clearData(telemetryLoadedPromise) {
     this.#loaded = false;
     if (telemetryLoadedPromise) {
