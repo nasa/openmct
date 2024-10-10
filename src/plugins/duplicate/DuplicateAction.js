@@ -109,8 +109,9 @@ class DuplicateAction {
       let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
       let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
       let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+      const isLocked = parentCandidate.locked === true;
 
-      if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+      if (isLocked || !this.openmct.objects.isPersistable(parentCandidate.identifier)) {
         return false;
       }
 
@@ -139,10 +140,9 @@ class DuplicateAction {
     const parentType = parent && this.openmct.types.get(parent.type);
     const child = objectPath[0];
     const childType = child && this.openmct.types.get(child.type);
-    const locked = child.locked ? child.locked : parent && parent.locked;
     const isPersistable = this.openmct.objects.isPersistable(child.identifier);
 
-    if (locked || !isPersistable) {
+    if (!isPersistable) {
       return false;
     }
 
