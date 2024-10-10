@@ -25,7 +25,7 @@ import _ from 'lodash';
 
 import StalenessUtils from '../../utils/staleness.js';
 import TableRowCollection from './collections/TableRowCollection.js';
-import { MODE, ORDER } from './constants.js';
+import { MODE } from './constants.js';
 import TelemetryTableColumn from './TelemetryTableColumn.js';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration.js';
 import TelemetryTableNameColumn from './TelemetryTableNameColumn.js';
