@@ -353,7 +353,10 @@ export default {
       this.internalDomainObject = domainObject;
     },
     persistCurrentTabIndex(index) {
-      this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
+      //only persist if the domain object is not locked. The object mutate API will deal with whether the object is persistable or not.
+      if (!this.internalDomainObject.locked) {
+        this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
+      }
     },
     storeCurrentTabIndexInURL(index) {
       let currentTabIndexInURL = this.openmct.router.getSearchParam(this.searchTabKey);
