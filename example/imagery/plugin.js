@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { seededRandom } from 'utils/random.js';
+
 const DEFAULT_IMAGE_SAMPLES = [
   'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg',
   'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18732.jpg',
@@ -162,8 +164,8 @@ export default function () {
   };
 }
 
-function getCompassValues(min, max) {
-  return min + Math.random() * (max - min);
+function getCompassValues(min, max, timestamp) {
+  return min + seededRandom(timestamp) * (max - min);
 }
 
 function getImageSamples(configuration) {
@@ -283,9 +285,9 @@ function pointForTimestamp(timestamp, name, imageSamples, delay) {
     utc: Math.floor(timestamp / delay) * delay,
     local: Math.floor(timestamp / delay) * delay,
     url,
-    sunOrientation: getCompassValues(0, 360),
-    cameraAzimuth: getCompassValues(0, 360),
-    heading: getCompassValues(0, 360),
+    sunOrientation: getCompassValues(0, 360, timestamp),
+    cameraAzimuth: getCompassValues(0, 360, timestamp),
+    heading: getCompassValues(0, 360, timestamp),
     transformations: navCamTransformations,
     imageDownloadName
   };
