@@ -29,7 +29,7 @@ export default class ConditionSetMetadataProvider {
     return domainObject.type === 'conditionSet';
   }
 
-  getDomains(domainObject) {
+  getDefaultDomains(domainObject) {
     return this.openmct.time.getAllTimeSystems().map(function (ts, i) {
       return {
         key: ts.key,
@@ -63,8 +63,8 @@ export default class ConditionSetMetadataProvider {
       }
     ];
 
-    return {
-      values: this.getDomains().concat([
+    const metaDataToReturn = {
+      values: [
         {
           key: 'value',
           name: 'Value',
@@ -82,7 +82,20 @@ export default class ConditionSetMetadataProvider {
             range: 2
           }
         }
-      ])
+      ]
     };
+
+    // if there are any parameters, grab the first one's timeMetaData
+    const timeMetaData =
+      domainObject?.configuration?.conditionCollection[0]?.configuration.timeMetadata;
+
+    if (timeMetaData) {
+      metaDataToReturn.values.push(timeMetaData);
+    } else {
+      const defaultDomains = this.getDefaultDomains(domainObject);
+      metaDataToReturn.values.push(...defaultDomains);
+    }
+
+    return metaDataToReturn;
   }
 }

@@ -336,6 +336,7 @@ export default {
         if (config?.output !== TELEMETRY_VALUE) {
           config.outputTelemetry = null;
           config.outputMetadata = null;
+          config.timeMetadata = null;
         }
       },
       deep: true
@@ -467,10 +468,28 @@ export default {
       this.condition.configuration.criteria.splice(index + 1, 0, clonedCriterion);
       this.persist();
     },
+    persistTimeMetadata() {
+      if (!this.condition.configuration.outputTelemetry) {
+        return;
+      }
+      const outputTelemetryObject = this.telemetry.find(
+        (telemetryItem) =>
+          this.openmct.objects.makeKeyString(telemetryItem.identifier) ===
+          this.condition.configuration.outputTelemetry
+      );
+      const timeSystem = this.openmct.time.getTimeSystem();
+      const telemetryMetadata = this.openmct.telemetry.getMetadata(outputTelemetryObject);
+      const domains = telemetryMetadata?.valuesForHints(['domain']);
+      const timeMetaData = domains.find((d) => d.key === timeSystem.key);
+      if (telemetryMetadata) {
+        this.condition.configuration.timeMetadata = timeMetaData;
+      }
+    },
     persist() {
       const valueMetadata = this.getOutputMetadata();
       if (valueMetadata) {
         this.condition.configuration.valueMetadata = valueMetadata;
+        this.persistTimeMetadata();
       }
       this.$emit('update-condition', {
         condition: this.condition

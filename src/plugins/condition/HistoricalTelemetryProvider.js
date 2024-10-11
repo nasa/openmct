@@ -57,11 +57,12 @@ export default class HistoricalTelemetryProvider {
     return specificDatum;
   }
 
-  #formatDatumForOutput(datum, metadata) {
+  #formatDatumForOutput(datum, metadata, result) {
     const formattedDatum = {
-      ...datum
+      ...datum,
+      value: datum[metadata],
+      result
     };
-    formattedDatum.value = datum[metadata];
     return formattedDatum;
   }
 
@@ -89,7 +90,8 @@ export default class HistoricalTelemetryProvider {
             dataFrame[outputTelmetryDetail.outputTelemetryKeyString][timestamp];
           const formattedDatum = this.#formatDatumForOutput(
             outputTelmetryDatum,
-            outputTelmetryDetail.outputMetadata
+            outputTelmetryDetail.outputMetadata,
+            result
           );
           return formattedDatum;
         } else if (outputTelmetryDetail?.staticOutputValue) {
