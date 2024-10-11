@@ -23,7 +23,11 @@
 import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
+import { ORDER } from './constants';
+
 export default class TelemetryTableConfiguration extends EventEmitter {
+  #sortOptions;
+
   constructor(domainObject, openmct, options) {
     super();
 
@@ -209,6 +213,26 @@ export default class TelemetryTableConfiguration extends EventEmitter {
     let configuration = this.getConfiguration();
     configuration.columnOrder = columnOrder;
     this.updateConfiguration(configuration);
+  }
+
+  getSortOptions() {
+    return (
+      this.#sortOptions ||
+      this.getConfiguration().sortOptions || {
+        key: this.openmct.time.getTimeSystem().key,
+        direction: ORDER.DESCENDING
+      }
+    );
+  }
+
+  setSortOptions(sortOptions) {
+    this.#sortOptions = sortOptions;
+
+    if (this.openmct.editor.isEditing()) {
+      let configuration = this.getConfiguration();
+      configuration.sortOptions = sortOptions;
+      this.updateConfiguration(configuration);
+    }
   }
 
   destroy() {
