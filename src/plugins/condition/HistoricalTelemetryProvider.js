@@ -41,7 +41,7 @@ export default class HistoricalTelemetryProvider {
       const outputTelemetryID = this.openmct.objects.makeKeyString(outputTelemetry);
       const outputTelemetryData = telemetryData.get(outputTelemetryID);
       output.telemetry = outputTelemetryData;
-      output.value = outputTelemetryData?.[outputMetadata] || undefined;
+      output.value = outputTelemetryData?.[outputMetadata];
       output.condition = condition;
     } else if (conditionConfiguration?.output) {
       output.telemetry = null;
@@ -58,17 +58,8 @@ export default class HistoricalTelemetryProvider {
     const historicalTelemetryPoolPromises = [];
 
     conditionCollection.forEach((condition, index) => {
-      console.log('-------------------------');
-      console.log(condition);
-      const { id } = condition;
-      const { criteria, output, outputTelemetry, outputMetadata } = condition.configuration;
+      const { criteria, outputTelemetry } = condition.configuration;
       const inputTelemetry = criteria?.[0]?.telemetry;
-      console.log(id);
-      console.log(criteria);
-      console.log(output);
-      console.log(outputMetadata);
-      console.log('inputTelemetry', inputTelemetry);
-      console.log('outputTelemetry', outputTelemetry);
       conditionCollectionMap.set(condition?.id, condition);
       if (inputTelemetry) {
         const inputTelemetryId = this.openmct.objects.makeKeyString(inputTelemetry);
@@ -241,12 +232,12 @@ export default class HistoricalTelemetryProvider {
     );
 
     console.log('*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣*️⃣');
-    console.log(historicalTelemetriesPool);
-    console.log(this.historicalTelemetryPoolMap);
-    console.log(inputTelemetries);
-    console.log(outputTelemetries);
-    console.log(historicalTelemetryDateMap);
-    console.log(outputTelemetryDateMap);
+    console.log('historicalTelemetriesPool', historicalTelemetriesPool);
+    console.log('historicalTelemetryPoolMap', this.historicalTelemetryPoolMap);
+    console.log('inputTelemetries', inputTelemetries);
+    console.log('outputTelemetries', outputTelemetries);
+    console.log('historicalTelemetryDateMap', historicalTelemetryDateMap);
+    console.log('outputTelemetryDateMap', outputTelemetryDateMap);
 
     return outputTelemetryDateMap;
   }
@@ -258,7 +249,7 @@ export default class HistoricalTelemetryProvider {
   }
 
   async getHistoricalData() {
-    console.log('getHistoricalData');
+    console.log('🌟🌟🌟🌟🌟🌟🌟🌟🌟 getHistoricalData 🌟🌟🌟🌟🌟🌟🌟🌟🌟');
     this.setTimeBounds(this.openmct.time.getBounds());
     const outputTelemetryMap = await this.getHistoricalInputsByDate();
     const formattedOutputTelemetry = this.formatOutputData(outputTelemetryMap);
