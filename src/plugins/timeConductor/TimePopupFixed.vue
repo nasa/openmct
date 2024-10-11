@@ -125,6 +125,7 @@ export default {
     return {
       timeFormatter: this.getFormatter(timeSystem.timeFormat),
       durationFormatter: this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER),
+      timeSystemKey: timeSystem.key,
       bounds: {
         start: bounds.start,
         end: bounds.end
@@ -142,12 +143,16 @@ export default {
         endDate: true,
         endTime: true
       },
+      hasLogicalValidationErrors: false,
       isDisabled: false
     };
   },
   computed: {
     isSubmitDisabled() {
-      return Object.values(this.inputValidityMap).some((isValid) => !isValid);
+      return (
+        Object.values(this.inputValidityMap).some((isValid) => !isValid) ||
+        this.hasLogicalValidationErrors
+      );
     }
   },
   watch: {
@@ -198,6 +203,7 @@ export default {
       this.formattedBounds.endTime = this.durationFormatter.format(Math.abs(bounds.end));
     },
     setTimeSystem(timeSystem) {
+      this.timeSystemKey = timeSystem.key;
       this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
       this.durationFormatter = this.getFormatter(
         timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
@@ -227,14 +233,52 @@ export default {
       }
     },
     handleFormSubmission(shouldDismiss) {
-      this.validateAllBounds('startDate');
-      this.validateAllBounds('startTime');
-      this.validateAllBounds('endDate');
-      this.validateAllBounds('endTime');
+      let validationResult;
+      this.hasLogicalValidationErrors = false;
 
-      if (!this.isDisabled) {
+      const bounds = {
+        start: this.timeFormatter.parse(
+          `${this.formattedBounds.startDate} ${this.formattedBounds.startTime}`
+        ),
+        end: this.timeFormatter.parse(
+          `${this.formattedBounds.endDate} ${this.formattedBounds.endTime}`
+        )
+      };
+
+      const limit = this.configuration?.menuOptions
+        ?.filter((option) => option.timeSystem === this.timeSystemKey)
+        ?.find((option) => option.limit)?.limit;
+
+      if (this.isUTCBased && limit && bounds.end - bounds.start > limit) {
+        validationResult = {
+          valid: false,
+          message: 'Start and end difference exceeds allowable limit'
+        };
+      } else {
+        validationResult = this.openmct.time.validateBounds(bounds);
+      }
+
+      this.handleValidationResults(this.$refs.startDate, validationResult);
+
+      if (!this.hasLogicalValidationErrors) {
         this.setBoundsFromView(shouldDismiss);
       }
+    },
+    validateLimit(bounds) {
+      const limit = this.configuration?.menuOptions
+        ?.filter((option) => option.timeSystem === this.timeSystemKey)
+        ?.find((option) => option.limit)?.limit;
+
+      if (this.isUTCBased && limit && bounds.end - bounds.start > limit) {
+        const validationResult = {
+          valid: false,
+          message: 'Start and end difference exceeds allowable limit'
+        };
+
+        return this.handleValidationResults(this.$refs.startDate, validationResult);
+      }
+
+      return true;
     },
     validateAllBounds(ref) {
       this.isDisabled = false;
@@ -257,8 +301,8 @@ export default {
           )
         };
         //TODO: Do we need limits here? We have conductor limits disabled right now
-        // const limit = this.getBoundsLimit();
         const limit = false;
+        // const limit = this.getBoundsLimit();
 
         if (this.isUTCBased && limit && boundsValues.end - boundsValues.start > limit) {
           if (input === currentInput) {
@@ -300,8 +344,8 @@ export default {
       });
     },
     getBoundsLimit() {
-      const configuration = this.configuration.menuOptions
-        .filter((option) => option.timeSystem === this.timeSystem.key)
+      const configuration = this.configuration?.menuOptions
+        ?.filter((option) => option.timeSystem === this.timeSystem.key)
         .find((option) => option.limit);
 
       const limit = configuration ? configuration.limit : undefined;
@@ -312,7 +356,7 @@ export default {
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
-        this.isDisabled = true;
+        this.hasLogicalValidationErrors = true;
       } else {
         input.setCustomValidity('');
         input.title = '';
