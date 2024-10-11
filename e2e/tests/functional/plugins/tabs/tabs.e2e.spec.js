@@ -98,7 +98,7 @@ test.describe('Tabs View', () => {
   }) => {
     await page.goto(tabsView.url);
     //lock the view
-    await page.getByLabel('Unlocked for editing - click to lock.', { exact: true }).click();
+    await page.getByLabel('Unlocked for editing, click to lock.', { exact: true }).click();
     // get the initial tab index
     const initialTab = page.getByLabel(/- selected/);
     // switch to a different tab in the view
@@ -113,7 +113,7 @@ test.describe('Tabs View', () => {
     await expect(lockedSelectedTab).toHaveText(await initialTab.textContent());
 
     //unlock the view
-    await page.getByLabel('Locked for editing - click to unlock.', { exact: true }).click();
+    await page.getByLabel('Locked for editing. Click to unlock.', { exact: true }).click();
     // switch to a different tab in the view
     await swgTab.click();
     await page.getByLabel(`${sineWaveGenerator.name} Object View`).isVisible();
