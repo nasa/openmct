@@ -43,7 +43,7 @@ export default class ConditionSetMetadataProvider {
   }
 
   getMetadata(domainObject) {
-    const format = { formatString: '%0.2f' };
+    const format = {};
     domainObject.configuration.conditionCollection.forEach((condition, index) => {
       if (condition?.configuration?.valueMetadata?.enumerations) {
         delete format.formatString;
