@@ -29,17 +29,12 @@ import {
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Time conductor operations', () => {
-  let DAY;
-  let DAY_AFTER;
-  let ONE_O_CLOCK;
-  let TWO_O_CLOCK;
+  const DAY = '2024-01-01';
+  const DAY_AFTER = '2024-01-02';
+  const ONE_O_CLOCK = '01:00:00';
+  const TWO_O_CLOCK = '02:00:00';
 
   test.beforeEach(async ({ page }) => {
-    DAY = '2024-01-01';
-    DAY_AFTER = '2024-01-02';
-    ONE_O_CLOCK = '01:00:00';
-    TWO_O_CLOCK = '02:00:00';
-
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
