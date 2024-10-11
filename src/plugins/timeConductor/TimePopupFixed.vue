@@ -17,7 +17,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="Start date"
-          @change="validateInput('startDate')"
+          @input="onInput('startDate')"
+          @change="onChange('startDate')"
         />
         <DatePicker
           v-if="isUTCBased"
@@ -37,7 +38,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="Start time"
-          @change="validateInput('startTime')"
+          @input="onInput('startTime')"
+          @change="onChange('startTime')"
         />
       </div>
 
@@ -54,7 +56,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="End date"
-          @change="validateInput('endDate')"
+          @input="onInput('endDate')"
+          @change="onChange('endDate')"
         />
         <DatePicker
           v-if="isUTCBased"
@@ -74,14 +77,15 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="End time"
-          @change="validateInput('endTime')"
+          @input="onInput('endTime')"
+          @change="onChange('endTime')"
         />
       </div>
 
       <div class="pr-time-input pr-time-input--buttons">
         <button
           class="c-button c-button--major icon-check"
-          :disabled="isSubmitDisabled"
+          :disabled="hasInputValidityError"
           aria-label="Submit time bounds"
           @click.prevent="handleFormSubmission(true)"
         ></button>
@@ -138,21 +142,26 @@ export default {
       },
       isUTCBased: timeSystem.isUTCBased,
       inputValidityMap: {
-        startDate: true,
-        startTime: true,
-        endDate: true,
-        endTime: true
+        startDate: { valid: true },
+        startTime: { valid: true },
+        endDate: { valid: true },
+        endTime: { valid: true }
       },
-      hasLogicalValidationErrors: false,
-      isDisabled: false
+      logicalValidityMap: {
+        limit: { valid: true },
+        bounds: { valid: true }
+      }
     };
   },
   computed: {
-    isSubmitDisabled() {
-      return (
-        Object.values(this.inputValidityMap).some((isValid) => !isValid) ||
-        this.hasLogicalValidationErrors
-      );
+    hasInputValidityError() {
+      return Object.values(this.inputValidityMap).some((isValid) => !isValid.valid);
+    },
+    hasLogicalValidationErrors() {
+      return Object.values(this.logicalValidityMap).some((isValid) => !isValid.valid);
+    },
+    isValid() {
+      return !this.hasInputValidityError && !this.hasLogicalValidationErrors;
     }
   },
   watch: {
@@ -183,15 +192,6 @@ export default {
     handleNewBounds(bounds) {
       this.setBounds(bounds);
       this.setViewFromBounds(bounds);
-    },
-    clearAllValidation() {
-      [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
-    },
-    clearValidationForInput(input) {
-      if (input) {
-        input.setCustomValidity('');
-        input.title = '';
-      }
     },
     setBounds(bounds) {
       this.bounds = bounds;
@@ -232,10 +232,42 @@ export default {
         return false;
       }
     },
-    handleFormSubmission(shouldDismiss) {
-      let validationResult;
-      this.hasLogicalValidationErrors = false;
+    clearAllValidation() {
+      Object.keys(this.inputValidityMap).forEach(this.clearValidation);
+    },
+    clearValidation(refName) {
+      const input = this.getInput(refName);
 
+      input.setCustomValidity('');
+      input.title = '';
+    },
+    onInput(refName) {
+      this.clearAllValidation();
+      this.validateInput(refName);
+    },
+    onChange(refName) {
+      this.handleValidationResults(refName);
+    },
+    handleFormSubmission(shouldDismiss) {
+      this.validateLimit();
+      this.handleValidationResults('limit');
+      this.validateBounds();
+      this.handleValidationResults('bounds');
+
+      if (this.isValid) {
+        this.setBoundsFromView(shouldDismiss);
+      }
+    },
+    validateInput(refName) {
+      const inputType = refName.includes('Date') ? 'Date' : 'Time';
+      const formatter = inputType === 'Date' ? this.timeFormatter : this.durationFormatter;
+      const validationResult = formatter.validate(this.formattedBounds[refName])
+        ? { valid: true }
+        : { valid: false, message: `Invalid ${inputType}` };
+
+      this.inputValidityMap[refName] = validationResult;
+    },
+    validateBounds() {
       const bounds = {
         start: this.timeFormatter.parse(
           `${this.formattedBounds.startDate} ${this.formattedBounds.startTime}`
@@ -245,24 +277,7 @@ export default {
         )
       };
 
-      const limit = this.configuration?.menuOptions
-        ?.filter((option) => option.timeSystem === this.timeSystemKey)
-        ?.find((option) => option.limit)?.limit;
-
-      if (this.isUTCBased && limit && bounds.end - bounds.start > limit) {
-        validationResult = {
-          valid: false,
-          message: 'Start and end difference exceeds allowable limit'
-        };
-      } else {
-        validationResult = this.openmct.time.validateBounds(bounds);
-      }
-
-      this.handleValidationResults(this.$refs.startDate, validationResult);
-
-      if (!this.hasLogicalValidationErrors) {
-        this.setBoundsFromView(shouldDismiss);
-      }
+      this.logicalValidityMap.bounds = this.openmct.time.validateBounds(bounds);
     },
     validateLimit(bounds) {
       const limit = this.configuration?.menuOptions
@@ -270,89 +285,18 @@ export default {
         ?.find((option) => option.limit)?.limit;
 
       if (this.isUTCBased && limit && bounds.end - bounds.start > limit) {
-        const validationResult = {
+        this.logicalValidityMap.limit = {
           valid: false,
           message: 'Start and end difference exceeds allowable limit'
         };
-
-        return this.handleValidationResults(this.$refs.startDate, validationResult);
+      } else {
+        this.logicalValidityMap.limit = { valid: true };
       }
-
-      return true;
     },
-    validateAllBounds(ref) {
-      this.isDisabled = false;
+    handleValidationResults(refName) {
+      const input = this.getInput(refName);
+      const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
 
-      if (!this.areBoundsFormatsValid()) {
-        this.isDisabled = true;
-        return false;
-      }
-
-      let validationResult = { valid: true };
-      const currentInput = this.$refs[ref];
-
-      return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        let boundsValues = {
-          start: this.timeFormatter.parse(
-            `${this.formattedBounds.startDate} ${this.formattedBounds.startTime}`
-          ),
-          end: this.timeFormatter.parse(
-            `${this.formattedBounds.endDate} ${this.formattedBounds.endTime}`
-          )
-        };
-        //TODO: Do we need limits here? We have conductor limits disabled right now
-        const limit = false;
-        // const limit = this.getBoundsLimit();
-
-        if (this.isUTCBased && limit && boundsValues.end - boundsValues.start > limit) {
-          if (input === currentInput) {
-            validationResult = {
-              valid: false,
-              message: 'Start and end difference exceeds allowable limit'
-            };
-          }
-        } else if (input === currentInput) {
-          validationResult = this.openmct.time.validateBounds(boundsValues);
-        }
-
-        return this.handleValidationResults(input, validationResult);
-      });
-    },
-    validateInput(refName) {
-      const inputType = refName.includes('Date') ? 'Date' : 'Time';
-      const formatter = inputType === 'Date' ? this.timeFormatter : this.durationFormatter;
-      const validationResult = formatter.validate(this.formattedBounds[refName])
-        ? { valid: true }
-        : { valid: false, message: `Invalid ${inputType}` };
-
-      this.inputValidityMap[refName] = validationResult.valid;
-
-      return this.handleValidationResults(this.$refs[refName], validationResult);
-    },
-    areBoundsFormatsValid() {
-      return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        const formattedDate =
-          input === this.$refs.startDate
-            ? `${this.formattedBounds.startDate} ${this.formattedBounds.startTime}`
-            : `${this.formattedBounds.endDate} ${this.formattedBounds.endTime}`;
-
-        const validationResult = this.timeFormatter.validate(formattedDate)
-          ? { valid: true }
-          : { valid: false, message: 'Invalid date' };
-
-        return this.handleValidationResults(input, validationResult);
-      });
-    },
-    getBoundsLimit() {
-      const configuration = this.configuration?.menuOptions
-        ?.filter((option) => option.timeSystem === this.timeSystem.key)
-        .find((option) => option.limit);
-
-      const limit = configuration ? configuration.limit : undefined;
-
-      return limit;
-    },
-    handleValidationResults(input, validationResult) {
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
@@ -363,16 +307,23 @@ export default {
       }
 
       this.$refs.fixedDeltaInput.reportValidity();
+    },
+    getInput(refName) {
+      if (Object.keys(this.inputValidityMap).includes(refName)) {
+        return this.$refs[refName];
+      }
 
-      return validationResult.valid;
+      return this.$refs.startDate;
     },
     startDateSelected(date) {
       this.formattedBounds.startDate = this.timeFormatter.format(date).split(' ')[0];
-      this.validateInput('startDate');
+      this.onInput('startDate');
+      this.onChange('startDate');
     },
     endDateSelected(date) {
       this.formattedBounds.endDate = this.timeFormatter.format(date).split(' ')[0];
-      this.validateInput('endDate');
+      this.onInput('endDate');
+      this.onChange('endDate');
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
