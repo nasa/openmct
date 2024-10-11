@@ -24,17 +24,28 @@ import {
   setEndOffset,
   setFixedTimeMode,
   setRealTimeMode,
-  setStartOffset,
-  setTimeConductorBounds
+  setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Time conductor operations', () => {
-  test('validate date and time inputs are validated on input event', async ({ page }) => {
-    const submitButtonLocator = page.getByLabel('Submit time bounds');
+  let DAY;
+  let DAY_AFTER;
+  let ONE_O_CLOCK;
+  let TWO_O_CLOCK;
+
+  test.beforeEach(async ({ page }) => {
+    DAY = '2024-01-01';
+    DAY_AFTER = '2024-01-02';
+    ONE_O_CLOCK = '01:00:00';
+    TWO_O_CLOCK = '02:00:00';
 
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('validate date and time inputs are validated on input event', async ({ page }) => {
+    const submitButtonLocator = page.getByLabel('Submit time bounds');
 
     // Open the time conductor popup
     await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
@@ -77,9 +88,6 @@ test.describe('Time conductor operations', () => {
   });
 
   test('validate date and time inputs validation is reported on change event', async ({ page }) => {
-    // Go to baseURL
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-
     // Open the time conductor popup
     await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
@@ -132,71 +140,99 @@ test.describe('Time conductor operations', () => {
     });
   });
 
-  test('validate bounds on submit', async ({ page }) => {
-    const day = '2024-01-01';
-    const dayAfter = '2024-01-02';
-    const oneOClock = '01:00:00';
-    const twoOClock = '02:00:00';
+  test('validate start time does not exceed end time on submit', async ({ page }) => {
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-    await test.step('start time does not exceed end time', async () => {
-      // Go to baseURL
-      await page.goto('./', { waitUntil: 'domcontentloaded' });
+    // FIXME: https://github.com/nasa/openmct/pull/7818
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(500);
 
-      // Open the time conductor popup
-      await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(TWO_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
 
-      await page.getByLabel('Start date').fill(day);
-      await page.getByLabel('Start time').fill(twoOClock);
-      await page.getByLabel('End date').fill(day);
-      await page.getByLabel('End time').fill(oneOClock);
-      await page.getByLabel('Submit time bounds').click();
+    await expect(page.getByLabel('Start date')).toHaveAttribute(
+      'title',
+      'Specified start date exceeds end bound'
+    );
+    await expect(page.getByLabel('Start bounds')).not.toHaveText(`${DAY} ${TWO_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
 
-      await expect(page.getByLabel('Start date')).toHaveAttribute(
-        'title',
-        'Specified start date exceeds end bound'
-      );
-      await expect(page.getByLabel('Start bounds')).not.toHaveText(`${day} ${twoOClock}.000Z`);
-      await expect(page.getByLabel('End bounds')).not.toHaveText(`${day} ${oneOClock}.000Z`);
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY);
+    await page.getByLabel('End time').fill(TWO_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
 
-      await page.getByLabel('Start date').fill(day);
-      await page.getByLabel('Start time').fill(oneOClock);
-      await page.getByLabel('End date').fill(day);
-      await page.getByLabel('End time').fill(twoOClock);
-      await page.getByLabel('Submit time bounds').click();
+    await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).toHaveText(`${DAY} ${TWO_O_CLOCK}.000Z`);
+  });
 
-      await expect(page.getByLabel('Start bounds')).toHaveText(`${day} ${oneOClock}.000Z`);
-      await expect(page.getByLabel('End bounds')).toHaveText(`${day} ${twoOClock}.000Z`);
+  test('validate start datetime does not exceed end datetime on submit', async ({ page }) => {
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    // FIXME: https://github.com/nasa/openmct/pull/7818
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(500);
+
+    await page.getByLabel('Start date').fill(DAY_AFTER);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
+
+    await expect(page.getByLabel('Start date')).toHaveAttribute(
+      'title',
+      'Specified start date exceeds end bound'
+    );
+    await expect(page.getByLabel('Start bounds')).not.toHaveText(
+      `${DAY_AFTER} ${ONE_O_CLOCK}.000Z`
+    );
+    await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
+
+    await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
+  });
+
+  test('cancelling form does not set bounds', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7791'
     });
 
-    await test.step('start datetime does not exceed end datetime', async () => {
-      // Go to baseURL
-      await page.reload({ waitUntil: 'domcontentloaded' });
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-      // Open the time conductor popup
-      await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Discard changes and close time popup').click();
 
-      await page.getByLabel('Start date').fill(dayAfter);
-      await page.getByLabel('Start time').fill(oneOClock);
-      await page.getByLabel('End date').fill(day);
-      await page.getByLabel('End time').fill(oneOClock);
-      await page.getByLabel('Submit time bounds').click();
+    await expect(page.getByLabel('Start bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
 
-      await expect(page.getByLabel('Start date')).toHaveAttribute(
-        'title',
-        'Specified start date exceeds end bound'
-      );
-      await expect(page.getByLabel('Start bounds')).not.toHaveText(`${dayAfter} ${oneOClock}.000Z`);
-      await expect(page.getByLabel('End bounds')).not.toHaveText(`${day} ${oneOClock}.000Z`);
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-      await page.getByLabel('Start date').fill(day);
-      await page.getByLabel('Start time').fill(oneOClock);
-      await page.getByLabel('End date').fill(dayAfter);
-      await page.getByLabel('End time').fill(oneOClock);
-      await page.getByLabel('Submit time bounds').click();
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
 
-      await expect(page.getByLabel('Start bounds')).toHaveText(`${day} ${oneOClock}.000Z`);
-      await expect(page.getByLabel('End bounds')).toHaveText(`${dayAfter} ${oneOClock}.000Z`);
-    });
+    await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
   });
 });
 
@@ -243,77 +279,6 @@ test.describe('Global Time Conductor', () => {
 
     await expect(page.getByLabel('Start offset: 01:29:23')).toBeVisible();
     await expect(page.getByLabel('End offset: 01:30:31')).toBeVisible();
-  });
-
-  test('Input field validation: fixed time mode', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7791'
-    });
-    // Switch to fixed time mode
-    await setFixedTimeMode(page);
-
-    // Define valid time bounds for testing
-    const validBounds = {
-      startDate: '2024-04-20',
-      startTime: '00:04:20',
-      endDate: '2024-04-20',
-      endTime: '16:04:20'
-    };
-    // Set valid time conductor bounds ✌️
-    await setTimeConductorBounds(page, validBounds);
-
-    // Verify that the time bounds are set correctly
-    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
-    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
-
-    // Open the Time Conductor Mode popup
-    await page.getByLabel('Time Conductor Mode').click();
-
-    // Test invalid start date
-    const invalidStartDate = '2024-04-21';
-    await page.getByLabel('Start date').fill(invalidStartDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('Start date').fill(validBounds.startDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Test invalid end date
-    const invalidEndDate = '2024-04-19';
-    await page.getByLabel('End date').fill(invalidEndDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('End date').fill(validBounds.endDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Test invalid start time
-    const invalidStartTime = '16:04:21';
-    await page.getByLabel('Start time').fill(invalidStartTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('Start time').fill(validBounds.startTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Test invalid end time
-    const invalidEndTime = '00:04:19';
-    await page.getByLabel('End time').fill(invalidEndTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('End time').fill(validBounds.endTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Verify that the time bounds remain unchanged after invalid inputs
-    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
-    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
-
-    // Discard changes and verify that bounds remain unchanged
-    await setTimeConductorBounds(page, {
-      startDate: validBounds.startDate,
-      startTime: '04:20:00',
-      endDate: validBounds.endDate,
-      endTime: '04:20:20',
-      submitChanges: false
-    });
-
-    // Verify that the original time bounds are still displayed after discarding changes
-    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
-    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
   });
 
   /**
