@@ -43,11 +43,13 @@ export default class ConditionSetMetadataProvider {
   }
 
   getMetadata(domainObject) {
-    const enumerations = domainObject.configuration.conditionCollection.map((condition, index) => {
-      return {
-        string: condition.configuration.output,
-        value: index
-      };
+    const format = { formatString: '%0.2f' };
+    domainObject.configuration.conditionCollection.forEach((condition, index) => {
+      if (condition?.configuration?.valueMetadata?.enumerations) {
+        delete format.formatString;
+        format.format = 'enum';
+        format.enumerations = condition?.configuration?.valueMetadata?.enumerations;
+      }
     });
 
     const resultEnum = [
@@ -67,8 +69,7 @@ export default class ConditionSetMetadataProvider {
           key: 'value',
           source: 'output',
           name: 'Value',
-          format: 'enum',
-          enumerations: enumerations,
+          ...format,
           hints: {
             range: 1
           }

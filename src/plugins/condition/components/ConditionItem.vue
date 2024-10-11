@@ -294,7 +294,8 @@ export default {
       criterionIndex: 0,
       draggingOver: false,
       isDefault: this.condition.isDefault,
-      telemetryMetadataOptions: {}
+      telemetryMetadataOptions: {},
+      telemetryFormats: new Map()
     };
   },
   computed: {
@@ -331,9 +332,10 @@ export default {
   watch: {
     condition: {
       handler() {
-        if (this.condition.configuration.output !== TELEMETRY_VALUE) {
-          this.condition.configuration.outputTelemetry = null;
-          this.condition.configuration.outputMetadata = null;
+        const config = this.condition?.configuration;
+        if (config?.output !== TELEMETRY_VALUE) {
+          config.outputTelemetry = null;
+          config.outputMetadata = null;
         }
       },
       deep: true
@@ -373,6 +375,16 @@ export default {
       }
 
       this.persist();
+    },
+    getOutputMetadata() {
+      const config = this.condition.configuration;
+      let valueMetadata;
+      if (config?.outputTelemetry && config?.outputMetadata) {
+        valueMetadata = this.telemetryFormats.get(
+          `${config?.outputTelemetry}_${config?.outputMetadata}`
+        );
+      }
+      return valueMetadata;
     },
     addCriteria() {
       const criteriaObject = {
@@ -456,6 +468,10 @@ export default {
       this.persist();
     },
     persist() {
+      const valueMetadata = this.getOutputMetadata();
+      if (valueMetadata) {
+        this.condition.configuration.valueMetadata = valueMetadata;
+      }
       this.$emit('update-condition', {
         condition: this.condition
       });
@@ -469,6 +485,9 @@ export default {
         let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
         if (telemetryMetadata) {
           this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+          telemetryMetadata.values().forEach((telemetryValue) => {
+            this.telemetryFormats.set(`${id}_${telemetryValue.key}`, telemetryValue);
+          });
         } else {
           this.telemetryMetadataOptions[id] = [];
         }
