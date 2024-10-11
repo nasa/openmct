@@ -412,7 +412,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     const currentOutput = {
-      output: output,
+      value: output,
       id: this.conditionSetDomainObject.identifier,
       conditionId: currentCondition.id,
       ...latestTimestamp
@@ -471,7 +471,7 @@ export default class ConditionManager extends EventEmitter {
         {
           id: this.conditionSetDomainObject.identifier,
           conditionId: currentCondition.id,
-          output: outputValue,
+          value: outputValue,
           result
         },
         timestamp
