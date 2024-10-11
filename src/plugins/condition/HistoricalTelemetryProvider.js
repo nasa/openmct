@@ -61,11 +61,11 @@ export default class HistoricalTelemetryProvider {
     const formattedDatum = {
       ...datum
     };
-    formattedDatum.output = datum[metadata];
+    formattedDatum.value = datum[metadata];
     return formattedDatum;
   }
 
-  #computeHistoricalDatum(timestamp, dataFrame) {
+  #computeHistoricalDatum(timestamp, dataFrame, timekey) {
     for (let conditionIndex = 0; conditionIndex < this.#conditions.length; conditionIndex++) {
       const condition = this.#conditions[conditionIndex];
       const { id } = condition;
@@ -81,7 +81,10 @@ export default class HistoricalTelemetryProvider {
       if (result) {
         // generate the output telemetry object if available
         const outputTelmetryDetail = this.#outputTelemetryDetails[id];
-        if (outputTelmetryDetail) {
+        if (
+          outputTelmetryDetail?.outputTelemetryKeyString &&
+          outputTelmetryDetail?.outputMetadata
+        ) {
           const outputTelmetryDatum =
             dataFrame[outputTelmetryDetail.outputTelemetryKeyString][timestamp];
           const formattedDatum = this.#formatDatumForOutput(
@@ -89,6 +92,13 @@ export default class HistoricalTelemetryProvider {
             outputTelmetryDetail.outputMetadata
           );
           return formattedDatum;
+        } else if (outputTelmetryDetail?.staticOutputValue) {
+          const staticOutput = {
+            output: outputTelmetryDetail?.staticOutputValue,
+            [timekey]: timestamp,
+            result: false
+          };
+          return staticOutput;
         }
       }
     }
@@ -120,8 +130,14 @@ export default class HistoricalTelemetryProvider {
     const referenceTelemetryData = referenceTelemetryCollection.getAll();
     referenceTelemetryData.forEach((datum) => {
       const timestamp = datum[referenceTelemetryCollection.timeKey];
-      const historicalDatum = this.#computeHistoricalDatum(timestamp, dataFrame);
-      historicalData.push(historicalDatum);
+      const historicalDatum = this.#computeHistoricalDatum(
+        timestamp,
+        dataFrame,
+        referenceTelemetryCollection.timeKey
+      );
+      if (historicalDatum) {
+        historicalData.push(historicalDatum);
+      }
     });
     return historicalData;
   }
@@ -217,11 +233,15 @@ export default class HistoricalTelemetryProvider {
   #processConditionSet() {
     const conditionCollection = this.#conditionSetDomainObject.configuration.conditionCollection;
     conditionCollection.forEach((condition, index) => {
-      const { outputTelemetry, outputMetadata } = condition.configuration;
+      const { outputTelemetry, outputMetadata, output } = condition.configuration;
       if (outputTelemetry && outputMetadata) {
         this.#outputTelemetryDetails[condition.id] = {
           outputTelemetryKeyString: outputTelemetry,
           outputMetadata
+        };
+      } else if (output) {
+        this.#outputTelemetryDetails[condition.id] = {
+          staticOutputValue: output
         };
       }
     });
@@ -236,7 +256,7 @@ export default class HistoricalTelemetryProvider {
       console.debug('🚨 No telemetry objects found in condition set');
       return [];
     }
-    console.debug('🍯 Processed Condition Set');
+    console.debug('🍯 Processed Condition Set', this.#outputTelemetryDetails);
     this.#processConditionSet();
     // load telemetry collections for each telemetry object
     await this.#loadTelemetryCollections();
