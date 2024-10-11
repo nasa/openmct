@@ -69,6 +69,7 @@
     "moment": "2.30.1",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.41",
+    "nano": "10.1.4",
     "npm-run-all2": "6.1.2",
     "nyc": "15.1.0",
     "painterro": "1.2.87",
