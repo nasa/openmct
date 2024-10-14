@@ -35,7 +35,7 @@ export const DEFAULT_SHELVE_DURATIONS = [
     value: 900000
   },
   {
-    name: 'Indefinite',
+    name: 'Unlimited',
     value: null
   }
 ];
@@ -146,7 +146,7 @@ export default class FaultManagementAPI {
 /**
  * @typedef {Object} ShelveDuration
  * @property {string} name - The name of the shelve duration
- * @property {number|null} value - The value of the shelve duration in milliseconds, or null for indefinite
+ * @property {number|null} value - The value of the shelve duration in milliseconds, or null for unlimited
  */
 
 /**
