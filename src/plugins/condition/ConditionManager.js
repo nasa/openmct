@@ -25,7 +25,6 @@ import { v4 as uuid } from 'uuid';
 
 import Condition from './Condition.js';
 import HistoricalTelemetryProvider from './HistoricalTelemetryProvider.js';
-import { TELEMETRY_VALUE } from './utils/constants.js';
 import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
@@ -338,89 +337,6 @@ export default class ConditionManager extends EventEmitter {
     return historicalData;
   }
 
-  getCurrentConditionLAD(conditionResults) {
-    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-    let currentCondition = conditionCollection[conditionCollection.length - 1];
-
-    for (let i = 0; i < conditionCollection.length - 1; i++) {
-      if (conditionResults[conditionCollection[i].id]) {
-        //first condition to be true wins
-        currentCondition = conditionCollection[i];
-        break;
-      }
-    }
-
-    return currentCondition;
-  }
-
-  async requestLADConditionSetOutput(options) {
-    if (!this.conditions.length) {
-      return [];
-    }
-
-    await this.compositionLoad;
-
-    let latestTimestamp;
-    let conditionResults = {};
-    let nextLegOptions = { ...options };
-    delete nextLegOptions.onPartialResponse;
-
-    const results = await Promise.all(
-      this.conditions.map((condition) => condition.requestLADConditionResult(nextLegOptions))
-    );
-
-    results.forEach((resultObj) => {
-      const {
-        id,
-        data,
-        data: { result }
-      } = resultObj;
-
-      if (this.findConditionById(id)) {
-        conditionResults[id] = Boolean(result);
-      }
-
-      latestTimestamp = getLatestTimestamp(
-        latestTimestamp,
-        data,
-        this.timeSystems,
-        this.openmct.time.getTimeSystem()
-      );
-    });
-
-    if (!Object.values(latestTimestamp).some((timeSystem) => timeSystem)) {
-      return [];
-    }
-
-    const currentCondition = this.getCurrentConditionLAD(conditionResults);
-    let output = currentCondition?.configuration?.output;
-    if (output === TELEMETRY_VALUE) {
-      const { outputTelemetry, outputMetadata } = currentCondition.configuration;
-      const outputTelemetryObject = await this.openmct.objects.get(outputTelemetry);
-      const telemetryOptions = {
-        size: 1,
-        strategy: 'latest',
-        timeContext: this.openmct.time.getContextForView([])
-      };
-      const latestData = await this.openmct.telemetry.request(
-        outputTelemetryObject,
-        telemetryOptions
-      );
-      if (latestData?.[0]?.[outputMetadata]) {
-        output = latestData?.[0]?.[outputMetadata];
-      }
-    }
-
-    const currentOutput = {
-      value: output,
-      id: this.conditionSetDomainObject.identifier,
-      conditionId: currentCondition.id,
-      ...latestTimestamp
-    };
-
-    return [currentOutput];
-  }
-
   isTelemetryUsed(endpoint) {
     const id = this.openmct.objects.makeKeyString(endpoint.identifier);
 
@@ -445,13 +361,16 @@ export default class ConditionManager extends EventEmitter {
     const datum = data[0];
 
     const normalizedDatum = this.createNormalizedDatum(datum, endpoint);
-    const timeSystemKey = this.openmct.time.getTimeSystem().key;
-    let timestamp = {};
-    const currentTimestamp = normalizedDatum[timeSystemKey];
-    timestamp[timeSystemKey] = currentTimestamp;
-    if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
+    const keyString = this.openmct.objects.makeKeyString(endpoint.identifier);
+    const associatedTelemetryCollection = this.telemetryCollections[keyString];
+    const timeKey = associatedTelemetryCollection.timeKey;
+    const formattedTimeStamp = associatedTelemetryCollection.parseTime(datum);
+    const rawTimestamp = {
+      [timeKey]: datum[timeKey]
+    };
+    if (this.shouldEvaluateNewTelemetry(formattedTimeStamp)) {
       this.updateConditionResults(normalizedDatum);
-      this.updateCurrentCondition(timestamp, endpoint, datum);
+      this.updateCurrentCondition(rawTimestamp, endpoint, datum);
     }
   }
 
@@ -465,18 +384,14 @@ export default class ConditionManager extends EventEmitter {
   }
 
   emitConditionSetResult(currentCondition, timestamp, outputValue, result) {
-    this.emit(
-      'conditionSetResultUpdated',
-      Object.assign(
-        {
-          id: this.conditionSetDomainObject.identifier,
-          conditionId: currentCondition.id,
-          value: outputValue,
-          result
-        },
-        timestamp
-      )
-    );
+    const conditionSetResult = {
+      id: this.conditionSetDomainObject.identifier,
+      conditionId: currentCondition.id,
+      value: outputValue,
+      result,
+      ...timestamp
+    };
+    this.emit('conditionSetResultUpdated', conditionSetResult);
   }
 
   updateCurrentCondition(timestamp, telemetryObject, telemetryData) {
@@ -498,7 +413,29 @@ export default class ConditionManager extends EventEmitter {
     this.isProcessing = false;
   }
 
-  async processCondition(timestamp, telemetryObject, telemetryData) {
+  fetchUnderlyingTelemetry(currentCondition, telemetryObject, telemetryData, timestamp) {
+    let telemetryValue;
+    const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
+    const outputMetadata = currentCondition?.configuration?.outputMetadata;
+    const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+
+    if (selectedOutputIdentifier === telemetryKeystring) {
+      telemetryValue = telemetryData[outputMetadata];
+    } else {
+      // grab it from the associated telemetry collection
+      const outputTelemetryCollection = this.telemetryCollections[selectedOutputIdentifier];
+      const latestTelemetryData = outputTelemetryCollection.getAll();
+      const lastValue = latestTelemetryData[latestTelemetryData.length - 1];
+      if (lastValue && lastValue?.[outputMetadata]) {
+        telemetryValue = lastValue?.[outputMetadata];
+      } else {
+        telemetryValue = null;
+      }
+    }
+    return telemetryValue;
+  }
+
+  processCondition(timestamp, telemetryObject, telemetryData) {
     const currentCondition = this.getCurrentCondition();
     const conditionDetails = this.conditions.filter(
       (condition) => condition.id === currentCondition.id
@@ -506,32 +443,12 @@ export default class ConditionManager extends EventEmitter {
     const conditionResult = currentCondition?.isDefault ? false : conditionDetails?.result;
     let telemetryValue = currentCondition.configuration.output;
     if (currentCondition?.configuration?.outputTelemetry) {
-      const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
-      const outputMetadata = currentCondition?.configuration?.outputMetadata;
-      const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-
-      if (selectedOutputIdentifier === telemetryKeystring) {
-        telemetryValue = telemetryData[outputMetadata];
-      } else {
-        const outputTelemetryObject = await this.openmct.objects.get(selectedOutputIdentifier);
-        const telemetryOptions = {
-          size: 1,
-          strategy: 'latest',
-          start: timestamp?.utc - 1000,
-          end: timestamp?.utc + 1000
-        };
-        const outputTelemetryData = await this.openmct.telemetry.request(
-          outputTelemetryObject,
-          telemetryOptions
-        );
-        const outputTelemetryValue =
-          outputTelemetryData?.length > 0 ? outputTelemetryData.slice(-1)[0] : null;
-        if (outputTelemetryData.length && outputTelemetryValue?.[outputMetadata]) {
-          telemetryValue = outputTelemetryValue?.[outputMetadata];
-        } else {
-          telemetryValue = undefined;
-        }
-      }
+      telemetryValue = this.fetchUnderlyingTelemetry(
+        currentCondition,
+        telemetryObject,
+        telemetryData,
+        timestamp
+      );
     }
 
     this.emitConditionSetResult(currentCondition, timestamp, telemetryValue, conditionResult);
@@ -553,18 +470,7 @@ export default class ConditionManager extends EventEmitter {
 
   createNormalizedDatum(telemetryDatum, endpoint) {
     const id = this.openmct.objects.makeKeyString(endpoint.identifier);
-    const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
-
-    const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
-      const testValue = this.getTestData(metadatum);
-      const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-      datum[metadatum.key] =
-        testValue !== undefined
-          ? formatter.parse(testValue)
-          : formatter.parse(telemetryDatum[metadatum.source]);
-
-      return datum;
-    }, {});
+    const normalizedDatum = { ...telemetryDatum };
 
     normalizedDatum.id = id;
 

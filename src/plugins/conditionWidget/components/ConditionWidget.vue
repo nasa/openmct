@@ -123,7 +123,7 @@ export default {
         return;
       }
 
-      this.conditionalLabel = latestDatum.output || '';
+      this.conditionalLabel = latestDatum.value || '';
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;

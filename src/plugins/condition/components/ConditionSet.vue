@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     updateCurrentOutput(currentConditionResult) {
-      this.currentConditionOutput = currentConditionResult.output;
+      this.currentConditionOutput = currentConditionResult.value;
     },
     updateDefaultOutput(output) {
       this.currentConditionOutput = output;
