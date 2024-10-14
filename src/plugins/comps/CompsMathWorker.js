@@ -122,8 +122,18 @@ function calculate(dataFrame, parameters, expression) {
       console.debug('🤦‍♂️ Missing data for some parameters, skipping calculation');
       return;
     }
-    const value = evaluate(expression, scope);
-    sumResults.push({ [referenceParameter.timeKey]: referenceTime, value });
+    const rawComputedValue = evaluate(expression, scope);
+    let computedValue = rawComputedValue;
+    if (computedValue.entries) {
+      // if there aren't any entries, return with nothing
+      if (computedValue.entries.length === 0) {
+        return;
+      }
+      console.debug('📊 Computed value is an array of entries', computedValue.entries);
+      // make array of arrays of entries
+      computedValue = computedValue.entries?.[0];
+    }
+    sumResults.push({ [referenceParameter.timeKey]: referenceTime, value: computedValue });
   });
   return sumResults;
 }
