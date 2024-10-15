@@ -50,7 +50,9 @@ export default class ConditionSetTelemetryProvider {
     let conditionManager = this.getConditionManager(domainObject);
 
     conditionManager.on('conditionSetResultUpdated', (data) => {
-      callback(data);
+      if (data?.result){
+        callback(data);
+      }
     });
 
     return this.destroyConditionManager.bind(
