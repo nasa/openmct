@@ -391,9 +391,7 @@ export default class ConditionManager extends EventEmitter {
       result,
       ...timestamp
     };
-    if (result) {
-      this.emit('conditionSetResultTrue', conditionSetResult);
-    }
+    this.emit('conditionSetResultUpdated', conditionSetResult);
   }
 
   updateCurrentCondition(timestamp, telemetryObject, telemetryData) {
