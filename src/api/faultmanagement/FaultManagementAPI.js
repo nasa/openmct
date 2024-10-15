@@ -136,10 +136,14 @@ export default class FaultManagementAPI {
   /**
    * Retrieves the available shelve durations from the provider, or the default durations if the
    * provider does not provide any.
-   * @returns {ShelveDuration[]}
+   * @returns {ShelveDuration[] | undefined}
    */
   getShelveDurations() {
-    return this.provider?.getShelveDurations?.() ?? DEFAULT_SHELVE_DURATIONS;
+    if (!this.provider) {
+      return;
+    }
+
+    return this.provider.getShelveDurations?.() ?? DEFAULT_SHELVE_DURATIONS;
   }
 }
 
