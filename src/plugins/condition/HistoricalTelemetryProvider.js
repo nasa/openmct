@@ -72,14 +72,15 @@ export default class HistoricalTelemetryProvider {
       const { id } = condition;
       const conditionCriteria = condition.criteria?.[0];
       let result = false;
+      let defaultHit = false;
       if (conditionCriteria) {
         const inputTelemetry = this.#getInputTelemetry(conditionCriteria, dataFrame, timestamp);
         result = conditionCriteria.computeResult({ id, ...inputTelemetry });
       } else {
         // default criteria is 'all'
-        result = true;
+        defaultHit = true;
       }
-      if (result) {
+      if (result || defaultHit) {
         // generate the output telemetry object if available
         const outputTelmetryDetail = this.#outputTelemetryDetails[id];
         if (
@@ -98,7 +99,7 @@ export default class HistoricalTelemetryProvider {
           const staticOutput = {
             output: outputTelmetryDetail?.staticOutputValue,
             [timekey]: timestamp,
-            result: false
+            result
           };
           return staticOutput;
         }
@@ -204,12 +205,12 @@ export default class HistoricalTelemetryProvider {
     this.#telemetryObjects[keyString] = telemetryObjectToAdd;
   }
 
-  removeTelemetryObject(telemetryObjectToRemove) {
-    const keyStringToRemove = this.#openmct.objects.makeKeyString(
-      telemetryObjectToRemove.identifier
-    );
+  removeTelemetryObject(telemetryIdentifierToRemove) {
+    const keyStringToRemove = this.#openmct.objects.makeKeyString(telemetryIdentifierToRemove);
     this.#telemetryObjects = this.#telemetryObjects.filter((existingTelemetryObject) => {
-      const existingKeyString = this.#openmct.objects.makeKeyString(existingTelemetryObject);
+      const existingKeyString = this.#openmct.objects.makeKeyString(
+        existingTelemetryObject.identifier
+      );
       return keyStringToRemove !== existingKeyString;
     });
   }
