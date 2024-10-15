@@ -139,7 +139,7 @@ export default class FaultManagementAPI {
    * @returns {ShelveDuration[]}
    */
   getShelveDurations() {
-    return this.provider?.getShelveDurations() ?? DEFAULT_SHELVE_DURATIONS;
+    return this.provider.getShelveDurations?.() ?? DEFAULT_SHELVE_DURATIONS;
   }
 }
 
