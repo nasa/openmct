@@ -330,7 +330,8 @@ export default {
         }
 
         shelveData.comment = data.comment || '';
-        shelveData.shelveDuration = data.shelveDuration;
+        shelveData.shelveDuration =
+          data.shelveDuration === undefined ? this.shelveDurations[0].value : data.shelveDuration;
       } else {
         shelveData = {
           shelved: false
