@@ -423,6 +423,9 @@ export default {
       return currentRow || SWIMLANE_PADDING;
     },
     generateActivities() {
+      if (!this.planObject) {
+        return;
+      }
       const groupNames = getValidatedGroups(this.planObject, this.planData);
 
       if (!groupNames.length) {
