@@ -46,7 +46,7 @@ jobs:
           git commit -m "chore: bump version to $NIGHTLY_VERSION for nightly build"
 
       - name: Push Changes
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
