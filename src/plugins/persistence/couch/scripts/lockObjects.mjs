@@ -2,8 +2,15 @@ import http from 'http';
 import nano from 'nano';
 import { parseArgs } from 'util';
 
-const COUCH_URL = process.env.OPENMCT_COUCH_URL || 'http://127.0.0.1:5984';
-const COUCH_DB_NAME = process.env.OPENMCT_DATABASE_NAME || 'openmct';
+const COUCH_URL = process.env.OPENMCT_COUCH_URL;
+const COUCH_DB_NAME = process.env.OPENMCT_DATABASE_NAME;
+
+if (!COUCH_URL || !COUCH_DB_NAME) {
+  console.error(
+    'Error: Environment variables OPENMCT_COUCH_URL and OPENMCT_DATABASE_NAME must be set.'
+  );
+  process.exit(1);
+}
 
 const {
   values: { couchUrl, database, lock, unlock, startObjectKeystring, user, pass }
