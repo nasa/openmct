@@ -35,7 +35,7 @@ export const DEFAULT_SHELVE_DURATIONS = [
     value: 900000
   },
   {
-    name: 'Indefinite',
+    name: 'Unlimited',
     value: null
   }
 ];
@@ -136,17 +136,21 @@ export default class FaultManagementAPI {
   /**
    * Retrieves the available shelve durations from the provider, or the default durations if the
    * provider does not provide any.
-   * @returns {ShelveDuration[]}
+   * @returns {ShelveDuration[] | undefined}
    */
   getShelveDurations() {
-    return this.provider?.getShelveDurations() ?? DEFAULT_SHELVE_DURATIONS;
+    if (!this.provider) {
+      return;
+    }
+
+    return this.provider.getShelveDurations?.() ?? DEFAULT_SHELVE_DURATIONS;
   }
 }
 
 /**
  * @typedef {Object} ShelveDuration
  * @property {string} name - The name of the shelve duration
- * @property {number|null} value - The value of the shelve duration in milliseconds, or null for indefinite
+ * @property {number|null} value - The value of the shelve duration in milliseconds, or null for unlimited
  */
 
 /**
