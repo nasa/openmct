@@ -17,8 +17,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="Start date"
-          @input="onInput('startDate')"
-          @change="onChange('startDate')"
+          @input="validateInput('startDate')"
+          @change="reportValidity('startDate')"
         />
         <DatePicker
           v-if="isUTCBased"
@@ -38,8 +38,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="Start time"
-          @input="onInput('startTime')"
-          @change="onChange('startTime')"
+          @input="validateInput('startTime')"
+          @change="reportValidity('startTime')"
         />
       </div>
 
@@ -56,8 +56,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="End date"
-          @input="onInput('endDate')"
-          @change="onChange('endDate')"
+          @input="validateInput('endDate')"
+          @change="reportValidity('endDate')"
         />
         <DatePicker
           v-if="isUTCBased"
@@ -77,8 +77,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="End time"
-          @input="onInput('endTime')"
-          @change="onChange('endTime')"
+          @input="validateInput('endTime')"
+          @change="reportValidity('endTime')"
         />
       </div>
 
@@ -241,24 +241,19 @@ export default {
       input.setCustomValidity('');
       input.title = '';
     },
-    onInput(refName) {
-      this.clearAllValidation();
-      this.validateInput(refName);
-    },
-    onChange(refName) {
-      this.handleValidationResults(refName);
-    },
     handleFormSubmission(shouldDismiss) {
       this.validateLimit();
-      this.handleValidationResults('limit');
+      this.reportValidity('limit');
       this.validateBounds();
-      this.handleValidationResults('bounds');
+      this.reportValidity('bounds');
 
       if (this.isValid) {
         this.setBoundsFromView(shouldDismiss);
       }
     },
     validateInput(refName) {
+      this.clearAllValidation();
+
       const inputType = refName.includes('Date') ? 'Date' : 'Time';
       const formatter = inputType === 'Date' ? this.timeFormatter : this.durationFormatter;
       const validationResult = formatter.validate(this.formattedBounds[refName])
@@ -293,7 +288,7 @@ export default {
         this.logicalValidityMap.limit = { valid: true };
       }
     },
-    handleValidationResults(refName) {
+    reportValidity(refName) {
       const input = this.getInput(refName);
       const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
 
@@ -317,13 +312,13 @@ export default {
     },
     startDateSelected(date) {
       this.formattedBounds.startDate = this.timeFormatter.format(date).split(' ')[0];
-      this.onInput('startDate');
-      this.onChange('startDate');
+      this.validateInput('startDate');
+      this.reportValidity('startDate');
     },
     endDateSelected(date) {
       this.formattedBounds.endDate = this.timeFormatter.format(date).split(' ')[0];
-      this.onInput('endDate');
-      this.onChange('endDate');
+      this.validateInput('endDate');
+      this.reportValidity('endDate');
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
