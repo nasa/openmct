@@ -526,6 +526,10 @@ async function setTimeConductorBounds(page, { submitChanges = true, ...bounds })
   // Open the time conductor popup
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
+  // FIXME: https://github.com/nasa/openmct/pull/7818
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(500);
+
   if (startDate) {
     await page.getByLabel('Start date').fill(startDate);
   }
