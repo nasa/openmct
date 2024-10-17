@@ -79,6 +79,7 @@ export default {
     const svgWidth = ref(0);
     const svgHeight = ref(0);
     const axisTransform = ref('translate(0,20)');
+    const alignmentOffset = ref(0);
     const nowMarkerStyle = reactive({
       height: '0px',
       left: '0px'
@@ -100,6 +101,7 @@ export default {
       svgWidth,
       svgHeight,
       axisTransform,
+      alignmentOffset,
       nowMarkerStyle,
       openmct
     };
