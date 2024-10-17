@@ -110,11 +110,12 @@ export default class HistoricalTelemetryProvider {
   async #loadTelemetryCollections() {
     await Promise.all(
       Object.entries(this.#telemetryObjects).map(async ([keystring, telemetryObject]) => {
-        // delete size as we need to scan the whole time bounds
-        delete this.#telemetryOptions.size;
+        // clone telemetry options without size as we need to load all data
+        const telemetryOptionsWithoutSize = { ...this.#telemetryOptions };
+        delete telemetryOptionsWithoutSize.size;
         const telemetryCollection = this.#openmct.telemetry.requestCollection(
           telemetryObject,
-          this.#telemetryOptions
+          telemetryOptionsWithoutSize
         );
         await telemetryCollection.load();
         this.#telemetryCollections[keystring] = telemetryCollection;
