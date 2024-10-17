@@ -451,7 +451,7 @@ export default {
         yKey = arrayValues.length > 1 ? arrayValues[1].key : yAxisMetadata.key;
       } else if (nonArrayValues.length > 0) {
         xKey = nonArrayValues[0].key;
-        yKey = yAxisMetadata ? yAxisMetadata.key : 'none';
+        yKey = 'none';
       } else {
         // Fallback if no valid xKey or yKey is found
         xKey = 'none';
