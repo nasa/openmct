@@ -110,11 +110,12 @@ export default class HistoricalTelemetryProvider {
   async #loadTelemetryCollections() {
     await Promise.all(
       Object.entries(this.#telemetryObjects).map(async ([keystring, telemetryObject]) => {
-        // delete size as we need to scan the whole time bounds
-        delete this.#telemetryOptions.size;
+        // clone telemetry options without size as we need to load all data
+        const telemetryOptionsWithoutSize = { ...this.#telemetryOptions };
+        delete telemetryOptionsWithoutSize.size;
         const telemetryCollection = this.#openmct.telemetry.requestCollection(
           telemetryObject,
-          this.#telemetryOptions
+          telemetryOptionsWithoutSize
         );
         await telemetryCollection.load();
         this.#telemetryCollections[keystring] = telemetryCollection;
@@ -133,7 +134,13 @@ export default class HistoricalTelemetryProvider {
     const referenceTelemetryKeyString = Object.keys(dataFrame)[0];
     const referenceTelemetryCollection = this.#telemetryCollections[referenceTelemetryKeyString];
     const referenceTelemetryData = referenceTelemetryCollection.getAll();
-    referenceTelemetryData.forEach((datum) => {
+    const maxDataPointsToCompute = this.#telemetryOptions.size || referenceTelemetryData.length;
+    for (
+      let i = 0;
+      i < referenceTelemetryData.length && historicalData.length < maxDataPointsToCompute;
+      i++
+    ) {
+      const datum = referenceTelemetryData[i];
       const timestamp = datum[referenceTelemetryCollection.timeKey];
       const historicalDatum = this.#computeHistoricalDatum(
         timestamp,
@@ -143,7 +150,7 @@ export default class HistoricalTelemetryProvider {
       if (historicalDatum) {
         historicalData.push(historicalDatum);
       }
-    });
+    }
     return historicalData;
   }
 
