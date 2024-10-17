@@ -24,65 +24,210 @@ import {
   setEndOffset,
   setFixedTimeMode,
   setRealTimeMode,
-  setStartOffset,
-  setTimeConductorBounds
+  setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Time conductor operations', () => {
-  test('validate start time does not exceed end time', async ({ page }) => {
+  const DAY = '2024-01-01';
+  const DAY_AFTER = '2024-01-02';
+  const ONE_O_CLOCK = '01:00:00';
+  const TWO_O_CLOCK = '02:00:00';
+
+  test.beforeEach(async ({ page }) => {
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    const year = new Date().getFullYear();
+  });
 
-    // Set initial valid time bounds
-    const startDate = `${year}-01-01`;
-    const startTime = '01:00:00';
-    const endDate = `${year}-01-01`;
-    const endTime = '02:00:00';
-    await setTimeConductorBounds(page, { startDate, startTime, endDate, endTime });
+  test('validate date and time inputs are validated on input event', async ({ page }) => {
+    const submitButtonLocator = page.getByLabel('Submit time bounds');
 
     // Open the time conductor popup
     await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-    // Test invalid start date
-    const invalidStartDate = `${year}-01-02`;
-    await page.getByLabel('Start date').fill(invalidStartDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('Start date').fill(startDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+    await test.step('invalid start date disables submit button', async () => {
+      const initialStartDate = await page.getByLabel('Start date').inputValue();
+      const invalidStartDate = `${initialStartDate.substring(0, 5)}${initialStartDate.substring(6)}`;
 
-    // Test invalid end date
-    const invalidEndDate = `${year - 1}-12-31`;
-    await page.getByLabel('End date').fill(invalidEndDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('End date').fill(endDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+      await page.getByLabel('Start date').fill(invalidStartDate);
+      await expect(submitButtonLocator).toBeDisabled();
+      await page.getByLabel('Start date').fill(initialStartDate);
+      await expect(submitButtonLocator).toBeEnabled();
+    });
 
-    // Test invalid start time
-    const invalidStartTime = '42:00:00';
-    await page.getByLabel('Start time').fill(invalidStartTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('Start time').fill(startTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+    await test.step('invalid start time disables submit button', async () => {
+      const initialStartTime = await page.getByLabel('Start time').inputValue();
+      const invalidStartTime = `${initialStartTime.substring(0, 5)}${initialStartTime.substring(6)}`;
 
-    // Test invalid end time
-    const invalidEndTime = '43:00:00';
-    await page.getByLabel('End time').fill(invalidEndTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('End time').fill(endTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
+      await page.getByLabel('Start time').fill(invalidStartTime);
+      await expect(submitButtonLocator).toBeDisabled();
+      await page.getByLabel('Start time').fill(initialStartTime);
+      await expect(submitButtonLocator).toBeEnabled();
+    });
 
-    // Submit valid time bounds
+    await test.step('disable/enable submit button also works with multiple invalid inputs', async () => {
+      const initialEndDate = await page.getByLabel('End date').inputValue();
+      const invalidEndDate = `${initialEndDate.substring(0, 5)}${initialEndDate.substring(6)}`;
+      const initialStartTime = await page.getByLabel('Start time').inputValue();
+      const invalidStartTime = `${initialStartTime.substring(0, 5)}${initialStartTime.substring(6)}`;
+
+      await page.getByLabel('Start time').fill(invalidStartTime);
+      await expect(submitButtonLocator).toBeDisabled();
+      await page.getByLabel('End date').fill(invalidEndDate);
+      await expect(submitButtonLocator).toBeDisabled();
+      await page.getByLabel('End date').fill(initialEndDate);
+      await expect(submitButtonLocator).toBeDisabled();
+      await page.getByLabel('Start time').fill(initialStartTime);
+      await expect(submitButtonLocator).toBeEnabled();
+    });
+  });
+
+  test('validate date and time inputs validation is reported on change event', async ({ page }) => {
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    await test.step('invalid start date is reported on change event, not on input event', async () => {
+      const initialStartDate = await page.getByLabel('Start date').inputValue();
+      const invalidStartDate = `${initialStartDate.substring(0, 5)}${initialStartDate.substring(6)}`;
+
+      await page.getByLabel('Start date').fill(invalidStartDate);
+      await expect(page.getByLabel('Start date')).not.toHaveAttribute('title', 'Invalid Date');
+      await page.getByLabel('Start date').press('Tab');
+      await expect(page.getByLabel('Start date')).toHaveAttribute('title', 'Invalid Date');
+      await page.getByLabel('Start date').fill(initialStartDate);
+      await expect(page.getByLabel('Start date')).not.toHaveAttribute('title', 'Invalid Date');
+    });
+
+    await test.step('invalid start time is reported on change event, not on input event', async () => {
+      const initialStartTime = await page.getByLabel('Start time').inputValue();
+      const invalidStartTime = `${initialStartTime.substring(0, 5)}${initialStartTime.substring(6)}`;
+
+      await page.getByLabel('Start time').fill(invalidStartTime);
+      await expect(page.getByLabel('Start time')).not.toHaveAttribute('title', 'Invalid Time');
+      await page.getByLabel('Start time').press('Tab');
+      await expect(page.getByLabel('Start time')).toHaveAttribute('title', 'Invalid Time');
+      await page.getByLabel('Start time').fill(initialStartTime);
+      await expect(page.getByLabel('Start time')).not.toHaveAttribute('title', 'Invalid Time');
+    });
+
+    await test.step('invalid end date is reported on change event, not on input event', async () => {
+      const initialEndDate = await page.getByLabel('End date').inputValue();
+      const invalidEndDate = `${initialEndDate.substring(0, 5)}${initialEndDate.substring(6)}`;
+
+      await page.getByLabel('End date').fill(invalidEndDate);
+      await expect(page.getByLabel('End date')).not.toHaveAttribute('title', 'Invalid Date');
+      await page.getByLabel('End date').press('Tab');
+      await expect(page.getByLabel('End date')).toHaveAttribute('title', 'Invalid Date');
+      await page.getByLabel('End date').fill(initialEndDate);
+      await expect(page.getByLabel('End date')).not.toHaveAttribute('title', 'Invalid Date');
+    });
+
+    await test.step('invalid end time is reported on change event, not on input event', async () => {
+      const initialEndTime = await page.getByLabel('End time').inputValue();
+      const invalidEndTime = `${initialEndTime.substring(0, 5)}${initialEndTime.substring(6)}`;
+
+      await page.getByLabel('End time').fill(invalidEndTime);
+      await expect(page.getByLabel('End time')).not.toHaveAttribute('title', 'Invalid Time');
+      await page.getByLabel('End time').press('Tab');
+      await expect(page.getByLabel('End time')).toHaveAttribute('title', 'Invalid Time');
+      await page.getByLabel('End time').fill(initialEndTime);
+      await expect(page.getByLabel('End time')).not.toHaveAttribute('title', 'Invalid Time');
+    });
+  });
+
+  test('validate start time does not exceed end time on submit', async ({ page }) => {
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    // FIXME: https://github.com/nasa/openmct/pull/7818
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(500);
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(TWO_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
     await page.getByLabel('Submit time bounds').click();
 
-    // Verify the submitted time bounds
-    await expect(page.getByLabel('Start bounds')).toHaveText(
-      new RegExp(`${startDate} ${startTime}.000Z`)
+    await expect(page.getByLabel('Start date')).toHaveAttribute(
+      'title',
+      'Specified start date exceeds end bound'
     );
-    await expect(page.getByLabel('End bounds')).toHaveText(
-      new RegExp(`${endDate} ${endTime}.000Z`)
+    await expect(page.getByLabel('Start bounds')).not.toHaveText(`${DAY} ${TWO_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY);
+    await page.getByLabel('End time').fill(TWO_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
+
+    await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).toHaveText(`${DAY} ${TWO_O_CLOCK}.000Z`);
+  });
+
+  test('validate start datetime does not exceed end datetime on submit', async ({ page }) => {
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    // FIXME: https://github.com/nasa/openmct/pull/7818
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(500);
+
+    await page.getByLabel('Start date').fill(DAY_AFTER);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
+
+    await expect(page.getByLabel('Start date')).toHaveAttribute(
+      'title',
+      'Specified start date exceeds end bound'
     );
+    await expect(page.getByLabel('Start bounds')).not.toHaveText(
+      `${DAY_AFTER} ${ONE_O_CLOCK}.000Z`
+    );
+    await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
+
+    await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
+  });
+
+  test('cancelling form does not set bounds', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7791'
+    });
+
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Discard changes and close time popup').click();
+
+    await expect(page.getByLabel('Start bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
+
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
+
+    await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
   });
 });
 
@@ -129,77 +274,6 @@ test.describe('Global Time Conductor', () => {
 
     await expect(page.getByLabel('Start offset: 01:29:23')).toBeVisible();
     await expect(page.getByLabel('End offset: 01:30:31')).toBeVisible();
-  });
-
-  test('Input field validation: fixed time mode', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7791'
-    });
-    // Switch to fixed time mode
-    await setFixedTimeMode(page);
-
-    // Define valid time bounds for testing
-    const validBounds = {
-      startDate: '2024-04-20',
-      startTime: '00:04:20',
-      endDate: '2024-04-20',
-      endTime: '16:04:20'
-    };
-    // Set valid time conductor bounds ✌️
-    await setTimeConductorBounds(page, validBounds);
-
-    // Verify that the time bounds are set correctly
-    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
-    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
-
-    // Open the Time Conductor Mode popup
-    await page.getByLabel('Time Conductor Mode').click();
-
-    // Test invalid start date
-    const invalidStartDate = '2024-04-21';
-    await page.getByLabel('Start date').fill(invalidStartDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('Start date').fill(validBounds.startDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Test invalid end date
-    const invalidEndDate = '2024-04-19';
-    await page.getByLabel('End date').fill(invalidEndDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('End date').fill(validBounds.endDate);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Test invalid start time
-    const invalidStartTime = '16:04:21';
-    await page.getByLabel('Start time').fill(invalidStartTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('Start time').fill(validBounds.startTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Test invalid end time
-    const invalidEndTime = '00:04:19';
-    await page.getByLabel('End time').fill(invalidEndTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeDisabled();
-    await page.getByLabel('End time').fill(validBounds.endTime);
-    await expect(page.getByLabel('Submit time bounds')).toBeEnabled();
-
-    // Verify that the time bounds remain unchanged after invalid inputs
-    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
-    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
-
-    // Discard changes and verify that bounds remain unchanged
-    await setTimeConductorBounds(page, {
-      startDate: validBounds.startDate,
-      startTime: '04:20:00',
-      endDate: validBounds.endDate,
-      endTime: '04:20:20',
-      submitChanges: false
-    });
-
-    // Verify that the original time bounds are still displayed after discarding changes
-    await expect(page.getByLabel(`Start bounds: 2024-04-20 00:04:20.000Z`)).toBeVisible();
-    await expect(page.getByLabel(`End bounds: 2024-04-20 16:04:20.000Z`)).toBeVisible();
   });
 
   /**
