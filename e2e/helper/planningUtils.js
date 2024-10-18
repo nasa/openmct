@@ -129,6 +129,7 @@ export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl
  */
 export function getEarliestStartTime(planJson) {
   const activities = Object.values(planJson).flat();
+
   return Math.min(...activities.map((activity) => activity.start));
 }
 
@@ -139,6 +140,7 @@ export function getEarliestStartTime(planJson) {
  */
 export function getLatestEndTime(planJson) {
   const activities = Object.values(planJson).flat();
+
   return Math.max(...activities.map((activity) => activity.end));
 }
 
@@ -151,6 +153,7 @@ export function getFirstActivity(planJson) {
   const groups = Object.keys(planJson);
   const firstGroupKey = groups[0];
   const firstGroupItems = planJson[firstGroupKey];
+
   return firstGroupItems[0];
 }
 
