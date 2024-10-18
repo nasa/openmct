@@ -287,7 +287,7 @@ workflows:
     jobs:
       - lint:
           name: node22-lint
-          node-version: 22
+          node-version: '22'
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -305,7 +305,7 @@ workflows:
     jobs:
       - unit-test:
           name: node22-chrome-nightly
-          node-version: 22
+          node-version: '22'
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
