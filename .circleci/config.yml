@@ -286,8 +286,8 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
-          name: node20-lint
-          node-version: lts/iron
+          name: node22-lint
+          node-version: '22'
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -304,8 +304,8 @@ workflows:
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node20-chrome-nightly
-          node-version: lts/iron
+          name: node22-chrome-nightly
+          node-version: '22'
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
