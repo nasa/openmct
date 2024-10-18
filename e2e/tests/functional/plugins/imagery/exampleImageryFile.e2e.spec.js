@@ -21,9 +21,8 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding imagery,
-but only assume that example imagery is present.
-*/
+ * This test suite verifies modifying the image location of the example imagery object.
+ */
 
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
@@ -67,7 +66,7 @@ test.describe('Example Imagery Object Custom Images', () => {
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();
   });
-  test('Can provide a custom image with spaces in name', async ({ page }) => {
+  test.fixme('Can provide a custom image with spaces in name', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7903'
@@ -80,7 +79,7 @@ test.describe('Example Imagery Object Custom Images', () => {
     await page
       .locator('#imageLocation-textarea')
       .fill(
-        'https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg,https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg'
+        'https://raw.githubusercontent.com/nasa/openmct/d8c64f183400afb70137221fc1a035e091bea912/e2e/test-data/rick%20space%20roll.jpg'
       );
     await page.getByRole('button', { name: 'Save' }).click();
     await page.reload({ waitUntil: 'domcontentloaded' });
