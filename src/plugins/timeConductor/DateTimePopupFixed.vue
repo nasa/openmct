@@ -45,7 +45,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="Start date"
-          @change="validateAllBounds('startDate')"
+          @input="validateInput('startDate')"
+          @change="reportValidity('startDate')"
         />
       </div>
 
@@ -58,7 +59,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="Start time"
-          @change="validateAllBounds('startDate')"
+          @input="validateInput('startTime')"
+          @change="reportValidity('startTime')"
         />
       </div>
 
@@ -81,7 +83,8 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="End date"
-          @change="validateAllBounds('endDate')"
+          @input="validateInput('endDate')"
+          @change="reportValidity('endDate')"
         />
       </div>
 
@@ -94,16 +97,17 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="End time"
-          @change="validateAllBounds('endDate')"
+          @input="validateInput('endTime')"
+          @change="reportValidity('endTime')"
         />
       </div>
 
       <div class="pr-time-input pr-time-input--buttons">
         <button
           class="c-button c-button--major icon-check"
-          :disabled="isDisabled"
+          :disabled="hasInputValidityError"
           aria-label="Submit time bounds"
-          @click.prevent="submit"
+          @click.prevent="handleFormSubmission(true)"
         ></button>
         <button
           class="c-button icon-x"
@@ -122,31 +126,51 @@ export default {
   components: {
     DatePicker
   },
+  inject: [
+    'openmct',
+    'isTimeSystemUTCBased',
+    'timeContext',
+    'timeSystemKey',
+    'timeSystemFormatter',
+    'timeSystemDurationFormatter',
+    'bounds'
+  ],
   props: {
     delimiter: {
       type: String,
       required: true
     }
   },
-  inject: [
-    'openmct',
-    'isTimeSystemUTCBased',
-    'timeContext',
-    'timeSystemFormatter',
-    'timeSystemDurationFormatter',
-    'bounds'
-  ],
-  emits: ['update', 'dismiss'],
+  emits: ['dismiss'],
   data() {
     return {
       formattedBounds: {},
-      isDisabled: false
+      inputValidityMap: {
+        startDate: { valid: true },
+        startTime: { valid: true },
+        endDate: { valid: true },
+        endTime: { valid: true }
+      },
+      logicalValidityMap: {
+        limit: { valid: true },
+        bounds: { valid: true }
+      }
     };
+  },
+  computed: {
+    hasInputValidityError() {
+      return Object.values(this.inputValidityMap).some((isValid) => !isValid.valid);
+    },
+    hasLogicalValidationErrors() {
+      return Object.values(this.logicalValidityMap).some((isValid) => !isValid.valid);
+    },
+    isValid() {
+      return !this.hasInputValidityError && !this.hasLogicalValidationErrors;
+    }
   },
   watch: {
     bounds: {
       handler() {
-        console.log(this.bounds);
         this.setViewFromBounds();
       }
     }
@@ -158,23 +182,19 @@ export default {
     this.clearAllValidation();
   },
   methods: {
-    clearAllValidation() {
-      [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
-    },
-    clearValidationForInput(input) {
-      input.setCustomValidity('');
-      input.title = '';
-    },
     setViewFromBounds() {
-      const formattedStartBounds = this.timeSystemFormatter.format(this.bounds.start);
-      const formattedEndBounds = this.timeSystemFormatter.format(this.bounds.end);
-
-      this.formattedBounds = {
-        startDate: formattedStartBounds.split(this.delimiter)[0],
-        startTime: formattedStartBounds.split(this.delimiter)[1],
-        endDate: formattedEndBounds.split(this.delimiter)[0],
-        endTime: formattedEndBounds.split(this.delimiter)[1]
-      };
+      this.formattedBounds.startDate = this.timeSystemFormatter
+        .format(this.bounds.start)
+        .split(this.delimiter)[0];
+      this.formattedBounds.endDate = this.timeSystemFormatter
+        .format(this.bounds.end)
+        .split(this.delimiter)[0];
+      this.formattedBounds.startTime = this.timeSystemDurationFormatter.format(
+        Math.abs(this.bounds.start)
+      );
+      this.formattedBounds.endTime = this.timeSystemDurationFormatter.format(
+        Math.abs(this.bounds.end)
+      );
     },
     setBoundsFromView(dismiss) {
       if (this.$refs.fixedDeltaInput.checkValidity()) {
@@ -197,106 +217,94 @@ export default {
         return false;
       }
     },
-    submit() {
-      this.validateAllBounds('startDate');
-      this.validateAllBounds('endDate');
-      this.submitForm(!this.isDisabled);
+    clearAllValidation() {
+      Object.keys(this.inputValidityMap).forEach(this.clearValidation);
     },
-    submitForm(dismiss) {
-      // Allow Vue model to catch up to user input.
-      // Submitting form will cause validation messages to display (but only if triggered by button click)
-      this.$nextTick(() => this.setBoundsFromView(dismiss));
+    clearValidation(refName) {
+      const input = this.getInput(refName);
+
+      input.setCustomValidity('');
+      input.title = '';
     },
-    validateAllBounds(ref) {
-      if (!this.areBoundsFormatsValid()) {
-        return false;
+    handleFormSubmission(shouldDismiss) {
+      this.validateLimit();
+      this.reportValidity('limit');
+      this.validateBounds();
+      this.reportValidity('bounds');
+
+      if (this.isValid) {
+        this.setBoundsFromView(shouldDismiss);
       }
+    },
+    validateInput(refName) {
+      this.clearAllValidation();
 
-      let validationResult = {
-        valid: true
+      const inputType = refName.includes('Date') ? 'Date' : 'Time';
+      const formatter = inputType === 'Date' ? this.timeFormatter : this.durationFormatter;
+      const validationResult = formatter.validate(this.formattedBounds[refName])
+        ? { valid: true }
+        : { valid: false, message: `Invalid ${inputType}` };
+
+      this.inputValidityMap[refName] = validationResult;
+    },
+    validateBounds() {
+      const bounds = {
+        start: this.timeSystemFormatter.parse(
+          `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
+        ),
+        end: this.timeSystemFormatter.parse(
+          `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
+        )
       };
-      const currentInput = this.$refs[ref];
 
-      return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        const boundsValues = {
-          start: this.timeSystemFormatter.parse(
-            `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
-          ),
-          end: this.timeSystemFormatter.parse(
-            `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
-          )
+      this.logicalValidityMap.bounds = this.timeContext.validateBounds(bounds);
+    },
+    validateLimit(bounds) {
+      const limit = this.configuration?.menuOptions
+        ?.filter((option) => option.timeSystem === this.timeSystemKey)
+        ?.find((option) => option.limit)?.limit;
+
+      if (this.isTimeSystemUTCBased && limit && bounds.end - bounds.start > limit) {
+        this.logicalValidityMap.limit = {
+          valid: false,
+          message: 'Start and end difference exceeds allowable limit of ${limit}'
         };
-        //TODO: Do we need limits here? We have conductor limits disabled right now
-        // const limit = this.getBoundsLimit();
-        const limit = false;
-
-        if (this.isTimeSystemUTCBased && limit && boundsValues.end - boundsValues.start > limit) {
-          if (input === currentInput) {
-            validationResult = {
-              valid: false,
-              message: 'Start and end difference exceeds allowable limit'
-            };
-          }
-        } else {
-          if (input === currentInput) {
-            validationResult = this.timeContext.validateBounds(boundsValues);
-          }
-        }
-
-        return this.handleValidationResults(input, validationResult);
-      });
+      } else {
+        this.logicalValidityMap.limit = { valid: true };
+      }
     },
-    areBoundsFormatsValid() {
-      let validationResult = {
-        valid: true
-      };
+    reportValidity(refName) {
+      const input = this.getInput(refName);
+      const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
 
-      return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        const formattedDate =
-          input === this.$refs.startDate
-            ? `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
-            : `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`;
-        if (!this.timeSystemFormatter.validate(formattedDate)) {
-          validationResult = {
-            valid: false,
-            message: 'Invalid date'
-          };
-        }
-
-        return this.handleValidationResults(input, validationResult);
-      });
-    },
-    getBoundsLimit() {
-      const configuration = this.configuration.menuOptions
-        .filter((option) => option.timeSystem === this.timeSystem.key)
-        .find((option) => option.limit);
-
-      const limit = configuration ? configuration.limit : undefined;
-
-      return limit;
-    },
-    handleValidationResults(input, validationResult) {
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
-        this.isDisabled = true;
       } else {
         input.setCustomValidity('');
         input.title = '';
-        this.isDisabled = false;
       }
 
       this.$refs.fixedDeltaInput.reportValidity();
+    },
+    getInput(refName) {
+      if (Object.keys(this.inputValidityMap).includes(refName)) {
+        return this.$refs[refName];
+      }
 
-      return validationResult.valid;
+      return this.$refs.startDate;
     },
     startDateSelected(date) {
-      this.formattedBounds.startDate = this.timeSystemFormatter.format(date).split(this.delimiter)[0];
-      this.validateAllBounds('startDate');
+      this.formattedBounds.startDate = this.timeSystemFormatter
+        .format(date)
+        .split(this.delimiter)[0];
+      this.validateInput('startDate');
+      this.reportValidity('startDate');
     },
     endDateSelected(date) {
       this.formattedBounds.endDate = this.timeSystemFormatter.format(date).split(this.delimiter)[0];
-      this.validateAllBounds('endDate');
+      this.validateInput('endDate');
+      this.reportValidity('endDate');
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
