@@ -64,13 +64,17 @@ class SelectionManager extends EventEmitter {
    */
   constructor(openmct) {
     super();
+
+    /** @type {OpenMCT} */
     this.openmct = openmct;
+    /** @type {Selectable[]} */
     this.selected = [];
   }
 
   /**
-   * Gets the current selection.
-   * @returns {Array} The currently selected objects.
+   * Gets the selected object.
+   * @returns {Selectable[]} The currently selected objects
+   * @public
    */
   get() {
     return this.selected;
