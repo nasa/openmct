@@ -107,8 +107,12 @@ export default {
     const openmct = inject('openmct');
     const { timeContext } = useTimeContext(openmct, () => props.objectPath);
 
-    const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
-      useTimeSystem(openmct, timeContext);
+    const {
+      timeSystemKey,
+      timeSystemFormatter,
+      timeSystemDurationFormatter,
+      isTimeSystemUTCBased
+    } = useTimeSystem(openmct, timeContext);
     const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
       useTimeMode(openmct, timeContext);
     const { bounds, isTick } = useTimeBounds(openmct, timeContext);
@@ -116,6 +120,7 @@ export default {
     const { offsets } = useClockOffsets(openmct, timeContext);
 
     provide('timeContext', timeContext);
+    provide('timeSystemKey', timeSystemKey);
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
     provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
