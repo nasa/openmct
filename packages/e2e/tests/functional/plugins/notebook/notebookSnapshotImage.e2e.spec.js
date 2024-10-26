@@ -52,7 +52,7 @@ test.describe('Snapshot image tests', () => {
 
     const dropTransfer = await page.evaluateHandle((data) => {
       const dataTransfer = new DataTransfer();
-      const file = new File([new Uint8Array(data)], 'favicon-96x96.png', { type: 'image/png' });
+      const file = new File([new Uint8Array(data)], 'rick.jpg', { type: 'image/jpeg' });
       dataTransfer.items.add(file);
       return dataTransfer;
     }, fileData);
@@ -60,21 +60,21 @@ test.describe('Snapshot image tests', () => {
     await page.dispatchEvent('.c-notebook__drag-area', 'drop', { dataTransfer: dropTransfer });
     await page.locator('.c-ne__save-button > button').click();
     // be sure that entry was created
-    await expect(page.getByText('favicon-96x96.png')).toBeVisible();
+    await expect(page.getByText('rick.jpg')).toBeVisible();
 
-    await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).click();
+    await page.getByRole('img', { name: 'rick.jpg thumbnail' }).click();
     // expect large image to be displayed
-    await expect(page.getByRole('dialog').getByText('favicon-96x96.png')).toBeVisible();
+    await expect(page.getByRole('dialog').getByText('rick.jpg')).toBeVisible();
 
     await page.getByRole('button', { name: 'Close' }).click();
 
     // drop another image onto the entry
     await page.dispatchEvent('.c-snapshots', 'drop', { dataTransfer: dropTransfer });
 
-    const secondThumbnail = page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).nth(1);
+    const secondThumbnail = page.getByRole('img', { name: 'rick.jpg thumbnail' }).nth(1);
     await secondThumbnail.waitFor({ state: 'attached' });
     // expect two embedded images now
-    await expect(page.getByRole('img', { name: 'favicon-96x96.png thumbnail' })).toHaveCount(2);
+    await expect(page.getByRole('img', { name: 'rick.jpg thumbnail' })).toHaveCount(2);
 
     await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
 
@@ -84,7 +84,7 @@ test.describe('Snapshot image tests', () => {
     await secondThumbnail.waitFor({ state: 'detached' });
 
     // expect one embedded image now as we deleted the other
-    await expect(page.getByRole('img', { name: 'favicon-96x96.png thumbnail' })).toHaveCount(1);
+    await expect(page.getByRole('img', { name: 'rick.jpg thumbnail' })).toHaveCount(1);
   });
 });
 
