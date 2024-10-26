@@ -31,7 +31,7 @@ const config = {
     trace: 'on-first-retry',
     video: 'off',
     // @ts-ignore - custom configuration option for nyc codecoverage output path
-    coveragePath: fileURLToPath(new URL('../.nyc_output', import.meta.url))
+    coveragePath: fileURLToPath(new URL('.nyc_output', import.meta.url))
   },
   projects: [
     {
@@ -77,7 +77,7 @@ const config = {
       'html',
       {
         open: 'never',
-        outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
+        outputFolder: '../../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
       }
     ],
     ['junit', { outputFile: '../test-results/results.xml' }]
