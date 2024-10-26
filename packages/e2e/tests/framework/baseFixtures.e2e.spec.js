@@ -22,7 +22,7 @@
 
 /*
 This test suite is dedicated to testing our use of the playwright framework as it
-relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions made in our dev environment
+relates to how we've extended it (i.e. ./baseFixtures.js) and assumptions made in our dev environment
 (`npm start` and ./e2e/webpack-dev-middleware.js)
 */
 

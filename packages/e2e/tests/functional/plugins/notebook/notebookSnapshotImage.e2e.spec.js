@@ -45,9 +45,7 @@ test.describe('Snapshot image tests', () => {
 
   test('Can drop an image onto a notebook and create a new entry', async ({ page }) => {
     const imageData = await fs.readFile(
-      fileURLToPath(
-        new URL('../../../../../src/images/favicons/favicon-96x96.png', import.meta.url)
-      )
+      fileURLToPath(new URL('../../../../test-data/rick.jpg', import.meta.url))
     );
     const imageArray = new Uint8Array(imageData);
     const fileData = Array.from(imageArray);
