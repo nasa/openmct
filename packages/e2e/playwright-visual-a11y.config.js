@@ -10,7 +10,7 @@ const config = {
   workers: 1, //Lower stress on Circle CI Agent for Visual tests https://github.com/percy/cli/discussions/1067
   webServer: {
     command: 'npm run start:coverage',
-    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
+    cwd: fileURLToPath(new URL('../../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
