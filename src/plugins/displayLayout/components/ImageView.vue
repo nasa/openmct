@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { encode_url } from '../../../utils/encoding';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
@@ -80,12 +81,12 @@ export default {
       return this.isEditing || !this.itemStyle?.isStyleInvisible;
     },
     style() {
-      let backgroundImage = 'url(' + this.item.url + ')';
+      let backgroundImage = `url('${encode_url(this.item.url)}')`;
       let border = '1px solid ' + this.item.stroke;
 
       if (this.itemStyle) {
         if (this.itemStyle.imageUrl !== undefined) {
-          backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';
+          backgroundImage = `url('${encode_url(this.itemStyle.imageUrl)}')`;
         }
 
         border = this.itemStyle.border;

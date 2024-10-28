@@ -243,11 +243,12 @@ export default {
       if (this.planObject) {
         this.showReplacePlanDialog(domainObject);
       } else {
-        this.swimlaneVisibility = this.configuration.swimlaneVisibility;
         this.setupPlan(domainObject);
+        this.swimlaneVisibility = this.configuration.swimlaneVisibility;
       }
     },
     handleConfigurationChange(newConfiguration) {
+      this.configuration = this.planViewConfiguration.getConfiguration();
       Object.keys(newConfiguration).forEach((key) => {
         this[key] = newConfiguration[key];
       });
@@ -423,7 +424,10 @@ export default {
       return currentRow || SWIMLANE_PADDING;
     },
     generateActivities() {
-      const groupNames = getValidatedGroups(this.domainObject, this.planData);
+      if (!this.planObject) {
+        return;
+      }
+      const groupNames = getValidatedGroups(this.planObject, this.planData);
 
       if (!groupNames.length) {
         return;
