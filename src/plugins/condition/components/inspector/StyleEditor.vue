@@ -28,11 +28,7 @@
           { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
           { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
         ]"
-        :style="[
-          styleItem.style.imageUrl
-            ? { backgroundImage: 'url(' + styleItem.style.imageUrl + ')' }
-            : itemStyle
-        ]"
+        :style="[encodedImageUrl ? { backgroundImage: 'url(' + encodedImageUrl + ')' } : itemStyle]"
         class="c-style-thumb"
       >
         <span
@@ -62,7 +58,7 @@
         @change="updateStyleValue"
       />
       <ToolbarButton
-        v-if="hasProperty(styleItem.style.imageUrl)"
+        v-if="hasProperty(encodedImageUrl)"
         class="c-style__toolbar-button--image-url"
         :options="imageUrlOption"
         @change="updateStyleValue"
@@ -92,6 +88,8 @@ import { getStylesWithoutNoneValue } from '@/plugins/condition/utils/styleUtils'
 import ToolbarButton from '@/ui/toolbar/components/ToolbarButton.vue';
 import ToolbarColorPicker from '@/ui/toolbar/components/ToolbarColorPicker.vue';
 import ToolbarToggleButton from '@/ui/toolbar/components/ToolbarToggleButton.vue';
+
+import { encode_url } from '../../../../utils/encoding';
 
 export default {
   name: 'StyleEditor',
@@ -183,10 +181,13 @@ export default {
         },
         property: 'imageUrl',
         formKeys: ['url'],
-        value: { url: this.styleItem.style.imageUrl },
+        value: { url: this.encodedImageUrl },
         isEditing: this.isEditing,
         nonSpecific: this.mixedStyles.indexOf('imageUrl') > -1
       };
+    },
+    encodedImageUrl() {
+      return encode_url(this.styleItem.style.imageUrl);
     },
     isStyleInvisibleOption() {
       return {

@@ -96,9 +96,6 @@ test.describe('Example Imagery Object', () => {
     expect(newPage.url()).toContain('.jpg');
   });
 
-  // this requires CORS to be enabled in some fashion
-  test.fixme('Can right click on image and save it as a file', async ({ page }) => {});
-
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
     page,
     browserName

@@ -209,9 +209,20 @@ const props = defineProps({
 });
 
 onBeforeMount(async () => {
+  let maxSampleSize = 20;
+  if (parameters.value) {
+    maxSampleSize =
+      parameters.value.reduce((max, param) => {
+        if (param.accumulateValues) {
+          return Math.max(max, param.sampleSize);
+        }
+        return max;
+      }, 0) + 20;
+  }
+
   const telemetryOptions = {
     strategy: 'minmax',
-    size: 20,
+    size: maxSampleSize
   };
   // TODO: we should dynamically set size to the largest comp input window
   outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject, telemetryOptions);
