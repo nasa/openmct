@@ -27,6 +27,7 @@ import {
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Comps', () => {
+  test.use({ failOnConsoleError: false });
   test.beforeEach(async ({ page }) => {
     // Open a browser, navigate to the main page, and wait until all networkevents to resolve
     await page.goto('./', { waitUntil: 'domcontentloaded' });

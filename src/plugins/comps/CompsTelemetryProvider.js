@@ -80,11 +80,6 @@ export default class CompsTelemetryProvider {
           parameters,
           callbackID
         };
-        console.debug(
-          `📝 Requesting calculation for ${domainObject.name} with callback ID ${callbackID}:`,
-          options,
-          payload
-        );
         this.#sharedWorker.port.postMessage(payload);
       });
     });
@@ -130,9 +125,6 @@ export default class CompsTelemetryProvider {
       size: 1
     };
     specificCompsManager.load(telemetryOptions);
-    console.debug(
-      `📝 Starting subscription for ${domainObject.name} with callback ID ${callbackID}`
-    );
     return () => {
       delete this.#subscriptionCallbacks[callbackID];
       specificCompsManager.stopListeningToUnderlyingTelemetry();
@@ -171,7 +163,6 @@ export default class CompsTelemetryProvider {
         console.error('📝 Error calculating request:', event.data);
         this.#requestPromises[callbackID].resolve([]);
       } else {
-        console.debug(`🧮 Calculation request result for ${callbackID}:`, result);
         this.#requestPromises[callbackID].resolve(result);
       }
       delete this.#requestPromises[callbackID];

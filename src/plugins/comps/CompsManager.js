@@ -115,10 +115,6 @@ export default class CompsManager extends EventEmitter {
     const loadVersion = ++this.#loadVersion;
 
     if (!_.isEqual(this.#telemetryOptions, telemetryOptions)) {
-      console.debug(
-        `😩 Reloading comps manager ${this.#domainObject.name} due to telemetry options change.`,
-        telemetryOptions
-      );
       this.#destroy();
     }
 
@@ -131,9 +127,6 @@ export default class CompsManager extends EventEmitter {
         await this.#loadComposition();
         // Check if a newer load has been initiated
         if (loadVersion !== this.#loadVersion) {
-          console.debug(
-            `🔄 Reloading comps manager in composition wait ${this.#domainObject.name} due to newer load.`
-          );
           await this.#currentLoadPromise;
           return;
         }
@@ -145,16 +138,9 @@ export default class CompsManager extends EventEmitter {
         await this.#startListeningToUnderlyingTelemetry();
         // Check again for newer load
         if (loadVersion !== this.#loadVersion) {
-          console.debug(
-            `🔄 Reloading comps manager in telemetry wait ${this.#domainObject.name} due to newer load.`
-          );
           await this.#currentLoadPromise;
           return;
         }
-        console.debug(
-          `✅ Comps manager ${this.#domainObject.name} is ready.`,
-          this.#telemetryCollections
-        );
         this.#loaded = true;
       }
     })();
@@ -259,8 +245,6 @@ export default class CompsManager extends EventEmitter {
         const imputedDatum = this.#getImputedDataUsingLOCF(fakeData, telemetryCollection);
         if (imputedDatum) {
           alignedValues.push(imputedDatum);
-        } else {
-          console.debug(`🚨 Missing data for ${keyString} at ${timestamp}`);
         }
       });
 
