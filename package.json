@@ -130,7 +130,7 @@
     "test:perf:memory": "npm test --workspace packages/e2e -- --config=playwright-performance-prod.config.js --project=chrome-memory",
     "update-about-dialog-copyright": "perl -pi -e 's/20\\d\\d\\-202\\d/2014\\-2024/gm' ./src/ui/layout/AboutDialog.vue",
     "update-copyright-date": "npm run update-about-dialog-copyright && grep -lr --null --include=*.{js,scss,vue,ts,sh,html,md,frag} 'Copyright (c) 20' . | xargs -r0 perl -pi -e 's/Copyright\\s\\(c\\)\\s20\\d\\d\\-20\\d\\d/Copyright \\(c\\)\\ 2014\\-2024/gm'",
-    "cov:e2e:report": "nyc report --cwd=./packages/e2e --reporter=lcovonly --report-dir=../../coverage/e2e",
+    "cov:e2e:report": "npx nyc report --reporter=lcovonly --report-dir=./coverage/e2e",
     "prepare": "npm run build:prod && npx tsc"
   },
   "homepage": "https://nasa.github.io/openmct",
