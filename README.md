@@ -124,7 +124,7 @@ Our e2e (end-to-end), Visual, and Performance tests leverage the Playwright fram
   npm run test:perf
   ```
 
-All tests are located within the `e2e/tests/` directory and are identified by the `*.e2e.spec.js` filename pattern. For more information about the e2e test suite, refer to the [README](./e2e/README.md).
+All tests are located within the `packages/e2e/tests/` directory and are identified by the `*.e2e.spec.js` filename pattern. For more information about the e2e test suite, refer to the [README](./packages/e2e/README.md).
 
 ### Security Tests
 

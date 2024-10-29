@@ -147,7 +147,7 @@ jobs:
       - run:
           command: |
             mkdir test-results
-            TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
+            TESTFILES=$(circleci tests glob "packages/e2e/**/*.spec.js")
             echo "$TESTFILES" | circleci tests run --command="xargs npm run test:e2e:<<parameters.suite>>" --verbose --split-by=timings
       - when:
           condition:

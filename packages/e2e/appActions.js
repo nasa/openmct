@@ -34,7 +34,7 @@
  * @typedef {Object} CreateObjectOptions
  * @property {string} type the type of domain object to create (e.g.: "Sine Wave Generator").
  * @property {string} [name] the desired name of the created domain object.
- * @property {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
+ * @property {string | import('../../src/api/objects/ObjectAPI').Identifier} [parent] the Identifier or uuid of the parent object.
  */
 
 /**
@@ -50,7 +50,7 @@
  * @typedef {Object} CreateNotificationOptions
  * @property {string} message the message
  * @property {'info' | 'alert' | 'error'} severity the severity
- * @property {import('../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
+ * @property {import('../../src/api/notifications/NotificationAPI').NotificationOptions} [notificationOptions] additional options
  */
 
 import { expect } from '@playwright/test';
@@ -65,7 +65,7 @@ import { v4 as genUuid } from 'uuid';
  * @param {Object} options - Options for creating the domain object.
  * @param {string} options.type - The type of domain object to create (e.g., "Sine Wave Generator").
  * @param {string} [options.name] - The desired name of the created domain object.
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [options.parent='mine'] - The Identifier or uuid of the parent object. Defaults to 'mine' folder
+ * @param {string | import('../../src/api/objects/ObjectAPI').Identifier} [options.parent='mine'] - The Identifier or uuid of the parent object. Defaults to 'mine' folder
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
@@ -142,7 +142,7 @@ async function createNotification(page, createNotificationOptions) {
  * @param {import('@playwright/test').Page} page
  * @param {string} name
  * @param {Object} json
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @param {string | import('../../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
 async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
@@ -188,7 +188,7 @@ async function createPlanFromJSON(page, { name, json, parent = 'mine' }) {
  * Create a standardized Telemetry Object (Sine Wave Generator) for use in visual tests
  * and tests against plotting telemetry (e.g. logPlot tests).
  * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @param {string | import('../../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
  */
 async function createExampleTelemetryObject(page, parent = 'mine') {
@@ -231,7 +231,7 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
  * Create a Stable State Telemetry Object (State Generator) for use in visual tests
  * and tests against plotting telemetry (e.g. logPlot tests). This will change state every 2 seconds.
  * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @param {string | import('../../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
  */
 async function createStableStateTelemetry(page, parent = 'mine') {
@@ -340,7 +340,7 @@ async function getFocusedObjectUuid(page) {
  * URLs returned will be of the form `'./browse/#/mine/<uuid0>/<uuid1>/...'`
  *
  * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier the uuid or identifier of the object to get the url for
+ * @param {string | import('../../src/api/objects/ObjectAPI').Identifier} identifier the uuid or identifier of the object to get the url for
  * @returns {Promise<string>} the url of the object
  */
 async function getHashUrlToDomainObject(page, identifier) {
@@ -369,7 +369,7 @@ async function getHashUrlToDomainObject(page, identifier) {
  * Utilizes the OpenMCT API to detect if the UI is in Edit mode.
  * @private
  * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} identifier
+ * @param {string | import('../../src/api/objects/ObjectAPI').Identifier} identifier
  * @return {Promise<boolean>} true if the Open MCT is in Edit Mode
  */
 async function _isInEditMode(page, identifier) {

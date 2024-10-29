@@ -16,7 +16,7 @@ const config = {
   timeout: 60 * 1000,
   webServer: {
     command: 'npm run start:coverage',
-    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
+    cwd: fileURLToPath(new URL('../../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
@@ -31,7 +31,7 @@ const config = {
     trace: 'on-first-retry',
     video: 'off',
     // @ts-ignore - custom configuration option for nyc codecoverage output path
-    coveragePath: fileURLToPath(new URL('../.nyc_output', import.meta.url))
+    coveragePath: fileURLToPath(new URL('../../.nyc_output', import.meta.url))
   },
   projects: [
     {
@@ -77,7 +77,7 @@ const config = {
       'html',
       {
         open: 'never',
-        outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
+        outputFolder: '../../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
       }
     ],
     ['junit', { outputFile: '../test-results/results.xml' }]
