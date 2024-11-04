@@ -316,8 +316,10 @@ test.describe('Basic Condition Set Use', () => {
     const conditionCollection = page.locator('#conditionCollection');
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
-    // Validate that the add criteria button is enabled
-    await expect(page.getByLabel('Add Criteria - Enabled')).toBeVisible();
+    // Validate that the add criteria button is enabled and adds a new criterion
+    await page.getByLabel('Add Criteria - Enabled').click();
+    const numOfUnnamedCriteria = await page.getByLabel('Criterion Telemetry Selection').count();
+    expect(numOfUnnamedCriteria).toEqual(2);
   });
 });
 
