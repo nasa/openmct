@@ -287,6 +287,38 @@ test.describe('Basic Condition Set Use', () => {
       description: 'https://github.com/nasa/openmct/issues/7484'
     });
   });
+
+  test('ConditionSet has add criteria button enabled/disabled when composition is and is not available', async ({
+    page
+  }) => {
+    const exampleTelemetry = await createExampleTelemetryObject(page);
+
+    await page.getByLabel('Show selected item in tree').click();
+    await page.goto(conditionSet.url);
+    // Change the object to edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // Create a condition
+    await page.locator('#addCondition').click();
+    await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
+
+    // Validate that the add criteria button is disabled
+    await expect(page.getByLabel('Add Criteria - Disabled')).toBeVisible();
+
+    // Add Telemetry to ConditionSet
+    const sineWaveGeneratorTreeItem = page
+      .getByRole('tree', {
+        name: 'Main Tree'
+      })
+      .getByRole('treeitem', {
+        name: exampleTelemetry.name
+      });
+    const conditionCollection = page.locator('#conditionCollection');
+    await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
+
+    // Validate that the add criteria button is enabled
+    await expect(page.getByLabel('Add Criteria - Enabled')).toBeVisible();
+  });
 });
 
 test.describe('Condition Set Composition', () => {
