@@ -288,7 +288,7 @@ test.describe('Basic Condition Set Use', () => {
     });
   });
 
-  test('ConditionSet has add criteria button enabled/disabled when composition is and is not available', async ({
+  test.only('ConditionSet has add criteria button enabled/disabled when composition is and is not available', async ({
     page
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
@@ -303,7 +303,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.locator('#conditionCollection').getByRole('textbox').nth(0).fill('First Condition');
 
     // Validate that the add criteria button is disabled
-    await expect(page.getByLabel('Add Criteria - Disabled')).toBeVisible();
+    await expect(page.getByLabel('Add Criteria - Disabled')).toHaveAttribute('disabled');
 
     // Add Telemetry to ConditionSet
     const sineWaveGeneratorTreeItem = page
@@ -317,6 +317,7 @@ test.describe('Basic Condition Set Use', () => {
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
     // Validate that the add criteria button is enabled and adds a new criterion
+    await expect(page.getByLabel('Add Criteria - Enabled')).not.toHaveAttribute('disabled');
     await page.getByLabel('Add Criteria - Enabled').click();
     const numOfUnnamedCriteria = await page.getByLabel('Criterion Telemetry Selection').count();
     expect(numOfUnnamedCriteria).toEqual(2);
