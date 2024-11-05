@@ -288,7 +288,7 @@ test.describe('Basic Condition Set Use', () => {
     });
   });
 
-  test.only('ConditionSet has add criteria button enabled/disabled when composition is and is not available', async ({
+  test('ConditionSet has add criteria button enabled/disabled when composition is and is not available', async ({
     page
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
