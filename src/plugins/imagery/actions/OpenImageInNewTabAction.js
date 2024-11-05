@@ -20,14 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class OpenImageInNewTabAction {
+const OPEN_IMAGE_IN_NEW_TAB_ACTION_KEY = 'openImageInNewTab';
+class OpenImageInNewTabAction {
   constructor(openmct) {
     this.openmct = openmct;
 
     this.cssClass = 'icon-new-window';
     this.description = 'Open the image in a new tab';
     this.group = 'action';
-    this.key = 'openImageInNewTab';
+    this.key = OPEN_IMAGE_IN_NEW_TAB_ACTION_KEY;
     this.name = 'Open Image in New Tab';
     this.priority = 1;
   }
@@ -44,3 +45,7 @@ export default class OpenImageInNewTabAction {
     }
   }
 }
+
+export { OPEN_IMAGE_IN_NEW_TAB_ACTION_KEY };
+
+export default OpenImageInNewTabAction;

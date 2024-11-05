@@ -107,7 +107,6 @@ class TimeAPI extends GlobalTimeContext {
    * automatically update the time bounds of the data displayed in Open MCT.
    *
    * @typedef {Object} Clock
-   * @memberof openmct.timeAPI
    * @property {string} key A unique identifier
    * @property {string} name A human-readable name. The name will be used to
    * represent this clock in the Time Conductor UI

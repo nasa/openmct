@@ -73,6 +73,9 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
 import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
@@ -80,7 +83,7 @@ import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
 const SECONDARY_TICK_NUMBER = 2;
 
 export default {
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     axisType: {
       type: String,
@@ -111,6 +114,18 @@ export default {
     }
   },
   emits: ['plot-tick-width'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { update: updateAlignment, remove: removeAlignment } = useAlignment(
+      domainObject,
+      objectPath,
+      openmct
+    );
+
+    return { updateAlignment, removeAlignment };
+  },
   data() {
     return {
       ticks: []
@@ -132,6 +147,10 @@ export default {
     this.updateTicks();
   },
   beforeUnmount() {
+    this.removeAlignment({
+      yAxisId: this.axisId,
+      updateObjectPath: this.objectPath
+    });
     this.stopListening();
   },
   methods: {
@@ -279,6 +298,14 @@ export default {
               width: tickWidth,
               yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
             });
+            if (this.axisType === 'yAxis') {
+              this.updateAlignment({
+                width: tickWidth,
+                yAxisId: this.axisId,
+                updateObjectPath: this.objectPath
+              });
+            }
+
             this.shouldCheckWidth = false;
           }
         }

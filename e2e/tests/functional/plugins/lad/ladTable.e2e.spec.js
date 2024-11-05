@@ -76,7 +76,7 @@ test.describe('LAD Table', () => {
       // Right-click the SWG treeitem context menu and click 'Remove' and confirm
       await page.getByRole('treeitem', { name: swg.name }).click({ button: 'right' });
       await page.getByRole('menuitem', { name: 'Remove' }).click();
-      await page.getByRole('button', { name: 'OK', exact: true }).click();
+      await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
       // Assert that the SWG is no longer in the tree and the table is empty
       await expect(page.getByRole('treeitem', { name: swg.name })).toBeHidden();

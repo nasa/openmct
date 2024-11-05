@@ -22,16 +22,15 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../../appActions.js';
+import { test } from '../../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../../constants.js';
-import { test } from '../../../pluginFixtures.js';
 
 //Declare the scope of the visual test
 const treePane = "[role=tree][aria-label='Main Tree']";
 
 test.describe('Visual - Tree Pane', () => {
-  test('Tree pane in various states', async ({ page, theme, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
+  test('Tree pane in various states', async ({ page, theme }) => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     //Open Tree
@@ -69,28 +68,28 @@ test.describe('Visual - Tree Pane', () => {
       scope: treePane
     });
 
-    await expandTreePaneItemByName(page, myItemsFolderName);
+    await page.getByLabel('Expand My Items folder').click();
 
     await page.goto(foo.url);
-    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.getByLabel('Navigate to A Clock').dragTo(page.getByLabel('Object View'));
+    await page.getByLabel('Navigate to Z Clock').dragTo(page.getByLabel('Object View'));
     await page.goto(bar.url);
-    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.getByLabel('Navigate to A Clock').dragTo(page.getByLabel('Object View'));
+    await page.getByLabel('Navigate to Z Clock').dragTo(page.getByLabel('Object View'));
     await page.goto(baz.url);
-    await page.dragAndDrop('role=treeitem[name=/A Clock/]', '.c-object-view');
-    await page.dragAndDrop('role=treeitem[name=/Z Clock/]', '.c-object-view');
+    await page.getByLabel('Navigate to A Clock').dragTo(page.getByLabel('Object View'));
+    await page.getByLabel('Navigate to Z Clock').dragTo(page.getByLabel('Object View'));
 
     await percySnapshot(page, `Tree Pane w/ single level expanded (theme: ${theme})`, {
       scope: treePane
     });
 
-    await expandTreePaneItemByName(page, foo.name);
-    await expandTreePaneItemByName(page, bar.name);
-    await expandTreePaneItemByName(page, baz.name);
+    await page.getByLabel(`Expand ${foo.name} folder`).click();
+    await page.getByLabel(`Expand ${bar.name} folder`).click();
+    await page.getByLabel(`Expand ${baz.name} folder`).click();
 
     // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(1 * 1000); //https://github.com/nasa/openmct/issues/7059
+    await page.waitForTimeout(3 * 1000); //https://github.com/nasa/openmct/issues/7059
 
     await percySnapshot(page, `Tree Pane w/ multiple levels expanded (theme: ${theme})`, {
       scope: treePane

@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import StalenessUtils from '../../utils/staleness.js';
 import TableRowCollection from './collections/TableRowCollection.js';
+import { MODE } from './constants.js';
 import TelemetryTableColumn from './TelemetryTableColumn.js';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration.js';
 import TelemetryTableNameColumn from './TelemetryTableNameColumn.js';
@@ -119,7 +120,7 @@ export default class TelemetryTable extends EventEmitter {
       this.rowLimit = rowLimit;
     }
 
-    if (this.telemetryMode === 'performance') {
+    if (this.telemetryMode === MODE.PERFORMANCE) {
       this.tableRows.setLimit(this.rowLimit);
     } else {
       this.tableRows.removeLimit();
@@ -129,14 +130,7 @@ export default class TelemetryTable extends EventEmitter {
   createTableRowCollections() {
     this.tableRows = new TableRowCollection();
 
-    //Fetch any persisted default sort
-    let sortOptions = this.configuration.getConfiguration().sortOptions;
-
-    //If no persisted sort order, default to sorting by time system, descending.
-    sortOptions = sortOptions || {
-      key: this.openmct.time.getTimeSystem().key,
-      direction: 'desc'
-    };
+    const sortOptions = this.configuration.getSortOptions();
 
     this.updateRowLimit();
 
@@ -171,11 +165,10 @@ export default class TelemetryTable extends EventEmitter {
 
     this.removeTelemetryCollection(keyString);
 
-    let sortOptions = this.configuration.getConfiguration().sortOptions;
-    requestOptions.order =
-      sortOptions?.direction ?? (this.telemetryMode === 'performance' ? 'desc' : 'asc');
+    let sortOptions = this.configuration.getSortOptions();
+    requestOptions.order = sortOptions.direction;
 
-    if (this.telemetryMode === 'performance') {
+    if (this.telemetryMode === MODE.PERFORMANCE) {
       requestOptions.size = this.rowLimit;
       requestOptions.enforceSize = true;
     }
@@ -442,12 +435,13 @@ export default class TelemetryTable extends EventEmitter {
   }
 
   sortBy(sortOptions) {
-    this.tableRows.sortBy(sortOptions);
+    this.configuration.setSortOptions(sortOptions);
 
-    if (this.openmct.editor.isEditing()) {
-      let configuration = this.configuration.getConfiguration();
-      configuration.sortOptions = sortOptions;
-      this.configuration.updateConfiguration(configuration);
+    if (this.telemetryMode === MODE.PERFORMANCE) {
+      this.tableRows.setSortOptions(sortOptions);
+      this.clearAndResubscribe();
+    } else {
+      this.tableRows.sortBy(sortOptions);
     }
   }
 

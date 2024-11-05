@@ -115,7 +115,7 @@ export default {
         return this.model.buttons.submit.label;
       }
 
-      return 'OK';
+      return 'Ok';
     },
     cancelLabel() {
       if (this.model.buttons && this.model.buttons.cancel && this.model.buttons.cancel.label) {

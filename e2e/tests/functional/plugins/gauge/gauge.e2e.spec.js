@@ -38,7 +38,7 @@ test.describe('Gauge', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Can add and remove telemetry sources @unstable', async ({ page }) => {
+  test('Can add and remove telemetry sources', async ({ page }) => {
     // Create the gauge with defaults
     const gauge = await createDomainObjectWithDefaults(page, { type: 'Gauge' });
 
@@ -53,6 +53,7 @@ test.describe('Gauge', () => {
     // the SWG appears in the elements pool
     await page.goto(gauge.url);
     await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Elements' }).click();
     await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
@@ -65,38 +66,35 @@ test.describe('Gauge', () => {
     });
 
     // Verify that the 'Replace telemetry source' modal appears and accept it
-    await expect
-      .soft(
-        page.locator(
-          'text=This action will replace the current telemetry source. Do you want to continue?'
-        )
+    await expect(
+      page.getByText(
+        'This action will replace the current telemetry source. Do you want to continue?'
       )
-      .toBeVisible();
-    await page.click('text=Ok');
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Navigate to the gauge and verify that the new SWG
     // appears in the elements pool and the old one is gone
     await page.goto(gauge.url);
     await page.getByLabel('Edit Object').click();
-    await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
-    await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
+    await page.getByRole('tab', { name: 'Elements' }).click();
+    await expect(page.getByLabel(`Preview ${swg1.name}`)).toBeHidden();
+    await expect(page.getByLabel(`Preview ${swg2.name}`)).toBeVisible();
     await page.getByRole('button', { name: 'Save' }).click();
 
     // Right click on the new SWG in the elements pool and delete it
-    await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({
+    await page.getByLabel(`Preview ${swg2.name}`).click({
       button: 'right'
     });
-    await page.locator('li[title="Remove this object from its containing object."]').click();
+    await page.getByLabel('Remove').click();
 
     // Verify that the 'Remove object' confirmation modal appears and accept it
-    await expect
-      .soft(
-        page.locator(
-          'text=Warning! This action will remove this object. Are you sure you want to continue?'
-        )
+    await expect(
+      page.getByText(
+        'Warning! This action will remove this object. Are you sure you want to continue?'
       )
-      .toBeVisible();
-    await page.click('text=Ok');
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Verify that the elements pool shows no elements
     await expect(page.locator('text="No contained elements"')).toBeVisible();
@@ -110,11 +108,11 @@ test.describe('Gauge', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     // Click the object specified by 'type'
-    await page.click(`li[role='menuitem']:text("Gauge")`);
+    await page.getByRole('menuitem', { name: 'Gauge' }).click();
     // FIXME: We need better selectors for these custom form controls
     const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
-    await displayCurrentValueSwitch.setChecked(false);
-    await page.click('button[aria-label="Save"]');
+    await displayCurrentValueSwitch.uncheck();
+    await page.getByLabel('Save').click();
 
     // TODO: Verify changes in the UI
   });
@@ -126,24 +124,21 @@ test.describe('Gauge', () => {
 
     // Create the gauge with defaults
     await createDomainObjectWithDefaults(page, { type: 'Gauge' });
-    await page.click('button[title="More actions"]');
-    await page.click('li[role="menuitem"]:has-text("Edit Properties")');
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     // FIXME: We need better selectors for these custom form controls
     const displayCurrentValueSwitch = page.locator('.c-toggle-switch__slider >> nth=0');
-    await displayCurrentValueSwitch.setChecked(false);
-    await page.click('button[aria-label="Save"]');
+    await displayCurrentValueSwitch.uncheck();
+    await page.getByLabel('Save').click();
 
     // TODO: Verify changes in the UI
   });
 
-  test.fixme('Gauge does not display NaN when data not available', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7421'
-    });
+  test('Gauge does not display NaN when data not available', async ({ page }) => {
     // Create a Gauge
     const gauge = await createDomainObjectWithDefaults(page, {
-      type: 'Gauge'
+      type: 'Gauge',
+      name: 'Gauge with no data'
     });
 
     // Create a Sine Wave Generator in the Gauge with a loading delay
@@ -154,7 +149,7 @@ test.describe('Gauge', () => {
     await page.getByRole('menuitem', { name: /Edit Properties.../ }).click();
 
     //Edit Example Telemetry Object to include 5s loading Delay
-    await page.locator('[aria-label="Loading Delay \\(ms\\)"]').fill('5000');
+    await page.getByLabel('Loading Delay (ms)', { exact: true }).fill('5000');
 
     await page.getByRole('button', { name: 'Save' }).click();
 
@@ -162,9 +157,13 @@ test.describe('Gauge', () => {
     await page.waitForURL(`**/${gauge.uuid}/*`);
 
     // Nav to the Gauge
-    await page.goto(gauge.url);
-    const gaugeNoDataText = await page.locator('.js-dial-current-value tspan').textContent();
-    expect(gaugeNoDataText).toBe('--');
+    await page.goto(gauge.url, { waitUntil: 'domcontentloaded' });
+    // Check that the value is not displayed
+    //TODO https://github.com/nasa/openmct/issues/7790 update this locator
+    await expect(page.getByTitle('Value is currently out of')).toHaveAttribute(
+      'aria-valuenow',
+      '--'
+    );
   });
 
   test('Gauge enforces composition policy', async ({ page }) => {

@@ -165,7 +165,6 @@ class IndependentTimeContext extends TimeContext {
   /**
    * Get the time system of the TimeAPI.
    * @returns {TimeSystem} The currently applied time system
-   * @memberof module:openmct.TimeAPI#
    * @method getTimeSystem
    * @override
    */
@@ -214,7 +213,6 @@ class IndependentTimeContext extends TimeContext {
       /**
        * The active clock has changed.
        * @event clock
-       * @memberof module:openmct.TimeAPI~
        * @property {Clock} clock The newly activated clock, or undefined
        * if the system is no longer following a clock source
        */
@@ -286,7 +284,6 @@ class IndependentTimeContext extends TimeContext {
     /**
      * The active clock has changed.
      * @event clock
-     * @memberof module:openmct.TimeAPI~
      * @property {Clock} clock The newly activated clock, or undefined
      * if the system is no longer following a clock source
      */
@@ -333,7 +330,6 @@ class IndependentTimeContext extends TimeContext {
       /**
        * The active mode has changed.
        * @event modeChanged
-       * @memberof module:openmct.TimeAPI~
        * @property {Mode} mode The newly activated mode
        */
       this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.mode));

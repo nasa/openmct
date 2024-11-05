@@ -32,7 +32,7 @@ import _ from 'lodash';
 import mount from 'utils/mount';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import PreviewAction from '@/ui/preview/PreviewAction';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 
 import imageryData from '../../imagery/mixins/imageryData.js';
 
@@ -71,7 +71,7 @@ export default {
     }
   },
   mounted() {
-    this.previewAction = new PreviewAction(this.openmct);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
 
     this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
     this.canvas.height = 0;
@@ -370,6 +370,7 @@ export default {
     createImageWrapper(index, image, showImagePlaceholders) {
       const id = `${ID_PREFIX}${image.time}`;
       let imageWrapper = document.createElement('div');
+      imageWrapper.ariaLabel = id;
       imageWrapper.classList.add(IMAGE_WRAPPER_CLASS);
       imageWrapper.style.left = `${this.xScale(image.time)}px`;
       this.setNSAttributesForElement(imageWrapper, {

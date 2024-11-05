@@ -87,6 +87,9 @@ import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
 
+/**
+ * @type {Object}
+ */
 const plugins = {};
 
 plugins.example = {};

@@ -98,16 +98,18 @@
           v-if="selectedPage && !selectedPage.isLocked"
           :aria-disabled="activeTransaction"
           class="c-notebook__drag-area icon-plus"
+          aria-dropeffect="link"
+          aria-labelledby="newEntryLabel"
           @click="newEntry(null, $event)"
           @dragover="dragOver"
           @drop.capture="dropCapture"
           @drop="dropOnEntry($event)"
         >
-          <span class="c-notebook__drag-area__label">
+          <span id="newEntryLabel" class="c-notebook__drag-area__label">
             To start a new entry, click here or drag and drop any object
           </span>
         </div>
-        <progress-bar
+        <ProgressBar
           v-if="savingTransaction"
           class="c-telemetry-table__progress-bar"
           :model="{ progressPerc: null }"
@@ -150,9 +152,10 @@
           <button
             class="c-button commit-button icon-lock"
             title="Commit entries and lock this page from further changes"
+            aria-labelledby="commitEntriesLabel"
             @click="lockPage()"
           >
-            <span class="c-button__label">Commit Entries</span>
+            <span id="commitEntriesLabel" class="c-button__label">Commit Entries</span>
           </button>
         </div>
       </div>
