@@ -36,6 +36,7 @@
       :class="[cellLimitClasses[key], selectableColumns[key] ? 'is-selectable' : '']"
       :object-path="objectPath"
       :row="row"
+      test="test"
     />
   </tr>
 </template>
