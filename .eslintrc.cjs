@@ -170,9 +170,10 @@ const config = {
     'vue/singleline-html-element-content-newline': 'off',
     'vue/no-mutating-props': 'off', // TODO: Remove this rule and fix resulting errors
     // TODO: A11y rules -> fix step by step
-    'vuejs-accessibility/no-static-element-interactions': 'off',
+    'vuejs-accessibility/no-static-element-interactions': 'warn',
     'vuejs-accessibility/click-events-have-key-events': 'off',
     'vuejs-accessibility/interactive-supports-focus': 'off',
+    // Bug in the eslint rule when using :for and :id instead of static classes
     'vuejs-accessibility/label-has-for': 'off',
     'vuejs-accessibility/mouse-events-have-key-events': 'off',
     'vuejs-accessibility/role-has-required-aria-props': 'off',
