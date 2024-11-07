@@ -166,6 +166,45 @@ test.describe('Gauge', () => {
     );
   });
 
+  test('Gauge does not break when an object is missing', async ({ page }) => {
+    // Set up error listeners
+    const pageErrors = [];
+
+    // Listen for uncaught exceptions
+    page.on('pageerror', (err) => {
+      pageErrors.push(err.message);
+    });
+
+    // Create a Gauge
+    const gauge = await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Gauge with missing object'
+    });
+
+    // Create a Sine Wave Generator in the Gauge with a loading delay
+    const missingSWG = await createExampleTelemetryObject(page, gauge.uuid);
+
+    // Remove the object from local storage
+    await page.evaluate(
+      ([missingObject]) => {
+        const mct = localStorage.getItem('mct');
+        const mctObjects = JSON.parse(mct);
+        delete mctObjects[missingObject.uuid];
+        localStorage.setItem('mct', JSON.stringify(mctObjects));
+      },
+      [missingSWG]
+    );
+
+    // Nav to the Gauge
+    await page.goto(gauge.url, { waitUntil: 'domcontentloaded' });
+
+    // Wait a bit to ensure all errors are caught
+    await page.waitForTimeout(500);
+
+    // Verify no errors were thrown
+    expect(pageErrors).toHaveLength(0);
+  });
+
   test('Gauge enforces composition policy', async ({ page }) => {
     // Create a Gauge
     await createDomainObjectWithDefaults(page, {
