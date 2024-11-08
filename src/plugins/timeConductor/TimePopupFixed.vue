@@ -170,7 +170,7 @@ export default {
     validateInput(refName) {
       this.clearAllValidation();
 
-      const validationResult = this.timeFormatter.validate(this.formattedBounds[refName])
+      const validationResult = this.timeSystemFormatter.validate(this.formattedBounds[refName])
         ? { valid: true }
         : { valid: false, message: `Invalid Time` };
 
@@ -205,7 +205,6 @@ export default {
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
-        this.hasLogicalValidationErrors = true;
       } else {
         input.setCustomValidity('');
         input.title = '';
