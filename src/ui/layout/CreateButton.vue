@@ -25,6 +25,7 @@
       class="c-create-button c-button--menu c-button--major icon-plus"
       :aria-disabled="isEditing"
       aria-labelledby="create-button-label"
+      data-test-id="create-button"
       @click.prevent.stop="showCreateMenu"
     >
       <span id="create-button-label" class="c-button__label">Create</span>
