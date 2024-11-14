@@ -251,6 +251,54 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Canonicalizes options object by creating a standardized version with sorted keys
+   * and recursively processed values. This ensures consistent object representation
+   * regardless of property order.
+   *
+   * Used internally to generate consistent hashes for caching subscription options.
+   *
+   * @private
+   * @param {Object|Array|*} options The options object to canonicalize
+   * @returns {Object|Array|*} A canonicalized version of the input where object keys are sorted
+   */
+  #canonicalizeOptions(options) {
+    if (typeof options !== 'object' || options === null) {
+      return options;
+    }
+
+    if (Array.isArray(options)) {
+      return options.map((item) => this.#canonicalizeOptions(item));
+    }
+
+    return Object.keys(options)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = this.#canonicalizeOptions(options[key]);
+        return acc;
+      }, {});
+  }
+
+  /**
+   * Generates a unique cache key for a telemetry subscription based on the
+   * domain object identifier, strategy, and options hash.
+   *
+   * This allows efficient caching and lookup of subscription handlers for
+   * identical subscription requests.
+   *
+   * @private
+   * @param {import('openmct').DomainObject} domainObject The domain object being subscribed to
+   * @param {string} strategy The subscription strategy (e.g. 'latest' or 'batch')
+   * @param {Object} options The subscription options object
+   * @returns {string} A unique key string for caching the subscription
+   */
+  #getSubscriptionCacheKey(domainObject, strategy, options) {
+    const keyString = makeKeyString(domainObject.identifier);
+    const canonicalOptions = this.#canonicalizeOptions(options);
+
+    return `${keyString}:${strategy}:${JSON.stringify(canonicalOptions)}`;
+  }
+
+  /**
    * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
    * The request will be modified when it is received and will be returned in it's modified state
    * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
@@ -418,16 +466,14 @@ export default class TelemetryAPI {
       this.#subscribeCache = {};
     }
 
-    const keyString = makeKeyString(domainObject.identifier);
     const supportedStrategy = supportsBatching ? requestedStrategy : SUBSCRIBE_STRATEGY.LATEST;
     // Override the requested strategy with the strategy supported by the provider
     const optionsWithSupportedStrategy = {
       ...options,
       strategy: supportedStrategy
     };
-    // If batching is supported, we need to cache a subscription for each strategy -
-    // latest and batched.
-    const cacheKey = `${keyString}:${supportedStrategy}`;
+
+    const cacheKey = this.#getSubscriptionCacheKey(domainObject, supportedStrategy, options);
     let subscriber = this.#subscribeCache[cacheKey];
 
     if (!subscriber) {
