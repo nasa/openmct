@@ -53,8 +53,12 @@
         </div>
       </div>
 
-      <div :class="['c-comps__refs-controls c-cdef__controls', { disabled: !parameters?.length }]">
-        <label v-if="isEditing" class="c-toggle-switch">
+      <div
+        v-if="isEditing"
+        class="c-comps__apply-test-data-control"
+        :class="['c-comps__refs-controls c-cdef__controls', { disabled: !parameters?.length }]"
+      >
+        <label class="c-toggle-switch">
           <input type="checkbox" :checked="testDataApplied" @change="toggleTestData" />
           <span class="c-toggle-switch__slider" aria-label="Apply Test Data"></span>
           <span class="c-toggle-switch__label">Apply Test Values</span>
@@ -62,46 +66,55 @@
       </div>
       <div class="c-comps__refs">
         <div v-for="parameter in parameters" :key="parameter.keyString" class="c-comps__ref">
-          <span class="c-test-datum__string">Reference</span>
-          <input
-            v-if="isEditing"
-            v-model="parameter.name"
-            :aria-label="`Reference Name Input for ${parameter.name}`"
-            type="text"
-            class="c-input--md"
-            @change="updateParameters"
-          />
-          <div v-else class="--em">{{ parameter.name }}</div>
-          <span class="c-test-datum__string">=</span>
-          <span
-            class="c-comps__path-and-field"
-            :aria-label="`Reference ${parameter.name} Object Path`"
-          >
-            <ObjectPathString
-              :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
-              :show-object-itself="true"
-              class="--em"
-            />
-            <!-- drop down to select value from telemetry -->
-            <select v-if="isEditing" v-model="parameter.valueToUse" @change="updateParameters">
-              <option
-                v-for="parameterValueOption in compsManager.getMetaDataValuesForParameter(
-                  parameter.keyString
-                )"
-                :key="parameterValueOption.key"
-                :value="parameterValueOption.key"
+          <div class="c-comps__ref-section">
+            <div class="c-comps__ref-sub-section ref-and-path">
+              <span class="c-test-datum__string">Reference</span>
+              <input
+                v-if="isEditing"
+                v-model="parameter.name"
+                :aria-label="`Reference Name Input for ${parameter.name}`"
+                type="text"
+                class="c-input--md"
+                @change="updateParameters"
+              />
+              <div v-else class="--em">{{ parameter.name }}</div>
+              <span class="c-test-datum__string">=</span>
+              <span
+                class="c-comps__path-and-field"
+                :aria-label="`Reference ${parameter.name} Object Path`"
               >
-                {{ parameterValueOption.name }}
-              </option>
-            </select>
-            <div v-else>{{ parameter.valueToUse }}</div>
+                <ObjectPathString
+                  :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
+                  :show-object-itself="true"
+                  class="c-comp__ref-path --em"
+                />
+                <!-- drop down to select value from telemetry -->
+                <select
+                  v-if="isEditing"
+                  v-model="parameter.valueToUse"
+                  class="c-comp__ref-field"
+                  @change="updateParameters"
+                >
+                  <option
+                    v-for="parameterValueOption in compsManager.getMetaDataValuesForParameter(
+                      parameter.keyString
+                    )"
+                    :key="parameterValueOption.key"
+                    :value="parameterValueOption.key"
+                  >
+                    {{ parameterValueOption.name }}
+                  </option>
+                </select>
+                <div v-else class="c-comp__ref-field">{{ parameter.valueToUse }}</div>
+              </span>
+            </div>
+
             <div
-              :class="[
-                'c-comps__refs-controls c-cdef__controls',
-                { disabled: !parameters?.length }
-              ]"
+              v-if="isEditing"
+              class="c-comps__ref-sub-section accum-vals"
+              :class="['c-comps__refs-controls', { disabled: !parameters?.length }]"
             >
-              <label v-if="isEditing" class="c-toggle-switch">
+              <label class="c-toggle-switch">
                 <span class="c-toggle-switch__label">Accumulate Values</span>
                 <input
                   v-model="parameter.accumulateValues"
@@ -113,11 +126,8 @@
                   aria-label="Toggle Parameter Accumulation"
                 ></span>
               </label>
-              <div v-if="!isEditing && parameter.accumulateValues">
-                - accumulating values with sample size {{ parameter.sampleSize }}
-              </div>
 
-              <span v-if="isEditing && parameter.accumulateValues" class="c-test-datum__string"
+              <span v-if="isEditing && parameter.accumulateValues" class="c-comps__label"
                 >Sample Size</span
               >
               <input
@@ -125,21 +135,30 @@
                 v-model="parameter.sampleSize"
                 :aria-label="`Sample Size for ${parameter.name}`"
                 type="number"
-                class="c-input--md"
+                class="c-input--sm c-comps__value"
                 @change="updateParameters"
               />
             </div>
-          </span>
 
-          <span v-if="isEditing" class="c-test-datum__string">Test value</span>
-          <input
-            v-if="isEditing"
-            v-model="parameter.testValue"
-            :aria-label="`Reference Test Value for ${parameter.name}`"
-            type="text"
-            class="c-input--md"
-            @change="updateTestValue(parameter)"
-          />
+            <div
+              v-if="!isEditing && parameter.accumulateValues"
+              class="c-comps__ref-sub-section accum-vals"
+            >
+              Accumulating values with sample size {{ parameter.sampleSize }}
+            </div>
+          </div>
+
+          <div v-if="isEditing" class="c-comps__ref-section">
+            <span class="c-comps__label">Test value</span>
+            <input
+              v-if="isEditing"
+              v-model="parameter.testValue"
+              :aria-label="`Reference Test Value for ${parameter.name}`"
+              type="text"
+              class="c-input--md c-comps__value"
+              @change="updateTestValue(parameter)"
+            />
+          </div>
         </div>
       </div>
     </section>
