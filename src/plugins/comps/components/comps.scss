@@ -56,25 +56,68 @@
     gap: $interiorMarginSm;
   }
 
+
+  &__apply-test-data-control {
+    padding: $interiorMargin 0;
+  }
+
+  &__refs {
+
+  }
+
   &__ref {
     @include discreteItem();
-    display: grid;
-    gap: $interiorMargin;
-    grid-template-columns: max-content max-content min-content 1fr;
-    padding: $interiorMargin;
+    align-items: start;
+    display: flex;
+    flex-direction: column;
+    padding: 0 $interiorMargin;
     line-height: 170%; // Aligns text with controls like selects
+
+    > * + * {
+      border-top: 1px solid $colorInteriorBorder;
+    }
+  }
+
+  &__ref-section {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $interiorMargin;
+    padding: $interiorMargin 0;
+    width: 100%;
+  }
+
+  &__ref-sub-section {
+    align-items: baseline;
+    display: flex;
+    flex: 1 1 auto;
+    gap: $interiorMargin;
+
+    &.ref-and-path {
+      flex: 0 1 auto;
+      flex-wrap: wrap;
+    }
   }
 
   &__path-and-field {
     align-items: start;
     display: flex;
+    flex-wrap: wrap;
     gap: $interiorMargin;
+
+    .c-comp__ref-path {
+      word-break: break-all;
+    }
+  }
+
+  &__label,
+  &__value {
+    white-space: nowrap;
   }
 
   &__expression {
     *[class*=value] {
       font-family: monospace;
-      //font-size: 1.1em;
       resize: vertical; // Only applies to textarea
     }
     div[class*=value] {
@@ -87,7 +130,6 @@
     border-radius: $basicCr;
     display: flex; // Creates hanging indent from :before icon
     padding: $interiorMarginSm $interiorMarginLg $interiorMarginSm $interiorMargin;
-    //text-wrap: normal;
     max-width: max-content;
 
     &:before {
@@ -107,6 +149,5 @@
 
   .--em {
     color: $colorBodyFgEm;
-    //font-weight: bold;
   }
 }

@@ -25,6 +25,7 @@
 .c-toggle-switch {
   cursor: pointer;
   display: inline-flex;
+  gap: $interiorMarginSm;
   align-items: center;
   vertical-align: middle;
 
@@ -55,7 +56,6 @@
   }
 
   &__label {
-    margin-left: $interiorMarginSm;
     white-space: nowrap;
   }
 
