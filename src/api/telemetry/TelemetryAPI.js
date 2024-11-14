@@ -280,22 +280,21 @@ export default class TelemetryAPI {
 
   /**
    * Generates a unique cache key for a telemetry subscription based on the
-   * domain object identifier, strategy, and options hash.
+   * domain object identifier and options (which includes strategy).
    *
    * This allows efficient caching and lookup of subscription handlers for
    * identical subscription requests.
    *
    * @private
    * @param {import('openmct').DomainObject} domainObject The domain object being subscribed to
-   * @param {string} strategy The subscription strategy (e.g. 'latest' or 'batch')
-   * @param {Object} options The subscription options object
+   * @param {Object} options The subscription options object (including strategy)
    * @returns {string} A unique key string for caching the subscription
    */
-  #getSubscriptionCacheKey(domainObject, strategy, options) {
+  #getSubscriptionCacheKey(domainObject, options) {
     const keyString = makeKeyString(domainObject.identifier);
     const canonicalOptions = this.#canonicalizeOptions(options);
 
-    return `${keyString}:${strategy}:${JSON.stringify(canonicalOptions)}`;
+    return `${keyString}:${JSON.stringify(canonicalOptions)}`;
   }
 
   /**
@@ -473,7 +472,7 @@ export default class TelemetryAPI {
       strategy: supportedStrategy
     };
 
-    const cacheKey = this.#getSubscriptionCacheKey(domainObject, supportedStrategy, options);
+    const cacheKey = this.#getSubscriptionCacheKey(domainObject, optionsWithSupportedStrategy);
     let subscriber = this.#subscribeCache[cacheKey];
 
     if (!subscriber) {
