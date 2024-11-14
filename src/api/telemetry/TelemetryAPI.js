@@ -279,11 +279,35 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Generates a numeric hash value for an options object. The hash is consistent
+   * for equivalent option objects regardless of property order.
+   *
+   * This is used to create compact, unique cache keys for telemetry subscriptions with
+   * different options configurations. The hash function ensures that identical options
+   * objects will always generate the same hash value.
+   *
+   * @private
+   * @param {Object} options The options object to hash
+   * @returns {number} A 32-bit integer hash of the options object
+   */
+  #hashOptions(options) {
+    let hash = 0;
+    const canonicalOptions = this.#canonicalizeOptions(options);
+    const str = JSON.stringify(canonicalOptions);
+
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = hash * 31 + char;
+    }
+    return hash;
+  }
+
+  /**
    * Generates a unique cache key for a telemetry subscription based on the
    * domain object identifier and options (which includes strategy).
    *
-   * This allows efficient caching and lookup of subscription handlers for
-   * identical subscription requests.
+   * Uses a hash of the options object to create compact cache keys while still
+   * ensuring unique keys for different subscription configurations.
    *
    * @private
    * @param {import('openmct').DomainObject} domainObject The domain object being subscribed to
@@ -292,9 +316,7 @@ export default class TelemetryAPI {
    */
   #getSubscriptionCacheKey(domainObject, options) {
     const keyString = makeKeyString(domainObject.identifier);
-    const canonicalOptions = this.#canonicalizeOptions(options);
-
-    return `${keyString}:${JSON.stringify(canonicalOptions)}`;
+    return `${keyString}:${this.#hashOptions(options)}`;
   }
 
   /**
