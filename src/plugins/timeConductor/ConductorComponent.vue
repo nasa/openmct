@@ -156,7 +156,11 @@ export default {
 
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
 
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
+    this.openmct.time.on(
+      TIME_CONTEXT_EVENTS.boundsChanged,
+      _.throttle(this.handleNewBounds, 300),
+      this.openmct.priority.HIGH
+    );
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
   },

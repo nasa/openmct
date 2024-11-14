@@ -205,7 +205,7 @@ export default {
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
 
       this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
-      this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds);
+      this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.setBounds, this.openmct.priority.HIGH);
 
       this.setViewFromClock(this.timeContext.getClock());
       this.setBounds(this.timeContext.getBounds());

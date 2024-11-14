@@ -173,7 +173,7 @@ export default {
       this.setViewFromOffsets(offsets);
 
       if (this.timeContext) {
-        this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
+        this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds, this.openmct.priority.HIGH);
         this.timeContext.on(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);
       } else {
         this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
