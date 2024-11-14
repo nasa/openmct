@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { EventEmitter } from 'eventemitter3';
+import PriorityEventEmitter from 'utils/PriorityEventEmitter.js';
 
 import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from './constants.js';
 
@@ -66,9 +66,9 @@ import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '.
 
 /**
  * @class TimeContext
- * @extends EventEmitter
+ * @extends PriorityEventEmitter
  */
-class TimeContext extends EventEmitter {
+class TimeContext extends PriorityEventEmitter {
   constructor() {
     super();
 
