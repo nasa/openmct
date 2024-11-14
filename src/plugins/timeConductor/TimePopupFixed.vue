@@ -38,6 +38,12 @@
           @input="validateInput('start')"
           @change="reportValidity('start')"
         />
+        <DatePicker
+          v-if="isTimeSystemUTCBased"
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.start"
+          @date-selected="dateSelected($event, 'start')"
+        />
       </div>
 
       <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
@@ -53,6 +59,12 @@
           aria-label="End time"
           @input="validateInput('end')"
           @change="reportValidity('end')"
+        />
+        <DatePicker
+          v-if="isTimeSystemUTCBased"
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.end"
+          @date-selected="dateSelected($event, 'end')"
         />
       </div>
 
@@ -74,7 +86,12 @@
 </template>
 
 <script>
+import DatePicker from './DatePicker.vue';
+
 export default {
+  components: {
+    DatePicker
+  },
   inject: [
     'openmct',
     'isTimeSystemUTCBased',
@@ -223,6 +240,10 @@ export default {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
         this.$emit('dismiss');
       }
+    },
+    dateSelected(date, refName) {
+      this.formattedBounds[refName] = this.timeSystemFormatter.format(date);
+      this.validateInput(refName);
     }
   }
 };
