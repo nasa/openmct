@@ -193,8 +193,10 @@
             </div>
           </template>
           <div class="c-cdef__separator c-row-separator"></div>
-          <div class="c-cdef__controls" :disabled="!telemetry.length">
+          <div class="c-cdef__controls">
             <button
+              :disabled="!telemetry.length"
+              :aria-label="`Add Criteria - ${!telemetry.length ? 'Disabled' : 'Enabled'}`"
               class="c-cdef__add-criteria-button c-button c-button--labeled icon-plus"
               @click="addCriteria"
             >
