@@ -86,14 +86,23 @@ export default class TelemetryCollection extends EventEmitter {
     }
     this._setTimeSystem(this.options.timeContext.getTimeSystem());
     this.lastBounds = this.options.timeContext.getBounds();
+    // prioritize passed options over time bounds
+    if (this.options.start) {
+      this.lastBounds.start = this.options.start;
+    }
+    if (this.options.end) {
+      this.lastBounds.end = this.options.end;
+    }
     this._watchBounds();
     this._watchTimeSystem();
     this._watchTimeModeChange();
 
-    this._requestHistoricalTelemetry();
+    const historicalTelemetryLoadedPromise = this._requestHistoricalTelemetry();
     this._initiateSubscriptionTelemetry();
 
     this.loaded = true;
+
+    return historicalTelemetryLoadedPromise;
   }
 
   /**
@@ -113,6 +122,7 @@ export default class TelemetryCollection extends EventEmitter {
     }
 
     this.removeAllListeners();
+    this.loaded = false;
   }
 
   /**
@@ -168,7 +178,7 @@ export default class TelemetryCollection extends EventEmitter {
       return;
     }
 
-    this._processNewTelemetry(historicalData);
+    this._processNewTelemetry(historicalData, false);
   }
 
   /**
@@ -182,10 +192,9 @@ export default class TelemetryCollection extends EventEmitter {
     const options = { ...this.options };
     //We always want to receive all available values in telemetry tables.
     options.strategy = this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH;
-
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,
-      (datum) => this._processNewTelemetry(datum),
+      (datum) => this._processNewTelemetry(datum, true),
       options
     );
   }
@@ -196,9 +205,10 @@ export default class TelemetryCollection extends EventEmitter {
    *
    * @param  {(Object|Object[])} telemetryData - telemetry data object or
    * array of telemetry data objects
+   * @param  {boolean} isSubscriptionData - `true` if the telemetry data is new subscription data,
    * @private
    */
-  _processNewTelemetry(telemetryData) {
+  _processNewTelemetry(telemetryData, isSubscriptionData = false) {
     if (telemetryData === undefined) {
       return;
     }
@@ -213,12 +223,19 @@ export default class TelemetryCollection extends EventEmitter {
     let hasDataBeforeStartBound = false;
     let size = this.options.size;
     let enforceSize = size !== undefined && this.options.enforceSize;
+    const boundsToUse = this.lastBounds;
+    if (!isSubscriptionData && this.options.start) {
+      boundsToUse.start = this.options.start;
+    }
+    if (!isSubscriptionData && this.options.end) {
+      boundsToUse.end = this.options.end;
+    }
 
     // loop through, sort and dedupe
     for (let datum of data) {
       parsedValue = this.parseTime(datum);
-      beforeStartOfBounds = parsedValue < this.lastBounds.start;
-      afterEndOfBounds = parsedValue > this.lastBounds.end;
+      beforeStartOfBounds = parsedValue < boundsToUse.start;
+      afterEndOfBounds = parsedValue > boundsToUse.end;
 
       if (
         !afterEndOfBounds &&
@@ -397,7 +414,10 @@ export default class TelemetryCollection extends EventEmitter {
         this.emit('add', added, [this.boundedTelemetry.length]);
       }
     } else {
-      // user bounds change, reset
+      // user bounds change, reset and remove initial requested bounds (we're using new bounds)
+      delete this.options?.start;
+      delete this.options?.end;
+      this.lastBounds = bounds;
       this._reset();
     }
   }
@@ -477,9 +497,9 @@ export default class TelemetryCollection extends EventEmitter {
     this.boundedTelemetry = [];
     this.futureBuffer = [];
 
-    this.emit('clear');
+    const telemetryLoadPromise = this._requestHistoricalTelemetry();
 
-    this._requestHistoricalTelemetry();
+    this.emit('clear', telemetryLoadPromise);
   }
 
   /**
