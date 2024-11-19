@@ -46,7 +46,7 @@ GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
 GeneratorProvider.prototype.supportsRequest = GeneratorProvider.prototype.supportsSubscribe =
   GeneratorProvider.prototype.canProvideTelemetry;
 
-GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
+GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, options) {
   var props = [
     'amplitude',
     'period',
@@ -59,7 +59,7 @@ GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request)
     'exceedFloat32'
   ];
 
-  request = request || {};
+  options = options || {};
 
   var workerRequest = {};
 
@@ -71,8 +71,8 @@ GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request)
       workerRequest[prop] = domainObject.telemetry[prop];
     }
 
-    if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
-      workerRequest[prop] = request[prop];
+    if (options && Object.prototype.hasOwnProperty.call(options, prop)) {
+      workerRequest[prop] = options[prop];
     }
 
     if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
@@ -88,17 +88,17 @@ GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request)
   return workerRequest;
 };
 
-GeneratorProvider.prototype.request = function (domainObject, request) {
-  var workerRequest = this.makeWorkerRequest(domainObject, request);
-  workerRequest.start = request.start;
-  workerRequest.end = request.end;
-  workerRequest.size = request.size;
-  workerRequest.strategy = request.strategy;
+GeneratorProvider.prototype.request = function (domainObject, options) {
+  var workerRequest = this.makeWorkerRequest(domainObject, options);
+  workerRequest.start = options.start;
+  workerRequest.end = options.end;
+  workerRequest.size = options.size;
+  workerRequest.strategy = options.strategy;
 
   return this.workerInterface.request(workerRequest);
 };
 
-GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
+GeneratorProvider.prototype.subscribe = function (domainObject, callback, options) {
   var workerRequest = this.makeWorkerRequest(domainObject, {});
 
   return this.workerInterface.subscribe(workerRequest, callback);

@@ -279,27 +279,72 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Filters out class instances and functions from an object, returning a plain
+   * data object suitable for JSON serialization.
+   *
+   * @private
+   * @param {Object|Array|*} value The value to sanitize
+   * @returns {Object|Array|*} A sanitized copy with class instances and functions removed
+   */
+  #sanitizeForSerialization(value) {
+    if (value === null || value === undefined) {
+      return value;
+    }
+
+    // Handle primitive types, arrays and objects
+    if (typeof value !== 'object') {
+      return typeof value !== 'function' ? value : undefined;
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((item) => this.#sanitizeForSerialization(item));
+    }
+
+    if (Object.getPrototypeOf(value) === Object.prototype) {
+      const result = {};
+
+      for (const key of Object.keys(value)) {
+        const sanitizedValue = this.#sanitizeForSerialization(value[key]);
+
+        if (sanitizedValue !== undefined) {
+          result[key] = sanitizedValue;
+        }
+      }
+      return result;
+    }
+
+    return undefined;
+  }
+
+  /**
    * Generates a numeric hash value for an options object. The hash is consistent
    * for equivalent option objects regardless of property order.
    *
    * This is used to create compact, unique cache keys for telemetry subscriptions with
    * different options configurations. The hash function ensures that identical options
-   * objects will always generate the same hash value.
+   * objects will always generate the same hash value, while different options objects
+   * (even with small differences) will generate different hash values.
    *
    * @private
    * @param {Object} options The options object to hash
-   * @returns {number} A 32-bit integer hash of the options object
+   * @returns {number} A positive integer hash of the options object
    */
   #hashOptions(options) {
-    let hash = 0;
-    const canonicalOptions = this.#canonicalizeOptions(options);
+    const sanitizedOptions = this.#sanitizeForSerialization(options);
+    const canonicalOptions = this.#canonicalizeOptions(sanitizedOptions);
     const str = JSON.stringify(canonicalOptions);
+
+    let hash = 0;
+    const prime = 31;
+    const modulus = 1e9 + 9; // Large prime number
 
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = hash * 31 + char;
+      // Calculate new hash value while keeping numbers manageable
+      hash = Math.floor((hash * prime + char) % modulus);
     }
-    return hash;
+
+    return Math.abs(hash);
   }
 
   /**
