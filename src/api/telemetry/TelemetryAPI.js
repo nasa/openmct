@@ -316,6 +316,7 @@ export default class TelemetryAPI {
    */
   #getSubscriptionCacheKey(domainObject, options) {
     const keyString = makeKeyString(domainObject.identifier);
+
     return `${keyString}:${this.#hashOptions(options)}`;
   }
 
