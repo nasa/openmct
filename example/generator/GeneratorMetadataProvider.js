@@ -117,7 +117,10 @@ const METADATA_BY_TYPE = {
               { label: 'ON', value: 1 }
             ]
           }
-        ]
+        ],
+        hints: {
+          range: 1
+        }
       },
       {
         key: 'value',
