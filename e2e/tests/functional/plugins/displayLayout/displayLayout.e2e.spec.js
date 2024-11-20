@@ -599,6 +599,7 @@ test.describe('Display Layout', () => {
 
     // Verify filtering is working correctly
     // Wait for some data to populate
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(2000); // Wait for a few state changes
 
     // Check ON table doesn't have any OFF values
