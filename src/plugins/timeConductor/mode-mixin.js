@@ -3,7 +3,14 @@ import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '../../api/time/constants.js';
 export default {
   methods: {
     loadModes() {
-      this.modes = [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(this.getModeMetadata);
+      const modes = [FIXED_MODE_KEY];
+      const clockCount = this.openmct.time.clocks.size;
+
+      if (clockCount > 1) {
+        modes.push(REALTIME_MODE_KEY);
+      }
+
+      this.modes = modes.map(this.getModeMetadata);
     },
     getModeMetadata(mode, testIds = false) {
       let modeOptions;

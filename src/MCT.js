@@ -356,7 +356,7 @@ export class MCT extends EventEmitter {
 
     this.element = domElement;
 
-    if (!this.time.getClock()) {
+    if (this.time.clocks.size !== 0 && !this.time.getClock()) {
       this.time.setClock(this.defaultClock);
     }
 

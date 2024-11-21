@@ -33,11 +33,11 @@
     <ConductorModeIcon class="c-conductor__mode-icon" />
     <div class="c-compact-tc__setting-value u-fade-truncate">
       <ConductorMode :read-only="true" />
-      <ConductorClock :read-only="true" />
+      <ConductorClock v-if="openmct.time.clocks.size > 0" :read-only="true" />
       <ConductorTimeSystem :read-only="true" />
     </div>
     <ConductorInputsFixed v-if="isFixedTimeMode" :input-bounds="viewBounds" :read-only="true" />
-    <ConductorInputsRealtime v-else :input-bounds="viewBounds" :read-only="true" />
+    <ConductorInputsRealtime v-else-if="openmct.time.clocks.size > 0" :input-bounds="viewBounds" :read-only="true" />
     <ConductorAxis
       v-if="isFixedTimeMode"
       class="c-conductor__ticks"

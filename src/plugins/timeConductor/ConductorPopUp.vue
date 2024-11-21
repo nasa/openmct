@@ -12,12 +12,12 @@
         title="Sets the Time Conductor's mode."
       />
       <IndependentClock
-        v-if="isIndependent"
+        v-if="isIndependent && openmct.time.clocks.size > 0"
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's clock."
       />
       <ConductorClock
-        v-else
+        v-else-if="openmct.time.clocks.size > 0"
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's clock."
       />
