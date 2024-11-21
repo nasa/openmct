@@ -34,7 +34,6 @@ export default function () {
     const timeSystem = new UTCTimeSystem();
     openmct.time.addTimeSystem(timeSystem);
     openmct.time.addClock(new LocalClock(100));
-
     openmct.telemetry.addFormat(new UTCTimeFormat());
     openmct.telemetry.addFormat(new DurationFormat());
   };
