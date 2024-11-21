@@ -6,7 +6,7 @@ export default {
       const modes = [FIXED_MODE_KEY];
       const clockCount = this.openmct.time.clocks.size;
 
-      if (clockCount > 1) {
+      if (clockCount > 0) {
         modes.push(REALTIME_MODE_KEY);
       }
 
