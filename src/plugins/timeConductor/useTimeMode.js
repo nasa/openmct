@@ -65,7 +65,14 @@ export function useTimeMode(openmct, timeContext) {
   }
 
   function getAllModeMetadata() {
-    return [FIXED_MODE_KEY, REALTIME_MODE_KEY].map(getModeMetadata);
+    const clockCount = openmct.time.clocks.size;
+    const modes = [FIXED_MODE_KEY];
+
+    if (clockCount > 0) {
+      modes.push(REALTIME_MODE_KEY);
+    }
+
+    return modes.map(getModeMetadata);
   }
 
   function getModeMetadata(key) {

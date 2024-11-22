@@ -12,12 +12,12 @@
         title="Sets the Time Conductor's mode."
       />
       <IndependentClock
-        v-if="isIndependent"
+        v-if="isIndependent && hasRegisteredClocks"
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's clock."
       />
       <ConductorClock
-        v-else
+        v-else-if="hasRegisteredClocks"
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's clock."
       />
@@ -76,6 +76,13 @@ export default {
     }
   },
   emits: ['popup-loaded', 'dismiss'],
+  data() {
+    const hasRegisteredClocks = this.openmct.time.clocks.size > 0;
+
+    return {
+      hasRegisteredClocks
+    };
+  },
   computed: {
     position() {
       const position = {
