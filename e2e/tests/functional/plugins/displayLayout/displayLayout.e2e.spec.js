@@ -598,9 +598,36 @@ test.describe('Display Layout', () => {
     });
 
     // Verify filtering is working correctly
-    // Wait for some data to populate
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(2000); // Wait for a few state changes
+
+    // Create a promise that resolves when we've seen enough new rows added
+    const rowsMutationPromise = page.evaluate(() => {
+      return new Promise((resolve) => {
+        const targetNode = document.querySelector('[aria-label="Table Filter Off Value Frame"]');
+        const config = { childList: true, subtree: true };
+        let changeCount = 0;
+        const requiredChanges = 20; // Number of changes to wait for
+
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+              // Count added or removed nodes
+              changeCount += mutation.addedNodes.length + mutation.removedNodes.length;
+            }
+          });
+
+          // Check if the required number of changes has been met
+          if (changeCount >= requiredChanges) {
+            console.log(`Detected ${requiredChanges} changes in the table.`);
+            observer.disconnect(); // Disconnect observer after the required changes
+            resolve();
+          }
+        });
+
+        observer.observe(targetNode, config);
+      });
+    });
+
+    await rowsMutationPromise;
 
     // Check ON table doesn't have any OFF values
     await expect(tableFilterOn.locator('td[title="OFF"]')).toHaveCount(0);

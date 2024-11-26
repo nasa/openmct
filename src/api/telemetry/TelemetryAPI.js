@@ -270,38 +270,31 @@ export default class TelemetryAPI {
    *    - Primitives: Returned as-is
    */
   sanitizeForSerialization(key, value) {
-    // Handle non-object types directly, except functions
-    if (typeof value !== 'object' || value === null) {
+    // Handle null and primitives directly
+    if (value === null || typeof value !== 'object') {
       return value;
     }
 
-    // Replace functions and other non-serializable values with their key names
-    if (
-      typeof value === 'function' ||
-      (value && typeof value === 'object' && !(Object.getPrototypeOf(value) === Object.prototype))
-    ) {
-      return `@${key}`;
-    }
-
-    // Handle arrays by returning a sanitized array
+    // Handle arrays
     if (Array.isArray(value)) {
       return value.map((item, index) => this.sanitizeForSerialization(String(index), item));
     }
 
-    // Only process plain objects
-    if (Object.getPrototypeOf(value) === Object.prototype) {
-      const sortedObject = {};
-      const keys = Object.keys(value).sort();
-      for (const objectKey of keys) {
-        const itemValue = value[objectKey];
-        const sanitizedValue = this.sanitizeForSerialization(objectKey, itemValue);
-        sortedObject[objectKey] = sanitizedValue;
-      }
-      return sortedObject;
+    // Replace functions and non-plain objects with their key names
+    if (typeof value === 'function' || Object.getPrototypeOf(value) !== Object.prototype) {
+      return `@${key}`;
     }
 
-    // If it's not a plain object, return the key name
-    return `@${key}`;
+    // Handle plain objects
+    const sortedObject = {};
+    const keys = Object.keys(value).sort();
+    for (const objectKey of keys) {
+      const itemValue = value[objectKey];
+      const sanitizedValue = this.sanitizeForSerialization(objectKey, itemValue);
+      sortedObject[objectKey] = sanitizedValue;
+    }
+
+    return sortedObject;
   }
 
   /**
@@ -318,7 +311,10 @@ export default class TelemetryAPI {
    * @returns {number} A positive integer hash of the options object
    */
   #hashOptions(options) {
-    const sanitizedOptionsString = JSON.stringify(options, this.sanitizeForSerialization);
+    const sanitizedOptionsString = JSON.stringify(
+      options,
+      this.sanitizeForSerialization.bind(this)
+    );
 
     let hash = 0;
     const prime = 31;
