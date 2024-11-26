@@ -251,69 +251,57 @@ export default class TelemetryAPI {
   }
 
   /**
-   * Canonicalizes options object by creating a standardized version with sorted keys
-   * and recursively processed values. This ensures consistent object representation
-   * regardless of property order.
+   * Sanitizes objects for consistent serialization by:
+   * 1. Converting non-plain objects (class instances) and functions to string markers (e.g. "@keyName")
+   * 2. Sorting object keys alphabetically to ensure consistent ordering
+   * 3. Recursively processing nested objects and arrays
    *
-   * Used internally to generate consistent hashes for caching subscription options.
+   * This is primarily used to generate consistent hash values for telemetry subscription options,
+   * ensuring that equivalent options objects produce the same hash regardless of property order
+   * or the presence of non-serializable values. While this would normally be a private method,
+   * it is exposed for use in JSON.stringify.
    *
-   * @private
-   * @param {Object|Array|*} options The options object to canonicalize
-   * @returns {Object|Array|*} A canonicalized version of the input where object keys are sorted
-   */
-  #canonicalizeOptions(options) {
-    if (typeof options !== 'object' || options === null) {
-      return options;
-    }
-
-    if (Array.isArray(options)) {
-      return options.map((item) => this.#canonicalizeOptions(item));
-    }
-
-    return Object.keys(options)
-      .sort()
-      .reduce((acc, key) => {
-        acc[key] = this.#canonicalizeOptions(options[key]);
-        return acc;
-      }, {});
-  }
-
-  /**
-   * Filters out class instances and functions from an object, returning a plain
-   * data object suitable for JSON serialization.
-   *
-   * @private
+   * @param {string} key The current property key being processed
    * @param {Object|Array|*} value The value to sanitize
-   * @returns {Object|Array|*} A sanitized copy with class instances and functions removed
+   * @returns {Object|Array|string|*} The sanitized value:
+   *    - Plain objects: A new object with sorted keys and sanitized values
+   *    - Arrays: A new array with sanitized elements
+   *    - Functions/Class instances: String in format "@keyName"
+   *    - Primitives: Returned as-is
    */
-  #sanitizeForSerialization(value) {
-    if (value === null || value === undefined) {
+  sanitizeForSerialization(key, value) {
+    // Handle non-object types directly, except functions
+    if (typeof value !== 'object' || value === null) {
       return value;
     }
 
-    // Handle primitive types, arrays and objects
-    if (typeof value !== 'object') {
-      return typeof value !== 'function' ? value : undefined;
+    // Replace functions and other non-serializable values with their key names
+    if (
+      typeof value === 'function' ||
+      (value && typeof value === 'object' && !(Object.getPrototypeOf(value) === Object.prototype))
+    ) {
+      return `@${key}`;
     }
 
+    // Handle arrays by returning a sanitized array
     if (Array.isArray(value)) {
-      return value.map((item) => this.#sanitizeForSerialization(item));
+      return value.map((item, index) => this.sanitizeForSerialization(String(index), item));
     }
 
+    // Only process plain objects
     if (Object.getPrototypeOf(value) === Object.prototype) {
-      const result = {};
-
-      for (const key of Object.keys(value)) {
-        const sanitizedValue = this.#sanitizeForSerialization(value[key]);
-
-        if (sanitizedValue !== undefined) {
-          result[key] = sanitizedValue;
-        }
+      const sortedObject = {};
+      const keys = Object.keys(value).sort();
+      for (const objectKey of keys) {
+        const itemValue = value[objectKey];
+        const sanitizedValue = this.sanitizeForSerialization(objectKey, itemValue);
+        sortedObject[objectKey] = sanitizedValue;
       }
-      return result;
+      return sortedObject;
     }
 
-    return undefined;
+    // If it's not a plain object, return the key name
+    return `@${key}`;
   }
 
   /**
@@ -330,16 +318,14 @@ export default class TelemetryAPI {
    * @returns {number} A positive integer hash of the options object
    */
   #hashOptions(options) {
-    const sanitizedOptions = this.#sanitizeForSerialization(options);
-    const canonicalOptions = this.#canonicalizeOptions(sanitizedOptions);
-    const str = JSON.stringify(canonicalOptions);
+    const sanitizedOptionsString = JSON.stringify(options, this.sanitizeForSerialization);
 
     let hash = 0;
     const prime = 31;
     const modulus = 1e9 + 9; // Large prime number
 
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
+    for (let i = 0; i < sanitizedOptionsString.length; i++) {
+      const char = sanitizedOptionsString.charCodeAt(i);
       // Calculate new hash value while keeping numbers manageable
       hash = Math.floor((hash * prime + char) % modulus);
     }
