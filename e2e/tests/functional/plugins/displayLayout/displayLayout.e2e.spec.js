@@ -602,7 +602,9 @@ test.describe('Display Layout', () => {
     // Create a promise that resolves when we've seen enough new rows added
     const rowsMutationPromise = page.evaluate(() => {
       return new Promise((resolve) => {
-        const targetNode = document.querySelector('[aria-label="Table Filter Off Value Frame"]');
+        const targetTable = document.querySelector(
+          'table[aria-label="Table Filter Off Value table content"]'
+        );
         const config = { childList: true, subtree: true };
         let changeCount = 0;
         const requiredChanges = 20; // Number of changes to wait for
@@ -610,20 +612,19 @@ test.describe('Display Layout', () => {
         const observer = new MutationObserver((mutations) => {
           mutations.forEach((mutation) => {
             if (mutation.type === 'childList') {
-              // Count added or removed nodes
-              changeCount += mutation.addedNodes.length + mutation.removedNodes.length;
+              // Count added nodes
+              changeCount += mutation.addedNodes.length;
             }
           });
 
           // Check if the required number of changes has been met
           if (changeCount >= requiredChanges) {
-            console.log(`Detected ${requiredChanges} changes in the table.`);
             observer.disconnect(); // Disconnect observer after the required changes
             resolve();
           }
         });
 
-        observer.observe(targetNode, config);
+        observer.observe(targetTable, config);
       });
     });
 
