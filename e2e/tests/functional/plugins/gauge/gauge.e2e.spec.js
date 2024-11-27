@@ -199,6 +199,9 @@ test.describe('Gauge', () => {
       [missingSWG]
     );
 
+    // Verify start bounds
+    await expect(page.getByLabel('Start offset: 00:30:00')).toBeVisible();
+
     // Nav to the Gauge
     await page.goto(gauge.url, { waitUntil: 'domcontentloaded' });
 
