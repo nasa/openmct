@@ -28,7 +28,9 @@ import { v4 as uuid } from 'uuid';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject
+  createExampleTelemetryObject,
+  setRealTimeMode,
+  setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -175,6 +177,8 @@ test.describe('Gauge', () => {
       pageErrors.push(err.message);
     });
 
+    await setRealTimeMode(page);
+
     // Create a Gauge
     const gauge = await createDomainObjectWithDefaults(page, {
       type: 'Gauge',
@@ -198,10 +202,17 @@ test.describe('Gauge', () => {
     // Nav to the Gauge
     await page.goto(gauge.url, { waitUntil: 'domcontentloaded' });
 
-    // Wait a bit to ensure all errors are caught
-    await page.waitForTimeout(500);
+    // adjust time bounds and ensure they are updated
+    await setStartOffset(page, {
+      startHours: '00',
+      startMins: '45',
+      startSecs: '00'
+    });
 
-    // Verify no errors were thrown
+    // Verify start bounds changed
+    await expect(page.getByLabel('Start offset: 00:45:00')).toBeVisible();
+
+    // // Verify no errors were thrown
     expect(pageErrors).toHaveLength(0);
   });
 
