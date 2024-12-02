@@ -543,6 +543,7 @@ export default {
     this.table.configuration.on('change', this.handleConfigurationChanges);
 
     this.table.tableRows.on('add', this.rowsAdded);
+    this.table.tableRows.on('update', this.throttledUpdateVisibleRows);
     this.table.tableRows.on('remove', this.rowsRemoved);
     this.table.tableRows.on('sort', this.throttledUpdateVisibleRows);
     this.table.tableRows.on('filter', this.throttledUpdateVisibleRows);
@@ -577,6 +578,7 @@ export default {
     this.table.configuration.off('change', this.handleConfigurationChanges);
 
     this.table.tableRows.off('add', this.rowsAdded);
+    this.table.tableRows.off('update', this.throttledUpdateVisibleRows);
     this.table.tableRows.off('remove', this.rowsRemoved);
     this.table.tableRows.off('sort', this.throttledUpdateVisibleRows);
     this.table.tableRows.off('filter', this.throttledUpdateVisibleRows);

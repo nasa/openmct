@@ -91,15 +91,20 @@ export default class TelemetryTableRow {
     return [VIEW_DATUM_ACTION_KEY, VIEW_HISTORICAL_DATA_ACTION_KEY];
   }
 
-  updateWithDatum(updatesToDatum) {
-    const normalizedUpdatesToDatum = createNormalizedDatum(updatesToDatum, this.columns);
+  /**
+   * Merges the row datum with the given row datum. This is used to merge rows
+   * when the user has selected multiple rows.
+   * @param {TelemetryTableRow} row
+   */
+  updateWithDatum(row) {
     this.datum = {
       ...this.datum,
-      ...normalizedUpdatesToDatum
+      ...row.datum
     };
+
     this.fullDatum = {
       ...this.fullDatum,
-      ...updatesToDatum
+      ...row.fullDatum
     };
   }
 }

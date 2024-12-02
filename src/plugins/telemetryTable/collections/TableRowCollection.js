@@ -24,6 +24,10 @@ import _ from 'lodash';
 
 import { ORDER } from '../constants.js';
 /**
+ * @typedef {import('.TelemetryTableRow.js').default} TelemetryTableRow
+ */
+
+/**
  * @constructor
  */
 export default class TableRowCollection extends EventEmitter {
@@ -59,12 +63,6 @@ export default class TableRowCollection extends EventEmitter {
     let rowsToAdd = this.filterRows(rows);
 
     this.sortAndMergeRows(rowsToAdd);
-
-    // we emit filter no matter what to trigger
-    // an update of visible rows
-    if (rowsToAdd.length > 0) {
-      this.emit('add', rowsToAdd);
-    }
   }
 
   clearRowsFromTableAndFilter(rows) {
@@ -91,6 +89,8 @@ export default class TableRowCollection extends EventEmitter {
 
     if (this.rows.length === 0) {
       this.rows = sortedRows;
+
+      this.emit('add', sortedRows);
 
       return;
     }
@@ -124,10 +124,22 @@ export default class TableRowCollection extends EventEmitter {
     return foundIndex;
   }
 
-  updateRowInPlace(row, index) {
-    const foundRow = this.rows[index];
-    foundRow.updateWithDatum(row.datum);
-    this.rows[index] = foundRow;
+  /**
+   * Incoming row exists in the collection,
+   * so merge existing and incoming row properties
+   *
+   * Do to reactivity of Vue, we want to emit the new row object
+   * @param {TelemetryTableRow} incomingRow to update rather than add to the collection
+   * @param {number} index of the existing row in the collection
+   */
+  updateRowInPlace(incomingRow, index) {
+    // Merge the existing row with the incoming row
+    const existingRow = this.rows[index];
+    incomingRow.updateWithDatum(existingRow);
+
+    // Emit the updated incoming row to trigger reactivity
+    this.rows.splice(index, 1, incomingRow);
+    this.emit('update', incomingRow);
   }
 
   setLimit(rowLimit) {
@@ -150,6 +162,8 @@ export default class TableRowCollection extends EventEmitter {
   }
 
   insertOrUpdateRows(rowsToAdd, addToBeginning) {
+    const rowsAdded = [];
+
     rowsToAdd.forEach((row, addRowsIndex) => {
       const index = this.getInPlaceUpdateIndex(row);
       if (index > -1) {
@@ -157,15 +171,22 @@ export default class TableRowCollection extends EventEmitter {
       } else {
         if (addToBeginning) {
           this.rows.splice(addRowsIndex, 0, row);
+          rowsAdded.push(row);
         } else {
           this.rows.push(row);
+          rowsAdded.push(row);
         }
       }
     });
+
+    if (rowsAdded.length > 0) {
+      this.emit('add', rowsAdded);
+    }
   }
 
   mergeSortedRows(incomingRows) {
     const mergedRows = [];
+    const addedRows = [];
     let existingRowIndex = 0;
     let incomingRowIndex = 0;
 
@@ -184,6 +205,7 @@ export default class TableRowCollection extends EventEmitter {
         } else {
           mergedRows.push(incomingRow);
           incomingRowIndex++;
+          addedRows.push(existingRow);
         }
       }
     }
@@ -199,10 +221,15 @@ export default class TableRowCollection extends EventEmitter {
     if (incomingRowIndex < incomingRows.length) {
       for (incomingRowIndex; incomingRowIndex < incomingRows.length; incomingRowIndex++) {
         mergedRows.push(incomingRows[incomingRowIndex]);
+        addedRows.push(incomingRows[incomingRowIndex]);
       }
     }
 
     this.rows = mergedRows;
+
+    if (addedRows.length > 0) {
+      this.emit('add', addedRows);
+    }
   }
 
   firstRowInSortOrder(row1, row2) {

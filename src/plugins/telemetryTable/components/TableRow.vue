@@ -99,6 +99,9 @@ export default {
       }, {})
     };
   },
+  beforeUnmount() {
+    console.log('destroyed row');
+  },
   computed: {
     ariaLabel() {
       return this.marked ? 'Selected Table Row' : 'Table Row';
@@ -126,7 +129,9 @@ export default {
   watch: {
     rowOffset: 'calculateRowTop',
     row: {
-      handler: 'formatRow',
+      handler() {
+        this.formatRow(this.row);
+      },
       deep: true
     }
   },
