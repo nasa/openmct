@@ -142,7 +142,7 @@ export default class TelemetryTableConfiguration extends EventEmitter {
   getAllHeaders() {
     let flattenedColumns = _.flatten(Object.values(this.columns));
     /* eslint-disable you-dont-need-lodash-underscore/uniq */
-    let headers = _.uniq(flattenedColumns, false, (column) => column.getKey()).reduce(
+    let headers = _.uniqBy(flattenedColumns, (column) => column.getKey()).reduce(
       fromColumnsToHeadersMap,
       {}
     );

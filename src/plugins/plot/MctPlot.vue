@@ -1113,6 +1113,7 @@ export default {
       }
 
       this.listenTo(window, 'mouseup', this.onMouseUp, this);
+      // TODO:  Why do we need this mousemove listener when we have a mousemove listener on the canvas above?
       this.listenTo(window, 'mousemove', this.trackMousePosition, this);
 
       // track frozen state on mouseDown to be read on mouseUp
@@ -1133,6 +1134,7 @@ export default {
 
     onMouseUp(event) {
       this.stopListening(window, 'mouseup', this.onMouseUp, this);
+      // TODO: Why do we need this when we have a mousemove listener on the canvas above?
       this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
       if (this.isMouseClick() && event.shiftKey) {

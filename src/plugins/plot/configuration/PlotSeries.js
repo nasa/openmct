@@ -230,7 +230,9 @@ export default class PlotSeries extends Model {
       const newPoints = _(data)
         .concat(points)
         .sortBy(this.getXVal)
-        .uniq(true, (point) => [this.getXVal(point), this.getYVal(point)].join())
+        .sortedUniqBy((point) => {
+          return [this.getXVal(point), this.getYVal(point)].join();
+        })
         .value();
       this.reset(newPoints);
     } catch (error) {
@@ -429,7 +431,7 @@ export default class PlotSeries extends Model {
     let data = this.getSeriesData();
     let insertIndex = data.length;
     const currentYVal = this.getYVal(newData);
-    const lastYVal = this.getYVal(data[insertIndex - 1]);
+    const lastYVal = insertIndex > 0 ? this.getYVal(data[insertIndex - 1]) : undefined;
 
     if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
       console.warn(`[Plot] Invalid Y Values detected: ${currentYVal} ${lastYVal}`);
