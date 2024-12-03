@@ -252,22 +252,14 @@ export default class TelemetryAPI {
 
   /**
    * Sanitizes objects for consistent serialization by:
-   * 1. Converting non-plain objects (class instances) and functions to string markers (e.g. "@keyName")
+   * 1. Removing non-plain objects (class instances) and functions
    * 2. Sorting object keys alphabetically to ensure consistent ordering
-   * 3. Recursively processing nested objects and arrays
+   * 3. Recursively processing nested objects
    *
-   * This is primarily used to generate consistent hash values for telemetry subscription options,
-   * ensuring that equivalent options objects produce the same hash regardless of property order
-   * or the presence of non-serializable values. While this would normally be a private method,
-   * it is exposed for use in JSON.stringify.
-   *
-   * @param {string} key The current property key being processed
-   * @param {Object|Array|*} value The value to sanitize
-   * @returns {Object|Array|string|*} The sanitized value:
-   *    - Plain objects: A new object with sorted keys and sanitized values
-   *    - Arrays: A new array with sanitized elements
-   *    - Functions/Class instances: String in format "@keyName"
-   *    - Primitives: Returned as-is
+   * Note: When used as a JSON.stringify replacer, this function will process objects
+   * twice - once for the initial sorting and again when JSON.stringify processes the
+   * sorted result. This is acceptable for small options objects, which is the
+   * intended use case.
    */
   sanitizeForSerialization(key, value) {
     // Handle null and primitives directly
@@ -275,14 +267,9 @@ export default class TelemetryAPI {
       return value;
     }
 
-    // Handle arrays
-    if (Array.isArray(value)) {
-      return value.map((item, index) => this.sanitizeForSerialization(String(index), item));
-    }
-
-    // Replace functions and non-plain objects with their key names
+    // Remove functions and non-plain objects by returning undefined
     if (typeof value === 'function' || Object.getPrototypeOf(value) !== Object.prototype) {
-      return `@${key}`;
+      return undefined;
     }
 
     // Handle plain objects
