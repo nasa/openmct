@@ -1,3 +1,5 @@
+import { evaluateResults } from './utils/evaluator.js';
+
 export default class HistoricalTelemetryProvider {
   #telemetryOptions;
   #telemetryObjects = {};
@@ -70,12 +72,17 @@ export default class HistoricalTelemetryProvider {
     for (let conditionIndex = 0; conditionIndex < this.#conditions.length; conditionIndex++) {
       const condition = this.#conditions[conditionIndex];
       const { id } = condition;
-      const conditionCriteria = condition.criteria?.[0];
+      const conditionCriteria = condition?.criteria.length > 0;
       let result = false;
       let defaultHit = false;
       if (conditionCriteria) {
-        const inputTelemetry = this.#getInputTelemetry(conditionCriteria, dataFrame, timestamp);
-        result = conditionCriteria.computeResult({ id, ...inputTelemetry });
+        result = evaluateResults(
+          condition.criteria.map((criterion) => {
+            const inputTelemetry = this.#getInputTelemetry(criterion, dataFrame, timestamp);
+            return criterion.computeResult({ id, ...inputTelemetry });
+          }),
+          condition?.trigger
+        );
       } else {
         // default criteria is 'all'
         defaultHit = true;
