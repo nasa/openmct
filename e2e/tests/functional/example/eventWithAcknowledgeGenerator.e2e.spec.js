@@ -27,8 +27,6 @@ import { expect, test } from '../../../pluginFixtures.js';
 const TELEMETRY_RATE = 2500;
 
 test.describe('Example Event Generator Acknowledge with Controlled Clock @clock', () => {
-  let eventWithAcknowledgeGenerator;
-
   test.beforeEach(async ({ page }) => {
     await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
@@ -37,7 +35,7 @@ test.describe('Example Event Generator Acknowledge with Controlled Clock @clock'
 
     await setRealTimeMode(page);
 
-    eventWithAcknowledgeGenerator = await createDomainObjectWithDefaults(page, {
+    await createDomainObjectWithDefaults(page, {
       type: 'Event Message Generator with Acknowledge'
     });
   });
