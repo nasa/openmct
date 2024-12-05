@@ -73,33 +73,3 @@ test.describe('Renaming objects', () => {
     expect(title).toBe(clock.name);
   });
 });
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- * @param {string} url
- * @param {string} newName
- */
-async function renameObjectFromContextMenu(page, url, newName) {
-  await openObjectTreeContextMenu(page, url);
-  await page.locator('li:text("Edit Properties")').click();
-  const nameInput = page.getByLabel('Title', { exact: true });
-  await nameInput.fill('');
-  await nameInput.fill(newName);
-  await page.locator('[aria-label="Save"]').click();
-}
-
-/**
- * Open the given `domainObject`'s context menu from the object tree.
- * Expands the path to the object and scrolls to it if necessary.
- *
- * @param {import('@playwright/test').Page} page
- * @param {string} url the url to the object
- */
-async function openObjectTreeContextMenu(page, url) {
-  await page.goto(url);
-  await page.getByLabel('Show selected item in tree').click();
-  await page.locator('.is-navigated-object').click({
-    button: 'right'
-  });
-}
