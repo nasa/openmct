@@ -24,7 +24,7 @@
 This test suite is dedicated to tests for renaming objects, and their global application effects.
 */
 
-import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { createDomainObjectWithDefaults, renameObjectFromContextMenu } from '../../appActions.js';
 import { expect, test } from '../../baseFixtures.js';
 
 test.describe('Renaming objects', () => {
