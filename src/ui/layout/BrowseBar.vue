@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-browse-bar">
+  <div class="l-browse-bar" aria-label="Browse bar">
     <div class="l-browse-bar__start">
       <button
         v-if="hasParent"
@@ -35,6 +35,7 @@
         </div>
         <span
           ref="objectName"
+          aria-label="Browse bar object name"
           class="l-browse-bar__object-name c-object-label__name"
           :class="{ 'c-input-inline': isPersistable }"
           :contenteditable="isNameEditable"
