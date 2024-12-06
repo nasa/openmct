@@ -80,7 +80,7 @@ class Browse {
     this.#openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
   }
 
-  #handelBrowseObjectUpdate(newObject) {
+  #handleBrowseObjectUpdate(newObject) {
     this.#openmct.layout.$refs.browseBar.domainObject = newObject;
 
     if (typeof newObject.name === 'string' && newObject.name !== document.title) {
@@ -119,7 +119,7 @@ class Browse {
     this.#unobserve = this.#openmct.objects.observe(
       this.#browseObject,
       '*',
-      this.#handelBrowseObjectUpdate.bind(this)
+      this.#handleBrowseObjectUpdate.bind(this)
     );
     const currentProvider = this.#openmct.objectViews.getByProviderKey(currentViewKey);
     if (currentProvider && currentProvider.canView(this.#browseObject, this.#openmct.router.path)) {
