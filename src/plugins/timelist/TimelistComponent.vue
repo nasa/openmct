@@ -436,6 +436,9 @@ export default {
 
       return startInBounds || endInBounds || middleInBounds;
     },
+    isActivityInProgress(activity) {
+      return this.persistedActivityStates[activity.id] === 'in-progress';
+    },
     filterActivities(activity) {
       if (this.isEditing) {
         return true;
@@ -460,7 +463,8 @@ export default {
         return false;
       }
 
-      if (!this.isActivityInBounds(activity)) {
+      // An activity may be out of bounds, but if it is in-progress, we show it.
+      if (!this.isActivityInBounds(activity) && !this.isActivityInProgress(activity)) {
         return false;
       }
       //current event or future start event or past end event
