@@ -683,31 +683,18 @@ async function linkParameterToObject(page, parameterName, objectName) {
 }
 
 /**
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- * @param {string} url
- * @param {string} newName
- */
-async function renameObjectFromContextMenu(page, url, newName) {
-  await openObjectTreeContextMenu(page, url);
-  await page.getByRole('menuitem', { name: 'Edit Properties' }).click();
-  const nameInput = page.getByLabel('Title', { exact: true });
-  await nameInput.fill('');
-  await nameInput.fill(newName);
-  await page.getByRole('button', { name: 'Save' }).click();
-}
-
-/**
- * Open the given `domainObject`'s context menu from the object tree.
- * Expands the path to the object and scrolls to it if necessary.
+ * Rename the currently viewed `domainObject` from the browse bar.
  *
  * @param {import('@playwright/test').Page} page
- * @param {string} url the url to the object
+ * @param {string} newName
  */
-async function openObjectTreeContextMenu(page, url) {
-  await page.goto(url);
-  await page.getByLabel('Show selected item in tree').click();
-  await page.getByRole('button', { name: 'More actions' }).click();
+async function renameCurrentObjectFromBrowseBar(page, newName) {
+  const nameInput = page.getByLabel('Browse bar object name');
+  await nameInput.click();
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  // Click the browse bar container to save changes
+  await page.getByLabel('Browse bar', { exact: true }).click();
 }
 
 export {
@@ -721,8 +708,7 @@ export {
   linkParameterToObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
-  openObjectTreeContextMenu,
-  renameObjectFromContextMenu,
+  renameCurrentObjectFromBrowseBar,
   setEndOffset,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
