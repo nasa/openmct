@@ -682,6 +682,21 @@ async function linkParameterToObject(page, parameterName, objectName) {
   await page.getByLabel('Save').click();
 }
 
+/**
+ * Rename the currently viewed `domainObject` from the browse bar.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} newName
+ */
+async function renameCurrentObjectFromBrowseBar(page, newName) {
+  const nameInput = page.getByLabel('Browse bar object name');
+  await nameInput.click();
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  // Click the browse bar container to save changes
+  await page.getByLabel('Browse bar', { exact: true }).click();
+}
+
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -693,6 +708,7 @@ export {
   linkParameterToObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
+  renameCurrentObjectFromBrowseBar,
   setEndOffset,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
