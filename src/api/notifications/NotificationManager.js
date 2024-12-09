@@ -2,26 +2,9 @@
  * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
- *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// eslint-disable-next-line no-unused-vars
-class NotificationManager {
+export default class NotificationManager {
   constructor() {
     this.notifications = new Map(); // Key: notificationId, Value: notification
     this.categories = new Set(['info', 'alert', 'error', 'progress']); // Default categories
@@ -50,7 +33,7 @@ class NotificationManager {
 
   // Add a notification to the system
   addNotification(notification) {
-    const id = crypto.randomUUID();
+    const id = Math.random().toString(36).substr(2, 9); // Simple ID generation
     const timestamp = Date.now();
 
     const enrichedNotification = {
@@ -74,11 +57,9 @@ class NotificationManager {
     return enrichedNotification;
   }
 
-  // Calculate notification priority based on multiple factors
   _calculatePriority(notification) {
     let priority = 0;
 
-    // Base priority from severity
     const severityWeights = {
       error: 100,
       alert: 50,
@@ -86,7 +67,6 @@ class NotificationManager {
     };
     priority += severityWeights[notification.severity] || 0;
 
-    // Additional priority factors
     if (notification.persistent) {
       priority += 20;
     }
@@ -100,14 +80,12 @@ class NotificationManager {
     return priority;
   }
 
-  // Get active notifications sorted by priority
   getActiveNotifications() {
     return Array.from(this.notifications.values())
       .filter((n) => n.status === 'active')
       .sort((a, b) => b.priority - a.priority);
   }
 
-  // Get notifications by group
   getGroupNotifications(groupId) {
     const group = this.groups.get(groupId);
     if (!group) {
@@ -119,7 +97,6 @@ class NotificationManager {
       .filter(Boolean);
   }
 
-  // Dismiss a notification
   dismissNotification(id) {
     const notification = this.notifications.get(id);
     if (!notification) {
@@ -134,7 +111,6 @@ class NotificationManager {
     return true;
   }
 
-  // Dismiss all notifications in a group
   dismissGroup(groupId) {
     const group = this.groups.get(groupId);
     if (!group) {
