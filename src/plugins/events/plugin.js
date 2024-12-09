@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventTimestripViewProvider from './EventTimestripViewProvider.js';
+import EventTimelineViewProvider from './EventTimelineViewProvider.js';
 
 export default function (options) {
   return function install(openmct) {
-    openmct.objectViews.addProvider(new EventTimestripViewProvider(openmct));
+    openmct.objectViews.addProvider(new EventTimelineViewProvider(openmct));
   };
 }

@@ -21,10 +21,10 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import EventTimeView from './components/EventTimeView.vue';
+import EventTimelineView from './components/EventTimelineView.vue';
 
 export default function EventTimestripViewProvider(openmct) {
-  const type = 'event.time-strip.view';
+  const type = 'event.time-line.view';
 
   function hasEventTelemetry(domainObject) {
     const metadata = openmct.telemetry.getMetadata(domainObject);
@@ -39,7 +39,7 @@ export default function EventTimestripViewProvider(openmct) {
 
   return {
     key: type,
-    name: 'Event Timestrip View',
+    name: 'Event Timeline View',
     cssClass: 'icon-event',
     canView: function (domainObject, objectPath) {
       let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
@@ -60,14 +60,14 @@ export default function EventTimestripViewProvider(openmct) {
             {
               el: element,
               components: {
-                EventTimeView
+                EventTimelineView
               },
               provide: {
                 openmct: openmct,
                 domainObject: domainObject,
                 objectPath: objectPath
               },
-              template: '<event-time-view ref="root"></event-time-view>'
+              template: '<event-timeline-view ref="root"></event-timeline-view>'
             },
             {
               app: openmct.app,
