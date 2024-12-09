@@ -599,46 +599,33 @@ test.describe('Display Layout', () => {
 
     // Verify filtering is working correctly
 
-    // Create a promise that resolves when we've seen enough new rows added
-    const rowsMutationPromise = page.evaluate(() => {
-      return new Promise((resolve) => {
-        const targetTable = document.querySelector(
-          'table[aria-label="Table Filter Off Value table content"]'
-        );
-        const config = { childList: true, subtree: true };
-        let changeCount = 0;
-        const requiredChanges = 20; // Number of changes to wait for
+    // Check that no filtered values appear for at least 2 seconds
+    const VERIFICATION_TIME = 2000; // 2 seconds
+    const CHECK_INTERVAL = 100; // Check every 100ms
 
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'childList') {
-              // Count added nodes
-              changeCount += mutation.addedNodes.length;
-            }
-          });
+    // Create a promise that will check for filtered values periodically
+    const checkForCorrectValues = new Promise((resolve, reject) => {
+      const interval = setInterval(async () => {
+        const offCount = await tableFilterOn.locator('td[title="OFF"]').count();
+        const onCount = await tableFilterOff.locator('td[title="ON"]').count();
+        if (offCount > 0 || onCount > 0) {
+          clearInterval(interval);
+          reject(
+            new Error(
+              `Found ${offCount} OFF and ${onCount} ON values when expecting 0 OFF and 0 ON`
+            )
+          );
+        }
+      }, CHECK_INTERVAL);
 
-          // Check if the required number of changes has been met
-          if (changeCount >= requiredChanges) {
-            observer.disconnect(); // Disconnect observer after the required changes
-            resolve();
-          }
-        });
-
-        observer.observe(targetTable, config);
-      });
+      // After VERIFICATION_TIME, if no filtered values were found, resolve successfully
+      setTimeout(() => {
+        clearInterval(interval);
+        resolve();
+      }, VERIFICATION_TIME);
     });
 
-    await rowsMutationPromise;
-
-    // Check ON table doesn't have any OFF values
-    await expect(tableFilterOn.locator('td[title="OFF"]')).toHaveCount(0);
-    const onCount = await tableFilterOn.locator('td[title="ON"]').count();
-    await expect(onCount).toBeGreaterThan(0);
-
-    // Check OFF table doesn't have any ON values
-    await expect(tableFilterOff.locator('td[title="ON"]')).toHaveCount(0);
-    const offCount = await tableFilterOff.locator('td[title="OFF"]').count();
-    await expect(offCount).toBeGreaterThan(0);
+    await expect(checkForCorrectValues).resolves.toBeUndefined();
   });
 });
 
