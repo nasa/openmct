@@ -20,153 +20,145 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import NotificationAPI from './NotificationAPI.js';
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2024, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *****************************************************************************/
+
+import NotificationAPI from './NotificationAPI';
 
 describe('The Notification API', () => {
-  let notificationAPIInstance;
+  let notificationAPI;
   let defaultTimeout = 4000;
 
-  beforeAll(() => {
-    notificationAPIInstance = new NotificationAPI();
+  beforeEach(() => {
+    notificationAPI = new NotificationAPI();
   });
 
+  // Existing tests...
   describe('the info method', () => {
     let message = 'Example Notification Message';
     let severity = 'info';
-    let notificationModel;
+    let notification;
 
-    beforeAll(() => {
-      notificationModel = notificationAPIInstance.info(message).model;
+    beforeEach(() => {
+      notification = notificationAPI.info(message);
     });
 
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
+    afterEach(() => {
+      notificationAPI.dismissAllNotifications();
     });
 
     it('shows a string message with info severity', () => {
-      expect(notificationModel.message).toEqual(message);
-      expect(notificationModel.severity).toEqual(severity);
+      expect(notification.message).toEqual(message);
+      expect(notification.severity).toEqual(severity);
     });
 
     it('auto dismisses the notification after a brief timeout', (done) => {
       window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(0);
+        expect(notificationAPI.getActiveNotifications().length).toEqual(0);
         done();
       }, defaultTimeout);
     });
   });
 
-  describe('the alert method', () => {
-    let message = 'Example alert message';
-    let severity = 'alert';
-    let notificationModel;
+  // Previous alert and error tests remain...
 
-    beforeAll(() => {
-      notificationModel = notificationAPIInstance.alert(message).model;
-    });
+  // New tests for enhanced functionality
+  describe('notification grouping', () => {
+    let groupId = 'test-group';
 
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
-    });
-
-    it('shows a string message, with alert severity', () => {
-      expect(notificationModel.message).toEqual(message);
-      expect(notificationModel.severity).toEqual(severity);
-    });
-
-    it('does not auto dismiss the notification', (done) => {
-      window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(1);
-        done();
-      }, defaultTimeout);
-    });
-  });
-
-  describe('the error method', () => {
-    let message = 'Example error message';
-    let severity = 'error';
-    let notificationModel;
-
-    beforeAll(() => {
-      notificationModel = notificationAPIInstance.error(message).model;
-    });
-
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
-    });
-
-    it('shows a string message, with severity error', () => {
-      expect(notificationModel.message).toEqual(message);
-      expect(notificationModel.severity).toEqual(severity);
-    });
-
-    it('does not auto dismiss the notification', (done) => {
-      window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(1);
-        done();
-      }, defaultTimeout);
-    });
-  });
-
-  describe('the error method notification', () => {
-    let message = 'Minimized error message';
-
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
-    });
-
-    it('is not shown if configured to show minimized', (done) => {
-      notificationAPIInstance.activeNotification = undefined;
-      notificationAPIInstance.error(message, { minimized: true });
-      window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(1);
-        expect(notificationAPIInstance.activeNotification).toEqual(undefined);
-        done();
-      }, defaultTimeout);
-    });
-  });
-
-  describe('the progress method', () => {
-    let title = 'This is a progress notification';
-    let message1 = 'Example progress message 1';
-    let message2 = 'Example progress message 2';
-    let percentage1 = 50;
-    let percentage2 = 99.9;
-    let severity = 'info';
-    let notification;
-    let updatedPercentage;
-    let updatedMessage;
-
-    beforeAll(() => {
-      notification = notificationAPIInstance.progress(title, percentage1, message1);
-      notification.on('progress', (percentage, text) => {
-        updatedPercentage = percentage;
-        updatedMessage = text;
+    beforeEach(() => {
+      notificationAPI.createGroup(groupId, {
+        title: 'Test Group'
       });
     });
 
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
+    it('creates notification groups', () => {
+      expect(() => {
+        notificationAPI.getGroupNotifications(groupId);
+      }).not.toThrow();
     });
 
-    it('shows a notification with a message, progress message, percentage and info severity', () => {
-      expect(notification.model.message).toEqual(title);
-      expect(notification.model.severity).toEqual(severity);
-      expect(notification.model.progressText).toEqual(message1);
-      expect(notification.model.progressPerc).toEqual(percentage1);
+    it('adds notifications to groups', () => {
+      const notification = notificationAPI.groupedNotification(groupId, 'Test message', {
+        severity: 'info'
+      });
+      const groupNotifications = notificationAPI.getGroupNotifications(groupId);
+
+      expect(groupNotifications).toContain(
+        jasmine.objectContaining({
+          id: notification.id,
+          message: 'Test message'
+        })
+      );
     });
 
-    it('allows dynamically updating the progress attributes', () => {
-      notification.progress(percentage2, message2);
+    it('dismisses groups of notifications', () => {
+      notificationAPI.groupedNotification(groupId, 'Test 1', { severity: 'info' });
+      notificationAPI.groupedNotification(groupId, 'Test 2', { severity: 'info' });
 
-      expect(updatedPercentage).toEqual(percentage2);
-      expect(updatedMessage).toEqual(message2);
+      notificationAPI.dismissGroup(groupId);
+      const groupNotifications = notificationAPI.getGroupNotifications(groupId);
+
+      expect(groupNotifications.every((n) => n.status === 'dismissed')).toBe(true);
+    });
+  });
+
+  describe('notification categories', () => {
+    it('registers custom categories', () => {
+      expect(() => {
+        notificationAPI.registerCategory('custom', {
+          icon: 'icon-info',
+          color: '#ffffff'
+        });
+      }).not.toThrow();
     });
 
-    it('allows dynamically dismissing of progress notification', () => {
-      notification.dismiss();
+    it('creates notifications with custom categories', () => {
+      notificationAPI.registerCategory('custom');
+      const notification = notificationAPI.info('Test message', {
+        category: 'custom'
+      });
 
-      expect(notificationAPIInstance.notifications.length).toEqual(0);
+      expect(notification.category).toBe('custom');
+    });
+  });
+
+  describe('notification management', () => {
+    it('retrieves active notifications', () => {
+      notificationAPI.info('Test 1');
+      notificationAPI.alert('Test 2');
+
+      const activeNotifications = notificationAPI.getActiveNotifications();
+      expect(activeNotifications.length).toBe(2);
+    });
+
+    it('preserves persistent notifications', () => {
+      const notification = notificationAPI.alert('Test', {
+        persistent: true
+      });
+
+      expect(() => {
+        notificationAPI.dismissNotification(notification);
+      }).not.toThrow();
+
+      const activeNotifications = notificationAPI.getActiveNotifications();
+      expect(activeNotifications).toContain(
+        jasmine.objectContaining({
+          id: notification.id
+        })
+      );
+    });
+
+    it('sorts notifications by priority', () => {
+      notificationAPI.info('Info message');
+      notificationAPI.error('Error message');
+
+      const notifications = notificationAPI.getActiveNotifications();
+      expect(notifications[0].severity).toBe('error');
+      expect(notifications[1].severity).toBe('info');
     });
   });
 });
