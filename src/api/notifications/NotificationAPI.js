@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { EventEmitter } from 'eventemitter3';
+// eslint-disable-next-line no-unused-vars
 import moment from 'moment';
 
 import NotificationManager from './NotificationManager';
@@ -81,29 +82,15 @@ export default class NotificationAPI extends EventEmitter {
     return this._notify(notificationModel);
   }
 
-  /**
-   * Dismiss all active notifications.
-   */
   dismissAllNotifications() {
     this.notifications = [];
     this.emit('dismiss-all');
   }
 
-  /**
-   * Create a new notification group
-   * @param {string} groupId unique identifier for the group
-   * @param {Object} [options] group options
-   */
   createGroup(groupId, options = {}) {
     return this.manager.createGroup(groupId, options);
   }
 
-  /**
-   * Add a notification to a specific group
-   * @param {string} groupId the group identifier
-   * @param {string} message the notification message
-   * @param {Object} [options] notification options
-   */
   groupedNotification(groupId, message, options = {}) {
     const notificationModel = {
       message,
@@ -113,57 +100,58 @@ export default class NotificationAPI extends EventEmitter {
     return this._notify(notificationModel);
   }
 
-  /**
-   * Register a new notification category
-   * @param {string} category the category identifier
-   * @param {Object} [options] category options
-   */
   registerCategory(category, options = {}) {
     return this.manager.registerCategory(category, options);
   }
 
-  /**
-   * Get all currently active notifications
-   * @returns {Array} array of active notifications
-   */
   getActiveNotifications() {
-    return this.manager.getActiveNotifications();
+    return this.notifications.filter((n) => !n.model.minimized);
   }
 
-  /**
-   * Get all notifications for a specific group
-   * @param {string} groupId the group identifier
-   * @returns {Array} array of group notifications
-   */
   getGroupNotifications(groupId) {
     return this.manager.getGroupNotifications(groupId);
   }
 
-  /**
-   * @private
-   */
+  dismissGroup(groupId) {
+    const groupNotifications = this.getGroupNotifications(groupId);
+    groupNotifications.forEach((notification) => {
+      const matchingNotification = this.notifications.find(
+        (n) => n.model.message === notification.message
+      );
+      if (matchingNotification) {
+        this._dismiss(matchingNotification);
+      }
+    });
+    this.manager.dismissGroup(groupId);
+  }
+
+  dismissNotification(notification) {
+    this._dismiss(notification);
+  }
+
   _notify(notificationModel) {
-    let notification;
-    let activeNotification = this.activeNotification;
+    const notification = this._createNotification(notificationModel);
 
-    notificationModel.severity = notificationModel.severity || 'info';
-    notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
+    // Add to manager
+    const managerNotification = this.manager.addNotification({
+      ...notificationModel,
+      message: notificationModel.message
+    });
 
-    notification = this._createNotification(notificationModel);
-    const managerNotification = this.manager.addNotification(notificationModel);
-
-    // Merge manager notification properties
-    Object.assign(notification, {
+    // Ensure model preserves the message and severity
+    notification.model = {
+      ...notificationModel,
       id: managerNotification.id,
       priority: managerNotification.priority
-    });
+    };
 
     this.notifications.push(notification);
     this._setHighestSeverity();
 
-    if (!this.activeNotification && !notification?.model?.options?.minimized) {
+    if (!this.activeNotification && !notification.model.options?.minimized) {
       this._setActiveNotification(notification);
     } else if (!this.activeTimeout) {
+      const activeNotification = this.activeNotification;
       this.activeTimeout = setTimeout(() => {
         this._dismissOrMinimize(activeNotification);
       }, DEFAULT_AUTO_DISMISS_TIMEOUT);
@@ -172,16 +160,12 @@ export default class NotificationAPI extends EventEmitter {
     return notification;
   }
 
-  /**
-   * @private
-   */
   _createNotification(notificationModel) {
-    let notification = new EventEmitter();
+    const notification = new EventEmitter();
     notification.model = notificationModel;
+
     notification.dismiss = () => {
-      if (this.manager.dismissNotification(notification.id)) {
-        this._dismiss(notification);
-      }
+      this._dismiss(notification);
     };
 
     if (Object.prototype.hasOwnProperty.call(notificationModel, 'progressPerc')) {

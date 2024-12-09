@@ -58,8 +58,6 @@ import ToolbarRegistry from './ui/registries/ToolbarRegistry.js';
 import ViewRegistry from './ui/registries/ViewRegistry.js';
 import ApplicationRouter from './ui/router/ApplicationRouter.js';
 import Browse from './ui/router/Browse.js';
-import NotificationAPI from './api/notifications/NotificationAPI.js';
-
 /**
  * Open MCT is an extensible web application for building mission
  * control user interfaces. This module is itself an instance of
@@ -281,7 +279,6 @@ export class MCT extends EventEmitter {
      * @type {NotificationAPI}
      */
     this.notifications = new NotificationAPI();
-
 
     // Plugins that are installed by default
     this.install(this.plugins.Plot());
