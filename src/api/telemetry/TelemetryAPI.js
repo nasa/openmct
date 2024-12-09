@@ -254,12 +254,6 @@ export default class TelemetryAPI {
    * Sanitizes objects for consistent serialization by:
    * 1. Removing non-plain objects (class instances) and functions
    * 2. Sorting object keys alphabetically to ensure consistent ordering
-   * 3. Recursively processing nested objects
-   *
-   * Note: When used as a JSON.stringify replacer, this function will process objects
-   * twice - once for the initial sorting and again when JSON.stringify processes the
-   * sorted result. This is acceptable for small options objects, which is the
-   * intended use case.
    */
   sanitizeForSerialization(key, value) {
     // Handle null and primitives directly
@@ -267,21 +261,27 @@ export default class TelemetryAPI {
       return value;
     }
 
-    // Remove functions and non-plain objects by returning undefined
-    if (typeof value === 'function' || Object.getPrototypeOf(value) !== Object.prototype) {
+    // Remove functions and non-plain objects (except arrays)
+    if (
+      typeof value === 'function' ||
+      (Object.getPrototypeOf(value) !== Object.prototype && !Array.isArray(value))
+    ) {
       return undefined;
     }
 
-    // Handle plain objects
-    const sortedObject = {};
-    const keys = Object.keys(value).sort();
-    for (const objectKey of keys) {
-      const itemValue = value[objectKey];
-      const sanitizedValue = this.sanitizeForSerialization(objectKey, itemValue);
-      sortedObject[objectKey] = sanitizedValue;
+    // For plain objects, just sort the keys
+    if (!Array.isArray(value)) {
+      const sortedObject = {};
+      const sortedKeys = Object.keys(value).sort();
+
+      sortedKeys.forEach((objectKey) => {
+        sortedObject[objectKey] = value[objectKey];
+      });
+
+      return sortedObject;
     }
 
-    return sortedObject;
+    return value;
   }
 
   /**
