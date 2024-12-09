@@ -141,7 +141,7 @@ export default class ExampleUserProvider extends EventEmitter {
   }
 
   getPossibleRoles() {
-    return this.user.getRoles();
+    return this.loginPromise.then(() => this.user.getRoles());
   }
 
   getPossibleMissionActions() {
