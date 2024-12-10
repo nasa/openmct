@@ -21,8 +21,8 @@
 -->
 
 <template>
-  <div ref="events" class="c-event-tsv c-timeline-holder">
-    <div ref="eventsHolder" class="c-event-tsv__contents u-contents"></div>
+  <div ref="events" class="c-events-tsv c-timeline-holder">
+    <div ref="eventsHolder" class="c-events-tsv__contents u-contents"></div>
   </div>
 </template>
 
@@ -32,20 +32,21 @@ import _ from 'lodash';
 import mount from 'utils/mount';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
-import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
+import eventData from '../mixins/eventData.js';
 
 const PADDING = 1;
 const ROW_HEIGHT = 100;
-const EVENT_DETAIL_SIZE = 85;
-const CONTAINER_CLASS = 'c-event-tsv-container';
-const NO_ITEMS_CLASS = 'c-event-tsv__no-items';
-const EVENT_WRAPPER_CLASS = 'c-event-tsv__event-wrapper';
+const CONTAINER_CLASS = 'c-events-tsv-container';
+const NO_ITEMS_CLASS = 'c-events-tsv__no-items';
+const EVENT_WRAPPER_CLASS = 'c-events-tsv__event-wrapper';
 const ID_PREFIX = 'wrapper-';
 
 export default {
+  mixins: [eventData],
   inject: ['openmct', 'domainObject', 'objectPath'],
   data() {
-    let timeSystem = this.openmct.time.getTimeSystem();
+    const timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
     this.requestCount = 0;
 
@@ -67,8 +68,6 @@ export default {
     }
   },
   mounted() {
-    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
-
     this.canvas = this.$refs.events.appendChild(document.createElement('canvas'));
     this.canvas.height = 0;
     this.canvasContext = this.canvas.getContext('2d');
@@ -113,18 +112,11 @@ export default {
         this.timeContext.off('boundsChanged', this.updateViewBounds);
       }
     },
-    expand(eventTimestamp) {
-      const path = this.objectPath[0];
-      this.previewAction.invoke([path], {
-        timestamp: eventTimestamp,
-        objectPath: this.objectPath
-      });
-    },
     observeForChanges(mutatedObject) {
       this.updateViewBounds();
     },
     resize() {
-      let clientWidth = this.getClientWidth();
+      const clientWidth = this.getClientWidth();
       if (clientWidth !== this.width) {
         this.setDimensions();
         this.updateViewBounds();
@@ -135,25 +127,26 @@ export default {
 
       if (!clientWidth) {
         //this is a hack - need a better way to find the parent of this component
-        let parent = this.openmct.layout.$refs.browseObject.$el;
+        const parent = this.openmct.layout.$refs.browseObject.$el;
         if (parent) {
           clientWidth = parent.getBoundingClientRect().width;
         }
       }
+      console.debug('🇹🇯 Calculated clientWidth:', clientWidth);
 
       return clientWidth;
     },
     updateViewBounds(bounds, isTick) {
       this.viewBounds = this.timeContext.getBounds();
 
-      if (this.timeSystem === undefined) {
+      if (!this.timeSystem) {
         this.timeSystem = this.timeContext.getTimeSystem();
       }
 
       this.setScaleAndPlotEvents(this.timeSystem, !isTick);
     },
     setScaleAndPlotEvents(timeSystem, clearAllEvents) {
-      if (timeSystem !== undefined) {
+      if (timeSystem) {
         this.timeSystem = timeSystem;
         this.timeFormatter = this.getFormatter(this.timeSystem.key);
       }
@@ -164,8 +157,8 @@ export default {
     getFormatter(key) {
       const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
 
-      let metadataValue = metadata.value(key) || { format: key };
-      let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+      const metadataValue = metadata.value(key) || { format: key };
+      const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
       return valueFormatter;
     },
@@ -181,7 +174,7 @@ export default {
       noItemsEl.forEach((item) => {
         item.remove();
       });
-      let events = this.$el.querySelectorAll(`.${EVENT_WRAPPER_CLASS}`);
+      const events = this.$el.querySelectorAll(`.${EVENT_WRAPPER_CLASS}`);
       events.forEach((eventElm) => {
         if (clearAllEvents) {
           eventElm.remove();
@@ -211,7 +204,7 @@ export default {
         return;
       }
 
-      if (timeSystem === undefined) {
+      if (!timeSystem) {
         timeSystem = this.timeContext.getTimeSystem();
       }
 
@@ -229,8 +222,8 @@ export default {
       return evenObj.time <= this.viewBounds.end && evenObj.time >= this.viewBounds.start;
     },
     getEventsContainer() {
-      let containerHeight = 100;
-      let containerWidth = this.eventHistory.length ? this.width : 200;
+      const containerHeight = 100;
+      const containerWidth = this.eventHistory.length ? this.width : 200;
       let eventContainer;
 
       let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
@@ -254,7 +247,7 @@ export default {
                 isNested: true
               };
             },
-            template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-event-tsv-container"></div></template></swim-lane>`
+            template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-events-tsv-container"></div></template></swim-lane>`
           },
           {
             app: this.openmct.app
@@ -277,7 +270,7 @@ export default {
       let index = 0;
       if (this.eventHistory.length) {
         this.eventHistory.forEach((currentEventObject) => {
-          if (this.isEventsInBounds(currentEventObject)) {
+          if (this.isEventInBounds(currentEventObject)) {
             this.plotEvents(currentEventObject, eventContainer, index);
             index = index + 1;
           }
@@ -287,7 +280,7 @@ export default {
       }
     },
     plotNoItems(containerElement) {
-      let textElement = document.createElement('text');
+      const textElement = document.createElement('text');
       textElement.classList.add(NO_ITEMS_CLASS);
       textElement.innerHTML = 'No events within timeframe';
 
@@ -317,57 +310,33 @@ export default {
       return this.$el.querySelector(`.c-events-tsv__contents div[id=${id}]`);
     },
     plotEvents(item, containerElement, index) {
-      let existingEventWrapper = this.getEventWrapper(item);
+      const existingEventWrapper = this.getEventWrapper(item);
       //eventWrapper wraps the vertical tick and the EVENT
       if (existingEventWrapper) {
         this.updateExistingEventWrapper(existingEventWrapper, item);
       } else {
-        let eventWrapper = this.createEventWrapper(index, item);
+        const eventWrapper = this.createEventWrapper(index, item);
         containerElement.appendChild(eventWrapper);
       }
-    },
-    setEventDisplay(eventElement) {
-      eventElement.style.display = 'block';
+      console.debug('🧟 Event time:', new Date(item.time).toISOString());
+      console.debug('🧟 Scaled X position:', this.xScale(item.time));
     },
     updateExistingEventWrapper(existingEventWrapper, event) {
-      //Update the x co-ordinates of the event wrapper and the url of event
-      //this is to avoid tearing down all elements completely and re-drawing them
+      //Update the x co-ordinates of the event wrapper
       existingEventWrapper.style.left = `${this.xScale(event.time)}px`;
-
-      let eventElement = existingEventWrapper.querySelector('img');
-      this.setNSAttributesForElement(eventElement, {
-        src: event.thumbnailUrl || event.url
-      });
-      this.setEventDisplay(eventElement);
     },
     createEventWrapper(index, event) {
       const id = `${ID_PREFIX}${event.time}`;
-      let eventWrapper = document.createElement('div');
+      const eventWrapper = document.createElement('div');
       eventWrapper.ariaLabel = id;
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
       eventWrapper.style.left = `${this.xScale(event.time)}px`;
       //create event vertical tick indicator
-      let eventTickElement = document.createElement('div');
+      const eventTickElement = document.createElement('div');
       eventTickElement.classList.add('c-events-tsv__event-handle');
       eventTickElement.style.width = '2px';
       eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
       eventWrapper.appendChild(eventTickElement);
-
-      //create placeholder - this will also hold the actual event
-      let eventPlaceholder = document.createElement('div');
-      eventPlaceholder.classList.add('c-events-tsv__event-placeholder');
-      eventPlaceholder.style.width = `${EVENT_DETAIL_SIZE}px`;
-      eventPlaceholder.style.height = `${EVENT_DETAIL_SIZE}px`;
-      eventWrapper.appendChild(eventPlaceholder);
-
-      //create event element
-      let eventElement = document.createElement('img');
-      this.setNSAttributesForElement(eventElement, {
-        src: event.thumbnailUrl || event.url
-      });
-      eventElement.style.width = `${EVENT_DETAIL_SIZE}px`;
-      eventElement.style.height = `${EVENT_DETAIL_SIZE}px`;
-      this.setEventDisplay(eventElement);
 
       //handle mousedown event to show the event in a large view
       eventWrapper.addEventListener('mousedown', (e) => {
@@ -375,8 +344,6 @@ export default {
           this.expand(event.time);
         }
       });
-
-      eventPlaceholder.appendChild(eventElement);
 
       return eventWrapper;
     }
