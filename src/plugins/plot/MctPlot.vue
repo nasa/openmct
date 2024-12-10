@@ -284,7 +284,7 @@ export default {
       selectedXKeyOption: {},
       xKeyOptions: [],
       pending: 0,
-      isRealTime: this.openmct.time.isRealTime(),
+      isRealTime: undefined,
       loaded: false,
       isTimeOutOfSync: false,
       isFrozenOnMouseDown: false,
@@ -387,6 +387,11 @@ export default {
 
     this.config.series.models.forEach(this.addSeries, this);
 
+    this.independentTimeConductorObserver = this.openmct.objects.observe(
+      this.domainObject,
+      'configuration.useIndependentTime',
+      this.setTimeContext
+    );
     this.filterObserver = this.openmct.objects.observe(
       this.domainObject,
       'configuration.filters',
@@ -538,8 +543,11 @@ export default {
     },
     followTimeContext() {
       this.updateDisplayBounds(this.timeContext.getBounds());
+      this.updateMode();
+
       this.timeContext.on('modeChanged', this.updateMode);
       this.timeContext.on('boundsChanged', this.updateDisplayBounds);
+
       this.synchronized(true);
     },
     stopFollowingTimeContext() {
@@ -824,13 +832,11 @@ export default {
      * displays can update accordingly.
      */
     synchronized(value) {
-      const isRealTime = this.timeContext.isRealTime();
-
       if (typeof value !== 'undefined') {
         this._synchronized = value;
         this.isTimeOutOfSync = value !== true;
 
-        const isUnsynced = isRealTime && !value;
+        const isUnsynced = this.isRealTime && !value;
         this.setStatus(isUnsynced);
       }
 
@@ -1794,8 +1800,7 @@ export default {
     },
 
     showSynchronizeDialog() {
-      const isFixedTimespanMode = this.timeContext.isFixed();
-      if (!isFixedTimespanMode) {
+      if (this.isRealTime) {
         const message = `
                 This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
                 Do you want to continue?
@@ -1853,17 +1858,12 @@ export default {
         delete this.checkForSize;
       }
 
-      if (this.filterObserver) {
-        this.filterObserver();
-      }
+      this.independentTimeConductorObserver?.();
+      this.filterObserver?.();
 
-      if (this.removeStatusListener) {
-        this.removeStatusListener();
-      }
+      this.removeStatusListener?.();
 
-      if (this.plotContainerResizeObserver) {
-        this.plotContainerResizeObserver.disconnect();
-      }
+      this.plotContainerResizeObserver?.disconnect?.();
 
       this.stopFollowingTimeContext();
       this.openmct.objectViews.off('clearData', this.clearData);
