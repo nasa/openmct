@@ -145,7 +145,6 @@ export default {
         }
       }
 
-      console.debug('🗺️ Calculated clientWidth:', clientWidth);
       return clientWidth;
     },
     updateViewBounds(bounds, isTick) {
@@ -346,9 +345,6 @@ export default {
         let imageWrapper = this.createImageWrapper(index, item, showImagePlaceholders);
         containerElement.appendChild(imageWrapper);
       }
-
-      console.debug('🪝 Event time:', new Date(item.time).toISOString());
-      console.debug('🪝 Scaled X position:', this.xScale(item.time));
     },
     setImageDisplay(imageElement, showImagePlaceholders) {
       if (showImagePlaceholders) {

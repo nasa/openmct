@@ -318,7 +318,7 @@ export default {
         const eventWrapper = this.createEventWrapper(index, item);
         containerElement.appendChild(eventWrapper);
       }
-      console.debug('🧟 Event time:', new Date(item.time).toISOString());
+      console.debug('🧟 Event time:', new Date(item.time).toTimeString());
       console.debug('🧟 Scaled X position:', this.xScale(item.time));
     },
     updateExistingEventWrapper(existingEventWrapper, event) {
@@ -329,6 +329,7 @@ export default {
       const id = `${ID_PREFIX}${event.time}`;
       const eventWrapper = document.createElement('div');
       eventWrapper.ariaLabel = id;
+      eventWrapper.setAttribute('id', id);
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
       eventWrapper.style.left = `${this.xScale(event.time)}px`;
       //create event vertical tick indicator
@@ -340,9 +341,7 @@ export default {
 
       //handle mousedown event to show the event in a large view
       eventWrapper.addEventListener('mousedown', (e) => {
-        if (e.button === 0) {
-          this.expand(event.time);
-        }
+        console.debug('🧟 Event clicked:', event);
       });
 
       return eventWrapper;
