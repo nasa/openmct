@@ -51,12 +51,11 @@ export default {
     this.requestCount = 0;
 
     return {
-      viewBounds: undefined,
+      viewBounds: null,
       height: 0,
-      durationFormatter: undefined,
       eventHistory: [],
       timeSystem: timeSystem,
-      keyString: undefined
+      overlapping: false
     };
   },
   watch: {
@@ -115,7 +114,7 @@ export default {
     firstNonDomainAttribute(metadata) {
       return metadata
         .values()
-        .find((metadatum) => metadatum.hints.domain === undefined && metadatum.key !== 'name');
+        .find((metadatum) => !metadatum.hints.domain && metadatum.key !== 'name');
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
