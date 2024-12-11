@@ -46,6 +46,24 @@ class EventMetadataProvider {
         ]
       }
     };
+
+    const inPlaceUpdateMetadataValue = {
+      key: 'messageId',
+      name: 'row identifier',
+      format: 'string',
+      useToUpdateInPlace: true
+    };
+    const eventAcknowledgeMetadataValue = {
+      key: 'acknowledge',
+      name: 'Acknowledge',
+      format: 'string'
+    };
+
+    const eventGeneratorWithAcknowledge = structuredClone(this.METADATA_BY_TYPE.eventGenerator);
+    eventGeneratorWithAcknowledge.values.push(inPlaceUpdateMetadataValue);
+    eventGeneratorWithAcknowledge.values.push(eventAcknowledgeMetadataValue);
+
+    this.METADATA_BY_TYPE.eventGeneratorWithAcknowledge = eventGeneratorWithAcknowledge;
   }
 
   supportsMetadata(domainObject) {

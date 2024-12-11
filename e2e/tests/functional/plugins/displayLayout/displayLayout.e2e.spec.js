@@ -507,7 +507,139 @@ test.describe('Display Layout', () => {
     // In real time mode, we don't fetch annotations at all
     await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(0);
   });
+
+  test('Same objects with different request options have unique subscriptions', async ({
+    page
+  }) => {
+    // Expand My Items
+    await page.getByLabel('Expand My Items folder').click();
+
+    // Create a Display Layout
+    const displayLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display'
+    });
+
+    // Create a State Generator, set to higher frequency updates
+    const stateGenerator = await createDomainObjectWithDefaults(page, {
+      type: 'State Generator',
+      name: 'State Generator'
+    });
+    const stateGeneratorTreeItem = page.getByRole('treeitem', {
+      name: stateGenerator.name
+    });
+    await stateGeneratorTreeItem.click({ button: 'right' });
+    await page.getByLabel('Edit Properties...').click();
+    await page.getByLabel('State Duration (seconds)', { exact: true }).fill('0.1');
+    await page.getByLabel('Save').click();
+
+    // Create a Table for filtering ON values
+    const tableFilterOnValue = await createDomainObjectWithDefaults(page, {
+      type: 'Telemetry Table',
+      name: 'Table Filter On Value'
+    });
+    const tableFilterOnTreeItem = page.getByRole('treeitem', {
+      name: tableFilterOnValue.name
+    });
+
+    // Create a Table for filtering OFF values
+    const tableFilterOffValue = await createDomainObjectWithDefaults(page, {
+      type: 'Telemetry Table',
+      name: 'Table Filter Off Value'
+    });
+    const tableFilterOffTreeItem = page.getByRole('treeitem', {
+      name: tableFilterOffValue.name
+    });
+
+    // Navigate to ON filtering table and add state generator and setup filters
+    await page.goto(tableFilterOnValue.url);
+    await stateGeneratorTreeItem.dragTo(page.getByLabel('Object View'));
+    await selectFilterOption(page, '1');
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Navigate to OFF filtering table and add state generator and setup filters
+    await page.goto(tableFilterOffValue.url);
+    await stateGeneratorTreeItem.dragTo(page.getByLabel('Object View'));
+    await selectFilterOption(page, '0');
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Navigate to the display layout and edit it
+    await page.goto(displayLayout.url);
+
+    // Add the tables to the display layout
+    await page.getByLabel('Edit Object').click();
+    await tableFilterOffTreeItem.dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 10, y: 300 }
+    });
+    await page.locator('.c-frame-edit > div:nth-child(4)').dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 400, y: 500 },
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+    await tableFilterOnTreeItem.dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 10, y: 100 }
+    });
+    await page.locator('.c-frame-edit > div:nth-child(4)').dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 400, y: 300 },
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Get the tables so we can verify filtering is working as expected
+    const tableFilterOn = page.getByLabel(`${tableFilterOnValue.name} Frame`, {
+      exact: true
+    });
+    const tableFilterOff = page.getByLabel(`${tableFilterOffValue.name} Frame`, {
+      exact: true
+    });
+
+    // Verify filtering is working correctly
+
+    // Check that no filtered values appear for at least 2 seconds
+    const VERIFICATION_TIME = 2000; // 2 seconds
+    const CHECK_INTERVAL = 100; // Check every 100ms
+
+    // Create a promise that will check for filtered values periodically
+    const checkForCorrectValues = new Promise((resolve, reject) => {
+      const interval = setInterval(async () => {
+        const offCount = await tableFilterOn.locator('td[title="OFF"]').count();
+        const onCount = await tableFilterOff.locator('td[title="ON"]').count();
+        if (offCount > 0 || onCount > 0) {
+          clearInterval(interval);
+          reject(
+            new Error(
+              `Found ${offCount} OFF and ${onCount} ON values when expecting 0 OFF and 0 ON`
+            )
+          );
+        }
+      }, CHECK_INTERVAL);
+
+      // After VERIFICATION_TIME, if no filtered values were found, resolve successfully
+      setTimeout(() => {
+        clearInterval(interval);
+        resolve();
+      }, VERIFICATION_TIME);
+    });
+
+    await expect(checkForCorrectValues).resolves.toBeUndefined();
+  });
 });
+
+async function selectFilterOption(page, filterOption) {
+  await page.getByRole('tab', { name: 'Filters' }).click();
+  await page
+    .getByLabel('Inspector Views')
+    .locator('li')
+    .filter({ hasText: 'State Generator' })
+    .locator('span')
+    .click();
+  await page.getByRole('switch').click();
+  await page.selectOption('select[name="setSelectionThreshold"]', filterOption);
+}
 
 async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LAYOUT_NAME) {
   await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);

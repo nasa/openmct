@@ -26,7 +26,10 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 import { fileURLToPath } from 'url';
 
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  renameCurrentObjectFromBrowseBar
+} from '../../../../appActions.js';
 import { copy, paste, selectAll } from '../../../../helper/hotkeys/hotkeys.js';
 import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, streamToString, test } from '../../../../pluginFixtures.js';
@@ -596,4 +599,61 @@ test.describe('Notebook entry tests', () => {
     await expect(await page.locator(`text="${TEST_TEXT.repeat(1)}"`).count()).toEqual(1);
     await expect(await page.locator(`text="${TEST_TEXT.repeat(2)}"`).count()).toEqual(0);
   });
+
+  test('When changing the name of a notebook in the browse bar, new notebook changes are not lost', async ({
+    page
+  }) => {
+    const TEST_TEXT = 'Do not lose me!';
+    const FIRST_NEW_NAME = 'New Name';
+    const SECOND_NEW_NAME = 'Second New Name';
+
+    await page.goto(notebookObject.url);
+
+    await page.getByLabel('Expand My Items folder').click();
+
+    await renameCurrentObjectFromBrowseBar(page, FIRST_NEW_NAME);
+
+    // verify the name change in tree and browse bar
+    await verifyNameChange(page, FIRST_NEW_NAME);
+
+    // enter one entry
+    await enterAndCommitTextEntry(page, TEST_TEXT);
+
+    // verify the entry is present
+    await expect(await page.locator(`text="${TEST_TEXT}"`).count()).toEqual(1);
+
+    // change the name
+    await renameCurrentObjectFromBrowseBar(page, SECOND_NEW_NAME);
+
+    // verify the name change in tree and browse bar
+    await verifyNameChange(page, SECOND_NEW_NAME);
+
+    // verify the entry is still present
+    await expect(await page.locator(`text="${TEST_TEXT}"`).count()).toEqual(1);
+  });
 });
+
+/**
+ * Enter text into the last notebook entry and commit it.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} text
+ */
+async function enterAndCommitTextEntry(page, text) {
+  await nbUtils.addNotebookEntry(page);
+  await nbUtils.enterTextInLastEntry(page, text);
+  await nbUtils.commitEntry(page);
+}
+
+/**
+ * Verify the name change in the tree and browse bar.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} newName
+ */
+async function verifyNameChange(page, newName) {
+  await expect(
+    page.getByRole('treeitem').locator('.is-navigated-object .c-tree__item__name')
+  ).toHaveText(newName);
+  await expect(page.getByLabel('Browse bar object name')).toHaveText(newName);
+}

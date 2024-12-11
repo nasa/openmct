@@ -251,6 +251,90 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Sanitizes objects for consistent serialization by:
+   * 1. Removing non-plain objects (class instances) and functions
+   * 2. Sorting object keys alphabetically to ensure consistent ordering
+   */
+  sanitizeForSerialization(key, value) {
+    // Handle null and primitives directly
+    if (value === null || typeof value !== 'object') {
+      return value;
+    }
+
+    // Remove functions and non-plain objects (except arrays)
+    if (
+      typeof value === 'function' ||
+      (Object.getPrototypeOf(value) !== Object.prototype && !Array.isArray(value))
+    ) {
+      return undefined;
+    }
+
+    // For plain objects, just sort the keys
+    if (!Array.isArray(value)) {
+      const sortedObject = {};
+      const sortedKeys = Object.keys(value).sort();
+
+      sortedKeys.forEach((objectKey) => {
+        sortedObject[objectKey] = value[objectKey];
+      });
+
+      return sortedObject;
+    }
+
+    return value;
+  }
+
+  /**
+   * Generates a numeric hash value for an options object. The hash is consistent
+   * for equivalent option objects regardless of property order.
+   *
+   * This is used to create compact, unique cache keys for telemetry subscriptions with
+   * different options configurations. The hash function ensures that identical options
+   * objects will always generate the same hash value, while different options objects
+   * (even with small differences) will generate different hash values.
+   *
+   * @private
+   * @param {Object} options The options object to hash
+   * @returns {number} A positive integer hash of the options object
+   */
+  #hashOptions(options) {
+    const sanitizedOptionsString = JSON.stringify(
+      options,
+      this.sanitizeForSerialization.bind(this)
+    );
+
+    let hash = 0;
+    const prime = 31;
+    const modulus = 1e9 + 9; // Large prime number
+
+    for (let i = 0; i < sanitizedOptionsString.length; i++) {
+      const char = sanitizedOptionsString.charCodeAt(i);
+      // Calculate new hash value while keeping numbers manageable
+      hash = Math.floor((hash * prime + char) % modulus);
+    }
+
+    return Math.abs(hash);
+  }
+
+  /**
+   * Generates a unique cache key for a telemetry subscription based on the
+   * domain object identifier and options (which includes strategy).
+   *
+   * Uses a hash of the options object to create compact cache keys while still
+   * ensuring unique keys for different subscription configurations.
+   *
+   * @private
+   * @param {import('openmct').DomainObject} domainObject The domain object being subscribed to
+   * @param {Object} options The subscription options object (including strategy)
+   * @returns {string} A unique key string for caching the subscription
+   */
+  #getSubscriptionCacheKey(domainObject, options) {
+    const keyString = makeKeyString(domainObject.identifier);
+
+    return `${keyString}:${this.#hashOptions(options)}`;
+  }
+
+  /**
    * Register a request interceptor that transforms a request via module:openmct.TelemetryAPI.request
    * The request will be modified when it is received and will be returned in it's modified state
    * The request will be transformed only if the interceptor is applicable to that domain object as defined by the RequestInterceptorDef
@@ -418,16 +502,14 @@ export default class TelemetryAPI {
       this.#subscribeCache = {};
     }
 
-    const keyString = makeKeyString(domainObject.identifier);
     const supportedStrategy = supportsBatching ? requestedStrategy : SUBSCRIBE_STRATEGY.LATEST;
     // Override the requested strategy with the strategy supported by the provider
     const optionsWithSupportedStrategy = {
       ...options,
       strategy: supportedStrategy
     };
-    // If batching is supported, we need to cache a subscription for each strategy -
-    // latest and batched.
-    const cacheKey = `${keyString}:${supportedStrategy}`;
+
+    const cacheKey = this.#getSubscriptionCacheKey(domainObject, optionsWithSupportedStrategy);
     let subscriber = this.#subscribeCache[cacheKey];
 
     if (!subscriber) {

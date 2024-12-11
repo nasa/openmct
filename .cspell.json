@@ -484,7 +484,8 @@
     "darkmatter",
     "Undeletes",
     "SSSZ",
-    "LOCF"
+    "LOCF",
+    "pageerror"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [
