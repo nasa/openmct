@@ -1,7 +1,23 @@
 .c-timeline-holder {
   overflow: hidden;
+  position: relative;
 }
 
 .c-timeline__objects {
   display: contents;
+}
+
+.extended-lines-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none; /* Allows clicks to pass through */
+  z-index: 10; /* Ensure it sits atop swimlanes */
+}
+
+.extended-line {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background-color: $colorBodyFg; /* Use desired color */
 }

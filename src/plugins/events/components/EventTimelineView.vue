@@ -44,7 +44,7 @@ const ID_PREFIX = 'wrapper-';
 
 export default {
   mixins: [eventData],
-  inject: ['openmct', 'domainObject', 'objectPath'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'timelineEventBus'],
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -55,7 +55,7 @@ export default {
       height: 0,
       eventHistory: [],
       timeSystem: timeSystem,
-      overlapping: false
+      extendLines: false
     };
   },
   watch: {
@@ -201,6 +201,9 @@ export default {
           }
         }
       });
+      if (this.extendLines) {
+        this.emitExtendedLines();
+      }
     },
     setDimensions() {
       const eventsHolder = this.$refs.events;
@@ -318,6 +321,10 @@ export default {
         const eventWrapper = this.createEventWrapper(index, item);
         containerElement.appendChild(eventWrapper);
       }
+
+      if (this.extendLines) {
+        this.emitExtendedLines();
+      }
     },
     updateExistingEventWrapper(existingEventWrapper, event) {
       // Update the x co-ordinates of the event wrapper
@@ -397,6 +404,12 @@ export default {
       });
 
       return eventWrapper;
+    },
+    emitExtendedLines() {
+      const lines = this.eventHistory
+        .filter((e) => this.isEventInBounds(e))
+        .map((e) => ({ x: this.xScale(e.time) }));
+      this.timelineEventBus.emit('update-extended-lines', lines);
     }
   }
 };

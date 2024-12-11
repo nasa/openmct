@@ -44,6 +44,8 @@
         :item="item"
       />
     </div>
+
+    <ExtendedLinesOverlay :extended-lines="extendedLines" :height="height" />
   </div>
 </template>
 
@@ -56,6 +58,7 @@ import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue'; // Import the overlay component
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
@@ -69,9 +72,10 @@ export default {
   components: {
     TimelineObjectView,
     TimelineAxis,
-    SwimLane
+    SwimLane,
+    ExtendedLinesOverlay
   },
-  inject: ['openmct', 'domainObject', 'path', 'composition'],
+  inject: ['openmct', 'domainObject', 'path', 'composition', 'eventsBus'],
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');
@@ -89,6 +93,7 @@ export default {
       items: [],
       timeSystems: [],
       height: 0,
+      extendedLines: [],
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions
     };
@@ -101,10 +106,13 @@ export default {
     this.stopFollowingTimeContext();
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
+    this.eventsBus.off('update-extended-lines', this.updateExtendedLines);
   },
   mounted() {
     this.items = [];
     this.setTimeContext();
+
+    this.eventsBus.on('update-extended-lines', this.updateExtendedLines);
 
     if (this.composition) {
       this.composition.on('add', this.addItem);
@@ -222,6 +230,10 @@ export default {
         this.timeContext.off('boundsChanged', this.updateViewBounds);
         this.timeContext.off('clockChanged', this.updateViewBounds);
       }
+    },
+    updateExtendedLines(lines) {
+      console.debug('🗺️ Updating extended lines', lines);
+      this.extendedLines = lines;
     }
   }
 };
