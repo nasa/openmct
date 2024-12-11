@@ -78,6 +78,12 @@ export default {
     this.setTimeContext = this.setTimeContext.bind(this);
     this.setTimeContext();
 
+    this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
+    const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+    if (metadata) {
+      this.valueMetadata =
+        metadata.valuesForHints(['range'])[0] || this.firstNonDomainAttribute(metadata);
+    }
     this.updateViewBounds();
 
     this.resize = _.debounce(this.resize, 400);
@@ -105,6 +111,11 @@ export default {
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.timeContext.on('timeSystem', this.setScaleAndPlotEvents);
       this.timeContext.on('boundsChanged', this.updateViewBounds);
+    },
+    firstNonDomainAttribute(metadata) {
+      return metadata
+        .values()
+        .find((metadatum) => metadatum.hints.domain === undefined && metadatum.key !== 'name');
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
@@ -294,15 +305,6 @@ export default {
         element.setAttributeNS(null, key, attributes[key]);
       });
     },
-    setStyles(element, styles) {
-      if (!element) {
-        return;
-      }
-
-      Object.keys(styles).forEach((key) => {
-        element.style[key] = styles[key];
-      });
-    },
     getEventWrapper(item) {
       const id = `${ID_PREFIX}${item.time}`;
 
@@ -383,6 +385,12 @@ export default {
       eventTickElement.style.width = '2px';
       eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
       eventWrapper.appendChild(eventTickElement);
+
+      const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
+      const limitClass = limitEvaluation?.cssClass;
+      if (limitClass) {
+        eventWrapper.classList.add(limitClass);
+      }
 
       eventWrapper.addEventListener('click', (mouseEvent) => {
         mouseEvent.stopPropagation();

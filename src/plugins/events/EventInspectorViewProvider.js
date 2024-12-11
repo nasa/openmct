@@ -12,8 +12,6 @@ export default function EventInspectorViewProvider(openmct) {
         return false;
       }
 
-      console.debug(`🧟 Event Inspector received selection`, selection);
-
       const selectionType = selection[0][0].context?.type;
       const event = selection[0][0].context?.event;
       return selectionType === 'time-strip-event-selection' && event;
