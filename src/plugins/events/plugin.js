@@ -26,6 +26,6 @@ import EventTimelineViewProvider from './EventTimelineViewProvider.js';
 export default function (options) {
   return function install(openmct) {
     openmct.objectViews.addProvider(new EventTimelineViewProvider(openmct));
-    openmct.objectViews.addProvider(new EventInspectorViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new EventInspectorViewProvider(openmct));
   };
 }

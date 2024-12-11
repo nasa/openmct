@@ -132,7 +132,6 @@ export default {
           clientWidth = parent.getBoundingClientRect().width;
         }
       }
-      console.debug('🇹🇯 Calculated clientWidth:', clientWidth);
 
       return clientWidth;
     },
@@ -311,19 +310,65 @@ export default {
     },
     plotEvents(item, containerElement, index) {
       const existingEventWrapper = this.getEventWrapper(item);
-      //eventWrapper wraps the vertical tick and the EVENT
+      // eventWrapper wraps the vertical tick and the EVENT
       if (existingEventWrapper) {
         this.updateExistingEventWrapper(existingEventWrapper, item);
       } else {
         const eventWrapper = this.createEventWrapper(index, item);
         containerElement.appendChild(eventWrapper);
       }
-      console.debug('🧟 Event time:', new Date(item.time).toTimeString());
-      console.debug('🧟 Scaled X position:', this.xScale(item.time));
     },
     updateExistingEventWrapper(existingEventWrapper, event) {
-      //Update the x co-ordinates of the event wrapper
+      // Update the x co-ordinates of the event wrapper
       existingEventWrapper.style.left = `${this.xScale(event.time)}px`;
+    },
+    createPathSelection() {
+      const selection = [];
+      selection.unshift({
+        element: this.$el,
+        context: {
+          item: this.domainObject
+        }
+      });
+      this.objectPath.forEach((pathObject, index) => {
+        selection.push({
+          element: this.openmct.layout.$refs.browseObject.$el,
+          context: {
+            item: pathObject
+          }
+        });
+      });
+
+      return selection;
+    },
+    createSelectionForInspector(event) {
+      const eventContext = {
+        type: 'time-strip-event-selection',
+        event
+      };
+
+      const selection = this.createPathSelection();
+      if (
+        selection.length &&
+        this.openmct.objects.areIdsEqual(
+          selection[0].context.item.identifier,
+          this.domainObject.identifier
+        )
+      ) {
+        selection[0].context = {
+          ...selection[0].context,
+          ...eventContext
+        };
+      } else {
+        selection.unshift({
+          element: this.$el,
+          context: {
+            item: this.domainObject,
+            ...eventContext
+          }
+        });
+      }
+      this.openmct.selection.select(selection, true);
     },
     createEventWrapper(index, event) {
       const id = `${ID_PREFIX}${event.time}`;
@@ -332,16 +377,16 @@ export default {
       eventWrapper.setAttribute('id', id);
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
       eventWrapper.style.left = `${this.xScale(event.time)}px`;
-      //create event vertical tick indicator
+
       const eventTickElement = document.createElement('div');
       eventTickElement.classList.add('c-events-tsv__event-handle');
       eventTickElement.style.width = '2px';
       eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
       eventWrapper.appendChild(eventTickElement);
 
-      //handle mousedown event to show the event in a large view
-      eventWrapper.addEventListener('mousedown', (e) => {
-        console.debug('🧟 Event clicked:', event);
+      eventWrapper.addEventListener('click', (mouseEvent) => {
+        mouseEvent.stopPropagation();
+        this.createSelectionForInspector(event);
       });
 
       return eventWrapper;
