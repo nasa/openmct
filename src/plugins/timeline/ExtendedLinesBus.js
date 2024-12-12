@@ -27,11 +27,9 @@ export default class ExtendedLinesBus extends EventEmitter {
     this.emit('update-extended-lines', { lineData, keyString });
   }
   disableExtendEventLines(keyString) {
-    console.debug('🍯 ExtendedLines#disableExtendedLines');
     this.emit('disable-extended-lines', keyString);
   }
   enableExtendEventLines(keyString) {
-    console.debug('🍯 ExtendedLines#enableExtendedLines');
     this.emit('enable-extended-lines', keyString);
   }
 }

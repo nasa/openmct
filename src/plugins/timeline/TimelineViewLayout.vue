@@ -234,7 +234,7 @@ export default {
         this.timeContext.off('clockChanged', this.updateViewBounds);
       }
     },
-    updateExtendedLines(lines) {
+    updateExtendedLines({ keyString, lines }) {
       console.debug('🗺️ Updating extended lines', lines);
       this.extendedLines = lines;
     }

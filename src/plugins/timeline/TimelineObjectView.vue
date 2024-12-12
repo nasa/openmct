@@ -140,12 +140,10 @@ export default {
       this.status = this.openmct.status.get(this.domainObject.identifier);
     },
     enableExtendEventLines() {
-      console.debug('🚄 extending event lines');
       const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
       this.extendedLinesBus.enableExtendEventLines(keyString);
     },
     disableExtendEventLines() {
-      console.debug('🚄 disabling extended event lines');
       const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
       this.extendedLinesBus.disableExtendEventLines(keyString);
     },

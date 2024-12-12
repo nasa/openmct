@@ -119,12 +119,18 @@ export default {
     },
     enableExtendEventLines(keyStringToEnable) {
       if (this.keyString === keyStringToEnable) {
+        console.debug('🚄 enabling extending event lines');
         this.extendLines = true;
+        // now emit our lines
+        this.emitExtendedLines();
       }
     },
     disableExtendEventLines(keyStringToDisable) {
       if (this.keyString === keyStringToDisable) {
+        console.debug('🚄 disabling extended event lines');
         this.extendLines = false;
+        // now emit an empty array to clear the lines
+        this.emitExtendedLines();
       }
     },
     firstNonDomainAttribute(metadata) {
@@ -422,13 +428,20 @@ export default {
       return eventWrapper;
     },
     emitExtendedLines() {
-      const lines = this.eventHistory
-        .filter((e) => this.isEventInBounds(e))
-        .map((e) => ({ x: this.xScale(e.time) }));
-      this.timelineEventBus.emit('update-extended-lines', {
-        lines,
-        keyString: this.keyString
-      });
+      if (this.extendLines) {
+        const lines = this.eventHistory
+          .filter((e) => this.isEventInBounds(e))
+          .map((e) => ({ x: this.xScale(e.time) }));
+        this.extendedLinesBus.emit('update-extended-lines', {
+          lines,
+          keyString: this.keyString
+        });
+      } else {
+        this.extendedLinesBus.emit('update-extended-lines', {
+          lines: [],
+          keyString: this.keyString
+        });
+      }
     }
   }
 };
