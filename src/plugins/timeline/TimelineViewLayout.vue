@@ -46,7 +46,11 @@
       />
     </div>
 
-    <ExtendedLinesOverlay :extended-lines="extendedLines" :height="height" />
+    <ExtendedLinesOverlay
+      :extended-lines="extendedLines"
+      :height="height"
+      :left-offset="extendedLeftOffset"
+    />
   </div>
 </template>
 
@@ -68,6 +72,8 @@ const unknownObjectType = {
     name: 'Unknown Type'
   }
 };
+
+const AXES_PADDING = 20;
 
 export default {
   components: {
@@ -96,8 +102,14 @@ export default {
       height: 0,
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions,
-      extendedLines: []
+      extendedLines: [],
+      additionalLeftOffset: 0
     };
+  },
+  computed: {
+    extendedLeftOffset() {
+      return this.alignmentData.leftWidth + this.additionalLeftOffset;
+    }
   },
   beforeUnmount() {
     this.resetAlignment();
@@ -109,7 +121,7 @@ export default {
     this.contentResizeObserver.disconnect();
     this.extendedLinesBus.off('update-extended-lines', this.updateExtendedLines);
   },
-  mounted() {
+  async mounted() {
     this.items = [];
     this.setTimeContext();
 
@@ -125,6 +137,8 @@ export default {
     this.handleContentResize = _.debounce(this.handleContentResize, 500);
     this.contentResizeObserver = new ResizeObserver(this.handleContentResize);
     this.contentResizeObserver.observe(this.$refs.timelineHolder);
+    await this.$nextTick();
+    this.calculateAdditionalLeftOffset();
   },
   methods: {
     addItem(domainObject) {
@@ -235,8 +249,17 @@ export default {
       }
     },
     updateExtendedLines({ keyString, lines }) {
-      console.debug('🗺️ Updating extended lines', lines);
       this.extendedLines = lines;
+    },
+    calculateAdditionalLeftOffset() {
+      const firstSwimLane = this.$el.querySelector('.c-swimlane__lane-object');
+      if (firstSwimLane) {
+        const timelineHolderRect = this.$refs.timelineHolder.getBoundingClientRect();
+        const laneObjectRect = firstSwimLane.getBoundingClientRect();
+        const offset = laneObjectRect.left - timelineHolderRect.left;
+        this.additionalLeftOffset = offset + AXES_PADDING;
+      }
+      console.debug('🤖 additionalLeftOffset:', this.additionalLeftOffset);
     }
   }
 };

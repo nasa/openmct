@@ -26,7 +26,7 @@
       v-for="(line, index) in extendedLines"
       :key="index"
       class="extended-line"
-      :style="{ left: `${line.x}px`, height: `${height}px` }"
+      :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
     ></div>
   </div>
 </template>
@@ -37,11 +37,20 @@ export default {
   props: {
     extendedLines: {
       type: Array,
-      default: () => {}
+      default: () => []
     },
     height: {
       type: Number,
       required: true
+    },
+    leftOffset: {
+      type: Number,
+      default: 0
+    }
+  },
+  watch: {
+    leftOffset(newVal) {
+      console.log('leftOffset received:', newVal);
     }
   }
 };

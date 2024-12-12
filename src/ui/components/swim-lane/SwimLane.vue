@@ -128,19 +128,19 @@ export default {
     hideButton: {
       type: Boolean,
       default() {
-        return false;
+        return true;
       }
     },
     buttonTitle: {
       type: String,
       default() {
-        return '';
+        return null;
       }
     },
     buttonIcon: {
       type: String,
       default() {
-        return '';
+        return null;
       }
     },
     buttonClickOn: {

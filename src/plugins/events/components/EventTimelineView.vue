@@ -30,9 +30,11 @@
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import _ from 'lodash';
 import mount from 'utils/mount';
+import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
+import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 import eventData from '../mixins/eventData.js';
 
 const PADDING = 1;
@@ -41,10 +43,18 @@ const CONTAINER_CLASS = 'c-events-tsv-container';
 const NO_ITEMS_CLASS = 'c-events-tsv__no-items';
 const EVENT_WRAPPER_CLASS = 'c-events-tsv__event-wrapper';
 const ID_PREFIX = 'wrapper-';
+const AXES_PADDING = 20;
 
 export default {
   mixins: [eventData],
   inject: ['openmct', 'domainObject', 'objectPath', 'extendedLinesBus'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, objectPath, openmct);
+    return { alignmentData };
+  },
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -64,12 +74,15 @@ export default {
         this.updatePlotEvents();
       },
       deep: true
+    },
+    alignmentData: {
+      handler() {
+        this.updateViewBounds();
+      },
+      deep: true
     }
   },
   mounted() {
-    this.canvas = this.$refs.events.appendChild(document.createElement('canvas'));
-    this.canvas.height = 0;
-    this.canvasContext = this.canvas.getContext('2d');
     this.setDimensions();
 
     this.setScaleAndPlotEvents = this.setScaleAndPlotEvents.bind(this);
@@ -349,8 +362,7 @@ export default {
       }
     },
     updateExistingEventWrapper(existingEventWrapper, event) {
-      // Update the x co-ordinates of the event wrapper
-      existingEventWrapper.style.left = `${this.xScale(event.time)}px`;
+      existingEventWrapper.style.left = `${this.xScale(event.time) + this.alignmentData.leftWidth + AXES_PADDING}px`;
     },
     createPathSelection() {
       const selection = [];
@@ -406,7 +418,7 @@ export default {
       eventWrapper.ariaLabel = id;
       eventWrapper.setAttribute('id', id);
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
-      eventWrapper.style.left = `${this.xScale(event.time)}px`;
+      eventWrapper.style.left = `${this.xScale(event.time) + this.alignmentData.leftWidth + AXES_PADDING}px`;
 
       const eventTickElement = document.createElement('div');
       eventTickElement.classList.add('c-events-tsv__event-handle');
