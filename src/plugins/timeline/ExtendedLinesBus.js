@@ -21,8 +21,17 @@
  *****************************************************************************/
 
 import { EventEmitter } from 'eventemitter3';
-export default class EventBusAPI extends EventEmitter {
-  updateExtendedLine(lineData) {
-    this.emit('update-extended-lines', lineData);
+export default class ExtendedLinesBus extends EventEmitter {
+  updateExtendedLines(keyString, lineData) {
+    console.debug('🍯 ExtendedLines#updateExtendedLines');
+    this.emit('update-extended-lines', { lineData, keyString });
+  }
+  disableExtendEventLines(keyString) {
+    console.debug('🍯 ExtendedLines#disableExtendedLines');
+    this.emit('disable-extended-lines', keyString);
+  }
+  enableExtendEventLines(keyString) {
+    console.debug('🍯 ExtendedLines#enableExtendedLines');
+    this.emit('enable-extended-lines', keyString);
   }
 }

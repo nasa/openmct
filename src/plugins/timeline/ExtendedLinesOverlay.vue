@@ -37,7 +37,7 @@ export default {
   props: {
     extendedLines: {
       type: Array,
-      default: () => []
+      default: () => {}
     },
     height: {
       type: Number,

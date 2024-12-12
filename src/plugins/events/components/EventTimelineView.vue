@@ -44,7 +44,7 @@ const ID_PREFIX = 'wrapper-';
 
 export default {
   mixins: [eventData],
-  inject: ['openmct', 'domainObject', 'objectPath', 'timelineEventBus'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'extendedLinesBus'],
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -78,6 +78,7 @@ export default {
     this.setTimeContext();
 
     this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
+    this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
     const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
     if (metadata) {
       this.valueMetadata =
@@ -90,6 +91,8 @@ export default {
     this.eventStripResizeObserver.observe(this.$refs.events);
 
     this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
+    this.extendedLinesBus.on('disable-extended-lines', this.disableExtendEventLines);
+    this.extendedLinesBus.on('enable-extended-lines', this.enableExtendEventLines);
   },
   beforeUnmount() {
     if (this.eventStripResizeObserver) {
@@ -103,6 +106,9 @@ export default {
     if (this.destroyEventContainer) {
       this.destroyEventContainer();
     }
+
+    this.extendedLinesBus.off('disable-extended-lines', this.disableExtendEventLines);
+    this.extendedLinesBus.off('enable-extended-lines', this.enableExtendEventLines);
   },
   methods: {
     setTimeContext() {
@@ -110,6 +116,16 @@ export default {
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.timeContext.on('timeSystem', this.setScaleAndPlotEvents);
       this.timeContext.on('boundsChanged', this.updateViewBounds);
+    },
+    enableExtendEventLines(keyStringToEnable) {
+      if (this.keyString === keyStringToEnable) {
+        this.extendLines = true;
+      }
+    },
+    disableExtendEventLines(keyStringToDisable) {
+      if (this.keyString === keyStringToDisable) {
+        this.extendLines = false;
+      }
     },
     firstNonDomainAttribute(metadata) {
       return metadata
@@ -409,7 +425,10 @@ export default {
       const lines = this.eventHistory
         .filter((e) => this.isEventInBounds(e))
         .map((e) => ({ x: this.xScale(e.time) }));
-      this.timelineEventBus.emit('update-extended-lines', lines);
+      this.timelineEventBus.emit('update-extended-lines', {
+        lines,
+        keyString: this.keyString
+      });
     }
   }
 };

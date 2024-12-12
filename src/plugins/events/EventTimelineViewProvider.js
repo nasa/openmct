@@ -23,7 +23,7 @@ import mount from 'utils/mount';
 
 import EventTimelineView from './components/EventTimelineView.vue';
 
-export default function EventTimestripViewProvider(openmct, timelineEventBus) {
+export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
   const type = 'event.time-line.view';
 
   function hasEventTelemetry(domainObject) {
@@ -66,7 +66,7 @@ export default function EventTimestripViewProvider(openmct, timelineEventBus) {
                 openmct: openmct,
                 domainObject: domainObject,
                 objectPath: objectPath,
-                timelineEventBus
+                extendedLinesBus
               },
               template: '<event-timeline-view ref="root"></event-timeline-view>'
             },

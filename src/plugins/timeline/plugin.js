@@ -25,9 +25,9 @@ import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
 import timelineInterceptor from './timelineInterceptor.js';
 import TimelineViewProvider from './TimelineViewProvider.js';
 
-const eventsBus = new ExtendedLinesBus();
+const extendedLinesBus = new ExtendedLinesBus();
 
-export { eventsBus };
+export { extendedLinesBus };
 
 export default function () {
   function install(openmct) {
@@ -48,10 +48,10 @@ export default function () {
     timelineInterceptor(openmct);
     openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
 
-    openmct.objectViews.addProvider(new TimelineViewProvider(openmct, eventsBus));
+    openmct.objectViews.addProvider(new TimelineViewProvider(openmct, extendedLinesBus));
   }
 
-  install.eventBus = eventsBus;
+  install.extendedLinesBus = extendedLinesBus;
 
   return install;
 }

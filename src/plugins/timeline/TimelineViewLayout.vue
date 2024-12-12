@@ -42,6 +42,7 @@
         :key="item.keyString"
         class="c-timeline__content js-timeline__content"
         :item="item"
+        :extended-lines-bus
       />
     </div>
 
@@ -75,7 +76,7 @@ export default {
     SwimLane,
     ExtendedLinesOverlay
   },
-  inject: ['openmct', 'domainObject', 'path', 'composition', 'eventsBus'],
+  inject: ['openmct', 'domainObject', 'path', 'composition', 'extendedLinesBus'],
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');
@@ -93,9 +94,9 @@ export default {
       items: [],
       timeSystems: [],
       height: 0,
-      extendedLines: [],
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
-      timeOptions: this.domainObject.configuration.timeOptions
+      timeOptions: this.domainObject.configuration.timeOptions,
+      extendedLines: []
     };
   },
   beforeUnmount() {
@@ -106,13 +107,13 @@ export default {
     this.stopFollowingTimeContext();
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
-    this.eventsBus.off('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.off('update-extended-lines', this.updateExtendedLines);
   },
   mounted() {
     this.items = [];
     this.setTimeContext();
 
-    this.eventsBus.on('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.on('update-extended-lines', this.updateExtendedLines);
 
     if (this.composition) {
       this.composition.on('add', this.addItem);
@@ -136,6 +137,8 @@ export default {
         rowCount = getValidatedGroups(domainObject, planData).length;
       } else if (domainObject.type === 'gantt-chart') {
         rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
+      } else if (domainObject.type === 'telemetry.plot.stacked') {
+        rowCount = domainObject.composition.length;
       }
 
       let height =

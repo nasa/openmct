@@ -34,6 +34,10 @@
       :class="[swimlaneClass, statusClass]"
       :style="gridRowSpan"
     >
+      <div class="c-object-label__name">
+        <slot name="label"></slot>
+      </div>
+
       <div v-if="iconClass" class="c-object-label__type-icon" :class="iconClass">
         <span
           v-if="status"
@@ -42,9 +46,14 @@
           :title="`This item is ${status}`"
         ></span>
       </div>
-
-      <div class="c-object-label__name">
-        <slot name="label"></slot>
+      <div class="c-notebook__toggle-nav-button c-icon-button c-icon-button--major">
+        <button
+          v-if="!hideButton"
+          class="c-button"
+          :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
+          :title="buttonTitle"
+          @click="pressOnButton"
+        />
       </div>
     </div>
     <div
@@ -115,7 +124,42 @@ export default {
     domainObject: {
       type: Object,
       default: undefined
+    },
+    hideButton: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    buttonTitle: {
+      type: String,
+      default() {
+        return '';
+      }
+    },
+    buttonIcon: {
+      type: String,
+      default() {
+        return '';
+      }
+    },
+    buttonClickOn: {
+      type: Function,
+      default() {
+        return () => {};
+      }
+    },
+    buttonClickOff: {
+      type: Function,
+      default() {
+        return () => {};
+      }
     }
+  },
+  data() {
+    return {
+      buttonPressed: false
+    };
   },
   computed: {
     gridRowSpan() {
@@ -142,6 +186,14 @@ export default {
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(await this.getObjectPath(), BELOW, 'swimLane');
+    },
+    pressOnButton() {
+      this.buttonPressed = !this.buttonPressed;
+      if (this.buttonPressed) {
+        this.buttonClickOn();
+      } else {
+        this.buttonClickOff();
+      }
     }
   }
 };

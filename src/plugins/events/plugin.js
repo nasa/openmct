@@ -23,9 +23,9 @@
 import EventInspectorViewProvider from './EventInspectorViewProvider.js';
 import EventTimelineViewProvider from './EventTimelineViewProvider.js';
 
-export default function plugin(timelineEventBus) {
+export default function plugin(extendedLinesBus) {
   return function install(openmct) {
-    openmct.objectViews.addProvider(new EventTimelineViewProvider(openmct, timelineEventBus));
+    openmct.objectViews.addProvider(new EventTimelineViewProvider(openmct, extendedLinesBus));
     openmct.inspectorViews.addProvider(new EventInspectorViewProvider(openmct));
   };
 }
