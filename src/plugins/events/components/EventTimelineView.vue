@@ -430,6 +430,7 @@ export default {
       const limitClass = limitEvaluation?.cssClass;
       if (limitClass) {
         eventWrapper.classList.add(limitClass);
+        event.limitClass = limitClass;
       }
 
       eventWrapper.addEventListener('click', (mouseEvent) => {
@@ -443,7 +444,7 @@ export default {
       if (this.extendLines) {
         const lines = this.eventHistory
           .filter((e) => this.isEventInBounds(e))
-          .map((e) => ({ x: this.xScale(e.time) }));
+          .map((e) => ({ x: this.xScale(e.time), limitClass: e.limitClass }));
         this.extendedLinesBus.emit('update-extended-lines', {
           lines,
           keyString: this.keyString

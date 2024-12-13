@@ -26,6 +26,7 @@
       v-for="(line, index) in extendedLines"
       :key="index"
       class="extended-line"
+      :class="line.limitClass"
       :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
     ></div>
   </div>
