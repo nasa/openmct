@@ -734,6 +734,21 @@ export default {
         );
       });
     },
+    plotCompositionContainsId(domainObjectToFind) {
+      if (!this.domainObject.composition) {
+        return false;
+      }
+      if (!domainObjectToFind.identifier) {
+        return false;
+      }
+
+      return this.domainObject.composition.some((compositionIdentifier) => {
+        return this.openmct.objects.areIdsEqual(
+          compositionIdentifier,
+          domainObjectToFind.identifier
+        );
+      });
+    },
 
     clearData(domainObjectToClear) {
       // If we don't have an object to clear (global), or the IDs are equal, just clear the data.
@@ -747,7 +762,8 @@ export default {
           domainObjectToClear.identifier,
           this.domainObject.identifier
         ) ||
-        this.compositionPathContainsId(domainObjectToClear)
+        this.compositionPathContainsId(domainObjectToClear) ||
+        this.plotCompositionContainsId(domainObjectToClear)
       ) {
         this.clearSeries();
       }
