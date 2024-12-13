@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="events" class="c-events-tsv c-timeline-holder">
+  <div ref="events" class="c-events-tsv">
     <div ref="eventsHolder" class="c-events-tsv__contents u-contents"></div>
   </div>
 </template>

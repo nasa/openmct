@@ -1,4 +1,5 @@
 .c-events-tsv {
+    overflow: hidden;
     div.c-events-tsv__event-wrapper {
       cursor: pointer;
       position: absolute;
@@ -8,22 +9,22 @@
       margin-top: 5px;
       &:hover {
         z-index: 2;
-  
+
         [class*='__event-handle'] {
           background-color: $colorBodyFg;
         }
       }
     }
-  
+
     &__no-items {
       fill: $colorBodyFg !important;
     }
-  
+
     &__event-handle {
       background-color: rgba($colorBodyFg, 0.5);
     }
   }
-  
+
   .c-events-canvas {
     pointer-events: auto; // This allows the event element to receive a browser-level context click
     position: absolute;
@@ -31,4 +32,3 @@
     top: 0;
     z-index: 2;
   }
-  

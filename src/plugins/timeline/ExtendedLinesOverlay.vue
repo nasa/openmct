@@ -19,9 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-
 <template>
-  <div class="extended-lines-overlay">
+  <div class="c-timeline__overlay-lines">
     <div v-for="(lines, key) in extendedLinesPerKey" :key="key" class="extended-line-container">
       <div
         v-for="(line, index) in lines"
@@ -53,22 +52,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.extended-lines-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.extended-line {
-  position: absolute;
-  top: 0;
-  width: 2px;
-  background-color: blue;
-}
-</style>
