@@ -57,7 +57,7 @@ export default {
   },
   data() {
     const timeSystem = this.openmct.time.getTimeSystem();
-    this.metadata = {};
+    this.valueMetadata = {};
     this.requestCount = 0;
 
     return {
@@ -65,7 +65,8 @@ export default {
       height: 0,
       eventHistory: [],
       timeSystem: timeSystem,
-      extendLines: false
+      extendLines: false,
+      titleKey: null
     };
   },
   watch: {
@@ -97,6 +98,12 @@ export default {
       this.valueMetadata =
         metadata.valuesForHints(['range'])[0] || this.firstNonDomainAttribute(metadata);
     }
+    // title is in the metadata, and is either a "hint" with a "label", or failing that, the first string type we find
+    this.titleKey =
+      metadata.valuesForHints(['label'])?.[0]?.key ||
+      metadata.values().find((metadatum) => metadatum.format === 'string')?.key;
+    console.debug('🧀 titleKey:', this.titleKey);
+
     this.updateViewBounds();
 
     this.resize = _.debounce(this.resize, 400);
@@ -134,7 +141,6 @@ export default {
       if (this.keyString === keyStringToEnable) {
         console.debug('🚄 enabling extending event lines');
         this.extendLines = true;
-        // now emit our lines
         this.emitExtendedLines();
       }
     },
@@ -142,7 +148,7 @@ export default {
       if (this.keyString === keyStringToDisable) {
         console.debug('🚄 disabling extended event lines');
         this.extendLines = false;
-        // now emit an empty array to clear the lines
+        // emit an empty array to clear the lines
         this.emitExtendedLines();
       }
     },
@@ -333,15 +339,6 @@ export default {
 
       containerElement.appendChild(textElement);
     },
-    setNSAttributesForElement(element, attributes) {
-      if (!element) {
-        return;
-      }
-
-      Object.keys(attributes).forEach((key) => {
-        element.setAttributeNS(null, key, attributes[key]);
-      });
-    },
     getEventWrapper(item) {
       const id = `${ID_PREFIX}${item.time}`;
 
@@ -424,8 +421,10 @@ export default {
       eventTickElement.classList.add('c-events-tsv__event-handle');
       eventTickElement.style.width = '2px';
       eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
+      if (this.titleKey) {
+        eventTickElement.title = event[this.titleKey];
+      }
       eventWrapper.appendChild(eventTickElement);
-
       const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
       const limitClass = limitEvaluation?.cssClass;
       if (limitClass) {
