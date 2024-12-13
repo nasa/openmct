@@ -50,11 +50,6 @@ export default {
       type: Number,
       default: 0
     }
-  },
-  watch: {
-    leftOffset(newVal) {
-      console.log('leftOffset received:', newVal);
-    }
   }
 };
 </script>

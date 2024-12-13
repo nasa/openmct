@@ -102,7 +102,6 @@ export default {
     this.titleKey =
       metadata.valuesForHints(['label'])?.[0]?.key ||
       metadata.values().find((metadatum) => metadatum.format === 'string')?.key;
-    console.debug('🧀 titleKey:', this.titleKey);
 
     this.updateViewBounds();
 

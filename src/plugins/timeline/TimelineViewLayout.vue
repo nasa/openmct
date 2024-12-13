@@ -106,9 +106,12 @@ export default {
       additionalLeftOffset: 0
     };
   },
-  computed: {
-    extendedLeftOffset() {
-      return this.alignmentData.leftWidth + this.additionalLeftOffset;
+  watch: {
+    alignmentData: {
+      handler() {
+        this.extendedLeftOffset = this.alignmentData.leftWidth + this.additionalLeftOffset;
+      },
+      deep: true
     }
   },
   beforeUnmount() {
