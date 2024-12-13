@@ -47,7 +47,7 @@
     </div>
 
     <ExtendedLinesOverlay
-      :extended-lines="extendedLines"
+      :extended-lines-per-key="extendedLinesPerKey"
       :height="height"
       :left-offset="extendedLeftOffset"
     />
@@ -102,7 +102,7 @@ export default {
       height: 0,
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions,
-      extendedLines: [],
+      extendedLinesPerKey: {},
       additionalLeftOffset: 0
     };
   },
@@ -175,6 +175,7 @@ export default {
         this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier)
       );
       this.items.splice(index, 1);
+      delete this.extendedLinesPerKey[this.openmct.objects.makeKeyString(identifier)];
     },
     reorder(reorderPlan) {
       let oldItems = this.items.slice();
@@ -249,7 +250,7 @@ export default {
       }
     },
     updateExtendedLines({ keyString, lines }) {
-      this.extendedLines = lines;
+      this.extendedLinesPerKey[keyString] = lines;
     },
     calculateAdditionalLeftOffset() {
       const firstSwimLane = this.$el.querySelector('.c-swimlane__lane-object');

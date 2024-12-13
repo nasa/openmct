@@ -22,13 +22,15 @@
 
 <template>
   <div class="extended-lines-overlay">
-    <div
-      v-for="(line, index) in extendedLines"
-      :key="index"
-      class="extended-line"
-      :class="line.limitClass"
-      :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
-    ></div>
+    <div v-for="(lines, key) in extendedLinesPerKey" :key="key" class="extended-line-container">
+      <div
+        v-for="(line, index) in lines"
+        :key="index"
+        class="extended-line"
+        :class="line.limitClass"
+        :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -36,9 +38,9 @@
 export default {
   name: 'ExtendedLinesOverlay',
   props: {
-    extendedLines: {
-      type: Array,
-      default: () => []
+    extendedLinesPerKey: {
+      type: Object,
+      required: true
     },
     height: {
       type: Number,
