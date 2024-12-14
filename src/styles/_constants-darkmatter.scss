@@ -517,6 +517,8 @@ $colorInProgressBg: $colorTimeRealtimeBg;
 $colorInProgressFg: $colorTimeRealtimeFgSubtle;
 $colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
 
 // Tree
 $colorTreeBg: transparent;

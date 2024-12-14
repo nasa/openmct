@@ -416,14 +416,15 @@ export default {
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
       eventWrapper.style.left = `${this.xScale(event.time) + this.alignmentData.leftWidth + AXES_PADDING}px`;
 
-      const eventTickElement = document.createElement('div');
-      eventTickElement.classList.add('c-events-tsv__event-handle');
-      eventTickElement.style.width = '2px';
-      eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
-      if (this.titleKey) {
-        eventTickElement.title = event[this.titleKey];
-      }
-      eventWrapper.appendChild(eventTickElement);
+      // const eventTickElement = document.createElement('div');
+      // eventTickElement.classList.add('c-events-tsv__event-handle');
+      // eventTickElement.style.width = '2px';
+      // eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
+      // if (this.titleKey) {
+      //   eventTickElement.title = event[this.titleKey];
+      // }
+      // eventWrapper.appendChild(eventTickElement);
+
       const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
       const limitClass = limitEvaluation?.cssClass;
       if (limitClass) {

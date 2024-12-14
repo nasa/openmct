@@ -21,11 +21,15 @@
 -->
 <template>
   <div class="c-timeline__overlay-lines">
-    <div v-for="(lines, key) in extendedLinesPerKey" :key="key" class="extended-line-container">
+    <div
+      v-for="(lines, key) in extendedLinesPerKey"
+      :key="key"
+      class="c-timeline__extended-line-container"
+    >
       <div
         v-for="(line, index) in lines"
         :key="index"
-        class="extended-line"
+        class="c-timeline__extended-line"
         :class="line.limitClass"
         :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
       ></div>

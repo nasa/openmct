@@ -79,7 +79,7 @@ export default {
     const { size: containerSize, startObserving } = useResizeObserver();
     const svgWidth = ref(0);
     const svgHeight = ref(0);
-    const axisTransform = ref(`translate(0,${TIME_AXIS_LINE_Y}})`);
+    const axisTransform = ref(`translate(0,${TIME_AXIS_LINE_Y})`);
     const alignmentOffset = ref(0);
     const nowMarkerStyle = reactive({
       height: '0px',
@@ -114,7 +114,7 @@ export default {
         if (this.alignmentData.leftWidth) {
           leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
         }
-        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, 20)`;
+        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, ${TIME_AXIS_LINE_Y})`;
 
         const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
         this.alignmentOffset =

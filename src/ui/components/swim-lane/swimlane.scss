@@ -24,8 +24,7 @@
   display: grid;
   grid-template-columns: 100px 100px 1fr;
   grid-column-gap: 1px;
-  grid-row-gap: 1px;
-  margin-bottom: 1px;
+  grid-row-gap: 1px; // Is this being used?
   width: 100%;
 
   &.is-status--draft {

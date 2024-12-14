@@ -24,6 +24,9 @@
 .c-timeline-holder {
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
 
     // Plot view overrides
     .gl-plot-display-area,
@@ -32,20 +35,23 @@
     }
 }
 
-.c-timeline__objects {
-    display: contents;
-}
+.c-timeline {
+    &__objects {
+        display: contents;
+    }
 
-.c-timeline__overlay-lines {
-    //background: rgba(deeppink, 0.2);
-    @include abs();
-    pointer-events: none; /* Allows clicks to pass through */
-    z-index: 10; /* Ensure it sits atop swimlanes */
-}
+    &__overlay-lines {
+        //background: rgba(deeppink, 0.2);
+        @include abs();
+        pointer-events: none; /* Allows clicks to pass through */
+        z-index: 10; /* Ensure it sits atop swimlanes */
+    }
 
-.extended-line {
-    position: absolute;
-    top: 0;
-    width: 2px;
-    background-color: $colorBodyFg; /* Use desired color */
+    &__extended-line {
+        opacity: 0.3;
+        position: absolute;
+        top: 20px; // Offset down to line up with time axis ticks line
+        width: 2px;
+        background-color: $colorEventLine; //$colorBodyFg; /* Use desired color */
+    }
 }
