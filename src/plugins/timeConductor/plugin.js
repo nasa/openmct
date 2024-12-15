@@ -140,9 +140,6 @@ export default function (config) {
       }
     }
 
-    openmct.time.setMode(defaultMode, defaultClock ? clockOffsets : defaultBounds);
-    openmct.time.setTimeSystem(defaults.timeSystem, defaultBounds);
-
     //We are going to set the clockOffsets in fixed time mode since the conductor components down the line need these
     if (clockOffsets && defaultMode === FIXED_MODE_KEY) {
       openmct.time.setClockOffsets(clockOffsets);
@@ -151,6 +148,8 @@ export default function (config) {
     if (defaultBounds && defaultMode === REALTIME_MODE_KEY) {
       openmct.time.setBounds(clockOffsets);
     }
+    openmct.time.setMode(defaultMode, defaultClock ? clockOffsets : defaultBounds);
+    openmct.time.setTimeSystem(defaults.timeSystem, defaultBounds);
 
     openmct.on('start', function () {
       mountComponent(openmct, config);
