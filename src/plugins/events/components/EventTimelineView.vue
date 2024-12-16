@@ -64,7 +64,8 @@ export default {
       eventHistory: [],
       timeSystem: timeSystem,
       extendLines: false,
-      titleKey: null
+      titleKey: null,
+      tooltip: null
     };
   },
   watch: {
@@ -420,7 +421,13 @@ export default {
       eventTickElement.style.width = '2px';
       eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
       if (this.titleKey) {
-        eventTickElement.title = event[this.titleKey];
+        const textToShow = event[this.titleKey];
+        eventWrapper.addEventListener('mouseover', () => {
+          this.showToolTip(textToShow, eventTickElement);
+        });
+        eventWrapper.addEventListener('mouseleave', () => {
+          this.tooltip?.destroy();
+        });
       }
       eventWrapper.appendChild(eventTickElement);
       const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
@@ -452,6 +459,13 @@ export default {
           keyString: this.keyString
         });
       }
+    },
+    showToolTip(textToShow, referenceElement) {
+      this.tooltip = this.openmct.tooltips.tooltip({
+        toolTipText: textToShow,
+        toolTipLocation: this.openmct.tooltips.TOOLTIP_LOCATIONS.RIGHT,
+        parentElement: referenceElement
+      });
     }
   }
 };
