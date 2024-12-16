@@ -21,7 +21,11 @@
 -->
 
 <template>
-  <div ref="events" class="c-events-tsv c-timeline-holder c-events-tsv__contents" />
+  <div
+    ref="events"
+    class="c-events-tsv c-timeline-holder c-events-tsv__contents"
+    :style="{ left: leftOffset + 'px' }"
+  />
 </template>
 
 <script>
@@ -69,6 +73,11 @@ export default {
       tooltip: null,
       selectedEvent: null
     };
+  },
+  computed: {
+    leftOffset() {
+      return this.alignmentData.leftWidth + AXES_PADDING;
+    }
   },
   watch: {
     eventHistory: {
@@ -365,7 +374,7 @@ export default {
       }
     },
     updateExistingEventWrapper(existingEventWrapper, event) {
-      existingEventWrapper.style.left = `${this.xScale(event.time) + this.alignmentData.leftWidth + AXES_PADDING}px`;
+      existingEventWrapper.style.left = `${this.xScale(event.time)}px`;
     },
     createPathSelection() {
       const selection = [];
@@ -421,7 +430,7 @@ export default {
       eventWrapper.ariaLabel = id;
       eventWrapper.setAttribute('id', id);
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
-      eventWrapper.style.left = `${this.xScale(event.time) + this.alignmentData.leftWidth + AXES_PADDING}px`;
+      eventWrapper.style.left = `${this.xScale(event.time)}px`;
       const eventTickElement = document.createElement('div');
       eventTickElement.classList.add('c-events-tsv__event-handle');
       eventTickElement.style.width = '2px';
