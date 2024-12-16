@@ -49,7 +49,7 @@
     <ExtendedLinesOverlay
       :extended-lines-per-key="extendedLinesPerKey"
       :height="height"
-      :left-offset="extendedLeftOffset"
+      :left-offset="extendedLinesLeftOffset"
     />
   </div>
 </template>
@@ -63,7 +63,7 @@ import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
-import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue'; // Import the overlay component
+import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue';
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
@@ -103,14 +103,13 @@ export default {
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions,
       extendedLinesPerKey: {},
-      additionalLeftOffset: 0,
-      extendedLeftOffset: 0
+      extendedLinesLeftOffset: 0
     };
   },
   watch: {
     alignmentData: {
       handler() {
-        this.extendedLeftOffset = this.alignmentData.leftWidth + this.additionalLeftOffset;
+        this.calculateExtendedLinesLeftOffset();
       },
       deep: true
     }
@@ -125,7 +124,7 @@ export default {
     this.contentResizeObserver.disconnect();
     this.extendedLinesBus.off('update-extended-lines', this.updateExtendedLines);
   },
-  async mounted() {
+  mounted() {
     this.items = [];
     this.setTimeContext();
 
@@ -141,8 +140,6 @@ export default {
     this.handleContentResize = _.debounce(this.handleContentResize, 500);
     this.contentResizeObserver = new ResizeObserver(this.handleContentResize);
     this.contentResizeObserver.observe(this.$refs.timelineHolder);
-    await this.$nextTick();
-    this.calculateAdditionalLeftOffset();
   },
   methods: {
     addItem(domainObject) {
@@ -195,6 +192,7 @@ export default {
       if (this.height !== clientHeight) {
         this.height = clientHeight;
       }
+      this.calculateExtendedLinesLeftOffset();
     },
     getClientHeight() {
       let clientHeight = this.$refs.timelineHolder.getBoundingClientRect().height;
@@ -256,15 +254,21 @@ export default {
     updateExtendedLines({ keyString, lines }) {
       this.extendedLinesPerKey[keyString] = lines;
     },
-    calculateAdditionalLeftOffset() {
+    calculateExtendedLinesLeftOffset() {
+      const swimLaneOffset = this.calculateSwimlaneOffset();
+      this.extendedLinesLeftOffset = this.alignmentData.leftWidth + swimLaneOffset;
+    },
+    calculateSwimlaneOffset() {
       const firstSwimLane = this.$el.querySelector('.c-swimlane__lane-object');
       if (firstSwimLane) {
         const timelineHolderRect = this.$refs.timelineHolder.getBoundingClientRect();
         const laneObjectRect = firstSwimLane.getBoundingClientRect();
         const offset = laneObjectRect.left - timelineHolderRect.left;
-        this.additionalLeftOffset = offset + AXES_PADDING;
+        const swimLaneOffset = offset + AXES_PADDING;
+        return swimLaneOffset;
+      } else {
+        return 0;
       }
-      console.debug('🤖 additionalLeftOffset:', this.additionalLeftOffset);
     }
   }
 };
