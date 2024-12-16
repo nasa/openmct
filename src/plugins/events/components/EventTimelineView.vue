@@ -21,9 +21,7 @@
 -->
 
 <template>
-  <div ref="events" class="c-events-tsv c-timeline-holder">
-    <div ref="eventsHolder" class="c-events-tsv__contents u-contents"></div>
-  </div>
+  <div ref="events" class="c-events-tsv c-timeline-holder c-events-tsv__contents" />
 </template>
 
 <script>
@@ -138,14 +136,12 @@ export default {
     },
     enableExtendEventLines(keyStringToEnable) {
       if (this.keyString === keyStringToEnable) {
-        console.debug('🚄 enabling extending event lines');
         this.extendLines = true;
         this.emitExtendedLines();
       }
     },
     disableExtendEventLines(keyStringToDisable) {
       if (this.keyString === keyStringToDisable) {
-        console.debug('🚄 disabling extended event lines');
         this.extendLines = false;
         // emit an empty array to clear the lines
         this.emitExtendedLines();
@@ -308,7 +304,7 @@ export default {
 
         this.destroyEventsContainer = destroy;
         const component = vNode.componentInstance;
-        this.$refs.eventsHolder.appendChild(component.$el);
+        this.$refs.events.appendChild(component.$el);
 
         eventContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
         eventContainer.style.maxWidth = `${containerWidth}px`;

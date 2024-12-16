@@ -103,7 +103,8 @@ export default {
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions,
       extendedLinesPerKey: {},
-      additionalLeftOffset: 0
+      additionalLeftOffset: 0,
+      extendedLeftOffset: 0
     };
   },
   watch: {
