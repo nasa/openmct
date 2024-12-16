@@ -481,7 +481,8 @@ export default {
       this.tooltip = this.openmct.tooltips.tooltip({
         toolTipText: textToShow,
         toolTipLocation: this.openmct.tooltips.TOOLTIP_LOCATIONS.RIGHT,
-        parentElement: referenceElement
+        parentElement: referenceElement,
+        cssClasses: ['c-timeline-event-tooltip']
       });
     },
     checkIfOurEvent(keyString) {

@@ -83,7 +83,7 @@ class TooltipAPI {
    */
 
   /**
-   * Tooltips take an options object that consists of the string, tooltipLocation, and parentElement
+   * Tooltips take an options object that consists of the string, tooltipLocation, a parentElement, and an array of cssClasses
    * @param {TooltipOptions} options
    */
   tooltip(options) {
