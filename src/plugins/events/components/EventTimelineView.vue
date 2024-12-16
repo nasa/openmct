@@ -295,7 +295,11 @@ export default {
                 isNested: true
               };
             },
-            template: `<swim-lane :is-nested="isNested" :hide-label="true"><template v-slot:object><div class="c-events-tsv-container"></div></template></swim-lane>`
+            template: `<swim-lane :is-nested="isNested" :hide-label="true">
+                        <template v-slot:object>
+                          <div class="c-events-tsv-container"/>
+                        </template>
+                       </swim-lane>`
           },
           {
             app: this.openmct.app
@@ -411,7 +415,6 @@ export default {
       eventWrapper.setAttribute('id', id);
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
       eventWrapper.style.left = `${this.xScale(event.time) + this.alignmentData.leftWidth + AXES_PADDING}px`;
-
       const eventTickElement = document.createElement('div');
       eventTickElement.classList.add('c-events-tsv__event-handle');
       eventTickElement.style.width = '2px';

@@ -11,8 +11,14 @@
   position: absolute;
   top: 0;
   left: 0;
-  pointer-events: none; /* Allows clicks to pass through */
-  z-index: 10; /* Ensure it sits atop swimlanes */
+  z-index: 10;
+}
+
+.extended-lines-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 }
 
 .extended-line {
@@ -20,4 +26,9 @@
   top: 0;
   width: 2px;
   background-color: $colorBodyFg; /* Use desired color */
+}
+
+
+.extended-line-hovered {
+  background-color: green;
 }

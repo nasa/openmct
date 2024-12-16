@@ -27,8 +27,10 @@
         v-for="(line, index) in lines"
         :key="index"
         class="extended-line"
-        :class="line.limitClass"
+        :class="[line.limitClass, { 'extended-line-hovered': isHovered(key, index) }]"
         :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
+        @mouseover="startingHover(key, index)"
+        @mouseleave="startingHover(null, null)"
       ></div>
     </div>
   </div>
@@ -50,25 +52,26 @@ export default {
       type: Number,
       default: 0
     }
+  },
+  data() {
+    return {
+      hoveredLine: {
+        key: null,
+        index: null
+      }
+    };
+  },
+  methods: {
+    startingHover(key, index) {
+      if (key === null && index === null) {
+        this.hoveredLine = { key: null, index: null };
+      } else {
+        this.hoveredLine = { key, index };
+      }
+    },
+    isHovered(key, index) {
+      return this.hoveredLine.key === key && this.hoveredLine.index === index;
+    }
   }
 };
 </script>
-
-<style scoped>
-.extended-lines-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.extended-line {
-  position: absolute;
-  top: 0;
-  width: 2px;
-  background-color: blue;
-}
-</style>
