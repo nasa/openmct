@@ -21,9 +21,9 @@
 -->
 <template>
   <div ref="axisHolder" class="c-timesystem-axis">
-    <div class="nowMarker" :style="nowMarkerStyle"><span class="icon-arrow-down"></span></div>
+    <div class="c-timesystem-axis__mb-line" :style="nowMarkerStyle"></div>
     <svg :width="svgWidth" :height="svgHeight">
-      <g class="axis" font-size="1.3em" :transform="axisTransform"></g>
+      <g class="axis" :transform="axisTransform"></g>
     </svg>
   </div>
 </template>
@@ -44,6 +44,7 @@ import { useResizeObserver } from '../composables/resize';
 const PADDING = 1;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
+const TIME_AXIS_LINE_Y = 20;
 
 export default {
   inject: ['openmct', 'domainObject', 'path'],
@@ -78,7 +79,7 @@ export default {
     const { size: containerSize, startObserving } = useResizeObserver();
     const svgWidth = ref(0);
     const svgHeight = ref(0);
-    const axisTransform = ref('translate(0,20)');
+    const axisTransform = ref(`translate(0,${TIME_AXIS_LINE_Y})`);
     const alignmentOffset = ref(0);
     const nowMarkerStyle = reactive({
       height: '0px',
@@ -113,7 +114,7 @@ export default {
         if (this.alignmentData.leftWidth) {
           leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
         }
-        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, 20)`;
+        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, ${TIME_AXIS_LINE_Y})`;
 
         const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
         this.alignmentOffset =
@@ -169,10 +170,12 @@ export default {
       this.updateNowMarker();
     },
     updateNowMarker() {
-      const nowMarker = this.$el.querySelector('.nowMarker');
+      const nowMarker = this.$el.querySelector('.c-timesystem-axis__mb-line');
       if (nowMarker) {
         nowMarker.classList.remove('hidden');
-        this.nowMarkerStyle.height = this.contentHeight + 'px';
+        // const markerH = this.contentHeight - TIME_AXIS_LINE_Y;
+        this.nowMarkerStyle.height = this.contentHeight - TIME_AXIS_LINE_Y + 'px';
+        this.nowMarkerStyle.top = TIME_AXIS_LINE_Y + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
         this.nowMarkerStyle.left = `${now + this.alignmentOffset}px`;

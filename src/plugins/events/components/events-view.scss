@@ -1,34 +1,51 @@
 .c-events-tsv {
-    div.c-events-tsv__event-wrapper {
-      cursor: pointer;
-      position: absolute;
-      top: 0;
-      display: flex;
-      z-index: 1;
-      margin-top: 5px;
-      &:hover {
-        z-index: 2;
-  
-        [class*='__event-handle'] {
-          background-color: $colorBodyFg;
+    overflow: hidden;
+
+    &__event-wrapper {
+        // Wraps an individual event line
+        // Also holds the hover flyout element
+        $c: $colorEventLine;
+        $lineW: 2px;
+        $hitAreaW: 6px;
+        $m: $interiorMargin;
+        background-color: rgba($c, 0.6);
+        cursor: pointer;
+        position: absolute;
+        display: flex;
+        top: $m; bottom: $m;
+        width: $lineW;
+        z-index: 1;
+
+        &:before {
+            // Extend hit area
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0; bottom: 0;
+            z-index: 0;
+            width: $hitAreaW;
+            transform: translateX(($hitAreaW - $lineW) * -0.5);
         }
-      }
+
+        &:hover {
+            z-index: 2;
+            background-color: $c;
+
+            &:before {
+                background-color: rgba($c, 0.4);
+            }
+        }
     }
-  
+
     &__no-items {
-      fill: $colorBodyFg !important;
+        fill: $colorBodyFg !important;
     }
-  
-    &__event-handle {
-      background-color: rgba($colorBodyFg, 0.5);
-    }
-  }
-  
-  .c-events-canvas {
-    pointer-events: auto; // This allows the event element to receive a browser-level context click
+}
+
+.c-events-canvas {
+    pointer-events: auto;
     position: absolute;
     left: 0;
     top: 0;
     z-index: 2;
-  }
-  
+}

@@ -19,15 +19,18 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-
 <template>
-  <div class="extended-lines-overlay">
-    <div v-for="(lines, key) in extendedLinesPerKey" :key="key" class="extended-line-container">
+  <div class="c-timeline__overlay-lines">
+    <div
+      v-for="(lines, key) in extendedLinesPerKey"
+      :key="key"
+      class="c-timeline__extended-line-container"
+    >
       <div
         v-for="(line, index) in lines"
         :key="index"
-        class="extended-line"
-        :class="[line.limitClass, { 'extended-line-hovered': isHovered(key, index) }]"
+        class="c-timeline__extended-line"
+        :class="[line.limitClass, { 'c-timeline__extended-line-hovered': isHovered(key, index) }]"
         :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
         @mouseover="startingHover(key, index)"
         @mouseleave="startingHover(null, null)"

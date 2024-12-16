@@ -481,6 +481,8 @@ $colorInProgressBg: #b1e8ff;
 $colorInProgressFg: $colorCurrentFg;
 $colorInProgressFgEm: $colorCurrentFgEm;
 $colorGanttSelectedBorder: #fff;
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
 
 // Tree
 $colorTreeBg: transparent;

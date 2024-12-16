@@ -34,10 +34,6 @@
       :class="[swimlaneClass, statusClass]"
       :style="gridRowSpan"
     >
-      <div class="c-object-label__name">
-        <slot name="label"></slot>
-      </div>
-
       <div v-if="iconClass" class="c-object-label__type-icon" :class="iconClass">
         <span
           v-if="status"
@@ -46,7 +42,10 @@
           :title="`This item is ${status}`"
         ></span>
       </div>
-      <div class="c-notebook__toggle-nav-button c-icon-button c-icon-button--major">
+      <div class="c-object-label__name">
+        <slot name="label"></slot>
+      </div>
+      <div class="c-icon-button c-icon-button--major">
         <button
           v-if="!hideButton"
           class="c-button"
