@@ -40,6 +40,7 @@ const ROW_HEIGHT = 100;
 const CONTAINER_CLASS = 'c-events-tsv-container';
 const NO_ITEMS_CLASS = 'c-events-tsv__no-items';
 const EVENT_WRAPPER_CLASS = 'c-events-tsv__event-wrapper';
+const EVENT_SELECTED_CLASS = '.c-event-selected';
 const ID_PREFIX = 'wrapper-';
 const AXES_PADDING = 20;
 
@@ -65,7 +66,8 @@ export default {
       timeSystem: timeSystem,
       extendLines: false,
       titleKey: null,
-      tooltip: null
+      tooltip: null,
+      selectedEvent: null
     };
   },
   watch: {
@@ -111,6 +113,9 @@ export default {
     this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     this.extendedLinesBus.on('disable-extended-lines', this.disableExtendEventLines);
     this.extendedLinesBus.on('enable-extended-lines', this.enableExtendEventLines);
+    this.extendedLinesBus.on('event-clicked', this.checkIfOurEvent);
+
+    document.addEventListener('click', this.checkIfOutsideClick);
   },
   beforeUnmount() {
     if (this.eventStripResizeObserver) {
@@ -127,6 +132,9 @@ export default {
 
     this.extendedLinesBus.off('disable-extended-lines', this.disableExtendEventLines);
     this.extendedLinesBus.off('enable-extended-lines', this.enableExtendEventLines);
+    this.extendedLinesBus.off('event-clicked', this.checkIfOurEvent);
+
+    document.removeEventListener('click', this.checkIfOutsideClick);
   },
   methods: {
     setTimeContext() {
@@ -320,12 +328,10 @@ export default {
     },
     drawEvents() {
       let eventContainer = this.getEventsContainer();
-      let index = 0;
       if (this.eventHistory.length) {
         this.eventHistory.forEach((currentEventObject) => {
           if (this.isEventInBounds(currentEventObject)) {
-            this.plotEvents(currentEventObject, eventContainer, index);
-            index = index + 1;
+            this.plotEvents(currentEventObject, eventContainer);
           }
         });
       } else {
@@ -344,13 +350,13 @@ export default {
 
       return this.$el.querySelector(`.c-events-tsv__contents div[id=${id}]`);
     },
-    plotEvents(item, containerElement, index) {
+    plotEvents(item, containerElement) {
       const existingEventWrapper = this.getEventWrapper(item);
       // eventWrapper wraps the vertical tick and the EVENT
       if (existingEventWrapper) {
         this.updateExistingEventWrapper(existingEventWrapper, item);
       } else {
-        const eventWrapper = this.createEventWrapper(index, item);
+        const eventWrapper = this.createEventWrapper(item);
         containerElement.appendChild(eventWrapper);
       }
 
@@ -369,7 +375,7 @@ export default {
           item: this.domainObject
         }
       });
-      this.objectPath.forEach((pathObject, index) => {
+      this.objectPath.forEach((pathObject) => {
         selection.push({
           element: this.openmct.layout.$refs.browseObject.$el,
           context: {
@@ -409,7 +415,7 @@ export default {
       }
       this.openmct.selection.select(selection, true);
     },
-    createEventWrapper(index, event) {
+    createEventWrapper(event) {
       const id = `${ID_PREFIX}${event.time}`;
       const eventWrapper = document.createElement('div');
       eventWrapper.ariaLabel = id;
@@ -440,6 +446,8 @@ export default {
       eventWrapper.addEventListener('click', (mouseEvent) => {
         mouseEvent.stopPropagation();
         this.createSelectionForInspector(event);
+        this.toggleEventSelection(eventTickElement);
+        this.extendedLinesBus.eventClicked(this.keyString);
       });
 
       return eventWrapper;
@@ -466,6 +474,27 @@ export default {
         toolTipLocation: this.openmct.tooltips.TOOLTIP_LOCATIONS.RIGHT,
         parentElement: referenceElement
       });
+    },
+    checkIfOurEvent(keyString) {
+      if (this.keyString !== keyString) {
+        this.selectedEvent?.classList.remove(EVENT_SELECTED_CLASS);
+        this.selectedEvent = null;
+      }
+    },
+    toggleEventSelection(clickedEvent) {
+      this.selectedEvent?.classList.remove(EVENT_SELECTED_CLASS);
+      clickedEvent.classList.add(EVENT_SELECTED_CLASS);
+      this.selectedEvent = clickedEvent;
+    },
+    checkIfOutsideClick(event) {
+      if (
+        this.selectedEvent &&
+        !this.selectedEvent.contains(event.target) &&
+        !this.$refs.events.contains(event.target)
+      ) {
+        this.selectedEvent.classList.remove(EVENT_SELECTED_CLASS);
+        this.selectedEvent = null;
+      }
     }
   }
 };
