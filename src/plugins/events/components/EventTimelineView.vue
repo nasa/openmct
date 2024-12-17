@@ -417,7 +417,6 @@ export default {
     createEventWrapper(event) {
       const id = `${ID_PREFIX}${event.time}`;
       const eventWrapper = document.createElement('div');
-      eventWrapper.ariaLabel = id;
       eventWrapper.setAttribute('id', id);
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
       eventWrapper.style.left = `${this.xScale(event.time)}px`;
@@ -425,6 +424,7 @@ export default {
       eventTickElement.classList.add('c-events-tsv__event-handle');
       if (this.titleKey) {
         const textToShow = event[this.titleKey];
+        eventWrapper.ariaLabel = textToShow;
         eventWrapper.addEventListener('mouseover', () => {
           this.showToolTip(textToShow, eventTickElement);
         });
