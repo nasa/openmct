@@ -41,8 +41,11 @@ export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
     key: type,
     name: 'Event Timeline View',
     cssClass: 'icon-event',
+    priority: function () {
+      return 6000; // big number!
+    },
     canView: function (domainObject, objectPath) {
-      let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
+      const isChildOfTimeStrip = objectPath.some((object) => object.type === 'time-strip');
 
       return (
         hasEventTelemetry(domainObject) &&
