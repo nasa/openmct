@@ -24,6 +24,7 @@
  * Module defining EventTelemetryProvider. Created by chacskaylo on 06/18/2015.
  */
 
+import { SEVERITY_CSS } from './EventLimitProvider.js';
 import messages from './transcript.json';
 
 class EventTelemetryProvider {
@@ -37,11 +38,15 @@ class EventTelemetryProvider {
     const utc = startTime + count + randomFewSeconds * duration;
     const ind = count % messages.length;
     const message = messages[ind] + ' - [' + millisecondsSinceStart + ']';
+    // pick a random severity level + 1 for an undefined level so we can do nominal
+    const severity =
+      Object.keys(SEVERITY_CSS)[Math.floor(Math.random() * Object.keys(SEVERITY_CSS).length + 1)];
 
     return {
       name,
       utc,
-      message
+      message,
+      severity
     };
   }
 
