@@ -37,6 +37,8 @@
             transform: translateX(($hitAreaW - $lineW) * -0.5);
         }
 
+        &.is-selected, // TODO: temp, remove this once we set selection correctly
+        &[s-selected],
         &:hover {
             z-index: 2;
             background-color: $c;

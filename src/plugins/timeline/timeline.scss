@@ -47,15 +47,14 @@
     &__overlay-lines {
         //background: rgba(deeppink, 0.2);
         @include abs();
+        top: 20px; // Offset down to line up with time axis ticks line
         pointer-events: none; // Allows clicks to pass through
         z-index: 10; // Ensure it sits atop swimlanes
     }
 
     &__extended-line {
         position: absolute;
-        top: 20px; // Offset down to line up with time axis ticks line
         width: $eventLineW;
-        pointer-events: auto; // TODO: don't think we want this, extended lines shouldn't be accepting pointer events
         background-color: $colorEventLineExtended;
     }
 
