@@ -39,7 +39,6 @@ const PADDING = 1;
 const CONTAINER_CLASS = 'c-events-tsv__container';
 const NO_ITEMS_CLASS = 'c-events-tsv__no-items';
 const EVENT_WRAPPER_CLASS = 'c-events-tsv__event-wrapper';
-const EVENT_SELECTED_CLASS = 'is-selected';
 const ID_PREFIX = 'wrapper-';
 const AXES_PADDING = 20;
 
@@ -117,9 +116,6 @@ export default {
     this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     this.extendedLinesBus.on('disable-extended-lines', this.disableExtendEventLines);
     this.extendedLinesBus.on('enable-extended-lines', this.enableExtendEventLines);
-    this.extendedLinesBus.on('event-clicked', this.checkIfOurEvent);
-
-    document.addEventListener('click', this.checkIfOutsideClick);
   },
   beforeUnmount() {
     if (this.eventStripResizeObserver) {
@@ -136,9 +132,7 @@ export default {
 
     this.extendedLinesBus.off('disable-extended-lines', this.disableExtendEventLines);
     this.extendedLinesBus.off('enable-extended-lines', this.enableExtendEventLines);
-    this.extendedLinesBus.off('event-clicked', this.checkIfOurEvent);
-
-    document.removeEventListener('click', this.checkIfOutsideClick);
+    this.extendedLinesBus.off('event-hovered', this.checkIfOurEvent);
   },
   methods: {
     setTimeContext() {
@@ -366,10 +360,10 @@ export default {
     updateExistingEventWrapper(existingEventWrapper, event) {
       existingEventWrapper.style.left = `${this.xScale(event.time)}px`;
     },
-    createPathSelection() {
+    createPathSelection(eventWrapper) {
       const selection = [];
       selection.unshift({
-        element: this.$el,
+        element: eventWrapper,
         context: {
           item: this.domainObject
         }
@@ -385,13 +379,13 @@ export default {
 
       return selection;
     },
-    createSelectionForInspector(event) {
+    createSelectionForInspector(event, eventWrapper) {
       const eventContext = {
         type: 'time-strip-event-selection',
         event
       };
 
-      const selection = this.createPathSelection();
+      const selection = this.createPathSelection(eventWrapper);
       if (
         selection.length &&
         this.openmct.objects.areIdsEqual(
@@ -405,7 +399,7 @@ export default {
         };
       } else {
         selection.unshift({
-          element: this.$el,
+          element: eventWrapper,
           context: {
             item: this.domainObject,
             ...eventContext
@@ -427,9 +421,11 @@ export default {
         eventWrapper.ariaLabel = textToShow;
         eventWrapper.addEventListener('mouseover', () => {
           this.showToolTip(textToShow, eventTickElement);
+          this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, event.time);
         });
         eventWrapper.addEventListener('mouseleave', () => {
           this.tooltip?.destroy();
+          this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, null);
         });
       }
       eventWrapper.appendChild(eventTickElement);
@@ -442,9 +438,7 @@ export default {
 
       eventWrapper.addEventListener('click', (mouseEvent) => {
         mouseEvent.stopPropagation();
-        this.createSelectionForInspector(event);
-        this.toggleEventSelection(eventTickElement);
-        this.extendedLinesBus.eventClicked(this.keyString);
+        this.createSelectionForInspector(event, eventWrapper);
       });
 
       return eventWrapper;
@@ -453,7 +447,7 @@ export default {
       if (this.extendLines) {
         const lines = this.eventHistory
           .filter((e) => this.isEventInBounds(e))
-          .map((e) => ({ x: this.xScale(e.time), limitClass: e.limitClass }));
+          .map((e) => ({ x: this.xScale(e.time), limitClass: e.limitClass, id: e.time }));
         this.extendedLinesBus.emit('update-extended-lines', {
           lines,
           keyString: this.keyString
@@ -472,27 +466,6 @@ export default {
         parentElement: referenceElement,
         cssClasses: ['c-timeline-event-tooltip']
       });
-    },
-    checkIfOurEvent(keyString) {
-      if (this.keyString !== keyString) {
-        this.selectedEvent?.classList.remove(EVENT_SELECTED_CLASS);
-        this.selectedEvent = null;
-      }
-    },
-    toggleEventSelection(clickedEvent) {
-      this.selectedEvent?.classList.remove(EVENT_SELECTED_CLASS);
-      clickedEvent.classList.add(EVENT_SELECTED_CLASS);
-      this.selectedEvent = clickedEvent;
-    },
-    checkIfOutsideClick(event) {
-      if (
-        this.selectedEvent &&
-        !this.selectedEvent.contains(event.target) &&
-        !this.$refs.events.contains(event.target)
-      ) {
-        this.selectedEvent.classList.remove(EVENT_SELECTED_CLASS);
-        this.selectedEvent = null;
-      }
     }
   }
 };

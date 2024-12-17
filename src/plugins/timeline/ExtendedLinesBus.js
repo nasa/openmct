@@ -31,7 +31,7 @@ export default class ExtendedLinesBus extends EventEmitter {
   enableExtendEventLines(keyString) {
     this.emit('enable-extended-lines', keyString);
   }
-  eventClicked(keyString) {
-    this.emit('event-clicked', keyString);
+  updateHoverExtendEventLine(keyString, id) {
+    this.emit('update-extended-hover', { id, keyString });
   }
 }

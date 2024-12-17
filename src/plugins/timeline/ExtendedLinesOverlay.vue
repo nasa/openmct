@@ -28,12 +28,17 @@
     >
       <div
         v-for="(line, index) in lines"
+        :id="line.id"
         :key="index"
         class="c-timeline__extended-line"
-        :class="[line.limitClass, { 'c-timeline__extended-line-hovered': isHovered(key, index) }]"
+        :class="[
+          line.limitClass,
+          {
+            'c-timeline__extended-line-hovered':
+              hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId
+          }
+        ]"
         :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
-        @mouseover="startingHover(key, index)"
-        @mouseleave="startingHover(null, null)"
       ></div>
     </div>
   </div>
@@ -54,26 +59,18 @@ export default {
     leftOffset: {
       type: Number,
       default: 0
+    },
+    extendedLineHover: {
+      type: Object,
+      required: true
     }
   },
-  data() {
-    return {
-      hoveredLine: {
-        key: null,
-        index: null
-      }
-    };
-  },
-  methods: {
-    startingHover(key, index) {
-      if (key === null && index === null) {
-        this.hoveredLine = { key: null, index: null };
-      } else {
-        this.hoveredLine = { key, index };
-      }
+  computed: {
+    hoveredLineId() {
+      return this.extendedLineHover.id || null;
     },
-    isHovered(key, index) {
-      return this.hoveredLine.key === key && this.hoveredLine.index === index;
+    hoveredKeyString() {
+      return this.extendedLineHover.keyString || null;
     }
   }
 };

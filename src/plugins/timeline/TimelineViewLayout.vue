@@ -50,6 +50,7 @@
       :extended-lines-per-key="extendedLinesPerKey"
       :height="height"
       :left-offset="extendedLinesLeftOffset"
+      :extended-line-hover="extendedLineHover"
     />
   </div>
 </template>
@@ -103,6 +104,7 @@ export default {
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions,
       extendedLinesPerKey: {},
+      extendedLineHover: {},
       extendedLinesLeftOffset: 0
     };
   },
@@ -123,12 +125,14 @@ export default {
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
     this.extendedLinesBus.off('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.off('update-extended-hover', this.updateExtendedHover);
   },
   mounted() {
     this.items = [];
     this.setTimeContext();
 
     this.extendedLinesBus.on('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.on('update-extended-hover', this.updateExtendedHover);
 
     if (this.composition) {
       this.composition.on('add', this.addItem);
@@ -253,6 +257,9 @@ export default {
     },
     updateExtendedLines({ keyString, lines }) {
       this.extendedLinesPerKey[keyString] = lines;
+    },
+    updateExtendedHover({ keyString, id }) {
+      this.extendedLineHover = { keyString, id };
     },
     calculateExtendedLinesLeftOffset() {
       const swimLaneOffset = this.calculateSwimlaneOffset();
