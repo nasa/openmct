@@ -24,7 +24,7 @@
   display: grid;
   grid-template-columns: 100px 100px 1fr;
   grid-column-gap: 1px;
-  grid-row-gap: 1px; // Is this being used?
+  grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
   width: 100%;
 
   &.is-status--draft {
@@ -43,6 +43,7 @@
 
   &__lane-object {
     background: rgba(black, 0.1);
+    height: 100%;
 
     .c-plan {
       display: contents;

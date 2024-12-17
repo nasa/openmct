@@ -1,13 +1,23 @@
 .c-events-tsv {
+    $m: $interiorMargin;
     overflow: hidden;
+    @include abs();
+
+    &__container {
+        // Holds event lines
+        background: $colorPlotBg;
+        box-shadow: inset $colorPlotAreaBorder 0 0 0 1px; // Using box-shadow instead of border to not affect box size
+        position: absolute;
+        top: $m; right: 0; bottom: $m; left: 0;
+    }
 
     &__event-wrapper {
         // Wraps an individual event line
         // Also holds the hover flyout element
         $c: $colorEventLine;
-        $lineW: 2px;
-        $hitAreaW: 6px;
-        $m: $interiorMargin;
+        $lineW: $eventLineW;
+        $hitAreaW: 7px;
+        $m: $interiorMarginSm;
         background-color: rgba($c, 0.6);
         cursor: pointer;
         position: absolute;
@@ -38,7 +48,10 @@
     }
 
     &__no-items {
-        fill: $colorBodyFg !important;
+        position: absolute;
+        left: $interiorMargin;
+        top: 50%;
+        transform: translateY(-50%);
     }
 }
 

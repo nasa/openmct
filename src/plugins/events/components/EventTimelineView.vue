@@ -21,11 +21,7 @@
 -->
 
 <template>
-  <div
-    ref="events"
-    class="c-events-tsv c-timeline-holder c-events-tsv__contents"
-    :style="{ left: leftOffset + 'px' }"
-  />
+  <div ref="events" class="c-events-tsv js-events-tsv" :style="{ left: leftOffset + 'px' }" />
 </template>
 
 <script>
@@ -40,11 +36,10 @@ import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 import eventData from '../mixins/eventData.js';
 
 const PADDING = 1;
-const ROW_HEIGHT = 100;
-const CONTAINER_CLASS = 'c-events-tsv-container';
+const CONTAINER_CLASS = 'c-events-tsv__container';
 const NO_ITEMS_CLASS = 'c-events-tsv__no-items';
 const EVENT_WRAPPER_CLASS = 'c-events-tsv__event-wrapper';
-const EVENT_SELECTED_CLASS = '.c-event-selected';
+const EVENT_SELECTED_CLASS = 'is-selected';
 const ID_PREFIX = 'wrapper-';
 const AXES_PADDING = 20;
 
@@ -295,7 +290,7 @@ export default {
       let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
       if (existingContainer) {
         eventContainer = existingContainer;
-        eventContainer.style.maxWidth = `${containerWidth}px`;
+        // eventContainer.style.maxWidth = `${containerWidth}px`;
       } else {
         if (this.destroyEventsContainer) {
           this.destroyEventsContainer();
@@ -315,7 +310,7 @@ export default {
             },
             template: `<swim-lane :is-nested="isNested" :hide-label="true">
                         <template v-slot:object>
-                          <div class="c-events-tsv-container"/>
+                          <div class="c-events-tsv__container"/>
                         </template>
                        </swim-lane>`
           },
@@ -329,8 +324,8 @@ export default {
         this.$refs.events.appendChild(component.$el);
 
         eventContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
-        eventContainer.style.maxWidth = `${containerWidth}px`;
-        eventContainer.style.height = `${containerHeight}px`;
+        // eventContainer.style.maxWidth = `${containerWidth}px`;
+        // eventContainer.style.height = `${containerHeight}px`;
       }
 
       return eventContainer;
@@ -348,7 +343,7 @@ export default {
       }
     },
     plotNoItems(containerElement) {
-      const textElement = document.createElement('text');
+      const textElement = document.createElement('div');
       textElement.classList.add(NO_ITEMS_CLASS);
       textElement.innerHTML = 'No events within timeframe';
 
@@ -357,7 +352,7 @@ export default {
     getEventWrapper(item) {
       const id = `${ID_PREFIX}${item.time}`;
 
-      return this.$el.querySelector(`.c-events-tsv__contents div[id=${id}]`);
+      return this.$el.querySelector(`.js-events-tsv div[id=${id}]`);
     },
     plotEvents(item, containerElement) {
       const existingEventWrapper = this.getEventWrapper(item);
@@ -433,8 +428,6 @@ export default {
       eventWrapper.style.left = `${this.xScale(event.time)}px`;
       const eventTickElement = document.createElement('div');
       eventTickElement.classList.add('c-events-tsv__event-handle');
-      eventTickElement.style.width = '2px';
-      eventTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
       if (this.titleKey) {
         const textToShow = event[this.titleKey];
         eventWrapper.addEventListener('mouseover', () => {
@@ -492,6 +485,7 @@ export default {
       }
     },
     toggleEventSelection(clickedEvent) {
+      console.log(clickedEvent);
       this.selectedEvent?.classList.remove(EVENT_SELECTED_CLASS);
       clickedEvent.classList.add(EVENT_SELECTED_CLASS);
       this.selectedEvent = clickedEvent;
