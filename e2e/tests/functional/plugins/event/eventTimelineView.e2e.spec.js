@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { createDomainObjectWithDefaults, setTimeConductorBounds } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Event Timeline View', () => {
   let eventTimelineView;
+  let eventGenerator1;
 
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -38,7 +39,7 @@ test.describe('Event Timeline View', () => {
       parent: eventTimelineView.uuid
     });
 
-    await createDomainObjectWithDefaults(page, {
+    eventGenerator1 = await createDomainObjectWithDefaults(page, {
       type: 'Event Message Generator',
       parent: eventTimelineView.uuid
     });
@@ -47,16 +48,64 @@ test.describe('Event Timeline View', () => {
       type: 'Event Message Generator with Acknowledge',
       parent: eventTimelineView.uuid
     });
+
+    await setTimeConductorBounds(page, {
+      startDate: '2024-01-01',
+      endDate: '2024-01-01',
+      startTime: '01:01:00',
+      endTime: '01:04:00'
+    });
   });
 
-  test('Ensure we can build a Time Strip', async ({ page }) => {
+  test('Ensure we can build a Time Strip with event', async ({ page }) => {
     await page.goto(eventTimelineView.url);
+
+    // click on an event
     await page
       .getByLabel(eventTimelineView.name)
       .getByLabel(/PROGRAM ALARM/)
       .click();
 
-    await page.getByText('Event', { exact: true }).click({ force: true });
-    await expect(page.getByText('LMP: 350 feet, down at 4. - [')).toBeVisible();
+    // click on the event inspector tab
+    await page.getByRole('tab', { name: 'Event' }).click();
+
+    // ensure the event inspector has the the same event
+    await expect(page.getByText(/PROGRAM ALARM/)).toBeVisible();
+
+    // count the event lines
+    const eventWrappersContainer = page.locator('.c-events-tsv__container');
+    const eventWrappers = eventWrappersContainer.locator('.c-events-tsv__event-wrapper');
+    const expectedEventWrappersCount = 25;
+    await expect(eventWrappers).toHaveCount(expectedEventWrappersCount);
+
+    // click on another event
+    await page
+      .getByLabel(eventTimelineView.name)
+      .getByLabel(/pegged/)
+      .click();
+
+    // ensure the tooltip shows up
+    await expect(
+      page.getByRole('tooltip').getByText(/pegged on horizontal velocity/)
+    ).toBeVisible();
+
+    // and that event appears in the inspector
+    await expect(
+      page.getByLabel('Inspector Views').getByText(/pegged on horizontal velocity/)
+    ).toBeVisible();
+
+    // turn on extended lines
+    await page
+      .getByLabel(eventTimelineView.name)
+      .getByRole('button', {
+        name: `Toggle extended event lines overlay for ${eventGenerator1.name}`
+      })
+      .click();
+
+    // count the extended lines
+    const overlayLinesContainer = page.locator('.c-timeline__overlay-lines');
+    const extendedLines = overlayLinesContainer.locator('.c-timeline__extended-line');
+    const expectedCount = 25;
+    await expect(extendedLines).toHaveCount(expectedCount);
   });
 });

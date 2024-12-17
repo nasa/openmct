@@ -51,6 +51,7 @@
           class="c-button"
           :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
           :title="buttonTitle"
+          :aria-label="buttonTitle"
           @click="pressOnButton"
         />
       </div>

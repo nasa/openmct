@@ -28,7 +28,7 @@
     :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
     :domain-object="item.domainObject"
-    button-title="Toggle extended event lines overlay"
+    :button-title="`Toggle extended event lines overlay for ${item.domainObject.name}`"
     button-icon="icon-arrows-up-down"
     :hide-button="!hasEventTelemetry()"
     :button-click-on="enableExtendEventLines"
