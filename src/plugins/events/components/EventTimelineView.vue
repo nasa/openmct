@@ -351,7 +351,7 @@ export default {
     },
     plotEvents(item, containerElement) {
       const existingEventWrapper = this.getEventWrapper(item);
-      // eventWrapper wraps the vertical tick and the EVENT
+      // eventWrapper IS NOW the vertical tick and the EVENT
       if (existingEventWrapper) {
         this.updateExistingEventWrapper(existingEventWrapper, item);
       } else {
@@ -420,19 +420,16 @@ export default {
       eventWrapper.setAttribute('id', id);
       eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
       eventWrapper.style.left = `${this.xScale(event.time)}px`;
-      const eventTickElement = document.createElement('div');
-      eventTickElement.classList.add('c-events-tsv__event-handle');
       if (this.titleKey) {
         const textToShow = event[this.titleKey];
         eventWrapper.ariaLabel = textToShow;
         eventWrapper.addEventListener('mouseover', () => {
-          this.showToolTip(textToShow, eventTickElement);
+          this.showToolTip(textToShow, eventWrapper);
         });
         eventWrapper.addEventListener('mouseleave', () => {
           this.tooltip?.destroy();
         });
       }
-      eventWrapper.appendChild(eventTickElement);
       const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
       const limitClass = limitEvaluation?.cssClass;
       if (limitClass) {
@@ -443,7 +440,7 @@ export default {
       eventWrapper.addEventListener('click', (mouseEvent) => {
         mouseEvent.stopPropagation();
         this.createSelectionForInspector(event);
-        this.toggleEventSelection(eventTickElement);
+        this.toggleEventSelection(eventWrapper);
         this.extendedLinesBus.eventClicked(this.keyString);
       });
 
