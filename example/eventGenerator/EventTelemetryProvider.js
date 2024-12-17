@@ -33,7 +33,7 @@ class EventTelemetryProvider {
 
   generateData(firstObservedTime, count, startTime, duration, name) {
     const millisecondsSinceStart = startTime - firstObservedTime;
-    const randomFewSeconds = Math.floor(Math.random() * 10000);
+    const randomFewSeconds = Math.floor(Math.random() * 1000);
     const utc = startTime + count + randomFewSeconds * duration;
     const ind = count % messages.length;
     const message = messages[ind] + ' - [' + millisecondsSinceStart + ']';

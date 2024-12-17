@@ -283,14 +283,11 @@ export default {
       return evenObj.time <= this.viewBounds.end && evenObj.time >= this.viewBounds.start;
     },
     getEventsContainer() {
-      const containerHeight = 100;
-      const containerWidth = this.eventHistory.length ? this.width : 200;
       let eventContainer;
 
       let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
       if (existingContainer) {
         eventContainer = existingContainer;
-        // eventContainer.style.maxWidth = `${containerWidth}px`;
       } else {
         if (this.destroyEventsContainer) {
           this.destroyEventsContainer();
@@ -324,8 +321,6 @@ export default {
         this.$refs.events.appendChild(component.$el);
 
         eventContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
-        // eventContainer.style.maxWidth = `${containerWidth}px`;
-        // eventContainer.style.height = `${containerHeight}px`;
       }
 
       return eventContainer;
@@ -485,7 +480,6 @@ export default {
       }
     },
     toggleEventSelection(clickedEvent) {
-      console.log(clickedEvent);
       this.selectedEvent?.classList.remove(EVENT_SELECTED_CLASS);
       clickedEvent.classList.add(EVENT_SELECTED_CLASS);
       this.selectedEvent = clickedEvent;
