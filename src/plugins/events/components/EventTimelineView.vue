@@ -408,6 +408,10 @@ export default {
       }
       this.openmct.selection.select(selection, true);
     },
+    getLimitClass(event) {
+      const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
+      return limitEvaluation?.cssClass;
+    },
     createEventWrapper(event) {
       const id = `${ID_PREFIX}${event.time}`;
       const eventWrapper = document.createElement('div');
@@ -418,7 +422,7 @@ export default {
         const textToShow = event[this.titleKey];
         eventWrapper.ariaLabel = textToShow;
         eventWrapper.addEventListener('mouseover', () => {
-          this.showToolTip(textToShow, eventWrapper);
+          this.showToolTip(textToShow, eventWrapper, event);
           this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, event.time);
         });
         eventWrapper.addEventListener('mouseleave', () => {
@@ -426,8 +430,7 @@ export default {
           this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, null);
         });
       }
-      const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
-      const limitClass = limitEvaluation?.cssClass;
+      const limitClass = this.getLimitClass(event);
       if (limitClass) {
         eventWrapper.classList.add(limitClass);
         event.limitClass = limitClass;
@@ -456,12 +459,22 @@ export default {
         });
       }
     },
-    showToolTip(textToShow, referenceElement) {
+    showToolTip(textToShow, referenceElement, event) {
+      const aClasses = ['c-events-tooltip'];
+      const limitClass = this.getLimitClass(event);
+      if (limitClass) {
+        aClasses.push(limitClass);
+      }
+      const showToLeft = false; // Temp, stubbed in
+      if (showToLeft) {
+        aClasses.push('--left');
+      }
+
       this.tooltip = this.openmct.tooltips.tooltip({
         toolTipText: textToShow,
         toolTipLocation: this.openmct.tooltips.TOOLTIP_LOCATIONS.RIGHT,
         parentElement: referenceElement,
-        cssClasses: ['c-timeline-event-tooltip']
+        cssClasses: [aClasses.join(' ')]
       });
     }
   }

@@ -111,3 +111,9 @@
         }
     }
 }
+
+.c-events-tooltip {
+    // Default to right of event line
+    border-radius: 0 !important;
+    //transform: translate(0, $interiorMargin);
+}
