@@ -39,6 +39,9 @@ export default function ImageryTimestripViewProvider(openmct) {
     key: type,
     name: 'Imagery Timestrip View',
     cssClass: 'icon-image',
+    priority: function () {
+      return 7000; // big number!
+    },
     canView: function (domainObject, objectPath) {
       let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
