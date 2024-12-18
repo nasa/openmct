@@ -153,7 +153,7 @@ export default {
         return;
       }
 
-      this.bounds = bounds; // setting bounds for EventryView watcher
+      this.bounds = bounds;
     },
     timeSystemChanged() {
       this.timeSystem = this.timeContext.getTimeSystem();
