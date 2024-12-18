@@ -90,8 +90,7 @@
     width: $eventLineW;
     opacity: 0.4;
 
-    &.--hovered,
-    &.--s-selected {
+    &.--hilite {
         opacity: 0.8;
         transition: none;
     }

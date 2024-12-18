@@ -34,8 +34,7 @@
         :class="[
           line.limitClass,
           {
-            '--hovered':
-              hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId
+            '--hilite': hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId
           }
         ]"
         :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
