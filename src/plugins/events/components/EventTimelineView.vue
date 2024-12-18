@@ -113,7 +113,6 @@ export default {
     this.eventStripResizeObserver = new ResizeObserver(this.resize);
     this.eventStripResizeObserver.observe(this.$refs.events);
 
-    this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     this.extendedLinesBus.on('disable-extended-lines', this.disableExtendEventLines);
     this.extendedLinesBus.on('enable-extended-lines', this.enableExtendEventLines);
   },
@@ -164,9 +163,6 @@ export default {
         this.timeContext.off('timeSystem', this.setScaleAndPlotEvents);
         this.timeContext.off('boundsChanged', this.updateViewBounds);
       }
-    },
-    observeForChanges(mutatedObject) {
-      this.updateViewBounds();
     },
     resize() {
       const clientWidth = this.getClientWidth();
@@ -345,7 +341,6 @@ export default {
     },
     plotEvents(item, containerElement) {
       const existingEventWrapper = this.getEventWrapper(item);
-      // eventWrapper IS NOW the vertical tick and the EVENT
       if (existingEventWrapper) {
         this.updateExistingEventWrapper(existingEventWrapper, item);
       } else {
