@@ -24,18 +24,17 @@
     <div
       v-for="(lines, key) in extendedLinesPerKey"
       :key="key"
-      class="c-timeline__extended-line-container"
+      class="c-timeline__event-line--extended-container"
     >
       <div
         v-for="(line, index) in lines"
         :id="line.id"
         :key="index"
-        class="c-timeline__extended-line"
+        class="c-timeline__event-line--extended"
         :class="[
           line.limitClass,
           {
-            'c-timeline__extended-line-hovered':
-              hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId
+            '--hilite': hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId
           }
         ]"
         :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"

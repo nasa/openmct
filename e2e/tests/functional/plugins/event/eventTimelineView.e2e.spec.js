@@ -74,7 +74,7 @@ test.describe('Event Timeline View', () => {
 
     // count the event lines
     const eventWrappersContainer = page.locator('.c-events-tsv__container');
-    const eventWrappers = eventWrappersContainer.locator('.c-events-tsv__event-wrapper');
+    const eventWrappers = eventWrappersContainer.locator('.c-events-tsv__event-line');
     const expectedEventWrappersCount = 25;
     await expect(eventWrappers).toHaveCount(expectedEventWrappersCount);
 
@@ -104,7 +104,7 @@ test.describe('Event Timeline View', () => {
 
     // count the extended lines
     const overlayLinesContainer = page.locator('.c-timeline__overlay-lines');
-    const extendedLines = overlayLinesContainer.locator('.c-timeline__extended-line');
+    const extendedLines = overlayLinesContainer.locator('.c-timeline__event-line--extended');
     const expectedCount = 25;
     await expect(extendedLines).toHaveCount(expectedCount);
   });

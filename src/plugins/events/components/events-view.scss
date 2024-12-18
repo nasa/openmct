@@ -1,3 +1,16 @@
+@mixin styleEventLine($colorConst) {
+    background-color: $colorConst !important;
+    &:hover,
+    &[s-selected] {
+        box-shadow: rgba($colorConst, 0.5) 0 0 0px 4px;
+        transition: none;
+        z-index: 2;
+    }
+}
+@mixin styleEventLineExtended($colorConst) {
+    background-color: $colorConst !important;
+}
+
 .c-events-tsv {
     $m: $interiorMargin;
     overflow: hidden;
@@ -11,20 +24,36 @@
         top: $m; right: 0; bottom: $m; left: 0;
     }
 
-    &__event-wrapper {
+    &__event-line {
         // Wraps an individual event line
         // Also holds the hover flyout element
         $c: $colorEventLine;
         $lineW: $eventLineW;
         $hitAreaW: 7px;
         $m: $interiorMarginSm;
-        background-color: rgba($c, 0.6);
         cursor: pointer;
         position: absolute;
         display: flex;
         top: $m; bottom: $m;
+        transition: box-shadow 250ms ease-out;
         width: $lineW;
         z-index: 1;
+
+        @include styleEventLine($colorEventLine);
+        &.is-event {
+            &--purple {
+                @include styleEventLine($colorEventPurpleLine);
+            }
+            &--red {
+                @include styleEventLine($colorEventRedLine);
+            }
+            &--orange {
+                @include styleEventLine($colorEventOrangeLine);
+            }
+            &--yellow {
+                @include styleEventLine($colorEventYellowLine);
+            }
+        }
 
         &:before {
             // Extend hit area
@@ -35,17 +64,6 @@
             z-index: 0;
             width: $hitAreaW;
             transform: translateX(($hitAreaW - $lineW) * -0.5);
-        }
-
-        &.is-selected, // TODO: temp, remove this once we set selection correctly
-        &[s-selected],
-        &:hover {
-            z-index: 2;
-            background-color: $c;
-
-            &:before {
-                background-color: rgba($c, 0.4);
-            }
         }
     }
 
@@ -63,4 +81,39 @@
     left: 0;
     top: 0;
     z-index: 2;
+}
+
+// Extended event lines
+.c-timeline__event-line--extended {
+    @include abs();
+    transition: opacity 250ms ease-out;
+    width: $eventLineW;
+    opacity: 0.4;
+
+    &.--hilite {
+        opacity: 0.8;
+        transition: none;
+    }
+
+    @include styleEventLineExtended($colorEventLine);
+    &.is-event {
+        &--purple {
+            @include styleEventLineExtended($colorEventPurpleLine);
+        }
+        &--red {
+            @include styleEventLineExtended($colorEventRedLine);
+        }
+        &--orange {
+            @include styleEventLineExtended($colorEventOrangeLine);
+        }
+        &--yellow {
+            @include styleEventLineExtended($colorEventYellowLine);
+        }
+    }
+}
+
+.c-events-tooltip {
+    // Default to right of event line
+    border-radius: 0 !important;
+    //transform: translate(0, $interiorMargin);
 }
