@@ -34,7 +34,9 @@
         :class="[
           line.limitClass,
           {
-            '--hilite': hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId
+            '--hilite':
+              (hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId) ||
+              (selectedLineId && selectedKeyString === key && line.id === selectedLineId)
           }
         ]"
         :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
@@ -62,6 +64,10 @@ export default {
     extendedLineHover: {
       type: Object,
       required: true
+    },
+    extendedLineSelection: {
+      type: Object,
+      required: true
     }
   },
   computed: {
@@ -70,6 +76,12 @@ export default {
     },
     hoveredKeyString() {
       return this.extendedLineHover.keyString || null;
+    },
+    selectedLineId() {
+      return this.extendedLineSelection.id || null;
+    },
+    selectedKeyString() {
+      return this.extendedLineSelection.keyString || null;
     }
   }
 };

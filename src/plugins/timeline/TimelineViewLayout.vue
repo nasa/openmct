@@ -51,6 +51,7 @@
       :height="height"
       :left-offset="extendedLinesLeftOffset"
       :extended-line-hover="extendedLineHover"
+      :extended-line-selection="extendedLineSelection"
     />
   </div>
 </template>
@@ -105,6 +106,7 @@ export default {
       timeOptions: this.domainObject.configuration.timeOptions,
       extendedLinesPerKey: {},
       extendedLineHover: {},
+      extendedLineSelection: {},
       extendedLinesLeftOffset: 0
     };
   },
@@ -126,6 +128,7 @@ export default {
     this.contentResizeObserver.disconnect();
     this.extendedLinesBus.off('update-extended-lines', this.updateExtendedLines);
     this.extendedLinesBus.off('update-extended-hover', this.updateExtendedHover);
+    this.openmct.selection.off('change', this.checkForLineSelection);
   },
   mounted() {
     this.items = [];
@@ -133,6 +136,7 @@ export default {
 
     this.extendedLinesBus.on('update-extended-lines', this.updateExtendedLines);
     this.extendedLinesBus.on('update-extended-hover', this.updateExtendedHover);
+    this.openmct.selection.on('change', this.checkForLineSelection);
 
     if (this.composition) {
       this.composition.on('add', this.addItem);
@@ -260,6 +264,18 @@ export default {
     },
     updateExtendedHover({ keyString, id }) {
       this.extendedLineHover = { keyString, id };
+    },
+    checkForLineSelection(selection) {
+      const selectionContext = selection?.[0]?.[0]?.context;
+      const eventType = selectionContext?.type;
+      if (eventType === 'time-strip-event-selection') {
+        const event = selectionContext.event;
+        const selectedObject = selectionContext.item;
+        const keyString = this.openmct.objects.makeKeyString(selectedObject.identifier);
+        this.extendedLineSelection = { keyString, id: event?.time };
+      } else {
+        this.extendedLineSelection = {};
+      }
     },
     calculateExtendedLinesLeftOffset() {
       const swimLaneOffset = this.calculateSwimlaneOffset();
