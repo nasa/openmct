@@ -22,7 +22,7 @@ at runtime from the About dialog for additional information.
 <template>
   <div
     ref="tooltip-wrapper"
-    class="c-menu c-tooltip-wrapper"
+    class="c-tooltip-wrapper"
     :class="cssClasses"
     :style="toolTipLocationStyle"
     role="tooltip"
