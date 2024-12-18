@@ -51,10 +51,4 @@
         pointer-events: none; // Allows clicks to pass through
         z-index: 10; // Ensure it sits atop swimlanes
     }
-
-    &__extended-line {
-        position: absolute;
-        width: $eventLineW;
-        background-color: $colorEventLineExtended;
-    }
 }
