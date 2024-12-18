@@ -25,7 +25,7 @@ export const SEVERITY_CSS = {
   WARNING: 'is-event--yellow',
   DISTRESS: 'is-event--red',
   CRITICAL: 'is-event--red',
-  SEVERE: 'is-event--red'
+  SEVERE: 'is-event--purple'
 };
 
 const NOMINAL_SEVERITY = {
