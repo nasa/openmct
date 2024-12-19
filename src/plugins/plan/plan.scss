@@ -29,6 +29,11 @@
     }
   }
 
+  &-av {
+    // Activities view
+    @include abs();
+  }
+
   &__activity {
     cursor: pointer;
 
