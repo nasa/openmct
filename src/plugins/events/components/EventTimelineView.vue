@@ -37,7 +37,7 @@ import eventData from '../mixins/eventData.js';
 
 const PADDING = 1;
 const CONTAINER_CLASS = 'c-events-tsv__container';
-const NO_ITEMS_CLASS = 'c-events-tsv__no-items';
+const NO_ITEMS_CLASS = 'c-timeline__no-items';
 const EVENT_WRAPPER_CLASS = 'c-events-tsv__event-line';
 const ID_PREFIX = 'wrapper-';
 const AXES_PADDING = 20;

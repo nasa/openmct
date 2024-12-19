@@ -42,7 +42,7 @@ const AXES_PADDING = 20;
 const PADDING = 1;
 const IMAGE_WIDTH_THRESHOLD = 25;
 const CONTAINER_CLASS = 'c-imagery-tsv-container';
-const NO_ITEMS_CLASS = 'c-imagery-tsv__no-items';
+const NO_ITEMS_CLASS = 'c-timeline__no-items';
 const IMAGE_WRAPPER_CLASS = 'c-imagery-tsv__image-wrapper';
 const ID_PREFIX = 'wrapper-';
 
@@ -254,7 +254,7 @@ export default {
       let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
       if (existingContainer) {
         imageryContainer = existingContainer;
-        imageryContainer.style.maxWidth = `${containerWidth}px`;
+        // imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
         if (this.destroyImageryContainer) {
           this.destroyImageryContainer();
@@ -284,7 +284,7 @@ export default {
         this.$refs.imageryHolder.appendChild(component.$el);
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
-        imageryContainer.style.maxWidth = `${containerWidth}px`;
+        // imageryContainer.style.maxWidth = `${containerWidth}px`;
       }
 
       return imageryContainer;
@@ -320,7 +320,7 @@ export default {
       }
     },
     plotNoItems(containerElement) {
-      let textElement = document.createElement('text');
+      let textElement = document.createElement('div');
       textElement.classList.add(NO_ITEMS_CLASS);
       textElement.innerHTML = 'No images within timeframe';
 

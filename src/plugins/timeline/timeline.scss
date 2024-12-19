@@ -51,4 +51,12 @@
         pointer-events: none; // Allows clicks to pass through
         z-index: 10; // Ensure it sits atop swimlanes
     }
+
+    &__no-items {
+        font-style: italic;
+        position: absolute;
+        left: $interiorMargin;
+        top: 50%;
+        transform: translateY(-50%);
+    }
 }
