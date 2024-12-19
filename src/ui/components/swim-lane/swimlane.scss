@@ -53,9 +53,7 @@
   }
 
   // Yet more brittle special case selecting...
-  .is-object-type-plan {
-    display: contents;
-  }
+  .is-object-type-plan,
   .is-object-type-gantt-chart {
     display: contents;
   }

@@ -45,16 +45,14 @@
       <div class="c-object-label__name">
         <slot name="label"></slot>
       </div>
-      <div class="c-icon-button c-icon-button--major">
-        <button
-          v-if="!hideButton"
-          class="c-button"
-          :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
-          :title="buttonTitle"
-          :aria-label="buttonTitle"
-          @click="pressOnButton"
-        />
-      </div>
+      <button
+        v-if="!hideButton"
+        class="c-button"
+        :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
+        :title="buttonTitle"
+        :aria-label="buttonTitle"
+        @click="pressOnButton"
+      />
     </div>
     <div
       class="c-swimlane__lane-object"
