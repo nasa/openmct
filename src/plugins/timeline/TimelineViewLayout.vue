@@ -75,6 +75,7 @@ const unknownObjectType = {
 };
 
 const AXES_PADDING = 20;
+const PLOT_ITEM_H_PX = 100;
 
 export default {
   components: {
@@ -156,14 +157,12 @@ export default {
         rowCount = getValidatedGroups(domainObject, planData).length;
       } else if (domainObject.type === 'gantt-chart') {
         rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
-      } else if (domainObject.type === 'telemetry.plot.stacked') {
-        rowCount = domainObject.composition.length;
       }
 
       let height =
         domainObject.type === 'telemetry.plot.stacked'
-          ? `${domainObject.composition.length * 100}px`
-          : '100px';
+          ? `${domainObject.composition.length * PLOT_ITEM_H_PX}px`
+          : 'auto';
       let item = {
         domainObject,
         objectPath,

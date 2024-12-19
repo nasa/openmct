@@ -56,7 +56,11 @@
         />
       </div>
     </div>
-    <div class="c-swimlane__lane-object" :class="{ 'u-contents': showUcontents }">
+    <div
+      class="c-swimlane__lane-object"
+      :style="{ 'min-height': minHeight }"
+      :class="{ 'u-contents': showUcontents }"
+    >
       <slot name="object"></slot>
     </div>
   </div>
