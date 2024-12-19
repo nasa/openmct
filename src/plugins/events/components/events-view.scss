@@ -1,5 +1,6 @@
 @mixin styleEventLine($colorConst) {
     background-color: $colorConst !important;
+    transition: box-shadow 250ms ease-out;
     &:hover,
     &[s-selected] {
         box-shadow: rgba($colorConst, 0.5) 0 0 0px 4px;
@@ -35,7 +36,6 @@
         position: absolute;
         display: flex;
         top: $m; bottom: $m;
-        transition: box-shadow 250ms ease-out;
         width: $lineW;
         z-index: 1;
 
@@ -86,7 +86,6 @@
 // Extended event lines
 .c-timeline__event-line--extended {
     @include abs();
-    transition: opacity 250ms ease-out;
     width: $eventLineW;
     opacity: 0.4;
 
