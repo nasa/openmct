@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="imagery" class="c-imagery-tsv js-imagery-tsv">
+  <div ref="imagery" class="c-imagery-tsv js-imagery-tsv" :style="{ left: leftOffset + 'px' }">
     <div ref="imageryHolder" class="c-imagery-tsv__contents u-contents"></div>
   </div>
 </template>
@@ -30,12 +30,15 @@
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import _ from 'lodash';
 import mount from 'utils/mount';
+import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 
+import { useAlignment } from '../../../ui/composables/alignmentContext';
 import imageryData from '../../imagery/mixins/imageryData.js';
 
+const AXES_PADDING = 20;
 const PADDING = 1;
 const IMAGE_WIDTH_THRESHOLD = 25;
 const CONTAINER_CLASS = 'c-imagery-tsv-container';
@@ -46,6 +49,13 @@ const ID_PREFIX = 'wrapper-';
 export default {
   mixins: [imageryData],
   inject: ['openmct', 'domainObject', 'objectPath'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, objectPath, openmct);
+    return { alignmentData };
+  },
   data() {
     let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -59,6 +69,11 @@ export default {
       timeSystem: timeSystem,
       keyString: undefined
     };
+  },
+  computed: {
+    leftOffset() {
+      return this.alignmentData.leftWidth + AXES_PADDING;
+    }
   },
   watch: {
     imageHistory: {
