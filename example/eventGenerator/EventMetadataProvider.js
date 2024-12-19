@@ -41,7 +41,10 @@ class EventMetadataProvider {
           {
             key: 'message',
             name: 'Message',
-            format: 'string'
+            format: 'string',
+            hints: {
+              label: 0
+            }
           }
         ]
       }
