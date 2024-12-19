@@ -45,14 +45,16 @@
       <div class="c-object-label__name">
         <slot name="label"></slot>
       </div>
-      <button
-        v-if="!hideButton"
-        class="c-button"
-        :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
-        :title="buttonTitle"
-        :aria-label="buttonTitle"
-        @click="pressOnButton"
-      />
+      <div class="c-swimlane__lane-label-button-h">
+        <button
+          v-if="!hideButton"
+          class="c-button"
+          :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
+          :title="buttonTitle"
+          :aria-label="buttonTitle"
+          @click="pressOnButton"
+        />
+      </div>
     </div>
     <div
       class="c-swimlane__lane-object"
@@ -170,7 +172,7 @@ export default {
 
     swimlaneClass() {
       if (!this.spanRowsCount && !this.isNested) {
-        return 'c-swimlane__lane-label--span-cols';
+        return 'c-swimlane__lane-label --span-cols';
       }
 
       return '';
