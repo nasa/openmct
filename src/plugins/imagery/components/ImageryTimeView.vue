@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="imagery" class="c-imagery-tsv c-timeline-holder">
+  <div ref="imagery" class="c-imagery-tsv js-imagery-tsv">
     <div ref="imageryHolder" class="c-imagery-tsv__contents u-contents"></div>
   </div>
 </template>
@@ -37,8 +37,6 @@ import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 import imageryData from '../../imagery/mixins/imageryData.js';
 
 const PADDING = 1;
-const ROW_HEIGHT = 100;
-const IMAGE_SIZE = 85;
 const IMAGE_WIDTH_THRESHOLD = 25;
 const CONTAINER_CLASS = 'c-imagery-tsv-container';
 const NO_ITEMS_CLASS = 'c-imagery-tsv__no-items';
@@ -73,9 +71,11 @@ export default {
   mounted() {
     this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
 
-    this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
-    this.canvas.height = 0;
-    this.canvasContext = this.canvas.getContext('2d');
+    // Why are we doing this? This element causes scroll problems in the swimlane.
+    // this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
+    // this.canvas.height = 0;
+    // this.canvas.width = 10;
+    // this.canvasContext = this.canvas.getContext('2d');
     this.setDimensions();
 
     this.setScaleAndPlotImagery = this.setScaleAndPlotImagery.bind(this);
@@ -207,8 +207,8 @@ export default {
     setDimensions() {
       const imageryHolder = this.$refs.imagery;
       this.width = this.getClientWidth();
-
       this.height = Math.round(imageryHolder.getBoundingClientRect().height);
+      this.imageHeight = this.height - 10;
     },
     setScale(timeSystem) {
       if (!this.width) {
@@ -233,7 +233,6 @@ export default {
       return imageObj.time <= this.viewBounds.end && imageObj.time >= this.viewBounds.start;
     },
     getImageryContainer() {
-      let containerHeight = 100;
       let containerWidth = this.imageHistory.length ? this.width : 200;
       let imageryContainer;
 
@@ -271,7 +270,6 @@ export default {
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
         imageryContainer.style.maxWidth = `${containerWidth}px`;
-        imageryContainer.style.height = `${containerHeight}px`;
       }
 
       return imageryContainer;
@@ -380,15 +378,11 @@ export default {
       //create image vertical tick indicator
       let imageTickElement = document.createElement('div');
       imageTickElement.classList.add('c-imagery-tsv__image-handle');
-      imageTickElement.style.width = '2px';
-      imageTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
       imageWrapper.appendChild(imageTickElement);
 
       //create placeholder - this will also hold the actual image
       let imagePlaceholder = document.createElement('div');
       imagePlaceholder.classList.add('c-imagery-tsv__image-placeholder');
-      imagePlaceholder.style.width = `${IMAGE_SIZE}px`;
-      imagePlaceholder.style.height = `${IMAGE_SIZE}px`;
       imageWrapper.appendChild(imagePlaceholder);
 
       //create image element
@@ -396,8 +390,6 @@ export default {
       this.setNSAttributesForElement(imageElement, {
         src: image.thumbnailUrl || image.url
       });
-      imageElement.style.width = `${IMAGE_SIZE}px`;
-      imageElement.style.height = `${IMAGE_SIZE}px`;
       this.setImageDisplay(imageElement, showImagePlaceholders);
 
       //handle mousedown event to show the image in a large view
