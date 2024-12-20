@@ -26,7 +26,7 @@
     </template>
     <template #object>
       <div class="c-plan-av" :style="alignmentStyle">
-        <svg v-if="activities.length > 0" :height="height" :width="svgWidth">
+        <svg v-if="activities.length > 0" class="c-plan-av__svg" :height="height">
           <symbol id="activity-bar-bg" :height="rowHeight" width="2" preserveAspectRatio="none">
             <rect x="0" y="0" width="100%" height="100%" fill="currentColor" />
             <line
@@ -157,24 +157,27 @@ export default {
   computed: {
     alignmentStyle() {
       let leftOffset = 0;
+      const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
       if (this.alignmentData.leftWidth) {
         leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
       }
       return {
-        left: `${this.alignmentData.leftWidth + leftOffset}px`
+        margin: `0 ${this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
       };
     },
     svgWidth() {
       // Reduce the width by left axis width, then take off the right yaxis width as well
+      return '100%'; // TEMP!
+      /*
       let leftOffset = 0;
       if (this.alignmentData.leftWidth) {
         leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
       }
       const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
-      return (
+           return (
         this.width -
         (this.alignmentData.leftWidth + leftOffset + this.alignmentData.rightWidth + rightOffset)
-      );
+      );*/
     }
   },
   methods: {

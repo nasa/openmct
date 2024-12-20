@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="imagery" class="c-imagery-tsv js-imagery-tsv" :style="{ left: leftOffset + 'px' }">
+  <div ref="imagery" class="c-imagery-tsv js-imagery-tsv" :style="alignmentStyle">
     <div ref="imageryHolder" class="c-imagery-tsv__contents u-contents"></div>
   </div>
 </template>
@@ -71,8 +71,15 @@ export default {
     };
   },
   computed: {
-    leftOffset() {
-      return this.alignmentData.leftWidth + AXES_PADDING;
+    alignmentStyle() {
+      let leftOffset = 0;
+      const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
+      return {
+        margin: `0 ${this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
+      };
     }
   },
   watch: {

@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="events" class="c-events-tsv js-events-tsv" :style="{ left: leftOffset + 'px' }" />
+  <div ref="events" class="c-events-tsv js-events-tsv" :style="alignmentStyle" />
 </template>
 
 <script>
@@ -69,8 +69,15 @@ export default {
     };
   },
   computed: {
-    leftOffset() {
-      return this.alignmentData.leftWidth + AXES_PADDING;
+    alignmentStyle() {
+      let leftOffset = 0;
+      const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
+      return {
+        margin: `0 ${this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
+      };
     }
   },
   watch: {
