@@ -94,7 +94,7 @@ export default class TypeRegistry {
    * @returns {Type[]} all registered types
    */
   getTypes() {
-    return Object.values(this.types);
+    return this.types;
   }
   /**
    * Import legacy types.
