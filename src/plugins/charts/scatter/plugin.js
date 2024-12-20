@@ -40,7 +40,6 @@ export default function () {
       cssClass: 'icon-plot-scatter',
       description: 'View data as a scatter plot.',
       creatable: true,
-      annotatable: true,
       initialize: function (domainObject) {
         domainObject.composition = [];
         domainObject.configuration = {
