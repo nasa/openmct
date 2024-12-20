@@ -511,10 +511,12 @@
 .c-imagery-tsv {
   $m: $interiorMargin;
   @include abs();
+  // We need overflow: hidden this because an image thumb can extend to the right past the time frame edge
+  overflow: hidden;
 
   &-container {
     background: $colorPlotBg;
-    box-shadow: inset $colorPlotAreaBorder 0 0 0 1px; // Using box-shadow instead of border to not affect box size
+    //box-shadow: inset $colorPlotAreaBorder 0 0 0 1px; // Using box-shadow instead of border to not affect box size
     position: absolute;
     top: $m; right: 0; bottom: $m; left: 0;
   }

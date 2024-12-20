@@ -19,8 +19,8 @@
 
     &__container {
         // Holds event lines
-        background: $colorPlotBg;
-        box-shadow: inset $colorPlotAreaBorder 0 0 0 1px; // Using box-shadow instead of border to not affect box size
+        background-color: $colorPlotBg;
+        //box-shadow: inset $colorPlotAreaBorder 0 0 0 1px; // Using box-shadow instead of border to not affect box size
         position: absolute;
         top: $m; right: 0; bottom: $m; left: 0;
     }
