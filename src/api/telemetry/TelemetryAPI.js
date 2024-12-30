@@ -284,17 +284,23 @@ export default class TelemetryAPI {
     return value;
   }
 
+  /**
+   * Determines whether a domain object has numeric telemetry data.
+   * A domain object has numeric telemetry if it:
+   * 1. Has a telemetry property
+   * 2. Has telemetry metadata with domain values (like timestamps)
+   * 3. Has range values (measurements) where at least one is numeric
+   *
+   * @method hasNumericTelemetry
+   * @param {import('openmct').DomainObject} domainObject The domain object to check
+   * @returns {boolean} True if the object has numeric telemetry, false otherwise
+   */
   hasNumericTelemetry(domainObject) {
     if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
       return false;
     }
 
-    let metadata = this.openmct.telemetry.getMetadata(domainObject);
-
-    return metadata.values().length > 0 && this.#hasDomainAndNumericRange(metadata);
-  }
-
-  #hasDomainAndNumericRange(metadata) {
+    const metadata = this.openmct.telemetry.getMetadata(domainObject);
     const rangeValues = metadata.valuesForHints(['range']);
     const domains = metadata.valuesForHints(['domain']);
 
