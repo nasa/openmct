@@ -601,7 +601,6 @@ export default class AnnotationAPI extends EventEmitter {
    * @returns {boolean} Returns true if the type is annotatable
    */
   isAnnotatableType(type) {
-    console.log('type', type, this.annotatableTypes);
     return this.annotatableTypes.some((annotatableType) => annotatableType === type);
   }
 }

@@ -40,7 +40,9 @@ export default function AnnotationsViewProvider(openmct) {
     view: function (selection) {
       let _destroy = null;
 
-      const domainObject = selection?.[0]?.[0]?.context?.item;
+      const selectionContext = selection?.[0]?.[0]?.context;
+      const domainObject = selectionContext?.item;
+      const isLayoutItem = selectionContext?.layoutItem;
 
       return {
         show: function (element) {
@@ -64,6 +66,10 @@ export default function AnnotationsViewProvider(openmct) {
           _destroy = destroy;
         },
         showTab: function () {
+          if (isLayoutItem) {
+            return false;
+          }
+
           const isAnnotatableType = openmct.annotation.isAnnotatableType(domainObject.type);
           const metadata = openmct.telemetry.getMetadata(domainObject);
           const hasImagery = metadata?.valuesForHints(['image']).length > 0;
