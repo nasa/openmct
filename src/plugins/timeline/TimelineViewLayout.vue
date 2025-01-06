@@ -286,7 +286,8 @@ export default {
         const timelineHolderRect = this.$refs.timelineHolder.getBoundingClientRect();
         const laneObjectRect = firstSwimLane.getBoundingClientRect();
         const offset = laneObjectRect.left - timelineHolderRect.left;
-        const swimLaneOffset = offset + AXES_PADDING;
+        const hasAxes = this.alignmentData.axes && Object.keys(this.alignmentData.axes).length > 0;
+        const swimLaneOffset = hasAxes ? offset + AXES_PADDING : offset;
         return swimLaneOffset;
       } else {
         return 0;
