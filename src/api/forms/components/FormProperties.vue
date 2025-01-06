@@ -158,7 +158,7 @@ export default {
       this.$emit('on-save');
     },
     handleKeyDown({ key }) {
-      if (key === 'Enter') {
+      if (key === 'Enter' && !this.isInvalid) {
         this.onSave();
       } else if (key === 'Escape') {
         this.onCancel();
