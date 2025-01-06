@@ -28,7 +28,6 @@ export default class NotebookType {
     this.description = description;
     this.cssClass = icon;
     this.creatable = true;
-    this.annotatable = true;
     this.form = [
       {
         key: 'defaultSort',

@@ -284,27 +284,6 @@ export default class TelemetryAPI {
     return value;
   }
 
-  hasNumericTelemetry(domainObject) {
-    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-      return false;
-    }
-
-    let metadata = this.openmct.telemetry.getMetadata(domainObject);
-
-    return metadata.values().length > 0 && this.#hasDomainAndNumericRange(metadata);
-  }
-
-  #hasDomainAndNumericRange(metadata) {
-    const rangeValues = metadata.valuesForHints(['range']);
-    const domains = metadata.valuesForHints(['domain']);
-
-    return (
-      domains.length > 0 &&
-      rangeValues.length > 0 &&
-      !rangeValues.every((value) => value.format === 'string')
-    );
-  }
-
   /**
    * Generates a numeric hash value for an options object. The hash is consistent
    * for equivalent option objects regardless of property order.

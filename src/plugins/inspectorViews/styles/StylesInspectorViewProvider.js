@@ -91,15 +91,6 @@ export default function StylesInspectorViewProvider(openmct) {
           );
           _destroy = destroy;
         },
-        showTab: function () {
-          const objectSelection = selection?.[0];
-          const objectContext = objectSelection?.[0]?.context;
-          const layoutItem = objectContext?.layoutItem;
-          const domainObject = objectContext?.item;
-          const hasStyles = domainObject?.configuration?.objectStyles;
-
-          return layoutItem || hasStyles;
-        },
         priority: function () {
           return openmct.priority.DEFAULT;
         },

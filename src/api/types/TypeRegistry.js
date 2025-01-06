@@ -89,17 +89,6 @@ export default class TypeRegistry {
   get(typeKey) {
     return this.types[typeKey] || UNKNOWN_TYPE;
   }
-  /**
-   * List all registered types.
-   * @returns {Type[]} all registered types
-   */
-  getTypes() {
-    return this.types;
-  }
-  /**
-   * Import legacy types.
-   * @param {TypeDefinition[]} types the types to import
-   */
   importLegacyTypes(types) {
     types
       .filter((t) => this.get(t.key) === UNKNOWN_TYPE)

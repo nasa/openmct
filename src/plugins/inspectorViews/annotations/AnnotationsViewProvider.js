@@ -63,14 +63,6 @@ export default function AnnotationsViewProvider(openmct) {
           );
           _destroy = destroy;
         },
-        showTab: function () {
-          const isAnnotatableType = openmct.annotation.isAnnotatableType(domainObject.type);
-          const metadata = openmct.telemetry.getMetadata(domainObject);
-          const hasImagery = metadata?.valuesForHints(['image']).length > 0;
-          const hasNumericTelemetry = openmct.telemetry.hasNumericTelemetry(domainObject);
-
-          return isAnnotatableType || hasImagery || hasNumericTelemetry;
-        },
         priority: function () {
           return openmct.priority.DEFAULT;
         },
