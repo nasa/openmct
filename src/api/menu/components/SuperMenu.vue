@@ -27,13 +27,15 @@
     :style="styleObject"
   >
     <div class="c-super-menu__left-col">
-      <div v-if="options.filterable" class="c-menu__search">
+      <div v-if="options.filterable" class="c-super-menu__filter">
         <input
+          ref="filterInput"
           v-model="searchTerm"
           type="text"
           placeholder="Filter..."
-          class="c-menu__search-input"
+          class="c-super-menu__filter-input"
           @input="filterItems"
+          @keydown.stop="handleKeyDown"
           @click.stop
         />
       </div>
@@ -101,7 +103,7 @@
 import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
-  inject: ['options'],
+  inject: ['options', 'dismiss'],
   data() {
     return {
       hoveredItem: null,
@@ -128,8 +130,14 @@ export default {
       return this.hoveredItem?.description ?? '';
     }
   },
-  created() {
+  mounted() {
     this.filteredActions = this.options.actions;
+
+    if (this.options.filterable) {
+      this.$nextTick(() => {
+        this.$refs.filterInput.focus();
+      });
+    }
   },
   methods: {
     toggleItemDescription(action = null) {
@@ -143,8 +151,10 @@ export default {
     },
     filterItems() {
       const term = this.searchTerm.toLowerCase();
+
       if (!term) {
         this.filteredActions = this.options.actions;
+
         return;
       }
 
@@ -166,6 +176,22 @@ export default {
             action.name.toLowerCase().includes(term) ||
             (action.description && action.description.toLowerCase().includes(term))
         );
+      }
+    },
+    handleKeyDown({ key }) {
+      console.log('keydown supermenu', key);
+      if (key === 'Enter') {
+        // if there is only one action, select it immediately on enter
+        const flattenedActions = Array.isArray(this.filteredActions[0])
+          ? this.filteredActions.flat()
+          : this.filteredActions;
+
+        if (flattenedActions.length === 1) {
+          flattenedActions[0].onItemClicked();
+          this.dismiss();
+        }
+      } else if (key === 'Escape') {
+        this.dismiss();
       }
     }
   }

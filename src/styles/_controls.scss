@@ -670,12 +670,12 @@ select {
     margin-right: $m;
   }
 
-  &__search {
+  &__filter {
     flex: 0 0 auto;
     width: 100%;
     margin-bottom: $interiorMarginLg;
 
-    .c-menu__search-input {
+    .c-super-menu__filter-input {
       @include nice-input();
       width: 100%;
       padding: $interiorMargin;
