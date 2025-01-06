@@ -255,7 +255,6 @@ export default {
       return imageObj.time <= this.viewBounds.end && imageObj.time >= this.viewBounds.start;
     },
     getImageryContainer() {
-      let containerWidth = this.imageHistory.length ? this.width : 200;
       let imageryContainer;
 
       let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);

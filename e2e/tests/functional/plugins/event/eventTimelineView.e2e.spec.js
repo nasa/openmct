@@ -96,7 +96,6 @@ test.describe('Event Timeline View', () => {
 
     // turn on extended lines
     await page
-      .getByLabel(eventTimelineView.name)
       .getByRole('button', {
         name: `Toggle extended event lines overlay for ${eventGenerator1.name}`
       })
