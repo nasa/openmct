@@ -663,10 +663,31 @@ select {
     }
   }
 
-  &__menu {
-    @include menuInner();
+  &__left-col {
+    display: flex;
+    flex-direction: column;
     flex: 1 1 50%;
     margin-right: $m;
+  }
+
+  &__search {
+    flex: 0 0 auto;
+    width: 100%;
+    margin-bottom: $interiorMarginLg;
+
+    .c-menu__search-input {
+      @include nice-input();
+      width: 100%;
+      padding: $interiorMargin;
+      &:focus {
+        background: $colorInputBg;
+      }
+    }
+  }
+
+  &__menu {
+    @include menuInner();
+    flex: 1 1 auto;
     overflow: auto;
 
     ul {
