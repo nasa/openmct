@@ -179,7 +179,6 @@ export default {
       }
     },
     handleKeyDown({ key }) {
-      console.log('keydown supermenu', key);
       if (key === 'Enter') {
         // if there is only one action, select it immediately on enter
         const flattenedActions = Array.isArray(this.filteredActions[0])

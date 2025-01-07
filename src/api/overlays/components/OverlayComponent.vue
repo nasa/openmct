@@ -69,7 +69,6 @@ export default {
     element.appendChild(this.element);
     const elementForFocus = this.getElementForFocus() || element;
     this.$nextTick(() => {
-      console.log('buttons', this.buttons);
       elementForFocus.focus();
     });
   },
