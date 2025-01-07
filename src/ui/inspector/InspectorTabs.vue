@@ -88,6 +88,8 @@ export default {
           showTab: view.showTab
         };
       });
+
+      this.selectTab(this.visibleTabs[0]);
     },
     isSelected(tab) {
       return this.selectedTab?.key === tab.key;
