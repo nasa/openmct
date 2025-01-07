@@ -27,13 +27,12 @@
     :style="styleObject"
   >
     <div class="c-super-menu__left-col">
-      <div v-if="options.filterable" class="c-super-menu__filter">
+      <div v-if="options.filterable" class="c-super-menu__filter l-input-lg">
         <input
           ref="filterInput"
           v-model="searchTerm"
           type="text"
           placeholder="Filter..."
-          class="c-super-menu__filter-input"
           @input="filterItems"
           @keydown.stop="handleKeyDown"
           @click.stop
