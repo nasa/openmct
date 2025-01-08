@@ -160,20 +160,12 @@ export default {
       if (Array.isArray(this.options.actions[0])) {
         // Handle grouped actions
         this.filteredActions = this.options.actions
-          .map((group) =>
-            group.filter(
-              (action) =>
-                action.name.toLowerCase().includes(term) ||
-                (action.description && action.description.toLowerCase().includes(term))
-            )
-          )
+          .map((group) => group.filter((action) => action.name.toLowerCase().includes(term)))
           .filter((group) => group.length > 0);
       } else {
         // Handle flat actions list
-        this.filteredActions = this.options.actions.filter(
-          (action) =>
-            action.name.toLowerCase().includes(term) ||
-            (action.description && action.description.toLowerCase().includes(term))
+        this.filteredActions = this.options.actions.filter((action) =>
+          action.name.toLowerCase().includes(term)
         );
       }
     },
