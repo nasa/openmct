@@ -172,11 +172,20 @@ export default {
   mounted() {
     this.setOffsets();
     document.addEventListener('click', this.hide);
+    document.addEventListener('keydown', this.handleKeyDown);
   },
   beforeUnmount() {
     document.removeEventListener('click', this.hide);
+    document.removeEventListener('keydown', this.handleKeyDown);
   },
   methods: {
+    handleKeyDown({ key }) {
+      if (key === 'Enter' && !this.isDisabled) {
+        this.submit();
+      } else if (key === 'Escape') {
+        this.dismiss();
+      }
+    },
     format(ref) {
       const curVal = this[ref];
       this[ref] = curVal.toString().padStart(2, '0');
@@ -218,12 +227,15 @@ export default {
           seconds: this.endInputSecs
         }
       });
-      this.$emit('dismiss');
+      this.dismiss();
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
-        this.$emit('dismiss');
+        this.dismiss();
       }
+    },
+    dismiss() {
+      this.$emit('dismiss');
     },
     increment($ev, ref) {
       $ev.preventDefault();
