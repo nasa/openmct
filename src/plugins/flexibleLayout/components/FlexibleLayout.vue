@@ -77,11 +77,12 @@
 </template>
 
 <script>
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
+
 import Container from '../utils/container.js';
 import Frame from '../utils/frame.js';
 import ContainerComponent from './ContainerComponent.vue';
 import DropHint from './DropHint.vue';
-import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 
