@@ -23,6 +23,7 @@
 <template>
   <div class="form-control select-field">
     <select
+      :id="fieldId"
       v-model="selected"
       required="model.required"
       name="mctControl"
@@ -47,7 +48,8 @@ export default {
   emits: ['on-change'],
   data() {
     return {
-      selected: this.model.value
+      selected: this.model.value,
+      fieldId: this.model.key ? 'form-' + this.model.key : null
     };
   },
   methods: {

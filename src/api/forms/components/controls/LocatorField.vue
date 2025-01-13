@@ -22,6 +22,7 @@
 
 <template>
   <MctTree
+    :form-key="formKey"
     :is-selector-tree="true"
     :initial-selection="model.parent"
     @tree-item-selection="handleItemSelection"
@@ -43,6 +44,11 @@ export default {
     }
   },
   emits: ['on-change'],
+  data() {
+    return {
+      formKey: this.model.key ? 'form-' + this.model.key : null
+    };
+  },
   methods: {
     handleItemSelection(item) {
       const data = {
