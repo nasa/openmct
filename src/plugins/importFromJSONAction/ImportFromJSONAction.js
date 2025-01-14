@@ -365,7 +365,7 @@ class ImportFromJSONAction {
               control: 'file-input',
               required: true,
               text: 'Select File...',
-              validate: this._validateJSON,
+              validate: this._validateJSON.bind(this),
               type: 'application/json'
             }
           ]
