@@ -25,6 +25,7 @@
     ref="swimLane"
     class="u-contents"
     :class="[{ 'c-swimlane': !isNested }, statusClass]"
+    :style="gridTemplateColumnStyle"
     @mouseover.ctrl="showToolTip"
     @mouseleave="hideToolTip"
   >
@@ -55,7 +56,9 @@
           @click="pressOnButton"
         />
       </div>
+      <div class="c-swimlane__handle" @mousedown="resizeStart"></div>
     </div>
+
     <div
       class="c-swimlane__lane-object"
       :style="{ 'min-height': minHeight }"
@@ -158,7 +161,8 @@ export default {
   },
   data() {
     return {
-      buttonPressed: false
+      buttonPressed: false,
+      labelWidth: 200
     };
   },
   computed: {
@@ -169,17 +173,25 @@ export default {
         return '';
       }
     },
-
     swimlaneClass() {
       if (!this.spanRowsCount && !this.isNested) {
         return 'c-swimlane__lane-label --span-cols';
       }
-
       return '';
     },
-
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
+    },
+    gridTemplateColumnStyle() {
+      if (this.isNested) {
+        return {};
+      }
+
+      const columnWidth = this.labelWidth / 2;
+
+      return {
+        'grid-template-columns': `${columnWidth}px ${columnWidth}px 1fr`
+      };
     }
   },
   methods: {
@@ -194,6 +206,31 @@ export default {
       } else {
         this.buttonClickOff();
       }
+    },
+    resizeStart(event) {
+      console.log(`resizingStart: ${this.resizeStartX}`);
+      this.resizeStartX = event.clientX;
+      this.resizeStartWidth = this.labelWidth;
+
+      document.addEventListener('mouseup', this.resizeEnd, {
+        once: true,
+        capture: true
+      });
+      document.addEventListener('mousemove', this.resize);
+      event.preventDefault();
+    },
+    resizeEnd(event) {
+      console.log('resizingEnd');
+      this.resizeStartX = undefined;
+      this.resizeStartWidth = undefined;
+      document.removeEventListener('mousemove', this.resize);
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    resize(event) {
+      console.log(`resizing: ${this.labelWidth}`);
+      let delta = event.clientX - this.resizeStartX;
+      this.labelWidth = this.resizeStartWidth + delta;
     }
   }
 };
