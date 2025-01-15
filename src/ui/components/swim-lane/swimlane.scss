@@ -23,7 +23,7 @@
 .c-swimlane {
   display: grid;
   flex: 1 1 auto;
-  grid-template-columns: 100px 100px 1fr;
+  // grid-template-columns: 100px 100px 1fr;
   grid-template-rows: 1fr;
   grid-column-gap: 1px;
   grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
@@ -45,6 +45,29 @@
     background: $colorTimeStripLabelBg;
     color: $colorBodyFg;
     padding: $interiorMarginSm $interiorMargin;
+  }
+
+  &__handle {
+    // In SwimLane.vue
+    @include abs();
+    display: none; // Set to display: block in .is-editing section below
+    left: auto;
+    // right: -1 * $tabularTdPadLR;
+    width: $splitterHandleD;
+    cursor: col-resize;
+
+    &:before {
+      // Extended hit area
+      top: 0;
+      right: $splitterHandleHitMargin * -1;
+      bottom: 0;
+      left: $splitterHandleHitMargin * -1;
+    }
+
+    &:hover {
+      background-color: $colorSplitterHover;
+      @include transition(background-color);
+    }
   }
 
   &__lane-object {
@@ -72,5 +95,11 @@
   .is-object-type-plan,
   .is-object-type-gantt-chart {
     display: contents;
+  }
+}
+
+.is-editing {
+  .c-swimlane__handle {
+    display: block;
   }
 }
