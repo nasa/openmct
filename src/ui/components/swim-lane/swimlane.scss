@@ -22,10 +22,20 @@
 
 .c-swimlane {
   display: grid;
+  flex: 1 1 auto;
   grid-template-columns: 100px 100px 1fr;
+  grid-template-rows: 1fr;
   grid-column-gap: 1px;
   grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
+  min-height: $btnStdH;
+  overflow: auto;
   width: 100%;
+
+  &__time-axis {
+    flex: 0 0 auto;
+    height: 32px;
+    overflow: visible;
+  }
 
   &.is-status--draft {
     background: $colorTimeStripDraftBg;
