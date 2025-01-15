@@ -22,7 +22,11 @@
 
 <template>
   <div ref="timelineHolder" class="c-timeline-holder">
-    <SwimLane v-for="timeSystemItem in timeSystems" :key="timeSystemItem.timeSystem.key">
+    <SwimLane
+      v-for="timeSystemItem in timeSystems"
+      :key="timeSystemItem.timeSystem.key"
+      class="c-swimlane__time-axis"
+    >
       <template #label>
         {{ timeSystemItem.timeSystem.name }}
       </template>
