@@ -32,13 +32,17 @@
         </div>
         <div class="c-inspect-properties__value">
           <input
+            v-if="isEditing"
             id="telemetryPrintfFormat"
             type="text"
-            :disabled="!isEditing"
             :value="telemetryFormat"
             :placeholder="nonMixedFormat ? '' : 'Mixed'"
             @change="formatTelemetry"
           />
+          <template v-if="!isEditing && telemetryFormat?.length">
+            {{ telemetryFormat }}
+          </template>
+          <span class="hint" v-else> No custom formating applied </span>
         </div>
       </li>
     </ul>
