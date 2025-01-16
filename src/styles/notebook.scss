@@ -578,7 +578,6 @@
   }
 
   &__actions-menu {
-    width: 55vh;
     max-width: 500px;
     height: 130px;
     z-index: 70;
@@ -591,6 +590,7 @@
 
     [class*='__item-description'] {
       min-width: 200px;
+      width: 25vw;
     }
   }
 }
