@@ -37,7 +37,8 @@ export default function plugin() {
       initialize: function (domainObject) {
         domainObject.configuration = {
           containers: [new Container(50), new Container(50)],
-          rowsLayout: false
+          rowsLayout: false,
+          objectStyles: {}
         };
         domainObject.composition = [];
       }
