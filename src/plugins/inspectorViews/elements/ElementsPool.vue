@@ -39,6 +39,7 @@
           :key="element.identifier.key"
           :index="index"
           :element-object="element"
+          :allow-drag="isEditing"
           :allow-drop="allowDrop"
           @dragstart-custom="moveFrom(index)"
           @drop-custom="moveTo(index)"
@@ -92,6 +93,7 @@ export default {
   methods: {
     setEditState(isEditing) {
       this.isEditing = isEditing;
+      console.log('this.isEditing', this.isEditing);
       this.showSelection(this.openmct.selection.get());
     },
     showSelection(selection) {
