@@ -35,19 +35,33 @@
           class="c-overlay__contents js-notebook-snapshot-item-wrapper"
           tabindex="0"
         ></div>
-        <div v-if="buttons" class="c-overlay__button-bar">
-          <button
-            v-for="(button, index) in buttons"
-            ref="buttons"
-            :key="index"
-            class="c-button js-overlay__button"
-            tabindex="0"
-            :class="{ 'c-button--major': focusIndex === index }"
-            @focus="focusIndex = index"
-            @click="buttonClickHandler(button.callback)"
-          >
-            {{ button.label }}
-          </button>
+        <div v-if="buttons || showSuppressOption" class="c-overlay__footer">
+          <div class="c-overlay__suppress-option">
+            <div v-if="showSuppressOption">
+              <input
+                id="suppressCheckbox"
+                v-model="suppress"
+                type="checkbox"
+                class="l-composite-control l-checkbox"
+                aria-label="Checkbox to Suppress Dialog"
+              />
+              <label for="suppressCheckbox">{{ suppressionText }}</label>
+            </div>
+          </div>
+          <div v-if="buttons" class="c-overlay__button-bar">
+            <button
+              v-for="(button, buttonIndex) in buttons"
+              ref="buttons"
+              :key="buttonIndex"
+              class="c-button js-overlay__button"
+              tabindex="0"
+              :class="{ 'c-button--major': focusIndex === buttonIndex }"
+              @focus="focusIndex = buttonIndex"
+              @click="buttonClickHandler(button.callback)"
+            >
+              {{ button.label }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -56,11 +70,12 @@
 
 <script>
 export default {
-  inject: ['dismiss', 'element', 'buttons', 'dismissible'],
+  inject: ['dismiss', 'element', 'buttons', 'dismissible', 'showSuppressOption', 'suppressionText'],
   emits: ['destroy'],
   data() {
     return {
-      focusIndex: -1
+      focusIndex: -1,
+      suppress: false
     };
   },
   mounted() {
@@ -78,7 +93,10 @@ export default {
       }
     },
     buttonClickHandler(method) {
-      method();
+      let callbackData = {
+        suppress: this.suppress
+      };
+      method(callbackData);
       this.$emit('destroy');
     },
     getElementForFocus() {

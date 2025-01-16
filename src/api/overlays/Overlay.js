@@ -19,6 +19,8 @@ class Overlay extends EventEmitter {
     element,
     onDestroy,
     onDismiss,
+    showSuppressOption = false,
+    suppressionText = "Don't ask again",
     size
   } = {}) {
     super();
@@ -38,6 +40,8 @@ class Overlay extends EventEmitter {
           dismiss: this.notifyAndDismiss.bind(this),
           element,
           buttons,
+          showSuppressOption,
+          suppressionText,
           dismissible: this.dismissible
         },
         template: '<overlay-component></overlay-component>'
