@@ -80,7 +80,9 @@ export default {
   },
   methods: {
     updateSelection() {
+      const previousSelectedTab = this.selectedTab?.key;
       const inspectorViews = this.openmct.inspectorViews.get(this.openmct.selection.get());
+      const isEditing = this.openmct.editor.isEditing();
 
       this.tabs = inspectorViews.map((view) => {
         return {
@@ -91,7 +93,13 @@ export default {
         };
       });
 
-      this.selectTab(this.visibleTabs[0]);
+      const stylesTabIndex = this.tabs.findIndex((tab) => tab.key === 'stylesInspectorView');
+
+      if (isEditing && previousSelectedTab === 'stylesInspectorView' && stylesTabIndex !== -1) {
+        this.selectTab(this.tabs[stylesTabIndex]);
+      } else {
+        this.selectTab(this.visibleTabs[0]);
+      }
     },
     isSelected(tab) {
       return this.selectedTab?.key === tab.key;
