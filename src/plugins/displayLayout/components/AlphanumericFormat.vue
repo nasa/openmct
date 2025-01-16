@@ -42,7 +42,6 @@
           <template v-if="!isEditing && telemetryFormat?.length">
             {{ telemetryFormat }}
           </template>
-          <span class="hint" v-else> No custom formating applied </span>
         </div>
       </li>
     </ul>
