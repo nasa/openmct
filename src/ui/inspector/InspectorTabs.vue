@@ -71,9 +71,11 @@ export default {
   },
   mounted() {
     this.updateSelection();
+    this.openmct.editor.on('isEditing', this.updateSelection);
     this.openmct.selection.on('change', this.updateSelection);
   },
   unmounted() {
+    this.openmct.editor.off('isEditing', this.updateSelection);
     this.openmct.selection.off('change', this.updateSelection);
   },
   methods: {
