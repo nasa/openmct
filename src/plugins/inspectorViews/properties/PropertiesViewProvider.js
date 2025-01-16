@@ -56,10 +56,7 @@ export default function PropertiesViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          if (openmct.editor.isEditing()) {
-            return openmct.priority.LOW;
-          }
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.LOW : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {
