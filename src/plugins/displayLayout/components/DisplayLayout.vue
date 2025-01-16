@@ -226,6 +226,11 @@ export default {
     this.composition.load();
     this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
 
+    // Initialize objectStyles if it doesn't exist for older versions
+    if (!this.domainObject.configuration.objectStyles) {
+      this.domainObject.configuration.objectStyles = {};
+    }
+
     this.unObserveItems = this.openmct.objects.observe(
       this.domainObject,
       'configuration.items',
