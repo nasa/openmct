@@ -62,7 +62,8 @@
 
 <script>
 import _ from 'lodash';
-import { inject } from 'vue';
+import { useDragResizer } from 'utils/vue/useDragResizer.js';
+import { inject, provide } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
@@ -90,6 +91,12 @@ export default {
     ExtendedLinesOverlay
   },
   inject: ['openmct', 'domainObject', 'path', 'composition', 'extendedLinesBus'],
+  props: {
+    isEditing: {
+      type: Boolean,
+      default: false
+    }
+  },
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');
@@ -99,6 +106,12 @@ export default {
       path,
       openmct
     );
+
+    // Drag resizer - Swimlane column width
+    const { size, mousedown } = useDragResizer('horizontal', { size: 200 });
+
+    provide('swimLaneLabelWidth', size);
+    provide('mousedown', mousedown);
 
     return { alignmentData, resetAlignment };
   },
