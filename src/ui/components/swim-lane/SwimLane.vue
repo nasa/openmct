@@ -56,7 +56,7 @@
           @click="pressOnButton"
         />
       </div>
-      <div class="c-swimlane__handle" @mousedown="resizeStart"></div>
+      <div class="c-swimlane__handle" @mousedown="mousedown"></div>
     </div>
 
     <div
@@ -74,7 +74,7 @@ import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 
 export default {
   mixins: [tooltipHelpers],
-  inject: ['openmct'],
+  inject: ['openmct', 'mousedown', 'swimLaneLabelWidth'],
   props: {
     iconClass: {
       type: String,
@@ -187,7 +187,7 @@ export default {
         return {};
       }
 
-      const columnWidth = this.labelWidth / 2;
+      const columnWidth = this.swimLaneLabelWidth / 2;
 
       return {
         'grid-template-columns': `${columnWidth}px ${columnWidth}px 1fr`
@@ -206,31 +206,6 @@ export default {
       } else {
         this.buttonClickOff();
       }
-    },
-    resizeStart(event) {
-      console.log(`resizingStart: ${this.resizeStartX}`);
-      this.resizeStartX = event.clientX;
-      this.resizeStartWidth = this.labelWidth;
-
-      document.addEventListener('mouseup', this.resizeEnd, {
-        once: true,
-        capture: true
-      });
-      document.addEventListener('mousemove', this.resize);
-      event.preventDefault();
-    },
-    resizeEnd(event) {
-      console.log('resizingEnd');
-      this.resizeStartX = undefined;
-      this.resizeStartWidth = undefined;
-      document.removeEventListener('mousemove', this.resize);
-      event.preventDefault();
-      event.stopPropagation();
-    },
-    resize(event) {
-      console.log(`resizing: ${this.labelWidth}`);
-      let delta = event.clientX - this.resizeStartX;
-      this.labelWidth = this.resizeStartWidth + delta;
     }
   }
 };
