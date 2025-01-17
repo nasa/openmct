@@ -164,11 +164,13 @@
           <div
             v-show="cursorGuide"
             ref="cursorGuideVertical"
+            aria-label="Vertical cursor guide"
             class="c-cursor-guide--v js-cursor-guide--v"
           ></div>
           <div
             v-show="cursorGuide"
             ref="cursorGuideHorizontal"
+            aria-label="Horizontal cursor guide"
             class="c-cursor-guide--h js-cursor-guide--h"
           ></div>
         </div>
