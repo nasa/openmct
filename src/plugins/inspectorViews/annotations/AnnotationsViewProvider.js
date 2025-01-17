@@ -34,7 +34,7 @@ export default function AnnotationsViewProvider(openmct) {
       const domainObject = selectionContext?.item;
       const isLayoutItem = selectionContext?.layoutItem;
 
-      if (availableTags.length < 1 || isLayoutItem || !domainObject) {
+      if (availableTags.length < 1 || isLayoutItem || !domainObject || openmct.editor.isEditing()) {
         return false;
       }
 

@@ -28,7 +28,7 @@ import TimelistPropertiesView from './TimelistPropertiesView.vue';
 export default function TimeListInspectorViewProvider(openmct) {
   return {
     key: 'timelist-inspector',
-    name: 'View Properties',
+    name: 'Config',
     canView: function (selection) {
       if (selection.length === 0 || selection[0].length === 0) {
         return false;
@@ -63,7 +63,7 @@ export default function TimeListInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH + 1 : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {

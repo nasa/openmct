@@ -42,7 +42,8 @@ export default function () {
         domainObject.composition = [];
         domainObject.configuration = {
           //series is an array of objects of type: {identifier, series: {color...}, yAxis:{}}
-          series: []
+          series: [],
+          objectStyles: {}
         };
       },
       priority: 891
@@ -60,7 +61,8 @@ export default function () {
         domainObject.configuration = {
           series: [],
           yAxis: {},
-          xAxis: {}
+          xAxis: {},
+          objectStyles: {}
         };
       },
       priority: 890
