@@ -154,10 +154,7 @@ class TimeAPI extends GlobalTimeContext {
     }
 
     // Also emit the mode in case it's different from the previous time context
-    timeContext.emit(
-      TIME_CONTEXT_EVENTS.modeChanged,
-      JSON.parse(JSON.stringify(timeContext.getMode()))
-    );
+    timeContext.emit(TIME_CONTEXT_EVENTS.modeChanged, structuredClone(timeContext.getMode()));
 
     // Notify any nested views to update, pass in the viewKey so that particular view can skip getting an upstream context
     this.emit('refreshContext', key);
