@@ -34,7 +34,9 @@ export default function plugin() {
       creatable: true,
       cssClass: 'icon-condition-widget',
       initialize(domainObject) {
-        domainObject.configuration = {};
+        domainObject.configuration = {
+          objectStyles: {}
+        };
         domainObject.label = 'Condition Widget';
         domainObject.conditionalLabel = '';
         domainObject.url = '';
