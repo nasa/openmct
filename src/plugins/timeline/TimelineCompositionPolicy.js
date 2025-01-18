@@ -33,10 +33,7 @@ export default function TimelineCompositionPolicy(openmct) {
   }
 
   function hasDomainAndRange(metadata) {
-    return (
-      metadata.valuesForHints(['range']).length > 0 &&
-      metadata.valuesForHints(['domain']).length > 0
-    );
+    return metadata.valuesForHints(['domain']).length > 0;
   }
 
   function hasImageTelemetry(domainObject, metadata) {
