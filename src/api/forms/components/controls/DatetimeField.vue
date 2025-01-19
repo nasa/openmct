@@ -29,6 +29,7 @@
     <div class="hint timezone">Timezone</div>
     <form ref="dateTimeForm" prevent class="u-contents">
       <input
+        :id="dateFieldId"
         v-model="date"
         class="field control date"
         :pattern="/\d{4}-\d{2}-\d{2}/"
@@ -92,10 +93,12 @@ export default {
       date: '',
       hour: 0,
       min: 0,
-      sec: 0
+      sec: 0,
+      dateFieldId: null
     };
   },
   mounted() {
+    this.dateFieldId = this.model.key ? 'form-' + this.model.key : null;
     this.formatDatetime();
   },
   methods: {

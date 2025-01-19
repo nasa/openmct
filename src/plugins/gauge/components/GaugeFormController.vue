@@ -24,7 +24,7 @@
   <span class="form-control">
     <span class="field control" :class="model.cssClass">
       <ToggleSwitch
-        :id="'gaugeToggle'"
+        :id="fieldId"
         :checked="isUseTelemetryLimits"
         label="Use telemetry limits for minimum and maximum ranges"
         @change="toggleUseTelemetryLimits"
@@ -84,6 +84,8 @@
 </template>
 
 <script>
+import { v4 as uuid } from 'uuid';
+
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
 
 export default {
@@ -106,7 +108,8 @@ export default {
       limitHigh: this.model.value.limitHigh,
       limitLow: this.model.value.limitLow,
       max: this.model.value.max,
-      min: this.model.value.min
+      min: this.model.value.min,
+      fieldId: this.model.key ? 'form-' + this.model.key : 'gaugeToggle-' + uuid()
     };
   },
   methods: {

@@ -73,7 +73,7 @@ export default function () {
           }),
           control: 'select',
           cssClass: 'l-input-sm',
-          key: 'gaugeController',
+          key: 'gaugeType',
           property: ['configuration', 'gaugeController', 'gaugeType']
         },
         {
