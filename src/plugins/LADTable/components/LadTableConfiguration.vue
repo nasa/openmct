@@ -58,7 +58,8 @@ export default {
       isEditing: this.openmct.editor.isEditing(),
       configuration: ladTableConfiguration.getConfiguration(),
       items: [],
-      ladTableObjects: []
+      ladTableObjects: [],
+      ladTelemetryObjects: {}
     };
   },
   computed: {
@@ -146,11 +147,14 @@ export default {
       this.ladTableObjects.push(ladTable);
 
       const composition = this.openmct.composition.get(ladTable.domainObject);
-
+      composition.on('add', this.addItem);
+      composition.on('remove', this.removeItem);
       composition.load();
 
       this.compositions.push({
-        composition
+        composition,
+        addCallback: this.addItem,
+        removeCallback: this.removeItem
       });
     },
     removeLadTable(identifier) {
