@@ -73,7 +73,25 @@ async function dragAndDropEmbed(page, notebookObject) {
  */
 async function commitEntry(page) {
   //Click the Commit Entry button
-  await page.locator('.c-ne__save-button > button').click();
+  await page.getByLabel('Save notebook entry').click();
+}
+
+/**
+ * @private
+ * @param {import('@playwright/test').Page} page
+ */
+async function commitEntryViaShortcutKey(page) {
+  //Click the Commit Entry button
+  await page.keyboard.press('Control+Enter');
+}
+
+/**
+ * @private
+ * @param {import('@playwright/test').Page} page
+ */
+async function cancelEntry(page) {
+  //Press the Escape key to cancel editing entry
+  await page.keyboard.press('Escape');
 }
 
 /**
@@ -153,7 +171,9 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
 
 export {
   addNotebookEntry,
+  cancelEntry,
   commitEntry,
+  commitEntryViaShortcutKey,
   createNotebookAndEntry,
   createNotebookEntryAndTags,
   dragAndDropEmbed,
