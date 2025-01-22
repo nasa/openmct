@@ -41,14 +41,17 @@ export default function AnnotationsViewProvider(openmct) {
       const isAnnotatableType = openmct.annotation.isAnnotatableType(domainObject.type);
       const metadata = openmct.telemetry.getMetadata(domainObject);
       const hasImagery = metadata?.valuesForHints(['image']).length > 0;
+      const isNotebookEntry = selectionContext?.type === 'notebook-entry-selection';
       const hasNumericTelemetry = openmct.telemetry.hasNumericTelemetry(domainObject);
 
-      return isAnnotatableType || hasImagery || hasNumericTelemetry;
+      return isAnnotatableType || hasImagery || hasNumericTelemetry || isNotebookEntry;
     },
     view: function (selection) {
       let _destroy = null;
 
-      const domainObject = selection?.[0]?.[0]?.context?.item;
+      const selectionContext = selection?.[0]?.[0]?.context;
+      const domainObject = selectionContext?.item;
+      const isNotebookEntry = selectionContext?.type === 'notebook-entry-selection';
 
       return {
         show: function (element) {
@@ -72,7 +75,7 @@ export default function AnnotationsViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return isNotebookEntry ? openmct.priority.HIGH + 1 : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {
