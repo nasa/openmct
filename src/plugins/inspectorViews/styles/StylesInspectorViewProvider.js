@@ -54,19 +54,17 @@ export default function StylesInspectorViewProvider(openmct) {
       );
       const isLayoutItem = objectContext?.layoutItem;
 
-      if (isLayoutItem) {
+      if (isLayoutItem || hasStyles) {
         return true;
       }
 
-      if (!domainObject || isFlexibleLayoutContainer || !hasStyles) {
+      if (!domainObject || isFlexibleLayoutContainer) {
         return false;
       }
 
       const typeObject = openmct.types.get(domainObject.type);
 
       return (
-        hasStyles ||
-        isLayoutItem ||
         isLayoutObject(objectSelection, domainObject.type) ||
         isCreatableObject(domainObject, typeObject)
       );
