@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { v4 as uuid } from 'uuid';
 
 import AllTelemetryCriterion from './criterion/AllTelemetryCriterion.js';
@@ -245,7 +245,7 @@ export default class Condition extends EventEmitter {
       latestTimestamp,
       updatedCriterion.data,
       this.timeSystems,
-      this.openmct.time.timeSystem()
+      this.openmct.time.getTimeSystem()
     );
     this.conditionManager.updateCurrentCondition(latestTimestamp);
   }
@@ -309,7 +309,7 @@ export default class Condition extends EventEmitter {
           latestTimestamp,
           data,
           this.timeSystems,
-          this.openmct.time.timeSystem()
+          this.openmct.time.getTimeSystem()
         );
       });
 

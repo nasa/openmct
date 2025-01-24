@@ -20,12 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <swim-lane :is-nested="isNested" :status="status">
+  <SwimLane :is-nested="isNested" :status="status">
     <template #label>
       {{ heading }}
     </template>
     <template #object>
-      <svg :height="height" :width="width">
+      <svg :height="height" :width="svgWidth" :style="alignmentStyle">
         <symbol id="activity-bar-bg" :height="rowHeight" width="2" preserveAspectRatio="none">
           <rect x="0" y="0" width="100%" height="100%" fill="currentColor" />
           <line
@@ -88,17 +88,23 @@
         </text>
       </svg>
     </template>
-  </swim-lane>
+  </SwimLane>
 </template>
 
 <script>
+const AXES_PADDING = 20;
+
+import { inject } from 'vue';
+
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+
+import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 
 export default {
   components: {
     SwimLane
   },
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     activities: {
       type: Array,
@@ -136,10 +142,45 @@ export default {
     }
   },
   emits: ['activity-selected'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      path,
+      openmct
+    );
+
+    return { alignmentData, resetAlignment };
+  },
   data() {
     return {
       lineHeight: 10
     };
+  },
+  computed: {
+    alignmentStyle() {
+      let leftOffset = 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
+      return {
+        marginLeft: `${this.alignmentData.leftWidth + leftOffset}px`
+      };
+    },
+    svgWidth() {
+      // Reduce the width by left axis width, then take off the right yaxis width as well
+      let leftOffset = 0;
+      if (this.alignmentData.leftWidth) {
+        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+      }
+      const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+      return (
+        this.width -
+        (this.alignmentData.leftWidth + leftOffset + this.alignmentData.rightWidth + rightOffset)
+      );
+    }
   },
   methods: {
     setSelectionForActivity(activity, event) {

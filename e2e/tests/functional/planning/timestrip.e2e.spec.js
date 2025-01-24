@@ -23,7 +23,8 @@
 import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
-  setIndependentTimeConductorBounds
+  navigateToObjectWithFixedTimeBounds,
+  setFixedIndependentTimeConductorBounds
 } from '../../../appActions.js';
 import { expect, test } from '../../../pluginFixtures.js';
 
@@ -73,7 +74,7 @@ const testPlan = {
 };
 
 test.describe('Time Strip', () => {
-  test('Create two Time Strips, add a single Plan to both, and verify they can have separate Independent Time Contexts @unstable', async ({
+  test('Create two Time Strips, add a single Plan to both, and verify they can have separate Independent Time Contexts', async ({
     page
   }) => {
     test.info().annotations.push({
@@ -103,17 +104,17 @@ test.describe('Time Strip', () => {
 
       await page.goto(timestrip.url);
       // Expand the tree to show the plan
-      await page.click("button[title='Show selected item in tree']");
-      await page.dragAndDrop(`role=treeitem[name=/${createdPlan.name}/]`, '.c-object-view');
-      await page.click("button[title='Save']");
-      await page.click("li[title='Save and Finish Editing']");
+      await page.getByLabel('Show selected item in tree').click();
+      await page
+        .getByLabel(`Navigate to ${createdPlan.name}`)
+        .dragTo(page.getByLabel('Object View'));
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
       const startBound = testPlan.TEST_GROUP[0].start;
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
       // Switch to fixed time mode with all plan events within the bounds
-      await page.goto(
-        `${timestrip.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=time-strip.view`
-      );
+      await navigateToObjectWithFixedTimeBounds(page, timestrip.url, startBound, endBound);
 
       // Verify all events are displayed
       const eventCount = await page.locator('.activity-bounds').count();
@@ -131,7 +132,7 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await setIndependentTimeConductorBounds(page, {
+      await setFixedIndependentTimeConductorBounds(page, {
         start: startBoundString,
         end: endBoundString
       });
@@ -149,9 +150,9 @@ test.describe('Time Strip', () => {
       expect(objectName).toBe(createdTimeStrip.name);
 
       // Drag the existing Plan onto the newly created Time Strip, and save.
-      await page.dragAndDrop(`role=treeitem[name=/${plan.name}/]`, '.c-object-view');
-      await page.click("button[title='Save']");
-      await page.click("li[title='Save and Finish Editing']");
+      await page.getByLabel(`Navigate to ${plan.name}`).dragTo(page.getByLabel('Object View'));
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
       // All events should be displayed at this point because the
       // initial independent context bounds will match the global bounds
@@ -163,7 +164,7 @@ test.describe('Time Strip', () => {
       const startBoundString = new Date(startBound).toISOString().replace('T', ' ');
       const endBoundString = new Date(endBound).toISOString().replace('T', ' ');
 
-      await setIndependentTimeConductorBounds(page, {
+      await setFixedIndependentTimeConductorBounds(page, {
         start: startBoundString,
         end: endBoundString
       });

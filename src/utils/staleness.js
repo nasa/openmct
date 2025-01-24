@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class StalenessUtils {
+class StalenessUtils {
   constructor(openmct, domainObject) {
     this.openmct = openmct;
     this.domainObject = domainObject;
@@ -29,11 +29,12 @@ export default class StalenessUtils {
 
     this.setTimeSystem(this.openmct.time.getTimeSystem());
     this.watchTimeSystem();
+    this.timeSystemKey = null;
   }
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
-    const { start } = this.openmct.time.bounds();
+    const { start } = this.openmct.time.getBounds();
     const isStalenessInCurrentClock = stalenessResponseTime > start;
 
     if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {
@@ -54,25 +55,26 @@ export default class StalenessUtils {
   }
 
   setTimeSystem(timeSystem) {
-    let metadataValue = { format: timeSystem.key };
+    this.timeSystem = timeSystem;
+  }
 
-    if (this.metadata) {
-      metadataValue = this.metadata.value(timeSystem.key) ?? metadataValue;
-    }
-
+  parseTime(stalenessResponse) {
+    const metadataValue = this.metadata.value(this.timeSystem.key) ?? {
+      format: this.timeSystem.key
+    };
     const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
-    this.parseTime = (stalenessResponse) => {
-      const stalenessDatum = {
-        ...stalenessResponse,
-        source: stalenessResponse[timeSystem.key]
-      };
-
-      return valueFormatter.parse(stalenessDatum);
+    const stalenessDatum = {
+      ...stalenessResponse,
+      source: stalenessResponse[this.timeSystem.key]
     };
+
+    return valueFormatter.parse(stalenessDatum);
   }
 
   destroy() {
     this.unwatchTimeSystem();
   }
 }
+
+export default StalenessUtils;

@@ -30,6 +30,7 @@
   >
     <td
       ref="tableCell"
+      scope="row"
       aria-label="lad name"
       class="js-first-data"
       @mouseover.ctrl="showToolTip"
@@ -57,13 +58,20 @@
 </template>
 
 <script>
-const CONTEXT_MENU_ACTIONS = ['viewDatumAction', 'viewHistoricalData', 'remove'];
-const BLANK_VALUE = '---';
-
 import { objectPathToUrl } from '/src/tools/url.js';
-import PreviewAction from '@/ui/preview/PreviewAction.js';
+import { REMOVE_ACTION_KEY } from '@/plugins/remove/RemoveAction.js';
+import { VIEW_DATUM_ACTION_KEY } from '@/plugins/viewDatumAction/ViewDatumAction.js';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+import { VIEW_HISTORICAL_DATA_ACTION_KEY } from '@/ui/preview/ViewHistoricalDataAction.js';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+
+const BLANK_VALUE = '---';
+const CONTEXT_MENU_ACTIONS = [
+  VIEW_DATUM_ACTION_KEY,
+  VIEW_HISTORICAL_DATA_ACTION_KEY,
+  REMOVE_ACTION_KEY
+];
 
 export default {
   mixins: [tooltipHelpers],
@@ -212,7 +220,7 @@ export default {
 
     this.openmct.time.on('timeSystem', this.updateTimeSystem);
 
-    this.timestampKey = this.openmct.time.timeSystem().key;
+    this.timestampKey = this.openmct.time.getTimeSystem().key;
 
     this.valueMetadata = undefined;
 
@@ -236,14 +244,12 @@ export default {
       this.setUnit();
     }
 
-    this.previewAction = new PreviewAction(this.openmct);
-    this.previewAction.on('isVisible', this.togglePreviewState);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
   },
   unmounted() {
     this.openmct.time.off('timeSystem', this.updateTimeSystem);
     this.telemetryCollection.off('add', this.setLatestValues);
     this.telemetryCollection.off('clear', this.resetValues);
-    this.previewAction.off('isVisible', this.togglePreviewState);
 
     this.telemetryCollection.destroy();
   },

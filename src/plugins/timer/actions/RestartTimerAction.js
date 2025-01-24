@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class RestartTimerAction {
+const RESTART_TIMER_ACTION_KEY = 'timer.restart';
+
+class RestartTimerAction {
   constructor(openmct) {
     this.name = 'Restart at 0';
-    this.key = 'timer.restart';
+    this.key = RESTART_TIMER_ACTION_KEY;
     this.description = 'Restart the currently displayed timer';
     this.group = 'view';
     this.cssClass = 'icon-refresh';
@@ -60,3 +62,7 @@ export default class RestartTimerAction {
       : domainObject.type === 'timer' && timerState !== 'stopped';
   }
 }
+
+export { RESTART_TIMER_ACTION_KEY };
+
+export default RestartTimerAction;

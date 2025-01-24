@@ -23,7 +23,7 @@
 <template>
   <div ref="timelistHolder" :class="listTypeClass">
     <template v-if="isExpanded">
-      <expanded-view-item
+      <ExpandedViewItem
         v-for="item in sortedItems"
         :key="item.key"
         :name="item.name"
@@ -42,7 +42,7 @@
         <table class="c-table__body js-table__body">
           <thead class="c-table__header">
             <tr>
-              <list-header
+              <ListHeader
                 v-for="headerItem in headerItems"
                 :key="headerItem.property"
                 :direction="getSortDirection(headerItem)"
@@ -56,7 +56,7 @@
             </tr>
           </thead>
           <tbody>
-            <list-item
+            <ListItem
               v-for="item in sortedItems"
               :key="item.key"
               :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
@@ -97,7 +97,7 @@ const headerItems = [
     property: 'start',
     name: 'Start Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -112,7 +112,7 @@ const headerItems = [
     property: 'end',
     name: 'End Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -425,16 +425,19 @@ export default {
     },
     isActivityInBounds(activity) {
       const startInBounds =
-        activity.start >= this.timeContext.bounds()?.start &&
-        activity.start <= this.timeContext.bounds()?.end;
+        activity.start >= this.timeContext.getBounds()?.start &&
+        activity.start <= this.timeContext.getBounds()?.end;
       const endInBounds =
-        activity.end >= this.timeContext.bounds()?.start &&
-        activity.end <= this.timeContext.bounds()?.end;
+        activity.end >= this.timeContext.getBounds()?.start &&
+        activity.end <= this.timeContext.getBounds()?.end;
       const middleInBounds =
-        activity.start <= this.timeContext.bounds()?.start &&
-        activity.end >= this.timeContext.bounds()?.end;
+        activity.start <= this.timeContext.getBounds()?.start &&
+        activity.end >= this.timeContext.getBounds()?.end;
 
       return startInBounds || endInBounds || middleInBounds;
+    },
+    isActivityInProgress(activity) {
+      return this.persistedActivityStates[activity.id] === 'in-progress';
     },
     filterActivities(activity) {
       if (this.isEditing) {
@@ -460,7 +463,8 @@ export default {
         return false;
       }
 
-      if (!this.isActivityInBounds(activity)) {
+      // An activity may be out of bounds, but if it is in-progress, we show it.
+      if (!this.isActivityInBounds(activity) && !this.isActivityInProgress(activity)) {
         return false;
       }
       //current event or future start event or past end event

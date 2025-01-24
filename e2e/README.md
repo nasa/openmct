@@ -167,9 +167,9 @@ When an a11y test fails, the result must be interpreted in the html test report 
 
 The open source performance tests function in three ways which match their naming and folder structure:
 
-`./e2e/tests/performance` - The tests at the root of this folder path detect functional changes which are mostly apparent with large performance regressions like [this](https://github.com/nasa/openmct/issues/6879). These tests run against openmct webpack in `production-mode` with the `npm run test:perf:localhost` script.
-`./e2e/tests/performance/contract/` -  These tests serve as [contracts](https://martinfowler.com/bliki/ContractTest.html) for the locator logic, functionality, and assumptions will work in our downstream, closed source test suites. These tests run against openmct webpack in `dev-mode` with the `npm run test:perf:contract` script.
-`./e2e/tests/performance/memory/` -  These tests execute memory leak detection checks in various ways. This is expected to evolve as we move to the `memlab` project. These tests run against openmct webpack in `production-mode` with the `npm run test:perf:memory` script.
+`tests/performance` - The tests at the root of this folder path detect functional changes which are mostly apparent with large performance regressions like [this](https://github.com/nasa/openmct/issues/6879). These tests run against openmct webpack in `production-mode` with the `npm run test:perf:localhost` script.
+`tests/performance/contract/` -  These tests serve as [contracts](https://martinfowler.com/bliki/ContractTest.html) for the locator logic, functionality, and assumptions will work in our downstream, closed source test suites. These tests run against openmct webpack in `dev-mode` with the `npm run test:perf:contract` script.
+`tests/performance/memory/` -  These tests execute memory leak detection checks in various ways. This is expected to evolve as we move to the `memlab` project. These tests run against openmct webpack in `production-mode` with the `npm run test:perf:memory` script.
 
 These tests are expected to become blocking and gating with assertions as we extend the capabilities of Playwright.
 
@@ -181,7 +181,7 @@ In addition to the explicit definition of performance tests, we also ensure that
 
 ### File Structure
 
-Our file structure follows the type of type of testing being excercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
+Our file structure follows the type of type of testing being exercised at the e2e layer and files containing test suites which matcher application behavior or our `src` and `example` layout. This area is not well refined as we figure out what works best for closed source and downstream projects. This may change altogether if we move `e2e` to it's own npm package.
 
 |File Path|Description|
 |:-:|-|
@@ -225,18 +225,17 @@ Current list of test tags:
 |:-:|-|
 |`@mobile` | Test case or test suite is compatible with Playwright's iPad support and Open MCT's read-only mobile view (i.e. no create button).|
 |`@a11y` | Test case or test suite to execute playwright-axe accessibility checks and generate a11y reports.|
-|`@gds` | Denotes a GDS Test Case used in the VIPER Mission.|
 |`@addInit` | Initializes the browser with an injected and artificial state. Useful for loading non-default plugins. Likely will not work outside of `npm start`.|
 |`@localStorage` | Captures or generates session storage to manipulate browser state. Useful for excluding in tests which require a persistent backend (i.e. CouchDB). See [note](#utilizing-localstorage)|
 |`@snapshot` | Uses Playwright's snapshot functionality to record a copy of the DOM for direct comparison. Must be run inside of the playwright container.|
-|`@unstable` | A new test or test which is known to be flaky.|
 |`@2p` | Indicates that multiple users are involved, or multiple tabs/pages are used. Useful for testing multi-user interactivity.|
 |`@generatedata` | Indicates that a test is used to generate testdata or test the generated test data. Usually to be associated with localstorage, but this may grow over time.|
 |`@clock` | A test which modifies the clock. These have expanded out of the visual tests and into the functional tests.
+|`@framework` | A test for open mct e2e capabilities. This is primarily to ensure we don't break projects which depend on sourcing this project's fixtures like appActions.js.
 
 ### Continuous Integration
 
-The cheapest time to catch a bug is pre-merge. Unfortuantely, this is the most expensive time to run all of the tests since each merge event can consist of hundreds of commits. For this reason, we're selective in _what we run_ as much as _when we run it_.
+The cheapest time to catch a bug is pre-merge. Unfortunately, this is the most expensive time to run all of the tests since each merge event can consist of hundreds of commits. For this reason, we're selective in _what we run_ as much as _when we run it_.
 
 We leverage CircleCI to run tests against each commit and inject the Test Reports which are generated by Playwright so that they team can keep track of flaky and [historical test trends](https://app.circleci.com/insights/github/nasa/openmct/workflows/overall-circleci-commit-status/tests?branch=master&reporting-window=last-30-days)
 
@@ -248,7 +247,7 @@ Our CI environment consists of 3 main modes of operation:
 
 CircleCI
 
-- Stable e2e tests against ubuntu and chrome
+- e2e tests against ubuntu and chrome
 - Performance tests against ubuntu and chrome
 - e2e tests are linted
 - Visual and a11y tests are run in a single resolution on the default `espresso` theme
@@ -281,23 +280,11 @@ Playwright has native support for semi-intelligent sharding. Read about it [here
 
 We will be adjusting the parallelization of the Per-Commit tests to keep below the 5 minute total runtime threshold.
 
-In addition to the Parallelization of Test Runners (Sharding), we're also running two concurrent threads on every Shard. This is the functional limit of what CircelCI Agents can support from a memory and CPU resource constraint.
+In addition to the Parallelization of Test Runners (Sharding), we're also running two concurrent threads on every Shard. This is the functional limit of what CircleCI Agents can support from a memory and CPU resource constraint.
 
 So for every commit, Playwright is effectively running 4 x 2 concurrent browsercontexts to keep the overall runtime to a miminum.
 
 At the same time, we don't want to waste CI resources on parallel runs, so we've configured each shard to fail after 5 test failures. Test failure logs are recorded and stored to allow fast triage.
-
-#### Test Promotion
-
-In order to maintain fast and reliable feedback, tests go through a promotion process. All new test cases or test suites must be labeled with the `@unstable` annotation. The Open MCT dev team runs these unstable tests in our private repos to ensure they work downstream and are reliable.
-
-- To run the stable tests, use the `npm run test:e2e:stable` command.
-- To run the new and flaky tests, use the `npm run test:e2e:unstable` command.
-
-A testcase and testsuite are to be unmarked as @unstable when:
-
-1. They run as part of "full" run 5 times without failure.
-2. They've been by a Open MCT Developer 5 times in the closed source repo without failure.
 
 ### Cross-browser and Cross-operating system
 
@@ -380,8 +367,7 @@ By adhering to this principle, we can create tests that are both robust and refl
   1. Avoid creating locator aliases. This likely means that you're compensating for a bad locator. Improve the application instead.
   1. Leverage `await page.goto('./', { waitUntil: 'domcontentloaded' });` instead of `{ waitUntil: 'networkidle' }`. Tests run against deployments with websockets often have issues with the networkidle detection.
   
-#### How to make tests faster and more resilient
-
+#### How to make tests faster and more resilient to application changes
   1. Avoid app interaction when possible. The best way of doing this is to navigate directly by URL:
 
   ```js
@@ -396,6 +382,16 @@ By adhering to this principle, we can create tests that are both robust and refl
     - Initial navigation should _almost_ always use the `{ waitUntil: 'domcontentloaded' }` option.
   1. Avoid repeated setup to test a single assertion. Write longer tests with multiple soft assertions.
   This ensures that your changes will be picked up with large refactors.
+  1. Use [user-facing locators](https://playwright.dev/docs/best-practices#use-locators) (Now a eslint rule!)
+  
+  ```js
+  page.getByRole('button', { name: 'Create' } )
+  ```
+  Instead of 
+  ```js
+  page.locator('.c-create-button')
+  ```
+  Note: `page.locator()` can be used in performance tests as xk6-browser does not yet support the new `page.getBy` pattern and css lookups can be [1.5x faster](https://serpapi.com/blog/css-selectors-faster-than-getbyrole-playwright/)
 
 ##### Utilizing LocalStorage
 
@@ -448,6 +444,7 @@ By adhering to this principle, we can create tests that are both robust and refl
 - Use Open MCT's fixed-time mode unless explicitly testing realtime clock
 - Employ the `createExampleTelemetryObject` appAction to source telemetry and specify a `name` to avoid autogenerated names.
 - Avoid creating objects with a time component like timers and clocks.
+- Utilize the playwright clock() API. See @clock Annotations for examples.
 
 5. **Hide the Tree and Inspector**: Generally, your test will not require comparisons involving the tree and inspector. These aspects are covered in component-specific tests (explained below). To exclude them from the comparison by default, navigate to the root of the main view with the tree and inspector hidden:
     - `await page.goto('./#/browse/mine?hideTree=true&hideInspector=true')`
@@ -472,6 +469,7 @@ By adhering to this principle, we can create tests that are both robust and refl
     //Select from object
     await percySnapshot(page, `object selected (theme: ${theme})`)
     ```
+8. **Use `networkidle` to wait for network requests to complete**: This is necessary to ensure that all network requests have completed before taking a snapshot. This ensures that icons are loaded and other assets are available. https://github.com/nasa/openmct/issues/7549
 
 #### How to write a great network test
 
@@ -493,28 +491,24 @@ For best practices with regards to mocking network responses, see our [couchdb.e
 The following contains a list of tips and tricks which don't exactly fit into a FAQ or Best Practices doc.
 
 - (Advanced) Overriding the Browser's Clock
-It is possible to override the browser's clock in order to control time-based elements. Since this can cause unwanted behavior (i.e. Tree not rendering), only use this sparingly. To do this, use the `overrideClock` fixture as such:
+It is possible to override the browser's clock in order to control time-based elements. Since this can cause unwanted behavior -- i.e. Tree not rendering -- only use this sparingly. Use the `page.clock()` API as such:
 
 ```js
 import { test, expect } from '../../pluginFixtures.js';
 
-test.describe('foo test suite', () => {
-  
-  // All subsequent tests in this suite will override the clock
-  test.use({
-    clockOptions: {
-      now: 1732413600000, // A timestamp given as milliseconds since the epoch
-      shouldAdvanceTime: true // Should the clock tick?
-    }
+test.describe('foo test suite @clock', () => {
+  test.beforeEach(async ({ page }) => {
+    //Set clock time
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
+    //Navigate to page with new clock
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('bar test', async ({ page }) => {
-    // ...
+  test('bar here', async ({ page }) => {
+    /// ...
   });
-});
   ```
-
-  More info and options for `overrideClock` can be found in [baseFixtures.js](baseFixtures.js)
 
 - Working with multiple pages
 There are instances where multiple browser pages will needed to verify multi-page or multi-tab application behavior. Make sure to use the `@2p` annotation as well as name each page appropriately: i.e. `page1` and `page2` or `tab1` and `tab2` depending on the intended use case. Generally pages should be used unless testing `sharedWorker` code, specifically.

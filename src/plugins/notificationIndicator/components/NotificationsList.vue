@@ -28,7 +28,7 @@
       </div>
     </div>
     <div role="list" class="w-messages c-overlay__messages">
-      <notification-message
+      <NotificationMessage
         v-for="(notification, notificationIndex) in notifications"
         :key="notificationIndex"
         :close-overlay="closeOverlay"
@@ -65,7 +65,7 @@ export default {
       this.overlay = this.openmct.overlays.overlay({
         element: this.$el,
         size: 'large',
-        dismissable: true,
+        dismissible: true,
         buttons: [
           {
             label: 'Clear All Notifications',

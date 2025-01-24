@@ -28,7 +28,7 @@ import DefaultCompositionProvider from './DefaultCompositionProvider.js';
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
@@ -72,7 +72,7 @@ export default class CompositionAPI {
    *
    * @method get
    * @param {DomainObject} domainObject
-   * @returns {CompositionCollection}
+   * @returns {CompositionCollection | undefined}
    */
   get(domainObject) {
     const provider = this.registry.find((p) => {

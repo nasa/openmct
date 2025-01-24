@@ -1,8 +1,8 @@
 /*
 This is the OpenMCT common webpack file. It is imported by the other three webpack configurations:
- - webpack.prod.js - the production configuration for OpenMCT (default)
- - webpack.dev.js - the development configuration for OpenMCT
- - webpack.coverage.js - imports webpack.dev.js and adds code coverage
+ - webpack.prod.mjs - the production configuration for OpenMCT (default)
+ - webpack.dev.mjs - the development configuration for OpenMCT
+ - webpack.coverage.mjs - imports webpack.dev.js and adds code coverage
 There are separate npm scripts to use these configurations, though simply running `npm install`
 will use the default production configuration.
 */
@@ -15,10 +15,11 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
+import { merge } from 'webpack-merge';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
-const packageDefinition = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
+const { version } = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
 
 try {
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
@@ -48,15 +49,18 @@ const config = {
     couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
     inMemorySearchWorker: './src/api/objects/InMemorySearchWorker.js',
     espressoTheme: './src/plugins/themes/espresso-theme.scss',
-    snowTheme: './src/plugins/themes/snow-theme.scss'
+    snowTheme: './src/plugins/themes/snow-theme.scss',
+    darkmatterTheme: './src/plugins/themes/darkmatter-theme.scss'
   },
   output: {
     globalObject: 'this',
     filename: '[name].js',
     path: path.resolve(projectRootDir, 'dist'),
-    library: 'openmct',
-    libraryExport: 'default',
-    libraryTarget: 'umd',
+    library: {
+      name: 'openmct',
+      type: 'umd',
+      export: 'default'
+    },
     publicPath: '',
     hashFunction: 'xxhash64',
     clean: true
@@ -66,7 +70,6 @@ const config = {
       '@': path.join(projectRootDir, 'src'),
       legacyRegistry: path.join(projectRootDir, 'src/legacyRegistry'),
       csv: 'comma-separated-values',
-      EventEmitter: 'eventemitter3',
       bourbon: 'bourbon.scss',
       'plotly-basic': 'plotly.js-basic-dist-min',
       'plotly-gl2d': 'plotly.js-gl2d-dist-min',
@@ -81,7 +84,7 @@ const config = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __OPENMCT_VERSION__: `'${packageDefinition.version}'`,
+      __OPENMCT_VERSION__: `'${version}'`,
       __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
       __OPENMCT_REVISION__: `'${gitRevision}'`,
       __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,

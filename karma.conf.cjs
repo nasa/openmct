@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,13 +24,13 @@
 const loadWebpackConfig = async () => {
   if (process.env.KARMA_DEBUG) {
     return {
-      config: (await import('./.webpack/webpack.dev.js')).default,
+      config: (await import('./.webpack/webpack.dev.mjs')).default,
       browsers: ['ChromeDebugging'],
       singleRun: false
     };
   } else {
     return {
-      config: (await import('./.webpack/webpack.coverage.js')).default,
+      config: (await import('./.webpack/webpack.coverage.mjs')).default,
       browsers: ['ChromeHeadless'],
       singleRun: true
     };

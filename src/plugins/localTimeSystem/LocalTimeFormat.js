@@ -38,7 +38,6 @@ const DATE_FORMATS = [DATE_FORMAT, 'YYYY-MM-DD h:mm:ss a', 'YYYY-MM-DD h:mm a', 
  *
  * @implements {Format}
  * @constructor
- * @memberof platform/commonUI/formats
  */
 export default function LocalTimeFormat() {
   this.key = 'local-format';

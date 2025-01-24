@@ -26,6 +26,7 @@ import StartTimerAction from './actions/StartTimerAction.js';
 import StopTimerAction from './actions/StopTimerAction.js';
 import TimerViewProvider from './TimerViewProvider.js';
 
+/** @type {OpenMCTPlugin} */
 export default function TimerPlugin() {
   return function install(openmct) {
     openmct.types.addType('timer', {

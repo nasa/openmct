@@ -20,7 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * Provides the root object for the Open MCT application.
+ */
 class RootObjectProvider {
+  /**
+   * @param {RootRegistry} rootRegistry - The registry containing root objects.
+   */
   constructor(rootRegistry) {
     if (!RootObjectProvider.instance) {
       this.rootRegistry = rootRegistry;
@@ -42,10 +48,18 @@ class RootObjectProvider {
     return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
   }
 
+  /**
+   * Updates the name of the root object.
+   * @param {string} name - The new name for the root object.
+   */
   updateName(name) {
     this.rootObject.name = name;
   }
 
+  /**
+   * Retrieves the root object with updated composition.
+   * @returns {Promise<RootObject>} A promise that resolves to the root object.
+   */
   async get() {
     let roots = await this.rootRegistry.getRoots();
     this.rootObject.composition = roots;
@@ -54,8 +68,30 @@ class RootObjectProvider {
   }
 }
 
+/**
+ * Creates or returns an instance of RootObjectProvider.
+ * @param {RootRegistry} rootRegistry - The registry containing root objects.
+ * @returns {RootObjectProvider} An instance of RootObjectProvider.
+ */
 function instance(rootRegistry) {
   return new RootObjectProvider(rootRegistry);
 }
 
 export default instance;
+
+/**
+ * @typedef {import('openmct').Identifier} Identifier
+ */
+
+/**
+ * @typedef {Object} RootObject
+ * @property {Identifier} identifier - The identifier of the root object.
+ * @property {string} name - The name of the root object.
+ * @property {string} type - The type of the root object.
+ * @property {Identifier[]} composition - The composition of the root object.
+ */
+
+/**
+ * @typedef {Object} RootRegistry
+ * @property {() => Promise<Identifier[]>} getRoots - A method that returns a promise resolving to an array of root identifiers.
+ */

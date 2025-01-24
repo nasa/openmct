@@ -30,4 +30,15 @@ snapshot:
     .gl-plot-chart-area{
       opacity: 0 !important;
     }
-   
+    /* SWG Time values on plot */
+    .gl-plot-x{
+      opacity: 0 !important;
+    }
+    /* Notification Time in modal */
+    .c-ne__time{
+      opacity: 0 !important;
+    }
+    /* Snapshot name with embedded time */
+    .l-browse-bar__snapshot-datetime{
+      opacity: 0 !important;
+    }

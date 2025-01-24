@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 import { v4 as uuid } from 'uuid';
 
@@ -41,8 +41,14 @@ const ANNOTATION_TYPES = Object.freeze({
   PLOT_SPATIAL: 'PLOT_SPATIAL'
 });
 
+/**
+ * @type {string}
+ */
 const ANNOTATION_TYPE = 'annotation';
 
+/**
+ * @type {string}
+ */
 const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
 
 /**
@@ -53,15 +59,15 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').Identifier} Identifier
+ * @typedef {import('openmct').Identifier} Identifier
  */
 
 /**
- * @typedef {import('../../../openmct').OpenMCT} OpenMCT
+ * @typedef {import('openmct').OpenMCT} OpenMCT
  */
 
 /**
@@ -73,7 +79,8 @@ const ANNOTATION_LAST_CREATED = 'annotationLastCreated';
  * about rationals behind why the robot has taken a certain path.
  * Annotations are discoverable using search, and are typically rendered in OpenMCT views to bring attention
  * to other users.
- * @constructor
+ * @class AnnotationAPI
+ * @extends {EventEmitter}
  */
 export default class AnnotationAPI extends EventEmitter {
   /** @type {Map<ANNOTATION_TYPES, Array<(a, b) => boolean >>} */
@@ -120,10 +127,9 @@ export default class AnnotationAPI extends EventEmitter {
    * @property {Array<Object>} targets The targets ID keystrings and their specific properties.
    * For plots, this will be a bounding box, e.g.: {keyString: "d8385009-789d-457b-acc7-d50ba2fd55ea", maxY: 100, minY: 0, maxX: 100, minX: 0}
    * For notebooks, this will be an entry ID, e.g.: {entryId: "entry-ecb158f5-d23c-45e1-a704-649b382622ba"}
-   * @property {DomainObject>[]} targetDomainObjects the domain objects this annotation points to (e.g., telemetry objects for a plot)
+   * @property {DomainObject[]} targetDomainObjects the domain objects this annotation points to (e.g., telemetry objects for a plot)
    */
   /**
-   * @method create
    * @param {CreateAnnotationOptions} options
    * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
    *          has been created, or be rejected if it cannot be saved
@@ -195,6 +201,10 @@ export default class AnnotationAPI extends EventEmitter {
     }
   }
 
+  /**
+   * Updates the annotation modified timestamp for a target domain object
+   * @param {DomainObject} targetDomainObject The target domain object to update
+   */
   #updateAnnotationModified(targetDomainObject) {
     // As certain telemetry objects are immutable, we'll need to check here first
     // to see if we can add the annotation last created property.
@@ -207,8 +217,8 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   /**
-   * @method defineTag
-   * @param {string} key a unique identifier for the tag
+   * Defines a new tag
+   * @param {string} tagKey a unique identifier for the tag
    * @param {Tag} tagsDefinition the definition of the tag to add
    */
   defineTag(tagKey, tagsDefinition) {
@@ -216,7 +226,7 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   /**
-   * @method setNamespaceToSaveAnnotations
+   * Sets the namespace to save new annotations to
    * @param {string} namespace the namespace to save new annotations to
    */
   setNamespaceToSaveAnnotations(namespace) {
@@ -224,7 +234,7 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   /**
-   * @method isAnnotation
+   * Checks if a domain object is an annotation
    * @param {DomainObject} domainObject the domainObject in question
    * @returns {boolean} Returns true if the domain object is an annotation
    */
@@ -233,7 +243,7 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   /**
-   * @method getAvailableTags
+   * Gets the available tags that have been loaded
    * @returns {Tag[]} Returns an array of the available tags that have been loaded
    */
   getAvailableTags() {
@@ -252,10 +262,10 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   /**
-   * @method getAnnotations
+   * Gets annotations for a given domain object identifier
    * @param {Identifier} domainObjectIdentifier - The domain object identifier to use to search for annotations. For example, a telemetry object identifier.
-   * @param {AbortSignal} abortSignal - An abort signal to cancel the search
-   * @returns {DomainObject[]} Returns an array of annotations that match the search query
+   * @param {AbortSignal} [abortSignal] - An abort signal to cancel the search
+   * @returns {Promise<DomainObject[]>} Returns a promise that resolves to an array of annotations that match the search query
    */
   async getAnnotations(domainObjectIdentifier, abortSignal = null) {
     const keyStringQuery = this.openmct.objects.makeKeyString(domainObjectIdentifier);
@@ -273,8 +283,8 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   /**
-   * @method deleteAnnotations
-   * @param {DomainObject[]} existingAnnotation - An array of annotations to delete (set _deleted to true)
+   * Deletes (marks as deleted) the given annotations
+   * @param {DomainObject[]} annotations - An array of annotations to delete (set _deleted to true)
    */
   deleteAnnotations(annotations) {
     if (!annotations) {
@@ -289,7 +299,7 @@ export default class AnnotationAPI extends EventEmitter {
   }
 
   /**
-   * @method deleteAnnotations
+   * Undeletes (marks as not deleted) the given annotation
    * @param {DomainObject} annotation - An annotation to undelete (set _deleted to false)
    */
   unDeleteAnnotation(annotation) {
@@ -300,6 +310,12 @@ export default class AnnotationAPI extends EventEmitter {
     this.openmct.objects.mutate(annotation, '_deleted', false);
   }
 
+  /**
+   * Gets tags from the given annotations
+   * @param {DomainObject[]} annotations - The annotations to get tags from
+   * @param {boolean} [filterDuplicates=true] - Whether to filter out duplicate tags
+   * @returns {Tag[]} An array of tags from the given annotations
+   */
   getTagsFromAnnotations(annotations, filterDuplicates = true) {
     if (!annotations) {
       return [];
@@ -324,6 +340,11 @@ export default class AnnotationAPI extends EventEmitter {
     return fullTagModels;
   }
 
+  /**
+   * Adds meta information to the given tags
+   * @param {string[]} tags - The tags to add meta information to
+   * @returns {Tag[]} An array of tags with meta information added
+   */
   #addTagMetaInformationToTags(tags) {
     // Convert to Set and back to Array to remove duplicates
     const uniqueTags = [...new Set(tags)];
@@ -336,6 +357,11 @@ export default class AnnotationAPI extends EventEmitter {
     });
   }
 
+  /**
+   * Gets tags that match the given query
+   * @param {string} query - The query to match tags against
+   * @returns {string[]} An array of tag keys that match the query
+   */
   #getMatchingTags(query) {
     if (!query) {
       return [];
@@ -352,6 +378,88 @@ export default class AnnotationAPI extends EventEmitter {
     return matchingTags;
   }
 
+  /**
+   * @typedef {Object} AnnotationTarget
+   * @property {string} keyString - The key string of the target
+   * @property {*} [additionalProperties] - Additional properties depending on the annotation type
+   */
+
+  /**
+   * @typedef {Object} TargetModel
+   * @property {import('openmct').DomainObject[]} originalPath - The original path of the target object
+   * @property {*} [additionalProperties] - Additional properties of the target domain object
+   */
+
+  /**
+   * @typedef {Object} AnnotationResult
+   * @property {string} name - The name of the annotation
+   * @property {string} type - The type of the object (always 'annotation')
+   * @property {{key: string, namespace: string}} identifier - The identifier of the annotation
+   * @property {string[]} tags - Array of tag keys associated with the annotation
+   * @property {boolean} _deleted - Whether the annotation is marked as deleted
+   * @property {ANNOTATION_TYPES} annotationType - The type of the annotation
+   * @property {string} contentText - The text content of the annotation
+   * @property {string} originalContextPath - The original context path of the annotation
+   * @property {AnnotationTarget[]} targets - Array of targets for the annotation
+   * @property {Tag[]} fullTagModels - Full tag models including metadata
+   * @property {string[]} matchingTagKeys - Array of tag keys that matched the search query
+   * @property {TargetModel[]} targetModels - Array of target models with additional information
+   */
+
+  /**
+   * Combines annotations with the same targets
+   * @param {AnnotationResult[]} results - The results to combine
+   * @returns {AnnotationResult[]} The combined results
+   */
+  #combineSameTargets(results) {
+    const combinedResults = [];
+    results.forEach((currentAnnotation) => {
+      const existingAnnotation = combinedResults.find((annotationToFind) => {
+        const { annotationType, targets } = currentAnnotation;
+        return this.areAnnotationTargetsEqual(annotationType, targets, annotationToFind.targets);
+      });
+      if (!existingAnnotation) {
+        combinedResults.push(currentAnnotation);
+      } else {
+        existingAnnotation.tags.push(...currentAnnotation.tags);
+      }
+    });
+
+    return combinedResults;
+  }
+
+  /**
+   * Breaks apart annotations with multiple targets into separate results
+   * @param {AnnotationResult[]} results - The results to break apart
+   * @returns {AnnotationResult[]} The separated results
+   */
+  #breakApartSeparateTargets(results) {
+    const separateResults = [];
+    results.forEach((result) => {
+      result.targets.forEach((target) => {
+        const targetID = target.keyString;
+        const separatedResult = {
+          ...result
+        };
+        separatedResult.targets = [target];
+        separatedResult.targetModels = result.targetModels.filter((targetModel) => {
+          const targetKeyString = this.openmct.objects.makeKeyString(targetModel.identifier);
+
+          return targetKeyString === targetID;
+        });
+        separateResults.push(separatedResult);
+      });
+    });
+
+    return separateResults;
+  }
+
+  /**
+   * Adds tag meta information to the given results
+   * @param {AnnotationResult[]} results - The results to add tag meta information to
+   * @param {string[]} matchingTagKeys - The matching tag keys
+   * @returns {AnnotationResult[]} The results with tag meta information added
+   */
   #addTagMetaInformationToResults(results, matchingTagKeys) {
     const tagsAddedToResults = results.map((result) => {
       const fullTagModels = this.#addTagMetaInformationToTags(result.tags);
@@ -366,6 +474,12 @@ export default class AnnotationAPI extends EventEmitter {
     return tagsAddedToResults;
   }
 
+  /**
+   * Adds target models to the results
+   * @param {AnnotationResult[]} results - The results to add target models to
+   * @param {AbortSignal} abortSignal - The abort signal
+   * @returns {Promise<AnnotationResult[]>} The results with target models added
+   */
   async #addTargetModelsToResults(results, abortSignal) {
     const modelAddedToResults = await Promise.all(
       results.map(async (result) => {
@@ -397,54 +511,11 @@ export default class AnnotationAPI extends EventEmitter {
     return modelAddedToResults;
   }
 
-  #combineSameTargets(results) {
-    const combinedResults = [];
-    results.forEach((currentAnnotation) => {
-      const existingAnnotation = combinedResults.find((annotationToFind) => {
-        const { annotationType, targets } = currentAnnotation;
-        return this.areAnnotationTargetsEqual(annotationType, targets, annotationToFind.targets);
-      });
-      if (!existingAnnotation) {
-        combinedResults.push(currentAnnotation);
-      } else {
-        existingAnnotation.tags.push(...currentAnnotation.tags);
-      }
-    });
-
-    return combinedResults;
-  }
-
   /**
-   * @method #breakApartSeparateTargets
-   * @param {Array} results A set of search results that could have the multiple targets for the same result
-   * @returns {Array} The same set of results, but with each target separated out into its own result
-   */
-  #breakApartSeparateTargets(results) {
-    const separateResults = [];
-    results.forEach((result) => {
-      result.targets.forEach((target) => {
-        const targetID = target.keyString;
-        const separatedResult = {
-          ...result
-        };
-        separatedResult.targets = [target];
-        separatedResult.targetModels = result.targetModels.filter((targetModel) => {
-          const targetKeyString = this.openmct.objects.makeKeyString(targetModel.identifier);
-
-          return targetKeyString === targetID;
-        });
-        separateResults.push(separatedResult);
-      });
-    });
-
-    return separateResults;
-  }
-
-  /**
-   * @method searchForTags
-   * @param {string} query A query to match against tags. E.g., "dr" will match the tags "drilling" and "driving"
-   * @param {Object} [abortController] An optional abort method to stop the query
-   * @returns {Promise} returns a model of matching tags with their target domain objects attached
+   * Searches for tags matching the given query
+   * @param {string} query - A query to match against tags
+   * @param {AbortSignal} [abortSignal] - An optional abort signal to stop the query
+   * @returns {Promise<AnnotationResult[]>} A promise that resolves to an array of matching annotation results
    */
   async searchForTags(query, abortSignal) {
     const matchingTagKeys = this.#getMatchingTags(query);

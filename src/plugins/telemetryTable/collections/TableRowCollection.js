@@ -19,8 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
+
+import { ORDER } from '../constants.js';
+
+/**
+ * @typedef {import('.TelemetryTableRow.js').default} TelemetryTableRow
+ */
 
 /**
  * @constructor
@@ -123,10 +129,22 @@ export default class TableRowCollection extends EventEmitter {
     return foundIndex;
   }
 
-  updateRowInPlace(row, index) {
-    const foundRow = this.rows[index];
-    foundRow.updateWithDatum(row.datum);
-    this.rows[index] = foundRow;
+  /**
+   * `incomingRow` exists in the collection,
+   * so merge existing and incoming row properties
+   *
+   * Do to reactivity of Vue, we want to replace the existing row with the updated row
+   * @param {TelemetryTableRow} incomingRow to update
+   * @param {number} index of the existing row in the collection to update
+   */
+  updateRowInPlace(incomingRow, index) {
+    // Update the incoming row, not the existing row
+    const existingRow = this.rows[index];
+    incomingRow.updateWithDatum(existingRow);
+
+    // Replacing the existing row with the updated, incoming row will trigger Vue reactivity
+    // because the reference to the row has changed
+    this.rows.splice(index, 1, incomingRow);
   }
 
   setLimit(rowLimit) {
@@ -149,13 +167,13 @@ export default class TableRowCollection extends EventEmitter {
   }
 
   insertOrUpdateRows(rowsToAdd, addToBeginning) {
-    rowsToAdd.forEach((row) => {
+    rowsToAdd.forEach((row, addRowsIndex) => {
       const index = this.getInPlaceUpdateIndex(row);
       if (index > -1) {
         this.updateRowInPlace(row, index);
       } else {
         if (addToBeginning) {
-          this.rows.unshift(row);
+          this.rows.splice(addRowsIndex, 0, row);
         } else {
           this.rows.push(row);
         }
@@ -208,7 +226,7 @@ export default class TableRowCollection extends EventEmitter {
     const val1 = this.getValueForSortColumn(row1);
     const val2 = this.getValueForSortColumn(row2);
 
-    if (this.sortOptions.direction === 'asc') {
+    if (this.sortOptions.direction === ORDER.ASCENDING) {
       return val1 <= val2 ? row1 : row2;
     } else {
       return val1 >= val2 ? row1 : row2;
@@ -272,7 +290,7 @@ export default class TableRowCollection extends EventEmitter {
    */
   sortBy(sortOptions) {
     if (arguments.length > 0) {
-      this.sortOptions = sortOptions;
+      this.setSortOptions(sortOptions);
       this.rows = _.orderBy(
         this.rows,
         (row) => row.getParsedValue(sortOptions.key),
@@ -283,6 +301,10 @@ export default class TableRowCollection extends EventEmitter {
 
     // Return duplicate to avoid direct modification of underlying object
     return Object.assign({}, this.sortOptions);
+  }
+
+  setSortOptions(sortOptions) {
+    this.sortOptions = sortOptions;
   }
 
   setColumnFilter(columnKey, filter) {
@@ -373,7 +395,7 @@ export default class TableRowCollection extends EventEmitter {
 
   getRows() {
     if (this.rowLimit && this.rows.length > this.rowLimit) {
-      if (this.sortOptions.direction === 'desc') {
+      if (this.sortOptions.direction === ORDER.DESCENDING) {
         return this.rows.slice(0, this.rowLimit);
       } else {
         return this.rows.slice(-this.rowLimit);

@@ -23,7 +23,7 @@
 /*
 Collection of Visual Tests set to run in a default context with default Plugins. The tests within this suite
 are only meant to run against openmct's app.js started by `npm run start` within the
-`./e2e/playwright-visual.config.js` file.
+`playwright-visual.config.js` file.
 */
 
 import percySnapshot from '@percy/playwright';
@@ -83,16 +83,6 @@ test.describe('Visual - Default @a11y', () => {
 
     await page.getByRole('menuItem', { name: 'Display Layout' }).hover({ trial: true });
     await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
-  });
-
-  test('Visual - Default Gauge', async ({ page, theme }) => {
-    await createDomainObjectWithDefaults(page, {
-      type: 'Gauge',
-      name: 'Default Gauge'
-    });
-
-    // Take a snapshot of the newly created Gauge object
-    await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
   });
 
   test.afterEach(async ({ page }, testInfo) => {

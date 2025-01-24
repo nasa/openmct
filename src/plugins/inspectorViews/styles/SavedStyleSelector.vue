@@ -154,7 +154,7 @@ ${font}`;
           message: message,
           buttons: [
             {
-              label: 'OK',
+              label: 'Ok',
               callback: () => {
                 dialog.dismiss();
                 resolve();

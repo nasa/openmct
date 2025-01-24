@@ -227,7 +227,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     return Promise.all(telemetryRequests).then((telemetryRequestsResults) => {
       let latestTimestamp;
       const timeSystems = this.openmct.time.getAllTimeSystems();
-      const timeSystem = this.openmct.time.timeSystem();
+      const timeSystem = this.openmct.time.getTimeSystem();
 
       telemetryRequestsResults.forEach((results, index) => {
         const latestDatum =

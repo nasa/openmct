@@ -4,6 +4,7 @@
  */
 {
   "compilerOptions": {
+    "target": "ES6",
     "baseUrl": "./",
     "allowJs": true,
     "checkJs": false,
@@ -14,16 +15,14 @@
     "esModuleInterop": true,
     "noImplicitOverride": true,
     "noImplicitAny": false,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "skipLibCheck": true,
-    "target": "ES2015",
-    "paths": {
-      // matches the alias in webpack config, so that types for those imports are visible.
-      "@/*": ["src/*"]
-    }
+    "outFile": "dist/types/index.d.ts",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
-  "include": ["src/api/**/*.js"],
-  "exclude": ["node_modules", "dist", "**/*Spec.js"]
+  "include": [
+    "src/api/**/*.js"
+  ],
+  "exclude": [
+    "**/*Spec.js"
+  ]
 }
