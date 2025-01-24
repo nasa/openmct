@@ -553,6 +553,11 @@ export default {
     this.openmct.time.on('boundsChanged', this.refreshData);
     this.openmct.time.on('timeSystem', this.setTimeSystem);
 
+    // Initialize objectStyles if it doesn't exist
+    if (!this.domainObject.configuration.objectStyles) {
+      this.domainObject.configuration.objectStyles = {};
+    }
+
     this.setupClockChangedEvent((domainObject) => {
       this.triggerUnsubscribeFromStaleness(domainObject);
       this.subscribeToStaleness(domainObject);

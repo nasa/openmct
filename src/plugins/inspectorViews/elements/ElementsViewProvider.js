@@ -62,10 +62,10 @@ export default function ElementsViewProvider(openmct) {
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
 
-          return hasComposition && isEditing;
+          return hasComposition;
         },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.LOW;
         },
         destroy: function () {
           if (_destroy) {

@@ -35,8 +35,8 @@ function isLayoutObject(selection, objectType) {
   );
 }
 
-function isCreatableObject(object, type) {
-  return NON_STYLABLE_TYPES.indexOf(object.type) < 0 && type.definition.creatable;
+function isCreatableObject(object, typeObject) {
+  return NON_STYLABLE_TYPES.indexOf(object.type) < 0 && typeObject.definition.creatable;
 }
 
 export default function StylesInspectorViewProvider(openmct) {
@@ -47,12 +47,14 @@ export default function StylesInspectorViewProvider(openmct) {
     canView: function (selection) {
       const objectSelection = selection?.[0];
       const objectContext = objectSelection?.[0]?.context;
-      const layoutItem = objectContext?.layoutItem;
       const domainObject = objectContext?.item;
-      const isFlexibleLayoutContainer =
-        domainObject?.type === 'flexible-layout' && objectContext.type === 'container';
+      const hasStyles = domainObject?.configuration?.objectStyles;
+      const isFlexibleLayoutContainer = ['flexible-layout', 'fixed-layout'].includes(
+        domainObject?.type
+      );
+      const isLayoutItem = objectContext?.layoutItem;
 
-      if (layoutItem) {
+      if (isLayoutItem || hasStyles) {
         return true;
       }
 
@@ -60,10 +62,11 @@ export default function StylesInspectorViewProvider(openmct) {
         return false;
       }
 
-      const type = openmct.types.get(domainObject.type);
+      const typeObject = openmct.types.get(domainObject.type);
 
       return (
-        isLayoutObject(objectSelection, domainObject.type) || isCreatableObject(domainObject, type)
+        isLayoutObject(objectSelection, domainObject.type) ||
+        isCreatableObject(domainObject, typeObject)
       );
     },
     view: function (selection) {
@@ -92,7 +95,7 @@ export default function StylesInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
         },
         destroy: function () {
           if (_destroy) {
