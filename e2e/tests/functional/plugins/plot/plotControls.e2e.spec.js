@@ -108,4 +108,59 @@ test.describe('Plot Controls', () => {
     // Expect before and after plot points to match
     await expect(plotPixelSizeAtPause).toEqual(plotPixelSizeAfterWait);
   });
+
+  test('Plots follow the right time context', async ({ page }) => {
+    // Set realtime mode with 2 second window
+    const startOffset = {
+      startMins: '00',
+      startSecs: '01'
+    };
+
+    const endOffset = {
+      endMins: '00',
+      endSecs: '01'
+    };
+
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    // Set start time offset
+    await setStartOffset(page, startOffset);
+
+    // Set end time offset
+    await setEndOffset(page, endOffset);
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on pause control
+    await page.getByTitle('Pause incoming real-time data').click();
+    // expect plot to be paused
+    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
+    // synchronize time conductor
+    await page.getByTitle('Synchronize Time Conductor').click();
+
+    // expect warning message, ack it.
+    await expect(page.getByLabel('Modal Overlay')).toBeVisible();
+    await page.getByLabel('Modal Overlay').getByRole('button', { name: 'OK' }).click();
+
+    // Toggle independent time conductor ON
+    await page.getByLabel('Enable Independent Time Conductor').click();
+    // Toggle independent time conductor OFF
+    await page.getByLabel('Disable Independent Time Conductor').click();
+
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on pause control
+    await page.getByTitle('Pause incoming real-time data').click();
+    // expect plot to be paused
+    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
+    // synchronize time conductor
+    await page.getByTitle('Synchronize Time Conductor').click();
+
+    // expect warning message, ack it.
+    await expect(page.getByLabel('Modal Overlay')).toBeVisible();
+    await page.getByLabel('Modal Overlay').getByRole('button', { name: 'OK' }).click();
+  });
 });
