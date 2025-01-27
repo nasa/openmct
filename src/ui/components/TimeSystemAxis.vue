@@ -21,7 +21,9 @@
 -->
 <template>
   <div ref="axisHolder" class="c-timesystem-axis">
-    <div class="nowMarker" :style="nowMarkerStyle"><span class="icon-arrow-down"></span></div>
+    <div class="nowMarker" :style="nowMarkerStyle" aria-label="Now Marker">
+      <span class="icon-arrow-down"></span>
+    </div>
     <svg :width="svgWidth" :height="svgHeight">
       <g class="axis" font-size="1.3em" :transform="axisTransform"></g>
     </svg>
