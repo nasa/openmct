@@ -24,33 +24,33 @@ import { ref } from 'vue';
 
 /**
  * @typedef {Object} DragResizerOptions the options object
- * @property {number} [size=0] the initial size of the object to track size for
+ * @property {number} [initialX=0] the initial x of the object to track size for
+ * @property {number} [initialY=0] the initial y of the object to track size for
  * @property {Function} [callback] the function to call when drag is complete
  */
 
 /**
  * @typedef {Object} ReturnObject the return object
- * @property {number} size the reactive size ref
+ * @property {number} x the reactive horizontal size during/post drag
+ * @property {number} y the reactive vertical size during/post drag
  * @property {function} mousedown
  */
 
 /**
  * Defines a drag resizer hook that tracks the size of an object
- * in vertical or horizontal direction on drag
- * @param {('horizontal'|'vertical')} [direction='horizontal'] the direction of drag to track
+ * in vertical and horizontal direction on drag
  * @param {DragResizerOptions} [param={}] the options object
  * @returns {ReturnObject}
  */
-export function useDragResizer(direction = 'horizontal', { size: initialSize = 0, callback } = {}) {
-  if (direction !== 'horizontal' && direction !== 'vertical') {
-    throw new Error(`Must specify 'horizontal' or 'vertical' drag direction`);
-  }
+export function useDragResizer({ initialX = 0, initialY = 0, callback } = {}) {
+  const x = ref(initialX);
+  const y = ref(initialY);
+  const isDragging = ref(false);
 
-  const size = ref(initialSize);
-
-  let dragStartLength;
-  let dragStartPosition;
-  const position = direction === 'horizontal' ? 'clientX' : 'clientY';
+  let dragStartX;
+  let dragStartY;
+  let dragStartClientX;
+  let dragStartClientY;
 
   /**
    * Begins the tracking process for the drag resizer
@@ -59,8 +59,11 @@ export function useDragResizer(direction = 'horizontal', { size: initialSize = 0
    * @param {*} event the mousedown event
    */
   function mousedown(event) {
-    dragStartLength = size.value;
-    dragStartPosition = event[position];
+    dragStartX = x.value;
+    dragStartY = y.value;
+    dragStartClientX = event.clientX;
+    dragStartClientY = event.clientY;
+    isDragging.value = true;
 
     document.addEventListener('mouseup', mouseup, {
       once: true,
@@ -71,13 +74,19 @@ export function useDragResizer(direction = 'horizontal', { size: initialSize = 0
   }
 
   function mousemove(event) {
-    const delta = event[position] - dragStartPosition;
-    size.value = dragStartLength + delta;
+    const deltaX = event.clientX - dragStartClientX;
+    const deltaY = event.clientY - dragStartClientY;
+
+    x.value = dragStartX + deltaX;
+    y.value = dragStartY + deltaY;
   }
 
   function mouseup(event) {
-    dragStartLength = undefined;
-    dragStartPosition = undefined;
+    dragStartX = undefined;
+    dragStartY = undefined;
+    dragStartClientX = undefined;
+    dragStartClientY = undefined;
+    isDragging.value = false;
 
     document.removeEventListener('mousemove', mousemove);
     event.preventDefault();
@@ -87,7 +96,9 @@ export function useDragResizer(direction = 'horizontal', { size: initialSize = 0
   }
 
   return {
-    size,
-    mousedown
+    mousedown,
+    x,
+    y,
+    isDragging
   };
 }
