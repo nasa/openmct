@@ -108,9 +108,9 @@ export default {
     );
 
     // Drag resizer - Swimlane column width
-    const { size, mousedown } = useDragResizer('horizontal', { size: 200 });
+    const { x: swimLaneLabelWidth, mousedown } = useDragResizer({ initialX: 200 });
 
-    provide('swimLaneLabelWidth', size);
+    provide('swimLaneLabelWidth', swimLaneLabelWidth);
     provide('mousedown', mousedown);
 
     return { alignmentData, resetAlignment };
