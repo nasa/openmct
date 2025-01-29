@@ -109,6 +109,14 @@ test.describe('Plot Controls', () => {
     await expect(plotPixelSizeAtPause).toEqual(plotPixelSizeAfterWait);
   });
 
+  /*
+  Test to verify that switching a plot's time context from global to
+  its own independent time context and then back to global context works correctly.
+
+  After switching from independent time context to the global time context in real time mode,
+  triggering 'synchronize time conductor' action should have the desired affect of putting the
+  global time conductor in fixed time span mode (including showing the popup modal).
+  */
   test('Plots follow the right time context', async ({ page }) => {
     // Set realtime mode with 2 second window
     const startOffset = {
