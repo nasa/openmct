@@ -421,8 +421,10 @@ export default class ConditionManager extends EventEmitter {
 
   updateConditionResults(normalizedDatum) {
     //We want to stop when the first condition evaluates to true.
-    this.conditions.forEach((condition) => {
+    this.conditions.some((condition) => {
       condition.updateResult(normalizedDatum);
+
+      return condition.result === true;
     });
   }
 
