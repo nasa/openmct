@@ -113,9 +113,8 @@ test.describe('Plot Controls', () => {
   Test to verify that switching a plot's time context from global to
   its own independent time context and then back to global context works correctly.
 
-  After switching from independent time context to the global time context in real time mode,
-  triggering 'synchronize time conductor' action should have the desired affect of putting the
-  global time conductor in fixed time span mode (including showing the popup modal).
+  After switching from fixed time mode (ITC) to real time mode (global context),
+  the pause control for the plot should be available, indicating that it is following the right context.
   */
   test('Plots follow the right time context', async ({ page }) => {
     // Set realtime mode with 2 second window
@@ -129,49 +128,33 @@ test.describe('Plot Controls', () => {
       endSecs: '01'
     };
 
-    // Switch to real-time mode
+    // Set global time conductor to real-time mode
     await setRealTimeMode(page);
-
-    // Set start time offset
-    await setStartOffset(page, startOffset);
-
-    // Set end time offset
-    await setEndOffset(page, endOffset);
 
     // hover over plot for plot controls
     await page.getByLabel('Plot Canvas').hover();
-    // click on pause control
-    await page.getByTitle('Pause incoming real-time data').click();
-    // expect plot to be paused
-    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
-    // synchronize time conductor
-    await page.getByTitle('Synchronize Time Conductor').click();
-
-    // expect warning message, ack it.
-    await expect(page.getByLabel('Modal Overlay')).toBeVisible();
-    await page.getByLabel('Modal Overlay').getByRole('button', { name: 'OK' }).click();
-
-    //confirm that you're now in fixed mode
-    await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
+    // Ensure pause control is visible since global time conductor is in Real time mode.
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeVisible();
 
     // Toggle independent time conductor ON
     await page.getByLabel('Enable Independent Time Conductor').click();
-    // Toggle independent time conductor OFF
-    await page.getByLabel('Disable Independent Time Conductor').click();
 
-    // Switch to real-time mode
-    await setRealTimeMode(page);
+    // Bring up the independent time conductor popup and switch to fixed time mode
+    await page.getByLabel('Independent Time Conductor Settings').click();
+    await page.getByLabel('Independent Time Conductor Mode Menu').click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+
     // hover over plot for plot controls
     await page.getByLabel('Plot Canvas').hover();
-    // click on pause control
-    await page.getByTitle('Pause incoming real-time data').click();
-    // expect plot to be paused
-    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
-    // synchronize time conductor
-    await page.getByTitle('Synchronize Time Conductor').click();
+    // Ensure pause control is no longer visible since the plot is following the independent time context
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeHidden();
 
-    // expect warning message, ack it.
-    await expect(page.getByLabel('Modal Overlay')).toBeVisible();
-    await page.getByLabel('Modal Overlay').getByRole('button', { name: 'OK' }).click();
+    // Toggle independent time conductor OFF - Note that the global time conductor is still in Real time mode
+    await page.getByLabel('Disable Independent Time Conductor').click();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // Ensure pause control is visible since the global time conductor is in real time mode
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeVisible();
   });
 });
