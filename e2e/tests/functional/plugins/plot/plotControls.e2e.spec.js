@@ -143,6 +143,9 @@ test.describe('Plot Controls', () => {
     await expect(page.getByLabel('Modal Overlay')).toBeVisible();
     await page.getByLabel('Modal Overlay').getByRole('button', { name: 'OK' }).click();
 
+    //confirm that you're now in fixed mode
+    await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
+
     // Toggle independent time conductor ON
     await page.getByLabel('Enable Independent Time Conductor').click();
     // Toggle independent time conductor OFF
