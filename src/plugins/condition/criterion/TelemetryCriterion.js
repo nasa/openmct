@@ -153,7 +153,7 @@ export default class TelemetryCriterion extends EventEmitter {
   createNormalizedDatum(telemetryDatum, endpoint) {
     const id = this.openmct.objects.makeKeyString(endpoint.identifier);
     const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
-
+    console.log('createNormalizedDatum', telemetryDatum);
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
       const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
       datum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
