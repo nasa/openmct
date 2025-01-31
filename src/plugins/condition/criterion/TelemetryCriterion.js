@@ -38,7 +38,7 @@ export default class TelemetryCriterion extends EventEmitter {
    */
   constructor(telemetryDomainObjectDefinition, openmct) {
     super();
-
+    console.log('TelemetryCriterion constructor');
     this.openmct = openmct;
     this.telemetryDomainObjectDefinition = telemetryDomainObjectDefinition;
     this.id = telemetryDomainObjectDefinition.id;
