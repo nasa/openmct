@@ -49,16 +49,27 @@ export default class TypeRegistry {
      * @type {Record<string, Type>}
      */
     this.types = {};
+
+    /**
+     * @type {Record<string, Type>}
+     */
+    this.deactivatedTypes = {};
   }
   /**
    * Register a new object type.
    *
    * @param {string} typeKey a string identifier for this type
    * @param {TypeDefinition} typeDef the type to add
+   * @param {boolean} isDeactivated if true, will load type in a deactivated state
    */
-  addType(typeKey, typeDef) {
+  addType(typeKey, typeDef, isDeactivated = false) {
     this.standardizeType(typeDef);
-    this.types[typeKey] = new Type(typeDef);
+
+    if (isDeactivated) {
+      this.deactivatedTypes[typeKey] = new Type(typeDef);
+    } else {
+      this.types[typeKey] = new Type(typeDef);
+    }
   }
   /**
    * Takes a typeDef, standardizes it, and logs warnings about unsupported
@@ -74,6 +85,12 @@ export default class TypeRegistry {
       delete typeDef.label;
     }
   }
+  removeType(typeKey) {
+    delete this.types[typeKey];
+  }
+  removeDeactivatedType(typeKey) {
+    delete this.deactivatedTypes[typeKey];
+  }
   /**
    * List keys for all registered types.
    * @returns {string[]} all registered type keys
@@ -82,12 +99,27 @@ export default class TypeRegistry {
     return Object.keys(this.types);
   }
   /**
+   * List keys for all deactivated types.
+   * @returns {string[]} all deactivated type keys
+   */
+  listDeactivatedKeys() {
+    return Object.keys(this.deactivatedTypes);
+  }
+  /**
    * Retrieve a registered type by its key.
    * @param {string} typeKey the key for this type
    * @returns {Type} the registered type
    */
   get(typeKey) {
     return this.types[typeKey] || UNKNOWN_TYPE;
+  }
+  /**
+   * Retrieve a registered type that's deactivated by its key.
+   * @param {string} typeKey the key for this deactivated type
+   * @returns {Type} the registered type that's deactivated
+   */
+  getDeactivated(typeKey) {
+    return this.deactivatedTypes[typeKey] || UNKNOWN_TYPE;
   }
   importLegacyTypes(types) {
     types

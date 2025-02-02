@@ -52,4 +52,63 @@ describe('The Type API', function () {
   it('type registry contains new keys', function () {
     expect(typeRegistryInstance.listKeys()).toContain('testType');
   });
+
+  it('types can be removed', function () {
+    expect(typeRegistryInstance.get('testType').definition.name).toBe('Test Type');
+    typeRegistryInstance.removeType('testType');
+    expect(typeRegistryInstance.get('testType').definition.name).toBe('Unknown Type');
+  });
+
+  it('types can be added in a deactivated state', function () {
+    typeRegistryInstance.addType(
+      'deactivatedTestType',
+      {
+        name: 'Deactivated Test Type',
+        description: 'This is a deactivated test type.',
+        creatable: true
+      },
+      true
+    );
+
+    expect(typeRegistryInstance.get('deactivatedTestType').definition.name).toBe('Unknown Type');
+    expect(typeRegistryInstance.getDeactivated('deactivatedTestType').definition.name).toBe(
+      'Deactivated Test Type'
+    );
+  });
+
+  it('deactivated types contain keys', function () {
+    typeRegistryInstance.addType(
+      'deactivatedTestType',
+      {
+        name: 'Deactivated Test Type',
+        description: 'This is a deactivated test type.',
+        creatable: true
+      },
+      true
+    );
+
+    let deactivatedKeys = typeRegistryInstance.listDeactivatedKeys();
+    expect(deactivatedKeys.length).toBe(1);
+    expect(deactivatedKeys[0]).toBe('deactivatedTestType');
+  });
+
+  it('deactivated types can be removed', function () {
+    typeRegistryInstance.addType(
+      'deactivatedTestType',
+      {
+        name: 'Deactivated Test Type',
+        description: 'This is a deactivated test type.',
+        creatable: true
+      },
+      true
+    );
+
+    expect(typeRegistryInstance.getDeactivated('deactivatedTestType').definition.name).toBe(
+      'Deactivated Test Type'
+    );
+    typeRegistryInstance.removeDeactivatedType('deactivatedTestType');
+    expect(typeRegistryInstance.getDeactivated('deactivatedTestType').definition.name).toBe(
+      'Unknown Type'
+    );
+  });
 });

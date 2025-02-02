@@ -53,11 +53,29 @@
             class="c-menu__section-separator"
           ></div>
           <li v-if="actionGroups.length === 0" :key="index">No actions defined.</li>
-        </div></template
-      >
+        </div>
+      </template>
     </ul>
 
     <ul v-else class="c-super-menu__menu" role="menu">
+      <template v-if="options.menuHeaderActions">
+        <div>
+          <li
+            v-for="action in options.menuHeaderActions"
+            :key="action.name"
+            role="menuitem"
+            :class="action.cssClass"
+            :aria-label="action.name"
+            aria-describedby="item-description"
+            @click="action.onItemClicked"
+            @mouseover="toggleItemDescription(action)"
+            @mouseleave="toggleItemDescription()"
+          >
+            {{ action.name }}
+          </li>
+          <div role="separator" class="c-menu__section-separator"></div>
+        </div>
+      </template>
       <li
         v-for="action in options.actions"
         :key="action.name"
