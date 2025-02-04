@@ -71,21 +71,24 @@ export default class Condition extends EventEmitter {
     this.handleTelemetryStaleness = this.handleTelemetryStaleness.bind(this);
   }
 
-  updateResult(datum) {
-    if (!datum || !datum.id) {
+  updateResult(latestDataTable) {
+    if (!latestDataTable) {
       console.log('no data received');
-
       return;
     }
 
+    const hasNoTelemetry = this.hasNoTelemetry();
+
     // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
-    if (this.hasNoTelemetry() || this.isTelemetryUsed(datum.id)) {
+    //if (this.hasNoTelemetry() || this.isTelemetryUsed(latestDataTable.id)) {
       this.criteria.forEach((criterion) => {
         if (this.isAnyOrAllTelemetry(criterion)) {
-          criterion.updateResult(datum, this.conditionManager.telemetryObjects);
+          criterion.updateResult(latestDataTable, this.conditionManager.telemetryObjects);
         } else {
-          if (criterion.usesTelemetry(datum.id)) {
-            criterion.updateResult(datum);
+          const relevantDatum = latestDataTable.get(criterion.telemetryObjectIdAsString);
+
+          if (relevantDatum !== undefined){
+            criterion.updateResult(relevantDatum);
           }
         }
       });
@@ -94,7 +97,7 @@ export default class Condition extends EventEmitter {
         this.criteria.map((criterion) => criterion.result),
         this.trigger
       );
-    }
+    //}
   }
 
   isAnyOrAllTelemetry(criterion) {

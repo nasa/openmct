@@ -27,6 +27,8 @@ import Condition from './Condition.js';
 import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
+  #latestDataTable = new Map();
+
   constructor(conditionSetDomainObject, openmct) {
     super();
     this.openmct = openmct;
@@ -410,19 +412,22 @@ export default class ConditionManager extends EventEmitter {
 
     const normalizedDatum = this.createNormalizedDatum(datum, endpoint);
     const timeSystemKey = this.openmct.time.getTimeSystem().key;
-    let timestamp = {};
     const currentTimestamp = normalizedDatum[timeSystemKey];
+    const timestamp = {};
+
     timestamp[timeSystemKey] = currentTimestamp;
+    this.#latestDataTable.set(normalizedDatum.id, normalizedDatum);
+
     if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
-      this.updateConditionResults(normalizedDatum);
+      this.updateConditionResults();
       this.updateCurrentCondition(timestamp);
     }
   }
 
-  updateConditionResults(normalizedDatum) {
+  updateConditionResults() {
     //We want to stop when the first condition evaluates to true.
     this.conditions.some((condition) => {
-      condition.updateResult(normalizedDatum);
+      condition.updateResult(this.#latestDataTable);
 
       return condition.result === true;
     });
