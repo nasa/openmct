@@ -158,6 +158,8 @@ export default class ObjectAPI {
    */
   get(identifier, abortSignal, forceRemote = false) {
     let keystring = this.#makeKeyString(identifier);
+    console.log('openmct get', keystring);
+    const now = new Date();
 
     if (!forceRemote) {
       if (this.cache[keystring] !== undefined) {
@@ -200,6 +202,8 @@ export default class ObjectAPI {
           mutableDomainObject.$refresh(domainObject);
           this.destroyMutable(mutableDomainObject);
         }
+
+        console.log('openmct get result', keystring, (new Date() - now) / 1000);
 
         return domainObject;
       })
