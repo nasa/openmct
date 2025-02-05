@@ -191,6 +191,8 @@ export default class ObjectAPI {
 
     get(identifier, abortSignal) {
         let keystring = this.makeKeyString(identifier);
+        console.log('openmct get', keystring);
+        const now = new Date();
 
         if (this.cache[keystring] !== undefined) {
             return this.cache[keystring];
@@ -227,6 +229,7 @@ export default class ObjectAPI {
                 mutableDomainObject.$refresh(result);
             }
 
+            console.log('openmct get', keystring, Date.now() - now.getTime());
             return result;
         }).catch((result) => {
             console.warn(`Failed to retrieve ${keystring}:`, result);
