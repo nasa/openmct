@@ -117,17 +117,6 @@ test.describe('Plot Controls', () => {
   the pause control for the plot should be available, indicating that it is following the right context.
   */
   test('Plots follow the right time context', async ({ page }) => {
-    // Set realtime mode with 2 second window
-    const startOffset = {
-      startMins: '00',
-      startSecs: '01'
-    };
-
-    const endOffset = {
-      endMins: '00',
-      endSecs: '01'
-    };
-
     // Set global time conductor to real-time mode
     await setRealTimeMode(page);
 

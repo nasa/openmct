@@ -441,7 +441,9 @@ class IndependentTimeContext extends TimeContext {
     this.emit('bounds', this.getBounds());
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
     // Also emit the mode in case it's different from previous time context
-    this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
+    if (this.getMode()) {
+      this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
+    }
   }
 
   /**
@@ -517,7 +519,9 @@ class IndependentTimeContext extends TimeContext {
       this.emit('bounds', this.getBounds());
       this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
       // Also emit the mode in case it's different from the global time context
-      this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
+      if (this.getMode()) {
+        this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
+      }
       // now that the view's context is set, tell others to check theirs in case they were following this view's context.
       this.globalTimeContext.emit('refreshContext', viewKey);
     }
