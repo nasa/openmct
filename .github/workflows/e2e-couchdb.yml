@@ -68,13 +68,17 @@ jobs:
         if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-test-results
           path: test-results
+          overwrite: true
 
       - name: Archive html test results
         if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-html-test-results
           path: html-test-results
+          overwrite: true
 
       - name: Remove pr:e2e:couchdb label (if present)
         if: always()

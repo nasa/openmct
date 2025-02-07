@@ -40,7 +40,9 @@ jobs:
         if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
+          name: e2e-flakefinder-test-results
           path: test-results
+          overwrite: true
 
       - name: Remove pr:e2e:flakefinder label (if present)
         if: always()
