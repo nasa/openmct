@@ -229,7 +229,7 @@ export default class ObjectAPI {
                 mutableDomainObject.$refresh(result);
             }
 
-            console.log('openmct get', keystring, Date.now() - now.getTime());
+            console.log('openmct get', keystring, (new Date() - now) / 1000);
             return result;
         }).catch((result) => {
             console.warn(`Failed to retrieve ${keystring}:`, result);
