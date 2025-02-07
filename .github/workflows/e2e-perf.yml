@@ -35,7 +35,7 @@ jobs:
       - run: npm run test:perf:memory
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: test-results
 
