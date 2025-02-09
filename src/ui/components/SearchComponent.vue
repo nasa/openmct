@@ -22,6 +22,7 @@
 <template>
   <div class="c-search" v-bind="$attrs" :class="{ 'is-active': active }">
     <input
+      :id="formKey"
       class="c-search__input"
       aria-label="Search Input"
       tabindex="0"
@@ -40,6 +41,12 @@
 export default {
   inheritAttrs: false,
   props: {
+    formKey: {
+      type: String,
+      default() {
+        return null;
+      }
+    },
     value: {
       type: String,
       default: ''

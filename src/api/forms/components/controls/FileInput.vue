@@ -31,7 +31,7 @@
         style="display: none"
         aria-labelledby="fileSelect"
       />
-      <button id="fileSelect" class="c-button" @click="selectFile">
+      <button :id="fileButtonId" class="c-button" @click="selectFile">
         {{ name }}
       </button>
       <button
@@ -56,7 +56,8 @@ export default {
   emits: ['on-change'],
   data() {
     return {
-      fileInfo: undefined
+      fileInfo: undefined,
+      fileButtonId: this.model.key ? 'form-' + this.model.key : null
     };
   },
   computed: {
