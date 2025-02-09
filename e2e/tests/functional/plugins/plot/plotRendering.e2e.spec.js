@@ -84,6 +84,58 @@ test.describe('Plot Rendering', () => {
     await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
   });
 
+  test('Time conductor synchronization confirmation dialog can be suppressed', async ({ page }) => {
+    // Navigate to Sine Wave Generator
+    await page.goto(sineWaveGeneratorObject.url);
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on pause control
+    await page.getByTitle('Pause incoming real-time data').click();
+
+    // expect plot to be paused
+    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+
+    // click on synchronize with time conductor
+    await page.getByTitle('Synchronize Time Conductor').click();
+
+    await expect(page.locator('.c-message__action-text')).toContainText(
+      'This action will change the Time Conductor to Fixed Timespan mode'
+    );
+
+    await page.getByLabel('Checkbox to Suppress Dialog').click();
+
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+
+    //confirm that you're now in fixed mode with the correct range
+    await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
+
+    await page.getByLabel('Zoom in').click();
+
+    await page.getByTitle('Synchronize Time Conductor').click();
+
+    await expect(page.locator('.c-message-banner__message')).toHaveText(
+      'Time conductor bounds have changed.'
+    );
+
+    await expect(page.locator('.c-message__action-text')).toBeHidden();
+
+    const suppressionVal = await page.evaluate(() =>
+      window.localStorage.getItem('sync-time-conductor-modal-suppression')
+    );
+
+    await expect(suppressionVal).toBe('true');
+
+    await page.evaluate(() =>
+      window.localStorage.removeItem('sync-time-conductor-modal-suppression')
+    );
+  });
+
   test('Plot is rendered when infinity values exist', async ({ page }) => {
     // Edit Plot
     await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
