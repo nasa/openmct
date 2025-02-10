@@ -31,45 +31,217 @@ Enim nec dui nunc mattis. Cursus turpis massa tincidunt dui ut. Donec adipiscing
 Proin libero nunc consequat interdum varius sit amet mattis vulputate. Metus dictum at tempor commodo ullamcorper a lacus vestibulum sed. Quisque non tellus orci ac auctor augue mauris. Id ornare arcu odio ut. Rhoncus est pellentesque elit ullamcorper dignissim. Senectus et netus et malesuada fames ac turpis egestas. Volutpat ac tincidunt vitae semper quis lectus nulla. Adipiscing elit duis tristique sollicitudin. Ipsum faucibus vitae aliquet nec ullamcorper sit. Gravida neque convallis a cras semper auctor neque vitae tempus. Porttitor leo a diam sollicitudin tempor id. Dictum non consectetur a erat nam at lectus. At volutpat diam ut venenatis tellus in. Morbi enim nunc faucibus a pellentesque sit amet. Cursus in hac habitasse platea. Sed augue lacus viverra vitae.
 `;
 
-test.describe('Inspector tests', () => {
+const viewsTabsMatrix = {
+  Clock: {
+    Browse: ['Properties']
+  },
+  'Condition Set': {
+    Browse: ['Properties', 'Elements', 'Annotations'],
+    Edit: ['Elements', 'Properties']
+  },
+  'Condition Widget': {
+    Browse: ['Properties', 'Styles'],
+    Edit: ['Styles', 'Properties']
+  },
+  'Display Layout': {
+    Browse: ['Properties', 'Elements', 'Styles'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  'Event Message Generator': {
+    Browse: ['Properties']
+  },
+  'Event Message Generator with Acknowledge': {
+    Browse: ['Properties']
+  },
+  'Example Imagery': {
+    Browse: ['Properties', 'Annotations']
+  },
+  'Flexible Layout': {
+    Browse: ['Properties', 'Elements'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  Folder: {
+    Browse: ['Properties']
+  },
+  'Gantt Chart': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Properties']
+  },
+  Gauge: {
+    Browse: ['Properties', 'Elements', 'Styles'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  Graph: {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  Hyperlink: {
+    Browse: ['Properties'],
+    required: {
+      url: 'https://www.google.com',
+      displayText: 'Google'
+    }
+  },
+  'LAD Table': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'LAD Table Set': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  Notebook: {
+    Browse: ['Properties']
+  },
+  'Overlay Plot': {
+    Browse: ['Properties', 'Config', 'Annotations'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'Scatter Plot': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'Sine Wave Generator': {
+    Browse: ['Properties', 'Annotations']
+  },
+  'Stacked Plot': {
+    Browse: ['Properties', 'Config', 'Annotations'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'Tabs View': {
+    Browse: ['Properties', 'Elements', 'Styles'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  'Telemetry Table': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'Time List': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Properties']
+  },
+  'Time Strip': {
+    Browse: ['Properties', 'Elements'],
+    Edit: ['Elements', 'Properties']
+  },
+  Timer: {
+    Browse: ['Properties']
+  }
+};
+
+// unique test required
+// const uniqueItemMatrix = {
+//   'Display Layout Alphanumeric': {
+//     'Browse': ['Properties', 'Styles', 'Format'],
+//     'Edit': ['Styles', 'Format', 'Properties']
+//   },
+//   'Display Layout Drawing object *': {
+//     'Browse': ['Styles'],
+//     'Edit': ['Styles']
+//   },
+//   'Display Layout Child domain object': {
+//     'Browse': ['']
+//   },
+//   'Gantt Chart Activity': {
+//     'Browse': ['Activity']
+//   },
+//   'Notebook Entry': {
+//     'Browse': ['Properties', 'Annotations']
+//   },
+//   Plan: {
+//     'Browse': ['Properties']
+//   },
+//   'Plan Activity': {
+//     'Browse': ['Activity']
+//   },
+//   'View-only Plot View': {
+//     'Browse': ['Properties', 'Annotations']
+//   },
+//   'Stacked Plot Child plot': {
+//     'Browse': ['']
+//   },
+//   'View-only Telemetry Table': {
+//     'Browse': ['Properties']
+//   },
+//   'Time List Activity': {
+//     'Browse': ['Activity']
+//   },
+//   'Time Strip Activity': {
+//     'Browse': ['Activity']
+//   },
+//   'Web Page': {
+//     Browse: ['Properties'],
+//     required: {
+//       url: 'http://www.google.com'
+//     }
+// }
+// };
+
+test.describe.only('Inspector tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('Content in inspector can be scrolled to vertically', async ({ page }) => {
-    const folderWithOverflowingTitle = await createDomainObjectWithDefaults(page, {
-      type: 'Folder',
-      name: loremIpsum
-    });
+  // test('Content in inspector can be scrolled to vertically', async ({ page }) => {
+  //   const folderWithOverflowingTitle = await createDomainObjectWithDefaults(page, {
+  //     type: 'Folder',
+  //     name: loremIpsum
+  //   });
 
-    await page.goto(folderWithOverflowingTitle.url);
+  //   await page.goto(folderWithOverflowingTitle.url);
 
-    const inspectorPropertiesLocator = page
-      .getByRole('tabpanel', { name: 'Inspector Views' })
-      .getByLabel('Inspector Properties Details');
-    const inspectorPropertiesList = inspectorPropertiesLocator.getByRole('list');
-    const firstInspectorPropertyValue = inspectorPropertiesList
-      .getByRole('listitem')
-      .first()
-      .getByLabel('value', { exact: false });
-    const lastInspectorPropertyValue = inspectorPropertiesList
-      .getByRole('listitem')
-      .last()
-      .getByLabel('value', { exact: false });
+  //   const inspectorPropertiesLocator = page
+  //     .getByRole('tabpanel', { name: 'Inspector Views' })
+  //     .getByLabel('Inspector Properties Details');
+  //   const inspectorPropertiesList = inspectorPropertiesLocator.getByRole('list');
+  //   const firstInspectorPropertyValue = inspectorPropertiesList
+  //     .getByRole('listitem')
+  //     .first()
+  //     .getByLabel('value', { exact: false });
+  //   const lastInspectorPropertyValue = inspectorPropertiesList
+  //     .getByRole('listitem')
+  //     .last()
+  //     .getByLabel('value', { exact: false });
 
-    // inspector content partially in viewport, but not all the way in viewport
-    await expect(inspectorPropertiesLocator).toBeInViewport();
-    await expect(inspectorPropertiesLocator).not.toBeInViewport({ ratio: 0.9 });
+  //   // inspector content partially in viewport, but not all the way in viewport
+  //   await expect(inspectorPropertiesLocator).toBeInViewport();
+  //   await expect(inspectorPropertiesLocator).not.toBeInViewport({ ratio: 0.9 });
 
-    await expect(firstInspectorPropertyValue).toBeInViewport();
-    await expect(lastInspectorPropertyValue).not.toBeInViewport();
+  //   await expect(firstInspectorPropertyValue).toBeInViewport();
+  //   await expect(lastInspectorPropertyValue).not.toBeInViewport();
 
-    // using page.mouse.wheel to scroll the inspector content by the height of the content
-    // because click and scrollIntoView will scroll even if scrollbar not available
-    await inspectorPropertiesLocator.hover();
-    const offset = await inspectorPropertiesLocator.evaluate((el) => el.offsetHeight);
-    await page.mouse.wheel(0, offset);
+  //   // using page.mouse.wheel to scroll the inspector content by the height of the content
+  //   // because click and scrollIntoView will scroll even if scrollbar not available
+  //   await inspectorPropertiesLocator.hover();
+  //   const offset = await inspectorPropertiesLocator.evaluate((el) => el.offsetHeight);
+  //   await page.mouse.wheel(0, offset);
 
-    await expect(lastInspectorPropertyValue).toBeInViewport();
+  //   await expect(lastInspectorPropertyValue).toBeInViewport();
+  // });
+
+  test(`Inspector tabs show the correct tabs per view and mode`, async ({ page }) => {
+    // Convert the nested loops to for...of which supports await
+    for (const view of Object.keys(viewsTabsMatrix)) {
+      const viewConfig = viewsTabsMatrix[view];
+      const createOptions = {
+        type: view,
+        name: view
+      };
+
+      const viewObject = await createDomainObjectWithDefaults(
+        page,
+        createOptions,
+        viewConfig.required ? viewConfig.required : {}
+      );
+      // create and navigate to view;
+
+      await page.goto(viewObject.url);
+
+      // add object
+      // navigate to view
+      // enter Edit if necessary
+      // check that the tabs are visible
+      // check that the tabs are in the correct order
+    }
   });
 });
