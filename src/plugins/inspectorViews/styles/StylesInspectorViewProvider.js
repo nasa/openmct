@@ -25,7 +25,14 @@ import mount from 'utils/mount';
 import StylesInspectorView from './StylesInspectorView.vue';
 import stylesManager from './StylesManager.js';
 
-const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
+const NON_STYLABLE_TYPES = [
+  'folder',
+  'webPage',
+  'conditionSet',
+  'summary-widget',
+  'hyperlink',
+  'clock'
+];
 
 function isLayoutObject(selection, objectType) {
   //we allow conditionSets to be styled if they're part of a layout
