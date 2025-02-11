@@ -306,22 +306,6 @@ export default class ConditionManager extends EventEmitter {
     this.persistConditions();
   }
 
-  getCurrentCondition() {
-    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-    let currentCondition = conditionCollection[conditionCollection.length - 1];
-
-    for (let i = 0; i < conditionCollection.length - 1; i++) {
-      const condition = this.findConditionById(conditionCollection[i].id);
-      if (condition.result) {
-        //first condition to be true wins
-        currentCondition = conditionCollection[i];
-        break;
-      }
-    }
-
-    return currentCondition;
-  }
-
   getCurrentConditionLAD(conditionResults) {
     const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
     let currentCondition = conditionCollection[conditionCollection.length - 1];
@@ -419,22 +403,27 @@ export default class ConditionManager extends EventEmitter {
     this.#latestDataTable.set(normalizedDatum.id, normalizedDatum);
 
     if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
-      this.updateConditionResults();
-      this.updateCurrentCondition(timestamp);
+      const matchingCondition = this.updateConditionResults(normalizedDatum.id);
+      this.updateCurrentCondition(timestamp, matchingCondition);
     }
   }
 
-  updateConditionResults() {
+  updateConditionResults(keyStringForUpdatedTelemetryObject) {
     //We want to stop when the first condition evaluates to true.
-    this.conditions.some((condition) => {
-      condition.updateResult(this.#latestDataTable);
+    const matchingCondition = this.conditions.find((condition) => {
+      condition.updateResult(this.#latestDataTable, keyStringForUpdatedTelemetryObject);
 
       return condition.result === true;
     });
+
+    return matchingCondition;
   }
 
-  updateCurrentCondition(timestamp) {
-    const currentCondition = this.getCurrentCondition();
+  updateCurrentCondition(timestamp, matchingCondition) {
+    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
+    const defaultCondition = conditionCollection[conditionCollection.length - 1];
+
+    const currentCondition = matchingCondition || defaultCondition;
 
     this.emit(
       'conditionSetResultUpdated',

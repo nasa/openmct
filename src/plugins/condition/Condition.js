@@ -44,50 +44,56 @@ import { getLatestTimestamp } from './utils/time.js';
  * }
  */
 export default class Condition extends EventEmitter {
+  #definition;
   /**
    * Manages criteria and emits the result of - true or false - based on criteria evaluated.
    * @constructor
-   * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+   * @param definition: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
    * @param openmct
    * @param conditionManager
    */
-  constructor(conditionConfiguration, openmct, conditionManager) {
+  constructor(definition, openmct, conditionManager) {
     super();
 
     this.openmct = openmct;
     this.conditionManager = conditionManager;
-    this.id = conditionConfiguration.id;
     this.criteria = [];
     this.result = undefined;
     this.timeSystems = this.openmct.time.getAllTimeSystems();
-    if (conditionConfiguration.configuration.criteria) {
-      this.createCriteria(conditionConfiguration.configuration.criteria);
+    this.#definition = definition;
+
+    if (definition.configuration.criteria) {
+      this.createCriteria(definition.configuration.criteria);
     }
 
-    this.trigger = conditionConfiguration.configuration.trigger;
+    this.trigger = definition.configuration.trigger;
     this.summary = '';
     this.handleCriterionUpdated = this.handleCriterionUpdated.bind(this);
     this.handleOldTelemetryCriterion = this.handleOldTelemetryCriterion.bind(this);
     this.handleTelemetryStaleness = this.handleTelemetryStaleness.bind(this);
   }
+  get id() {
+    return this.#definition.id;
+  }
+  get configuration() {
+    return this.#definition.configuration;
+  }
 
-  updateResult(latestDataTable) {
+  updateResult(latestDataTable, telemetryIdThatChanged) {
     if (!latestDataTable) {
       console.log('no data received');
       return;
     }
 
-    const hasNoTelemetry = this.hasNoTelemetry();
-
     // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
-    //if (this.hasNoTelemetry() || this.isTelemetryUsed(latestDataTable.id)) {
+    if (this.hasNoTelemetry() || this.isTelemetryUsed(telemetryIdThatChanged)) {
       this.criteria.forEach((criterion) => {
         if (this.isAnyOrAllTelemetry(criterion)) {
           criterion.updateResult(latestDataTable, this.conditionManager.telemetryObjects);
         } else {
           const relevantDatum = latestDataTable.get(criterion.telemetryObjectIdAsString);
 
-          if (relevantDatum !== undefined){
+          if (relevantDatum !== undefined) {
             criterion.updateResult(relevantDatum);
           }
         }
@@ -97,7 +103,7 @@ export default class Condition extends EventEmitter {
         this.criteria.map((criterion) => criterion.result),
         this.trigger
       );
-    //}
+    }
   }
 
   isAnyOrAllTelemetry(criterion) {
@@ -105,9 +111,11 @@ export default class Condition extends EventEmitter {
   }
 
   hasNoTelemetry() {
-    return this.criteria.every((criterion) => {
-      return !this.isAnyOrAllTelemetry(criterion) && criterion.telemetry === '';
+    const usesSomeTelemetry = this.criteria.some((criterion) => {
+      return this.isAnyOrAllTelemetry(criterion) || criterion.telemetry !== '';
     });
+
+    return !usesSomeTelemetry;
   }
 
   isTelemetryUsed(id) {
