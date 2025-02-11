@@ -36,8 +36,8 @@ export default class TelemetryTableConfiguration extends EventEmitter {
     this.defaultOptions = options;
     this.columns = {};
 
-    // Initialize objectStyles if it doesn't exist
-    if (!this.domainObject.configuration.objectStyles) {
+    // Initialize objectStyles if it doesn't exist, for items with configuration
+    if (this.domainObject.configuration && !this.domainObject.configuration.objectStyles) {
       this.domainObject.configuration.objectStyles = {};
     }
 
