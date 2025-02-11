@@ -64,6 +64,7 @@ export default {
     };
   },
   mounted() {
+    document.addEventListener('keydown', this.handleKeyDown);
     const element = this.$refs.element;
     element.appendChild(this.element);
     const elementForFocus = this.getElementForFocus() || element;
@@ -73,6 +74,7 @@ export default {
   },
   methods: {
     destroy() {
+      document.removeEventListener('keydown', this.handleKeyDown);
       if (this.dismissible) {
         this.dismiss();
       }
@@ -100,6 +102,20 @@ export default {
       }
 
       return focusButton[0];
+    },
+    handleKeyDown({ key }) {
+      if (key === 'Enter') {
+        if (this.focusIndex >= 0 && this.focusIndex < this.buttons.length) {
+          this.buttonClickHandler(this.buttons[this.focusIndex].callback);
+        } else {
+          const okButton = this.buttons?.find((button) => button.label.toLowerCase() === 'ok');
+          if (okButton) {
+            this.buttonClickHandler(okButton.callback);
+          }
+        }
+      } else if (key === 'Escape') {
+        this.destroy();
+      }
     }
   }
 };
