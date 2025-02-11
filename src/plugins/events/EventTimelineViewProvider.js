@@ -21,32 +21,34 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
-import ImageryTimeView from './components/ImageryTimeView.vue';
+import EventTimelineView from './components/EventTimelineView.vue';
 
-export default function ImageryTimestripViewProvider(openmct) {
-  const type = 'example.imagery.time-strip.view';
+export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
+  const type = 'event.time-line.view';
 
-  function hasImageTelemetry(domainObject) {
+  function hasEventTelemetry(domainObject) {
     const metadata = openmct.telemetry.getMetadata(domainObject);
     if (!metadata) {
       return false;
     }
+    const hasDomain = metadata.valuesForHints(['domain']).length > 0;
+    const hasNoRange = !metadata.valuesForHints(['range'])?.length;
 
-    return metadata.valuesForHints(['image']).length > 0;
+    return hasDomain && hasNoRange;
   }
 
   return {
     key: type,
-    name: 'Imagery Timestrip View',
-    cssClass: 'icon-image',
+    name: 'Event Timeline View',
+    cssClass: 'icon-event',
     priority: function () {
-      return 7000; // big number!
+      return 6000; // big number!
     },
     canView: function (domainObject, objectPath) {
-      let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
+      const isChildOfTimeStrip = objectPath.some((object) => object.type === 'time-strip');
 
       return (
-        hasImageTelemetry(domainObject) &&
+        hasEventTelemetry(domainObject) &&
         isChildOfTimeStrip &&
         !openmct.router.isNavigatedObject(objectPath)
       );
@@ -61,14 +63,15 @@ export default function ImageryTimestripViewProvider(openmct) {
             {
               el: element,
               components: {
-                ImageryTimeView
+                EventTimelineView
               },
               provide: {
                 openmct: openmct,
                 domainObject: domainObject,
-                objectPath: objectPath
+                objectPath: objectPath,
+                extendedLinesBus
               },
-              template: '<imagery-time-view ref="root"></imagery-time-view>'
+              template: '<event-timeline-view ref="root"></event-timeline-view>'
             },
             {
               app: openmct.app,

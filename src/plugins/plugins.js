@@ -38,6 +38,7 @@ import CouchDBSearchFolder from './CouchDBSearchFolder/plugin.js';
 import DefaultRootName from './defaultRootName/plugin.js';
 import DeviceClassifier from './DeviceClassifier/plugin.js';
 import DisplayLayoutPlugin from './displayLayout/plugin.js';
+import EventTimestripPlugin from './events/plugin.js';
 import FaultManagementPlugin from './faultManagement/FaultManagementPlugin.js';
 import Filters from './filters/plugin.js';
 import FlexibleLayout from './flexibleLayout/plugin.js';
@@ -176,5 +177,6 @@ plugins.Gauge = GaugePlugin;
 plugins.Timelist = TimeList;
 plugins.InspectorViews = InspectorViews;
 plugins.InspectorDataVisualization = InspectorDataVisualization;
+plugins.EventTimestripPlugin = EventTimestripPlugin;
 
 export default plugins;
