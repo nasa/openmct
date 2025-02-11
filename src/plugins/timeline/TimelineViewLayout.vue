@@ -41,13 +41,22 @@
     </SwimLane>
 
     <div ref="contentHolder" class="c-timeline__objects">
-      <TimelineObjectView
-        v-for="item in items"
-        :key="item.keyString"
-        class="c-timeline__content js-timeline__content"
-        :item="item"
-        :extended-lines-bus
-      />
+      <template v-for="(item, index) in items" :key="item.keyString">
+        <TimelineObjectView
+          class="c-timeline__content js-timeline__content"
+          :item="item"
+          :extended-lines-bus
+        />
+        <ResizeHandle
+          v-if="index !== items.length - 1"
+          :index="index"
+          drag-orientation="'vertical'"
+          :is-editing="isEditing"
+          @init-move="startContainerResizing"
+          @move="containerResizing"
+          @end-move="endContainerResizing"
+        />
+      </template>
     </div>
 
     <ExtendedLinesOverlay
@@ -66,6 +75,7 @@ import { useDragResizer } from 'utils/vue/useDragResizer.js';
 import { inject, provide } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
@@ -85,6 +95,7 @@ const PLOT_ITEM_H_PX = 100;
 
 export default {
   components: {
+    ResizeHandle,
     TimelineObjectView,
     TimelineAxis,
     SwimLane,
