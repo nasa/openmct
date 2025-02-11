@@ -35,9 +35,6 @@ export default function EventGeneratorPlugin(options) {
         object.telemetry = {
           duration: 5
         };
-        object.configuration = {
-          objectStyles: {}
-        };
       }
     });
     openmct.telemetry.addProvider(new EventTelemetryProvider());
@@ -52,9 +49,6 @@ export default function EventGeneratorPlugin(options) {
       initialize: function (object) {
         object.telemetry = {
           duration: 2.5
-        };
-        object.configuration = {
-          objectStyles: {}
         };
       }
     });

@@ -31,6 +31,7 @@ Enim nec dui nunc mattis. Cursus turpis massa tincidunt dui ut. Donec adipiscing
 Proin libero nunc consequat interdum varius sit amet mattis vulputate. Metus dictum at tempor commodo ullamcorper a lacus vestibulum sed. Quisque non tellus orci ac auctor augue mauris. Id ornare arcu odio ut. Rhoncus est pellentesque elit ullamcorper dignissim. Senectus et netus et malesuada fames ac turpis egestas. Volutpat ac tincidunt vitae semper quis lectus nulla. Adipiscing elit duis tristique sollicitudin. Ipsum faucibus vitae aliquet nec ullamcorper sit. Gravida neque convallis a cras semper auctor neque vitae tempus. Porttitor leo a diam sollicitudin tempor id. Dictum non consectetur a erat nam at lectus. At volutpat diam ut venenatis tellus in. Morbi enim nunc faucibus a pellentesque sit amet. Cursus in hac habitasse platea. Sed augue lacus viverra vitae.
 `;
 
+const noCompositionViews = ['Clock'];
 const viewsTabsMatrix = {
   Clock: {
     Browse: ['Properties']
@@ -228,17 +229,22 @@ test.describe.only('Inspector tests', () => {
         name: view
       };
 
-      const viewObject = await createDomainObjectWithDefaults(
+      // create and navigate to view;
+      const objectInfo = await createDomainObjectWithDefaults(
         page,
         createOptions,
         viewConfig.required ? viewConfig.required : {}
       );
-      // create and navigate to view;
+      await page.goto(objectInfo.url);
 
-      await page.goto(viewObject.url);
+      // add object if necessary
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      if (!noCompositionViews.includes(view)) {
+        // add object
+      }
 
-      // add object
-      // navigate to view
+      // verify correct number of tabs for browse mode
+      expect(await page.getByRole('tab').count()).toBe(Object.keys(viewConfig.Browse).length);
       // enter Edit if necessary
       // check that the tabs are visible
       // check that the tabs are in the correct order
