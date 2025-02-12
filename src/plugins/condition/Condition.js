@@ -87,14 +87,16 @@ export default class Condition extends EventEmitter {
 
     // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
     if (this.hasNoTelemetry() || this.isTelemetryUsed(telemetryIdThatChanged)) {
+      const currentTimeSystemKey = this.openmct.time.getTimeSystem().key;
+
       this.criteria.forEach((criterion) => {
         if (this.isAnyOrAllTelemetry(criterion)) {
           criterion.updateResult(latestDataTable, this.conditionManager.telemetryObjects);
         } else {
           const relevantDatum = latestDataTable.get(criterion.telemetryObjectIdAsString);
 
-          if (relevantDatum !== undefined) {
-            criterion.updateResult(relevantDatum);
+          if (criterion.shouldUpdateResult(relevantDatum, currentTimeSystemKey)) {
+            criterion.updateResult(relevantDatum, currentTimeSystemKey);
           }
         }
       });
