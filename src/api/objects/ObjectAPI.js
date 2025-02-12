@@ -161,15 +161,14 @@ export default class ObjectAPI {
    * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
    *          has been saved, or be rejected if it cannot be saved
    */
-  get(identifier, abortSignal, forceRemote = false) {
-    if (!requests[identifier]) {
-        requests[identifier] = 0;
-    }
-    requests[identifier]++;
-    
+  get(identifier, abortSignal, forceRemote = false) {    
     let keystring = this.#makeKeyString(identifier);
     console.log('openmct get', keystring);
     const now = new Date();
+    if (!requests[keystring]) {
+      requests[keystring] = 0;
+    }
+    requests[keystring]++;
 
     if (!forceRemote) {
       if (this.cache[keystring] !== undefined) {
