@@ -31,6 +31,11 @@ import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
 
+const requests = {};
+window.showRequests = () => {
+    console.log(requests);
+}
+
 /**
  * Uniquely identifies a domain object.
  * @typedef {Object} Identifier
@@ -157,6 +162,11 @@ export default class ObjectAPI {
    *          has been saved, or be rejected if it cannot be saved
    */
   get(identifier, abortSignal, forceRemote = false) {
+    if (!requests[identifier]) {
+        requests[identifier] = 0;
+    }
+    requests[identifier]++;
+    
     let keystring = this.#makeKeyString(identifier);
     console.log('openmct get', keystring);
     const now = new Date();
