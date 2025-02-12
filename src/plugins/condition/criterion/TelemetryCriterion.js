@@ -29,16 +29,22 @@ import { getOperatorText, OPERATIONS } from '../utils/operations.js';
 import { checkIfOld } from '../utils/time.js';
 
 export default class TelemetryCriterion extends EventEmitter {
+  #lastUpdated;
+  #lastTimeSystem;
+
   /**
    * Subscribes/Unsubscribes to telemetry and emits the result
    * of operations performed on the telemetry data returned and a given input value.
    * @constructor
    * @param telemetryDomainObjectDefinition {id: uuid, operation: enum, input: Array, metadata: string, key: {domainObject.identifier} }
-   * @param openmct
+   * @param {import('../../../MCT.js').OpenMCT} openmct
    */
   constructor(telemetryDomainObjectDefinition, openmct) {
     super();
 
+    /**
+     * @type {import('../../../MCT.js').MCT}
+     */
     this.openmct = openmct;
     this.telemetryDomainObjectDefinition = telemetryDomainObjectDefinition;
     this.id = telemetryDomainObjectDefinition.id;
@@ -179,8 +185,15 @@ export default class TelemetryCriterion extends EventEmitter {
 
     return datum;
   }
+  shouldUpdateResult(datum, timesystem) {
+    const dataIsDefined = datum !== undefined;
+    const hasTimeSystemChanged =
+      this.#lastTimeSystem === undefined || this.#lastTimeSystem !== timesystem;
+    const isCacheStale = this.#lastUpdated === undefined || datum[timesystem] > this.#lastUpdated;
 
-  updateResult(data) {
+    return dataIsDefined && (hasTimeSystemChanged || isCacheStale);
+  }
+  updateResult(data, currentTimeSystemKey) {
     const validatedData = this.isValid() ? data : {};
 
     if (!this.isStalenessCheck()) {
@@ -193,6 +206,8 @@ export default class TelemetryCriterion extends EventEmitter {
       } else {
         this.result = this.computeResult(validatedData);
       }
+      this.#lastUpdated = data[currentTimeSystemKey];
+      this.#lastTimeSystem = currentTimeSystemKey;
     }
   }
 
