@@ -31,8 +31,9 @@ export default function ElementsViewProvider(openmct) {
     canView: function (selection) {
       const hasValidSelection = selection?.length;
       const isOverlayPlot = selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
+      const isFolder = selection?.[0]?.[0]?.context?.item?.type === 'folder';
 
-      return hasValidSelection && !isOverlayPlot;
+      return hasValidSelection && !isOverlayPlot && !isFolder;
     },
     view: function (selection) {
       let _destroy = null;

@@ -26,12 +26,16 @@ import StylesInspectorView from './StylesInspectorView.vue';
 import stylesManager from './StylesManager.js';
 
 const NON_STYLABLE_TYPES = [
-  'folder',
-  'webPage',
+  'clock',
   'conditionSet',
-  'summary-widget',
+  'eventGenerator',
+  'eventGeneratorWithAcknowledge',
+  'example.imagery',
+  'folder',
+  'gantt-chart',
   'hyperlink',
-  'clock'
+  'summary-widget',
+  'webPage'
 ];
 
 function isLayoutObject(selection, objectType) {

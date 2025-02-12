@@ -58,7 +58,7 @@ const viewsTabsMatrix = {
     Browse: ['Properties', 'Annotations']
   },
   'Flexible Layout': {
-    Browse: ['Properties', 'Elements'],
+    Browse: ['Properties', 'Elements', 'Styles'],
     Edit: ['Elements', 'Styles', 'Properties']
   },
   Folder: {
