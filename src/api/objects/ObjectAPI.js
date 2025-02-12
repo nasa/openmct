@@ -30,6 +30,12 @@ import Transaction from './Transaction';
 import ConflictError from './ConflictError';
 import InMemorySearchProvider from './InMemorySearchProvider';
 
+
+const requests = {};
+window.showRequests = () => {
+    console.log(requests);
+}
+
 /**
  * Uniquely identifies a domain object.
  *
@@ -190,6 +196,11 @@ export default class ObjectAPI {
      */
 
     get(identifier, abortSignal) {
+        if (!requests[identifier]) {
+            requests[identifier] = 0;
+        }
+        requests[identifier]++;
+
         let keystring = this.makeKeyString(identifier);
         console.log('openmct get', keystring);
         const now = new Date();
