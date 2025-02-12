@@ -196,14 +196,14 @@ export default class ObjectAPI {
      */
 
     get(identifier, abortSignal) {
-        if (!requests[identifier]) {
-            requests[identifier] = 0;
-        }
-        requests[identifier]++;
-
         let keystring = this.makeKeyString(identifier);
         console.log('openmct get', keystring);
         const now = new Date();
+        
+        if (!requests[keystring]) {
+            requests[keystring] = 0;
+        }
+        requests[keystring]++;
 
         if (this.cache[keystring] !== undefined) {
             return this.cache[keystring];
