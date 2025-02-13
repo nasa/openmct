@@ -56,7 +56,7 @@
           @click="pressOnButton"
         />
       </div>
-      <div class="c-swimlane__handle" @mousedown="mousedown"></div>
+      <div class="c-swimlane__handle horizontal" @mousedown="mousedown"></div>
     </div>
 
     <div
