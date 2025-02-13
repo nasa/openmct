@@ -247,46 +247,17 @@
   }
 
   &__resize-handle {
-    $size: 2px;
+    $size: 1px;
     $margin: 3px;
     $marginHov: 0;
     $grippyThickness: $size + 6;
     $grippyLen: $grippyThickness * 2;
 
+    @include resizeHandleStyle($size, $margin);
+
     display: flex;
     flex-direction: column;
     flex: 0 0 ($margin * 2) + $size;
-
-    &:before {
-      // The visible resize line
-      background-color: $editUIColor;
-      content: '';
-      display: block;
-      flex: 1 1 auto;
-      min-height: $size;
-      min-width: $size;
-    }
-
-    &.vertical {
-      padding: $margin $size;
-      &:hover {
-        cursor: row-resize;
-      }
-    }
-
-    &.horizontal {
-      padding: $size $margin;
-      &:hover {
-        cursor: col-resize;
-      }
-    }
-
-    &:hover {
-      &:before {
-        // The visible resize line
-        background-color: $editUIColorHov;
-      }
-    }
   }
 
   // Hide the resize-handles in first and last c-fl-frame elements

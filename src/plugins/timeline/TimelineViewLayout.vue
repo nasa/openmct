@@ -50,7 +50,7 @@
         <ResizeHandle
           v-if="index !== items.length - 1"
           :index="index"
-          drag-orientation="'vertical'"
+          drag-orientation="vertical"
           :is-editing="isEditing"
           @init-move="startContainerResizing"
           @move="containerResizing"

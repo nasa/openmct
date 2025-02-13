@@ -20,10 +20,15 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 
+@use 'sass:math';
+
 .c-swimlane {
+  $handleSize: 1px;
+  $handleMargin: 3px;
+  $handleHitSize: $handleMargin * 2 + $handleSize;
+
   display: grid;
   flex: 1 1 auto;
-  // grid-template-columns: 100px 100px 1fr;
   grid-template-rows: 1fr;
   grid-column-gap: 1px;
   grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
@@ -44,29 +49,29 @@
   &__lane-label {
     background: $colorTimeStripLabelBg;
     color: $colorBodyFg;
+    overflow: visible;
     padding: $interiorMarginSm $interiorMargin;
   }
 
   &__handle {
-    // In SwimLane.vue
+    $size: $handleSize;
+    $margin: $handleMargin;
+
+    @include resizeHandleStyle($size, $margin);
+
     @include abs();
     display: none; // Set to display: block in .is-editing section below
-    left: auto;
-    // right: -1 * $tabularTdPadLR;
-    width: $splitterHandleD;
-    cursor: col-resize;
+    //z-index: 1000;
 
-    &:before {
-      // Extended hit area
-      top: 0;
-      right: $splitterHandleHitMargin * -1;
-      bottom: 0;
-      left: $splitterHandleHitMargin * -1;
+    &.vertical {
+      // Vertical resizing uses c-fl-frame__resize-handle
     }
 
-    &:hover {
-      background-color: $colorSplitterHover;
-      @include transition(background-color);
+    &.horizontal {
+      // Resizes in X dimension
+      left: auto;
+      right: -1 * $handleHitSize;
+      width: $handleHitSize;
     }
   }
 
@@ -96,10 +101,12 @@
   .is-object-type-gantt-chart {
     display: contents;
   }
-}
 
-.is-editing {
-  .c-swimlane__handle {
-    display: block;
+  .is-editing & {
+    // TODO: BETTER SELECTOR TO LIMIT STYLING TO TIME STRIP IN MAIN VIEW, NOT NESTED VIEWS
+    grid-column-gap: $handleHitSize;
+    .c-swimlane__handle {
+      display: block;
+    }
   }
 }
