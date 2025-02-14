@@ -33,7 +33,10 @@ const NON_STYLABLE_TYPES = [
   'example.imagery',
   'folder',
   'gantt-chart',
+  'generator',
   'hyperlink',
+  'notebook',
+  'restricted-notebook',
   'summary-widget',
   'webPage'
 ];
@@ -60,9 +63,8 @@ export default function StylesInspectorViewProvider(openmct) {
       const objectContext = objectSelection?.[0]?.context;
       const domainObject = objectContext?.item;
       const hasStyles = domainObject?.configuration?.objectStyles;
-      const isFlexibleLayoutContainer = ['flexible-layout', 'fixed-layout'].includes(
-        domainObject?.type
-      );
+      const isFlexibleLayoutContainer =
+        domainObject?.type === 'flexible-layout' && objectContext.type === 'container';
       const isLayoutItem = objectContext?.layoutItem;
 
       if (isLayoutItem || hasStyles) {
@@ -82,6 +84,19 @@ export default function StylesInspectorViewProvider(openmct) {
     },
     view: function (selection) {
       let _destroy = null;
+      const objectSelection = selection?.[0];
+      const objectContext = objectSelection?.[0]?.context;
+      const domainObject = objectContext?.item;
+      const onlyEditMode = [
+        'flexible-layout',
+        'LadTable',
+        'LadTableSet',
+        'table',
+        'telemetry.plot.bar-graph',
+        'telemetry.plot.overlay',
+        'telemetry.plot.stacked',
+        'telemetry.plot.scatter-plot'
+      ].includes(domainObject?.type);
 
       return {
         show: function (element) {
@@ -104,6 +119,13 @@ export default function StylesInspectorViewProvider(openmct) {
             }
           );
           _destroy = destroy;
+        },
+        showTab: function (isEditing) {
+          if (onlyEditMode && !isEditing) {
+            return false;
+          }
+
+          return true;
         },
         priority: function () {
           return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
