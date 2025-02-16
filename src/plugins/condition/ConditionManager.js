@@ -420,11 +420,11 @@ export default class ConditionManager extends EventEmitter {
   }
 
   updateConditionResults(normalizedDatum) {
-  // Iterate over all conditions and update their results
-  this.conditions.forEach((condition) => {
-    condition.updateResult(normalizedDatum);
-  });
-}
+    // Iterate over all conditions and update their results
+    this.conditions.forEach((condition) => {
+      condition.updateResult(normalizedDatum);
+    });
+  }
 
   updateCurrentCondition(timestamp) {
     const currentCondition = this.getCurrentCondition();
