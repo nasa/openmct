@@ -298,7 +298,133 @@ test.describe('Notebook entry tests', () => {
     await page.locator('.c-notebook__drag-area').click();
     await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
     await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
+    await expect(page.getByLabel('Save notebook entry')).toBeVisible();
   });
+
+  test("A new entry that's being created can be saved via ctrl+enter shortcut", async ({
+    page
+  }) => {
+    // Navigate to the notebook object
+    await page.goto(notebookObject.url);
+
+    // Click .c-notebook__drag-area to create a new notebook entry
+    await page.locator('.c-notebook__drag-area').click();
+
+    //verify visible elements
+    await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
+    await expect(page.getByLabel('Delete this entry')).toBeHidden();
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
+    await expect(page.getByLabel('Save notebook entry')).toBeVisible();
+
+    //add text to textarea
+    const testText = 'test text';
+    await page.getByLabel('Notebook Entry Input').fill(testText);
+
+    const textareaVal = await page.getByLabel('Notebook Entry Input').inputValue();
+    await expect(textareaVal).toBe(testText);
+
+    //press "Control+Enter" to save
+    await nbUtils.commitEntryViaShortcutKey(page);
+
+    //verify notebook entry is saved
+    await expect(page.locator('.c-ne__input')).toBeHidden();
+    await expect(page.getByLabel('Notebook Entry Input')).toBeHidden();
+    await expect(page.getByLabel('Save notebook entry')).toBeHidden();
+
+    await expect(page.getByLabel('Delete this entry')).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry Display')).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry Display')).toContainText(testText);
+  });
+
+  test("A new entry that's being created can be canceled via the escape key", async ({ page }) => {
+    // Navigate to the notebook object
+    await page.goto(notebookObject.url);
+
+    // Click .c-notebook__drag-area to create a new notebook entry
+    await page.locator('.c-notebook__drag-area').click();
+
+    //verify visible elements
+    await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
+    await expect(page.getByLabel('Delete this entry')).toBeHidden();
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
+    await expect(page.getByLabel('Save notebook entry')).toBeVisible();
+
+    //add text to textarea
+    const testText = 'test text';
+    await page.getByLabel('Notebook Entry Input').fill(testText);
+
+    const textareaVal = await page.getByLabel('Notebook Entry Input').inputValue();
+    await expect(textareaVal).toBe(testText);
+
+    //press "Escape" key to cancel
+    await nbUtils.cancelEntry(page);
+
+    //verify notebook entry is gone
+    await expect(page.locator('.c-ne__input')).toBeHidden();
+    await expect(page.getByLabel('Notebook Entry Input')).toBeHidden();
+    await expect(page.getByLabel('Delete this entry')).toBeHidden();
+    await expect(page.getByLabel('Save notebook entry')).toBeHidden();
+  });
+
+  test("An existing entry that's being edited can be canceled via the escape key", async ({
+    page
+  }) => {
+    // Navigate to the notebook object
+    await page.goto(notebookObject.url);
+
+    const testText = 'test text';
+    const otherText = 'other text';
+
+    //create notebook entry
+    await nbUtils.enterTextEntry(page, testText);
+
+    //verify entry
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry Display')).toContainText(testText);
+
+    //make entry the active selection
+    await page.getByLabel('Notebook Entry', { exact: true }).click();
+
+    //edit entry (make textarea visible for editing)
+    await page.getByLabel('Notebook Entry Display', { exact: true }).click();
+    await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
+
+    //edit textarea value
+    await page.getByLabel('Notebook Entry Input').fill(otherText);
+    const textareaVal = await page.getByLabel('Notebook Entry Input').inputValue();
+    await expect(textareaVal).toBe(otherText);
+
+    //press "Escape" key
+    await nbUtils.cancelEntry(page);
+
+    //verify entry reverts back to the original value
+    await expect(page.getByLabel('Notebook Entry Input')).toBeHidden();
+    await expect(page.getByLabel('Notebook Entry Display')).toContainText(testText);
+    await expect(page.getByLabel('Notebook Entry Display')).not.toContainText(otherText);
+  });
+
+  test('The trashcan is not visible when notebook entry is in edit mode', async ({ page }) => {
+    // Navigate to the notebook object
+    await page.goto(notebookObject.url);
+
+    const testText = 'test text';
+
+    //create notebook entry
+    await nbUtils.enterTextEntry(page, testText);
+
+    //verify entry
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Delete this entry', { exact: true })).toBeVisible();
+
+    //make entry the active selection
+    await page.getByLabel('Notebook Entry', { exact: true }).click();
+
+    //edit entry (make textarea visible for editing)
+    await page.getByLabel('Notebook Entry Display', { exact: true }).click();
+    await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
+    await expect(page.getByLabel('Delete this entry', { exact: true })).toBeHidden();
+  });
+
   test('When an object is dropped into a notebook, a new entry is created and it should be focused', async ({
     page
   }) => {
@@ -351,7 +477,38 @@ test.describe('Notebook entry tests', () => {
     await expect(embed).toHaveClass(/icon-plot-overlay/);
     expect(embedName).toBe(overlayPlot.name);
   });
-  test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
+
+  test('new entries persist through navigation events without save', async ({ page }) => {
+    // Navigate to the notebook object
+    await page.goto(notebookObject.url);
+
+    // Click .c-notebook__drag-area to create a new notebook entry
+    await page.locator('.c-notebook__drag-area').click();
+
+    //verify visible elements
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
+
+    //add text to textarea
+    const testText = 'test text';
+    await page.getByLabel('Notebook Entry Input').fill(testText);
+
+    const textareaVal = await page.getByLabel('Notebook Entry Input').inputValue();
+    await expect(textareaVal).toBe(testText);
+
+    //navigate away from notebook without saving the new notebook entry
+    await page.getByLabel('Navigate up to parent').click();
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toBeHidden();
+
+    //navigate back to notebook
+    await page.goto(notebookObject.url);
+
+    await expect(page.getByLabel('Notebook Entry', { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Notebook Entry Display')).toContainText(testText);
+  });
+
   test('previous and new entries can be deleted', async ({ page }) => {
     // Navigate to the notebook object
     await page.goto(notebookObject.url);

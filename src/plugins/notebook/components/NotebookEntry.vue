@@ -45,7 +45,7 @@
             }}
           </span>
         </div>
-        <span v-if="!readOnly && !isLocked" class="c-ne__local-controls--hidden">
+        <span v-if="!readOnly && !isLocked && !editMode" class="c-ne__local-controls--hidden">
           <button
             class="c-ne__remove c-icon-button c-icon-button--major icon-trash"
             title="Delete this entry"
@@ -80,15 +80,21 @@
             v-else
             :id="entry.id"
             ref="entryInput"
-            v-model="entry.text"
+            v-model="entryTextVal"
             class="c-ne__input"
             aria-label="Notebook Entry Input"
             tabindex="-1"
             @mouseleave="canEdit = true"
+            @keydown.esc="cancelEntry()"
+            @keydown.ctrl.enter="updateEntryValue($event)"
             @blur="updateEntryValue($event)"
           ></textarea>
           <div v-if="editMode" class="c-ne__save-button">
-            <button class="c-button c-button--major icon-check"></button>
+            <button
+              class="c-button c-button--major icon-check"
+              title="Save notebook entry (Ctrl-Enter)"
+              aria-label="Save notebook entry"
+            ></button>
           </div>
         </template>
 
@@ -271,6 +277,7 @@ export default {
     }
   },
   emits: [
+    'cancel-edit',
     'delete-entry',
     'change-section-page',
     'update-entry',
@@ -283,7 +290,8 @@ export default {
       editMode: false,
       canEdit: true,
       enableEmbedsWrapperScroll: false,
-      urlWhitelist: []
+      urlWhitelist: [],
+      entryTextVal: null
     };
   },
   computed: {
@@ -347,6 +355,7 @@ export default {
     this.renderer = new this.marked.Renderer();
   },
   mounted() {
+    this.entryTextVal = this.entry.text;
     const originalLinkRenderer = this.renderer.link;
     this.renderer.link = this.validateLink.bind(this, originalLinkRenderer);
 
@@ -491,6 +500,11 @@ export default {
       if ($event.target.nodeName === 'A') {
         this.canEdit = false;
       }
+    },
+    cancelEntry() {
+      this.editMode = false;
+      this.entryTextVal = this.entry.text;
+      this.$emit('cancel-edit');
     },
     deleteEntry() {
       this.$emit('delete-entry', this.entry.id);
@@ -657,7 +671,7 @@ export default {
     },
     updateEntryValue($event) {
       this.editMode = false;
-      const rawEntryValue = $event.target.value;
+      const rawEntryValue = this.entryTextVal;
       const sanitizeInput = sanitizeHtml(rawEntryValue, { allowedAttributes: [], allowedTags: [] });
       // change &gt back to > for markdown to do blockquotes
       const restoredQuoteBrackets = sanitizeInput.replace(/&gt;/g, '>');
