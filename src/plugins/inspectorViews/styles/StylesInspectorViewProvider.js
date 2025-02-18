@@ -25,7 +25,21 @@ import mount from 'utils/mount';
 import StylesInspectorView from './StylesInspectorView.vue';
 import stylesManager from './StylesManager.js';
 
-const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
+const NON_STYLABLE_TYPES = [
+  'clock',
+  'conditionSet',
+  'eventGenerator',
+  'eventGeneratorWithAcknowledge',
+  'example.imagery',
+  'folder',
+  'gantt-chart',
+  'generator',
+  'hyperlink',
+  'notebook',
+  'restricted-notebook',
+  'summary-widget',
+  'webPage'
+];
 
 function isLayoutObject(selection, objectType) {
   //we allow conditionSets to be styled if they're part of a layout
@@ -35,8 +49,8 @@ function isLayoutObject(selection, objectType) {
   );
 }
 
-function isCreatableObject(object, type) {
-  return NON_STYLABLE_TYPES.indexOf(object.type) < 0 && type.definition.creatable;
+function isCreatableObject(object, typeObject) {
+  return NON_STYLABLE_TYPES.indexOf(object.type) < 0 && typeObject.definition.creatable;
 }
 
 export default function StylesInspectorViewProvider(openmct) {
@@ -47,12 +61,13 @@ export default function StylesInspectorViewProvider(openmct) {
     canView: function (selection) {
       const objectSelection = selection?.[0];
       const objectContext = objectSelection?.[0]?.context;
-      const layoutItem = objectContext?.layoutItem;
       const domainObject = objectContext?.item;
+      const hasStyles = domainObject?.configuration?.objectStyles;
       const isFlexibleLayoutContainer =
         domainObject?.type === 'flexible-layout' && objectContext.type === 'container';
+      const isLayoutItem = objectContext?.layoutItem;
 
-      if (layoutItem) {
+      if (isLayoutItem || hasStyles) {
         return true;
       }
 
@@ -60,14 +75,28 @@ export default function StylesInspectorViewProvider(openmct) {
         return false;
       }
 
-      const type = openmct.types.get(domainObject.type);
+      const typeObject = openmct.types.get(domainObject.type);
 
       return (
-        isLayoutObject(objectSelection, domainObject.type) || isCreatableObject(domainObject, type)
+        isLayoutObject(objectSelection, domainObject.type) ||
+        isCreatableObject(domainObject, typeObject)
       );
     },
     view: function (selection) {
       let _destroy = null;
+      const objectSelection = selection?.[0];
+      const objectContext = objectSelection?.[0]?.context;
+      const domainObject = objectContext?.item;
+      const onlyEditMode = [
+        'flexible-layout',
+        'LadTable',
+        'LadTableSet',
+        'table',
+        'telemetry.plot.bar-graph',
+        'telemetry.plot.overlay',
+        'telemetry.plot.stacked',
+        'telemetry.plot.scatter-plot'
+      ].includes(domainObject?.type);
 
       return {
         show: function (element) {
@@ -91,8 +120,15 @@ export default function StylesInspectorViewProvider(openmct) {
           );
           _destroy = destroy;
         },
+        showTab: function (isEditing) {
+          if (onlyEditMode && !isEditing) {
+            return false;
+          }
+
+          return true;
+        },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
         },
         destroy: function () {
           if (_destroy) {

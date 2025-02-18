@@ -38,11 +38,13 @@ export default function () {
       description:
         'Combine multiple telemetry elements and view them together as a plot with common X and Y axes. Can be added to Display Layouts.',
       creatable: true,
+      annotatable: true,
       initialize: function (domainObject) {
         domainObject.composition = [];
         domainObject.configuration = {
           //series is an array of objects of type: {identifier, series: {color...}, yAxis:{}}
-          series: []
+          series: [],
+          objectStyles: {}
         };
       },
       priority: 891
@@ -55,12 +57,14 @@ export default function () {
       description:
         'Combine multiple telemetry elements and view them together as a plot with a common X axis and individual Y axes. Can be added to Display Layouts.',
       creatable: true,
+      annotatable: true,
       initialize: function (domainObject) {
         domainObject.composition = [];
         domainObject.configuration = {
           series: [],
           yAxis: {},
-          xAxis: {}
+          xAxis: {},
+          objectStyles: {}
         };
       },
       priority: 890

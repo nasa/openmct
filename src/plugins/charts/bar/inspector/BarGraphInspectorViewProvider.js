@@ -41,7 +41,7 @@ export default function BarGraphInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH + 1 : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {
