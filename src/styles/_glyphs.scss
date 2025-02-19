@@ -605,6 +605,9 @@
 .bg-icon-folder {
   @include glyphBg($bg-icon-folder);
 }
+.bg-icon-gear {
+  @include glyphBg($bg-icon-gear);
+}
 .bg-icon-image {
   @include glyphBg($bg-icon-image);
 }
