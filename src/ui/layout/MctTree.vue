@@ -270,7 +270,7 @@ export default {
     this.isLoading = false;
 
     if (!this.isSelectorTree) {
-      await this.syncTreeOpenItems();
+      await this.syncOpenTreeItems();
     } else {
       if (this.initialSelection.identifier) {
         const objectPath = await this.openmct.objects.getOriginalPath(
@@ -433,14 +433,91 @@ export default {
         this.openAndScrollTo(currentPath);
       }
     },
-    async syncTreeOpenItems() {
-      const items = [...this.treeItems];
+    async syncOpenTreeItems() {
+      // Get all initially open paths
+      const openPaths = [...this.openTreeItems];
 
-      for (let item of items) {
-        if (this.isTreeItemOpen(item)) {
-          await this.openTreeItem(item);
+      // First collect all unique identifiers needed
+      const uniqueIdentifiers = new Set();
+      openPaths.forEach((path) => {
+        const keystrings = this.getKeystringsFromPath(path);
+        keystrings.forEach((keystring) => {
+          uniqueIdentifiers.add(keystring);
+        });
+      });
+
+      // Load all unique objects in parallel
+      const loadedObjects = {};
+      const uniqueObjectPromises = Array.from(uniqueIdentifiers).map(async (keyString) => {
+        const object = await this.openmct.objects.get(keyString);
+        loadedObjects[keyString] = object;
+        return object;
+      });
+      await Promise.all(uniqueObjectPromises);
+
+      // Build object paths using the loaded objects
+      const objectsByPath = {};
+      openPaths.forEach((path) => {
+        const keystrings = this.getKeystringsFromPath(path);
+        const objects = keystrings.map((keystring) => {
+          return loadedObjects[keystring];
+        });
+        objectsByPath[path] = objects;
+      });
+
+      // Now load all compositions in parallel
+      const compositionPromises = openPaths.map(async (parentPath) => {
+        const abortSignal = this.startItemLoad(parentPath);
+        const objects = objectsByPath[parentPath];
+        const parentObject = objects[0]; // First object is the parent
+
+        try {
+          const childrenItems = await this.loadAndBuildTreeItemsFor(
+            parentObject.identifier,
+            objects,
+            abortSignal
+          );
+
+          return {
+            parentPath,
+            childrenItems,
+            parentObject
+          };
+        } catch (error) {
+          this.endItemLoad(parentPath);
+          return null;
         }
-      }
+      });
+
+      // Wait for all compositions to load
+      const results = await Promise.all(compositionPromises);
+
+      // Process results in correct order
+      results
+        .filter((result) => result !== null)
+        .sort((a, b) => {
+          return a.parentPath.split('/').length - b.parentPath.split('/').length;
+        })
+        .forEach(({ parentPath, childrenItems, parentObject }) => {
+          if (!this.isItemLoading(parentPath)) {
+            return;
+          }
+
+          this.endItemLoad(parentPath);
+
+          const parentIndex = this.treeItems.findIndex(
+            (item) => item.navigationPath === parentPath
+          );
+
+          if (parentIndex === -1) {
+            return;
+          }
+
+          const newTreeItems = [...this.treeItems];
+          newTreeItems.splice(parentIndex + 1, 0, ...childrenItems);
+
+          this.treeItems = [...newTreeItems];
+        });
     },
     openAndScrollTo(navigationPath) {
       if (navigationPath.includes('/ROOT')) {
@@ -1109,6 +1186,14 @@ export default {
 
         delete this.mutables[key];
       });
+    },
+    // Helper method to get identifiers from a path
+    getKeystringsFromPath(path) {
+      const parts = path.split('/');
+      // Remove 'browse' and empty parts
+      const identifierParts = parts.filter((part) => part && part !== 'browse');
+
+      return identifierParts;
     }
   }
 };
