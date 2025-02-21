@@ -33,7 +33,6 @@ Enim nec dui nunc mattis. Cursus turpis massa tincidunt dui ut. Donec adipiscing
 Proin libero nunc consequat interdum varius sit amet mattis vulputate. Metus dictum at tempor commodo ullamcorper a lacus vestibulum sed. Quisque non tellus orci ac auctor augue mauris. Id ornare arcu odio ut. Rhoncus est pellentesque elit ullamcorper dignissim. Senectus et netus et malesuada fames ac turpis egestas. Volutpat ac tincidunt vitae semper quis lectus nulla. Adipiscing elit duis tristique sollicitudin. Ipsum faucibus vitae aliquet nec ullamcorper sit. Gravida neque convallis a cras semper auctor neque vitae tempus. Porttitor leo a diam sollicitudin tempor id. Dictum non consectetur a erat nam at lectus. At volutpat diam ut venenatis tellus in. Morbi enim nunc faucibus a pellentesque sit amet. Cursus in hac habitasse platea. Sed augue lacus viverra vitae.
 `;
 
-const noCompositionViews = ['Clock'];
 const viewsTabsMatrix = {
   Clock: {
     Browse: ['Properties']
@@ -132,7 +131,7 @@ const viewsTabsMatrix = {
   }
 };
 
-// unique test required
+// TODO: need to implement uniqueItemMatrix tests
 // const uniqueItemMatrix = {
 //   'Display Layout Alphanumeric': {
 //     'Browse': ['Properties', 'Styles', 'Format'],
@@ -185,42 +184,42 @@ test.describe('Inspector tests', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  // test('Content in inspector can be scrolled to vertically', async ({ page }) => {
-  //   const folderWithOverflowingTitle = await createDomainObjectWithDefaults(page, {
-  //     type: 'Folder',
-  //     name: loremIpsum
-  //   });
+  test('Content in inspector can be scrolled to vertically', async ({ page }) => {
+    const folderWithOverflowingTitle = await createDomainObjectWithDefaults(page, {
+      type: 'Folder',
+      name: loremIpsum
+    });
 
-  //   await page.goto(folderWithOverflowingTitle.url);
+    await page.goto(folderWithOverflowingTitle.url);
 
-  //   const inspectorPropertiesLocator = page
-  //     .getByRole('tabpanel', { name: 'Inspector Views' })
-  //     .getByLabel('Inspector Properties Details');
-  //   const inspectorPropertiesList = inspectorPropertiesLocator.getByRole('list');
-  //   const firstInspectorPropertyValue = inspectorPropertiesList
-  //     .getByRole('listitem')
-  //     .first()
-  //     .getByLabel('value', { exact: false });
-  //   const lastInspectorPropertyValue = inspectorPropertiesList
-  //     .getByRole('listitem')
-  //     .last()
-  //     .getByLabel('value', { exact: false });
+    const inspectorPropertiesLocator = page
+      .getByRole('tabpanel', { name: 'Inspector Views' })
+      .getByLabel('Inspector Properties Details');
+    const inspectorPropertiesList = inspectorPropertiesLocator.getByRole('list');
+    const firstInspectorPropertyValue = inspectorPropertiesList
+      .getByRole('listitem')
+      .first()
+      .getByLabel('value', { exact: false });
+    const lastInspectorPropertyValue = inspectorPropertiesList
+      .getByRole('listitem')
+      .last()
+      .getByLabel('value', { exact: false });
 
-  //   // inspector content partially in viewport, but not all the way in viewport
-  //   await expect(inspectorPropertiesLocator).toBeInViewport();
-  //   await expect(inspectorPropertiesLocator).not.toBeInViewport({ ratio: 0.9 });
+    // inspector content partially in viewport, but not all the way in viewport
+    await expect(inspectorPropertiesLocator).toBeInViewport();
+    await expect(inspectorPropertiesLocator).not.toBeInViewport({ ratio: 0.9 });
 
-  //   await expect(firstInspectorPropertyValue).toBeInViewport();
-  //   await expect(lastInspectorPropertyValue).not.toBeInViewport();
+    await expect(firstInspectorPropertyValue).toBeInViewport();
+    await expect(lastInspectorPropertyValue).not.toBeInViewport();
 
-  //   // using page.mouse.wheel to scroll the inspector content by the height of the content
-  //   // because click and scrollIntoView will scroll even if scrollbar not available
-  //   await inspectorPropertiesLocator.hover();
-  //   const offset = await inspectorPropertiesLocator.evaluate((el) => el.offsetHeight);
-  //   await page.mouse.wheel(0, offset);
+    // using page.mouse.wheel to scroll the inspector content by the height of the content
+    // because click and scrollIntoView will scroll even if scrollbar not available
+    await inspectorPropertiesLocator.hover();
+    const offset = await inspectorPropertiesLocator.evaluate((el) => el.offsetHeight);
+    await page.mouse.wheel(0, offset);
 
-  //   await expect(lastInspectorPropertyValue).toBeInViewport();
-  // });
+    await expect(lastInspectorPropertyValue).toBeInViewport();
+  });
 
   test(`Inspector tabs show the correct tabs per view and mode`, async ({ page }) => {
     // Convert the nested loops to for...of which supports await
