@@ -1,3 +1,5 @@
+/* eslint-disable playwright/no-conditional-in-test */
+/* eslint-disable playwright/no-conditional-expect */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -96,7 +98,7 @@ const viewsTabsMatrix = {
   },
   'Overlay Plot': {
     Browse: ['Properties', 'Config', 'Annotations'],
-    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+    Edit: ['Config', 'Elements', 'Styles', 'Filters', 'Properties']
   },
   'Scatter Plot': {
     Browse: ['Properties', 'Config', 'Elements'],
@@ -106,7 +108,7 @@ const viewsTabsMatrix = {
     Browse: ['Properties', 'Annotations']
   },
   'Stacked Plot': {
-    Browse: ['Properties', 'Config', 'Annotations'],
+    Browse: ['Properties', 'Config', 'Annotations', 'Elements'],
     Edit: ['Config', 'Elements', 'Styles', 'Properties']
   },
   'Tabs View': {
@@ -115,7 +117,7 @@ const viewsTabsMatrix = {
   },
   'Telemetry Table': {
     Browse: ['Properties', 'Config', 'Elements'],
-    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+    Edit: ['Config', 'Elements', 'Styles', 'Filters', 'Properties']
   },
   'Time List': {
     Browse: ['Properties', 'Config', 'Elements'],
@@ -178,7 +180,7 @@ const viewsTabsMatrix = {
 // }
 // };
 
-test.describe.only('Inspector tests', () => {
+test.describe('Inspector tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
@@ -237,17 +239,31 @@ test.describe.only('Inspector tests', () => {
       );
       await page.goto(objectInfo.url);
 
-      // add object if necessary
-      // eslint-disable-next-line playwright/no-conditional-in-test
-      if (!noCompositionViews.includes(view)) {
-        // add object
-      }
-
       // verify correct number of tabs for browse mode
       expect(await page.getByRole('tab').count()).toBe(Object.keys(viewConfig.Browse).length);
+
+      // verify correct order of tabs for browse mode
+      for (const [index, value] of Object.entries(viewConfig.Browse)) {
+        const tab = page.getByRole('tab').nth(index);
+        await expect(tab).toHaveText(value);
+      }
+
       // enter Edit if necessary
-      // check that the tabs are visible
-      // check that the tabs are in the correct order
+      if (viewConfig.Edit) {
+        await page.getByLabel('Edit Object').click();
+
+        // verify correct number of tabs for edit mode
+        expect(await page.getByRole('tab').count()).toBe(Object.keys(viewConfig.Edit).length);
+
+        // verify correct order of tabs for edit mode
+        for (const [index, value] of Object.entries(viewConfig.Edit)) {
+          const tab = page.getByRole('tab').nth(index);
+          await expect(tab).toHaveText(value);
+        }
+
+        await page.getByLabel('Save').first().click();
+        await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+      }
     }
   });
 });

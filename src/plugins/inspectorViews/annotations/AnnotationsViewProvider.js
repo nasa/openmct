@@ -52,6 +52,7 @@ export default function AnnotationsViewProvider(openmct) {
       const selectionContext = selection?.[0]?.[0]?.context;
       const domainObject = selectionContext?.item;
       const isNotebookEntry = selectionContext?.type === 'notebook-entry-selection';
+      const isConditionSet = domainObject?.type === 'conditionSet';
 
       return {
         show: function (element) {
@@ -75,7 +76,15 @@ export default function AnnotationsViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return isNotebookEntry ? openmct.priority.HIGH + 1 : openmct.priority.DEFAULT;
+          if (isNotebookEntry) {
+            return openmct.priority.HIGH + 1;
+          }
+
+          if (isConditionSet) {
+            return openmct.priority.LOW;
+          }
+
+          return openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {

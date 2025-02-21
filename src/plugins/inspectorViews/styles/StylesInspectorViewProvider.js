@@ -38,6 +38,9 @@ const NON_STYLABLE_TYPES = [
   'notebook',
   'restricted-notebook',
   'summary-widget',
+  'time-strip',
+  'timelist',
+  'timer',
   'webPage'
 ];
 
