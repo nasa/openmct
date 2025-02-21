@@ -222,7 +222,7 @@ test.describe('Inspector tests', () => {
   });
 
   test(`Inspector tabs show the correct tabs per view and mode`, async ({ page }) => {
-    // Convert the nested loops to for...of which supports await
+    // loop through each view type
     for (const view of Object.keys(viewsTabsMatrix)) {
       const viewConfig = viewsTabsMatrix[view];
       const createOptions = {
