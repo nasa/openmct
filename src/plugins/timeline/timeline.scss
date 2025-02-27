@@ -22,42 +22,42 @@
 
 /********************************************* TIME STRIP */
 .c-timeline-holder {
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    height: 100%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  height: 100%;
 
-    // Plot view overrides
-    .gl-plot-display-area,
-    .gl-plot-axis-area.gl-plot-y {
-        bottom: $interiorMargin !important;
-    }
+  // Plot view overrides
+  .gl-plot-display-area,
+  .gl-plot-axis-area.gl-plot-y {
+    bottom: $interiorMargin !important;
+  }
 }
 
 .c-timeline {
-    &__objects {
-        display: contents;
+  &__objects {
+    display: contents;
 
-        .c-swimlane {
-            min-height: 100px; // TEMP!! Will be replaced when heights are set by user
-        }
+    .c-swimlane {
+      // min-height: 100px; // TEMP!! Will be replaced when heights are set by user
     }
+  }
 
-    &__overlay-lines {
-        //background: rgba(deeppink, 0.2);
-        @include abs();
-        top: 20px; // Offset down to line up with time axis ticks line
-        pointer-events: none; // Allows clicks to pass through
-        z-index: 10; // Ensure it sits atop swimlanes
-    }
+  &__overlay-lines {
+    //background: rgba(deeppink, 0.2);
+    @include abs();
+    top: 20px; // Offset down to line up with time axis ticks line
+    pointer-events: none; // Allows clicks to pass through
+    z-index: 10; // Ensure it sits atop swimlanes
+  }
 
-    &__no-items {
-        font-style: italic;
-        position: absolute;
-        left: $interiorMargin;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+  &__no-items {
+    font-style: italic;
+    position: absolute;
+    left: $interiorMargin;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
