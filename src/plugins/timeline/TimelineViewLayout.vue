@@ -45,6 +45,7 @@
         <TimelineObjectView
           class="c-timeline__content js-timeline__content"
           :item="item"
+          :size="getContainerSize(item)"
           :extended-lines-bus
         />
         <ResizeHandle
@@ -71,8 +72,10 @@
 
 <script>
 import _ from 'lodash';
+import { identifierEquals } from 'objectUtils';
 import { useDragResizer } from 'utils/vue/useDragResizer.js';
-import { inject, provide } from 'vue';
+import { useFlexContainers } from 'utils/vue/useFlexContainers.js';
+import { inject, onMounted, provide, ref } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
@@ -80,6 +83,7 @@ import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import Container from './Container.js';
 import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue';
 import TimelineObjectView from './TimelineObjectView.vue';
 
@@ -112,6 +116,8 @@ export default {
     const domainObject = inject('domainObject');
     const path = inject('path');
     const openmct = inject('openmct');
+    const items = ref([]);
+
     const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
       domainObject,
       path,
@@ -124,11 +130,46 @@ export default {
     provide('swimLaneLabelWidth', swimLaneLabelWidth);
     provide('mousedown', mousedown);
 
-    return { alignmentData, resetAlignment };
+    // Flex containers - Swimlane height
+    const timelineHolder = ref(null);
+    onMounted(() => {
+      console.log(timelineHolder.value);
+    });
+
+    const {
+      addContainer,
+      containers,
+      startContainerResizing,
+      containerResizing,
+      endContainerResizing
+    } = useFlexContainers(timelineHolder, {
+      containerClass: Container,
+      rowsLayout: true
+    });
+
+    function getContainerSize(item) {
+      const containerforItem = containers.value.find((container) =>
+        identifierEquals(container.domainObjectIdentifier, item.identifier)
+      );
+
+      return containerforItem.size;
+    }
+
+    return {
+      containers,
+      getContainerSize,
+      timelineHolder,
+      items,
+      addContainer,
+      alignmentData,
+      resetAlignment,
+      startContainerResizing,
+      containerResizing,
+      endContainerResizing
+    };
   },
   data() {
     return {
-      items: [],
       timeSystems: [],
       height: 0,
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
@@ -206,6 +247,7 @@ export default {
       };
 
       this.items.push(item);
+      this.addContainer(item);
     },
     hasEventTelemetry(domainObject) {
       const metadata = this.openmct.telemetry.getMetadata(domainObject);
