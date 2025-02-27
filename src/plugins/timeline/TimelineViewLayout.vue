@@ -72,10 +72,9 @@
 
 <script>
 import _ from 'lodash';
-import { identifierEquals } from 'objectUtils';
 import { useDragResizer } from 'utils/vue/useDragResizer.js';
 import { useFlexContainers } from 'utils/vue/useFlexContainers.js';
-import { inject, onMounted, provide, ref } from 'vue';
+import { inject, provide, ref } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
@@ -132,9 +131,6 @@ export default {
 
     // Flex containers - Swimlane height
     const timelineHolder = ref(null);
-    onMounted(() => {
-      console.log(timelineHolder.value);
-    });
 
     const {
       addContainer,
@@ -149,10 +145,10 @@ export default {
 
     function getContainerSize(item) {
       const containerforItem = containers.value.find((container) =>
-        identifierEquals(container.domainObjectIdentifier, item.identifier)
+        openmct.objects.areIdsEqual(container.domainObjectIdentifier, item.domainObject.identifier)
       );
 
-      return containerforItem.size;
+      return containerforItem?.size;
     }
 
     return {
@@ -246,7 +242,9 @@ export default {
       };
 
       this.items.push(item);
-      this.addContainer(item);
+
+      const container = new Container(domainObject);
+      this.addContainer(container);
     },
     removeItem(identifier) {
       let index = this.items.findIndex((item) =>
