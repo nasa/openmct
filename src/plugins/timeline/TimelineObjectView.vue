@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     sizeString() {
-      return `${this.size}px`;
+      return `${this.size}%`;
     }
   },
   watch: {

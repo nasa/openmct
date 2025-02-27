@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { ref } from 'vue';
 
 export function useFlexContainers(element, { rowsLayout, minContainerSize = 5, callback }) {
@@ -72,7 +73,7 @@ export function useFlexContainers(element, { rowsLayout, minContainerSize = 5, c
       }
 
       // Resize oldItems to fit inside remaining space;
-      const oldItems = items.filter((item) => item !== newItem);
+      const oldItems = items.filter((item) => !_.isEqual(item, newItem));
       const remainingSize = 100 - newItem.size;
 
       oldItems.forEach((item) => {
