@@ -79,13 +79,6 @@ export default {
   },
   mounted() {
     if (this.domainObject) {
-      if (!this.domainObject.configuration) {
-        // older versions didn't initialize configuration
-        this.domainObject.configuration = {
-          objectStyles: {}
-        };
-      }
-
       this.listenToConditionSetChanges();
     }
   },

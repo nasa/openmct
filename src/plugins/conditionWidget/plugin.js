@@ -20,11 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import conditionWidgetStylesInterceptor from './conditionWidgetInterceptor.js';
 import ConditionWidgetViewProvider from './ConditionWidgetViewProvider.js';
 
 export default function plugin() {
   return function install(openmct) {
     openmct.objectViews.addProvider(new ConditionWidgetViewProvider(openmct));
+    openmct.objects.addGetInterceptor(conditionWidgetStylesInterceptor(openmct));
 
     openmct.types.addType('conditionWidget', {
       key: 'conditionWidget',
