@@ -131,54 +131,6 @@ const viewsTabsMatrix = {
   }
 };
 
-// TODO: need to implement uniqueItemMatrix tests
-// const uniqueItemMatrix = {
-//   'Display Layout Alphanumeric': {
-//     'Browse': ['Properties', 'Styles', 'Format'],
-//     'Edit': ['Styles', 'Format', 'Properties']
-//   },
-//   'Display Layout Drawing object *': {
-//     'Browse': ['Styles'],
-//     'Edit': ['Styles']
-//   },
-//   'Display Layout Child domain object': {
-//     'Browse': ['']
-//   },
-//   'Gantt Chart Activity': {
-//     'Browse': ['Activity']
-//   },
-//   'Notebook Entry': {
-//     'Browse': ['Properties', 'Annotations']
-//   },
-//   Plan: {
-//     'Browse': ['Properties']
-//   },
-//   'Plan Activity': {
-//     'Browse': ['Activity']
-//   },
-//   'View-only Plot View': {
-//     'Browse': ['Properties', 'Annotations']
-//   },
-//   'Stacked Plot Child plot': {
-//     'Browse': ['']
-//   },
-//   'View-only Telemetry Table': {
-//     'Browse': ['Properties']
-//   },
-//   'Time List Activity': {
-//     'Browse': ['Activity']
-//   },
-//   'Time Strip Activity': {
-//     'Browse': ['Activity']
-//   },
-//   'Web Page': {
-//     Browse: ['Properties'],
-//     required: {
-//       url: 'http://www.google.com'
-//     }
-// }
-// };
-
 test.describe('Inspector tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
