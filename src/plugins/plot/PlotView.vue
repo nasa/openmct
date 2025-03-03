@@ -173,15 +173,6 @@ export default {
   created() {
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
-
-    // Initialize objectStyles for overlay plot if it doesn't exist
-    if (
-      this.domainObject.type === 'telemetry.plot.overlay' &&
-      !this.domainObject.configuration.objectStyles
-    ) {
-      this.domainObject.configuration.objectStyles = {};
-    }
-
     this.loadComposition();
     this.setupClockChangedEvent((domainObject) => {
       this.triggerUnsubscribeFromStaleness(domainObject);

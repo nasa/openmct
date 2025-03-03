@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function conditionWidgetStylesInterceptor(openmct) {
+export default function overlayPlotStylesInterceptor(openmct) {
   return {
     appliesTo: (identifier, domainObject) => {
-      return identifier.key === 'conditionWidget' && !domainObject.configuration?.objectStyles;
+      return (
+        identifier.key === 'telemetry.plot.overlay' && !domainObject.configuration?.objectStyles
+      );
     },
     invoke: (identifier, domainObject) => {
       if (!domainObject.configuration) {

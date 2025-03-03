@@ -23,6 +23,7 @@ import PlotViewActions from './actions/ViewActions.js';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider.js';
 import StackedPlotsInspectorViewProvider from './inspector/StackedPlotsInspectorViewProvider.js';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy.js';
+import overlayPlotStylesInterceptor from './overlayPlot/overlayPlotStylesInterceptor.js';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider.js';
 import PlotViewProvider from './PlotViewProvider.js';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy.js';
@@ -31,6 +32,8 @@ import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider.js';
 
 export default function () {
   return function install(openmct) {
+    openmct.objects.addGetInterceptor(overlayPlotStylesInterceptor(openmct));
+
     openmct.types.addType('telemetry.plot.overlay', {
       key: 'telemetry.plot.overlay',
       name: 'Overlay Plot',
