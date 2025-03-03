@@ -24,7 +24,7 @@ export default function overlayPlotStylesInterceptor(openmct) {
   return {
     appliesTo: (identifier, domainObject) => {
       return (
-        identifier.key === 'telemetry.plot.overlay' && !domainObject.configuration?.objectStyles
+        domainObject.type === 'telemetry.plot.overlay' && !domainObject?.configuration?.objectStyles
       );
     },
     invoke: (identifier, domainObject) => {
@@ -37,7 +37,6 @@ export default function overlayPlotStylesInterceptor(openmct) {
       openmct.objects.save(domainObject);
 
       return domainObject;
-    },
-    priority: openmct.priority.DEFAULT
+    }
   };
 }

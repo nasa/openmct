@@ -32,8 +32,6 @@ import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider.js';
 
 export default function () {
   return function install(openmct) {
-    openmct.objects.addGetInterceptor(overlayPlotStylesInterceptor(openmct));
-
     openmct.types.addType('telemetry.plot.overlay', {
       key: 'telemetry.plot.overlay',
       name: 'Overlay Plot',
@@ -52,6 +50,8 @@ export default function () {
       },
       priority: 891
     });
+
+    openmct.objects.addGetInterceptor(overlayPlotStylesInterceptor(openmct));
 
     openmct.types.addType('telemetry.plot.stacked', {
       key: 'telemetry.plot.stacked',

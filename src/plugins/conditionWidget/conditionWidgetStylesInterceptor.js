@@ -23,7 +23,7 @@
 export default function conditionWidgetStylesInterceptor(openmct) {
   return {
     appliesTo: (identifier, domainObject) => {
-      return identifier.key === 'conditionWidget' && !domainObject.configuration?.objectStyles;
+      return domainObject.type === 'conditionWidget' && !domainObject?.configuration?.objectStyles;
     },
     invoke: (identifier, domainObject) => {
       if (!domainObject.configuration) {
@@ -35,7 +35,6 @@ export default function conditionWidgetStylesInterceptor(openmct) {
       openmct.objects.save(domainObject);
 
       return domainObject;
-    },
-    priority: openmct.priority.DEFAULT
+    }
   };
 }

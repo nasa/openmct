@@ -147,11 +147,6 @@ export default {
     this.config = this.getConfig(configId);
     this.showLegendsForChildren = this.config.legend.get('showLegendsForChildren');
 
-    // Initialize objectStyles if it doesn't exist
-    if (!this.domainObject.configuration.objectStyles) {
-      this.domainObject.configuration.objectStyles = {};
-    }
-
     this.loaded = true;
     this.imageExporter = new ImageExporter(this.openmct);
 
