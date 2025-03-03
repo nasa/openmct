@@ -93,7 +93,7 @@ export default class TypeRegistry {
    * List all registered types.
    * @returns {Type[]} all registered types
    */
-  getTypes() {
+  getAllTypes() {
     return this.types;
   }
   /**

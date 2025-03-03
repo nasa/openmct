@@ -95,7 +95,6 @@ export default class AnnotationAPI extends EventEmitter {
     this.availableTags = {};
     this.namespaceToSaveAnnotations = '';
     this.#targetComparatorMap = new Map();
-    this.annotatableTypes = [];
 
     this.ANNOTATION_TYPES = ANNOTATION_TYPES;
     this.ANNOTATION_TYPE = ANNOTATION_TYPE;
@@ -115,17 +114,6 @@ export default class AnnotationAPI extends EventEmitter {
         domainObject.contentText = domainObject.contentText || '';
         domainObject.annotationType = domainObject.annotationType || 'plotspatial';
       }
-    });
-
-    this.openmct.on('start', () => {
-      const types = this.openmct.types.getTypes();
-      const typeKeys = Object.keys(types);
-
-      typeKeys.forEach((key) => {
-        if (types[key].definition.annotatable) {
-          this.annotatableTypes.push(key);
-        }
-      });
     });
   }
   /**
@@ -601,6 +589,8 @@ export default class AnnotationAPI extends EventEmitter {
    * @returns {boolean} Returns true if the type is annotatable
    */
   isAnnotatableType(type) {
-    return this.annotatableTypes.some((annotatableType) => annotatableType === type);
+    const types = this.openmct.types.getAllTypes();
+
+    return types[type]?.definition?.annotatable;
   }
 }
