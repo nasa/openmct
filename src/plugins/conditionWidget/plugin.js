@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import conditionWidgetStylesInterceptor from './conditionWidgetInterceptor.js';
+import conditionWidgetStylesInterceptor from './conditionWidgetStylesInterceptor.js';
 import ConditionWidgetViewProvider from './ConditionWidgetViewProvider.js';
 
 export default function plugin() {
