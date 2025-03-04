@@ -56,7 +56,12 @@
           @click="pressOnButton"
         />
       </div>
-      <div class="c-swimlane__handle horizontal" @mousedown="mousedown"></div>
+      <div
+        v-if="canShowResizeHandle"
+        class="c-swimlane__handle horizontal"
+        :style="{ height: `${resizeHandleHeight}px` }"
+        @mousedown="mousedown"
+      ></div>
     </div>
 
     <div
@@ -116,6 +121,19 @@ export default {
       type: Boolean,
       default() {
         return false;
+      }
+    },
+    canShowResizeHandle: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    resizeHandleHeight: {
+      type: Number,
+      required: false,
+      default() {
+        return 32;
       }
     },
     spanRowsCount: {

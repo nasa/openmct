@@ -55,6 +55,7 @@
   &__handle {
     $size: $handleSize;
     $margin: $handleMargin;
+    z-index: 2;
 
     @include resizeHandleStyle($size, $margin);
 
@@ -69,7 +70,7 @@
     &.horizontal {
       // Resizes in X dimension
       left: auto;
-      right: -1 * $handleHitSize;
+      right: math.floor($handleHitSize * -0.5);
       width: $handleHitSize;
     }
   }
@@ -102,8 +103,7 @@
   }
 
   .is-editing & {
-    // TODO: BETTER SELECTOR TO LIMIT STYLING TO TIME STRIP IN MAIN VIEW, NOT NESTED VIEWS
-    grid-column-gap: $handleHitSize;
+    //grid-column-gap: $handleHitSize;
     .c-swimlane__handle {
       display: block;
     }

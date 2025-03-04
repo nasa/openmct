@@ -25,6 +25,8 @@
     <SwimLane
       v-for="timeSystemItem in timeSystems"
       :key="timeSystemItem.timeSystem.key"
+      :canShowResizeHandle="true"
+      :resizeHandleHeight="height"
       class="c-swimlane__time-axis"
     >
       <template #label>
