@@ -104,7 +104,6 @@ export default {
     SwimLane,
     ExtendedLinesOverlay
   },
-  inject: ['openmct', 'domainObject', 'path', 'composition', 'extendedLinesBus'],
   props: {
     isEditing: {
       type: Boolean,
@@ -112,10 +111,14 @@ export default {
     }
   },
   setup() {
+    const openmct = inject('openmct');
     const domainObject = inject('domainObject');
     const path = inject('path');
-    const openmct = inject('openmct');
+    const composition = inject('composition');
+    const extendedLinesBus = inject('extendedLinesBus');
+
     const items = ref([]);
+    const loadedComposition = ref(null);
 
     const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
       domainObject,
@@ -140,7 +143,8 @@ export default {
       endContainerResizing
     } = useFlexContainers(timelineHolder, {
       containerClass: Container,
-      rowsLayout: true
+      rowsLayout: true,
+      callback: mutateContainers
     });
 
     function getContainerSize(item) {
@@ -151,17 +155,33 @@ export default {
       return containerforItem?.size;
     }
 
+    function mutateContainers() {
+      if (
+        loadedComposition?.value?.length &&
+        loadedComposition?.value?.length === containers?.value?.length
+      ) {
+        openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
+      }
+    }
+
     return {
+      openmct,
+      domainObject,
+      path,
+      composition,
+      extendedLinesBus,
       containers,
       getContainerSize,
       timelineHolder,
+      loadedComposition,
       items,
       addContainer,
       alignmentData,
       resetAlignment,
       startContainerResizing,
       containerResizing,
-      endContainerResizing
+      endContainerResizing,
+      mutateContainers
     };
   },
   data() {
@@ -196,7 +216,7 @@ export default {
     this.extendedLinesBus.removeEventListener('update-extended-lines', this.updateExtendedLines);
     this.extendedLinesBus.removeEventListener('update-extended-hover', this.updateExtendedHover);
   },
-  mounted() {
+  async mounted() {
     this.items = [];
     this.setTimeContext();
 
@@ -208,7 +228,8 @@ export default {
       this.composition.on('add', this.addItem);
       this.composition.on('remove', this.removeItem);
       this.composition.on('reorder', this.reorder);
-      this.composition.load();
+
+      this.loadedComposition = await this.composition.load();
     }
 
     this.handleContentResize = _.debounce(this.handleContentResize, 500);
@@ -244,7 +265,14 @@ export default {
 
       this.items.push(item);
 
-      const container = new Container(domainObject);
+      const containerSizeFromConfiguration = this.domainObject.configuration?.containers?.find(
+        (container) =>
+          this.openmct.objects.areIdsEqual(
+            container.domainObjectIdentifier,
+            domainObject.identifier
+          )
+      )?.size;
+      const container = new Container(domainObject, containerSizeFromConfiguration);
       this.addContainer(container);
     },
     hasEventTelemetry(domainObject) {

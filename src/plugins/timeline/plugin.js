@@ -41,7 +41,8 @@ export default function () {
       initialize: function (domainObject) {
         domainObject.composition = [];
         domainObject.configuration = {
-          useIndependentTime: false
+          useIndependentTime: false,
+          containers: []
         };
       }
     });
