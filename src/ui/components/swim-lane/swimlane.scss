@@ -28,8 +28,7 @@
   $handleHitSize: $handleMargin * 2 + $handleSize;
 
   display: grid;
-  flex: 1 1 auto;
-  grid-template-rows: 1fr;
+  grid-template-columns: 100px 100px 1fr;
   grid-column-gap: 1px;
   grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
   min-height: $btnStdH;
