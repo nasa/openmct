@@ -21,7 +21,9 @@
 -->
 <template>
   <div ref="axisHolder" class="c-timesystem-axis">
-    <div class="nowMarker" :style="nowMarkerStyle"><span class="icon-arrow-down"></span></div>
+    <div class="nowMarker" :style="nowMarkerStyle" aria-label="Now Marker">
+      <span class="icon-arrow-down"></span>
+    </div>
     <svg :width="svgWidth" :height="svgHeight">
       <g class="axis" font-size="1.3em" :transform="axisTransform"></g>
     </svg>
@@ -116,8 +118,10 @@ export default {
         this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, 20)`;
 
         const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+
+        this.leftAlignmentOffset = this.alignmentData.leftWidth + leftOffset;
         this.alignmentOffset =
-          this.alignmentData.leftWidth + leftOffset + this.alignmentData.rightWidth + rightOffset;
+          this.leftAlignmentOffset + this.alignmentData.rightWidth + rightOffset;
         this.refresh();
       },
       deep: true
@@ -175,8 +179,8 @@ export default {
         this.nowMarkerStyle.height = this.contentHeight + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
-        this.nowMarkerStyle.left = `${now + this.alignmentOffset}px`;
-        if (now > this.width) {
+        this.nowMarkerStyle.left = `${now + this.leftAlignmentOffset}px`;
+        if (now < 0 || now > this.width) {
           nowMarker.classList.add('hidden');
         }
       }
