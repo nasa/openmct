@@ -25,8 +25,8 @@
     <SwimLane
       v-for="timeSystemItem in timeSystems"
       :key="timeSystemItem.timeSystem.key"
-      :canShowResizeHandle="true"
-      :resizeHandleHeight="height"
+      :can-show-resize-handle="true"
+      :resize-handle-height="height"
       class="c-swimlane__time-axis"
     >
       <template #label>
@@ -139,12 +139,14 @@ export default {
 
     const {
       addContainer,
+      removeContainer,
+      reorderContainers,
       containers,
       startContainerResizing,
       containerResizing,
       endContainerResizing
     } = useFlexContainers(timelineHolder, {
-      containerClass: Container,
+      containers: domainObject.configuration.containers,
       rowsLayout: true,
       callback: mutateContainers
     });
@@ -158,12 +160,7 @@ export default {
     }
 
     function mutateContainers() {
-      if (
-        loadedComposition?.value?.length &&
-        loadedComposition?.value?.length === containers?.value?.length
-      ) {
-        openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
-      }
+      openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
     }
 
     return {
@@ -178,6 +175,8 @@ export default {
       loadedComposition,
       items,
       addContainer,
+      removeContainer,
+      reorderContainers,
       alignmentData,
       resetAlignment,
       startContainerResizing,
@@ -266,21 +265,24 @@ export default {
 
       this.items.push(item);
 
-      const containerSizeFromConfiguration = this.domainObject.configuration?.containers?.find(
-        (container) =>
+      if (
+        !this.containers.some((container) =>
           this.openmct.objects.areIdsEqual(
             container.domainObjectIdentifier,
-            domainObject.identifier
+            item.domainObject.identifier
           )
-      )?.size;
-      const container = new Container(domainObject, containerSizeFromConfiguration);
-      this.addContainer(container);
+        )
+      ) {
+        const container = new Container(domainObject);
+        this.addContainer(container);
+      }
     },
     removeItem(identifier) {
       let index = this.items.findIndex((item) =>
         this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier)
       );
       this.items.splice(index, 1);
+      this.removeContainer(index);
       delete this.extendedLinesPerKey[this.openmct.objects.makeKeyString(identifier)];
     },
     reorder(reorderPlan) {
@@ -288,6 +290,8 @@ export default {
       reorderPlan.forEach((reorderEvent) => {
         this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
       });
+
+      this.reorderContainers(reorderPlan);
     },
     handleContentResize() {
       this.updateContentHeight();
