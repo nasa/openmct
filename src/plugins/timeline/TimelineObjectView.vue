@@ -30,7 +30,7 @@
     :domain-object="item.domainObject"
     :button-title="`Toggle extended event lines overlay for ${item.domainObject.name}`"
     button-icon="icon-arrows-up-down"
-    :hide-button="!hasEventTelemetry()"
+    :hide-button="!item.isEventTelemetry"
     :button-click-on="enableExtendEventLines"
     :button-click-off="disableExtendEventLines"
   >
@@ -146,18 +146,6 @@ export default {
     disableExtendEventLines() {
       const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
       this.extendedLinesBus.disableExtendEventLines(keyString);
-    },
-    hasEventTelemetry() {
-      const metadata = this.openmct.telemetry.getMetadata(this.item.domainObject);
-      if (!metadata) {
-        return false;
-      }
-      const hasDomain = metadata.valuesForHints(['domain']).length > 0;
-      const hasNoRange = !metadata.valuesForHints(['range'])?.length;
-      // for the moment, let's also exclude telemetry with images
-      const hasNoImages = !metadata.valuesForHints(['image']).length;
-
-      return hasDomain && hasNoRange && hasNoImages;
     },
     setActionCollection(actionCollection) {
       this.openmct.menus.actionsToMenuItems(

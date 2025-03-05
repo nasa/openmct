@@ -22,8 +22,8 @@
 
 import { EventEmitter } from 'eventemitter3';
 export default class ExtendedLinesBus extends EventEmitter {
-  updateExtendedLines(keyString, lineData) {
-    this.emit('update-extended-lines', { lineData, keyString });
+  updateExtendedLines(keyString, lines) {
+    this.emit('update-extended-lines', { lines, keyString });
   }
   disableExtendEventLines(keyString) {
     this.emit('disable-extended-lines', keyString);

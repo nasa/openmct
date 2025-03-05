@@ -162,7 +162,7 @@ export default {
       } else if (domainObject.type === 'gantt-chart') {
         rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
       }
-
+      const isEventTelemetry = this.hasEventTelemetry(domainObject);
       let height =
         domainObject.type === 'telemetry.plot.stacked'
           ? `${domainObject.composition.length * PLOT_ITEM_H_PX}px`
@@ -173,10 +173,23 @@ export default {
         type,
         keyString,
         rowCount,
-        height
+        height,
+        isEventTelemetry
       };
 
       this.items.push(item);
+    },
+    hasEventTelemetry(domainObject) {
+      const metadata = this.openmct.telemetry.getMetadata(domainObject);
+      if (!metadata) {
+        return false;
+      }
+      const hasDomain = metadata.valuesForHints(['domain']).length > 0;
+      const hasNoRange = !metadata.valuesForHints(['range'])?.length;
+      // for the moment, let's also exclude telemetry with images
+      const hasNoImages = !metadata.valuesForHints(['image']).length;
+
+      return hasDomain && hasNoRange && hasNoImages;
     },
     removeItem(identifier) {
       let index = this.items.findIndex((item) =>

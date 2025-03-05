@@ -53,19 +53,8 @@ export default {
     return { alignmentData };
   },
   data() {
-    const timeSystem = this.openmct.time.getTimeSystem();
-    this.valueMetadata = {};
-    this.requestCount = 0;
-
     return {
-      viewBounds: null,
-      height: 0,
-      eventHistory: [],
-      timeSystem: timeSystem,
-      extendLines: false,
-      titleKey: null,
-      tooltip: null,
-      selectedEvent: null
+      eventHistory: []
     };
   },
   computed: {
@@ -82,24 +71,26 @@ export default {
   },
   watch: {
     eventHistory: {
-      handler(newHistory, oldHistory) {
+      handler() {
         this.updatePlotEvents();
       },
       deep: true
     },
     alignmentData: {
       handler() {
-        this.updateViewBounds();
+        this.setScaleAndPlotEvents(this.timeSystem);
       },
       deep: true
     }
   },
+  created() {
+    this.valueMetadata = {};
+    this.height = 0;
+    this.timeSystem = this.openmct.time.getTimeSystem();
+    this.extendLines = false;
+  },
   mounted() {
     this.setDimensions();
-
-    this.setScaleAndPlotEvents = this.setScaleAndPlotEvents.bind(this);
-    this.updateViewBounds = this.updateViewBounds.bind(this);
-    this.setTimeContext = this.setTimeContext.bind(this);
     this.setTimeContext();
 
     this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -175,7 +166,7 @@ export default {
       const clientWidth = this.getClientWidth();
       if (clientWidth !== this.width) {
         this.setDimensions();
-        this.updateViewBounds();
+        this.setScaleAndPlotEvents(this.timeSystem);
       }
     },
     getClientWidth() {
@@ -446,20 +437,13 @@ export default {
       return eventWrapper;
     },
     emitExtendedLines() {
+      let lines = [];
       if (this.extendLines) {
-        const lines = this.eventHistory
+        lines = this.eventHistory
           .filter((e) => this.isEventInBounds(e))
           .map((e) => ({ x: this.xScale(e.time), limitClass: e.limitClass, id: e.time }));
-        this.extendedLinesBus.emit('update-extended-lines', {
-          lines,
-          keyString: this.keyString
-        });
-      } else {
-        this.extendedLinesBus.emit('update-extended-lines', {
-          lines: [],
-          keyString: this.keyString
-        });
       }
+      this.extendedLinesBus.updateExtendedLines(this.keyString, lines);
     },
     showToolTip(textToShow, referenceElement, event) {
       const aClasses = ['c-events-tooltip'];

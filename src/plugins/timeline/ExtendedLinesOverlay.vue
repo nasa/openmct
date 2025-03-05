@@ -29,7 +29,7 @@
       <div
         v-for="(line, index) in lines"
         :id="line.id"
-        :key="index"
+        :key="`${index - line.id}`"
         class="c-timeline__event-line--extended"
         :class="[
           line.limitClass,
