@@ -24,7 +24,7 @@ export default function telemetryTableStylesInterceptor(openmct) {
   return {
     appliesTo: (identifier, domainObject) => {
       return (
-        domainObject.type === 'table' &&
+        domainObject?.type === 'table' &&
         domainObject.configuration && // only applies to tables with existing configuration
         !domainObject.configuration.objectStyles
       );

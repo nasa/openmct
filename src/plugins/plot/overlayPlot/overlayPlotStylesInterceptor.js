@@ -24,7 +24,8 @@ export default function overlayPlotStylesInterceptor(openmct) {
   return {
     appliesTo: (identifier, domainObject) => {
       return (
-        domainObject.type === 'telemetry.plot.overlay' && !domainObject?.configuration?.objectStyles
+        domainObject?.type === 'telemetry.plot.overlay' &&
+        !domainObject?.configuration?.objectStyles
       );
     },
     invoke: (identifier, domainObject) => {

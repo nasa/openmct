@@ -23,7 +23,7 @@
 export default function conditionWidgetStylesInterceptor(openmct) {
   return {
     appliesTo: (identifier, domainObject) => {
-      return domainObject.type === 'conditionWidget' && !domainObject?.configuration?.objectStyles;
+      return domainObject?.type === 'conditionWidget' && !domainObject.configuration?.objectStyles;
     },
     invoke: (identifier, domainObject) => {
       if (!domainObject.configuration) {

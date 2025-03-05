@@ -87,19 +87,6 @@ export default function StylesInspectorViewProvider(openmct) {
     },
     view: function (selection) {
       let _destroy = null;
-      const objectSelection = selection?.[0];
-      const objectContext = objectSelection?.[0]?.context;
-      const domainObject = objectContext?.item;
-      const onlyEditMode = [
-        'flexible-layout',
-        'LadTable',
-        'LadTableSet',
-        'table',
-        'telemetry.plot.bar-graph',
-        'telemetry.plot.overlay',
-        'telemetry.plot.stacked',
-        'telemetry.plot.scatter-plot'
-      ].includes(domainObject?.type);
 
       return {
         show: function (element) {
@@ -124,10 +111,6 @@ export default function StylesInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         showTab: function (isEditing) {
-          if (onlyEditMode && !isEditing) {
-            return false;
-          }
-
           return true;
         },
         priority: function () {

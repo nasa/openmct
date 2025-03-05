@@ -24,7 +24,7 @@ export default function stackedPlotConfigurationInterceptor(openmct) {
   openmct.objects.addGetInterceptor({
     appliesTo: (identifier, domainObject) => {
       return (
-        domainObject.type === 'telemetry.plot.stacked' &&
+        domainObject?.type === 'telemetry.plot.stacked' &&
         (!domainObject.configuration?.series || !domainObject.configuration?.objectStyles)
       );
     },

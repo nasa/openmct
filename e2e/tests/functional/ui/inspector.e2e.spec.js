@@ -59,7 +59,7 @@ const viewsTabsMatrix = {
     Browse: ['Properties', 'Annotations']
   },
   'Flexible Layout': {
-    Browse: ['Properties', 'Elements'],
+    Browse: ['Properties', 'Elements', 'Styles'],
     Edit: ['Elements', 'Styles', 'Properties']
   },
   Folder: {
@@ -74,7 +74,7 @@ const viewsTabsMatrix = {
     Edit: ['Elements', 'Styles', 'Properties']
   },
   Graph: {
-    Browse: ['Properties', 'Config', 'Elements'],
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
     Edit: ['Config', 'Elements', 'Styles', 'Properties']
   },
   Hyperlink: {
@@ -85,29 +85,29 @@ const viewsTabsMatrix = {
     }
   },
   'LAD Table': {
-    Browse: ['Properties', 'Config', 'Elements'],
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
     Edit: ['Config', 'Elements', 'Styles', 'Properties']
   },
   'LAD Table Set': {
-    Browse: ['Properties', 'Config', 'Elements'],
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
     Edit: ['Config', 'Elements', 'Styles', 'Properties']
   },
   Notebook: {
     Browse: ['Properties']
   },
   'Overlay Plot': {
-    Browse: ['Properties', 'Config', 'Annotations'],
+    Browse: ['Properties', 'Config', 'Annotations', 'Styles'],
     Edit: ['Config', 'Elements', 'Styles', 'Filters', 'Properties']
   },
   'Scatter Plot': {
-    Browse: ['Properties', 'Config', 'Elements'],
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
     Edit: ['Config', 'Elements', 'Styles', 'Properties']
   },
   'Sine Wave Generator': {
     Browse: ['Properties', 'Annotations']
   },
   'Stacked Plot': {
-    Browse: ['Properties', 'Config', 'Annotations', 'Elements'],
+    Browse: ['Properties', 'Config', 'Annotations', 'Elements', 'Styles'],
     Edit: ['Config', 'Elements', 'Styles', 'Properties']
   },
   'Tabs View': {
@@ -115,7 +115,7 @@ const viewsTabsMatrix = {
     Edit: ['Elements', 'Styles', 'Properties']
   },
   'Telemetry Table': {
-    Browse: ['Properties', 'Config', 'Elements'],
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
     Edit: ['Config', 'Elements', 'Styles', 'Filters', 'Properties']
   },
   'Time List': {
