@@ -34,7 +34,10 @@ export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
     const hasDomain = metadata.valuesForHints(['domain']).length > 0;
     const hasNoRange = !metadata.valuesForHints(['range'])?.length;
 
-    return hasDomain && hasNoRange;
+    // for the moment, let's also exclude telemetry with images
+    const hasNoImages = !metadata.valuesForHints(['image']).length;
+
+    return hasDomain && hasNoRange && hasNoImages;
   }
 
   return {
@@ -42,7 +45,8 @@ export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
     name: 'Event Timeline View',
     cssClass: 'icon-event',
     priority: function () {
-      return 6000; // big number!
+      // We want this to be higher priority than the TelemetryTableView
+      return openmct.priority.HIGH;
     },
     canView: function (domainObject, objectPath) {
       const isChildOfTimeStrip = objectPath.some((object) => object.type === 'time-strip');
