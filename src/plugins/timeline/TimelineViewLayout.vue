@@ -129,10 +129,21 @@ export default {
     );
 
     // Drag resizer - Swimlane column width
-    const { x: swimLaneLabelWidth, mousedown } = useDragResizer({ initialX: 200 });
+    const { x: swimLaneLabelWidth, mousedown } = useDragResizer({
+      initialX: domainObject.configuration.swimLaneLabelWidth,
+      callback: mutateSwimLaneLabelWidth
+    });
 
     provide('swimLaneLabelWidth', swimLaneLabelWidth);
     provide('mousedown', mousedown);
+
+    function mutateSwimLaneLabelWidth() {
+      openmct.objects.mutate(
+        domainObject,
+        'configuration.swimLaneLabelWidth',
+        swimLaneLabelWidth.value
+      );
+    }
 
     // Flex containers - Swimlane height
     const timelineHolder = ref(null);
