@@ -30,9 +30,9 @@
         </div>
         <div class="c-inspect-properties__value">
           <input
+            v-if="isEditing"
             :id="key + 'ColumnControl'"
             type="checkbox"
-            v-if="isEditing"
             :checked="configuration.hiddenColumns[key] !== true"
             @change="toggleColumn(key)"
           />
