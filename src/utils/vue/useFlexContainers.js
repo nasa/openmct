@@ -16,8 +16,11 @@ import { ref } from 'vue';
  * @param {configuration} configuration object with configuration options
  * @returns
  */
-export function useFlexContainers(element, { rowsLayout, minContainerSize = 5, callback }) {
-  const containers = ref([]);
+export function useFlexContainers(
+  element,
+  { containers: existingContainers = [], rowsLayout, minContainerSize = 5, callback }
+) {
+  const containers = ref(existingContainers);
   const maxMoveSize = ref(null);
   let sizingContainers = 0;
 
@@ -31,6 +34,23 @@ export function useFlexContainers(element, { rowsLayout, minContainerSize = 5, c
     }
 
     sizeItems(containers.value, container);
+
+    callback?.();
+  }
+
+  function removeContainer(index) {
+    containers.value.splice(index, 1);
+    sizeToFill(containers.value);
+
+    callback?.();
+  }
+
+  function reorderContainers(reorderPlan) {
+    const oldContainers = containers.value.slice();
+
+    reorderPlan.forEach((reorderEvent) => {
+      containers.value[reorderEvent.newIndex] = oldContainers[reorderEvent.oldIndex];
+    });
 
     callback?.();
   }
@@ -52,7 +72,7 @@ export function useFlexContainers(element, { rowsLayout, minContainerSize = 5, c
   }
 
   function endContainerResizing() {
-    callback?.(containers.value);
+    callback?.();
   }
 
   function getElSize() {
@@ -101,15 +121,39 @@ export function useFlexContainers(element, { rowsLayout, minContainerSize = 5, c
         });
 
         // Ensure items add up to 100 in case of rounding error.
-        let total = items.reduce((t, item) => t + item.size, 0);
-        let excess = Math.round(100 - total);
+        const total = items.reduce((t, item) => t + item.size, 0);
+        const excess = Math.round(100 - total);
         oldItems[oldItems.length - 1].size += excess;
       }
     }
   }
 
+  /**
+   * Scales items proportionally so total is equal to 100.
+   * Assumes that an item was removed from array.
+   * @param {*} items
+   */
+  function sizeToFill(items) {
+    if (items.length === 0) {
+      return;
+    }
+
+    const oldTotal = items.reduce((total, item) => total + item.size, 0);
+    items.forEach((item) => {
+      const itemScale = item.scale || 1;
+      item.size = Math.round((item.size * itemScale * 100) / oldTotal);
+    });
+
+    // Ensure items add up to 100 in case of rounding error.
+    const total = items.reduce((t, item) => t + item.size, 0);
+    const excess = Math.round(100 - total);
+    items[items.length - 1].size += excess;
+  }
+
   return {
     addContainer,
+    removeContainer,
+    reorderContainers,
     containers,
     startContainerResizing,
     containerResizing,
