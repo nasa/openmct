@@ -35,9 +35,11 @@ jobs:
       - run: npm run test:perf:memory
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-perf-test-results
           path: test-results
+          overwrite: true
 
       - name: Remove pr:e2e:perf label (if present)
         if: always()
