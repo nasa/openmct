@@ -80,6 +80,7 @@ class TooltipAPI {
    * @property {string} tooltipText text to show in the tooltip
    * @property {TOOLTIP_LOCATIONS} tooltipLocation location to show the tooltip relative to the parentElement
    * @property {HTMLElement} parentElement reference to the DOM node we're adding the tooltip to
+   * @property {Array} cssClasses css classes to use with the tool tip element
    */
 
   /**
