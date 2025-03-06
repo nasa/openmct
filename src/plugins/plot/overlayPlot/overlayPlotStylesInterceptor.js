@@ -35,8 +35,6 @@ export default function overlayPlotStylesInterceptor(openmct) {
 
       domainObject.configuration.objectStyles = {};
 
-      openmct.objects.save(domainObject);
-
       return domainObject;
     }
   };

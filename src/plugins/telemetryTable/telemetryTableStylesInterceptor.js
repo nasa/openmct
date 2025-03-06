@@ -32,8 +32,6 @@ export default function telemetryTableStylesInterceptor(openmct) {
     invoke: (identifier, domainObject) => {
       domainObject.configuration.objectStyles = {};
 
-      openmct.objects.save(domainObject);
-
       return domainObject;
     }
   };

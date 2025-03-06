@@ -41,8 +41,6 @@ export default function stackedPlotConfigurationInterceptor(openmct) {
         domainObject.configuration.objectStyles = {};
       }
 
-      openmct.objects.save(domainObject);
-
       return domainObject;
     }
   });

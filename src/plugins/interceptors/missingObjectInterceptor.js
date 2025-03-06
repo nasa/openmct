@@ -39,6 +39,6 @@ export default function MissingObjectInterceptor(openmct) {
 
       return object;
     },
-    priority: openmct.priority.HIGH + 1 // this should be the first interceptor to run
+    priority: openmct.priority.HIGH
   });
 }
