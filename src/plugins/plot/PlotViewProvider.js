@@ -25,27 +25,6 @@ import mount from 'utils/mount';
 import Plot from './PlotView.vue';
 
 export default function PlotViewProvider(openmct) {
-  function hasNumericTelemetry(domainObject) {
-    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-      return false;
-    }
-
-    let metadata = openmct.telemetry.getMetadata(domainObject);
-
-    return metadata.values().length > 0 && hasDomainAndNumericRange(metadata);
-  }
-
-  function hasDomainAndNumericRange(metadata) {
-    const rangeValues = metadata.valuesForHints(['range']);
-    const domains = metadata.valuesForHints(['domain']);
-
-    return (
-      domains.length > 0 &&
-      rangeValues.length > 0 &&
-      !rangeValues.every((value) => value.format === 'string')
-    );
-  }
-
   function isCompactView(objectPath) {
     let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
 
@@ -57,7 +36,7 @@ export default function PlotViewProvider(openmct) {
     name: 'Plot',
     cssClass: 'icon-telemetry',
     canView(domainObject, objectPath) {
-      return hasNumericTelemetry(domainObject);
+      return openmct.telemetry.hasNumericTelemetry(domainObject);
     },
 
     view: function (domainObject, objectPath) {
