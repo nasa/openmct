@@ -22,8 +22,8 @@
 
 <template>
   <div ref="events" class="c-events-tsv js-events-tsv" :style="alignmentStyle">
-    <swim-lane v-if="eventItems.length" :is-nested="true" :hide-label="true">
-      <template v-slot:object>
+    <SwimLane v-if="eventItems.length" :is-nested="true" :hide-label="true">
+      <template #object>
         <div ref="eventsContainer" class="c-events-tsv__container">
           <div
             v-for="event in eventItems"
@@ -40,7 +40,7 @@
           ></div>
         </div>
       </template>
-    </swim-lane>
+    </SwimLane>
     <div v-else class="c-timeline__no-items">No events within timeframe</div>
   </div>
 </template>
@@ -52,9 +52,9 @@ import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 import eventData from '../mixins/eventData.js';
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 
 const PADDING = 1;
 const AXES_PADDING = 20;
@@ -298,7 +298,6 @@ export default {
       this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
     },
     createSelectionForInspector(event) {
-
       const eventWrapper = this.$refs[`wrapper-${event.time}`][0];
       const eventContext = {
         type: 'time-strip-event-selection',
