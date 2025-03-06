@@ -31,6 +31,7 @@ import { checkIfOld } from '../utils/time.js';
 export default class TelemetryCriterion extends EventEmitter {
   #lastUpdated;
   #lastTimeSystem;
+  #comparator;
 
   /**
    * Subscribes/Unsubscribes to telemetry and emits the result
@@ -50,6 +51,7 @@ export default class TelemetryCriterion extends EventEmitter {
     this.id = telemetryDomainObjectDefinition.id;
     this.telemetry = telemetryDomainObjectDefinition.telemetry;
     this.operation = telemetryDomainObjectDefinition.operation;
+    this.#comparator = this.#findOperation(this.operation);
     this.input = telemetryDomainObjectDefinition.input;
     this.metadata = telemetryDomainObjectDefinition.metadata;
     this.result = undefined;
@@ -251,7 +253,7 @@ export default class TelemetryCriterion extends EventEmitter {
       });
   }
 
-  findOperation(operation) {
+  #findOperation(operation) {
     for (let i = 0, ii = OPERATIONS.length; i < ii; i++) {
       if (operation === OPERATIONS[i].name) {
         return OPERATIONS[i].operation;
@@ -264,15 +266,14 @@ export default class TelemetryCriterion extends EventEmitter {
   computeResult(data) {
     let result = false;
     if (data) {
-      let comparator = this.findOperation(this.operation);
       let params = [];
       params.push(data[this.metadata]);
       if (this.isValidInput()) {
         this.input.forEach((input) => params.push(input));
       }
 
-      if (typeof comparator === 'function') {
-        result = Boolean(comparator(params));
+      if (typeof this.comparator === 'function') {
+        result = Boolean(this.comparator(params));
       }
     }
 
