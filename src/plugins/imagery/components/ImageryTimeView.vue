@@ -260,7 +260,6 @@ export default {
       let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
       if (existingContainer) {
         imageryContainer = existingContainer;
-        // imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
         if (this.destroyImageryContainer) {
           this.destroyImageryContainer();
@@ -290,7 +289,6 @@ export default {
         this.$refs.imageryHolder.appendChild(component.$el);
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
-        // imageryContainer.style.maxWidth = `${containerWidth}px`;
       }
 
       return imageryContainer;

@@ -21,29 +21,47 @@
 -->
 
 <template>
-  <div ref="events" class="c-events-tsv js-events-tsv" :style="alignmentStyle" />
+  <div ref="events" class="c-events-tsv js-events-tsv" :style="alignmentStyle">
+    <SwimLane v-if="eventItems.length" :is-nested="true" :hide-label="true">
+      <template #object>
+        <div ref="eventsContainer" class="c-events-tsv__container">
+          <div
+            v-for="event in eventItems"
+            :id="`wrapper-${event.time}`"
+            :ref="`wrapper-${event.time}`"
+            :key="event.id"
+            :aria-label="titleKey ? `${event[titleKey]}` : ''"
+            class="c-events-tsv__event-line"
+            :class="event.limitClass || ''"
+            :style="`left: ${event.left}px`"
+            @mouseover="showToolTip(event)"
+            @mouseleave="dismissToolTip()"
+            @click.stop="createSelectionForInspector(event)"
+          ></div>
+        </div>
+      </template>
+    </SwimLane>
+    <div v-else class="c-timeline__no-items">No events within timeframe</div>
+  </div>
 </template>
 
 <script>
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import _ from 'lodash';
-import mount from 'utils/mount';
 import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import { useAlignment } from '../../../ui/composables/alignmentContext.js';
 import eventData from '../mixins/eventData.js';
 
 const PADDING = 1;
-const CONTAINER_CLASS = 'c-events-tsv__container';
-const NO_ITEMS_CLASS = 'c-timeline__no-items';
-const EVENT_WRAPPER_CLASS = 'c-events-tsv__event-line';
-const ID_PREFIX = 'wrapper-';
 const AXES_PADDING = 20;
 
 export default {
-  mixins: [eventData],
+  components: { SwimLane },
+  mixins: [eventData, tooltipHelpers],
   inject: ['openmct', 'domainObject', 'objectPath', 'extendedLinesBus'],
   setup() {
     const domainObject = inject('domainObject');
@@ -53,19 +71,10 @@ export default {
     return { alignmentData };
   },
   data() {
-    const timeSystem = this.openmct.time.getTimeSystem();
-    this.valueMetadata = {};
-    this.requestCount = 0;
-
     return {
-      viewBounds: null,
-      height: 0,
+      eventItems: [],
       eventHistory: [],
-      timeSystem: timeSystem,
-      extendLines: false,
-      titleKey: null,
-      tooltip: null,
-      selectedEvent: null
+      titleKey: null
     };
   },
   computed: {
@@ -82,24 +91,26 @@ export default {
   },
   watch: {
     eventHistory: {
-      handler(newHistory, oldHistory) {
-        this.updatePlotEvents();
+      handler() {
+        this.updateEventItems();
       },
       deep: true
     },
     alignmentData: {
       handler() {
-        this.updateViewBounds();
+        this.setScaleAndPlotEvents(this.timeSystem);
       },
       deep: true
     }
   },
+  created() {
+    this.valueMetadata = {};
+    this.height = 0;
+    this.timeSystem = this.openmct.time.getTimeSystem();
+    this.extendLines = false;
+  },
   mounted() {
     this.setDimensions();
-
-    this.setScaleAndPlotEvents = this.setScaleAndPlotEvents.bind(this);
-    this.updateViewBounds = this.updateViewBounds.bind(this);
-    this.setTimeContext = this.setTimeContext.bind(this);
     this.setTimeContext();
 
     this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -175,7 +186,7 @@ export default {
       const clientWidth = this.getClientWidth();
       if (clientWidth !== this.width) {
         this.setDimensions();
-        this.updateViewBounds();
+        this.setScaleAndPlotEvents(this.timeSystem);
       }
     },
     getClientWidth() {
@@ -200,14 +211,14 @@ export default {
 
       this.setScaleAndPlotEvents(this.timeSystem, !isTick);
     },
-    setScaleAndPlotEvents(timeSystem, clearAllEvents) {
+    setScaleAndPlotEvents(timeSystem) {
       if (timeSystem) {
         this.timeSystem = timeSystem;
         this.timeFormatter = this.getFormatter(this.timeSystem.key);
       }
 
       this.setScale(this.timeSystem);
-      this.updatePlotEvents(clearAllEvents);
+      this.updateEventItems();
     },
     getFormatter(key) {
       const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
@@ -217,38 +228,19 @@ export default {
 
       return valueFormatter;
     },
-    updatePlotEvents(clearAllEvents) {
-      this.clearPreviousEvents(clearAllEvents);
+    updateEventItems() {
       if (this.xScale) {
-        this.drawEvents();
-      }
-    },
-    clearPreviousEvents(clearAllEvents) {
-      //TODO: Only clear items that are out of bounds
-      let noItemsEl = this.$el.querySelectorAll(`.${NO_ITEMS_CLASS}`);
-      noItemsEl.forEach((item) => {
-        item.remove();
-      });
-      const events = this.$el.querySelectorAll(`.${EVENT_WRAPPER_CLASS}`);
-      events.forEach((eventElm) => {
-        if (clearAllEvents) {
-          eventElm.remove();
-        } else {
-          const id = eventElm.getAttributeNS(null, 'id');
-          if (id) {
-            const timestamp = id.replace(ID_PREFIX, '');
-            if (
-              !this.isEventInBounds({
-                time: timestamp
-              })
-            ) {
-              eventElm.remove();
-            }
-          }
+        this.eventItems = this.eventHistory.map((eventHistoryItem) => {
+          const limitClass = this.getLimitClass(eventHistoryItem);
+          return {
+            ...eventHistoryItem,
+            left: this.xScale(eventHistoryItem.time),
+            limitClass
+          };
+        });
+        if (this.extendLines) {
+          this.emitExtendedLines();
         }
-      });
-      if (this.extendLines) {
-        this.emitExtendedLines();
       }
     },
     setDimensions() {
@@ -276,92 +268,6 @@ export default {
 
       this.xScale.range([PADDING, this.width - PADDING * 2]);
     },
-    isEventInBounds(evenObj) {
-      return evenObj.time <= this.viewBounds.end && evenObj.time >= this.viewBounds.start;
-    },
-    getEventsContainer() {
-      let eventContainer;
-
-      let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
-      if (existingContainer) {
-        eventContainer = existingContainer;
-      } else {
-        if (this.destroyEventsContainer) {
-          this.destroyEventsContainer();
-        }
-        const { vNode, destroy } = mount(
-          {
-            components: {
-              SwimLane
-            },
-            provide: {
-              openmct: this.openmct
-            },
-            data() {
-              return {
-                isNested: true
-              };
-            },
-            template: `<swim-lane :is-nested="isNested" :hide-label="true">
-                        <template v-slot:object>
-                          <div class="c-events-tsv__container"/>
-                        </template>
-                       </swim-lane>`
-          },
-          {
-            app: this.openmct.app
-          }
-        );
-
-        this.destroyEventsContainer = destroy;
-        const component = vNode.componentInstance;
-        this.$refs.events.appendChild(component.$el);
-
-        eventContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
-      }
-
-      return eventContainer;
-    },
-    drawEvents() {
-      let eventContainer = this.getEventsContainer();
-      if (this.eventHistory.length) {
-        this.eventHistory.forEach((currentEventObject) => {
-          if (this.isEventInBounds(currentEventObject)) {
-            this.plotEvents(currentEventObject, eventContainer);
-          }
-        });
-      } else {
-        this.plotNoItems(eventContainer);
-      }
-    },
-    plotNoItems(containerElement) {
-      const textElement = document.createElement('div');
-      textElement.classList.add(NO_ITEMS_CLASS);
-      textElement.innerHTML = 'No events within timeframe';
-
-      containerElement.appendChild(textElement);
-    },
-    getEventWrapper(item) {
-      const id = `${ID_PREFIX}${item.time}`;
-
-      return this.$el.querySelector(`.js-events-tsv div[id=${id}]`);
-    },
-    plotEvents(item, containerElement) {
-      const existingEventWrapper = this.getEventWrapper(item);
-      if (existingEventWrapper) {
-        this.updateExistingEventWrapper(existingEventWrapper, item);
-      } else {
-        const eventWrapper = this.createEventWrapper(item);
-        containerElement.appendChild(eventWrapper);
-      }
-
-      if (this.extendLines) {
-        this.emitExtendedLines();
-      }
-    },
-    updateExistingEventWrapper(existingEventWrapper, event) {
-      existingEventWrapper.style.left = `${this.xScale(event.time)}px`;
-    },
     createPathSelection(eventWrapper) {
       const selection = [];
       selection.unshift({
@@ -381,7 +287,18 @@ export default {
 
       return selection;
     },
-    createSelectionForInspector(event, eventWrapper) {
+    setSelection() {
+      let childContext = {};
+      childContext.item = this.childObject;
+      this.context = childContext;
+      if (this.removeSelectable) {
+        this.removeSelectable();
+      }
+
+      this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
+    },
+    createSelectionForInspector(event) {
+      const eventWrapper = this.$refs[`wrapper-${event.time}`][0];
       const eventContext = {
         type: 'time-strip-event-selection',
         event
@@ -414,70 +331,38 @@ export default {
       const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
       return limitEvaluation?.cssClass;
     },
-    createEventWrapper(event) {
-      const id = `${ID_PREFIX}${event.time}`;
-      const eventWrapper = document.createElement('div');
-      eventWrapper.setAttribute('id', id);
-      eventWrapper.classList.add(EVENT_WRAPPER_CLASS);
-      eventWrapper.style.left = `${this.xScale(event.time)}px`;
-      if (this.titleKey) {
-        const textToShow = event[this.titleKey];
-        eventWrapper.ariaLabel = textToShow;
-        eventWrapper.addEventListener('mouseover', () => {
-          this.showToolTip(textToShow, eventWrapper, event);
-          this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, event.time);
-        });
-        eventWrapper.addEventListener('mouseleave', () => {
-          this.tooltip?.destroy();
-          this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, null);
-        });
-      }
-      const limitClass = this.getLimitClass(event);
-      if (limitClass) {
-        eventWrapper.classList.add(limitClass);
-        event.limitClass = limitClass;
-      }
-
-      eventWrapper.addEventListener('click', (mouseEvent) => {
-        mouseEvent.stopPropagation();
-        this.createSelectionForInspector(event, eventWrapper);
-      });
-
-      return eventWrapper;
-    },
-    emitExtendedLines() {
-      if (this.extendLines) {
-        const lines = this.eventHistory
-          .filter((e) => this.isEventInBounds(e))
-          .map((e) => ({ x: this.xScale(e.time), limitClass: e.limitClass, id: e.time }));
-        this.extendedLinesBus.emit('update-extended-lines', {
-          lines,
-          keyString: this.keyString
-        });
-      } else {
-        this.extendedLinesBus.emit('update-extended-lines', {
-          lines: [],
-          keyString: this.keyString
-        });
-      }
-    },
-    showToolTip(textToShow, referenceElement, event) {
+    showToolTip(event) {
       const aClasses = ['c-events-tooltip'];
-      const limitClass = this.getLimitClass(event);
-      if (limitClass) {
-        aClasses.push(limitClass);
+      if (event.limitClass) {
+        aClasses.push(event.limitClass);
       }
       const showToLeft = false; // Temp, stubbed in
       if (showToLeft) {
         aClasses.push('--left');
       }
 
-      this.tooltip = this.openmct.tooltips.tooltip({
-        toolTipText: textToShow,
-        toolTipLocation: this.openmct.tooltips.TOOLTIP_LOCATIONS.RIGHT,
-        parentElement: referenceElement,
-        cssClasses: [aClasses.join(' ')]
-      });
+      this.buildToolTip(
+        this.titleKey ? `${event[this.titleKey]}` : '',
+        this.openmct.tooltips.TOOLTIP_LOCATIONS.RIGHT,
+        `wrapper-${event.time}`,
+        [aClasses.join(' ')]
+      );
+      this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, event.time);
+    },
+    dismissToolTip() {
+      this.hideToolTip();
+      this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, null);
+    },
+    emitExtendedLines() {
+      let lines = [];
+      if (this.extendLines) {
+        lines = this.eventItems.map((e) => ({
+          x: e.left,
+          limitClass: e.limitClass,
+          id: e.time
+        }));
+      }
+      this.extendedLinesBus.updateExtendedLines(this.keyString, lines);
     }
   }
 };

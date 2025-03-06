@@ -51,7 +51,7 @@ jobs:
         env:
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
         run: npm run test:e2e:couchdb
-      
+
       - name: Generate Code Coverage Report
         run: npm run cov:e2e:report
 
@@ -66,15 +66,19 @@ jobs:
 
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-test-results
           path: test-results
+          overwrite: true
 
       - name: Archive html test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-html-test-results
           path: html-test-results
+          overwrite: true
 
       - name: Remove pr:e2e:couchdb label (if present)
         if: always()

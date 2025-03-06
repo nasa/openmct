@@ -20,8 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="axisHolder" class="c-timesystem-axis" :style="alignmentStyle">
-    <div class="c-timesystem-axis__mb-line" :style="nowMarkerStyle"></div>
+  <div ref="axisHolder" class="c-timesystem-axis">
+    <div class="c-timesystem-axis__mb-line" :style="nowMarkerStyle" aria-label="Now Marker"></div>
     <svg :width="svgWidth" :height="svgHeight">
       <g class="axis" :transform="axisTransform"></g>
     </svg>
@@ -117,8 +117,12 @@ export default {
         if (this.alignmentData.leftWidth) {
           leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
         }
+        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, 20)`;
+        this.leftAlignmentOffset = this.alignmentData.leftWidth + leftOffset;
+        this.alignmentOffset =
+          this.leftAlignmentOffset + this.alignmentData.rightWidth + rightOffset;
         this.alignmentStyle = {
-          margin: `0 ${this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
+          margin: `0 ${this.leftAlignmentOffset + this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
         };
         this.refresh();
       },
@@ -178,14 +182,14 @@ export default {
         this.nowMarkerStyle.top = TIME_AXIS_LINE_Y + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
-        this.nowMarkerStyle.left = `${now}px`;
+        this.nowMarkerStyle.left = `${now + this.leftAlignmentOffset}px`;
         if (now < 0 || now > this.width) {
           nowMarker.classList.add('hidden');
         }
       }
     },
     setDimensions() {
-      this.width = this.axisHolder.clientWidth;
+      this.width = this.axisHolder.clientWidth - (this.alignmentOffset ?? 0);
       this.height = Math.round(this.axisHolder.getBoundingClientRect().height);
 
       if (this.useSVG) {
