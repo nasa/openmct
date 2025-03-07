@@ -43,6 +43,8 @@ class EventMetadataProvider {
             name: 'Message',
             format: 'string',
             hints: {
+              // this is used in the EventTimelineView to provide a title for the event
+              // label can be changed to other properties for the title (e.g., the `name` property)
               label: 0
             }
           }

@@ -79,13 +79,19 @@ export default {
   },
   computed: {
     alignmentStyle() {
-      let leftOffset = 0;
-      const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+      let leftMargin = 0;
+      let rightMargin = 0;
       if (this.alignmentData.leftWidth) {
-        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+        const leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+        leftMargin = `${this.alignmentData.leftWidth + leftOffset}px`;
       }
+
+      if (this.alignmentData.rightWidth) {
+        rightMargin = `${this.alignmentData.rightWidth + AXES_PADDING}px`;
+      }
+
       return {
-        margin: `0 ${this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
+        margin: `0 ${rightMargin} 0 ${leftMargin}`
       };
     }
   },
@@ -130,9 +136,8 @@ export default {
     this.resize = _.debounce(this.resize, 400);
     this.eventStripResizeObserver = new ResizeObserver(this.resize);
     this.eventStripResizeObserver.observe(this.$refs.events);
-
-    this.extendedLinesBus.on('disable-extended-lines', this.disableExtendEventLines);
-    this.extendedLinesBus.on('enable-extended-lines', this.enableExtendEventLines);
+    this.extendedLinesBus.addEventListener('disable-extended-lines', this.disableExtendEventLines);
+    this.extendedLinesBus.addEventListener('enable-extended-lines', this.enableExtendEventLines);
   },
   beforeUnmount() {
     if (this.eventStripResizeObserver) {
@@ -147,9 +152,11 @@ export default {
       this.destroyEventContainer();
     }
 
-    this.extendedLinesBus.off('disable-extended-lines', this.disableExtendEventLines);
-    this.extendedLinesBus.off('enable-extended-lines', this.enableExtendEventLines);
-    this.extendedLinesBus.off('event-hovered', this.checkIfOurEvent);
+    this.extendedLinesBus.removeEventListener(
+      'disable-extended-lines',
+      this.disableExtendEventLines
+    );
+    this.extendedLinesBus.removeEventListener('enable-extended-lines', this.enableExtendEventLines);
   },
   methods: {
     setTimeContext() {
@@ -158,16 +165,17 @@ export default {
       this.timeContext.on('timeSystem', this.setScaleAndPlotEvents);
       this.timeContext.on('boundsChanged', this.updateViewBounds);
     },
-    enableExtendEventLines(keyStringToEnable) {
+    enableExtendEventLines(event) {
+      const keyStringToEnable = event.detail;
       if (this.keyString === keyStringToEnable) {
         this.extendLines = true;
         this.emitExtendedLines();
       }
     },
-    disableExtendEventLines(keyStringToDisable) {
+    disableExtendEventLines(event) {
+      const keyStringToDisable = event.detail;
       if (this.keyString === keyStringToDisable) {
         this.extendLines = false;
-        // emit an empty array to clear the lines
         this.emitExtendedLines();
       }
     },
@@ -190,16 +198,15 @@ export default {
       }
     },
     getClientWidth() {
-      let clientWidth = this.$refs.events.clientWidth;
-
+      // Try to use the component’s own element first
+      let clientWidth = this.$refs.events?.clientWidth;
       if (!clientWidth) {
-        //this is a hack - need a better way to find the parent of this component
-        const parent = this.openmct.layout.$refs.browseObject.$el;
+        // Fallback: use the actual container element (the immediate parent)
+        const parent = this.$el.parentElement;
         if (parent) {
           clientWidth = parent.getBoundingClientRect().width;
         }
       }
-
       return clientWidth;
     },
     updateViewBounds(bounds, isTick) {
