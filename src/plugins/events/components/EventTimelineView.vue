@@ -196,16 +196,15 @@ export default {
       }
     },
     getClientWidth() {
-      let clientWidth = this.$refs.events.clientWidth;
-
+      // Try to use the component’s own element first
+      let clientWidth = this.$refs.events?.clientWidth;
       if (!clientWidth) {
-        //this is a hack - need a better way to find the parent of this component
-        const parent = this.openmct.layout.$refs.browseObject.$el;
+        // Fallback: use the actual container element (the immediate parent)
+        const parent = this.$el.parentElement;
         if (parent) {
           clientWidth = parent.getBoundingClientRect().width;
         }
       }
-
       return clientWidth;
     },
     updateViewBounds(bounds, isTick) {
