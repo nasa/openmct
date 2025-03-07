@@ -23,9 +23,9 @@
 <template>
   <div class="c-cs" :class="{ 'is-stale': isStale }" aria-label="Condition Set">
     <section class="c-cs__current-output c-section">
-      <div class="c-cs__content c-cs__current-output-value">
-        <span class="c-cs__current-output-value__label">Current Output</span>
-        <span class="c-cs__current-output-value__value" aria-label="Current Output Value">
+      <div class="c-output-featured">
+        <span class="c-output-featured__label">Current Output</span>
+        <span class="c-output-featured__value" aria-label="Current Output Value">
           <template v-if="currentConditionOutput">
             {{ currentConditionOutput }}
           </template>
@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     updateCurrentOutput(currentConditionResult) {
-      this.currentConditionOutput = currentConditionResult.output;
+      this.currentConditionOutput = currentConditionResult.value;
     },
     updateDefaultOutput(output) {
       this.currentConditionOutput = output;

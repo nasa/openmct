@@ -42,15 +42,17 @@ export default class ConditionSetTelemetryProvider {
 
   async request(domainObject, options) {
     let conditionManager = this.getConditionManager(domainObject);
-    let latestOutput = await conditionManager.requestLADConditionSetOutput(options);
-    return latestOutput;
+    const formattedHistoricalData = await conditionManager.getHistoricalData(options);
+    return formattedHistoricalData;
   }
 
   subscribe(domainObject, callback) {
     let conditionManager = this.getConditionManager(domainObject);
 
     conditionManager.on('conditionSetResultUpdated', (data) => {
-      callback(data);
+      if (data?.result) {
+        callback(data);
+      }
     });
 
     return this.destroyConditionManager.bind(

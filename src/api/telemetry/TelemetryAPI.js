@@ -761,6 +761,15 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Remove a domain object from the telemetry metadata cache.
+   * @param {import('openmct').DomainObject} domainObject
+   */
+
+  removeMetadataFromCache(domainObject) {
+    this.metadataCache.delete(domainObject);
+  }
+
+  /**
    * Get a value formatter for a given valueMetadata.
    *
    * @returns {TelemetryValueFormatter}

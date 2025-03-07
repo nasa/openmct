@@ -19,18 +19,23 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import CompsManager from './CompsManager.js';
 
-export default class ConditionSetMetadataProvider {
-  constructor(openmct) {
-    this.openmct = openmct;
+export default class CompsMetadataProvider {
+  #openmct = null;
+  #compsManagerPool = null;
+
+  constructor(openmct, compsManagerPool) {
+    this.#openmct = openmct;
+    this.#compsManagerPool = compsManagerPool;
   }
 
   supportsMetadata(domainObject) {
-    return domainObject.type === 'conditionSet';
+    return domainObject.type === 'comps';
   }
 
   getDefaultDomains(domainObject) {
-    return this.openmct.time.getAllTimeSystems().map(function (ts, i) {
+    return this.#openmct.time.getAllTimeSystems().map(function (ts, i) {
       return {
         key: ts.key,
         name: ts.name,
@@ -43,59 +48,32 @@ export default class ConditionSetMetadataProvider {
   }
 
   getMetadata(domainObject) {
-    const format = {};
-    domainObject.configuration.conditionCollection.forEach((condition, index) => {
-      if (condition?.configuration?.valueMetadata?.enumerations) {
-        delete format.formatString;
-        format.format = 'enum';
-        format.enumerations = condition?.configuration?.valueMetadata?.enumerations;
-      }
-    });
-
-    const resultEnum = [
-      {
-        string: 'true',
-        value: true
-      },
-      {
-        string: 'false',
-        value: false
-      }
-    ];
-
+    const specificCompsManager = CompsManager.getCompsManager(
+      domainObject,
+      this.#openmct,
+      this.#compsManagerPool
+    );
+    // if there are any parameters, grab the first one's timeMetaData
+    const timeMetaData = specificCompsManager?.getParameters()[0]?.timeMetaData;
     const metaDataToReturn = {
       values: [
         {
           key: 'value',
           name: 'Value',
+          derived: true,
+          formatString: specificCompsManager.getOutputFormat(),
           hints: {
             range: 1
-          }
-        },
-        {
-          key: 'result',
-          source: 'result',
-          name: 'Result',
-          format: 'enum',
-          enumerations: resultEnum,
-          hints: {
-            range: 2
           }
         }
       ]
     };
-
-    // if there are any parameters, grab the first one's timeMetaData
-    const timeMetaData =
-      domainObject?.configuration?.conditionCollection[0]?.configuration.timeMetadata;
-
     if (timeMetaData) {
       metaDataToReturn.values.push(timeMetaData);
     } else {
       const defaultDomains = this.getDefaultDomains(domainObject);
       metaDataToReturn.values.push(...defaultDomains);
     }
-
     return metaDataToReturn;
   }
 }
