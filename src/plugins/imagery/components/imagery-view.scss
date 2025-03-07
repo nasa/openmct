@@ -509,45 +509,92 @@
 
 /*************************************** IMAGERY IN TIMESTRIP VIEWS */
 .c-imagery-tsv {
-  div.c-imagery-tsv__image-wrapper {
+  $m: $interiorMargin;
+  @include abs();
+  // We need overflow: hidden this because an image thumb can extend to the right past the time frame edge
+  overflow: hidden;
+
+  &-container {
+    background: $colorPlotBg;
+    //box-shadow: inset $colorPlotAreaBorder 0 0 0 1px; // Using box-shadow instead of border to not affect box size
+    position: absolute;
+    top: $m; right: 0; bottom: $m; left: 0;
+  }
+
+  .c-imagery-tsv__image-wrapper {
+    $m: $interiorMarginSm;
     cursor: pointer;
     position: absolute;
-    top: 0;
+    top: $m; bottom: $m;
     display: flex;
     z-index: 1;
-    margin-top: 5px;
 
     img {
       align-self: flex-end;
     }
+
     &:hover {
       z-index: 2;
 
-      [class*='__image-handle'] {
-        background-color: $colorBodyFg;
+      .c-imagery-tsv {
+        &__image-handle {
+          box-shadow: rgba($colorEventLine, 0.5) 0 0 0px 4px;
+          transition: none;
+        }
+
+        &__image-placeholder img {
+          filter: none;
+        }
       }
 
       img {
+        // img can be `display: none` when there's not enough space between tick lines
         display: block !important;
       }
+    }
+  }
+
+  &__image-placeholder {
+    background-color: deeppink; //pushBack($colorBodyBg, 0.3);
+    $m: $interiorMargin;
+    display: block;
+    position: absolute;
+    top: $m; right: auto; bottom: $m; left: 0;
+
+    img {
+      filter: brightness(0.8);
+      height: 100%;
+    }
+  }
+
+
+  &__image-handle {
+    $lineW: $eventLineW;
+    $hitAreaW: 7px;
+    background-color: $colorEventLine;
+    transition: box-shadow 250ms ease-out;
+    top: 0; bottom: 0;
+    width: $lineW;
+    z-index: 3;
+
+    &:before {
+      // Extend hit area
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0; bottom: 0;
+      z-index: 0;
+      width: $hitAreaW;
+      transform: translateX(($hitAreaW - $lineW) * -0.5);
     }
   }
 
   &__no-items {
     fill: $colorBodyFg !important;
   }
-
-  &__image-handle {
-    background-color: rgba($colorBodyFg, 0.5);
-  }
-
-  &__image-placeholder {
-    background-color: pushBack($colorBodyBg, 0.3);
-    display: block;
-    align-self: flex-end;
-  }
 }
 
+// DON'T THINK THIS IS BEING USED
 .c-image-canvas {
   pointer-events: auto; // This allows the image element to receive a browser-level context click
   position: absolute;
