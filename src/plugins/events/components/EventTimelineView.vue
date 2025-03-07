@@ -79,13 +79,19 @@ export default {
   },
   computed: {
     alignmentStyle() {
-      let leftOffset = 0;
-      const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+      let leftMargin = 0;
+      let rightMargin = 0;
       if (this.alignmentData.leftWidth) {
-        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+        const leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+        leftMargin = `${this.alignmentData.leftWidth + leftOffset}px`;
       }
+
+      if (this.alignmentData.rightWidth) {
+        rightMargin = `${this.alignmentData.rightWidth + AXES_PADDING}px`;
+      }
+
       return {
-        margin: `0 ${this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
+        margin: `0 ${rightMargin} 0 ${leftMargin}`
       };
     }
   },
