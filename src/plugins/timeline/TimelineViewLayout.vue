@@ -127,16 +127,16 @@ export default {
     this.stopFollowingTimeContext();
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
-    this.extendedLinesBus.off('update-extended-lines', this.updateExtendedLines);
-    this.extendedLinesBus.off('update-extended-hover', this.updateExtendedHover);
     this.openmct.selection.off('change', this.checkForLineSelection);
+    this.extendedLinesBus.removeEventListener('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.removeEventListener('update-extended-hover', this.updateExtendedHover);
   },
   mounted() {
     this.items = [];
     this.setTimeContext();
 
-    this.extendedLinesBus.on('update-extended-lines', this.updateExtendedLines);
-    this.extendedLinesBus.on('update-extended-hover', this.updateExtendedHover);
+    this.extendedLinesBus.addEventListener('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.addEventListener('update-extended-hover', this.updateExtendedHover);
     this.openmct.selection.on('change', this.checkForLineSelection);
 
     if (this.composition) {
@@ -271,10 +271,12 @@ export default {
         this.timeContext.off('clockChanged', this.updateViewBounds);
       }
     },
-    updateExtendedLines({ keyString, lines }) {
+    updateExtendedLines(event) {
+      const { keyString, lines } = event.detail;
       this.extendedLinesPerKey[keyString] = lines;
     },
-    updateExtendedHover({ keyString, id }) {
+    updateExtendedHover(event) {
+      const { keyString, id } = event.detail;
       this.extendedLineHover = { keyString, id };
     },
     checkForLineSelection(selection) {

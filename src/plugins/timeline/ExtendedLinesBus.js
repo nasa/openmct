@@ -20,18 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { EventEmitter } from 'eventemitter3';
-export default class ExtendedLinesBus extends EventEmitter {
+export default class ExtendedLinesBus extends EventTarget {
   updateExtendedLines(keyString, lines) {
-    this.emit('update-extended-lines', { lines, keyString });
+    this.dispatchEvent(
+      new CustomEvent('update-extended-lines', {
+        detail: { keyString, lines }
+      })
+    );
   }
+
   disableExtendEventLines(keyString) {
-    this.emit('disable-extended-lines', keyString);
+    this.dispatchEvent(
+      new CustomEvent('disable-extended-lines', {
+        detail: keyString
+      })
+    );
   }
+
   enableExtendEventLines(keyString) {
-    this.emit('enable-extended-lines', keyString);
+    this.dispatchEvent(
+      new CustomEvent('enable-extended-lines', {
+        detail: keyString
+      })
+    );
   }
+
   updateHoverExtendEventLine(keyString, id) {
-    this.emit('update-extended-hover', { id, keyString });
+    this.dispatchEvent(
+      new CustomEvent('update-extended-hover', {
+        detail: { keyString, id }
+      })
+    );
   }
 }

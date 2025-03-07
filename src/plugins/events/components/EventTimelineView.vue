@@ -136,9 +136,8 @@ export default {
     this.resize = _.debounce(this.resize, 400);
     this.eventStripResizeObserver = new ResizeObserver(this.resize);
     this.eventStripResizeObserver.observe(this.$refs.events);
-
-    this.extendedLinesBus.on('disable-extended-lines', this.disableExtendEventLines);
-    this.extendedLinesBus.on('enable-extended-lines', this.enableExtendEventLines);
+    this.extendedLinesBus.addEventListener('disable-extended-lines', this.disableExtendEventLines);
+    this.extendedLinesBus.addEventListener('enable-extended-lines', this.enableExtendEventLines);
   },
   beforeUnmount() {
     if (this.eventStripResizeObserver) {
@@ -153,9 +152,11 @@ export default {
       this.destroyEventContainer();
     }
 
-    this.extendedLinesBus.off('disable-extended-lines', this.disableExtendEventLines);
-    this.extendedLinesBus.off('enable-extended-lines', this.enableExtendEventLines);
-    this.extendedLinesBus.off('event-hovered', this.checkIfOurEvent);
+    this.extendedLinesBus.removeEventListener(
+      'disable-extended-lines',
+      this.disableExtendEventLines
+    );
+    this.extendedLinesBus.removeEventListener('enable-extended-lines', this.enableExtendEventLines);
   },
   methods: {
     setTimeContext() {
@@ -164,16 +165,17 @@ export default {
       this.timeContext.on('timeSystem', this.setScaleAndPlotEvents);
       this.timeContext.on('boundsChanged', this.updateViewBounds);
     },
-    enableExtendEventLines(keyStringToEnable) {
+    enableExtendEventLines(event) {
+      const keyStringToEnable = event.detail;
       if (this.keyString === keyStringToEnable) {
         this.extendLines = true;
         this.emitExtendedLines();
       }
     },
-    disableExtendEventLines(keyStringToDisable) {
+    disableExtendEventLines(event) {
+      const keyStringToDisable = event.detail;
       if (this.keyString === keyStringToDisable) {
         this.extendLines = false;
-        // emit an empty array to clear the lines
         this.emitExtendedLines();
       }
     },
