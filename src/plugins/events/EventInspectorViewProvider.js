@@ -6,7 +6,7 @@ export default function EventInspectorViewProvider(openmct) {
   const TIMELINE_VIEW = 'time-strip.event.inspector';
   return {
     key: TIMELINE_VIEW,
-    name: 'Event',
+    name: 'Details',
     canView: function (selection) {
       if (selection.length === 0 || selection[0].length === 0) {
         return false;
