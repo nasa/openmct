@@ -101,6 +101,19 @@
     padding-right: $interiorMargin; // fend off scroll bar
   }
 
+  &__footer {
+    margin-top: $interiorMargin;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__suppress-option {
+    justify-items: start;
+    align-self: center;
+    padding-left: $interiorMargin;
+  }
+
   &__button-bar {
     flex: 0 0 auto;
     display: flex;
