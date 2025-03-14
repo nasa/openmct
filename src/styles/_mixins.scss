@@ -470,6 +470,14 @@
   unicode-bidi: bidi-override;
 }
 
+@mixin textViews() {
+  // DL text objects, hyperlinks
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 $interiorMargin;
+}
+
 /************************** CONTROLS, BUTTONS, INPUTS */
 @mixin hover {
   body.desktop & {
