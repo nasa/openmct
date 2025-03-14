@@ -26,7 +26,10 @@
       {{ row.name }}
     </label>
     <div class="c-form-row__state-indicator" :class="reqClass"></div>
-    <div v-if="row.control" ref="rowElement" class="c-form-row__controls"></div>
+    <div class="c-form-row__controls">
+      <div v-if="row.control" ref="rowElement"></div>
+      <div v-if="errorMessage" class="form-error">{{ errorMessage }}</div>
+    </div>
   </div>
 </template>
 
@@ -54,6 +57,7 @@ export default {
   emits: ['on-change'],
   data() {
     return {
+      errorMessage: null,
       formControl: this.openmct.forms.getFormControl(this.row.control),
       valid: undefined,
       visited: false
@@ -105,6 +109,7 @@ export default {
       this.$emit('on-change', data);
     },
     validateRow(data) {
+      this.errorMessage = null;
       let valid = true;
       if (this.row.required) {
         valid = data.value !== undefined && data.value !== null && data.value !== '';
@@ -122,7 +127,10 @@ export default {
 
       const validate = data.model.validate;
       if (valid && validate) {
-        valid = validate(data);
+        valid = validate(data, (errorMessage = null) => {
+          this.errorMessage = errorMessage;
+          return false;
+        });
       }
 
       return Boolean(valid);

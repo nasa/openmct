@@ -104,6 +104,33 @@ test.describe('Form File Input Behavior', () => {
   });
 });
 
+test.describe('Form File Invalid Input Behavior', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript({
+      path: fileURLToPath(new URL('../../helper/addInitInvalidFileInputObject.js', import.meta.url))
+    });
+  });
+
+  test('An invalid file will display an error', async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    await page.getByRole('button', { name: 'Create' }).click();
+    await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
+
+    await page.setInputFiles('#fileElem', jsonFilePath);
+
+    await expect(page.getByLabel('Save')).toBeDisabled();
+
+    await expect(
+      page
+        .locator('.form-error', {
+          hasText: 'Test error json'
+        })
+        .first()
+    ).toBeVisible();
+  });
+});
+
 test.describe('Persistence operations @addInit', () => {
   // add non persistable root item
   test.beforeEach(async ({ page }) => {
