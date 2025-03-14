@@ -31,6 +31,7 @@
       <Search
         v-show="isSelectorTree"
         ref="shell-search"
+        :form-key="formKey"
         class="c-search"
         :value="searchValue"
         @input="searchTree"
@@ -148,6 +149,12 @@ export default {
       required: false,
       default() {
         return {};
+      }
+    },
+    formKey: {
+      type: String,
+      default() {
+        return null;
       }
     },
     syncTreeNavigation: {

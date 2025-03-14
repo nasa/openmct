@@ -24,7 +24,7 @@
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
       <ToggleSwitch
-        id="switchId"
+        :id="switchId"
         :checked="isChecked"
         :name="model.name"
         @change="toggleCheckBox"
@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      switchId: `toggleSwitch-${uuid}`,
+      switchId: this.model.key ? 'form-' + this.model.key : `toggleSwitch-${uuid}`,
       isChecked: this.model.value
     };
   }

@@ -24,6 +24,7 @@
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
       <input
+        :id="fieldId"
         v-model="field"
         :aria-label="model.name"
         type="number"
@@ -49,7 +50,8 @@ export default {
   emits: ['on-change'],
   data() {
     return {
-      field: this.model.value
+      field: this.model.value,
+      fieldId: this.model.key ? 'form-' + this.model.key : null
     };
   },
   mounted() {

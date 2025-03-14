@@ -223,8 +223,8 @@ test.describe('Persistence operations @couchdb @network', () => {
     // Both pages: Fill the "Notes" section with information about the
     // currently running test and its project.
     const testNotes = page.testNotes;
-    const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
-    const notesInput2 = page2.locator('form[name="mctForm"] #notes-textarea');
+    const notesInput = page.locator('form[name="mctForm"] #form-notes');
+    const notesInput2 = page2.locator('form[name="mctForm"] #form-notes');
     await Promise.all([notesInput.fill(testNotes), notesInput2.fill(testNotes)]);
 
     // Page 2: Click "OK" to create the domain object and wait for navigation.
