@@ -34,8 +34,8 @@
             class="c-events-tsv__event-line"
             :class="event.limitClass || ''"
             :style="`left: ${event.left}px`"
-            @mouseover="showToolTip(event)"
-            @mouseleave="dismissToolTip()"
+            @mouseenter="showToolTip(event)"
+            @mouseleave="dismissToolTip(event)"
             @click.stop="createSelectionForInspector(event)"
           ></div>
         </div>
@@ -54,6 +54,7 @@ import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
 import { useAlignment } from '../../../ui/composables/alignmentContext.js';
+import { useExtendedLines } from '../../../ui/composables/extendedLines';
 import eventData from '../mixins/eventData.js';
 
 const PADDING = 1;
@@ -68,7 +69,21 @@ export default {
     const objectPath = inject('objectPath');
     const openmct = inject('openmct');
     const { alignment: alignmentData } = useAlignment(domainObject, objectPath, openmct);
-    return { alignmentData };
+
+    const {
+      extendedLines: extendedLines,
+      update: updateExtendedLines,
+      updateLineHover: updateExtendedLineHover,
+      remove: removeLinesForObject
+    } = useExtendedLines(domainObject, objectPath, openmct);
+
+    return {
+      alignmentData,
+      extendedLines,
+      updateExtendedLineHover,
+      updateExtendedLines,
+      removeLinesForObject
+    };
   },
   data() {
     return {
@@ -107,13 +122,23 @@ export default {
         this.setScaleAndPlotEvents(this.timeSystem);
       },
       deep: true
+    },
+    extendedLines: {
+      handler() {
+        const { enabled = false } = this.extendedLines[this.keyString];
+        if (this.extendedLinesEnabled !== enabled) {
+          this.extendedLinesEnabled = enabled === true;
+          this.updateLines();
+        }
+      },
+      deep: true
     }
   },
   created() {
     this.valueMetadata = {};
     this.height = 0;
     this.timeSystem = this.openmct.time.getTimeSystem();
-    this.extendLines = false;
+    this.extendedLinesEnabled = false;
   },
   mounted() {
     this.setDimensions();
@@ -136,8 +161,6 @@ export default {
     this.resize = _.debounce(this.resize, 400);
     this.eventStripResizeObserver = new ResizeObserver(this.resize);
     this.eventStripResizeObserver.observe(this.$refs.events);
-    this.extendedLinesBus.addEventListener('disable-extended-lines', this.disableExtendEventLines);
-    this.extendedLinesBus.addEventListener('enable-extended-lines', this.enableExtendEventLines);
   },
   beforeUnmount() {
     if (this.eventStripResizeObserver) {
@@ -148,15 +171,6 @@ export default {
     if (this.unlisten) {
       this.unlisten();
     }
-    if (this.destroyEventContainer) {
-      this.destroyEventContainer();
-    }
-
-    this.extendedLinesBus.removeEventListener(
-      'disable-extended-lines',
-      this.disableExtendEventLines
-    );
-    this.extendedLinesBus.removeEventListener('enable-extended-lines', this.enableExtendEventLines);
   },
   methods: {
     setTimeContext() {
@@ -164,20 +178,6 @@ export default {
       this.timeContext = this.openmct.time.getContextForView(this.objectPath);
       this.timeContext.on('timeSystem', this.setScaleAndPlotEvents);
       this.timeContext.on('boundsChanged', this.updateViewBounds);
-    },
-    enableExtendEventLines(event) {
-      const keyStringToEnable = event.detail;
-      if (this.keyString === keyStringToEnable) {
-        this.extendLines = true;
-        this.emitExtendedLines();
-      }
-    },
-    disableExtendEventLines(event) {
-      const keyStringToDisable = event.detail;
-      if (this.keyString === keyStringToDisable) {
-        this.extendLines = false;
-        this.emitExtendedLines();
-      }
     },
     firstNonDomainAttribute(metadata) {
       return metadata
@@ -242,12 +242,11 @@ export default {
           return {
             ...eventHistoryItem,
             left: this.xScale(eventHistoryItem.time),
-            limitClass
+            limitClass,
+            hoverEnabled: false
           };
         });
-        if (this.extendLines) {
-          this.emitExtendedLines();
-        }
+        this.updateLines();
       }
     },
     setDimensions() {
@@ -354,22 +353,33 @@ export default {
         `wrapper-${event.time}`,
         [aClasses.join(' ')]
       );
-      this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, event.time);
+      this.updateExtendedLineHover({
+        keyString: this.keyString,
+        id: event.time,
+        hoverEnabled: true
+      });
     },
-    dismissToolTip() {
+    dismissToolTip(event) {
       this.hideToolTip();
-      this.extendedLinesBus.updateHoverExtendEventLine(this.keyString, null);
+      this.updateExtendedLineHover({
+        keyString: this.keyString,
+        id: event.time
+      });
     },
-    emitExtendedLines() {
+    updateLines() {
       let lines = [];
-      if (this.extendLines) {
+      if (this.extendedLinesEnabled) {
         lines = this.eventItems.map((e) => ({
           x: e.left,
           limitClass: e.limitClass,
-          id: e.time
+          id: e.time,
+          hoverEnabled: false
         }));
       }
-      this.extendedLinesBus.updateExtendedLines(this.keyString, lines);
+      this.updateExtendedLines({
+        lines,
+        keyString: this.keyString
+      });
     }
   }
 };

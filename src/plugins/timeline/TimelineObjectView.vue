@@ -50,8 +50,12 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import ObjectView from '@/ui/components/ObjectView.vue';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+
+import { useExtendedLines } from '../../ui/composables/extendedLines';
 
 export default {
   components: {
@@ -68,6 +72,16 @@ export default {
       type: Object,
       required: true
     }
+  },
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('path');
+    const openmct = inject('openmct');
+
+    const { disable: disableExetendedLinesForObject, enable: enableExtendedLinesForObject } =
+      useExtendedLines(domainObject, objectPath, openmct);
+
+    return { disableExetendedLinesForObject, enableExtendedLinesForObject };
   },
   data() {
     return {
@@ -141,11 +155,11 @@ export default {
     },
     enableExtendEventLines() {
       const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
-      this.extendedLinesBus.enableExtendEventLines(keyString);
+      this.enableExtendedLinesForObject(keyString);
     },
     disableExtendEventLines() {
       const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
-      this.extendedLinesBus.disableExtendEventLines(keyString);
+      this.disableExetendedLinesForObject(keyString);
     },
     setActionCollection(actionCollection) {
       this.openmct.menus.actionsToMenuItems(
