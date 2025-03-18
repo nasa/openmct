@@ -83,7 +83,7 @@ export default {
     SwimLane,
     ExtendedLinesOverlay
   },
-  inject: ['openmct', 'domainObject', 'path', 'composition', 'extendedLinesBus'],
+  inject: ['openmct', 'domainObject', 'path', 'composition'],
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');

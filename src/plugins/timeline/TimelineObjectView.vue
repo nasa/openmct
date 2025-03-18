@@ -67,10 +67,6 @@ export default {
     item: {
       type: Object,
       required: true
-    },
-    extendedLinesBus: {
-      type: Object,
-      required: true
     }
   },
   setup() {

@@ -63,7 +63,7 @@ const AXES_PADDING = 20;
 export default {
   components: { SwimLane },
   mixins: [eventData, tooltipHelpers],
-  inject: ['openmct', 'domainObject', 'objectPath', 'extendedLinesBus'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   setup() {
     const domainObject = inject('domainObject');
     const objectPath = inject('objectPath');
