@@ -47,10 +47,8 @@
     </div>
 
     <ExtendedLinesOverlay
-      :extended-lines-per-key="extendedLinesPerKey"
       :height="height"
       :left-offset="extendedLinesLeftOffset"
-      :extended-line-hover="extendedLineHover"
       :extended-line-selection="extendedLineSelection"
     />
   </div>
@@ -85,7 +83,7 @@ export default {
     SwimLane,
     ExtendedLinesOverlay
   },
-  inject: ['openmct', 'domainObject', 'path', 'composition', 'extendedLinesBus'],
+  inject: ['openmct', 'domainObject', 'path', 'composition'],
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');
@@ -105,8 +103,6 @@ export default {
       height: 0,
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions,
-      extendedLinesPerKey: {},
-      extendedLineHover: {},
       extendedLineSelection: {},
       extendedLinesLeftOffset: 0
     };
@@ -128,15 +124,11 @@ export default {
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
     this.openmct.selection.off('change', this.checkForLineSelection);
-    this.extendedLinesBus.removeEventListener('update-extended-lines', this.updateExtendedLines);
-    this.extendedLinesBus.removeEventListener('update-extended-hover', this.updateExtendedHover);
   },
   mounted() {
     this.items = [];
     this.setTimeContext();
 
-    this.extendedLinesBus.addEventListener('update-extended-lines', this.updateExtendedLines);
-    this.extendedLinesBus.addEventListener('update-extended-hover', this.updateExtendedHover);
     this.openmct.selection.on('change', this.checkForLineSelection);
 
     if (this.composition) {
@@ -274,10 +266,6 @@ export default {
     updateExtendedLines(event) {
       const { keyString, lines } = event.detail;
       this.extendedLinesPerKey[keyString] = lines;
-    },
-    updateExtendedHover(event) {
-      const { keyString, id } = event.detail;
-      this.extendedLineHover = { keyString, id };
     },
     checkForLineSelection(selection) {
       const selectionContext = selection?.[0]?.[0]?.context;

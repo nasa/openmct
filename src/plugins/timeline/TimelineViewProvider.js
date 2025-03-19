@@ -24,7 +24,7 @@ import mount from 'utils/mount';
 
 import TimelineViewLayout from './TimelineViewLayout.vue';
 
-export default function TimelineViewProvider(openmct, extendedLinesBus) {
+export default function TimelineViewProvider(openmct) {
   return {
     key: 'time-strip.view',
     name: 'TimeStrip',
@@ -52,8 +52,7 @@ export default function TimelineViewProvider(openmct, extendedLinesBus) {
                 openmct,
                 domainObject,
                 path: objectPath,
-                composition: openmct.composition.get(domainObject),
-                extendedLinesBus
+                composition: openmct.composition.get(domainObject)
               },
               template: '<timeline-view-layout></timeline-view-layout>'
             },
