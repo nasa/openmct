@@ -74,10 +74,10 @@ export default {
     const objectPath = inject('path');
     const openmct = inject('openmct');
 
-    const { disable: disableExetendedLinesForObject, enable: enableExtendedLinesForObject } =
+    const { disable: disableExtendedLinesForObject, enable: enableExtendedLinesForObject } =
       useExtendedLines(domainObject, objectPath, openmct);
 
-    return { disableExetendedLinesForObject, enableExtendedLinesForObject };
+    return { disableExtendedLinesForObject, enableExtendedLinesForObject };
   },
   data() {
     return {
@@ -108,6 +108,8 @@ export default {
     if (this.removeSelectable) {
       this.removeSelectable();
     }
+
+    this.disableExtendEventLines();
 
     if (this.removeStatusListener) {
       this.removeStatusListener();
@@ -155,7 +157,7 @@ export default {
     },
     disableExtendEventLines() {
       const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
-      this.disableExetendedLinesForObject(keyString);
+      this.disableExtendedLinesForObject(keyString);
     },
     setActionCollection(actionCollection) {
       this.openmct.menus.actionsToMenuItems(
