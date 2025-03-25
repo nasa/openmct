@@ -76,7 +76,7 @@
 import _ from 'lodash';
 import { useDragResizer } from 'utils/vue/useDragResizer.js';
 import { useFlexContainers } from 'utils/vue/useFlexContainers.js';
-import { inject, provide, ref } from 'vue';
+import { inject, onBeforeUnmount, onMounted, provide, ref } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
@@ -87,13 +87,6 @@ import { getValidatedData, getValidatedGroups } from '../plan/util.js';
 import Container from './Container.js';
 import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue';
 import TimelineObjectView from './TimelineObjectView.vue';
-
-const unknownObjectType = {
-  definition: {
-    cssClass: 'icon-object-unknown',
-    name: 'Unknown Type'
-  }
-};
 
 const AXES_PADDING = 20;
 const PLOT_ITEM_H_PX = 100;
@@ -121,6 +114,7 @@ export default {
 
     const items = ref([]);
     const loadedComposition = ref(null);
+    const extendedLinesPerKey = ref({});
 
     const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
       domainObject,
@@ -162,17 +156,120 @@ export default {
       callback: mutateContainers
     });
 
+    function addItem(_domainObject) {
+      let rowCount = 0;
+
+      const typeKey = _domainObject.type;
+      const type = openmct.types.get(typeKey);
+      const keyString = openmct.objects.makeKeyString(_domainObject.identifier);
+      const objectPath = [_domainObject].concat(path.slice());
+
+      if (typeKey === 'plan') {
+        const planData = getValidatedData(_domainObject);
+        rowCount = getValidatedGroups(_domainObject, planData).length;
+      } else if (typeKey === 'gantt-chart') {
+        rowCount = Object.keys(_domainObject.configuration.swimlaneVisibility).length;
+      }
+      const isEventTelemetry = hasEventTelemetry(_domainObject);
+      const height =
+        typeKey === 'telemetry.plot.stacked'
+          ? `${_domainObject.composition.length * PLOT_ITEM_H_PX}px`
+          : 'auto';
+      const item = {
+        domainObject: _domainObject,
+        objectPath,
+        type,
+        keyString,
+        rowCount,
+        height,
+        isEventTelemetry
+      };
+
+      items.value.push(item);
+
+      if (
+        !containers.value.some((container) =>
+          openmct.objects.areIdsEqual(
+            container.domainObjectIdentifier,
+            item.domainObject.identifier
+          )
+        )
+      ) {
+        const container = new Container(domainObject);
+        addContainer(container);
+      }
+    }
+
+    function removeItem(identifier) {
+      const index = items.value.findIndex((item) =>
+        openmct.objects.areIdsEqual(identifier, item.domainObject.identifier)
+      );
+
+      items.value.splice(index, 1);
+      removeContainer(index);
+
+      delete extendedLinesPerKey.value[openmct.objects.makeKeyString(identifier)];
+    }
+
+    function reorder(reorderPlan) {
+      const oldItems = items.value.slice();
+      reorderPlan.forEach((reorderEvent) => {
+        items.value[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
+      });
+
+      reorderContainers(reorderPlan);
+    }
+
+    function hasEventTelemetry(_domainObject) {
+      const metadata = openmct.telemetry.getMetadata(_domainObject);
+      if (!metadata) {
+        return false;
+      }
+      const hasDomain = metadata.valuesForHints(['domain']).length > 0;
+      const hasNoRange = !metadata.valuesForHints(['range'])?.length;
+      // for the moment, let's also exclude telemetry with images
+      const hasNoImages = !metadata.valuesForHints(['image']).length;
+
+      return hasDomain && hasNoRange && hasNoImages;
+    }
+
     function getContainerSize(item) {
-      const containerforItem = containers.value.find((container) =>
+      const containerForItem = containers.value.find((container) =>
         openmct.objects.areIdsEqual(container.domainObjectIdentifier, item.domainObject.identifier)
       );
 
-      return containerforItem?.size;
+      return containerForItem?.size;
     }
 
     function mutateContainers() {
       openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
     }
+
+    onMounted(async () => {
+      if (composition) {
+        composition.on('add', addItem);
+        composition.on('remove', removeItem);
+        composition.on('reorder', reorder);
+
+        loadedComposition.value = await composition.load();
+
+        const containersToRemove = containers.value.filter(
+          (container) =>
+            !items.value.some((item) =>
+              openmct.objects.areIdsEqual(
+                container.domainObjectIdentifier,
+                item.domainObject.identifier
+              )
+            )
+        );
+      }
+    });
+
+    onBeforeUnmount(() => {
+      composition.off('add', addItem);
+      composition.off('remove', removeItem);
+      composition.off('reorder', reorder);
+    });
 
     return {
       openmct,
@@ -180,6 +277,7 @@ export default {
       path,
       composition,
       extendedLinesBus,
+      extendedLinesPerKey,
       containers,
       getContainerSize,
       timelineHolder,
@@ -202,7 +300,6 @@ export default {
       height: 0,
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
       timeOptions: this.domainObject.configuration.timeOptions,
-      extendedLinesPerKey: {},
       extendedLineHover: {},
       extendedLineSelection: {},
       extendedLinesLeftOffset: 0
@@ -218,9 +315,6 @@ export default {
   },
   beforeUnmount() {
     this.resetAlignment();
-    this.composition.off('add', this.addItem);
-    this.composition.off('remove', this.removeItem);
-    this.composition.off('reorder', this.reorder);
     this.stopFollowingTimeContext();
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
@@ -228,95 +322,18 @@ export default {
     this.extendedLinesBus.removeEventListener('update-extended-lines', this.updateExtendedLines);
     this.extendedLinesBus.removeEventListener('update-extended-hover', this.updateExtendedHover);
   },
-  async mounted() {
-    this.items = [];
+  mounted() {
     this.setTimeContext();
 
     this.extendedLinesBus.addEventListener('update-extended-lines', this.updateExtendedLines);
     this.extendedLinesBus.addEventListener('update-extended-hover', this.updateExtendedHover);
     this.openmct.selection.on('change', this.checkForLineSelection);
 
-    if (this.composition) {
-      this.composition.on('add', this.addItem);
-      this.composition.on('remove', this.removeItem);
-      this.composition.on('reorder', this.reorder);
-
-      this.loadedComposition = await this.composition.load();
-    }
-
     this.handleContentResize = _.debounce(this.handleContentResize, 500);
     this.contentResizeObserver = new ResizeObserver(this.handleContentResize);
     this.contentResizeObserver.observe(this.$refs.timelineHolder);
   },
   methods: {
-    addItem(domainObject) {
-      let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
-      let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-      let objectPath = [domainObject].concat(this.path.slice());
-      let rowCount = 0;
-      if (domainObject.type === 'plan') {
-        const planData = getValidatedData(domainObject);
-        rowCount = getValidatedGroups(domainObject, planData).length;
-      } else if (domainObject.type === 'gantt-chart') {
-        rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
-      }
-      const isEventTelemetry = this.hasEventTelemetry(domainObject);
-      let height =
-        domainObject.type === 'telemetry.plot.stacked'
-          ? `${domainObject.composition.length * PLOT_ITEM_H_PX}px`
-          : 'auto';
-      let item = {
-        domainObject,
-        objectPath,
-        type,
-        keyString,
-        rowCount,
-        height,
-        isEventTelemetry
-      };
-
-      this.items.push(item);
-
-      if (
-        !this.containers.some((container) =>
-          this.openmct.objects.areIdsEqual(
-            container.domainObjectIdentifier,
-            item.domainObject.identifier
-          )
-        )
-      ) {
-        const container = new Container(domainObject);
-        this.addContainer(container);
-      }
-    },
-    hasEventTelemetry(domainObject) {
-      const metadata = this.openmct.telemetry.getMetadata(domainObject);
-      if (!metadata) {
-        return false;
-      }
-      const hasDomain = metadata.valuesForHints(['domain']).length > 0;
-      const hasNoRange = !metadata.valuesForHints(['range'])?.length;
-      // for the moment, let's also exclude telemetry with images
-      const hasNoImages = !metadata.valuesForHints(['image']).length;
-
-      return hasDomain && hasNoRange && hasNoImages;
-    },
-    removeItem(identifier) {
-      let index = this.items.findIndex((item) =>
-        this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier)
-      );
-      this.items.splice(index, 1);
-      this.removeContainer(index);
-      delete this.extendedLinesPerKey[this.openmct.objects.makeKeyString(identifier)];
-    },
-    reorder(reorderPlan) {
-      let oldItems = this.items.slice();
-      reorderPlan.forEach((reorderEvent) => {
-        this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
-      });
-
-      this.reorderContainers(reorderPlan);
-    },
     handleContentResize() {
       this.updateContentHeight();
     },
