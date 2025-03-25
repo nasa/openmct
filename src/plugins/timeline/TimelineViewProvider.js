@@ -38,11 +38,12 @@ export default function TimelineViewProvider(openmct, extendedLinesBus) {
     },
 
     view: function (domainObject, objectPath) {
+      let component = null;
       let _destroy = null;
 
       return {
-        show: function (element) {
-          const { destroy } = mount(
+        show: function (element, isEditing) {
+          const { vNode, destroy } = mount(
             {
               el: element,
               components: {
@@ -55,14 +56,23 @@ export default function TimelineViewProvider(openmct, extendedLinesBus) {
                 composition: openmct.composition.get(domainObject),
                 extendedLinesBus
               },
-              template: '<timeline-view-layout></timeline-view-layout>'
+              data() {
+                return {
+                  isEditing
+                };
+              },
+              template: '<timeline-view-layout :is-editing="isEditing"></timeline-view-layout>'
             },
             {
               app: openmct.app,
               element
             }
           );
+          component = vNode.componentInstance;
           _destroy = destroy;
+        },
+        onEditModeChange(isEditing) {
+          component.isEditing = isEditing;
         },
         destroy: function () {
           if (_destroy) {
