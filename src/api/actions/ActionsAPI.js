@@ -19,19 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import ActionCollection from './ActionCollection.js';
 
+/**
+ * The ActionsAPI manages the registration and retrieval of actions in Open MCT.
+ * @extends EventEmitter
+ */
 class ActionsAPI extends EventEmitter {
+  /**
+   * @param {import('openmct').OpenMCT} openmct - The Open MCT instance
+   */
   constructor(openmct) {
     super();
 
+    /** @type {Object<string, Action>} */
     this._allActions = {};
+    /** @type {WeakMap<Object, ActionCollection>} */
     this._actionCollections = new WeakMap();
+    /** @type {import('openmct').OpenMCT} */
     this._openmct = openmct;
 
+    /** @type {string[]} */
     this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'export', 'import'];
 
     this.register = this.register.bind(this);
@@ -40,14 +51,29 @@ class ActionsAPI extends EventEmitter {
     this._updateCachedActionCollections = this._updateCachedActionCollections.bind(this);
   }
 
+  /**
+   * Register an action with the API.
+   * @param {Action} actionDefinition - The definition of the action to register
+   */
   register(actionDefinition) {
     this._allActions[actionDefinition.key] = actionDefinition;
   }
 
+  /**
+   * Get an action by its key.
+   * @param {string} key - The key of the action to retrieve
+   * @returns {Action|undefined} The action definition, or undefined if not found
+   */
   getAction(key) {
     return this._allActions[key];
   }
 
+  /**
+   * Get or create an ActionCollection for a given object path and view.
+   * @param {import('openmct').ObjectPath} objectPath - The path of the object
+   * @param {import('openmct').View} [view] - The view object
+   * @returns {ActionCollection} The ActionCollection for the given object path and view
+   */
   getActionsCollection(objectPath, view) {
     if (view) {
       return (
@@ -59,14 +85,31 @@ class ActionsAPI extends EventEmitter {
     }
   }
 
+  /**
+   * Update the order in which action groups are displayed.
+   * @param {string[]} groupArray - An array of group names in the desired order
+   */
   updateGroupOrder(groupArray) {
     this._groupOrder = groupArray;
   }
 
+  /**
+   * Get a cached ActionCollection for a given view.
+   * @param {import('openmct').ObjectPath} objectPath - The path of the object
+   * @param {Object} view - The view object
+   * @returns {ActionCollection|undefined} The cached ActionCollection, or undefined if not found
+   */
   _getCachedActionCollection(objectPath, view) {
     return this._actionCollections.get(view);
   }
 
+  /**
+   * Create a new ActionCollection.
+   * @param {import('openmct').ObjectPath} objectPath - The path of the object
+   * @param {import('openmct').View} [view] - The view object
+   * @param {boolean} skipEnvironmentObservers - Whether to skip environment observers
+   * @returns {ActionCollection} The new ActionCollection
+   */
   _newActionCollection(objectPath, view, skipEnvironmentObservers) {
     let applicableActions = this._applicableActions(objectPath, view);
 
@@ -84,20 +127,35 @@ class ActionsAPI extends EventEmitter {
     return actionCollection;
   }
 
+  /**
+   * Cache an ActionCollection for a given view.
+   * @param {import('openmct').View} view - The view object
+   * @param {ActionCollection} actionCollection - The ActionCollection to cache
+   */
   _cacheActionCollection(view, actionCollection) {
     this._actionCollections.set(view, actionCollection);
     actionCollection.on('destroy', this._updateCachedActionCollections);
   }
 
-  _updateCachedActionCollections(key) {
-    if (this._actionCollections.has(key)) {
-      let actionCollection = this._actionCollections.get(key);
+  /**
+   * Update cached ActionCollections when destroyed.
+   * @param {import('openmct').View} view - The key (View object)of the destroyed ActionCollection
+   */
+  _updateCachedActionCollections(view) {
+    if (this._actionCollections.has(view)) {
+      let actionCollection = this._actionCollections.get(view);
       actionCollection.off('destroy', this._updateCachedActionCollections);
       delete actionCollection.applicableActions;
-      this._actionCollections.delete(key);
+      this._actionCollections.delete(view);
     }
   }
 
+  /**
+   * Get applicable actions for a given object path and view.
+   * @param {import('openmct').ObjectPath} objectPath - The path of the object
+   * @param {import('openmct').View} [view] - The view object
+   * @returns {Object<string, Action>} A dictionary of applicable actions keyed by action key
+   */
   _applicableActions(objectPath, view) {
     let actionsObject = {};
 
@@ -120,6 +178,11 @@ class ActionsAPI extends EventEmitter {
     return actionsObject;
   }
 
+  /**
+   * Group and sort actions based on their group and priority.
+   * @param {Action[]|Object<string, Action>} actionsArray - An array or object of actions to group and sort
+   * @returns {Action[][]} An array of grouped and sorted action arrays
+   */
   _groupAndSortActions(actionsArray = []) {
     if (!Array.isArray(actionsArray) && typeof actionsArray === 'object') {
       actionsArray = Object.keys(actionsArray).map((key) => actionsArray[key]);
@@ -153,3 +216,19 @@ class ActionsAPI extends EventEmitter {
 }
 
 export default ActionsAPI;
+
+/**
+ * @typedef {Object} Action
+ * @property {string} name - The display name of the action.
+ * @property {string} key - A unique identifier for the action.
+ * @property {string} description - A brief description of what the action does.
+ * @property {string} cssClass - The CSS class for the action's icon.
+ * @property {string} [group] - The group this action belongs to (e.g., 'action', 'import').
+ * @property {number} [priority] - The priority of the action within its group (controls the order of the actions in the menu).
+ * @property {boolean} [isHidden] - Whether the action should be hidden from menus.
+ * @property {(objectPath: ObjectPath, view: View) => void} invoke - Executes the action.
+ * @property {(objectPath: ObjectPath, view: View) => boolean} appliesTo - Determines if the action is applicable to the given object path.
+ */
+
+/** @typedef {import('openmct').ObjectPath} ObjectPath */
+/** @typedef {import('openmct').View} View */

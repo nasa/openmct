@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -123,11 +122,15 @@ const extendedTest = test.extend({
   theme: [theme, { option: true }],
   // eslint-disable-next-line no-shadow
   page: async ({ page, theme }, use, testInfo) => {
-    // eslint-disable-next-line playwright/no-conditional-in-test
     if (theme === 'snow') {
       //inject snow theme
       await page.addInitScript({
         path: fileURLToPath(new URL('./helper/useSnowTheme.js', import.meta.url))
+      });
+    } else if (theme === 'darkmatter') {
+      //inject darkmatter theme
+      await page.addInitScript({
+        path: fileURLToPath(new URL('./helper/useDarkmatterTheme.js', import.meta.url))
       });
     }
 

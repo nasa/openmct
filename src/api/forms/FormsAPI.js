@@ -26,7 +26,14 @@ import mount from 'utils/mount';
 import FormProperties from './components/FormProperties.vue';
 import FormController from './FormController.js';
 
+/**
+ * The FormsAPI provides methods for creating and managing forms in Open MCT.
+ */
 export default class FormsAPI {
+  /**
+   * Creates an instance of FormsAPI.
+   * @param {import('openmct').OpenMCT} openmct - The Open MCT API
+   */
   constructor(openmct) {
     this.openmct = openmct;
     this.formController = new FormController(openmct);
@@ -47,8 +54,7 @@ export default class FormsAPI {
    * Create a new form control definition with a formControlViewProvider
    *      this formControlViewProvider is used inside form overlay to show/render a form row
    *
-   * @public
-   * @param {String} controlName a form structure, array of section
+   * @param {string} controlName a form structure, array of section
    * @param {ControlViewProvider} controlViewProvider
    */
   addNewFormControl(controlName, controlViewProvider) {
@@ -58,8 +64,7 @@ export default class FormsAPI {
   /**
    * Get a ControlViewProvider for a given/stored form controlName
    *
-   * @public
-   * @param {String} controlName a form structure, array of section
+   * @param {string} controlName a form structure, array of section
    * @return {ControlViewProvider}
    */
   getFormControl(controlName) {
@@ -69,7 +74,7 @@ export default class FormsAPI {
   /**
    * Section definition for formStructure
    * @typedef Section
-   * @property {object} name Name of the section to display on Form
+   * @property {Object} name Name of the section to display on Form
    * @property {string} cssClass class name for styling section
    * @property {array<Row>} rows collection of rows inside a section
    */
@@ -80,20 +85,20 @@ export default class FormsAPI {
    * @property {string} control represents type of row to render
    *     eg:autocomplete,composite,datetime,file-input,locator,numberfield,select,textarea,textfield
    * @property {string} cssClass class name for styling this row
-   * @property {module:openmct.DomainObject} domainObject object to be used by row
+   * @property {import('openmct').DomainObject} domainObject object to be used by row
    * @property {string} key id for this row
    * @property {string} name Name of the row to display on Form
-   * @property {module:openmct.DomainObject} parent parent object to be used by row
+   * @property {import('openmct').DomainObject} parent parent object to be used by row
    * @property {boolean} required is this row mandatory
    * @property {function} validate a function to validate this row on any changes
    */
 
   /**
    * Show form inside an Overlay dialog with given form structure
-   * @public
    * @param {Array<Section>} formStructure a form structure, array of section
    * @param {Object} options
-   *      @property {function} onChange a callback function when any changes detected
+   * @param {() => void} [options.onChange] a callback function when any changes detected
+   * @returns {Promise<Object>} A promise that resolves with the form data when saved, or rejects when cancelled
    */
   showForm(formStructure, { onChange } = {}) {
     let overlay;
@@ -134,11 +139,11 @@ export default class FormsAPI {
   /**
    * Show form as a child of the element provided with given form structure
    *
-   * @public
    * @param {Array<Section>} formStructure a form structure, array of section
    * @param {Object} options
-   *      @property {HTMLElement} element Parent Element to render a Form
-   *      @property {function} onChange a callback function when any changes detected
+   * @param {HTMLElement} options.element Parent Element to render a Form
+   * @param {() => void} [options.onChange] a callback function when any changes detected
+   * @returns {Promise<Object>} A promise that resolves with the form data when saved, or rejects when cancelled
    */
   showCustomForm(formStructure, { element, onChange } = {}) {
     if (element === undefined) {
@@ -179,6 +184,10 @@ export default class FormsAPI {
       }
     );
 
+    /**
+     * Handles form property changes
+     * @param {Object} data - The changed form data
+     */
     function onFormPropertyChange(data) {
       if (onChange) {
         onChange(data);
@@ -196,6 +205,11 @@ export default class FormsAPI {
       }
     }
 
+    /**
+     * Creates a form action handler
+     * @param {() => void} callback - The callback to be called when the form action is triggered
+     * @returns {(...args: any[]) => void} The form action handler
+     */
     function onFormAction(callback) {
       return () => {
         destroy();

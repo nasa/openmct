@@ -72,6 +72,7 @@ import SummaryWidget from './summaryWidget/plugin.js';
 import Tabs from './tabs/plugin.js';
 import TelemetryMean from './telemetryMean/plugin.js';
 import TelemetryTablePlugin from './telemetryTable/plugin.js';
+import DarkMatter from './themes/darkmatter.js';
 import Espresso from './themes/espresso.js';
 import Snow from './themes/snow.js';
 import TimeConductorPlugin from './timeConductor/plugin.js';
@@ -86,6 +87,9 @@ import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
 
+/**
+ * @type {Object}
+ */
 const plugins = {};
 
 plugins.example = {};
@@ -125,7 +129,6 @@ plugins.Plot = PlotPlugin;
 plugins.BarChart = BarChartPlugin;
 plugins.ScatterPlot = ScatterPlotPlugin;
 plugins.TelemetryTable = TelemetryTablePlugin;
-
 plugins.SummaryWidget = SummaryWidget;
 plugins.TelemetryMean = TelemetryMean;
 plugins.URLIndicator = URLIndicatorPlugin;
@@ -145,6 +148,7 @@ plugins.OpenInNewTabAction = OpenInNewTabAction;
 plugins.ReloadAction = ReloadAction;
 plugins.ClearData = ClearData;
 plugins.WebPage = WebPagePlugin;
+plugins.DarkmatterTheme = DarkMatter;
 plugins.Espresso = Espresso;
 plugins.Snow = Snow;
 plugins.Condition = ConditionPlugin;

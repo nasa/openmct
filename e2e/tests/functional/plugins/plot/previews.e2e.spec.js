@@ -54,10 +54,12 @@ test.describe('Plots work in Previews', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // right click on the plot and select view large
-    await page.getByLabel('Sine', { exact: true }).click({ button: 'right' });
+    await page.getByLabel(/Alpha-numeric telemetry value of.*/).click({
+      button: 'right'
+    });
     await page.getByLabel('View Historical Data').click();
     await expect(page.getByLabel('Preview Container').getByLabel('Plot Canvas')).toBeVisible();
-    await page.getByLabel('Close').click();
+    await page.getByRole('button', { name: 'Close' }).click();
     await page.getByLabel('Expand Test Display Layout layout').click();
 
     // change to a plot and ensure embiggen works
@@ -73,7 +75,7 @@ test.describe('Plots work in Previews', () => {
     await expect(page.getByLabel('Preview Container')).toBeHidden();
     await page.getByLabel('Large View').click();
     await expect(page.getByLabel('Preview Container').getByLabel('Plot Canvas')).toBeVisible();
-    await page.getByLabel('Close').click();
+    await page.getByRole('button', { name: 'Close' }).click();
 
     // get last sinewave tree item (in the display layout)
     await page
@@ -83,6 +85,6 @@ test.describe('Plots work in Previews', () => {
       .click({ button: 'right' });
     await page.getByLabel('View', { exact: true }).click();
     await expect(page.getByLabel('Preview Container').getByLabel('Plot Canvas')).toBeVisible();
-    await page.getByLabel('Close').click();
+    await page.getByRole('button', { name: 'Close' }).click();
   });
 });

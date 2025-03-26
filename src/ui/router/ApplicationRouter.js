@@ -20,26 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import LocationBar from 'location-bar';
 import _ from 'lodash';
 
 class ApplicationRouter extends EventEmitter {
   /**
-     * events
-     * change:params -> notify listeners w/ new, old, and changed.
-     * change:path -> notify listeners w/ new, old paths.
-     *
-     * methods:
-     * update(path, params) -> updates path and params at the same time.  Only
-     *   updates specified params, other params are not modified.
-     * updateParams(newParams) -> update only specified params, leaving rest
-     *      intact.  Does not modify path.
-     * updatePath(path);
+   * events
+   * change:params -> notify listeners w/ new, old, and changed.
+   * change:path -> notify listeners w/ new, old paths.
+   *
+   * methods:
+   * update(path, params) -> updates path and params at the same time.  Only
+   *   updates specified params, other params are not modified.
+   * updateParams(newParams) -> update only specified params, leaving rest
+   *      intact.  Does not modify path.
+   * updatePath(path);
+   *
+   * route(path, handler);
+   * start(); Start routing.
+   * @param {import('../../../openmct').OpenMCT} openmct
+   */
 
-     * route(path, handler);
-     * start(); Start routing.
-     */
   constructor(openmct) {
     super();
 
@@ -47,6 +49,7 @@ class ApplicationRouter extends EventEmitter {
     this.openmct = openmct;
     this.routes = [];
     this.started = false;
+    this.path = null;
 
     this.setHash = _.debounce(this.setHash.bind(this), 300);
 
@@ -89,7 +92,7 @@ class ApplicationRouter extends EventEmitter {
    * @property {URL} url current url location
    * @property {string} path current url location pathname
    * @property {string} getQueryString a function which returns url search query
-   * @property {object} params object representing url searchParams
+   * @property {Object} params object representing url searchParams
    */
 
   /**
@@ -113,7 +116,7 @@ class ApplicationRouter extends EventEmitter {
   /**
    * Get current location URL Object searchParams
    *
-   * @returns {object} object representing current url searchParams
+   * @returns {Object} object representing current url searchParams
    */
   getParams() {
     return this.currentLocation.params;
@@ -143,7 +146,7 @@ class ApplicationRouter extends EventEmitter {
    *
    * @param {Array<Object>} objectPath Object path of a given Domain Object
    *
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   isNavigatedObject(objectPath) {
     let targetObject = objectPath[0];
@@ -159,8 +162,8 @@ class ApplicationRouter extends EventEmitter {
   /**
    * Add routes listeners
    *
-   * @param {string} matcher Regex to match value in url
-   * @param {@function} callback function called when found match in url
+   * @param {RegExp} matcher Regex to match value in url
+   * @param {Function} callback function called when found match in url
    */
   route(matcher, callback) {
     this.routes.push({
@@ -329,8 +332,8 @@ class ApplicationRouter extends EventEmitter {
    * @private
    * Compare new and old params and on change emit event 'change:params'
    *
-   * @param {object} newParams new params of url
-   * @param {object} oldParams old params of url
+   * @param {Object} newParams new params of url
+   * @param {Object} oldParams old params of url
    * @returns {boolean} true if params changed, false otherwise
    */
   doParamsChange(newParams, oldParams) {

@@ -22,9 +22,9 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
-import { test } from '../../avpFixtures.js';
-import { VISUAL_URL } from '../../constants.js';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
 test.describe('Visual - Restricted Notebook @a11y', () => {
@@ -39,18 +39,54 @@ test.describe('Visual - Restricted Notebook @a11y', () => {
   });
 });
 
+test.describe('Visual - Notebook Snapshot @a11y', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./?hideTree=true&hideInspector=true', { waitUntil: 'domcontentloaded' });
+  });
+  test('Visual check for Snapshot Annotation', async ({ page, theme }) => {
+    await page.getByLabel('Open the Notebook Snapshot Menu').click();
+    await page.getByRole('menuitem', { name: 'Save to Notebook Snapshots' }).click();
+    await page.getByLabel('Show Snapshots').click();
+
+    await page.getByLabel('My Items Notebook Embed').getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: 'View Snapshot' }).click();
+
+    await page.getByLabel('Annotate this snapshot').click();
+    await expect(page.locator('#snap-annotation-canvas')).toBeVisible();
+    // Clear the canvas
+    await page.getByRole('button', { name: 'Put text [T]' }).click();
+    // Click in the Painterro canvas to add a text annotation
+    await page.locator('.ptro-crp-el').click();
+    await page.locator('.ptro-text-tool-input').fill('...is there life on mars?');
+    await percySnapshot(page, `Notebook Snapshot with text entry open (theme: '${theme}')`);
+
+    // When working with Painterro, we need to check that the Apply button is hidden after clicking
+    await page.getByTitle('Apply').click();
+    await expect(page.getByTitle('Apply')).toBeHidden();
+
+    // Save and exit annotation window
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Done' }).click();
+
+    // Open up annotation again
+    await page.getByRole('img', { name: 'My Items thumbnail' }).click();
+    await expect(page.getByLabel('Modal Overlay').getByRole('img')).toBeVisible();
+
+    // Take a snapshot
+    await percySnapshot(page, `Notebook Snapshot with annotation (theme: '${theme}')`);
+  });
+});
+
 test.describe('Visual - Notebook @a11y', () => {
   let notebook;
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     notebook = await createDomainObjectWithDefaults(page, {
       type: 'Notebook',
       name: 'Test Notebook'
     });
   });
-  test('Accepts dropped objects as embeds', async ({ page, theme, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
-
+  test('Accepts dropped objects as embeds', async ({ page, theme }) => {
     // Create Overlay Plot
     await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot',
@@ -60,11 +96,13 @@ test.describe('Visual - Notebook @a11y', () => {
     //Open Tree to perform drag
     await page.getByRole('button', { name: 'Browse' }).click();
 
-    await expandTreePaneItemByName(page, myItemsFolderName);
+    await page.getByLabel('Expand My Items folder').click();
 
-    await page.goto(notebook.url);
+    await page.goto(notebook.url, { waitUntil: 'networkidle' });
 
-    await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+    await page
+      .getByLabel('Navigate to Dropped Overlay Plot')
+      .dragTo(page.getByLabel('To start a new entry, click here or drag and drop any object'));
 
     await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
   });
@@ -125,8 +163,7 @@ test.describe('Visual - Notebook @a11y', () => {
     // Take a snapshot
     await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
   });
-  // Skipping for https://github.com/nasa/openmct/issues/7421
-  // test.afterEach(async ({ page }, testInfo) => {
-  //   await scanForA11yViolations(page, testInfo.title);
-  // });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
+  });
 });

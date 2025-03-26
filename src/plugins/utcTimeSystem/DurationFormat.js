@@ -12,7 +12,6 @@ const DATE_FORMATS = [DATE_FORMAT];
  *
  * @implements {Format}
  * @constructor
- * @memberof platform/commonUI/formats
  */
 class DurationFormat {
   constructor() {

@@ -48,5 +48,5 @@ index.html.bak
 coverage
 codecov
 
-# :(
-package-lock.json
+# Don't commit MacOS screenshots
+*-darwin.png

@@ -21,22 +21,26 @@
 -->
 
 <template>
-  <div class="c-lad-table-wrapper u-style-receiver js-style-receiver" :class="staleClass">
+  <div
+    id="lad-table-drop-area"
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    :class="staleClass"
+  >
     <table class="c-table c-lad-table" :class="applyLayoutClass">
       <thead>
         <tr>
-          <th>Name</th>
-          <th v-if="showTimestamp">Timestamp</th>
-          <th>Value</th>
-          <th v-if="hasUnits">Units</th>
-          <th v-if="showType">Type</th>
-          <th v-for="limitColumn in limitColumnNames" :key="limitColumn.key">
+          <th scope="col">Name</th>
+          <th v-if="showTimestamp" scope="col">Timestamp</th>
+          <th scope="col">Value</th>
+          <th v-if="hasUnits" scope="col">Units</th>
+          <th v-if="showType" scope="col">Type</th>
+          <th v-for="limitColumn in limitColumnNames" :key="limitColumn.key" scope="col">
             {{ limitColumn.label }}
           </th>
         </tr>
       </thead>
       <tbody>
-        <lad-row
+        <LadRow
           v-for="ladRow in items"
           :key="ladRow.key"
           :domain-object="ladRow.domainObject"
@@ -180,13 +184,13 @@ export default {
       this.items.push(item);
       this.subscribeToStaleness(domainObject);
     },
-    removeItem(identifier) {
+    async removeItem(identifier) {
       const keystring = this.openmct.objects.makeKeyString(identifier);
 
       const index = this.items.findIndex((item) => keystring === item.key);
       this.items.splice(index, 1);
 
-      const domainObject = this.openmct.objects.get(keystring);
+      const domainObject = await this.openmct.objects.get(keystring);
       this.triggerUnsubscribeFromStaleness(domainObject);
     },
     reorder(reorderPlan) {

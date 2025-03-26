@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import _ from 'lodash';
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
 import eventHelpers from '../eventHelpers.js';
 import SummaryWidgetRule from './SummaryWidgetRule.js';
@@ -62,7 +62,7 @@ SummaryWidgetEvaluator.prototype.subscribe = function (callback) {
       }
 
       const updateCallback = function () {
-        const datum = this.evaluateState(realtimeStates, this.openmct.time.timeSystem().key);
+        const datum = this.evaluateState(realtimeStates, this.openmct.time.getTimeSystem().key);
         if (datum) {
           callback(datum);
         }
@@ -113,7 +113,7 @@ SummaryWidgetEvaluator.prototype.updateRules = function (domainObject) {
 };
 
 SummaryWidgetEvaluator.prototype.addChild = function (childObject) {
-  const childId = objectUtils.makeKeyString(childObject.identifier);
+  const childId = makeKeyString(childObject.identifier);
   const metadata = this.openmct.telemetry.getMetadata(childObject);
   const formats = this.openmct.telemetry.getFormatMap(metadata);
 
@@ -126,7 +126,7 @@ SummaryWidgetEvaluator.prototype.addChild = function (childObject) {
 };
 
 SummaryWidgetEvaluator.prototype.removeChild = function (childObject) {
-  const childId = objectUtils.makeKeyString(childObject.identifier);
+  const childId = makeKeyString(childObject.identifier);
   delete this.baseState[childId];
 };
 

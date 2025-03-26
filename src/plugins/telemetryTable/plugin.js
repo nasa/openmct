@@ -20,15 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { MODE } from './constants.js';
 import TableConfigurationViewProvider from './TableConfigurationViewProvider.js';
 import getTelemetryTableType from './TelemetryTableType.js';
 import TelemetryTableViewProvider from './TelemetryTableViewProvider.js';
 import TelemetryTableViewActions from './ViewActions.js';
 
-export default function plugin(options) {
+export default function plugin(
+  options = { telemetryMode: MODE.PERFORMANCE, persistModeChange: true, rowLimit: 50 }
+) {
   return function install(openmct) {
     openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct, options));
-    openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct, options));
     openmct.types.addType('table', getTelemetryTableType(options));
     openmct.composition.addPolicy((parent, child) => {
       if (parent.type === 'table') {

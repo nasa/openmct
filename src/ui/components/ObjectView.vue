@@ -21,7 +21,13 @@
 -->
 <template>
   <div>
-    <div ref="objectViewWrapper" class="c-object-view" :class="viewClasses"></div>
+    <div
+      ref="objectViewWrapper"
+      role="region"
+      :aria-label="ariaLabel"
+      class="c-object-view"
+      :class="viewClasses"
+    ></div>
   </div>
 </template>
 
@@ -33,7 +39,7 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import objectUtils from '../../api/objects/object-utils.js';
+import { objectEquals } from '../../api/objects/object-utils.js';
 import VisibilityObserver from '../../utils/visibility/VisibilityObserver.js';
 
 export default {
@@ -71,6 +77,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return this.domainObject ? `${this.domainObject.name} Object View` : 'Object View';
+    },
     path() {
       return this.domainObject && (this.currentObjectPath || this.objectPath);
     },
@@ -224,7 +233,7 @@ export default {
       this.updateView(true);
     },
     reload(domainObjectToReload) {
-      if (objectUtils.equals(domainObjectToReload, this.domainObject)) {
+      if (objectEquals(domainObjectToReload, this.domainObject)) {
         this.updateView(true);
         this.initObjectStyles();
         this.triggerStalenessSubscribe(this.domainObject);
@@ -351,6 +360,10 @@ export default {
     },
     show(object, viewKey, immediatelySelect, currentObjectPath) {
       this.updateStyle();
+
+      if (this.domainObject) {
+        this.triggerUnsubscribeFromStaleness(this.domainObject);
+      }
 
       if (this.removeSelectable) {
         this.removeSelectable();

@@ -24,10 +24,12 @@ import mount from 'utils/mount';
 
 import MetadataListView from './components/MetadataList.vue';
 
-export default class ViewDatumAction {
+const VIEW_DATUM_ACTION_KEY = 'viewDatumAction';
+
+class ViewDatumAction {
   constructor(openmct) {
     this.name = 'View Full Datum';
-    this.key = 'viewDatumAction';
+    this.key = VIEW_DATUM_ACTION_KEY;
     this.description = 'View full value of datum received';
     this.cssClass = 'icon-object';
 
@@ -56,7 +58,7 @@ export default class ViewDatumAction {
     this.openmct.overlays.overlay({
       element: vNode.el,
       size: 'large',
-      dismissable: true,
+      dismissible: true,
       onDestroy: destroy
     });
   }
@@ -76,3 +78,7 @@ export default class ViewDatumAction {
     return false;
   }
 }
+
+export { VIEW_DATUM_ACTION_KEY };
+
+export default ViewDatumAction;

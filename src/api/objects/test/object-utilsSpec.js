@@ -1,4 +1,4 @@
-import objectUtils from 'objectUtils';
+import { makeKeyString, parseKeyString, toNewFormat, toOldFormat } from 'objectUtils';
 
 describe('objectUtils', function () {
   describe('keyString util', function () {
@@ -31,27 +31,27 @@ describe('objectUtils', function () {
 
     Object.keys(EXPECTATIONS).forEach(function (keyString) {
       it('parses "' + keyString + '".', function () {
-        expect(objectUtils.parseKeyString(keyString)).toEqual(EXPECTATIONS[keyString]);
+        expect(parseKeyString(keyString)).toEqual(EXPECTATIONS[keyString]);
       });
 
       it('parses and re-encodes "' + keyString + '"', function () {
-        const identifier = objectUtils.parseKeyString(keyString);
-        expect(objectUtils.makeKeyString(identifier)).toEqual(keyString);
+        const identifier = parseKeyString(keyString);
+        expect(makeKeyString(identifier)).toEqual(keyString);
       });
 
       it('is idempotent for "' + keyString + '".', function () {
-        const identifier = objectUtils.parseKeyString(keyString);
-        let again = objectUtils.parseKeyString(identifier);
+        const identifier = parseKeyString(keyString);
+        let again = parseKeyString(identifier);
         expect(identifier).toEqual(again);
-        again = objectUtils.parseKeyString(again);
-        again = objectUtils.parseKeyString(again);
+        again = parseKeyString(again);
+        again = parseKeyString(again);
         expect(identifier).toEqual(again);
 
-        let againKeyString = objectUtils.makeKeyString(again);
+        let againKeyString = makeKeyString(again);
         expect(againKeyString).toEqual(keyString);
-        againKeyString = objectUtils.makeKeyString(againKeyString);
-        againKeyString = objectUtils.makeKeyString(againKeyString);
-        againKeyString = objectUtils.makeKeyString(againKeyString);
+        againKeyString = makeKeyString(againKeyString);
+        againKeyString = makeKeyString(againKeyString);
+        againKeyString = makeKeyString(againKeyString);
         expect(againKeyString).toEqual(keyString);
       });
     });
@@ -60,7 +60,7 @@ describe('objectUtils', function () {
   describe('old object conversions', function () {
     it('translate ids', function () {
       expect(
-        objectUtils.toNewFormat(
+        toNewFormat(
           {
             prop: 'someValue'
           },
@@ -77,7 +77,7 @@ describe('objectUtils', function () {
 
     it('translates composition', function () {
       expect(
-        objectUtils.toNewFormat(
+        toNewFormat(
           {
             prop: 'someValue',
             composition: ['anotherObjectId', 'scratch:anotherObjectId']
@@ -107,7 +107,7 @@ describe('objectUtils', function () {
   describe('new object conversions', function () {
     it('removes ids', function () {
       expect(
-        objectUtils.toOldFormat({
+        toOldFormat({
           prop: 'someValue',
           identifier: {
             namespace: '',
@@ -121,7 +121,7 @@ describe('objectUtils', function () {
 
     it('translates composition', function () {
       expect(
-        objectUtils.toOldFormat({
+        toOldFormat({
           prop: 'someValue',
           composition: [
             {

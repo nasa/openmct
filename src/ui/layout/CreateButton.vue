@@ -24,15 +24,15 @@
     <button
       class="c-create-button c-button--menu c-button--major icon-plus"
       :aria-disabled="isEditing"
+      aria-labelledby="create-button-label"
       @click.prevent.stop="showCreateMenu"
     >
-      <span class="c-button__label">Create</span>
+      <span id="create-button-label" class="c-button__label">Create</span>
     </button>
   </div>
 </template>
-
 <script>
-import CreateAction from '@/plugins/formActions/CreateAction';
+import { CREATE_ACTION_KEY } from '@/plugins/formActions/CreateAction';
 
 export default {
   inject: ['openmct'],
@@ -101,9 +101,8 @@ export default {
       this.isEditing = isEditing;
     },
     create(key) {
-      const createAction = new CreateAction(this.openmct, key, this.openmct.router.path[0]);
-
-      createAction.invoke();
+      const createAction = this.openmct.actions.getAction(CREATE_ACTION_KEY);
+      createAction.invoke(key, this.openmct.router.path[0]);
     }
   }
 };

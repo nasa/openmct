@@ -41,7 +41,7 @@ test.describe('Sine Wave Generator', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     // Click Sine Wave Generator
-    await page.click('text=Sine Wave Generator');
+    await page.getByRole('menuitem', { name: 'Sine Wave Generator' }).click();
 
     // Verify that the each required field has required indicator
     // Title
@@ -107,11 +107,11 @@ test.describe('Sine Wave Generator', () => {
     await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
     await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
 
-    const value = await page.locator('.field.control.l-input-sm input').first().inputValue();
-    await expect(value).toBe('6');
+    const value = page.locator('.field.control.l-input-sm input').first();
+    await expect(value).toHaveValue('6');
 
-    //Click text=OK
-    await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
+    //Click save button
+    await page.getByLabel('Save').click();
 
     // Verify that the Sine Wave Generator is displayed and correct
     // Verify object properties

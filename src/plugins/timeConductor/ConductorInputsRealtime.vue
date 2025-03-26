@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <time-popup-realtime
+  <TimePopupRealtime
     v-if="readOnly === false"
     :offsets="offsets"
     @focus="$event.target.select()"
@@ -148,7 +148,10 @@ export default {
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+    this.handleNewBounds = _.throttle(this.handleNewBounds, 300, {
+      leading: true,
+      trailing: true
+    });
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();
@@ -178,6 +181,8 @@ export default {
       }
     },
     stopFollowingTime() {
+      this.handleNewBounds.cancel();
+
       if (this.timeContext) {
         this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
         this.timeContext.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);

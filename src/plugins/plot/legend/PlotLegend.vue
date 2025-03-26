@@ -27,11 +27,13 @@
       'is-legend-hidden': isLegendHidden
     }"
   >
-    <div
+    <button
       class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
       :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
+      :aria-label="ariaLabelValue"
+      tabindex="0"
       @click="toggleLegend"
-    ></div>
+    ></button>
 
     <div class="c-plot-legend__wrapper" :class="{ 'is-cursor-locked': cursorLocked }">
       <!-- COLLAPSED PLOT LEGEND -->
@@ -45,7 +47,7 @@
           class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
           title="Cursor is point locked. Click anywhere in the plot to unlock."
         ></div>
-        <plot-legend-item-collapsed
+        <PlotLegendItemCollapsed
           v-for="(seriesObject, seriesIndex) in seriesModels"
           :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
           :highlights="highlights"
@@ -79,7 +81,7 @@
             </tr>
           </thead>
           <tbody>
-            <plot-legend-item-expanded
+            <PlotLegendItemExpanded
               v-for="(seriesObject, seriesIndex) in seriesModels"
               :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
               :series-key-string="seriesObject.keyString"
@@ -127,6 +129,11 @@ export default {
     };
   },
   computed: {
+    ariaLabelValue() {
+      const name = this.domainObject.name ? ` ${this.domainObject.name}` : '';
+
+      return `${this.isLegendExpanded ? 'Collapse' : 'Expand'}${name} Legend`;
+    },
     showUnitsWhenExpanded() {
       return this.loaded && this.legend.get('showUnitsWhenExpanded') === true;
     },
@@ -165,7 +172,6 @@ export default {
       this.registerListeners(this.config);
     }
     this.listenTo(this.config.legend, 'change:expandByDefault', this.changeExpandDefault, this);
-    this.initialize();
   },
   mounted() {
     this.loaded = true;
@@ -182,16 +188,6 @@ export default {
     this.stopListening();
   },
   methods: {
-    initialize() {
-      if (this.domainObject.type === 'telemetry.plot.stacked') {
-        this.objectComposition = this.openmct.composition.get(this.domainObject);
-        this.objectComposition.on('add', this.addTelemetryObject);
-        this.objectComposition.on('remove', this.removeTelemetryObject);
-        this.objectComposition.load();
-      } else {
-        this.registerListeners(this.config);
-      }
-    },
     changeExpandDefault() {
       this.isLegendExpanded = this.config.legend.model.expandByDefault;
       this.legend.set('expanded', this.isLegendExpanded);

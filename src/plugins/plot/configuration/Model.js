@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import eventHelpers from '../lib/eventHelpers.js';
 
 /**
- * @template {object} T
- * @template {object} O
+ * @template {Object} T
+ * @template {Object} O
  */
 export default class Model extends EventEmitter {
   /**
@@ -144,15 +144,15 @@ export default class Model extends EventEmitter {
  */
 
 /**
-@template {object} T
+@template {Object} T
 @typedef {{
     id?: string
 } & T} ModelType
 */
 
 /**
-@template {object} T
-@template {object} O
+@template {Object} T
+@template {Object} O
 @typedef {{
     model?: ModelType<T>
     models?: T[]

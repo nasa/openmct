@@ -68,7 +68,7 @@ test.describe('Snapshot image tests', () => {
     // expect large image to be displayed
     await expect(page.getByRole('dialog').getByText('favicon-96x96.png')).toBeVisible();
 
-    await page.getByLabel('Close').click();
+    await page.getByRole('button', { name: 'Close' }).click();
 
     // drop another image onto the entry
     await page.dispatchEvent('.c-snapshots', 'drop', { dataTransfer: dropTransfer });
@@ -76,7 +76,7 @@ test.describe('Snapshot image tests', () => {
     const secondThumbnail = page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).nth(1);
     await secondThumbnail.waitFor({ state: 'attached' });
     // expect two embedded images now
-    expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(2);
+    await expect(page.getByRole('img', { name: 'favicon-96x96.png thumbnail' })).toHaveCount(2);
 
     await page.locator('.c-snapshot.c-ne__embed').first().getByTitle('More actions').click();
 
@@ -86,7 +86,7 @@ test.describe('Snapshot image tests', () => {
     await secondThumbnail.waitFor({ state: 'detached' });
 
     // expect one embedded image now as we deleted the other
-    expect(await page.getByRole('img', { name: 'favicon-96x96.png thumbnail' }).count()).toBe(1);
+    await expect(page.getByRole('img', { name: 'favicon-96x96.png thumbnail' })).toHaveCount(1);
   });
 });
 

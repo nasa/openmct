@@ -19,11 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import objectPathToUrl from '/src/tools/url.js';
-export default class OpenInNewTab {
+import { objectPathToUrl } from '/src/tools/url.js';
+
+const NEW_TAB_ACTION_KEY = 'newTab';
+
+class OpenInNewTab {
   constructor(openmct) {
     this.name = 'Open In New Tab';
-    this.key = 'newTab';
+    this.key = NEW_TAB_ACTION_KEY;
     this.description = 'Open in a new browser tab';
     this.group = 'windowing';
     this.priority = 10;
@@ -31,8 +34,30 @@ export default class OpenInNewTab {
 
     this._openmct = openmct;
   }
-  invoke(objectPath, urlParams = undefined) {
-    let url = objectPathToUrl(this._openmct, objectPath, urlParams);
-    window.open(url);
+
+  /**
+   * Invokes the "Open in New Tab" action. This will open the object in a new
+   * browser tab. The URL for the new tab is determined by the current object
+   * path and any custom time bounds.
+   *
+   * @param {import('@/api/objects/ObjectAPI').DomainObject[]} objectPath The current object path
+   * @param {ViewContext} _view The view context for the object being opened (unused)
+   * @param {Object<string, string | number>} customUrlParams Provides the ability to override
+   * the global time conductor bounds. It is an object with the following key/value pairs:
+   * ```
+   * {
+   *  'tc.start': <number>,
+   *  'tc.end': <number>,
+   *  'tc.mode': 'fixed' | 'local' | <string>
+   * }
+   * ```
+   */
+  invoke(objectPath, _view, customUrlParams) {
+    const url = objectPathToUrl(this._openmct, objectPath, customUrlParams);
+    window.open(url, undefined, 'noopener');
   }
 }
+
+export { NEW_TAB_ACTION_KEY };
+
+export default OpenInNewTab;

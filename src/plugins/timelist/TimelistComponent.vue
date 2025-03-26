@@ -23,7 +23,7 @@
 <template>
   <div ref="timelistHolder" :class="listTypeClass">
     <template v-if="isExpanded">
-      <expanded-view-item
+      <ExpandedViewItem
         v-for="item in sortedItems"
         :key="item.key"
         :name="item.name"
@@ -35,41 +35,39 @@
         :item-properties="itemProperties"
         :execution-state="persistedActivityStates[item.id]"
         @click.stop="setSelectionForActivity(item, $event.currentTarget)"
-      >
-      </expanded-view-item>
+      />
     </template>
-    <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
-      <table class="c-table__body js-table__body">
-        <thead class="c-table__header">
-          <tr>
-            <list-header
-              v-for="headerItem in headerItems"
-              :key="headerItem.property"
-              :direction="
-                defaultSort.property === headerItem.property
-                  ? defaultSort.defaultDirection
-                  : headerItem.defaultDirection
-              "
-              :is-sortable="headerItem.isSortable"
-              :aria-label="headerItem.name"
-              :title="headerItem.name"
-              :property="headerItem.property"
-              :current-sort="defaultSort.property"
-              @sort="sort"
+    <template v-else>
+      <div class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
+        <table class="c-table__body js-table__body">
+          <thead class="c-table__header">
+            <tr>
+              <ListHeader
+                v-for="headerItem in headerItems"
+                :key="headerItem.property"
+                :direction="getSortDirection(headerItem)"
+                :is-sortable="headerItem.isSortable"
+                :aria-label="headerItem.name"
+                :title="headerItem.name"
+                :property="headerItem.property"
+                :current-sort="defaultSort.property"
+                @sort="sort"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <ListItem
+              v-for="item in sortedItems"
+              :key="item.key"
+              :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
+              :item="item"
+              :item-properties="itemProperties"
+              @click.stop="setSelectionForActivity(item, $event.currentTarget)"
             />
-          </tr>
-        </thead>
-        <tbody>
-          <list-item
-            v-for="item in sortedItems"
-            :key="item.key"
-            :item="item"
-            :item-properties="itemProperties"
-            @click.stop="setSelectionForActivity(item, $event.currentTarget)"
-          />
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -85,8 +83,6 @@ import { getFilteredValues, getValidatedData, getValidatedGroups } from '../plan
 import { SORT_ORDER_OPTIONS } from './constants.js';
 import ExpandedViewItem from './ExpandedViewItem.vue';
 
-const SCROLL_TIMEOUT = 10000;
-
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 const SAME_DAY_PRECISION_SECONDS = 'HH:mm:ss';
 
@@ -101,7 +97,7 @@ const headerItems = [
     property: 'start',
     name: 'Start Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -116,7 +112,7 @@ const headerItems = [
     property: 'end',
     name: 'End Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -209,7 +205,6 @@ export default {
   },
   created() {
     this.updateTimestamp = _.throttle(this.updateTimestamp, 1000);
-    this.deferAutoScroll = _.debounce(this.deferAutoScroll, 500);
 
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
@@ -237,8 +232,6 @@ export default {
     this.status = this.openmct.status.get(this.domainObject.identifier);
 
     this.openmct.editor.on('isEditing', this.setEditState);
-
-    this.$el.parentElement.addEventListener('scroll', this.deferAutoScroll, true);
 
     if (this.composition) {
       this.composition.on('add', this.addToComposition);
@@ -271,11 +264,6 @@ export default {
 
     this.openmct.editor.off('isEditing', this.setEditState);
     this.stopFollowingTimeContext();
-
-    this.$el.parentElement?.removeEventListener('scroll', this.deferAutoScroll, true);
-    if (this.clearAutoScrollDisabledTimer) {
-      clearTimeout(this.clearAutoScrollDisabledTimer);
-    }
 
     if (this.composition) {
       this.composition.off('add', this.addToComposition);
@@ -429,8 +417,6 @@ export default {
       const filteredItems = this.planActivities.filter(this.filterActivities);
       const sortedItems = this.sortItems(filteredItems);
       this.sortedItems = this.applyStyles(sortedItems);
-      //We need to wait for the next tick since we need the height of the row from the DOM
-      this.$nextTick(this.setScrollTop);
     },
     updateTimeStampAndListActivities(time) {
       this.timestamp = time;
@@ -439,16 +425,19 @@ export default {
     },
     isActivityInBounds(activity) {
       const startInBounds =
-        activity.start >= this.timeContext.bounds()?.start &&
-        activity.start <= this.timeContext.bounds()?.end;
+        activity.start >= this.timeContext.getBounds()?.start &&
+        activity.start <= this.timeContext.getBounds()?.end;
       const endInBounds =
-        activity.end >= this.timeContext.bounds()?.start &&
-        activity.end <= this.timeContext.bounds()?.end;
+        activity.end >= this.timeContext.getBounds()?.start &&
+        activity.end <= this.timeContext.getBounds()?.end;
       const middleInBounds =
-        activity.start <= this.timeContext.bounds()?.start &&
-        activity.end >= this.timeContext.bounds()?.end;
+        activity.start <= this.timeContext.getBounds()?.start &&
+        activity.end >= this.timeContext.getBounds()?.end;
 
       return startInBounds || endInBounds || middleInBounds;
+    },
+    isActivityInProgress(activity) {
+      return this.persistedActivityStates[activity.id] === 'in-progress';
     },
     filterActivities(activity) {
       if (this.isEditing) {
@@ -474,7 +463,8 @@ export default {
         return false;
       }
 
-      if (!this.isActivityInBounds(activity)) {
+      // An activity may be out of bounds, but if it is in-progress, we show it.
+      if (!this.isActivityInBounds(activity) && !this.isActivityInProgress(activity)) {
         return false;
       }
       //current event or future start event or past end event
@@ -509,24 +499,13 @@ export default {
       });
     },
     // Add activity classes, increase activity counts by type,
-    // set indices of the first occurrences of current and future activities - used for scrolling
     styleActivity(activity, index) {
       if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
         activity.cssClass = CURRENT_CSS_SUFFIX;
-        if (this.firstCurrentActivityIndex < 0) {
-          this.firstCurrentActivityIndex = index;
-        }
-        this.currentActivitiesCount = this.currentActivitiesCount + 1;
       } else if (this.timestamp < activity.start) {
         activity.cssClass = FUTURE_CSS_SUFFIX;
-        //the index of the first activity that's greater than the current timestamp
-        if (this.firstFutureActivityIndex < 0) {
-          this.firstFutureActivityIndex = index;
-        }
-        this.futureActivitiesCount = this.futureActivitiesCount + 1;
       } else {
         activity.cssClass = PAST_CSS_SUFFIX;
-        this.pastActivitiesCount = this.pastActivitiesCount + 1;
       }
 
       if (!activity.key) {
@@ -545,127 +524,19 @@ export default {
       return activity;
     },
     applyStyles(activities) {
-      this.firstCurrentOrFutureActivityIndex = -1;
-      this.firstCurrentActivityIndex = -1;
-      this.firstFutureActivityIndex = -1;
-      this.currentActivitiesCount = 0;
-      this.pastActivitiesCount = 0;
-      this.futureActivitiesCount = 0;
-
-      const styledActivities = activities.map(this.styleActivity);
-
-      if (this.firstCurrentActivityIndex > -1) {
-        this.firstCurrentOrFutureActivityIndex = this.firstCurrentActivityIndex;
-      } else if (this.firstFutureActivityIndex > -1) {
-        this.firstCurrentOrFutureActivityIndex = this.firstFutureActivityIndex;
-      }
-
-      return styledActivities;
-    },
-    canAutoScroll() {
-      //this distinguishes between programmatic vs user-triggered scroll events
-      this.autoScrolled = this.dontAutoScroll !== true;
-
-      return this.autoScrolled;
-    },
-    resetScroll() {
-      if (this.canAutoScroll() === false) {
-        return;
-      }
-
-      this.firstCurrentOrFutureActivityIndex = -1;
-      this.pastActivitiesCount = 0;
-      this.currentActivitiesCount = 0;
-      this.futureActivitiesCount = 0;
-      this.$el.parentElement?.scrollTo({ top: 0 });
-      this.autoScrolled = false;
-    },
-    setScrollTop() {
-      //The view isn't ready yet
-      if (!this.$el.parentElement || this.isExpanded) {
-        return;
-      }
-
-      if (this.canAutoScroll() === false) {
-        return;
-      }
-
-      // See #7167 for scrolling algorithm
-      const scrollTop = this.calculateScrollOffset();
-
-      if (scrollTop === undefined) {
-        this.resetScroll();
-      } else {
-        this.$el.parentElement?.scrollTo({
-          top: scrollTop,
-          behavior: 'smooth'
-        });
-        this.autoScrolled = false;
-      }
-    },
-    calculateScrollOffset() {
-      let scrollTop;
-
-      //No scrolling necessary if no past events are present
-      if (this.pastActivitiesCount > 0) {
-        const row = this.$el.querySelector('.js-list-item');
-        const ROW_HEIGHT = row.getBoundingClientRect().height;
-
-        const maxViewableActivities =
-          Math.floor(this.$el.parentElement.getBoundingClientRect().height / ROW_HEIGHT) - 1;
-
-        const currentAndFutureActivities = this.currentActivitiesCount + this.futureActivitiesCount;
-
-        //If there is more viewable area than all current and future activities combined, then show some past events
-        const numberOfPastEventsToShow = maxViewableActivities - currentAndFutureActivities;
-        if (numberOfPastEventsToShow > 0) {
-          //some past events can be shown - get that scroll index
-          if (this.pastActivitiesCount > numberOfPastEventsToShow) {
-            scrollTop =
-              ROW_HEIGHT * (this.firstCurrentOrFutureActivityIndex + numberOfPastEventsToShow);
-          }
-        } else {
-          // only show current and future events
-          scrollTop = ROW_HEIGHT * this.firstCurrentOrFutureActivityIndex;
-        }
-      }
-
-      return scrollTop;
-    },
-    deferAutoScroll() {
-      //if this is not a user-triggered event, don't defer auto scrolling
-      if (this.autoScrolled) {
-        this.autoScrolled = false;
-
-        return;
-      }
-
-      this.dontAutoScroll = true;
-      const self = this;
-      if (this.clearAutoScrollDisabledTimer) {
-        clearTimeout(this.clearAutoScrollDisabledTimer);
-      }
-
-      this.clearAutoScrollDisabledTimer = setTimeout(() => {
-        self.dontAutoScroll = false;
-        self.setScrollTop();
-      }, SCROLL_TIMEOUT);
+      return activities.map(this.styleActivity);
     },
     setSort() {
-      const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
-      const property = sortOrder.property;
-      const direction = sortOrder.direction.toLowerCase() === 'asc';
+      const { property, direction } =
+        SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
       this.defaultSort = {
         property,
-        defaultDirection: direction
+        defaultDirection: direction.toLowerCase() === 'asc'
       };
     },
     sortItems(activities) {
-      let sortedItems = _.sortBy(activities, this.defaultSort.property);
-      if (!this.defaultSort.defaultDirection) {
-        sortedItems = sortedItems.reverse();
-      }
-      return sortedItems;
+      const sortedItems = _.sortBy(activities, this.defaultSort.property);
+      return this.defaultSort.defaultDirection ? sortedItems : sortedItems.reverse();
     },
     setStatus(status) {
       this.status = status;
@@ -674,10 +545,7 @@ export default {
       this.isEditing = isEditing;
       this.setViewFromConfig(this.domainObject.configuration);
     },
-    sort(data) {
-      const property = data.property;
-      const direction = data.direction;
-
+    sort({ property, direction }) {
       if (this.defaultSort.property === property) {
         this.defaultSort.defaultDirection = !this.defaultSort.defaultDirection;
       } else {
@@ -691,10 +559,10 @@ export default {
       this.openmct.selection.select(
         [
           {
-            element: element,
+            element,
             context: {
               type: 'activity',
-              activity: activity
+              activity
             }
           },
           {
@@ -707,6 +575,11 @@ export default {
         ],
         multiSelect
       );
+    },
+    getSortDirection(headerItem) {
+      return this.defaultSort.property === headerItem.property
+        ? this.defaultSort.defaultDirection
+        : headerItem.defaultDirection;
     }
   }
 };

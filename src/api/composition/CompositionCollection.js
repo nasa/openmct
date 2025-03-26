@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
@@ -33,7 +33,7 @@
  */
 
 /**
- * @typedef {object} ListenerMap
+ * @typedef {Object} ListenerMap
  * @property {Array.<any>} add
  * @property {Array.<any>} remove
  * @property {Array.<any>} load
@@ -200,10 +200,9 @@ export default class CompositionCollection {
   /**
    * Load the domain objects in this composition.
    *
-   * @param {AbortSignal} abortSignal
+   * @param {AbortSignal} [abortSignal]
    * @returns {Promise.<Array.<DomainObject>>} a promise for
    *          the domain objects in this composition
-   * @memberof {module:openmct.CompositionCollection#}
    * @name load
    */
   async load(abortSignal) {
@@ -271,7 +270,7 @@ export default class CompositionCollection {
   /**
    * Handle reorder from provider.
    * @private
-   * @param {object} reorderMap
+   * @param {Object} reorderMap
    */
   #onProviderReorder(reorderMap) {
     this.#emit('reorder', reorderMap);
@@ -280,7 +279,7 @@ export default class CompositionCollection {
   /**
    * Handle adds from provider.
    * @private
-   * @param {import('../objects/ObjectAPI').Identifier} childId
+   * @param {import('openmct').Identifier} childId
    * @returns {DomainObject}
    */
   #onProviderAdd(childId) {

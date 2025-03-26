@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -42,7 +42,7 @@
         <div class="c-text-view__text">{{ item.text }}</div>
       </div>
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>

@@ -22,13 +22,19 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions.js';
-import { VISUAL_URL } from '../../constants.js';
+import {
+  createDomainObjectWithDefaults,
+  createStableStateTelemetry,
+  linkParameterToObject
+} from '../../appActions.js';
+import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
 
-test.describe('Visual - Display Layout', () => {
-  test.beforeEach(async ({ page, theme }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+test.describe('Visual - Display Layout @clock', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     const parentLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
@@ -45,26 +51,26 @@ test.describe('Visual - Display Layout', () => {
       name: 'Child Right Layout',
       parent: parentLayout.uuid
     });
-    await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      name: 'SWG 1',
-      parent: child1Layout.uuid
-    });
-    await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      name: 'SWG 2',
-      parent: child2Layout.uuid
-    });
+
+    const stableStateTelemetry = await createStableStateTelemetry(page);
+    await linkParameterToObject(page, stableStateTelemetry.name, child1Layout.name);
+    await linkParameterToObject(page, stableStateTelemetry.name, child2Layout.name);
+
+    // Pause the clock at a time where the telemetry is stable 20 minutes in the future
+    await page.clock.pauseAt(new Date(MISSION_TIME + 1200000));
 
     await page.goto(parentLayout.url, { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: 'Edit Object' }).click();
 
-    //Move the Child Right Layout to the Right. It should be on top of the Left Layout at this point.
+    // Select the child right layout
     await page
       .getByLabel('Child Right Layout Layout', { exact: true })
       .getByLabel('Move Sub-object Frame')
       .click();
-    await page.getByLabel('Move Sub-object Frame').nth(3).click(); //I'm not sure why this step is necessary
+    // FIXME: Click to select the parent object (layout)
+    await page.getByLabel('Move Sub-object Frame').nth(3).click();
+
+    // Move the second layout element to the right
     await page.getByLabel('X:').click();
     await page.getByLabel('X:').fill('35');
   });
@@ -92,5 +98,16 @@ test.describe('Visual - Display Layout', () => {
 
     await page.getByLabel('Parent Layout Layout', { exact: true }).click();
     await percySnapshot(page, `Parent outer layout selected (theme: '${theme}')`);
+  });
+
+  test('Toolbar does not overflow into inspector', async ({ page, theme }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7036'
+    });
+    await page.getByLabel('Expand Inspect Pane').click();
+    await page.getByLabel('Resize Inspect Pane').dragTo(page.getByLabel('X:'));
+    await page.getByRole('tab', { name: 'Elements' }).click();
+    await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`);
   });
 });

@@ -141,6 +141,7 @@ mct-plot {
   .plot-wrapper-axis-and-display-area {
     position: relative;
     flex: 1 1 auto;
+    overflow: hidden;
     //min-height: $plotMinH;
   }
 
@@ -363,6 +364,7 @@ mct-plot {
     top: $m;
     left: $m;
     z-index: 9;
+
 
     &__reset {
       transition: right 100ms;

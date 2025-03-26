@@ -5,6 +5,7 @@
   display: flex;
   flex: 1 1 auto;
   overflow: hidden;
+  
 
   &--horizontal,
   > .l-pane {
@@ -18,9 +19,6 @@
 
   &--vertical {
     height: 100%;
-    > .l-pane .l-pane__contents {
-      padding-right: $interiorMarginSm; // Fend off scrollbar
-    }
   }
 }
 
@@ -60,7 +58,7 @@
       transition: opacity 150ms ease;
       opacity: 0;
       pointer-events: none;
-      overflow: hidden;
+      overflow: hidden; // Prevents toolbar from extending into Inspector
 
       > * {
         min-width: 0 !important;
@@ -93,6 +91,8 @@
   &__contents {
     flex: 1 1 100%;
     opacity: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
     pointer-events: inherit;
     transition: opacity 250ms ease 250ms;
 
@@ -193,7 +193,7 @@
       }
     }
 
-    &[class*='--collapsed'] { // For Recent Objects Button  
+    &[class*='--collapsed'] { // For Recent Objects Button
       &.collapse-horizontal {
         [class*='expand-button'] {
           display: block;
@@ -324,7 +324,7 @@
       }
 
       /************************** Vertical Splitter Before */
-      // Pane collapses downward. Used by Recent Objects in Tree 
+      // Pane collapses downward. Used by Recent Objects in Tree
       &[class*='-before'] {
         $m: $interiorMarginLg;
         margin-top: $m;

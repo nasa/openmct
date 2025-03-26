@@ -64,7 +64,7 @@ test.describe('Tabs View', () => {
     page.goto(tabsView.url);
 
     // select first tab
-    await page.getByLabel(`${table.name} tab`, { exact: true }).click();
+    await page.getByLabel(`${table.name} tab - selected`, { exact: true }).click();
     // ensure table header visible
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 
@@ -78,7 +78,7 @@ test.describe('Tabs View', () => {
     await page.getByLabel(`${sineWaveGenerator.name} tab`, { exact: true }).click();
 
     // ensure sine wave generator visible
-    expect(await page.locator('.c-plot').isVisible()).toBe(true);
+    await expect(page.locator('.c-plot')).toBeVisible();
 
     // now select notebook and clear animation calls
     await page.getByLabel(`${notebook.name} tab`, { exact: true }).click();

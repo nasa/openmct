@@ -162,13 +162,13 @@ test.describe('Grand Search', () => {
     const searchResults = page.getByRole('listitem', { name: 'Object Search Result' });
 
     // Verify that no results are found
-    expect(await searchResults.count()).toBe(0);
+    await expect(searchResults).toHaveCount(0);
 
     // Verify proper message appears
     await expect(page.getByText('No results found')).toBeVisible();
   });
 
-  test('Validate single object in search result @couchdb', async ({ page }) => {
+  test('Validate single object in search result @couchdb @network', async ({ page }) => {
     // Create a folder object
     const folderName = uuid();
     await createDomainObjectWithDefaults(page, {
@@ -187,11 +187,11 @@ test.describe('Grand Search', () => {
 
     // Verify that one result is found
     await expect(searchResults).toBeVisible();
-    expect(await searchResults.count()).toBe(1);
+    await expect(searchResults).toHaveCount(1);
     await expect(searchResults).toContainText(folderName);
   });
 
-  test('Search results are debounced @couchdb', async ({ page }) => {
+  test('Search results are debounced @couchdb @network', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6179'
@@ -216,12 +216,14 @@ test.describe('Grand Search', () => {
 
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  batched request for latest telemetry using the bulk API
-    expect(networkRequests.length).toBe(1);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(1);
 
     await expect(page.getByRole('list', { name: 'Object Results' })).toContainText('Clock A');
   });
 
-  test('Slowly typing after search debounce will abort requests @couchdb', async ({ page }) => {
+  test('Slowly typing after search debounce will abort requests @couchdb @network', async ({
+    page
+  }) => {
     let requestWasAborted = false;
     await createObjectsForSearch(page);
     page.on('requestfailed', (request) => {
@@ -282,7 +284,7 @@ test.describe('Grand Search', () => {
     // Get the search results
     const objectSearchResults = page.getByLabel('Object Search Result');
     // Verify that two results are found
-    expect(await objectSearchResults.count()).toBe(2);
+    await expect(objectSearchResults).toHaveCount(2);
   });
 });
 

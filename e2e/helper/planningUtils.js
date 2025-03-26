@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../appActions.js';
 import { expect } from '../pluginFixtures.js';
 
 /**
@@ -28,10 +29,10 @@ import { expect } from '../pluginFixtures.js';
  * for each activity in the plan data per group, using the earliest activity's
  * start time as the start bound and the current activity's end time as the end bound.
  * @param {import('@playwright/test').Page} page the page
- * @param {object} plan The raw plan json to assert against
- * @param {string} objectUrl The URL of the object to assert against (plan or gantt chart)
+ * @param {Object} plan The raw plan json to assert against
+ * @param {string} planObjectUrl The URL of the object to assert against (plan or gantt chart)
  */
-export async function assertPlanActivities(page, plan, objectUrl) {
+export async function assertPlanActivities(page, plan, planObjectUrl) {
   const groups = Object.keys(plan);
   for (const group of groups) {
     for (let i = 0; i < plan[group].length; i++) {
@@ -47,13 +48,12 @@ export async function assertPlanActivities(page, plan, objectUrl) {
 
       // Switch to fixed time mode with all plan events within the bounds
       await page.goto(
-        `${objectUrl}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`
+        `${planObjectUrl}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`
       );
 
       // Assert that the number of activities in the plan view matches the number of
       // activities in the plan data within the specified time bounds
-      const eventCount = await page.locator('.activity-bounds').count();
-      expect(eventCount).toEqual(
+      await expect(page.locator('.activity-bounds')).toHaveCount(
         Object.values(plan)
           .flat()
           .filter((event) =>
@@ -85,7 +85,7 @@ function activitiesWithinTimeBounds(start1, end1, start2, end2) {
  * Asserts that the swim lanes / groups in the plan view matches the order of
  * groups in the plan data.
  * @param {import('@playwright/test').Page} page the page
- * @param {object} plan The raw plan json to assert against
+ * @param {Object} plan The raw plan json to assert against
  * @param {string} objectUrl The URL of the object to assert against (plan or gantt chart)
  */
 export async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
@@ -100,8 +100,8 @@ export async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
   for (let i = 0; i < groups.length; i++) {
     // Assert that the order of groups in the plan view matches the order of
     // groups in the plan data
-    const groupName = await planGroups[i].innerText();
-    expect(groupName).toEqual(groups[i].name);
+    const groupName = planGroups[i];
+    await expect(groupName).toHaveText(groups[i].name);
   }
 }
 
@@ -109,7 +109,7 @@ export async function assertPlanOrderedSwimLanes(page, plan, objectUrl) {
  * Navigate to the plan view, switch to fixed time mode,
  * and set the bounds to span all activities.
  * @param {import('@playwright/test').Page} page
- * @param {object} planJson
+ * @param {Object} planJson
  * @param {string} planObjectUrl
  */
 export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl) {
@@ -124,22 +124,37 @@ export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl
 }
 
 /**
- * @param {object} planJson
+ * @param {Object} planJson
  * @returns {number}
  */
 export function getEarliestStartTime(planJson) {
   const activities = Object.values(planJson).flat();
+
   return Math.min(...activities.map((activity) => activity.start));
 }
 
 /**
  *
- * @param {object} planJson
+ * @param {Object} planJson
  * @returns {number}
  */
 export function getLatestEndTime(planJson) {
   const activities = Object.values(planJson).flat();
+
   return Math.max(...activities.map((activity) => activity.end));
+}
+
+/**
+ *
+ * @param {object} planJson
+ * @returns {object}
+ */
+export function getFirstActivity(planJson) {
+  const groups = Object.keys(planJson);
+  const firstGroupKey = groups[0];
+  const firstGroupItems = planJson[firstGroupKey];
+
+  return firstGroupItems[0];
 }
 
 /**
@@ -171,4 +186,56 @@ export async function addPlanGetInterceptor(page) {
       }
     });
   });
+}
+
+/**
+ * Create a Plan from JSON and add it to a Timelist and Navigate to the Plan view
+ * @param {import('@playwright/test').Page} page
+ */
+export async function createTimelistWithPlanAndSetActivityInProgress(page, planJson) {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+  const timelist = await createDomainObjectWithDefaults(page, {
+    name: 'Time List',
+    type: 'Time List'
+  });
+
+  await createPlanFromJSON(page, {
+    name: 'Test Plan',
+    json: planJson,
+    parent: timelist.uuid
+  });
+
+  // Ensure that all activities are shown in the expanded view
+  const groups = Object.keys(planJson);
+  const firstGroupKey = groups[0];
+  const firstGroupItems = planJson[firstGroupKey];
+  const firstActivityForPlan = firstGroupItems[0];
+  const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+  const startBound = firstActivityForPlan.start;
+  const endBound = lastActivity.end;
+
+  // Switch to fixed time mode with all plan events within the bounds
+  await page.goto(
+    `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
+  );
+
+  // Change the object to edit mode
+  await page.getByRole('button', { name: 'Edit Object' }).click();
+
+  // Find the display properties section in the inspector
+  await page.getByRole('tab', { name: 'View Properties' }).click();
+  // Switch to expanded view and save the setting
+  await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
+
+  // Click on the "Save" button
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+  const anActivity = page.getByRole('row').nth(0);
+
+  // Set the activity to in progress
+  await anActivity.click();
+  await page.getByRole('tab', { name: 'Activity' }).click();
+  await page.getByLabel('Activity Status', { exact: true }).selectOption({ label: 'In progress' });
 }

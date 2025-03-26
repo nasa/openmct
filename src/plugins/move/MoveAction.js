@@ -19,10 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-export default class MoveAction {
+
+const MOVE_ACTION_KEY = 'move';
+
+class MoveAction {
   constructor(openmct) {
     this.name = 'Move';
-    this.key = 'move';
+    this.key = MOVE_ACTION_KEY;
     this.description = 'Move this object from its containing object to another object.';
     this.cssClass = 'icon-move';
     this.group = 'action';
@@ -216,3 +219,7 @@ export default class MoveAction {
     this.transaction = null;
   }
 }
+
+export { MOVE_ACTION_KEY };
+
+export default MoveAction;

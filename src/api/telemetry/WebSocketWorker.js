@@ -21,11 +21,8 @@
  *****************************************************************************/
 /* eslint-disable max-classes-per-file */
 export default function installWorker() {
+  const ONE_SECOND = 1000;
   const FALLBACK_AND_WAIT_MS = [1000, 5000, 5000, 10000, 10000, 30000];
-
-  /**
-   * @typedef {import('./BatchingWebSocket').BatchingStrategy} BatchingStrategy
-   */
 
   /**
    * Provides a WebSocket connection that is resilient to errors and dropouts.
@@ -44,10 +41,17 @@ export default function installWorker() {
     #currentWaitIndex = 0;
     #messageCallbacks = [];
     #wsUrl;
+    #reconnecting = false;
+    #worker;
+
+    constructor(worker) {
+      super();
+      this.#worker = worker;
+    }
 
     /**
      * Establish a new WebSocket connection to the given URL
-     * @param {String} url
+     * @param {string} url
      */
     connect(url) {
       this.#wsUrl = url;
@@ -62,6 +66,9 @@ export default function installWorker() {
       this.#isConnecting = true;
 
       this.#webSocket = new WebSocket(url);
+      //Exposed to e2e tests so that the websocket can be manipulated during tests. Cannot find any other way to do this.
+      // Playwright does not support forcing websocket state changes.
+      this.#worker.currentWebSocket = this.#webSocket;
 
       const boundConnected = this.#connected.bind(this);
       this.#webSocket.addEventListener('open', boundConnected);
@@ -100,12 +107,17 @@ export default function installWorker() {
     }
 
     #connected() {
-      console.debug('Websocket connected.');
+      console.info('Websocket connected.');
       this.#isConnected = true;
       this.#isConnecting = false;
       this.#currentWaitIndex = 0;
 
-      this.dispatchEvent(new Event('connected'));
+      if (this.#reconnecting) {
+        this.#worker.postMessage({
+          type: 'reconnected'
+        });
+        this.#reconnecting = false;
+      }
 
       this.#flushQueue();
     }
@@ -138,6 +150,7 @@ export default function installWorker() {
       if (this.#reconnectTimeoutHandle) {
         return;
       }
+      this.#reconnecting = true;
 
       this.#reconnectTimeoutHandle = setTimeout(() => {
         this.connect(this.#wsUrl);
@@ -198,14 +211,17 @@ export default function installWorker() {
         case 'message':
           this.#websocket.enqueueMessage(message.data.message);
           break;
-        case 'setBatchingStrategy':
-          this.setBatchingStrategy(message);
-          break;
         case 'readyForNextBatch':
           this.#messageBatcher.readyForNextBatch();
           break;
-        case 'setMaxBatchSize':
-          this.#messageBatcher.setMaxBatchSize(message.data.maxBatchSize);
+        case 'setMaxBufferSize':
+          this.#messageBatcher.setMaxBufferSize(message.data.maxBufferSize);
+          break;
+        case 'setThrottleRate':
+          this.#messageBatcher.setThrottleRate(message.data.throttleRate);
+          break;
+        case 'setThrottleMessagePattern':
+          this.#messageBatcher.setThrottleMessagePattern(message.data.throttleMessagePattern);
           break;
         default:
           throw new Error(`Unknown message type: ${type}`);
@@ -218,114 +234,69 @@ export default function installWorker() {
     disconnect() {
       this.#websocket.disconnect();
     }
-    setBatchingStrategy(message) {
-      const { serializedStrategy } = message.data;
-      const batchingStrategy = {
-        // eslint-disable-next-line no-new-func
-        shouldBatchMessage: new Function(`return ${serializedStrategy.shouldBatchMessage}`)(),
-        // eslint-disable-next-line no-new-func
-        getBatchIdFromMessage: new Function(`return ${serializedStrategy.getBatchIdFromMessage}`)()
-        // Will also include maximum batch length here
-      };
-      this.#messageBatcher.setBatchingStrategy(batchingStrategy);
-    }
   }
 
   /**
-   * Received messages from the WebSocket, and passes them along to the
-   * Worker interface and back to the main thread.
+   * Responsible for buffering messages
    */
-  class WebSocketToWorkerMessageBroker {
-    #worker;
-    #messageBatcher;
-
-    constructor(messageBatcher, worker) {
-      this.#messageBatcher = messageBatcher;
-      this.#worker = worker;
-    }
-
-    routeMessageToHandler(data) {
-      //Implement batching here
-      if (this.#messageBatcher.shouldBatchMessage(data)) {
-        this.#messageBatcher.addMessageToBatch(data);
-      } else {
-        this.#worker.postMessage({
-          type: 'message',
-          message: data
-        });
-      }
-    }
-  }
-
-  /**
-   * Responsible for batching messages according to the defined batching strategy.
-   */
-  class MessageBatcher {
-    #batch;
-    #batchingStrategy;
-    #hasBatch = false;
-    #maxBatchSize;
+  class MessageBuffer {
+    #buffer;
+    #currentBufferLength;
+    #dropped;
+    #maxBufferSize;
     #readyForNextBatch;
     #worker;
+    #throttledSendNextBatch;
+    #throttleMessagePattern;
 
     constructor(worker) {
-      this.#maxBatchSize = 10;
+      // No dropping telemetry unless we're explicitly told to.
+      this.#maxBufferSize = Number.POSITIVE_INFINITY;
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
+      this.setThrottleRate(ONE_SECOND);
     }
     #resetBatch() {
-      this.#batch = {};
-      this.#hasBatch = false;
+      //this.#batch = {};
+      this.#buffer = [];
+      this.#currentBufferLength = 0;
+      this.#dropped = false;
     }
-    /**
-     * @param {BatchingStrategy} strategy
-     */
-    setBatchingStrategy(strategy) {
-      this.#batchingStrategy = strategy;
+
+    addMessageToBuffer(message) {
+      this.#buffer.push(message);
+      this.#currentBufferLength += message.length;
+
+      for (
+        let i = 0;
+        this.#currentBufferLength > this.#maxBufferSize && i < this.#buffer.length;
+        i++
+      ) {
+        const messageToConsider = this.#buffer[i];
+        if (this.#shouldThrottle(messageToConsider)) {
+          this.#buffer.splice(i, 1);
+          this.#currentBufferLength -= messageToConsider.length;
+          this.#dropped = true;
+        }
+      }
+
+      if (this.#readyForNextBatch) {
+        this.#throttledSendNextBatch();
+      }
     }
-    /**
-     * Applies the `shouldBatchMessage` function from the supplied batching strategy
-     * to each message to determine if it should be added to a batch. If not batched,
-     * the message is immediately sent over the worker to the main thread.
-     * @param {any} message the message received from the WebSocket. See the WebSocket
-     * documentation for more details -
-     * https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/data
-     * @returns
-     */
-    shouldBatchMessage(message) {
+
+    #shouldThrottle(message) {
       return (
-        this.#batchingStrategy.shouldBatchMessage &&
-        this.#batchingStrategy.shouldBatchMessage(message)
+        this.#throttleMessagePattern !== undefined && this.#throttleMessagePattern.test(message)
       );
     }
-    /**
-     * Adds the given message to a batch. The batch group that the message is added
-     * to will be determined by the value returned by `getBatchIdFromMessage`.
-     * @param {any} message the message received from the WebSocket. See the WebSocket
-     * documentation for more details -
-     * https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/data
-     */
-    addMessageToBatch(message) {
-      const batchId = this.#batchingStrategy.getBatchIdFromMessage(message);
-      let batch = this.#batch[batchId];
-      if (batch === undefined) {
-        batch = this.#batch[batchId] = [message];
-      } else {
-        batch.push(message);
-      }
-      if (batch.length > this.#maxBatchSize) {
-        batch.shift();
-        this.#batch.dropped = this.#batch.dropped || true;
-      }
-      if (this.#readyForNextBatch) {
-        this.#sendNextBatch();
-      } else {
-        this.#hasBatch = true;
-      }
+
+    setMaxBufferSize(maxBufferSize) {
+      this.#maxBufferSize = maxBufferSize;
     }
-    setMaxBatchSize(maxBatchSize) {
-      this.#maxBatchSize = maxBatchSize;
+    setThrottleRate(throttleRate) {
+      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), throttleRate);
     }
     /**
      * Indicates that client code is ready to receive the next batch of
@@ -334,33 +305,73 @@ export default function installWorker() {
      * any new data is available.
      */
     readyForNextBatch() {
-      if (this.#hasBatch) {
-        this.#sendNextBatch();
+      if (this.#hasData()) {
+        this.#throttledSendNextBatch();
       } else {
         this.#readyForNextBatch = true;
       }
     }
     #sendNextBatch() {
-      const batch = this.#batch;
+      const buffer = this.#buffer;
+      const dropped = this.#dropped;
+      const currentBufferLength = this.#currentBufferLength;
+
       this.#resetBatch();
       this.#worker.postMessage({
         type: 'batch',
-        batch
+        dropped,
+        currentBufferLength: currentBufferLength,
+        maxBufferSize: this.#maxBufferSize,
+        batch: buffer
       });
+
       this.#readyForNextBatch = false;
-      this.#hasBatch = false;
+    }
+    #hasData() {
+      return this.#currentBufferLength > 0;
+    }
+    setThrottleMessagePattern(priorityMessagePattern) {
+      this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
     }
   }
 
-  const websocket = new ResilientWebSocket();
-  const messageBatcher = new MessageBatcher(self);
-  const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBatcher);
-  const websocketBroker = new WebSocketToWorkerMessageBroker(messageBatcher, self);
+  function throttle(callback, wait) {
+    let last = 0;
+    let throttling = false;
+
+    return function (...args) {
+      if (throttling) {
+        return;
+      }
+
+      const now = performance.now();
+      const timeSinceLast = now - last;
+
+      if (timeSinceLast >= wait) {
+        last = now;
+        callback(...args);
+      } else if (!throttling) {
+        throttling = true;
+
+        setTimeout(() => {
+          last = performance.now();
+          throttling = false;
+          callback(...args);
+        }, wait - timeSinceLast);
+      }
+    };
+  }
+
+  const websocket = new ResilientWebSocket(self);
+  const messageBuffer = new MessageBuffer(self);
+  const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBuffer);
 
   self.addEventListener('message', (message) => {
     workerBroker.routeMessageToHandler(message);
   });
   websocket.registerMessageCallback((data) => {
-    websocketBroker.routeMessageToHandler(data);
+    messageBuffer.addMessageToBuffer(data);
   });
+
+  self.websocketInstance = websocket;
 }

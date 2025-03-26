@@ -23,18 +23,109 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
+  navigateToObjectWithFixedTimeBounds,
+  setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
-  setIndependentTimeConductorBounds,
   setRealTimeMode,
   setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
-const LOCALSTORAGE_PATH = fileURLToPath(
+const CHILD_LAYOUT_STORAGE_STATE_PATH = fileURLToPath(
   new URL('../../../../test-data/display_layout_with_child_layouts.json', import.meta.url)
+);
+const CHILD_PLOT_STORAGE_STATE_PATH = fileURLToPath(
+  new URL('../../../../test-data/display_layout_with_child_overlay_plot.json', import.meta.url)
 );
 const TINY_IMAGE_BASE64 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
+
+test.describe('Display Layout Sub-object Actions @localStorage', () => {
+  const INIT_ITC_START_BOUNDS = '2024-11-12 19:11:11.000Z';
+  const INIT_ITC_END_BOUNDS = '2024-11-12 20:11:11.000Z';
+  const NEW_GLOBAL_START_BOUNDS = '2024-11-11 19:11:11.000Z';
+  const NEW_GLOBAL_END_BOUNDS = '2024-11-11 20:11:11.000Z';
+
+  test.use({
+    storageState: CHILD_PLOT_STORAGE_STATE_PATH
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await page.getByLabel('Expand My Items folder').click();
+    const waitForMyItemsNavigation = page.waitForURL(`**/mine/?*`);
+    await page
+      .getByLabel('Main Tree')
+      .getByLabel('Navigate to Parent Display Layout layout Object')
+      .click();
+    // Wait for the URL to change to the display layout
+    await waitForMyItemsNavigation;
+  });
+  test('Open in New Tab action preserves time bounds @2p', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7524'
+    });
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/6982'
+    });
+
+    const TEST_FIXED_START_TIME = 1731352271000; // 2024-11-11 19:11:11.000Z
+    const TEST_FIXED_END_TIME = TEST_FIXED_START_TIME + 3600000; // 2024-11-11 20:11:11.000Z
+
+    // Verify the ITC has the expected initial bounds
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
+
+    // Update the global fixed bounds to 2024-11-11 19:11:11.000Z / 2024-11-11 20:11:11.000Z
+    const url = page.url().split('?')[0];
+    await navigateToObjectWithFixedTimeBounds(
+      page,
+      url,
+      TEST_FIXED_START_TIME,
+      TEST_FIXED_END_TIME
+    );
+
+    // ITC bounds should still match the initial ITC bounds
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      page.getByLabel('Child Overlay Plot 1 Frame Controls').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
+
+    // Open the Child Overlay Plot 1 in a new tab
+    await page.getByLabel('View menu items').click();
+    const pagePromise = page.context().waitForEvent('page');
+    await page.getByLabel('Open In New Tab').click();
+
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState('domcontentloaded');
+
+    // Verify that the global time conductor bounds in the new page match the updated global bounds
+    await expect(newPage.getByLabel('Global Time Conductor').getByLabel('Start bounds')).toHaveText(
+      NEW_GLOBAL_START_BOUNDS
+    );
+    await expect(newPage.getByLabel('Global Time Conductor').getByLabel('End bounds')).toHaveText(
+      NEW_GLOBAL_END_BOUNDS
+    );
+
+    // Verify that the ITC is enabled in the new page
+    await expect(newPage.getByLabel('Disable Independent Time Conductor')).toBeVisible();
+    // Verify that the ITC bounds in the new page match the original ITC bounds
+    await expect(
+      newPage.getByLabel('Independent Time Conductor Panel').getByLabel('Start bounds')
+    ).toHaveText(INIT_ITC_START_BOUNDS);
+    await expect(
+      newPage.getByLabel('Independent Time Conductor Panel').getByLabel('End bounds')
+    ).toHaveText(INIT_ITC_END_BOUNDS);
+  });
+});
 
 test.describe('Display Layout Toolbar Actions @localStorage', () => {
   const PARENT_DISPLAY_LAYOUT_NAME = 'Parent Display Layout';
@@ -50,7 +141,7 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
     await page.getByLabel('Edit Object').click();
   });
   test.use({
-    storageState: LOCALSTORAGE_PATH
+    storageState: CHILD_LAYOUT_STORAGE_STATE_PATH
   });
 
   test('can add/remove Text element to a single layout', async ({ page }) => {
@@ -65,17 +156,17 @@ test.describe('Display Layout Toolbar Actions @localStorage', () => {
   test('can add/remove Image to a single layout', async ({ page }) => {
     const layoutObject = 'Image';
     await test.step("Add and remove image element from the parent's layout", async () => {
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
       await addLayoutObject(page, PARENT_DISPLAY_LAYOUT_NAME, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(1);
       await removeLayoutObject(page, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
     });
     await test.step("Add and remove image from the child's layout", async () => {
       await addLayoutObject(page, CHILD_DISPLAY_LAYOUT_NAME1, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(1);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(1);
       await removeLayoutObject(page, layoutObject);
-      expect(await page.getByLabel(`Move ${layoutObject} Frame`).count()).toBe(0);
+      await expect(page.getByLabel(`Move ${layoutObject} Frame`)).toHaveCount(0);
     });
   });
   test(`can add/remove Box to a single layout`, async ({ page }) => {
@@ -144,26 +235,23 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the  Display Layout is the most recent value
     // from the Sine Wave Generator
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
-    const formattedTelemetryValue = getTelemValuePromise;
-    const displayLayoutValuePromise = await page.waitForSelector(
-      `text="${formattedTelemetryValue}"`
-    );
-    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
+    const formattedTelemetryValue = await getTelemValuePromise;
+    await expect(page.getByText(formattedTelemetryValue)).toBeVisible();
+    const displayLayoutValue = await page.getByText(formattedTelemetryValue).textContent();
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
 
     // ensure we can right click on the alpha-numeric widget and view historical data
-    await page.getByLabel('Sine', { exact: true }).click({
+    await page.getByLabel(/Alpha-numeric telemetry value of.*/).click({
       button: 'right'
     });
     await page.getByLabel('View Historical Data').click();
@@ -189,24 +277,21 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
-    const getTelemValuePromise = await subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
-    await setStartOffset(page, { mins: '1' });
+    await setStartOffset(page, { startMins: '1' });
     await setFixedTimeMode(page);
 
     // On getting data, check if the value found in the Display Layout is the most recent value
     // from the Sine Wave Generator
-    const formattedTelemetryValue = getTelemValuePromise;
-    const displayLayoutValuePromise = await page.waitForSelector(
-      `text="${formattedTelemetryValue}"`
-    );
-    const displayLayoutValue = await displayLayoutValuePromise.textContent();
+    const formattedTelemetryValue = await getTelemValuePromise;
+    await expect(page.getByText(formattedTelemetryValue)).toBeVisible();
+    const displayLayoutValue = await page.getByText(formattedTelemetryValue).textContent();
     const trimmedDisplayValue = displayLayoutValue.trim();
 
     expect(trimmedDisplayValue).toBe(formattedTelemetryValue);
@@ -231,8 +316,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -273,8 +357,7 @@ test.describe('Display Layout', () => {
     const sineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(sineWaveObject.name)
     });
-    const layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -319,8 +402,7 @@ test.describe('Display Layout', () => {
     const exampleImageryTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(exampleImageryObject.name)
     });
-    let layoutGridHolder = page.locator('.l-layout__grid-holder');
-    await exampleImageryTreeItem.dragTo(layoutGridHolder);
+    await exampleImageryTreeItem.dragTo(page.getByLabel('Layout Grid'));
 
     //adjust so that we can see the independent time conductor toggle
     // Adjust object height
@@ -336,7 +418,7 @@ test.describe('Display Layout', () => {
 
     const startDate = '2021-12-30 01:01:00.000Z';
     const endDate = '2021-12-30 01:11:00.000Z';
-    await setIndependentTimeConductorBounds(page, startDate, endDate);
+    await setFixedIndependentTimeConductorBounds(page, { start: startDate, end: endDate });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -347,7 +429,7 @@ test.describe('Display Layout', () => {
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
   });
 
-  test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb', async ({
+  test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb @network', async ({
     page
   }) => {
     await setFixedTimeMode(page);
@@ -376,9 +458,8 @@ test.describe('Display Layout', () => {
       name: new RegExp(sineWaveObject.name)
     });
 
-    let layoutGridHolder = page.locator('.l-layout__grid-holder');
     // eslint-disable-next-line playwright/no-force-option
-    await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+    await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'), { force: true });
 
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
@@ -386,14 +467,13 @@ test.describe('Display Layout', () => {
     const anotherSineWaveGeneratorTreeItem = treePane.getByRole('treeitem', {
       name: new RegExp(anotherSineWaveObject.name)
     });
-    layoutGridHolder = page.locator('.l-layout__grid-holder');
     // eslint-disable-next-line playwright/no-force-option
-    await anotherSineWaveGeneratorTreeItem.dragTo(layoutGridHolder, { force: true });
+    await anotherSineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'), { force: true });
 
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
 
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Time to inspect some network traffic
@@ -410,10 +490,10 @@ test.describe('Display Layout', () => {
     await page.reload();
 
     // wait for annotations requests to be batched and requested
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  a single batched request for annotations
-    expect(networkRequests.length).toBe(1);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(1);
 
     await setRealTimeMode(page);
 
@@ -422,15 +502,147 @@ test.describe('Display Layout', () => {
     await page.reload();
 
     // wait for annotations to not load (if we have any, we've got a problem)
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // In real time mode, we don't fetch annotations at all
-    expect(networkRequests.length).toBe(0);
+    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(0);
+  });
+
+  test('Same objects with different request options have unique subscriptions', async ({
+    page
+  }) => {
+    // Expand My Items
+    await page.getByLabel('Expand My Items folder').click();
+
+    // Create a Display Layout
+    const displayLayout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Test Display'
+    });
+
+    // Create a State Generator, set to higher frequency updates
+    const stateGenerator = await createDomainObjectWithDefaults(page, {
+      type: 'State Generator',
+      name: 'State Generator'
+    });
+    const stateGeneratorTreeItem = page.getByRole('treeitem', {
+      name: stateGenerator.name
+    });
+    await stateGeneratorTreeItem.click({ button: 'right' });
+    await page.getByLabel('Edit Properties...').click();
+    await page.getByLabel('State Duration (seconds)', { exact: true }).fill('0.1');
+    await page.getByLabel('Save').click();
+
+    // Create a Table for filtering ON values
+    const tableFilterOnValue = await createDomainObjectWithDefaults(page, {
+      type: 'Telemetry Table',
+      name: 'Table Filter On Value'
+    });
+    const tableFilterOnTreeItem = page.getByRole('treeitem', {
+      name: tableFilterOnValue.name
+    });
+
+    // Create a Table for filtering OFF values
+    const tableFilterOffValue = await createDomainObjectWithDefaults(page, {
+      type: 'Telemetry Table',
+      name: 'Table Filter Off Value'
+    });
+    const tableFilterOffTreeItem = page.getByRole('treeitem', {
+      name: tableFilterOffValue.name
+    });
+
+    // Navigate to ON filtering table and add state generator and setup filters
+    await page.goto(tableFilterOnValue.url);
+    await stateGeneratorTreeItem.dragTo(page.getByLabel('Object View'));
+    await selectFilterOption(page, '1');
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Navigate to OFF filtering table and add state generator and setup filters
+    await page.goto(tableFilterOffValue.url);
+    await stateGeneratorTreeItem.dragTo(page.getByLabel('Object View'));
+    await selectFilterOption(page, '0');
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Navigate to the display layout and edit it
+    await page.goto(displayLayout.url);
+
+    // Add the tables to the display layout
+    await page.getByLabel('Edit Object').click();
+    await tableFilterOffTreeItem.dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 10, y: 300 }
+    });
+    await page.locator('.c-frame-edit > div:nth-child(4)').dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 400, y: 500 },
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+    await tableFilterOnTreeItem.dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 10, y: 100 }
+    });
+    await page.locator('.c-frame-edit > div:nth-child(4)').dragTo(page.getByLabel('Layout Grid'), {
+      targetPosition: { x: 400, y: 300 },
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Get the tables so we can verify filtering is working as expected
+    const tableFilterOn = page.getByLabel(`${tableFilterOnValue.name} Frame`, {
+      exact: true
+    });
+    const tableFilterOff = page.getByLabel(`${tableFilterOffValue.name} Frame`, {
+      exact: true
+    });
+
+    // Verify filtering is working correctly
+
+    // Check that no filtered values appear for at least 2 seconds
+    const VERIFICATION_TIME = 2000; // 2 seconds
+    const CHECK_INTERVAL = 100; // Check every 100ms
+
+    // Create a promise that will check for filtered values periodically
+    const checkForCorrectValues = new Promise((resolve, reject) => {
+      const interval = setInterval(async () => {
+        const offCount = await tableFilterOn.locator('td[title="OFF"]').count();
+        const onCount = await tableFilterOff.locator('td[title="ON"]').count();
+        if (offCount > 0 || onCount > 0) {
+          clearInterval(interval);
+          reject(
+            new Error(
+              `Found ${offCount} OFF and ${onCount} ON values when expecting 0 OFF and 0 ON`
+            )
+          );
+        }
+      }, CHECK_INTERVAL);
+
+      // After VERIFICATION_TIME, if no filtered values were found, resolve successfully
+      setTimeout(() => {
+        clearInterval(interval);
+        resolve();
+      }, VERIFICATION_TIME);
+    });
+
+    await expect(checkForCorrectValues).resolves.toBeUndefined();
   });
 });
 
+async function selectFilterOption(page, filterOption) {
+  await page.getByRole('tab', { name: 'Filters' }).click();
+  await page
+    .getByLabel('Inspector Views')
+    .locator('li')
+    .filter({ hasText: 'State Generator' })
+    .locator('span')
+    .click();
+  await page.getByRole('switch').click();
+  await page.selectOption('select[name="setSelectionThreshold"]', filterOption);
+}
+
 async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LAYOUT_NAME) {
-  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);
   await addLayoutObject(page, DISPLAY_LAYOUT_NAME, layoutObject);
   expect(
     await page
@@ -440,7 +652,7 @@ async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LA
       .count()
   ).toBe(1);
   await removeLayoutObject(page, layoutObject);
-  expect(await page.getByLabel(layoutObject, { exact: true }).count()).toBe(0);
+  await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);
 }
 
 /**
@@ -456,7 +668,7 @@ async function removeLayoutObject(page, layoutObject) {
     // eslint-disable-next-line playwright/no-force-option
     .click({ force: true });
   await page.getByTitle('Delete the selected object').click();
-  await page.getByRole('button', { name: 'OK', exact: true }).click();
+  await page.getByRole('button', { name: 'Ok', exact: true }).click();
 }
 
 /**
@@ -475,10 +687,10 @@ async function addLayoutObject(page, layoutName, layoutObject) {
     .click();
   if (layoutObject === 'Text') {
     await page.getByRole('textbox', { name: 'Text' }).fill('Hello, Universe!');
-    await page.getByText('OK').click();
+    await page.getByText('Ok').click();
   } else if (layoutObject === 'Image') {
     await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
-    await page.getByText('OK').click();
+    await page.getByText('Ok').click();
   }
 }
 

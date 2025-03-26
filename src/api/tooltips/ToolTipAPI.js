@@ -24,12 +24,12 @@ import Tooltip from './ToolTip.js';
 
 /**
  * @readonly
- * @enum {String} TooltipLocation
- * @property {String} ABOVE The string for locating tooltips above an element
- * @property {String} BELOW The string for locating tooltips below an element
- * @property {String} RIGHT The pixel-spatial annotation type
- * @property {String} LEFT The temporal annotation type
- * @property {String} CENTER The plot-spatial annotation type
+ * @enum {string} TooltipLocation
+ * @property {string} ABOVE The string for locating tooltips above an element
+ * @property {string} BELOW The string for locating tooltips below an element
+ * @property {string} RIGHT The pixel-spatial annotation type
+ * @property {string} LEFT The temporal annotation type
+ * @property {string} CENTER The plot-spatial annotation type
  */
 const TOOLTIP_LOCATIONS = Object.freeze({
   ABOVE: 'above',
@@ -43,7 +43,6 @@ const TOOLTIP_LOCATIONS = Object.freeze({
  * The TooltipAPI is responsible for adding custom tooltips to
  * the desired elements on the screen
  *
- * @memberof api/tooltips
  * @constructor
  */
 

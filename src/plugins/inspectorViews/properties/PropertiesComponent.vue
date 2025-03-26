@@ -22,7 +22,10 @@
 
 <template>
   <div>
-    <div class="c-inspector__properties c-inspect-properties">
+    <div
+      class="c-inspector__properties c-inspect-properties"
+      aria-label="Inspector Properties Details"
+    >
       <div class="c-inspect-properties__header">Details</div>
       <ul v-if="hasDetails" class="c-inspect-properties__section">
         <Component
@@ -93,6 +96,8 @@ export default {
       const createdTimestamp = this.domainObject.created;
       const createdBy = this.domainObject.createdBy ? this.domainObject.createdBy : UNKNOWN_USER;
       const modifiedBy = this.domainObject.modifiedBy ? this.domainObject.modifiedBy : UNKNOWN_USER;
+      const locked = this.domainObject.locked;
+      const lockedBy = this.domainObject.lockedBy ?? UNKNOWN_USER;
       const modifiedTimestamp = this.domainObject.modified
         ? this.domainObject.modified
         : this.domainObject.created;
@@ -142,6 +147,13 @@ export default {
         details.push({
           name: 'Modified',
           value: formattedModifiedTimestamp
+        });
+      }
+
+      if (locked === true) {
+        details.push({
+          name: 'Locked By',
+          value: lockedBy
         });
       }
 

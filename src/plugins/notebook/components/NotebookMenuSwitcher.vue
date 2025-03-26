@@ -23,11 +23,11 @@
   <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
     <button
       class="c-icon-button c-button--menu icon-camera"
-      aria-label="Take a Notebook Snapshot"
-      title="Take a Notebook Snapshot"
+      :aria-label="snapshotMenuLabel"
+      :title="snapshotMenuLabel"
       @click.stop.prevent="showMenu"
     >
-      <span title="Take Notebook Snapshot" class="c-icon-button__label"> Snapshot </span>
+      <span class="c-icon-button__label">Snapshot</span>
     </button>
   </div>
 </template>
@@ -71,6 +71,11 @@ export default {
       notebookSnapshot: undefined,
       notebookTypes: []
     };
+  },
+  computed: {
+    snapshotMenuLabel() {
+      return 'Open the Notebook Snapshot Menu';
+    }
   },
   mounted() {
     validateNotebookStorageObject();
@@ -118,7 +123,7 @@ export default {
         const objectPath = this.objectPath || this.openmct.router.path;
         const link = this.isPreview ? this.getPreviewObjectLink() : window.location.hash;
         const snapshotMeta = {
-          bounds: this.openmct.time.bounds(),
+          bounds: this.openmct.time.getBounds(),
           link,
           objectPath,
           openmct: this.openmct

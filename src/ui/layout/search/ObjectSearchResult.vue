@@ -54,10 +54,11 @@
 </template>
 
 <script>
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
-import identifierToString from '../../../tools/url.js';
+import { objectPathToUrl } from '../../../tools/url.js';
 import ObjectPath from '../../components/ObjectPath.vue';
-import PreviewAction from '../../preview/PreviewAction.js';
 
 export default {
   name: 'ObjectSearchResult',
@@ -88,7 +89,7 @@ export default {
     }
   },
   mounted() {
-    this.previewAction = new PreviewAction(this.openmct);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
     this.previewAction.on('isVisible', this.togglePreviewState);
   },
   unmounted() {
@@ -101,7 +102,7 @@ export default {
         event.preventDefault();
         this.preview(objectPath);
       } else {
-        let resultUrl = identifierToString(this.openmct, objectPath);
+        let resultUrl = objectPathToUrl(this.openmct, objectPath);
 
         // Remove the vestigial 'ROOT' identifier from url if it exists
         if (resultUrl.includes('/ROOT')) {

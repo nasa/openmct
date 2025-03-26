@@ -34,29 +34,90 @@
  */
 
 import AxeBuilder from '@axe-core/playwright';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { expect, test } from './pluginFixtures.js';
-
 // Constants for repeated values
-const TEST_RESULTS_DIR = './test-results';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const TEST_RESULTS_DIR = path.join(__dirname, './test-results');
+
+const extendedTest = test.extend({
+  /**
+   * Overrides the default screenshot function to apply default options that should apply to all
+   * screenshots taken in the AVP tests.
+   *
+   * @param {import('@playwright/test').PlaywrightTestArgs} args - The Playwright test arguments.
+   * @param {Function} use - The function to use the page object.
+   * Defaults:
+   * - Disables animations
+   * - Masks the clock indicator
+   * - Masks the time conductor last update time in realtime mode
+   * - Masks the time conductor start bounds in fixed mode
+   * - Masks the time conductor end bounds in fixed mode
+   */
+  page: async ({ page }, use) => {
+    const playwrightScreenshot = page.screenshot;
+
+    /**
+     * Override the screenshot function to always mask a given set of locators which will always
+     * show variance across screenshots. Defaults may be overridden by passing in options to the
+     * screenshot function.
+     * @param {import('@playwright/test').PageScreenshotOptions} options - The options for the screenshot.
+     * @returns {Promise<Buffer>} Returns the screenshot as a buffer.
+     */
+    page.screenshot = async function (options = {}) {
+      const mask = [
+        this.getByLabel('Clock Indicator'), // Mask the clock indicator
+        this.getByLabel('Last update'), // Mask the time conductor last update time in realtime mode
+        this.getByLabel('Start bounds'), // Mask the time conductor start bounds in fixed mode
+        this.getByLabel('End bounds') // Mask the time conductor end bounds in fixed mode
+      ];
+
+      const result = await playwrightScreenshot.call(this, {
+        animations: 'disabled',
+        mask,
+        ...options // Pass through or override any options
+      });
+      return result;
+    };
+
+    await use(page);
+  }
+});
+
+/**
+ * Writes the accessibility report to the specified path.
+ *
+ * @param {string} reportPath - The path to write the report to.
+ * @param {Object} accessibilityScanResults - The results of the accessibility scan.
+ * @returns {Promise<Object>} The accessibility scan results.
+ * @throws Will throw an error if writing the report fails.
+ */
+async function writeAccessibilityReport(reportPath, accessibilityScanResults) {
+  try {
+    await fs.mkdir(path.dirname(reportPath), { recursive: true });
+    const data = JSON.stringify(accessibilityScanResults, null, 2);
+    await fs.writeFile(reportPath, data);
+    console.log(`Accessibility report with violations saved successfully as ${reportPath}`);
+    return accessibilityScanResults;
+  } catch (err) {
+    console.error(`Error writing the accessibility report to file ${reportPath}:`, err);
+    throw err;
+  }
+}
 
 /**
  * Scans for accessibility violations on a page and writes a report to disk if violations are found.
  * Automatically asserts that no violations should be present.
  *
- * @typedef {object} GenerateReportOptions
- * @property {string} [reportName] - The name for the report file.
- *
  * @param {import('playwright').Page} page - The page object from Playwright.
  * @param {string} testCaseName - The name of the test case.
- * @param {GenerateReportOptions} [options={}] - The options for the report generation.
- *
- * @returns {Promise<object|null>} Returns the accessibility scan results if violations are found,
- *                                  otherwise returns null.
+ * @param {{ reportName?: string }} [options={}] - The options for the report generation.
+ * @returns {Promise<Object|null>} Returns the accessibility scan results if violations are found, otherwise returns null.
  */
-/* eslint-disable no-undef */
+
 export async function scanForA11yViolations(page, testCaseName, options = {}) {
   const builder = new AxeBuilder({ page });
   builder.withTags(['wcag2aa']);
@@ -64,25 +125,29 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
   const accessibilityScanResults = await builder.analyze();
 
   // Assert that no violations should be present
-  expect(
-    accessibilityScanResults.violations,
-    `Accessibility violations found in test case: ${testCaseName}`
-  ).toEqual([]);
+  expect
+    .soft(
+      accessibilityScanResults.violations,
+      `Accessibility violations found in test case: ${testCaseName}`
+    )
+    .toEqual([]);
 
   // Check if there are any violations
   if (accessibilityScanResults.violations.length > 0) {
-    let reportName = options.reportName || testCaseName;
-    let sanitizedReportName = reportName.replace(/\//g, '_');
-    const reportPath = path.join(TEST_RESULTS_DIR, `${sanitizedReportName}.json`);
+    const reportName = options.reportName || testCaseName;
+    const sanitizedReportName = reportName.replace(/\//g, '_');
+    const reportPath = path.join(
+      TEST_RESULTS_DIR,
+      'a11y-json-reports',
+      `${sanitizedReportName}.json`
+    );
 
     try {
-      if (!fs.existsSync(TEST_RESULTS_DIR)) {
-        fs.mkdirSync(TEST_RESULTS_DIR);
-      }
+      await page.screenshot({
+        path: path.join(TEST_RESULTS_DIR, 'a11y-screenshots', `${sanitizedReportName}.png`)
+      });
 
-      fs.writeFileSync(reportPath, JSON.stringify(accessibilityScanResults, null, 2));
-      console.log(`Accessibility report with violations saved successfully as ${reportPath}`);
-      return accessibilityScanResults;
+      return await writeAccessibilityReport(reportPath, accessibilityScanResults);
     } catch (err) {
       console.error(`Error writing the accessibility report to file ${reportPath}:`, err);
       throw err;
@@ -93,4 +158,4 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
   }
 }
 
-export { expect, test };
+export { expect, extendedTest as test };

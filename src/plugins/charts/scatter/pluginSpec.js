@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
@@ -117,7 +117,7 @@ describe('the plugin', function () {
   describe('The scatter plot view', () => {
     let testDomainObject;
     let scatterPlotObject;
-    // eslint-disable-next-line no-unused-vars
+
     let mockComposition;
 
     beforeEach(async () => {

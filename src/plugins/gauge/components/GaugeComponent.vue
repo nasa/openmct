@@ -20,18 +20,23 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
+  <!-- TODO: Better a11y for Gauges. See https://github.com/nasa/openmct/issues/7790 -->
   <div
     ref="gaugeWrapper"
     class="c-gauge__wrapper js-gauge-wrapper"
     :class="gaugeClasses"
-    :aria-label="gaugeTitle"
     :title="gaugeTitle"
+    :aria-valuemin="rangeLow"
+    :aria-valuemax="rangeHigh"
+    :aria-valuenow="curVal"
+    :aria-valuetext="`Current value: ${curVal}`"
   >
     <template v-if="typeDial">
       <svg
         ref="gauge"
         class="c-gauge c-dial"
         viewBox="0 0 10 10"
+        role="meter"
         @mouseover.ctrl="showToolTip"
         @mouseleave="hideToolTip"
       >
@@ -220,6 +225,7 @@
             lengthAdjust="spacing"
             text-anchor="middle"
             dominant-baseline="middle"
+            :aria-label="`gauge value of ${curVal}`"
             x="50%"
             y="50%"
           >
@@ -232,7 +238,7 @@
     </template>
 
     <template v-if="typeMeter">
-      <div class="c-meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
+      <div class="c-meter" role="meter" @mouseover.ctrl="showToolTip" @mouseleave="hideToolTip">
         <div v-if="displayMinMax" class="c-gauge__range c-meter__range js-gauge-meter-range">
           <div class="c-meter__range__high">{{ rangeHigh }}</div>
           <div class="c-meter__range__low">{{ rangeLow }}</div>
@@ -362,7 +368,7 @@ export default {
       rangeLow: gaugeController.min,
       gaugeType: gaugeController.gaugeType,
       showUnits: gaugeController.showUnits,
-      activeTimeSystem: this.openmct.time.timeSystem(),
+      activeTimeSystem: this.openmct.time.getTimeSystem(),
       units: ''
     };
   },
@@ -544,7 +550,7 @@ export default {
 
     this.composition.load();
 
-    this.openmct.time.on('bounds', this.refreshData);
+    this.openmct.time.on('boundsChanged', this.refreshData);
     this.openmct.time.on('timeSystem', this.setTimeSystem);
 
     this.setupClockChangedEvent((domainObject) => {
@@ -560,7 +566,7 @@ export default {
       this.unsubscribe();
     }
 
-    this.openmct.time.off('bounds', this.refreshData);
+    this.openmct.time.off('boundsChanged', this.refreshData);
     this.openmct.time.off('timeSystem', this.setTimeSystem);
   },
   methods: {
@@ -643,6 +649,11 @@ export default {
     },
     request(domainObject = this.telemetryObject) {
       this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+
+      if (!this.metadata) {
+        return;
+      }
+
       this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
       const LimitEvaluator = this.openmct.telemetry.getLimits(domainObject);
       LimitEvaluator.limits().then(this.updateLimits);
@@ -725,7 +736,7 @@ export default {
         return;
       }
 
-      const { start, end } = this.openmct.time.bounds();
+      const { start, end } = this.openmct.time.getBounds();
       const parsedValue = this.timeFormatter.parse(this.datum);
 
       const beforeStartOfBounds = parsedValue < start;

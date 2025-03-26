@@ -40,12 +40,10 @@ export default class ConditionSetTelemetryProvider {
     return domainObject.type === 'conditionSet';
   }
 
-  request(domainObject, options) {
+  async request(domainObject, options) {
     let conditionManager = this.getConditionManager(domainObject);
-
-    return conditionManager.requestLADConditionSetOutput(options).then((latestOutput) => {
-      return latestOutput;
-    });
+    let latestOutput = await conditionManager.requestLADConditionSetOutput(options);
+    return latestOutput;
   }
 
   subscribe(domainObject, callback) {

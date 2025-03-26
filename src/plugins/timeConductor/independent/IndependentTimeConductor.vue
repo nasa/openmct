@@ -27,6 +27,7 @@
       isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
       { 'is-expanded': independentTCEnabled }
     ]"
+    aria-label="Independent Time Conductor Panel"
   >
     <ToggleSwitch
       id="independentTCToggle"
@@ -242,12 +243,20 @@ export default {
       this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setTimeOptionsMode);
     },
     setTimeOptionsClock(clock) {
+      // If the user has persisted any time options, then don't override them with global settings.
+      if (this.independentTCEnabled) {
+        return;
+      }
       this.setTimeOptionsOffsets();
       this.timeOptions.clock = clock.key;
     },
     setTimeOptionsMode(mode) {
-      this.setTimeOptionsOffsets();
-      this.timeOptions.mode = mode;
+      // If the user has persisted any time options, then don't override them with global settings.
+      if (this.independentTCEnabled) {
+        this.setTimeOptionsOffsets();
+        this.timeOptions.mode = mode;
+        this.isFixed = this.timeOptions.mode === FIXED_MODE_KEY;
+      }
     },
     setTimeOptionsOffsets() {
       this.timeOptions.clockOffsets =

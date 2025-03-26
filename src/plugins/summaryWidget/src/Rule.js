@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import * as templateHelpers from '../../../utils/template/templateHelpers.js';
@@ -161,7 +161,6 @@ export default function Rule(
    */
   function onDragStart(event) {
     document.querySelectorAll('.t-drag-indicator').forEach((indicator) => {
-      // eslint-disable-next-line no-invalid-this
       const ruleHeader = self.domElement.querySelectorAll('.widget-rule-header')[0].cloneNode(true);
       indicator.textContent = '';
       indicator.appendChild(ruleHeader);
