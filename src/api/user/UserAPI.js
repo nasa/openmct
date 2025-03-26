@@ -20,33 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 
 import { MULTIPLE_PROVIDER_ERROR, NO_PROVIDER_ERROR } from './constants.js';
 import StatusAPI from './StatusAPI.js';
-import StoragePersistance from './StoragePersistance.js';
+import StoragePersistence from './StoragePersistence.js';
 import User from './User.js';
 
 class UserAPI extends EventEmitter {
   /**
-   * @param {OpenMCT} openmct
-   * @param {UserAPIConfiguration} config
+   * @type {OpenMCT}
    */
-  constructor(openmct, config) {
+  #openmct;
+  /**
+   * @param {OpenMCT} openmct
+   */
+  constructor(openmct) {
     super();
 
-    this._openmct = openmct;
+    this.#openmct = openmct;
     this._provider = undefined;
 
     this.User = User;
-    this.status = new StatusAPI(this, openmct, config);
+    this.status = new StatusAPI(this, openmct);
   }
 
   /**
    * Set the user provider for the user API. This allows you
    *  to specify ONE user provider to be used with Open MCT.
    * @method setProvider
-   * @memberof module:openmct.UserAPI#
    * @param {module:openmct.UserAPI~UserProvider} provider the new
    *        user provider
    */
@@ -66,7 +68,6 @@ class UserAPI extends EventEmitter {
   /**
    * Return true if the user provider has been set.
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {boolean} true if the user provider exists
    */
   hasProvider() {
@@ -77,7 +78,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return a copy of a user object from
    * the provider. If the user is not logged in, it will return undefined;
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|Promise} user provider 'getCurrentUser' method
    * @throws Will throw an error if no user provider is set
    */
@@ -91,7 +91,6 @@ class UserAPI extends EventEmitter {
   /**
    *  If a user provider is set, it will return an array of possible roles
    *  that can be selected by the current user
-   *  @memberof module:openmct.UserAPI#
    *  @returns {Array}
    *  @throws Will throw an error if no user provider is set
    */
@@ -104,7 +103,6 @@ class UserAPI extends EventEmitter {
   }
   /**
    * If a user provider is set, it will return the active role or null
-   * @memberof module:openmct.UserAPI#
    * @returns {string|null}
    */
   getActiveRole() {
@@ -113,28 +111,26 @@ class UserAPI extends EventEmitter {
     }
 
     // get from session storage
-    const sessionStorageValue = StoragePersistance.getActiveRole();
+    const sessionStorageValue = StoragePersistence.getActiveRole();
 
     return sessionStorageValue;
   }
   /**
    * Set the active role in session storage
-   * @memberof module:openmct.UserAPI#
    * @returns {undefined}
    */
   setActiveRole(role) {
     if (!role) {
-      StoragePersistance.clearActiveRole();
+      StoragePersistence.clearActiveRole();
     } else {
-      StoragePersistance.setActiveRole(role);
+      StoragePersistence.setActiveRole(role);
     }
     this.emit('roleChanged', role);
   }
 
   /**
    * Will return if a role can provide a operator status response
-   * @memberof module:openmct.UserApi#
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   canProvideStatusForRole() {
     if (!this.hasProvider()) {
@@ -149,7 +145,6 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return the user provider's
    * 'isLoggedIn' method
    *
-   * @memberof module:openmct.UserAPI#
    * @returns {Function|Boolean} user provider 'isLoggedIn' method
    * @throws Will throw an error if no user provider is set
    */
@@ -165,8 +160,7 @@ class UserAPI extends EventEmitter {
    * If a user provider is set, it will return a call to it's
    * 'hasRole' method
    *
-   * @memberof module:openmct.UserAPI#
-   * @returns {Function|Boolean} user provider 'isLoggedIn' method
+   * @returns {Function|boolean} user provider 'isLoggedIn' method
    * @param {string} roleId id of role to check for
    * @throws Will throw an error if no user provider is set
    */
@@ -201,20 +195,19 @@ class UserAPI extends EventEmitter {
 }
 
 export default UserAPI;
+
 /**
- * @typedef {String} Role
+ * @typedef {string} Role
+ * @typedef {import('../../MCT.js').MCT} OpenMCT
+ * @typedef {{statusStyles: Record<string, StatusStyleDefinition>}} UserAPIConfiguration
+ * @typedef {Object} UserProvider
  */
-/**
- * @typedef {Object} OpenMCT
- */
-/**
- * @typedef {{statusStyles: Object.<string, StatusStyleDefinition>}} UserAPIConfiguration
- */
+
 /**
  * @typedef {Object} StatusStyleDefinition
- * @property {String} iconClass The icon class to apply to the status indicator when this status is active "icon-circle-slash",
- * @property {String} iconClassPoll The icon class to apply to the poll question indicator when this style is active eg. "icon-status-poll-question-mark"
- * @property {String} statusClass The class to apply to the indicator when this status is active eg. "s-status-error"
- * @property {String} statusBgColor The background color to apply in the status summary section of the poll question popup for this status eg."#9900cc"
- * @property {String} statusFgColor The foreground color to apply in the status summary section of the poll question popup for this status eg. "#fff"
+ * @property {string} iconClass The icon class to apply to the status indicator when this status is active "icon-circle-slash",
+ * @property {string} iconClassPoll The icon class to apply to the poll question indicator when this style is active eg. "icon-status-poll-question-mark"
+ * @property {string} statusClass The class to apply to the indicator when this status is active eg. "s-status-error"
+ * @property {string} statusBgColor The background color to apply in the status summary section of the poll question popup for this status eg."#9900cc"
+ * @property {string} statusFgColor The foreground color to apply in the status summary section of the poll question popup for this status eg. "#fff"
  */

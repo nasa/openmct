@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <time-popup-fixed
+  <TimePopupFixed
     v-if="readOnly === false"
     :input-bounds="bounds"
     :input-time-system="timeSystem"
@@ -32,7 +32,7 @@
     <div
       class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
       :title="`Start bounds: ${formattedBounds.start}`"
-      aria-label="Start bounds"
+      :aria-label="`Start bounds: ${formattedBounds.start}`"
     >
       {{ formattedBounds.start }}
     </div>
@@ -40,7 +40,7 @@
     <div
       class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
       :title="`End bounds: ${formattedBounds.end}`"
-      aria-label="End bounds"
+      :aria-label="`End bounds: ${formattedBounds.end}`"
     >
       {{ formattedBounds.end }}
     </div>

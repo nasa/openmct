@@ -30,13 +30,11 @@
 
     <div
       class="c-fl__container-holder u-style-receiver js-style-receiver"
-      :class="{
-        'c-fl--rows': rowsLayout === true
-      }"
-      :aria-label="`Flexible Layout ${rowsLayout ? 'Row' : 'Column'}`"
+      :class="flexLayoutCssClass"
+      :aria-label="`Flexible Layout ${rowsLayout ? 'Rows' : 'Columns'}`"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
-        <drop-hint
+        <DropHint
           v-if="index === 0 && containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="-1"
@@ -44,8 +42,7 @@
           @object-drop-to="moveContainer"
         />
 
-        <container-component
-          class="c-fl__container"
+        <ContainerComponent
           :index="index"
           :container="container"
           :rows-layout="rowsLayout"
@@ -57,7 +54,7 @@
           @persist="persist"
         />
 
-        <resize-handle
+        <ResizeHandle
           v-if="index !== containers.length - 1"
           :index="index"
           :drag-orientation="rowsLayout ? 'vertical' : 'horizontal'"
@@ -67,7 +64,7 @@
           @end-move="endContainerResizing"
         />
 
-        <drop-hint
+        <DropHint
           v-if="containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="index"
@@ -148,15 +145,11 @@ export default {
     };
   },
   computed: {
-    layoutDirectionStr() {
-      if (this.rowsLayout) {
-        return 'Rows';
-      } else {
-        return 'Columns';
-      }
-    },
     allContainersAreEmpty() {
       return this.containers.every((container) => container.frames.length === 0);
+    },
+    flexLayoutCssClass() {
+      return this.rowsLayout ? 'c-fl--rows' : 'c-fl--cols';
     }
   },
   created() {

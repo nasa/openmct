@@ -26,7 +26,11 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 import { fileURLToPath } from 'url';
 
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  renameCurrentObjectFromBrowseBar
+} from '../../../../appActions.js';
+import { copy, paste, selectAll } from '../../../../helper/hotkeys/hotkeys.js';
 import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, streamToString, test } from '../../../../pluginFixtures.js';
 
@@ -258,7 +262,7 @@ test.describe('Notebook export tests', () => {
     const exportedText = await streamToString(readStream);
     expect(exportedText).toContain('Foo bar entry');
   });
-  test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+  test.fixme('can export multiple notebook entries as text', async ({ page }) => {});
   test.fixme('can export all notebook entry metdata', async ({ page }) => {});
   test.fixme('can export all notebook tags', async ({ page }) => {});
   test.fixme('can export all notebook snapshots', async ({ page }) => {});
@@ -277,7 +281,6 @@ test.describe('Notebook entry tests', () => {
   // Create Notebook with URL Whitelist
   let notebookObject;
   test.beforeEach(async ({ page }) => {
-    // eslint-disable-next-line no-undef
     await page.addInitScript({
       path: fileURLToPath(new URL('../../../../helper/addInitNotebookWithUrls.js', import.meta.url))
     });
@@ -296,7 +299,7 @@ test.describe('Notebook entry tests', () => {
     await expect(page.getByLabel('Notebook Entry Input')).toBeVisible();
     await expect(page.getByLabel('Notebook Entry', { exact: true })).toHaveClass(/is-selected/);
   });
-  test('When an object is dropped into a notebook, a new entry is created and it should be focused @unstable', async ({
+  test('When an object is dropped into a notebook, a new entry is created and it should be focused', async ({
     page
   }) => {
     // Create Overlay Plot
@@ -320,7 +323,7 @@ test.describe('Notebook entry tests', () => {
     await expect(embed).toHaveClass(/icon-plot-overlay/);
     expect(embedName).toBe(overlayPlot.name);
   });
-  test('When an object is dropped into a notebooks existing entry, it should be focused @unstable', async ({
+  test('When an object is dropped into a notebooks existing entry, it should be focused', async ({
     page
   }) => {
     // Create Overlay Plot
@@ -354,19 +357,19 @@ test.describe('Notebook entry tests', () => {
     await page.goto(notebookObject.url);
 
     await nbUtils.enterTextEntry(page, 'First Entry');
-    await page.hover('text="First Entry"');
-    await page.click('button[title="Delete this entry"]');
-    await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
-    await expect(page.locator('text="First Entry"')).toBeHidden();
+    await page.getByLabel('Notebook Entry', { exact: true }).hover();
+    await page.getByLabel('Delete this entry').click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    await expect(page.getByText('First Entry')).toBeHidden();
     await nbUtils.enterTextEntry(page, 'Another First Entry');
     await nbUtils.enterTextEntry(page, 'Second Entry');
     await nbUtils.enterTextEntry(page, 'Third Entry');
-    await page.hover('[aria-label="Notebook Entry"] >> nth=2');
-    await page.click('button[title="Delete this entry"] >> nth=2');
-    await page.getByRole('button', { name: 'Ok' }).filter({ hasText: 'Ok' }).click();
-    await expect(page.locator('text="Third Entry"')).toBeHidden();
-    await expect(page.locator('text="Another First Entry"')).toBeVisible();
-    await expect(page.locator('text="Second Entry"')).toBeVisible();
+    await page.getByLabel('Notebook Entry', { exact: true }).nth(2).hover();
+    await page.getByLabel('Delete this entry').nth(2).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    await expect(page.getByText('Third Entry')).toBeHidden();
+    await expect(page.getByText('Another First Entry')).toBeVisible();
+    await expect(page.getByText('Second Entry')).toBeVisible();
   });
   test('when a valid link is entered into a notebook entry, it becomes clickable when viewing', async ({
     page
@@ -383,7 +386,7 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await validLink.count()).toBe(1);
+    await expect(validLink).toHaveCount(1);
 
     // Start waiting for popup before clicking. Note no await.
     const popupPromise = page.waitForEvent('popup');
@@ -410,7 +413,7 @@ test.describe('Notebook entry tests', () => {
 
     const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await invalidLink.count()).toBe(0);
+    await expect(invalidLink).toHaveCount(0);
   });
   test('when a link is entered, but it is not in the whitelisted urls, it does not become clickable when viewing', async ({
     page
@@ -427,7 +430,7 @@ test.describe('Notebook entry tests', () => {
 
     const invalidLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await invalidLink.count()).toBe(0);
+    await expect(invalidLink).toHaveCount(0);
   });
   test('when a valid link with a subdomain and a valid domain in the whitelisted urls is entered into a notebook entry, it becomes clickable when viewing', async ({
     page
@@ -444,7 +447,7 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${INVALID_TEST_LINK}"]`);
 
-    expect(await validLink.count()).toBe(1);
+    await expect(validLink).toHaveCount(1);
   });
   test('when a valid secure link is entered into a notebook entry, it becomes clickable when viewing', async ({
     page
@@ -461,7 +464,7 @@ test.describe('Notebook entry tests', () => {
 
     const validLink = page.locator(`a[href="${TEST_LINK}"]`);
 
-    expect(await validLink.count()).toBe(1);
+    await expect(validLink).toHaveCount(1);
 
     // Start waiting for popup before clicking. Note no await.
     const popupPromise = page.waitForEvent('popup');
@@ -494,7 +497,7 @@ test.describe('Notebook entry tests', () => {
     const unsanitizedLink = page.locator(`a[href="${TEST_LINK_BAD}"]`);
 
     expect.soft(await sanitizedLink.count()).toBe(1);
-    expect(await unsanitizedLink.count()).toBe(0);
+    await expect(unsanitizedLink).toHaveCount(0);
   });
   test('Can add markdown to a notebook entry', async ({ page }) => {
     await page.goto(notebookObject.url);
@@ -547,4 +550,110 @@ test.describe('Notebook entry tests', () => {
     );
     await expect(secondLineOfBlockquoteText).toBeVisible();
   });
+
+  /**
+   *  Paste into notebook entry tests
+   */
+  test('Can paste text into a notebook entry', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7686'
+    });
+    const TEST_TEXT = 'This is a test';
+    const iterations = 20;
+    const EXPECTED_TEXT = TEST_TEXT.repeat(iterations);
+
+    await page.goto(notebookObject.url);
+
+    await nbUtils.addNotebookEntry(page);
+    await nbUtils.enterTextInLastEntry(page, TEST_TEXT);
+    await selectAll(page);
+    await copy(page);
+    for (let i = 0; i < iterations; i++) {
+      await paste(page);
+    }
+    await nbUtils.commitEntry(page);
+
+    await expect(page.locator(`text="${EXPECTED_TEXT}"`)).toBeVisible();
+  });
+
+  test('Prevents pasting text into selected notebook entry if not editing', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7686'
+    });
+    const TEST_TEXT = 'This is a test';
+
+    await page.goto(notebookObject.url);
+
+    await nbUtils.addNotebookEntry(page);
+    await nbUtils.enterTextInLastEntry(page, TEST_TEXT);
+    await selectAll(page);
+    await copy(page);
+    await paste(page);
+    await nbUtils.commitEntry(page);
+
+    // This should not paste text into the entry
+    await paste(page);
+
+    await expect(await page.locator(`text="${TEST_TEXT.repeat(1)}"`).count()).toEqual(1);
+    await expect(await page.locator(`text="${TEST_TEXT.repeat(2)}"`).count()).toEqual(0);
+  });
+
+  test('When changing the name of a notebook in the browse bar, new notebook changes are not lost', async ({
+    page
+  }) => {
+    const TEST_TEXT = 'Do not lose me!';
+    const FIRST_NEW_NAME = 'New Name';
+    const SECOND_NEW_NAME = 'Second New Name';
+
+    await page.goto(notebookObject.url);
+
+    await page.getByLabel('Expand My Items folder').click();
+
+    await renameCurrentObjectFromBrowseBar(page, FIRST_NEW_NAME);
+
+    // verify the name change in tree and browse bar
+    await verifyNameChange(page, FIRST_NEW_NAME);
+
+    // enter one entry
+    await enterAndCommitTextEntry(page, TEST_TEXT);
+
+    // verify the entry is present
+    await expect(await page.locator(`text="${TEST_TEXT}"`).count()).toEqual(1);
+
+    // change the name
+    await renameCurrentObjectFromBrowseBar(page, SECOND_NEW_NAME);
+
+    // verify the name change in tree and browse bar
+    await verifyNameChange(page, SECOND_NEW_NAME);
+
+    // verify the entry is still present
+    await expect(await page.locator(`text="${TEST_TEXT}"`).count()).toEqual(1);
+  });
 });
+
+/**
+ * Enter text into the last notebook entry and commit it.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} text
+ */
+async function enterAndCommitTextEntry(page, text) {
+  await nbUtils.addNotebookEntry(page);
+  await nbUtils.enterTextInLastEntry(page, text);
+  await nbUtils.commitEntry(page);
+}
+
+/**
+ * Verify the name change in the tree and browse bar.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} newName
+ */
+async function verifyNameChange(page, newName) {
+  await expect(
+    page.getByRole('treeitem').locator('.is-navigated-object .c-tree__item__name')
+  ).toHaveText(newName);
+  await expect(page.getByLabel('Browse bar object name')).toHaveText(newName);
+}

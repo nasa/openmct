@@ -23,7 +23,7 @@
 <template>
   <div ref="timelistHolder" :class="listTypeClass">
     <template v-if="isExpanded">
-      <expanded-view-item
+      <ExpandedViewItem
         v-for="item in sortedItems"
         :key="item.key"
         :name="item.name"
@@ -35,42 +35,39 @@
         :item-properties="itemProperties"
         :execution-state="persistedActivityStates[item.id]"
         @click.stop="setSelectionForActivity(item, $event.currentTarget)"
-      >
-      </expanded-view-item>
+      />
     </template>
-    <div v-else class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
-      <table class="c-table__body js-table__body">
-        <thead class="c-table__header">
-          <tr>
-            <list-header
-              v-for="headerItem in headerItems"
-              :key="headerItem.property"
-              :direction="
-                defaultSort.property === headerItem.property
-                  ? defaultSort.defaultDirection
-                  : headerItem.defaultDirection
-              "
-              :is-sortable="headerItem.isSortable"
-              :aria-label="headerItem.name"
-              :title="headerItem.name"
-              :property="headerItem.property"
-              :current-sort="defaultSort.property"
-              @sort="sort"
+    <template v-else>
+      <div class="c-table c-table--sortable c-list-view c-list-view--sticky-header sticky">
+        <table class="c-table__body js-table__body">
+          <thead class="c-table__header">
+            <tr>
+              <ListHeader
+                v-for="headerItem in headerItems"
+                :key="headerItem.property"
+                :direction="getSortDirection(headerItem)"
+                :is-sortable="headerItem.isSortable"
+                :aria-label="headerItem.name"
+                :title="headerItem.name"
+                :property="headerItem.property"
+                :current-sort="defaultSort.property"
+                @sort="sort"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <ListItem
+              v-for="item in sortedItems"
+              :key="item.key"
+              :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
+              :item="item"
+              :item-properties="itemProperties"
+              @click.stop="setSelectionForActivity(item, $event.currentTarget)"
             />
-          </tr>
-        </thead>
-        <tbody>
-          <list-item
-            v-for="item in sortedItems"
-            :key="item.key"
-            :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
-            :item="item"
-            :item-properties="itemProperties"
-            @click.stop="setSelectionForActivity(item, $event.currentTarget)"
-          />
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -100,7 +97,7 @@ const headerItems = [
     property: 'start',
     name: 'Start Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -115,7 +112,7 @@ const headerItems = [
     property: 'end',
     name: 'End Time',
     format: function (value, object, key, openmct, options = {}) {
-      const timeFormat = openmct.time.timeSystem().timeFormat;
+      const timeFormat = openmct.time.getTimeSystem().timeFormat;
       const timeFormatter = openmct.telemetry.getValueFormatter({ format: timeFormat }).formatter;
       if (options.skipDateForToday) {
         return timeFormatter.format(value, SAME_DAY_PRECISION_SECONDS);
@@ -428,16 +425,19 @@ export default {
     },
     isActivityInBounds(activity) {
       const startInBounds =
-        activity.start >= this.timeContext.bounds()?.start &&
-        activity.start <= this.timeContext.bounds()?.end;
+        activity.start >= this.timeContext.getBounds()?.start &&
+        activity.start <= this.timeContext.getBounds()?.end;
       const endInBounds =
-        activity.end >= this.timeContext.bounds()?.start &&
-        activity.end <= this.timeContext.bounds()?.end;
+        activity.end >= this.timeContext.getBounds()?.start &&
+        activity.end <= this.timeContext.getBounds()?.end;
       const middleInBounds =
-        activity.start <= this.timeContext.bounds()?.start &&
-        activity.end >= this.timeContext.bounds()?.end;
+        activity.start <= this.timeContext.getBounds()?.start &&
+        activity.end >= this.timeContext.getBounds()?.end;
 
       return startInBounds || endInBounds || middleInBounds;
+    },
+    isActivityInProgress(activity) {
+      return this.persistedActivityStates[activity.id] === 'in-progress';
     },
     filterActivities(activity) {
       if (this.isEditing) {
@@ -463,7 +463,8 @@ export default {
         return false;
       }
 
-      if (!this.isActivityInBounds(activity)) {
+      // An activity may be out of bounds, but if it is in-progress, we show it.
+      if (!this.isActivityInBounds(activity) && !this.isActivityInProgress(activity)) {
         return false;
       }
       //current event or future start event or past end event
@@ -526,20 +527,16 @@ export default {
       return activities.map(this.styleActivity);
     },
     setSort() {
-      const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
-      const property = sortOrder.property;
-      const direction = sortOrder.direction.toLowerCase() === 'asc';
+      const { property, direction } =
+        SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
       this.defaultSort = {
         property,
-        defaultDirection: direction
+        defaultDirection: direction.toLowerCase() === 'asc'
       };
     },
     sortItems(activities) {
-      let sortedItems = _.sortBy(activities, this.defaultSort.property);
-      if (!this.defaultSort.defaultDirection) {
-        sortedItems = sortedItems.reverse();
-      }
-      return sortedItems;
+      const sortedItems = _.sortBy(activities, this.defaultSort.property);
+      return this.defaultSort.defaultDirection ? sortedItems : sortedItems.reverse();
     },
     setStatus(status) {
       this.status = status;
@@ -548,10 +545,7 @@ export default {
       this.isEditing = isEditing;
       this.setViewFromConfig(this.domainObject.configuration);
     },
-    sort(data) {
-      const property = data.property;
-      const direction = data.direction;
-
+    sort({ property, direction }) {
       if (this.defaultSort.property === property) {
         this.defaultSort.defaultDirection = !this.defaultSort.defaultDirection;
       } else {
@@ -565,10 +559,10 @@ export default {
       this.openmct.selection.select(
         [
           {
-            element: element,
+            element,
             context: {
               type: 'activity',
-              activity: activity
+              activity
             }
           },
           {
@@ -581,6 +575,11 @@ export default {
         ],
         multiSelect
       );
+    },
+    getSortDirection(headerItem) {
+      return this.defaultSort.property === headerItem.property
+        ? this.defaultSort.defaultDirection
+        : headerItem.defaultDirection;
     }
   }
 };

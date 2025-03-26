@@ -123,7 +123,7 @@ export default {
         const objectPath = this.objectPath || this.openmct.router.path;
         const link = this.isPreview ? this.getPreviewObjectLink() : window.location.hash;
         const snapshotMeta = {
-          bounds: this.openmct.time.bounds(),
+          bounds: this.openmct.time.getBounds(),
           link,
           objectPath,
           openmct: this.openmct

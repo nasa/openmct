@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -25,7 +25,7 @@
     <div v-if="properties.length" class="u-contents">
       <div class="c-inspect-properties__header">{{ heading }}</div>
       <ul v-for="property in properties" :key="property.id" class="c-inspect-properties__section">
-        <activity-property :label="property.label" :value="property.value" />
+        <ActivityProperty :label="property.label" :value="property.value" />
       </ul>
     </div>
   </div>

@@ -247,7 +247,7 @@ export default function ConditionEvaluator(subscriptionCache, compositionObjs) {
  * Evaluate the conditions passed in as an argument, and return the boolean
  * value of these conditions. Available evaluation modes are 'any', which will
  * return true if any of the conditions evaluates to true (i.e. logical OR); 'all',
- * which returns true only if all conditions evalute to true (i.e. logical AND);
+ * which returns true only if all conditions evaluate to true (i.e. logical AND);
  * or 'js', which returns the boolean value of a custom JavaScript conditional.
  * @param {} conditions Either an array of objects with object, key, operation,
  *                      and value fields, or a string representing a JavaScript
@@ -464,7 +464,7 @@ ConditionEvaluator.prototype.getInputTypeById = function (dataType) {
 
 /**
  * Set the test data cache used by this rule evaluator
- * @param {object} testCache A mock cache following the format of the real
+ * @param {Object} testCache A mock cache following the format of the real
  *                           subscription cache
  */
 ConditionEvaluator.prototype.setTestDataCache = function (testCache) {

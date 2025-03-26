@@ -21,28 +21,34 @@
 -->
 <template>
   <div ref="axisHolder" class="c-timesystem-axis">
-    <div class="nowMarker"><span class="icon-arrow-down"></span></div>
+    <div class="nowMarker" :style="nowMarkerStyle" aria-label="Now Marker">
+      <span class="icon-arrow-down"></span>
+    </div>
+    <svg :width="svgWidth" :height="svgHeight">
+      <g class="axis" font-size="1.3em" :transform="axisTransform"></g>
+    </svg>
   </div>
 </template>
 
 <script>
+const AXES_PADDING = 20;
+
 import { axisTop } from 'd3-axis';
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import { select } from 'd3-selection';
-import { onMounted, ref } from 'vue';
+import { inject, onMounted, reactive, ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
+import { useAlignment } from '../composables/alignmentContext';
 import { useResizeObserver } from '../composables/resize';
 
-//TODO: UI direction needed for the following property values
 const PADDING = 1;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
-//This offset needs to be re-considered
 
 export default {
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'path'],
   props: {
     bounds: {
       type: Object,
@@ -67,36 +73,77 @@ export default {
       default() {
         return 'svg';
       }
-    },
-    offset: {
-      type: Number,
-      default() {
-        return 0;
-      }
     }
   },
   setup() {
     const axisHolder = ref(null);
-    const { size, startObserving } = useResizeObserver();
+    const { size: containerSize, startObserving } = useResizeObserver();
+    const svgWidth = ref(0);
+    const svgHeight = ref(0);
+    const axisTransform = ref('translate(0,20)');
+    const alignmentOffset = ref(0);
+    const nowMarkerStyle = reactive({
+      height: '0px',
+      left: '0px'
+    });
+
     onMounted(() => {
       startObserving(axisHolder.value);
     });
+
+    const domainObject = inject('domainObject');
+    const objectPath = inject('path');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, objectPath, openmct);
+
     return {
-      containerSize: size
+      axisHolder,
+      containerSize,
+      alignmentData,
+      svgWidth,
+      svgHeight,
+      axisTransform,
+      alignmentOffset,
+      nowMarkerStyle,
+      openmct
     };
   },
   watch: {
+    alignmentData: {
+      handler() {
+        let leftOffset = 0;
+        if (this.alignmentData.leftWidth) {
+          leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
+        }
+        this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, 20)`;
+
+        const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
+
+        this.leftAlignmentOffset = this.alignmentData.leftWidth + leftOffset;
+        this.alignmentOffset =
+          this.leftAlignmentOffset + this.alignmentData.rightWidth + rightOffset;
+        this.refresh();
+      },
+      deep: true
+    },
     bounds(newBounds) {
+      this.setDimensions();
       this.drawAxis(newBounds, this.timeSystem);
+      this.updateNowMarker();
     },
     timeSystem(newTimeSystem) {
+      this.setDimensions();
       this.drawAxis(this.bounds, newTimeSystem);
+      this.updateNowMarker();
     },
     contentHeight() {
       this.updateNowMarker();
     },
-    containerSize() {
-      this.resize();
+    containerSize: {
+      handler() {
+        this.resize();
+      },
+      deep: true
     }
   },
   mounted() {
@@ -104,17 +151,11 @@ export default {
       this.useSVG = true;
     }
 
-    this.container = select(this.$refs.axisHolder);
-    this.svgElement = this.container.append('svg:svg');
-    // draw x axis with labels. CSS is used to position them.
-    this.axisElement = this.svgElement
-      .append('g')
-      .attr('class', 'axis')
-      .attr('font-size', '1.3em')
-      .attr('transform', 'translate(0,20)');
+    this.container = select(this.axisHolder);
+    this.svgElement = this.container.select('svg');
+    this.axisElement = this.svgElement.select('g.axis');
 
-    this.setDimensions();
-    this.drawAxis(this.bounds, this.timeSystem);
+    this.refresh();
     this.resize();
   },
   unmounted() {
@@ -122,34 +163,37 @@ export default {
   },
   methods: {
     resize() {
-      if (this.$refs.axisHolder.clientWidth !== this.width) {
-        this.setDimensions();
-        this.drawAxis(this.bounds, this.timeSystem);
-        this.updateNowMarker();
+      if (this.axisHolder.clientWidth - this.alignmentOffset !== this.width) {
+        this.refresh();
       }
     },
+    refresh() {
+      this.setDimensions();
+      this.drawAxis(this.bounds, this.timeSystem);
+      this.updateNowMarker();
+    },
     updateNowMarker() {
-      let nowMarker = this.$el.querySelector('.nowMarker');
+      const nowMarker = this.$el.querySelector('.nowMarker');
       if (nowMarker) {
         nowMarker.classList.remove('hidden');
-        nowMarker.style.height = this.contentHeight + 'px';
+        this.nowMarkerStyle.height = this.contentHeight + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
-        nowMarker.style.left = now + this.offset + 'px';
+        this.nowMarkerStyle.left = `${now + this.leftAlignmentOffset}px`;
+        if (now < 0 || now > this.width) {
+          nowMarker.classList.add('hidden');
+        }
       }
     },
     setDimensions() {
-      const axisHolder = this.$refs.axisHolder;
-      this.width = axisHolder.clientWidth;
-      this.offsetWidth = this.width - this.offset;
-
-      this.height = Math.round(axisHolder.getBoundingClientRect().height);
+      this.width = this.axisHolder.clientWidth - (this.alignmentOffset ?? 0);
+      this.height = Math.round(this.axisHolder.getBoundingClientRect().height);
 
       if (this.useSVG) {
-        this.svgElement.attr('width', this.width);
-        this.svgElement.attr('height', this.height);
+        this.svgWidth = this.width;
+        this.svgHeight = this.height;
       } else {
-        this.svgElement.attr('height', 50);
+        this.svgHeight = 50;
       }
     },
     drawAxis(bounds, timeSystem) {
@@ -177,16 +221,16 @@ export default {
         this.xScale.domain([bounds.start, bounds.end]);
       }
 
-      this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
+      this.xScale.range([PADDING, this.width - PADDING * 2]);
     },
     setAxis() {
       this.xAxis = axisTop(this.xScale);
       this.xAxis.tickFormat(utcMultiTimeFormat);
 
       if (this.width > 1800) {
-        this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK_WIDE);
+        this.xAxis.ticks(this.width / PIXELS_PER_TICK_WIDE);
       } else {
-        this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK);
+        this.xAxis.ticks(this.width / PIXELS_PER_TICK);
       }
     }
   }

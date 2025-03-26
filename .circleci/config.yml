@@ -1,59 +1,33 @@
 version: 2.1
+orbs:
+  node: circleci/node@5.2.0
+  browser-tools: circleci/browser-tools@1.3.0
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.39.0-focal
+      - image: mcr.microsoft.com/playwright:v1.48.1-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
-      PERCY_POSTINSTALL_BROWSER: "true" # Needed to store the percy browser in cache deps
-      PERCY_LOGLEVEL: "debug" # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
+      PERCY_POSTINSTALL_BROWSER: 'true' # Needed to store the percy browser in cache deps
+      PERCY_LOGLEVEL: 'debug' # Enable DEBUG level logging for Percy (Issue: https://github.com/nasa/openmct/issues/5742)
+      PERCY_PARALLEL_TOTAL: 2
   ubuntu:
     machine:
       image: ubuntu-2204:current
       docker_layer_caching: true
-parameters:
-  BUST_CACHE:
-    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
-    default: false
-    type: boolean
 commands:
   build_and_install:
-    description: "All steps used to build and install. Will use cache if found"
+    description: 'All steps used to build and install.'
     parameters:
       node-version:
         type: string
     steps:
       - checkout
-      - restore_cache_cmd:
-          node-version: << parameters.node-version >>
       - node/install:
           node-version: << parameters.node-version >>
-      - run: npm install --no-audit --progress=false
-  restore_cache_cmd:
-    description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
-    parameters:
-      node-version:
-        type: string
-    steps:
-      - when:
-          condition:
-            equal: [false, << pipeline.parameters.BUST_CACHE >>]
-          steps:
-            - restore_cache:
-                key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
-  save_cache_cmd:
-    description: "Custom command for saving cache."
-    parameters:
-      node-version:
-        type: string
-    steps:
-      - save_cache:
-          key: deps--{{ arch }}--{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
-          paths:
-            - ~/.npm
-            - node_modules
+      - node/install-packages
   generate_and_store_version_and_filesystem_artifacts:
-    description: "Track important packages and files"
+    description: 'Track important packages and files'
     steps:
       - run: |
           [[ $EUID -ne 0 ]] && (sudo mkdir -p /tmp/artifacts && sudo chmod 777 /tmp/artifacts) || (mkdir -p /tmp/artifacts && chmod 777 /tmp/artifacts)
@@ -63,17 +37,45 @@ commands:
           ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
+  download_verify_codecov_cli:
+    description: 'Download and verify Codecov CLI'
+    steps:
+      - run:
+          name: Download and verify Codecov CLI
+          command: |
+            # Download Codecov CLI
+            curl -Os https://cli.codecov.io/latest/linux/codecov
+
+            # Import Codecov's GPG key
+            curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+
+            # Download and verify the SHA256SUM and its signature
+            curl -Os https://cli.codecov.io/latest/linux/codecov.SHA256SUM
+            curl -Os https://cli.codecov.io/latest/linux/codecov.SHA256SUM.sig
+            gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+
+            # Verify the checksum
+            shasum -a 256 -c codecov.SHA256SUM
+
+            # Make the codecov executable
+            [[ $EUID -ne 0 ]] && sudo chmod +x codecov || chmod +x codecov
+            ./codecov --help
   generate_e2e_code_cov_report:
-    description: "Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test"
+    description: 'Generate e2e code coverage artifacts and publish to codecov.io. Needed to that we can ignore the exit code status of the npm run test'
     parameters:
       suite:
         type: string
     steps:
       - run: npm run cov:e2e:report || true
-      - run: npm run cov:e2e:<<parameters.suite>>:publish
-orbs:
-  node: circleci/node@5.1.0
-  browser-tools: circleci/browser-tools@1.3.0
+      - download_verify_codecov_cli
+      - run:
+          name: Upload coverage report to Codecov
+          command: |
+            ./codecov --verbose upload-process --disable-search \
+              -t $CODECOV_TOKEN \
+              -n 'e2e-<<parameters.suite>>'-${CIRCLE_WORKFLOW_ID} \
+              -F e2e-<<parameters.suite>> \
+              -f ./coverage/e2e/lcov.info
 jobs:
   npm-audit:
     parameters:
@@ -110,9 +112,15 @@ jobs:
             mkdir -p dist/reports/tests/
             TESTFILES=$(circleci tests glob "src/**/*Spec.js")
             echo "$TESTFILES" | circleci tests run --command="xargs npm run test" --verbose
-      - run: npm run cov:unit:publish
-      - save_cache_cmd:
-          node-version: <<parameters.node-version>>
+      - download_verify_codecov_cli
+      - run:
+          name: Upload coverage report to Codecov
+          command: |
+            ./codecov --verbose upload-process --disable-search \
+              -t $CODECOV_TOKEN \
+              -n 'unit-test'-${CIRCLE_WORKFLOW_ID} \
+              -F unit \
+              -f ./coverage/unit/lcov.info
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
@@ -124,16 +132,16 @@ jobs:
             - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
     parameters:
-      suite: #stable or full
+      suite: #ci or full
         type: string
     executor: pw-focal-development
-    parallelism: 7
+    parallelism: 8
     steps:
       - build_and_install:
           node-version: lts/hydrogen
       - when: #Only install chrome-beta when running the 'full' suite to save $$$
           condition:
-            equal: ["full", <<parameters.suite>>]
+            equal: ['full', <<parameters.suite>>]
           steps:
             - run: npx playwright install chrome-beta
       - run:
@@ -190,10 +198,10 @@ jobs:
     steps:
       - build_and_install:
           node-version: lts/hydrogen
-      - run: npx playwright@1.39.0 install #Necessary for bare ubuntu machine
+      - run: npx playwright@1.48.1 install #Necessary for bare ubuntu machine
       - run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
-          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          docker compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
       - run: sh src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh #Replace LocalStorage Plugin with CouchDB
@@ -252,15 +260,16 @@ jobs:
             equal: [42, 42] # Always run codecov reports regardless of test failure https://discuss.circleci.com/t/make-custom-command-run-always-with-when-always/38957/2
           steps:
             - generate_and_store_version_and_filesystem_artifacts
-  visual-a11y-tests:
+  visual-a11y:
     parameters:
       suite:
         type: string # ci or full
     executor: pw-focal-development
+    parallelism: 2
     steps:
       - build_and_install:
-          node-version: lts/hydrogen
-      - run: npm run test:e2e:visual:<<parameters.suite>>
+          node-version: lts/iron
+      - run: SHARD="$((${CIRCLE_NODE_INDEX}+1))"; npm run test:e2e:visual:<<parameters.suite>> -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -277,24 +286,26 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - lint:
-          name: node20-lint
-          node-version: lts/iron
+          name: node22-lint
+          node-version: '22'
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
       - e2e-test:
-          name: e2e-stable
-          suite: stable
-      - e2e-mobile
-      - visual-a11y-tests:
-          name: visual-a11y-test-ci
+          name: e2e-ci
           suite: ci
+      - e2e-mobile
+      - visual-a11y:
+          name: visual-a11y-ci
+          suite: ci
+      - perf-test
+      - mem-test
 
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node20-chrome-nightly
-          node-version: lts/iron
+          name: node22-chrome-nightly
+          node-version: '22'
       - unit-test:
           name: node18-chrome
           node-version: lts/hydrogen
@@ -306,13 +317,13 @@ workflows:
       - e2e-mobile
       - perf-test
       - mem-test
-      - visual-a11y-tests:
-          name: visual-a11y-test-nightly
+      - visual-a11y:
+          name: visual-a11y-nightly
           suite: full
       - e2e-couchdb
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: '0 0 * * *'
           filters:
             branches:
               only:

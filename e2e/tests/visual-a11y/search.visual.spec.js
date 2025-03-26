@@ -28,13 +28,13 @@ import percySnapshot from '@percy/playwright';
 
 import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
-import { VISUAL_URL } from '../../constants.js';
+import { VISUAL_FIXED_URL } from '../../constants.js';
 
 test.describe('Grand Search @a11y', () => {
   let conditionWidget;
   let displayLayout;
   test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     displayLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
@@ -53,7 +53,7 @@ test.describe('Grand Search @a11y', () => {
     theme
   }) => {
     // Navigate to display layout
-    await page.goto(displayLayout.url);
+    await page.goto(displayLayout.url, { waitUntil: 'networkidle' });
 
     // Search for the object
     await page.getByRole('searchbox', { name: 'Search Input' }).click();

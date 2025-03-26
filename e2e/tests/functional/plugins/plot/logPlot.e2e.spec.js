@@ -25,19 +25,50 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-import { setTimeConductorBounds } from '../../../../appActions.js';
+import { createDomainObjectWithDefaults, setTimeConductorBounds } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Log plot tests', () => {
-  test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({
-    page,
-    openmctConfig
-  }) => {
-    const { myItemsFolderName } = openmctConfig;
-    //Test is slow and should be split in the future
-    test.slow();
+  test.beforeEach(async ({ page }) => {
+    // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await makeOverlayPlot(page, myItemsFolderName);
+    // Set a specific time range for consistency, otherwise it will change
+    // on every test to a range based on the current time.
+    const startDate = '2022-03-29';
+    const startTime = '22:00:00';
+    const endDate = '2022-03-29';
+    const endTime = '22:00:30';
+
+    await setTimeConductorBounds(page, { startDate, startTime, endDate, endTime });
+
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Unnamed Overlay Plot'
+    });
+
+    // create a sinewave generator
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'Unnamed Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+
+    // set amplitude to 6, offset 4, data rate 2 hz
+    await page.getByLabel('Amplitude', { exact: true }).fill('6');
+    await page.getByLabel('Offset', { exact: true }).fill('4');
+    await page.getByLabel('Data Rate (hz)', { exact: true }).fill('2');
+
+    await page.getByLabel('Save').click();
+
+    await page.goto(overlayPlot.url);
+  });
+  test('Log Plot ticks are functionally correct in regular and log mode and after refresh', async ({
+    page
+  }) => {
     await testRegularTicks(page);
     await enableEditMode(page);
     await page.getByRole('tab', { name: 'Config' }).click();
@@ -47,98 +78,35 @@ test.describe('Log plot tests', () => {
     await testRegularTicks(page);
     await enableLogMode(page);
     await testLogTicks(page);
-    await saveOverlayPlot(page);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await testLogTicks(page);
   });
 
   // Leaving test as 'TODO' for now.
   // NOTE: Not eligible for community contributions.
-  test.fixme(
-    'Verify that log mode option is reflected in import/export JSON',
-    async ({ page, openmctConfig }) => {
-      const { myItemsFolderName } = openmctConfig;
+  test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
+    await enableEditMode(page);
+    await enableLogMode(page);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-      await makeOverlayPlot(page, myItemsFolderName);
-      await enableEditMode(page);
-      await enableLogMode(page);
-      await saveOverlayPlot(page);
+    // TODO ...export, delete the overlay, then import it...
 
-      // TODO ...export, delete the overlay, then import it...
+    //await testLogTicks(page);
 
-      //await testLogTicks(page);
-
-      // TODO, the plot is slightly at different position that in the other test, so this fails.
-      // ...We can fix it by copying all steps from the first test...
-      // await testLogPlotPixels(page);
-    }
-  );
+    // TODO, the plot is slightly at different position that in the other test, so this fails.
+    // ...We can fix it by copying all steps from the first test...
+    // await testLogPlotPixels(page);
+  });
 });
-
-/**
- * Makes an overlay plot with a sine wave generator and clicks on the overlay plot in the sidebar so it is the active thing displayed.
- * @param {import('@playwright/test').Page} page
- * @param {string} myItemsFolderName
- */
-async function makeOverlayPlot(page, myItemsFolderName) {
-  // fresh page with time range from 2022-03-29 22:00:00.000Z to 2022-03-29 22:00:30.000Z
-  await page.goto('./', { waitUntil: 'domcontentloaded' });
-
-  // Set a specific time range for consistency, otherwise it will change
-  // on every test to a range based on the current time.
-
-  const start = '2022-03-29 22:00:00.000Z';
-  const end = '2022-03-29 22:00:30.000Z';
-
-  await setTimeConductorBounds(page, start, end);
-
-  // create overlay plot
-
-  await page.locator('button.c-create-button').click();
-  await page.locator('li[role="menuitem"]:has-text("Overlay Plot")').click();
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    await page.getByRole('button', { name: 'Save' }).click(),
-    // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-
-  // save the overlay plot
-  await saveOverlayPlot(page);
-
-  // create a sinewave generator
-
-  await page.locator('button.c-create-button').click();
-  await page.locator('li[role="menuitem"]:has-text("Sine Wave Generator")').click();
-
-  // set amplitude to 6, offset 4, data rate 2 hz
-
-  await page.getByLabel('Amplitude').fill('6');
-  await page.getByLabel('Offset').fill('4');
-  await page.getByLabel('Data Rate (hz)').fill('2');
-
-  // Click OK button and wait for Navigate event
-  await Promise.all([
-    page.waitForLoadState(),
-    await page.getByRole('button', { name: 'Save' }).click(),
-    // Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-
-  // click on overlay plot
-  await page.locator(`text=Open MCT ${myItemsFolderName} >> span`).nth(3).click();
-  await Promise.all([
-    page.waitForLoadState(),
-    page.locator('text=Unnamed Overlay Plot').first().click()
-  ]);
-}
 
 /**
  * @param {import('@playwright/test').Page} page
  */
 async function testRegularTicks(page) {
   const yTicks = page.locator('.gl-plot-y-tick-label');
-  expect(await yTicks.count()).toBe(7);
+  await expect(yTicks).toHaveCount(7);
   await expect(yTicks.nth(0)).toHaveText('-2');
   await expect(yTicks.nth(1)).toHaveText('0');
   await expect(yTicks.nth(2)).toHaveText('2');
@@ -153,7 +121,7 @@ async function testRegularTicks(page) {
  */
 async function testLogTicks(page) {
   const yTicks = page.locator('.gl-plot-y-tick-label');
-  expect(await yTicks.count()).toBe(9);
+  await expect(yTicks).toHaveCount(9);
   await expect(yTicks.nth(0)).toHaveText('-2.98');
   await expect(yTicks.nth(1)).toHaveText('-1.51');
   await expect(yTicks.nth(2)).toHaveText('-0.58');
@@ -188,26 +156,6 @@ async function enableLogMode(page) {
 async function disableLogMode(page) {
   await expect(page.getByRole('checkbox', { name: 'Log mode' })).toBeChecked();
   await page.getByRole('checkbox', { name: 'Log mode' }).uncheck();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function saveOverlayPlot(page) {
-  // save overlay plot
-  await page
-    .locator('text=Snapshot Save and Finish Editing Save and Continue Editing >> button')
-    .nth(1)
-    .click();
-
-  await Promise.all([
-    page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
-    //Wait for Save Banner to appear
-    page.waitForSelector('.c-message-banner__message')
-  ]);
-  //Wait until Save Banner is gone
-  await page.locator('.c-message-banner__close-button').click();
-  await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
 }
 
 /**

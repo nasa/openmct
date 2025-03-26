@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="l-browse-bar__end">
-      <view-switcher :v-if="!hideViewSwitcher" :views="views" :current-view="currentView" />
+      <ViewSwitcher :v-if="!hideViewSwitcher" :views="views" :current-view="currentView" />
       <NotebookMenuSwitcher
         :domain-object="domainObject"
         :object-path="objectPath"
@@ -58,11 +58,17 @@
 </template>
 
 <script>
+import { toRaw } from 'vue';
+
+import { CREATE_ACTION_KEY } from '@/plugins/formActions/CreateAction.js';
+import { MOVE_ACTION_KEY } from '@/plugins/move/MoveAction.js';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import { RELOAD_ACTION_KEY } from '@/plugins/reloadAction/ReloadAction.js';
+import { REMOVE_ACTION_KEY } from '@/plugins/remove/RemoveAction.js';
+import { VIEW_LARGE_ACTION_KEY } from '@/plugins/viewLargeAction/viewLargeAction.js';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 
 import ViewSwitcher from '../layout/ViewSwitcher.vue';
-
-const HIDDEN_ACTIONS = ['remove', 'move', 'preview', 'large.view'];
 
 export default {
   components: {
@@ -94,12 +100,6 @@ export default {
       default: () => {
         return [];
       }
-    },
-    actionCollection: {
-      type: Object,
-      default: () => {
-        return undefined;
-      }
     }
   },
   emits: ['set-view'],
@@ -111,22 +111,33 @@ export default {
     };
   },
   watch: {
-    actionCollection(actionCollection) {
-      if (this.actionCollection) {
-        this.unlistenToActionCollection();
-      }
+    currentView: {
+      handler: function (newView) {
+        if (this.actionCollection) {
+          this.unlistenToActionCollection();
+        }
+        this.actionCollection = this.openmct.actions.getActionsCollection(
+          toRaw(this.objectPath),
+          toRaw(newView)
+        );
 
-      this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.getActionsObject());
+        this.actionCollection.on('update', this.updateActionItems);
+        this.updateActionItems(this.actionCollection.getActionsObject());
+      },
+      flush: 'post' // Access the DOM after Vue has updated it
     }
   },
-  mounted() {
-    if (this.actionCollection) {
-      this.actionCollection.on('update', this.updateActionItems);
-      this.updateActionItems(this.actionCollection.getActionsObject());
-    }
+  created() {
+    this.HIDDEN_ACTIONS = [
+      CREATE_ACTION_KEY,
+      REMOVE_ACTION_KEY,
+      MOVE_ACTION_KEY,
+      PREVIEW_ACTION_KEY,
+      VIEW_LARGE_ACTION_KEY,
+      RELOAD_ACTION_KEY
+    ];
   },
-  unmounted() {
+  beforeUnmount() {
     if (this.actionCollection) {
       this.actionCollection.off('update', this.updateActionItems);
     }
@@ -138,7 +149,7 @@ export default {
         const isGroup = Array.isArray(menuItem);
         if (isGroup) {
           items.push(this.filterHiddenItems(menuItem));
-        } else if (!HIDDEN_ACTIONS.includes(menuItem.key)) {
+        } else if (this.HIDDEN_ACTIONS.includes(menuItem.key) === false) {
           items.push(menuItem);
         }
       });

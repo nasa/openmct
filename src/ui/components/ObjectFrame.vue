@@ -64,7 +64,7 @@
         :aria-label="`${ariaLabel} Controls`"
       >
         <div v-if="supportsIndependentTime" class="c-conductor-holder--compact">
-          <independent-time-conductor :domain-object="domainObject" :object-path="objectPath" />
+          <IndependentTimeConductor :domain-object="domainObject" :object-path="objectPath" />
         </div>
         <NotebookMenuSwitcher
           v-if="notebookEnabled"
@@ -94,7 +94,7 @@
       </div>
     </div>
 
-    <object-view
+    <ObjectView
       ref="objectView"
       class="c-so-view__object-view js-object-view js-notebook-snapshot-item"
       :show-edit-view="showEditView"
@@ -190,7 +190,7 @@ export default {
       this.soViewResizeObserver.observe(this.$refs.soView);
     }
 
-    const viewKey = this.getViewKey();
+    const viewKey = this.$refs.objectView?.viewKey;
     this.supportsIndependentTime = this.domainObject && SupportedViewTypes.includes(viewKey);
   },
   beforeUnmount() {
@@ -256,9 +256,6 @@ export default {
       }
 
       this.widthClass = wClass.trimStart();
-    },
-    getViewKey() {
-      return this.$refs.objectView?.viewKey;
     },
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;

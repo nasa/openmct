@@ -69,5 +69,9 @@ test.describe('Preview mode', () => {
     await page.getByLabel('Overlay').getByLabel('More actions').click();
     await expect(page.getByLabel('Export Table Data')).toBeVisible();
     await expect(page.getByLabel('Export Marked Rows')).toBeVisible();
+    await expect(page.getByLabel('Export Marked Rows')).toBeDisabled();
+    await page.getByLabel('Pause').click();
+    const tableWrapper = page.getByLabel('Preview Container').locator('div.c-table-wrapper');
+    await expect(tableWrapper).toHaveClass(/is-paused/);
   });
 });

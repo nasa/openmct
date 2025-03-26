@@ -16,8 +16,6 @@ The [CodeQL GitHub Actions workflow](https://github.com/nasa/openmct/blob/master
 
 CodeQL is run for every pull-request in GitHub Actions.
 
-The project is also monitored by [LGTM](https://lgtm.com/projects/g/nasa/openmct/) and is available to public.
-
 ### ESLint
 
 Static analysis is run for every push on the master branch and every pull request on all branches in Github Actions. 

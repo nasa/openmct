@@ -39,13 +39,12 @@
  * with the mouse while the horizontal dimensions shrink in
  * kind (and vertical properties remain unmodified.)
  *
- * @param {object} rawPosition the initial position/dimensions
+ * @param {Object} rawPosition the initial position/dimensions
  *                 of the frame being interacted with
  * @param {number[]} posFactor the position factor
  * @param {number[]} dimFactor the dimensions factor
  * @param {number[]} the size of each grid element, in pixels
  * @constructor
- * @memberof platform/features/layout
  */
 export default function LayoutDrag(rawPosition, posFactor, dimFactor, gridSize) {
   this.rawPosition = rawPosition;

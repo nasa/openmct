@@ -228,9 +228,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({
-    page
-  }) => {
+  test('display layout with plots of swgs, alphanumerics, and condition sets', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'display-layout-simple-telemetry'
@@ -299,7 +297,6 @@ test.describe('Navigation memory leak is not detected in', () => {
     // for detecting memory leaks.
     await page.evaluate(() => {
       window.gcPromise = new Promise((resolve) => {
-        // eslint-disable-next-line no-undef
         window.fr = new FinalizationRegistry(resolve);
         window.fr.register(
           window.openmct.layout.$refs.browseObject.$refs.objectViewWrapper.firstChild,

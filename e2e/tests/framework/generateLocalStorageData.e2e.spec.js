@@ -36,7 +36,7 @@ import { fileURLToPath } from 'url';
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
-  setIndependentTimeConductorBounds,
+  setFixedIndependentTimeConductorBounds,
   setTimeConductorBounds
 } from '../../appActions.js';
 import { MISSION_TIME } from '../../constants.js';
@@ -45,14 +45,10 @@ import { expect, test } from '../../pluginFixtures.js';
 const overlayPlotName = 'Overlay Plot with Telemetry Object';
 
 test.describe('Generate Visual Test Data @localStorage @generatedata @clock', () => {
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    // Override the clock
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
@@ -112,23 +108,30 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 
     await page.goto(parent.url, { waitUntil: 'domcontentloaded' });
 
-    await setIndependentTimeConductorBounds(page, {
+    await setFixedIndependentTimeConductorBounds(page, {
       start: '2024-11-12 19:11:11.000Z',
       end: '2024-11-12 20:11:11.000Z'
     });
 
-    const NEW_GLOBAL_START_BOUNDS = '2024-11-11 19:11:11.000Z';
-    const NEW_GLOBAL_END_BOUNDS = '2024-11-11 20:11:11.000Z';
+    const NEW_GLOBAL_START_DATE = '2024-11-11';
+    const NEW_GLOBAL_START_TIME = '19:11:11';
+    const NEW_GLOBAL_END_DATE = '2024-11-11';
+    const NEW_GLOBAL_END_TIME = '20:11:11';
 
-    await setTimeConductorBounds(page, NEW_GLOBAL_START_BOUNDS, NEW_GLOBAL_END_BOUNDS);
+    await setTimeConductorBounds(page, {
+      startDate: NEW_GLOBAL_START_DATE,
+      startTime: NEW_GLOBAL_START_TIME,
+      endDate: NEW_GLOBAL_END_DATE,
+      endTime: NEW_GLOBAL_END_TIME
+    });
 
     // Verify that the global time conductor bounds have been updated
-    expect(
-      await page.getByLabel('Global Time Conductor').getByLabel('Start bounds').textContent()
-    ).toEqual(NEW_GLOBAL_START_BOUNDS);
-    expect(
-      await page.getByLabel('Global Time Conductor').getByLabel('End bounds').textContent()
-    ).toEqual(NEW_GLOBAL_END_BOUNDS);
+    await expect(
+      page.getByLabel(`Start bounds: ${NEW_GLOBAL_START_DATE} ${NEW_GLOBAL_START_TIME}.000Z`)
+    ).toBeVisible();
+    await expect(
+      page.getByLabel(`End bounds: ${NEW_GLOBAL_END_DATE} ${NEW_GLOBAL_END_TIME}.000Z`)
+    ).toBeVisible();
 
     //Save localStorage for future test execution
     await context.storageState({
@@ -204,11 +207,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.
@@ -267,7 +266,7 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
       page.waitForNavigation(),
       page.locator('text=OK').click(),
       //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // focus the overlay plot
@@ -277,11 +276,60 @@ test.describe('Generate Visual Test Data @localStorage @generatedata @clock', ()
 
     // Clear Recently Viewed
     await page.getByRole('button', { name: 'Clear Recently Viewed' }).click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     //Save localStorage for future test execution
     await context.storageState({
       path: fileURLToPath(
         new URL('../../../e2e/test-data/overlay_plot_with_delay_storage.json', import.meta.url)
+      )
+    });
+  });
+});
+
+test.describe('Generate Conditional Styling Data @localStorage @generatedata', () => {
+  test('Generate basic condition set', async ({ page, context }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    // Create a Condition Set
+    const conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: 'Test Condition Set'
+    });
+
+    // Create a Telemetry Object (Sine Wave Generator)
+    const swg = await createExampleTelemetryObject(page, conditionSet.uuid);
+
+    // Edit the Telemetry Object to have a 10hz data rate (Gotta go fast!)
+    await page.goto(swg.url);
+    await page.getByLabel('More actions').click();
+    await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
+    await page.getByLabel('Period', { exact: true }).fill('5');
+    await page.getByLabel('Save').click();
+
+    // Edit the Condition Set
+    await page.goto(conditionSet.url);
+    await page.getByLabel('Edit Object').click();
+
+    // Add a Condition to the Condition Set
+    await page.getByLabel('Add Condition').click();
+    await page.getByLabel('Condition Name Input').first().fill('Test Condition');
+    await page.getByLabel('Condition Output Type').first().selectOption('String');
+    await page.getByLabel('Condition Output String').first().fill('Test Condition Met');
+
+    // Condition: True if sine value > 0 (half the time)
+    await page.getByLabel('Criterion Telemetry Selection').selectOption(swg.name);
+    await page.getByLabel('Criterion Metadata Selection').selectOption('Sine');
+    await page.getByLabel('Criterion Comparison Selection').selectOption('is greater than');
+    await page.getByLabel('Criterion Input').first().fill('0');
+
+    // Rename default condition
+    await page.getByLabel('Condition Output String').nth(1).fill('Test Condition Unmet');
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Save localStorage for future test execution
+    await context.storageState({
+      path: fileURLToPath(
+        new URL('../../../e2e/test-data/condition_set_storage.json', import.meta.url)
       )
     });
   });
@@ -300,11 +348,7 @@ test.describe('Validate Overlay Plot with Telemetry Object @localStorage @genera
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(overlayPlotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.
@@ -345,11 +389,7 @@ test.describe('Validate Overlay Plot with 5s Delay Telemetry Object @localStorag
     // TODO: Flesh Out Assertions against created Objects
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(plotName);
     await page.getByRole('tab', { name: 'Config' }).click();
-    await page
-      .getByRole('list', { name: 'Plot Series Properties' })
-      .locator('span')
-      .first()
-      .click();
+    await page.getByLabel('Plot Series Items').getByLabel('Expand').click();
 
     // TODO: Modify the Overlay Plot to use fixed Scaling
     // TODO: Verify Autoscaling.

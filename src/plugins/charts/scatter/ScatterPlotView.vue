@@ -105,11 +105,11 @@ export default {
       this.followTimeContext();
     },
     followTimeContext() {
-      this.timeContext.on('bounds', this.reloadTelemetryOnBoundsChange);
+      this.timeContext.on('boundsChanged', this.reloadTelemetryOnBoundsChange);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('bounds', this.reloadTelemetryOnBoundsChange);
+        this.timeContext.off('boundsChanged', this.reloadTelemetryOnBoundsChange);
       }
     },
     addToComposition(telemetryObject) {
@@ -306,7 +306,7 @@ export default {
       this.trace = [trace];
     },
     getTimestampForDatum(datum, key, telemetryObject) {
-      const timeSystemKey = this.timeContext.timeSystem().key;
+      const timeSystemKey = this.timeContext.getTimeSystem().key;
       const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
       let metadataValue = metadata.value(timeSystemKey) || { format: timeSystemKey };
 
@@ -327,7 +327,7 @@ export default {
       return formats[metadataKey].parse(datum);
     },
     getOptions() {
-      const { start, end } = this.timeContext.bounds();
+      const { start, end } = this.timeContext.getBounds();
 
       return {
         end,

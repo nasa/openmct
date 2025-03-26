@@ -1,13 +1,20 @@
 const LEGACY_FILES = ['example/**'];
-module.exports = {
+/** @type {import('eslint').Linter.Config} */
+const config = {
   env: {
     browser: true,
-    es6: true,
+    es2024: true,
     jasmine: true,
-    amd: true
+    amd: true,
+    node: true
   },
   globals: {
-    _: 'readonly'
+    _: 'readonly',
+    __webpack_public_path__: 'writeable',
+    __OPENMCT_VERSION__: 'readonly',
+    __OPENMCT_BUILD_DATE__: 'readonly',
+    __OPENMCT_REVISION__: 'readonly',
+    __OPENMCT_BUILD_BRANCH__: 'readonly'
   },
   plugins: ['prettier', 'unicorn', 'simple-import-sort'],
   extends: [
@@ -23,10 +30,11 @@ module.exports = {
     parser: '@babel/eslint-parser',
     requireConfigFile: false,
     allowImportExportEverywhere: true,
-    ecmaVersion: 2015,
+    ecmaVersion: 'latest',
     ecmaFeatures: {
       impliedStrict: true
-    }
+    },
+    sourceType: 'module'
   },
   rules: {
     'simple-import-sort/imports': 'warn',
@@ -35,6 +43,7 @@ module.exports = {
     'vue/no-deprecated-events-api': 'warn',
     'vue/no-v-for-template-key': 'off',
     'vue/no-v-for-template-key-on-child': 'error',
+    'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     'prettier/prettier': 'error',
     'you-dont-need-lodash-underscore/omit': 'off',
     'you-dont-need-lodash-underscore/throttle': 'off',
@@ -152,7 +161,7 @@ module.exports = {
         cases: {
           pascalCase: true
         },
-        ignore: ['^.*\\.js$']
+        ignore: ['^.*\\.(js|cjs|mjs)$']
       }
     ],
     'vue/first-attribute-linebreak': 'error',
@@ -179,3 +188,5 @@ module.exports = {
     }
   ]
 };
+
+module.exports = config;

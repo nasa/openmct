@@ -90,16 +90,17 @@ export default {
     dataCleared() {
       this.imageHistory = [];
     },
-    dataRemoved(dataToRemove) {
-      this.imageHistory = this.imageHistory.filter((existingDatum) => {
-        const shouldKeep = dataToRemove.some((datumToRemove) => {
-          const existingDatumTimestamp = this.parseTime(existingDatum);
-          const datumToRemoveTimestamp = this.parseTime(datumToRemove);
+    dataRemoved(removed) {
+      const removedTimestamps = {};
+      removed.forEach((_removed) => {
+        const removedTimestamp = this.parseTime(_removed);
+        removedTimestamps[removedTimestamp] = true;
+      });
 
-          return existingDatumTimestamp !== datumToRemoveTimestamp;
-        });
+      this.imageHistory = this.imageHistory.filter((image) => {
+        const imageTimestamp = this.parseTime(image);
 
-        return shouldKeep;
+        return !removedTimestamps[imageTimestamp];
       });
     },
     setDataTimeContext() {
@@ -171,7 +172,7 @@ export default {
       this.bounds = bounds; // setting bounds for ImageryView watcher
     },
     timeSystemChanged() {
-      this.timeSystem = this.timeContext.timeSystem();
+      this.timeSystem = this.timeContext.getTimeSystem();
       this.timeKey = this.timeSystem.key;
       this.timeFormatter = this.getFormatter(this.timeKey);
       this.durationFormatter = this.getFormatter(

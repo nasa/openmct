@@ -77,7 +77,7 @@ export default {
   inject: ['openmct'],
   data() {
     const selection = this.openmct.selection.get();
-    /** @type {import('../../../api/objects/ObjectAPI').DomainObject}  */
+    /** @type {import('openmct').DomainObject}  */
     const domainObject = selection[0][0].context.item;
     const planViewConfiguration = markRaw(new PlanViewConfiguration(domainObject, this.openmct));
 

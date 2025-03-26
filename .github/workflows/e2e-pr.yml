@@ -33,9 +33,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npx playwright@1.39.0 install
+      - run: npx playwright@1.47.2 install
       - run: npx playwright install chrome-beta
-      - run: npm install --cache ~/.npm --no-audit --progress=false
+      - run: npm ci --no-audit --progress=false
       - run: npm run test:e2e:full -- --max-failures=40
       - run: npm run cov:e2e:report || true
       - shell: bash
@@ -45,9 +45,11 @@ jobs:
           npm run cov:e2e:full:publish
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-pr-test-results
           path: test-results
+          overwrite: true
 
       - name: Remove pr:e2e label (if present)
         if: always()

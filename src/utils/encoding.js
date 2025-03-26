@@ -20,18 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
-
-class StoragePersistance {
-  getActiveRole() {
-    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
-  setActiveRole(role) {
-    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
-  }
-  clearActiveRole() {
-    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
-  }
+export function encode_url(url) {
+  return url ? encodeURI(url) : url;
 }
-
-export default new StoragePersistance();

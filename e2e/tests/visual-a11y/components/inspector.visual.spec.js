@@ -22,22 +22,21 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { test } from '../../../avpFixtures.js';
-import { MISSION_TIME, VISUAL_URL } from '../../../constants.js';
+import { scanForA11yViolations, test } from '../../../avpFixtures.js';
+import { MISSION_TIME, VISUAL_FIXED_URL } from '../../../constants.js';
 
 //Declare the scope of the visual test
 const inspectorPane = '.l-shell__pane-inspector';
 
 test.describe('Visual - Inspector @ally @clock', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_URL, { waitUntil: 'domcontentloaded' });
-  });
   test.use({
-    storageState: './e2e/test-data/overlay_plot_with_delay_storage.json',
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
+    storageState: 'test-data/overlay_plot_with_delay_storage.json'
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
@@ -55,7 +54,6 @@ test.describe('Visual - Inspector @ally @clock', () => {
     });
   });
 });
-// Skipping for https://github.com/nasa/openmct/issues/7421
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});

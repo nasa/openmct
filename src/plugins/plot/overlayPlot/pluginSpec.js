@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 import {
   createMouseEvent,
@@ -315,7 +315,7 @@ describe('the plugin', function () {
             openmct,
             domainObject: overlayPlotObject,
             composition,
-            path: [overlayPlotObject],
+            objectPath: [overlayPlotObject],
             renderWhenVisible
           },
           template: '<plot ref="plotComponent"></plot>'
@@ -507,7 +507,7 @@ describe('the plugin', function () {
             openmct: openmct,
             domainObject: overlayPlotObject,
             composition,
-            path: [overlayPlotObject],
+            objectPath: [overlayPlotObject],
             renderWhenVisible
           },
           template: '<plot ref="plotComponent"></plot>'
