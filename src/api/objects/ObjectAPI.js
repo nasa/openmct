@@ -31,11 +31,6 @@ import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
 
-const requests = {};
-window.showRequests = () => {
-    console.log(requests);
-}
-
 /**
  * Uniquely identifies a domain object.
  * @typedef {Object} Identifier
@@ -163,12 +158,6 @@ export default class ObjectAPI {
    */
   get(identifier, abortSignal, forceRemote = false) {    
     let keystring = this.#makeKeyString(identifier);
-    console.log('openmct get', keystring);
-    const now = new Date();
-    if (!requests[keystring]) {
-      requests[keystring] = 0;
-    }
-    requests[keystring]++;
 
     if (!forceRemote) {
       if (this.cache[keystring] !== undefined) {
@@ -211,8 +200,6 @@ export default class ObjectAPI {
           mutableDomainObject.$refresh(domainObject);
           this.destroyMutable(mutableDomainObject);
         }
-
-        console.log('openmct get result', keystring, (new Date() - now) / 1000);
 
         return domainObject;
       })
