@@ -500,6 +500,12 @@ export default {
       }
     },
     addItem(itemType, ...options) {
+      const now = Date.now();
+      const oldAddItemTime = this.addItemTime ?? now;
+      this.addItemTime = now;
+      const timeDifference = this.addItemTime - oldAddItemTime;
+      console.log(`addItem for ${itemType} time difference (ms):`, timeDifference);
+
       let item = getItemDefinition(itemType, this.openmct, this.gridSize, ...options);
       item.type = itemType;
       item.id = uuid();
