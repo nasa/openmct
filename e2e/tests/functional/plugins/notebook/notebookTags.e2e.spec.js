@@ -163,7 +163,7 @@ test.describe('Tagging in Notebooks @addInit', () => {
 
     await page.locator('text=To start a new entry, click here or drag and drop any object').click();
     await page.getByLabel('Notebook Entry Input').fill(`An entry without tags`);
-    await page.locator('.c-ne__save-button > button').click();
+    await page.getByLabel('Save notebook entry').click();
 
     await page.hover('[aria-label="Notebook Entry Display"] >> nth=1');
     await page.locator('button[title="Delete this entry"]').last().click();
