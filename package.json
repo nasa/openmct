@@ -82,7 +82,7 @@
     "sanitize-html": "2.12.1",
     "sass": "1.71.1",
     "sass-loader": "14.1.1",
-    "style-loader": "3.3.3",
+    "style-loader": "4.0.0",
     "terser-webpack-plugin": "5.3.9",
     "tiny-emitter": "2.1.0",
     "typescript": "5.3.3",
