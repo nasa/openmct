@@ -345,6 +345,10 @@ export default {
   beforeMount() {
     this.marked = new Marked();
     this.renderer = new this.marked.Renderer();
+    this.marked.use({
+      breaks: true,
+      renderer: this.renderer
+    });
   },
   mounted() {
     const originalLinkRenderer = this.renderer.link;
@@ -437,10 +441,7 @@ export default {
       }
     },
     convertMarkDownToHtml(text = '') {
-      let markDownHtml = this.marked.parse(text, {
-        breaks: true,
-        renderer: this.renderer
-      });
+      let markDownHtml = this.marked.parse(text);
       markDownHtml = sanitizeHtml(markDownHtml, SANITIZATION_SCHEMA);
       return markDownHtml;
     },
