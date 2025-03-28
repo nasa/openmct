@@ -27,14 +27,12 @@
       :limit-line-labels="showLimitLineLabels"
       :grid-lines="gridLines"
       :cursor-guide="cursorGuide"
-      :parent-y-tick-width="parentYTickWidth"
       :options="options"
       :color-palette="colorPalette"
       :class="isStale && 'is-stale'"
       @config-loaded="onConfigLoaded"
       @lock-highlight-point="onLockHighlightPointUpdated"
       @highlights="onHighlightsUpdated"
-      @plot-y-tick-width="onYTickWidthChange"
       @cursor-guide="onCursorGuideChange"
       @grid-lines="onGridLinesChange"
     />
@@ -53,7 +51,7 @@ export default {
     Plot
   },
   mixins: [conditionalStylesMixin, stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   provide() {
     return {
       openmct: this.openmct,
@@ -97,16 +95,6 @@ export default {
         return undefined;
       }
     },
-    parentYTickWidth: {
-      type: Object,
-      default() {
-        return {
-          leftTickWidth: 0,
-          rightTickWidth: 0,
-          hasMultipleLeftAxes: false
-        };
-      }
-    },
     hideLegend: {
       type: Boolean,
       default() {
@@ -122,8 +110,11 @@ export default {
     'grid-lines',
     'plot-y-tick-width'
   ],
-  mounted() {
+  beforeMount() {
+    // We must do this before mounted to use any series configuration options set at the stacked plot level
     this.updateView();
+  },
+  mounted() {
     this.isEditing = this.openmct.editor.isEditing();
     this.openmct.editor.on('isEditing', this.setEditState);
     this.setupClockChangedEvent((domainObject) => {
@@ -197,9 +188,6 @@ export default {
     },
     onConfigLoaded() {
       this.$emit('config-loaded', ...arguments);
-    },
-    onYTickWidthChange() {
-      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
       this.$emit('cursor-guide', ...arguments);

@@ -112,13 +112,15 @@ test.describe('Telemetry Table', () => {
 
     // Subtract 5 minutes from the current end bound datetime and set it
     // Bring up the time conductor popup
-    let endDate = await page.locator('[aria-label="End bounds"]').textContent();
-    endDate = new Date(endDate);
+    let endTimeStamp = await page.getByLabel('End bounds').textContent();
+    endTimeStamp = new Date(endTimeStamp);
 
-    endDate.setUTCMinutes(endDate.getUTCMinutes() - 5);
-    endDate = endDate.toISOString().replace(/T/, ' ');
+    endTimeStamp.setUTCMinutes(endTimeStamp.getUTCMinutes() - 5);
+    const endDate = endTimeStamp.toISOString().split('T')[0];
+    const milliseconds = endTimeStamp.getMilliseconds();
+    const endTime = endTimeStamp.toISOString().split('T')[1].replace(`.${milliseconds}Z`, '');
 
-    await setTimeConductorBounds(page, undefined, endDate);
+    await setTimeConductorBounds(page, { endDate, endTime });
 
     await expect(tableWrapper).not.toHaveClass(/is-paused/);
 
@@ -131,7 +133,7 @@ test.describe('Telemetry Table', () => {
 
     // Verify that it is <= our new end bound
     const latestMilliseconds = Date.parse(latestTelemetryDate);
-    const endBoundMilliseconds = Date.parse(endDate);
+    const endBoundMilliseconds = Date.parse(endTimeStamp);
     expect(latestMilliseconds).toBeLessThanOrEqual(endBoundMilliseconds);
   });
 
@@ -154,8 +156,7 @@ test.describe('Telemetry Table', () => {
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).toContain('Roger');
+      await expect(cell).toHaveText(/Roger/);
     }
 
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
@@ -166,15 +167,14 @@ test.describe('Telemetry Table', () => {
       .getByText(/Dodger/)
       .all();
     // ensure we've got more than one cell
-    expect(cells.length).toBe(0);
+    expect(cells).toHaveLength(0);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).not.toContain('Dodger');
+      await expect(cell).not.toHaveText(/Dodger/);
     }
 
     // Click pause button
-    await page.click('button[title="Pause"]');
+    await page.getByLabel('Pause').click();
   });
 
   test('Supports filtering using Regex', async ({ page }) => {
@@ -200,8 +200,7 @@ test.describe('Telemetry Table', () => {
     expect(cells.length).toBeGreaterThan(1);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).toContain('Roger');
+      await expect(cell).toHaveText(/Roger/);
     }
 
     await page.getByRole('searchbox', { name: 'message filter input' }).click();
@@ -212,15 +211,14 @@ test.describe('Telemetry Table', () => {
       .getByText(/Dodger/)
       .all();
     // ensure we've got more than one cell
-    expect(cells.length).toBe(0);
+    expect(cells).toHaveLength(0);
     // ensure the text content of each cell contains the search term
     for (const cell of cells) {
-      const text = await cell.textContent();
-      expect(text).not.toContain('Dodger');
+      await expect(cell).not.toHaveText(/Dodger/);
     }
 
     // Click pause button
-    await page.click('button[title="Pause"]');
+    await page.getByLabel('Pause').click();
   });
 });
 
@@ -255,7 +253,6 @@ async function getScrollPosition(page, top = true) {
     scrollHeight: node.scrollHeight
   }));
 
-  // eslint-disable-next-line playwright/no-conditional-in-test
   if (top) {
     return scrollTop;
   } else {

@@ -22,16 +22,18 @@
 
 import {
   createDomainObjectWithDefaults,
-  setIndependentTimeConductorBounds
+  navigateToObjectWithFixedTimeBounds,
+  setFixedIndependentTimeConductorBounds
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
-const FIXED_TIME =
-  './#/browse/mine?tc.mode=fixed&tc.startBound=1693592063607&tc.endBound=1693593893607&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true';
+const FIXED_TIME_URL = './#/browse/mine';
+
 test.describe('Datepicker operations', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(FIXED_TIME);
+    await navigateToObjectWithFixedTimeBounds(page, FIXED_TIME_URL, 1693592063607, 1693593893607);
   });
+
   test('Verify that user can use the datepicker in the TC', async ({ page }) => {
     await page.getByLabel('Time Conductor Mode').click();
     // Click on the date picker that is left-most on the screen
@@ -42,12 +44,13 @@ test.describe('Datepicker operations', () => {
     // Expect datepicker to close and time conductor date setting to be changed
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
+
   test('Verify that user can use the datepicker in the ITC', async ({ page }) => {
     const createdTimeList = await createDomainObjectWithDefaults(page, { type: 'Time List' });
 
     await page.goto(createdTimeList.url, { waitUntil: 'domcontentloaded' });
 
-    await setIndependentTimeConductorBounds(page, {
+    await setFixedIndependentTimeConductorBounds(page, {
       start: '2024-11-12 19:11:11.000Z',
       end: '2024-11-12 20:11:11.000Z'
     });

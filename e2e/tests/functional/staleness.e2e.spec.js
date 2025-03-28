@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,8 +29,6 @@ test.describe('Staleness', () => {
   });
 
   test('Does not show staleness after navigating from a stale object', async ({ page }) => {
-    const objectViewSelector = '.c-object-view';
-    const isStaleClass = 'is-stale';
     const staleSWG = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'SWG'
@@ -51,7 +49,7 @@ test.describe('Staleness', () => {
     await navigateToObjectWithRealTime(page, staleSWG.url);
 
     // Assert that staleness is shown
-    await expect(page.locator(`${objectViewSelector} .${isStaleClass}`)).toBeAttached({
+    await expect(page.getByLabel('Object View')).toHaveClass(/is-stale/, {
       timeout: 30 * 1000 // Give 30 seconds for the staleness to be updated
     });
 
@@ -59,6 +57,6 @@ test.describe('Staleness', () => {
     await page.goto(folder.url);
 
     // Verify that staleness is not shown
-    await expect(page.locator(`${objectViewSelector} .${isStaleClass}`)).not.toBeAttached();
+    await expect(page.getByLabel('Object View')).not.toHaveClass(/is-stale/);
   });
 });

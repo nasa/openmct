@@ -30,17 +30,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npx playwright@1.44.0 install
+      - run: npx playwright@1.48.1 install
       - run: npm ci --no-audit --progress=false
 
       - name: Run E2E Tests (Repeated 10 Times)
-        run: npm run test:e2e:stable -- --retries=0 --repeat-each=10 --max-failures=50
+        run: npm run test:e2e:ci -- --retries=0 --repeat-each=10 --max-failures=50
 
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-flakefinder-test-results
           path: test-results
+          overwrite: true
 
       - name: Remove pr:e2e:flakefinder label (if present)
         if: always()

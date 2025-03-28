@@ -23,7 +23,7 @@
 <template>
   <div ref="timelistHolder" :class="listTypeClass">
     <template v-if="isExpanded">
-      <expanded-view-item
+      <ExpandedViewItem
         v-for="item in sortedItems"
         :key="item.key"
         :name="item.name"
@@ -42,7 +42,7 @@
         <table class="c-table__body js-table__body">
           <thead class="c-table__header">
             <tr>
-              <list-header
+              <ListHeader
                 v-for="headerItem in headerItems"
                 :key="headerItem.property"
                 :direction="getSortDirection(headerItem)"
@@ -56,7 +56,7 @@
             </tr>
           </thead>
           <tbody>
-            <list-item
+            <ListItem
               v-for="item in sortedItems"
               :key="item.key"
               :class="{ '--is-in-progress': persistedActivityStates[item.id] === 'in-progress' }"
@@ -436,6 +436,9 @@ export default {
 
       return startInBounds || endInBounds || middleInBounds;
     },
+    isActivityInProgress(activity) {
+      return this.persistedActivityStates[activity.id] === 'in-progress';
+    },
     filterActivities(activity) {
       if (this.isEditing) {
         return true;
@@ -460,7 +463,8 @@ export default {
         return false;
       }
 
-      if (!this.isActivityInBounds(activity)) {
+      // An activity may be out of bounds, but if it is in-progress, we show it.
+      if (!this.isActivityInBounds(activity) && !this.isActivityInProgress(activity)) {
         return false;
       }
       //current event or future start event or past end event

@@ -41,17 +41,13 @@ const examplePlanSmall2 = JSON.parse(
   fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
 );
 
+const FIRST_ACTIVITY_SMALL_1 = getFirstActivity(examplePlanSmall1);
+const FIRST_ACTIVITY_SMALL_2 = getFirstActivity(examplePlanSmall2);
+
 test.describe('Visual - Timelist progress bar @clock @a11y', () => {
-  const firstActivity = getFirstActivity(examplePlanSmall1);
-
-  test.use({
-    clockOptions: {
-      now: firstActivity.end + 10000,
-      shouldAdvanceTime: true
-    }
-  });
-
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.end + 10000 });
+    await page.clock.resume();
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
     await page.getByLabel('Click to collapse items').click();
   });
@@ -64,6 +60,11 @@ test.describe('Visual - Timelist progress bar @clock @a11y', () => {
 
 test.describe('Visual - Plan View @a11y', () => {
   test.beforeEach(async ({ page }) => {
+    // Set the clock to the end of the first activity in the plan
+    // This is so we can see the "now" line in the plan view
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_2.end + 10000 });
+    await page.clock.resume();
+
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
 

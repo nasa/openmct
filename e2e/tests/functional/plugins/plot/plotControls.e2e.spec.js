@@ -33,7 +33,6 @@ import {
   setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
-import { setUserDefinedMinAndMax, turnOffAutoscale } from './plotActions.js';
 
 test.describe('Plot Controls', () => {
   let overlayPlot;
@@ -78,20 +77,16 @@ test.describe('Plot Controls', () => {
     await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
-    await turnOffAutoscale(page);
 
-    await setUserDefinedMinAndMax(page, '-1', '1');
+    // turn off autoscale
+    await page.getByRole('checkbox', { name: 'Auto scale' }).uncheck();
+
+    await page.getByLabel('Y Axis 1 Minimum value').fill('-1');
+    await page.getByLabel('Y Axis 1 Maximum value').fill('1');
 
     // save
-    await page.click('button[title="Save"]');
-    await Promise.all([
-      page.getByRole('listitem', { name: 'Save and Finish Editing' }).click(),
-      //Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
-    ]);
-    //Wait until Save Banner is gone
-    await page.locator('.c-message-banner__close-button').click();
-    await page.waitForSelector('.c-message-banner__message', { state: 'detached' });
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     // hover over plot for plot controls
     await page.getByLabel('Plot Canvas').hover();
     // click on pause control
@@ -112,5 +107,43 @@ test.describe('Plot Controls', () => {
     const plotPixelSizeAfterWait = plotPixelsAfterWait.length;
     // Expect before and after plot points to match
     await expect(plotPixelSizeAtPause).toEqual(plotPixelSizeAfterWait);
+  });
+
+  /*
+  Test to verify that switching a plot's time context from global to
+  its own independent time context and then back to global context works correctly.
+
+  After switching from fixed time mode (ITC) to real time mode (global context),
+  the pause control for the plot should be available, indicating that it is following the right context.
+  */
+  test('Plots follow the right time context', async ({ page }) => {
+    // Set global time conductor to real-time mode
+    await setRealTimeMode(page);
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // Ensure pause control is visible since global time conductor is in Real time mode.
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeVisible();
+
+    // Toggle independent time conductor ON
+    await page.getByLabel('Enable Independent Time Conductor').click();
+
+    // Bring up the independent time conductor popup and switch to fixed time mode
+    await page.getByLabel('Independent Time Conductor Settings').click();
+    await page.getByLabel('Independent Time Conductor Mode Menu').click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // Ensure pause control is no longer visible since the plot is following the independent time context
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeHidden();
+
+    // Toggle independent time conductor OFF - Note that the global time conductor is still in Real time mode
+    await page.getByLabel('Disable Independent Time Conductor').click();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // Ensure pause control is visible since the global time conductor is in real time mode
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeVisible();
   });
 });

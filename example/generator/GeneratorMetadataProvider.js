@@ -108,6 +108,16 @@ const METADATA_BY_TYPE = {
             string: 'ON'
           }
         ],
+        filters: [
+          {
+            singleSelectionThreshold: true,
+            comparator: 'equals',
+            possibleValues: [
+              { label: 'OFF', value: 0 },
+              { label: 'ON', value: 1 }
+            ]
+          }
+        ],
         hints: {
           range: 1
         }

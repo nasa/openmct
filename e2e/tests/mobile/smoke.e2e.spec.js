@@ -62,7 +62,7 @@ test.describe('Smoke tests for @mobile', () => {
   test('Verify that user can change time conductor @mobile', async ({ page }) => {
     //Collapse Browse Pane to get more Time Conductor space
     await page.getByLabel('Collapse Browse Pane').click();
-    //Open Time Conductor and change to Real Time Mode and set offset hour by 1 hour
+    // Open Time Conductor and change to Real Time Mode and set offset hour by 1 hour
     // Disabling line because we're intentionally obscuring the text
     // eslint-disable-next-line playwright/no-force-option
     await page.getByLabel('Time Conductor Mode').click({ force: true });
@@ -82,14 +82,14 @@ test.describe('Smoke tests for @mobile', () => {
     await page.getByTitle('Collapse Browse Pane').click();
     await expect(page.getByRole('main').getByText('Parent Display Layout')).toBeVisible();
     //Verify both objects are in view
-    await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
-    await expect(await page.getByLabel('Child Layout 2 Layout')).toBeVisible();
+    await expect(page.getByLabel('Child Layout 1 Layout')).toBeVisible();
+    await expect(page.getByLabel('Child Layout 2 Layout')).toBeVisible();
     //Remove First Object to bring up confirmation dialog
     await page.getByLabel('View menu items').nth(1).click();
     await page.getByLabel('Remove').click();
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'Ok' }).click();
     //Verify that the object is removed
-    await expect(await page.getByLabel('Child Layout 1 Layout')).toBeVisible();
-    expect(await page.getByLabel('Child Layout 2 Layout').count()).toBe(0);
+    await expect(page.getByLabel('Child Layout 1 Layout')).toBeVisible();
+    await expect(page.getByLabel('Child Layout 2 Layout')).toHaveCount(0);
   });
 });

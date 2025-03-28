@@ -28,7 +28,7 @@
     }"
   >
     <div ref="search" class="c-tree-and-search__search">
-      <search
+      <Search
         v-show="isSelectorTree"
         ref="shell-search"
         class="c-search"
@@ -81,10 +81,11 @@
         @scroll="updateVisibleItems()"
       >
         <div :style="childrenHeightStyles">
-          <tree-item
+          <TreeItem
             v-for="(treeItem, index) in visibleItems"
             :key="`${treeItem.navigationPath}-${index}-${treeItem.object.name}`"
             :node="treeItem"
+            :draggable="true"
             :is-selector-tree="isSelectorTree"
             :selected-item="selectedItem"
             :active-search="activeSearch"

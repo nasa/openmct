@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { MODE } from './constants.js';
+
 export default function getTelemetryTableType(options) {
   let { telemetryMode, persistModeChange, rowLimit } = options;
 
@@ -36,11 +38,11 @@ export default function getTelemetryTableType(options) {
         control: 'select',
         options: [
           {
-            value: 'performance',
+            value: MODE.PERFORMANCE,
             name: 'Limited (Performance) Mode'
           },
           {
-            value: 'unlimited',
+            value: MODE.UNLIMITED,
             name: 'Unlimited Mode'
           }
         ],

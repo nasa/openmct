@@ -22,12 +22,24 @@
 
 import { isIdentifier } from './object-utils.js';
 
+/**
+ * Registry for managing root items in Open MCT.
+ */
 export default class RootRegistry {
+  /**
+   * @param {OpenMCT} openmct - The Open MCT instance.
+   */
   constructor(openmct) {
+    /** @type {Array<RootItemEntry>} */
     this._rootItems = [];
+    /** @type {OpenMCT} */
     this._openmct = openmct;
   }
 
+  /**
+   * Get all registered root items.
+   * @returns {Promise<Array<Identifier>>} A promise that resolves to an array of root item identifiers.
+   */
   getRoots() {
     const sortedItems = this._rootItems.sort((a, b) => b.priority - a.priority);
     const promises = sortedItems.map((rootItem) => rootItem.provider());
@@ -35,6 +47,11 @@ export default class RootRegistry {
     return Promise.all(promises).then((rootItems) => rootItems.flat());
   }
 
+  /**
+   * Add a root item to the registry.
+   * @param {RootItemInput} rootItem - The root item to add.
+   * @param {number} [priority] - The priority of the root item.
+   */
   addRoot(rootItem, priority) {
     if (!this._isValid(rootItem)) {
       return;
@@ -46,6 +63,12 @@ export default class RootRegistry {
     });
   }
 
+  /**
+   * Validate a root item.
+   * @param {RootItemInput} rootItem - The root item to validate.
+   * @returns {boolean} True if the root item is valid, false otherwise.
+   * @private
+   */
   _isValid(rootItem) {
     if (isIdentifier(rootItem) || typeof rootItem === 'function') {
       return true;
@@ -58,3 +81,15 @@ export default class RootRegistry {
     return false;
   }
 }
+
+/**
+ * @typedef {Object} RootItemEntry
+ * @property {number} priority - The priority of the root item.
+ * @property {() => Promise<Identifier | Identifier[]>} provider - A function that returns a promise resolving to a root item or an array of root items.
+ */
+
+/**
+ * @typedef {import('openmct').Identifier} Identifier
+ * @typedef {Identifier | Identifier[] | (() => Promise<Identifier | Identifier[]>)} RootItemInput
+ * @typedef {import('openmct').OpenMCT} OpenMCT
+ */

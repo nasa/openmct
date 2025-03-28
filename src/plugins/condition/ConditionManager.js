@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { v4 as uuid } from 'uuid';
 
 import Condition from './Condition.js';
@@ -39,7 +39,7 @@ export default class ConditionManager extends EventEmitter {
     this.shouldEvaluateNewTelemetry = this.shouldEvaluateNewTelemetry.bind(this);
 
     this.compositionLoad = this.composition.load();
-    this.subscriptions = {};
+    this.telemetryCollections = {};
     this.telemetryObjects = {};
     this.testData = {
       conditionTestInputs: this.conditionSetDomainObject.configuration.conditionTestData,
@@ -48,55 +48,46 @@ export default class ConditionManager extends EventEmitter {
     this.initialize();
   }
 
-  async requestLatestValue(endpoint) {
-    const options = {
+  subscribeToTelemetry(telemetryObject) {
+    const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+
+    if (this.telemetryCollections[keyString]) {
+      return;
+    }
+
+    const requestOptions = {
       size: 1,
       strategy: 'latest'
     };
-    const latestData = await this.openmct.telemetry.request(endpoint, options);
 
-    if (!latestData) {
-      throw new Error('Telemetry request failed by returning a falsy response');
-    }
-    if (latestData.length === 0) {
-      return;
-    }
-    this.telemetryReceived(endpoint, latestData[0]);
-  }
-
-  subscribeToTelemetry(endpoint) {
-    const telemetryKeyString = this.openmct.objects.makeKeyString(endpoint.identifier);
-    if (this.subscriptions[telemetryKeyString]) {
-      return;
-    }
-
-    const metadata = this.openmct.telemetry.getMetadata(endpoint);
-
-    this.telemetryObjects[telemetryKeyString] = Object.assign({}, endpoint, {
-      telemetryMetaData: metadata ? metadata.valueMetadatas : []
-    });
-
-    // get latest telemetry value (in case subscription is cached and no new data is coming in)
-    this.requestLatestValue(endpoint);
-
-    this.subscriptions[telemetryKeyString] = this.openmct.telemetry.subscribe(
-      endpoint,
-      this.telemetryReceived.bind(this, endpoint)
+    this.telemetryCollections[keyString] = this.openmct.telemetry.requestCollection(
+      telemetryObject,
+      requestOptions
     );
+
+    const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+    const telemetryMetaData = metadata ? metadata.valueMetadatas : [];
+
+    this.telemetryObjects[keyString] = { ...telemetryObject, telemetryMetaData };
+
+    this.telemetryCollections[keyString].on(
+      'add',
+      this.telemetryReceived.bind(this, telemetryObject)
+    );
+    this.telemetryCollections[keyString].load();
+
     this.updateConditionTelemetryObjects();
   }
 
   unsubscribeFromTelemetry(endpointIdentifier) {
-    const id = this.openmct.objects.makeKeyString(endpointIdentifier);
-    if (!this.subscriptions[id]) {
-      console.log('no subscription to remove');
-
+    const keyString = this.openmct.objects.makeKeyString(endpointIdentifier);
+    if (!this.telemetryCollections[keyString]) {
       return;
     }
 
-    this.subscriptions[id]();
-    delete this.subscriptions[id];
-    delete this.telemetryObjects[id];
+    this.telemetryCollections[keyString].destroy();
+    this.telemetryCollections[keyString] = null;
+    this.telemetryObjects[keyString] = null;
     this.removeConditionTelemetryObjects();
 
     //force re-computation of condition set result as we might be in a state where
@@ -107,7 +98,7 @@ export default class ConditionManager extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.updateConditionResults({ id: id });
+    this.updateConditionResults({ id: keyString });
     this.updateCurrentCondition(latestTimestamp);
 
     if (Object.keys(this.telemetryObjects).length === 0) {
@@ -410,10 +401,12 @@ export default class ConditionManager extends EventEmitter {
     return this.openmct.time.getBounds().end >= currentTimestamp;
   }
 
-  telemetryReceived(endpoint, datum) {
+  telemetryReceived(endpoint, data) {
     if (!this.isTelemetryUsed(endpoint)) {
       return;
     }
+
+    const datum = data[0];
 
     const normalizedDatum = this.createNormalizedDatum(datum, endpoint);
     const timeSystemKey = this.openmct.time.getTimeSystem().key;
@@ -507,8 +500,9 @@ export default class ConditionManager extends EventEmitter {
   destroy() {
     this.composition.off('add', this.subscribeToTelemetry, this);
     this.composition.off('remove', this.unsubscribeFromTelemetry, this);
-    Object.values(this.subscriptions).forEach((unsubscribe) => unsubscribe());
-    delete this.subscriptions;
+    Object.values(this.telemetryCollections).forEach((telemetryCollection) =>
+      telemetryCollection.destroy()
+    );
 
     this.conditions.forEach((condition) => {
       condition.destroy();

@@ -1,6 +1,6 @@
 <template>
   <div class="c-tc-input-popup" :class="popupClasses" :style="position">
-    <div class="c-tc-input-popup__options">
+    <div class="c-tc-input-popup__options" aria-label="Time Conductor Options">
       <IndependentMode
         v-if="isIndependent"
         class="c-conductor__mode-select"
@@ -44,14 +44,14 @@
         :button-css-class="'c-icon-button'"
       />
     </div>
-    <conductor-inputs-fixed
+    <ConductorInputsFixed
       v-if="isFixed"
       :input-bounds="bounds"
       :object-path="objectPath"
       @bounds-updated="saveFixedBounds"
       @dismiss-inputs-fixed="dismiss"
     />
-    <conductor-inputs-realtime
+    <ConductorInputsRealtime
       v-else
       :input-bounds="bounds"
       :object-path="objectPath"

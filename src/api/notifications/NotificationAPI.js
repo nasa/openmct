@@ -27,56 +27,9 @@
  * much as possible, notifications share a model with blocking
  * dialogs so that the same information can be provided in a dialog
  * and then minimized to a banner notification if needed.
- *
- * @namespace platform/api/notifications
  */
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import moment from 'moment';
-
-/**
- * @typedef {Object} NotificationProperties
- * @property {function} dismiss Dismiss the notification
- * @property {NotificationModel} model The Notification model
- * @property {(progressPerc: number, progressText: string) => void} [progress] Update the progress of the notification
- */
-
-/**
- * @typedef {EventEmitter & NotificationProperties} Notification
- */
-
-/**
- * @typedef {Object} NotificationLink
- * @property {function} onClick The function to be called when the link is clicked
- * @property {string} cssClass A CSS class name to style the link
- * @property {string} text The text to be displayed for the link
- */
-
-/**
- * @typedef {Object} NotificationOptions
- * @property {number} [autoDismissTimeout] Milliseconds to wait before automatically dismissing the notification
- * @property {boolean} [minimized] Allows for a notification to be minimized into the indicator by default
- * @property {NotificationLink} [link] A link for the notification
- */
-
-/**
- * A representation of a banner notification. Banner notifications
- * are used to inform users of events in a non-intrusive way. As
- * much as possible, notifications share a model with blocking
- * dialogs so that the same information can be provided in a dialog
- * and then minimized to a banner notification if needed, or vice-versa.
- *
- * @see DialogModel
- * @typedef {Object} NotificationModel
- * @property {string} message The message to be displayed by the notification
- * @property {number | 'unknown'} [progress] The progress of some ongoing task. Should be a number between 0 and 100, or
- * with the string literal 'unknown'.
- * @property {string} [progressText] A message conveying progress of some ongoing task.
- * @property {string} [severity] The severity of the notification. Should be one of 'info', 'alert', or 'error'.
- * @property {string} [timestamp] The time at which the notification was created. Should be a string in ISO 8601 format.
- * @property {boolean} [minimized] Whether or not the notification has been minimized
- * @property {boolean} [autoDismiss] Whether the notification should be automatically dismissed after a short period of time.
- * @property {NotificationOptions} options The notification options
- */
 
 const DEFAULT_AUTO_DISMISS_TIMEOUT = 3000;
 const MINIMIZE_ANIMATION_TIMEOUT = 300;
@@ -84,8 +37,12 @@ const MINIMIZE_ANIMATION_TIMEOUT = 300;
 /**
  * The notification service is responsible for informing the user of
  * events via the use of banner notifications.
+ * @extends EventEmitter
  */
 export default class NotificationAPI extends EventEmitter {
+  /**
+   * @constructor
+   */
   constructor() {
     super();
     /** @type {Notification[]} */
@@ -123,12 +80,7 @@ export default class NotificationAPI extends EventEmitter {
   /**
    * Present an alert to the user.
    * @param {string} message The message to display to the user.
-   * @param {NotificationOptions} [options] object with following properties
-   *      autoDismissTimeout: {number} in milliseconds to automatically dismisses notification
-   *      link: {Object} Add a link to notifications for navigation
-   *              onClick: callback function
-   *              cssClass: css class name to add style on link
-   *              text: text to display for link
+   * @param {NotificationOptions} [options] The notification options
    * @returns {Notification}
    */
   alert(message, options = {}) {
@@ -143,13 +95,8 @@ export default class NotificationAPI extends EventEmitter {
 
   /**
    * Present an error message to the user
-   * @param {string} message
-   * @param {Object} [options] object with following properties
-   *      autoDismissTimeout: {number} in milliseconds to automatically dismisses notification
-   *      link: {Object} Add a link to notifications for navigation
-   *              onClick: callback function
-   *              cssClass: css class name to add style on link
-   *              text: text to display for link
+   * @param {string} message The error message to display
+   * @param {NotificationOptions} [options] The notification options
    * @returns {Notification}
    */
   error(message, options = {}) {
@@ -164,9 +111,10 @@ export default class NotificationAPI extends EventEmitter {
 
   /**
    * Create a new progress notification. These notifications will contain a progress bar.
-   * @param {string} message
+   * @param {string} message The message to display
    * @param {number | null} progressPerc A value between 0 and 100, or null.
    * @param {string} [progressText] Text description of progress (eg. "10 of 20 objects copied").
+   * @returns {Notification}
    */
   progress(message, progressPerc, progressText) {
     let notificationModel = {
@@ -180,6 +128,9 @@ export default class NotificationAPI extends EventEmitter {
     return this._notify(notificationModel);
   }
 
+  /**
+   * Dismiss all active notifications.
+   */
   dismissAllNotifications() {
     this.notifications = [];
     this.emit('dismiss-all');
@@ -192,7 +143,7 @@ export default class NotificationAPI extends EventEmitter {
    * dismissed.
    *
    * @private
-   * @param {Notification | undefined} notification
+   * @param {Notification | undefined} notification The notification to minimize
    */
   _minimize(notification) {
     if (!notification) {
@@ -204,13 +155,13 @@ export default class NotificationAPI extends EventEmitter {
 
     if (this.activeTimeout) {
       /*
-                Method can be called manually (clicking dismiss) or
-                automatically from an auto-timeout. this.activeTimeout
-                acts as a semaphore to prevent race conditions. Cancel any
-                timeout in progress (for the case where a manual dismiss
-                has shortcut an active auto-dismiss), and clear the
-                semaphore.
-                */
+       * Method can be called manually (clicking dismiss) or
+       * automatically from an auto-timeout. this.activeTimeout
+       * acts as a semaphore to prevent race conditions. Cancel any
+       * timeout in progress (for the case where a manual dismiss
+       * has shortcut an active auto-dismiss), and clear the
+       * semaphore.
+       */
       clearTimeout(this.activeTimeout);
       delete this.activeTimeout;
     }
@@ -232,11 +183,10 @@ export default class NotificationAPI extends EventEmitter {
    * message banner and remove it from the list of notifications.
    * Typically only notifications with a severity of info should be
    * dismissed. If you're not sure whether to dismiss or minimize a
-   * notification, use {@link Notification#dismissOrMinimize}.
-   * dismiss
+   * notification, use {@link NotificationAPI#_dismissOrMinimize}.
    *
    * @private
-   * @param {Notification | undefined} notification
+   * @param {Notification | undefined} notification The notification to dismiss
    */
   _dismiss(notification) {
     if (!notification) {
@@ -247,14 +197,14 @@ export default class NotificationAPI extends EventEmitter {
     let index = this.notifications.indexOf(notification);
 
     if (this.activeTimeout) {
-      /* Method can be called manually (clicking dismiss) or
+      /*
+       * Method can be called manually (clicking dismiss) or
        * automatically from an auto-timeout. this.activeTimeout
        * acts as a semaphore to prevent race conditions. Cancel any
        * timeout in progress (for the case where a manual dismiss
        * has shortcut an active auto-dismiss), and clear the
        * semaphore.
        */
-
       clearTimeout(this.activeTimeout);
       delete this.activeTimeout;
     }
@@ -273,7 +223,7 @@ export default class NotificationAPI extends EventEmitter {
    * dismiss or minimize where appropriate.
    *
    * @private
-   * @param {Notification | undefined} notification
+   * @param {Notification | undefined} notification The notification to dismiss or minimize
    */
   _dismissOrMinimize(notification) {
     let model = notification?.model;
@@ -285,6 +235,7 @@ export default class NotificationAPI extends EventEmitter {
   }
 
   /**
+   * Sets the highest severity notification.
    * @private
    */
   _setHighestSeverity() {
@@ -308,10 +259,10 @@ export default class NotificationAPI extends EventEmitter {
    * already active, then it will be dismissed or minimized automatically,
    * and the provided notification displayed in its place.
    *
-   * @param {NotificationModel} notificationModel The notification to
-   * display
+   * @private
+   * @param {NotificationModel} notificationModel The notification to display
    * @returns {Notification} the provided notification decorated with
-   * functions to {@link Notification#dismiss} or {@link Notification#minimize}
+   * functions to dismiss or minimize
    */
   _notify(notificationModel) {
     let notification;
@@ -326,21 +277,21 @@ export default class NotificationAPI extends EventEmitter {
     this._setHighestSeverity();
 
     /*
-        Check if there is already an active (ie. visible) notification
-            */
+     * Check if there is already an active (ie. visible) notification
+     */
     if (!this.activeNotification && !notification?.model?.options?.minimized) {
       this._setActiveNotification(notification);
     } else if (!this.activeTimeout) {
       /*
-                If there is already an active notification, time it out. If it's
-                already got a timeout in progress (either because it has had
-                timeout forced because of a queue of messages, or it had an
-                autodismiss specified), leave it to run. Otherwise force a
-                timeout.
-
-                This notification has been added to queue and will be
-                serviced as soon as possible.
-                */
+       * If there is already an active notification, time it out. If it's
+       * already got a timeout in progress (either because it has had
+       * timeout forced because of a queue of messages, or it had an
+       * autodismiss specified), leave it to run. Otherwise force a
+       * timeout.
+       *
+       * This notification has been added to queue and will be
+       * serviced as soon as possible.
+       */
       this.activeTimeout = setTimeout(() => {
         this._dismissOrMinimize(activeNotification);
       }, DEFAULT_AUTO_DISMISS_TIMEOUT);
@@ -350,8 +301,9 @@ export default class NotificationAPI extends EventEmitter {
   }
 
   /**
+   * Creates a new notification object.
    * @private
-   * @param {NotificationModel} notificationModel
+   * @param {NotificationModel} notificationModel The model for the notification
    * @returns {Notification}
    */
   _createNotification(notificationModel) {
@@ -374,8 +326,9 @@ export default class NotificationAPI extends EventEmitter {
   }
 
   /**
+   * Sets the active notification.
    * @private
-   * @param {Notification | undefined} notification
+   * @param {Notification | undefined} notification The notification to set as active
    */
   _setActiveNotification(notification) {
     this.activeNotification = notification;
@@ -400,18 +353,18 @@ export default class NotificationAPI extends EventEmitter {
   }
 
   /**
-   * Used internally by the NotificationService
-   *
+   * Selects the next notification to be displayed.
    * @private
+   * @returns {Notification | undefined}
    */
   _selectNextNotification() {
     let notification;
     let i = 0;
 
     /*
-        Loop through the notifications queue and find the first one that
-        has not already been minimized (manually or otherwise).
-            */
+     * Loop through the notifications queue and find the first one that
+     * has not already been minimized (manually or otherwise).
+     */
     for (; i < this.notifications.length; i++) {
       notification = this.notifications[i];
 
@@ -424,3 +377,41 @@ export default class NotificationAPI extends EventEmitter {
     }
   }
 }
+
+/**
+ * @typedef {Object} NotificationProperties
+ * @property {() => void} dismiss Dismiss the notification
+ * @property {NotificationModel} model The Notification model
+ * @property {(progressPerc: number, progressText: string) => void} [progress] Update the progress of the notification
+ */
+
+/**
+ * @typedef {EventEmitter & NotificationProperties} Notification
+ */
+
+/**
+ * @typedef {Object} NotificationLink
+ * @property {() => void} onClick The function to be called when the link is clicked
+ * @property {string} cssClass A CSS class name to style the link
+ * @property {string} text The text to be displayed for the link
+ */
+
+/**
+ * @typedef {Object} NotificationOptions
+ * @property {number} [autoDismissTimeout] Milliseconds to wait before automatically dismissing the notification
+ * @property {boolean} [minimized] Allows for a notification to be minimized into the indicator by default
+ * @property {NotificationLink} [link] A link for the notification
+ */
+
+/**
+ * A representation of a banner notification.
+ * @typedef {Object} NotificationModel
+ * @property {string} message The message to be displayed by the notification
+ * @property {number | 'unknown'} [progress] The progress of some ongoing task. Should be a number between 0 and 100, or 'unknown'.
+ * @property {string} [progressText] A message conveying progress of some ongoing task.
+ * @property {'info' | 'alert' | 'error'} [severity] The severity of the notification.
+ * @property {string} [timestamp] The time at which the notification was created. Should be a string in ISO 8601 format.
+ * @property {boolean} [minimized] Whether or not the notification has been minimized
+ * @property {boolean} [autoDismiss] Whether the notification should be automatically dismissed after a short period of time.
+ * @property {NotificationOptions} options The notification options
+ */

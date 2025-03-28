@@ -21,27 +21,30 @@
 -->
 <template>
   <div v-if="loaded" class="js-plot-options-edit">
-    <ul v-if="!isStackedPlotObject" class="c-tree" aria-label="Plot Series Properties">
-      <h2 class="--first" title="Display properties for this object">Plot Series</h2>
+    <ul v-if="!isStackedPlotObject" class="c-tree" role="tree">
+      <h2 class="--first" title="Display properties for this Plot Series object">Plot Series</h2>
       <li v-for="series in plotSeries" :key="series.keyString">
-        <series-form :series="series" @series-updated="updateSeriesConfigForObject" />
+        <SeriesForm :series="series" @series-updated="updateSeriesConfigForObject" />
       </li>
     </ul>
-    <y-axis-form
+    <YAxisForm
       v-for="(yAxisId, index) in yAxesIds"
       :id="yAxisId.id"
       :key="`yAxis-${index}`"
       class="grid-properties js-yaxis-grid-properties"
       :y-axis="config.yAxis"
+      role="group"
+      aria-labelledby="y-axis-group"
       @series-updated="updateSeriesConfigForObject"
     />
     <ul
       v-if="isStackedPlotObject || !isStackedPlotNestedObject"
       class="l-inspector-part"
       aria-label="Legend Properties"
+      role="tree"
     >
       <h2 class="--first" title="Legend options">Legend</h2>
-      <legend-form class="grid-properties" :legend="config.legend" />
+      <LegendForm role="treeitem" tabindex="0" class="grid-properties" :legend="config.legend" />
     </ul>
   </div>
 </template>
@@ -83,7 +86,10 @@ export default {
       );
     },
     yAxesIds() {
-      return !this.isStackedPlotObject && this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
+      if (this.isStackedPlotObject) {
+        return [];
+      }
+      return this.yAxes.filter((yAxis) => yAxis.seriesCount > 0);
     }
   },
   created() {

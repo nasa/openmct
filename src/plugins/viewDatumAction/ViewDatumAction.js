@@ -58,7 +58,7 @@ class ViewDatumAction {
     this.openmct.overlays.overlay({
       element: vNode.el,
       size: 'large',
-      dismissable: true,
+      dismissible: true,
       onDestroy: destroy
     });
   }

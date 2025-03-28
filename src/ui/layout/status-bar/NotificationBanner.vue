@@ -39,7 +39,7 @@
       >{{ getLinkProps.text }}</span
     >
 
-    <progress-bar
+    <ProgressBar
       v-if="activeModel.progressPerc"
       class="c-message-banner__progress-bar"
       :model="activeModel"

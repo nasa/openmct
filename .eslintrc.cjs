@@ -5,12 +5,16 @@ const config = {
     browser: true,
     es2024: true,
     jasmine: true,
-    node: true,
-    worker: true,
-    serviceworker: true
+    amd: true,
+    node: true
   },
   globals: {
-    _: 'readonly'
+    _: 'readonly',
+    __webpack_public_path__: 'writeable',
+    __OPENMCT_VERSION__: 'readonly',
+    __OPENMCT_BUILD_DATE__: 'readonly',
+    __OPENMCT_REVISION__: 'readonly',
+    __OPENMCT_BUILD_BRANCH__: 'readonly'
   },
   plugins: ['prettier', 'unicorn', 'simple-import-sort'],
   extends: [
@@ -39,6 +43,7 @@ const config = {
     'vue/no-deprecated-events-api': 'warn',
     'vue/no-v-for-template-key': 'off',
     'vue/no-v-for-template-key-on-child': 'error',
+    'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     'prettier/prettier': 'error',
     'you-dont-need-lodash-underscore/omit': 'off',
     'you-dont-need-lodash-underscore/throttle': 'off',
