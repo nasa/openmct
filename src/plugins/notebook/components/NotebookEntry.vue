@@ -344,9 +344,6 @@ export default {
   },
   beforeMount() {
     this.marked = new Marked();
-    //this.renderer = new this.marked.Renderer();
-    //const originalRenderer = this.renderer.link;
-    //this.renderer.link = this.validateLink.bind(this, originalRenderer);
     this.marked.use({
       breaks: true,
       extensions: [
