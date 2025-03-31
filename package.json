@@ -86,7 +86,7 @@
     "terser-webpack-plugin": "5.3.9",
     "tiny-emitter": "2.1.0",
     "typescript": "5.3.3",
-    "uuid": "9.0.1",
+    "uuid": "11.1.0",
     "vue": "3.4.24",
     "vue-eslint-parser": "9.4.2",
     "vue-loader": "16.8.3",
