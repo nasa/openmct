@@ -178,9 +178,7 @@ export default {
     handleFormSubmission(shouldDismiss) {
       this.validateLimit();
       this.validateBounds();
-      this.reportValidity('bounds');
-      // report on this custom validity check last after more basic checks
-      this.reportValidity('limit');
+      this.reportLogicalValidity();
 
       if (this.isValid) {
         this.setBoundsFromView(shouldDismiss);
@@ -224,11 +222,29 @@ export default {
     },
     reportValidity(refName) {
       const input = this.getInput(refName);
-      const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
+      const validationResult = this.inputValidityMap[refName];
 
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
+      } else {
+        input.setCustomValidity('');
+        input.title = '';
+      }
+
+      this.$refs.fixedDeltaInput.reportValidity();
+    },
+    reportLogicalValidity() {
+      const input = this.getInput();
+      const boundsValidationResult = this.logicalValidityMap.bounds;
+      const limitValidationResult = this.logicalValidityMap.limit;
+
+      if (boundsValidationResult.valid !== true) {
+        input.setCustomValidity(boundsValidationResult.message);
+        input.title = boundsValidationResult.message;
+      } else if (limitValidationResult.valid !== true) {
+        input.setCustomValidity(limitValidationResult.message);
+        input.title = limitValidationResult.message;
       } else {
         input.setCustomValidity('');
         input.title = '';
