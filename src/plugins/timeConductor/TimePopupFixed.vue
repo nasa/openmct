@@ -94,6 +94,7 @@ export default {
   },
   inject: [
     'openmct',
+    'configuration',
     'isTimeSystemUTCBased',
     'timeContext',
     'timeSystemKey',
@@ -176,9 +177,10 @@ export default {
     },
     handleFormSubmission(shouldDismiss) {
       this.validateLimit();
-      this.reportValidity('limit');
       this.validateBounds();
       this.reportValidity('bounds');
+      // report on this custom validity check last after more basic checks
+      this.reportValidity('limit');
 
       if (this.isValid) {
         this.setBoundsFromView(shouldDismiss);
@@ -201,7 +203,12 @@ export default {
 
       this.logicalValidityMap.bounds = this.timeContext.validateBounds(bounds);
     },
-    validateLimit(bounds) {
+    validateLimit() {
+      const bounds = {
+        start: this.timeSystemFormatter.parse(this.formattedBounds.start),
+        end: this.timeSystemFormatter.parse(this.formattedBounds.end)
+      };
+
       const limit = this.configuration?.menuOptions
         ?.filter((option) => option.timeSystem === this.timeSystemKey)
         ?.find((option) => option.limit)?.limit;

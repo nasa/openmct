@@ -240,7 +240,7 @@ export default {
       this.clearAllValidation();
 
       const inputType = refName.includes('Date') ? 'Date' : 'Time';
-      const formatter = inputType === 'Date' ? this.timeFormatter : this.durationFormatter;
+      const formatter = inputType === 'Date' ? this.timeSystemFormatter : this.durationFormatter;
       const validationResult = formatter.validate(this.formattedBounds[refName])
         ? { valid: true }
         : { valid: false, message: `Invalid ${inputType}` };
