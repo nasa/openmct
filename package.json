@@ -93,7 +93,7 @@
     "webpack": "5.90.3",
     "webpack-cli": "5.1.1",
     "webpack-dev-server": "5.0.2",
-    "webpack-merge": "5.10.0"
+    "webpack-merge": "6.0.1"
   },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./coverage ./html-test-results ./e2e/test-results ./.nyc_output ./e2e/.nyc_output",
