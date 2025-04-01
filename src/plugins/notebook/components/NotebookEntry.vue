@@ -467,7 +467,7 @@ export default {
           return text;
         }
 
-        return `<a class="c-hyperlink" target="_blank", href="${href}">${text}</a>`;
+        return `<a class="c-hyperlink" target="_blank" href="${href}">${text}</a>`;
       } catch (error) {
         // had error parsing this URL, just return the text
         return text;
