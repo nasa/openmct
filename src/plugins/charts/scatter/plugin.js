@@ -63,7 +63,6 @@ export default function () {
           name: 'Underlay ranges',
           control: 'scatter-plot-form-control',
           cssClass: 'l-input',
-          key: 'scatterPlotForm',
           required: false,
           hideFromInspector: false,
           property: ['configuration', 'ranges'],
