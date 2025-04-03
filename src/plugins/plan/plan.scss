@@ -28,6 +28,11 @@
       stroke: none;
     }
 
+    .c-swimlane {
+      background: rgba(green, 0.3) !important;
+      flex: 1 0 auto;
+    }
+
     .c-swimlane__lane-object {
       display: flex;
     }
