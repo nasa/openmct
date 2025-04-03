@@ -28,6 +28,11 @@
     :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
     :domain-object="item.domainObject"
+    :button-title="`Toggle extended event lines overlay for ${item.domainObject.name}`"
+    button-icon="icon-arrows-up-down"
+    :hide-button="!item.isEventTelemetry"
+    :button-click-on="enableExtendEventLines"
+    :button-click-off="disableExtendEventLines"
   >
     <template #label>
       {{ item.domainObject.name }}
@@ -58,12 +63,16 @@ export default {
     item: {
       type: Object,
       required: true
+    },
+    extendedLinesBus: {
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
-      domainObject: undefined,
-      mutablePromise: undefined,
+      domainObject: null,
+      mutablePromise: null,
       status: ''
     };
   },
@@ -103,33 +112,40 @@ export default {
     }
   },
   methods: {
-    setObject(domainObject) {
+    async setObject(domainObject) {
       this.domainObject = domainObject;
-      this.mutablePromise = undefined;
-      this.$nextTick(() => {
-        let reference = this.$refs.objectView;
+      this.mutablePromise = null;
+      await this.$nextTick();
+      let reference = this.$refs.objectView;
 
-        if (reference) {
-          let childContext = this.$refs.objectView.getSelectionContext();
-          childContext.item = domainObject;
-          this.context = childContext;
-          if (this.removeSelectable) {
-            this.removeSelectable();
-          }
-
-          this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
+      if (reference) {
+        let childContext = this.$refs.objectView.getSelectionContext();
+        childContext.item = domainObject;
+        this.context = childContext;
+        if (this.removeSelectable) {
+          this.removeSelectable();
         }
 
-        if (this.removeStatusListener) {
-          this.removeStatusListener();
-        }
+        this.removeSelectable = this.openmct.selection.selectable(this.$el, this.context);
+      }
 
-        this.removeStatusListener = this.openmct.status.observe(
-          this.domainObject.identifier,
-          this.setStatus
-        );
-        this.status = this.openmct.status.get(this.domainObject.identifier);
-      });
+      if (this.removeStatusListener) {
+        this.removeStatusListener();
+      }
+
+      this.removeStatusListener = this.openmct.status.observe(
+        this.domainObject.identifier,
+        this.setStatus
+      );
+      this.status = this.openmct.status.get(this.domainObject.identifier);
+    },
+    enableExtendEventLines() {
+      const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
+      this.extendedLinesBus.enableExtendEventLines(keyString);
+    },
+    disableExtendEventLines() {
+      const keyString = this.openmct.objects.makeKeyString(this.item.domainObject.identifier);
+      this.extendedLinesBus.disableExtendEventLines(keyString);
     },
     setActionCollection(actionCollection) {
       this.openmct.menus.actionsToMenuItems(
