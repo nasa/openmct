@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function displayLayoutStylesInterceptor(openmct) {
+export default function flexibleLayoutStylesInterceptor(openmct) {
   return {
     appliesTo: (identifier, domainObject) => {
       return domainObject?.type === 'flexible-layout';
