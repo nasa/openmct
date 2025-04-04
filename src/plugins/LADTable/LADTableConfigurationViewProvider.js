@@ -61,7 +61,7 @@ export default function LADTableConfigurationViewProvider(openmct) {
           _destroy = destroy;
         },
         priority() {
-          return openmct.editor.isEditing() ? openmct.priority.HIGH + 1 : openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
         },
         destroy() {
           if (_destroy) {

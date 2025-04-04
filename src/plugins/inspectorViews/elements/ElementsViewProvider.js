@@ -66,7 +66,7 @@ export default function ElementsViewProvider(openmct) {
           return hasComposition;
         },
         priority: function () {
-          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.LOW;
+          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
         },
         destroy: function () {
           if (_destroy) {
