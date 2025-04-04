@@ -29,6 +29,7 @@ import displayLayoutStylesInterceptor from './displayLayoutStylesInterceptor.js'
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
+
 class DisplayLayoutView {
   constructor(openmct, domainObject, objectPath, options) {
     this.openmct = openmct;
