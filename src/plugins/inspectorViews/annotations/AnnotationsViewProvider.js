@@ -30,17 +30,29 @@ export default function AnnotationsViewProvider(openmct) {
     name: 'Annotations',
     canView: function (selection) {
       const availableTags = openmct.annotation.getAvailableTags();
+      const selectionContext = selection?.[0]?.[0]?.context;
+      const domainObject = selectionContext?.item;
+      const isLayoutItem = selectionContext?.layoutItem;
 
-      if (availableTags.length < 1) {
+      if (availableTags.length < 1 || isLayoutItem || !domainObject || openmct.editor.isEditing()) {
         return false;
       }
 
-      return selection.length;
+      const isAnnotatableType = openmct.annotation.isAnnotatableType(domainObject.type);
+      const metadata = openmct.telemetry.getMetadata(domainObject);
+      const hasImagery = metadata?.valuesForHints(['image']).length > 0;
+      const isNotebookEntry = selectionContext?.type === 'notebook-entry-selection';
+      const hasNumericTelemetry = openmct.telemetry.hasNumericTelemetry(domainObject);
+
+      return isAnnotatableType || hasImagery || hasNumericTelemetry || isNotebookEntry;
     },
     view: function (selection) {
       let _destroy = null;
 
-      const domainObject = selection?.[0]?.[0]?.context?.item;
+      const selectionContext = selection?.[0]?.[0]?.context;
+      const domainObject = selectionContext?.item;
+      const isNotebookEntry = selectionContext?.type === 'notebook-entry-selection';
+      const isConditionSet = domainObject?.type === 'conditionSet';
 
       return {
         show: function (element) {
@@ -64,6 +76,14 @@ export default function AnnotationsViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
+          if (isNotebookEntry) {
+            return openmct.priority.HIGH + 1;
+          }
+
+          if (isConditionSet) {
+            return openmct.priority.LOW;
+          }
+
           return openmct.priority.DEFAULT;
         },
         destroy: function () {
