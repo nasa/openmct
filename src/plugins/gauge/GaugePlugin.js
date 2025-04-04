@@ -24,6 +24,7 @@ import mount from 'utils/mount';
 
 import GaugeFormController from './components/GaugeFormController.vue';
 import GaugeCompositionPolicy from './GaugeCompositionPolicy.js';
+import gaugeStylesInterceptor from './gaugeStylesInterceptor.js';
 import GaugeViewProvider from './GaugeViewProvider.js';
 
 export const GAUGE_TYPES = [
@@ -37,7 +38,7 @@ export const GAUGE_TYPES = [
 export default function () {
   return function install(openmct) {
     openmct.objectViews.addProvider(new GaugeViewProvider(openmct));
-
+    openmct.objects.addGetInterceptor(gaugeStylesInterceptor(openmct));
     openmct.forms.addNewFormControl('gauge-controller', getGaugeFormController(openmct));
     openmct.types.addType('gauge', {
       name: 'Gauge',

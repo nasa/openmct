@@ -93,7 +93,6 @@ export default {
   methods: {
     setEditState(isEditing) {
       this.isEditing = isEditing;
-      console.log('this.isEditing', this.isEditing);
       this.showSelection(this.openmct.selection.get());
     },
     showSelection(selection) {

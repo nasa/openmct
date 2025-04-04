@@ -159,11 +159,6 @@ export default {
     this.composition.on('add', this.addFrame);
     this.composition.load();
 
-    // Initialize objectStyles if it doesn't exist for older versions
-    if (!this.domainObject.configuration.objectStyles) {
-      this.domainObject.configuration.objectStyles = {};
-    }
-
     this.unObserveContainers = this.openmct.objects.observe(
       this.domainObject,
       'configuration.containers',
