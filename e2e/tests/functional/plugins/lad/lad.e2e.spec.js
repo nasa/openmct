@@ -53,7 +53,6 @@ test.describe('Testing LAD table configuration', () => {
   test('in edit mode, LAD Tables provide ability to hide columns', async ({ page }) => {
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { name: 'Config' }).click();
 
     // make sure headers are visible initially
     await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
@@ -114,7 +113,6 @@ test.describe('Testing LAD table configuration', () => {
 
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { key: 'lad-table-configuration' }).click();
 
     // show timestamp column
     await page.getByLabel('Timestamp', { exact: true }).check();
@@ -142,7 +140,6 @@ test.describe('Testing LAD table configuration', () => {
 
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { key: 'lad-table-configuration' }).click();
 
     // show units, type, and WATCH columns
     await page.getByLabel('Units').check();
@@ -182,7 +179,6 @@ test.describe('Testing LAD table configuration', () => {
 
     // Edit LAD table
     await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { key: 'lad-table-configuration' }).click();
 
     // make sure Sine Wave headers are visible initially too
     await expect(page.getByRole('columnheader', { name: 'Timestamp', exact: true })).toBeVisible();
