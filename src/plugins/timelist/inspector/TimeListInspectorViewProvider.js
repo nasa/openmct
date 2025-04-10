@@ -63,7 +63,7 @@ export default function TimeListInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.editor.isEditing() ? openmct.priority.HIGH + 1 : openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {

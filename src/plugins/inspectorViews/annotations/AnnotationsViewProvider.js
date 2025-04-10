@@ -77,7 +77,7 @@ export default function AnnotationsViewProvider(openmct) {
         },
         priority: function () {
           if (isNotebookEntry) {
-            return openmct.priority.HIGH + 1;
+            return openmct.priority.HIGHEST;
           }
 
           if (isConditionSet) {
