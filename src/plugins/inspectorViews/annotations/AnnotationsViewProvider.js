@@ -50,6 +50,7 @@ export default function AnnotationsViewProvider(openmct) {
       let _destroy = null;
 
       const selectionContext = selection?.[0]?.[0]?.context;
+      const isImageSelection = selectionContext?.type === 'clicked-on-image-selection';
       const domainObject = selectionContext?.item;
       const isNotebookEntry = selectionContext?.type === 'notebook-entry-selection';
       const isConditionSet = domainObject?.type === 'conditionSet';
@@ -76,7 +77,7 @@ export default function AnnotationsViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          if (isNotebookEntry) {
+          if (isNotebookEntry || isImageSelection) {
             return openmct.priority.HIGHEST;
           }
 
