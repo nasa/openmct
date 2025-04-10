@@ -99,6 +99,27 @@ create_replicator_table() {
 add_index_and_views() {
     echo "Adding index and views to $OPENMCT_DATABASE_NAME database"
 
+    # Add object names search index
+    response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request PUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_design/object_names/\
+    --header 'Content-Type: application/json' \
+    --data '{
+      "_id":"_design/object_names",
+      "views":{
+        "object_names":{
+          "map":"function (doc) { if (doc.model && doc.model.name) {const name = doc.model.name.toLowerCase(); const tokens = name.split('\'' '\'');tokens.forEach((token) => {emit(token, doc._id);});}}"
+        }
+      }
+    }')
+
+    if [[ $response =~ "\"ok\":true" ]]; then
+        echo "Successfully created object_names"
+    elif [[ $response =~ "\"error\":\"conflict\"" ]]; then
+        echo "object_names already exists, skipping creation"
+    else
+        echo "Unable to create object_names"
+        echo $response
+    fi
+
     # Add type_tags_index
     response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request POST "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_index/\
     --header 'Content-Type: application/json' \

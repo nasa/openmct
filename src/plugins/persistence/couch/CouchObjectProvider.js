@@ -434,16 +434,35 @@ class CouchObjectProvider {
     return Promise.resolve([]);
   }
 
-  async getObjectsByView({ designDoc, viewName, keysToSearch }, abortSignal) {
-    const stringifiedKeys = JSON.stringify(keysToSearch);
-    const url = `${this.url}/_design/${designDoc}/_view/${viewName}?keys=${stringifiedKeys}&include_docs=true`;
+  async getObjectsByView(
+    { designDoc, viewName, keysToSearch, startKey, endKey, limit },
+    abortSignal
+  ) {
+    let stringifiedKeys = JSON.stringify(keysToSearch);
+    const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
+    const requestBody = {
+      include_docs: true
+    };
+
+    if (startKey !== undefined && endKey !== undefined) {
+      requestBody.startkey = startKey;
+      requestBody.endkey = endKey;
+    } else {
+      requestBody.keys = stringifiedKeys;
+    }
+
+    if (limit !== undefined) {
+      requestBody.limit = limit;
+    }
+
     let objectModels = [];
 
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: abortSignal
+        signal: abortSignal,
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {

@@ -33,7 +33,10 @@ class CouchSearchProvider {
   #bulkPromise;
   #batchIds;
   #lastAbortSignal;
-
+  /**
+   * 
+   * @param {import('./CouchObjectProvider').default} couchObjectProvider 
+   */
   constructor(couchObjectProvider) {
     this.couchObjectProvider = couchObjectProvider;
     this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
@@ -68,17 +71,13 @@ class CouchSearchProvider {
   }
 
   searchForObjects(query, abortSignal) {
-    const filter = {
-      selector: {
-        model: {
-          name: {
-            $regex: `(?i)${query}`
-          }
-        }
-      }
-    };
-
-    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    const preparedQuery = query.toLowerCase().trim();
+    return this.couchObjectProvider.getObjectsByView({
+      designDoc: 'object_names',
+      viewName: 'object_names',
+      startKey: preparedQuery,
+      endKey: preparedQuery + encodeURIComponent(String.fromCharCode(0xfff0))
+    });
   }
 
   async #deferBatchAnnotationSearch() {
