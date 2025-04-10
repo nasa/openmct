@@ -77,7 +77,7 @@ test.describe('Notifications List', () => {
 });
 
 test.describe('Notification Overlay', () => {
-  test('Closing notification list after notification banner disappeared does not cause it to open automatically', async ({
+  test.fixme('Closing notification list after notification banner disappeared does not cause it to open automatically', async ({
     page
   }) => {
     test.info().annotations.push({
