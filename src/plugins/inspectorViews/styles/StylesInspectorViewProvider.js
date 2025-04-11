@@ -70,7 +70,7 @@ export default function StylesInspectorViewProvider(openmct) {
         domainObject?.type === 'flexible-layout' && objectContext.type === 'container';
       const isLayoutItem = objectContext?.layoutItem;
 
-      if (isLayoutItem || hasStyles) {
+      if ((isLayoutItem || hasStyles) && !isFlexibleLayoutContainer) {
         return true;
       }
 

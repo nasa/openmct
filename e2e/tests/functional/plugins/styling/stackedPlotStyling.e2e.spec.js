@@ -153,21 +153,21 @@ test.describe('Stacked Plot styling', () => {
       NO_STYLE_RGBA,
       NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Item Overlay Plot 1')
     );
 
     await checkStyles(
       NO_STYLE_RGBA,
       NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
+      page.getByLabel('Stacked Plot Item Overlay Plot 2')
     );
 
     await checkFontStyles(
       setFontSize,
       setFontWeight,
       setFontFamily,
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Item Overlay Plot 1')
     );
   });
 
