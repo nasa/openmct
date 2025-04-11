@@ -435,14 +435,15 @@ class CouchObjectProvider {
   }
 
   async getObjectsByView(
-    { designDoc, viewName, keysToSearch, startKey, endKey, limit },
+    { designDoc, viewName, keysToSearch, startKey, endKey, limit, objectIdField },
     abortSignal
   ) {
     let stringifiedKeys = JSON.stringify(keysToSearch);
     const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
-    const requestBody = {
-      include_docs: true
-    };
+    const requestBody = {};
+    if (objectIdField === undefined) {
+      requestBody.include_docs = true;
+    }
 
     if (startKey !== undefined && endKey !== undefined) {
       requestBody.startkey = startKey;
@@ -473,13 +474,21 @@ class CouchObjectProvider {
 
       const result = await response.json();
       const couchRows = result.rows;
-      couchRows.forEach((couchRow) => {
-        const couchDoc = couchRow.doc;
-        const objectModel = this.#getModel(couchDoc);
-        if (objectModel) {
-          objectModels.push(objectModel);
-        }
-      });
+      if (objectIdField !== undefined) {
+        const objectIdsToResolve = [];
+        couchRows.forEach((couchRow) => {
+          objectIdsToResolve.push(couchRow[objectIdField]);
+        });
+        objectModels = Object.values(await this.#bulkGet(objectIdsToResolve), abortSignal);
+      } else {
+        couchRows.forEach((couchRow) => {
+          const couchDoc = couchRow.doc;
+          const objectModel = this.#getModel(couchDoc);
+          if (objectModel) {
+            objectModels.push(objectModel);
+          }
+        });
+      }
     } catch (error) {
       // do nothing
     }

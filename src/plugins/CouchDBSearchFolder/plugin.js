@@ -35,9 +35,13 @@ export default function (folderName, couchPlugin, searchFilter) {
         );
       },
       load() {
-        return couchProvider.getObjectsByFilter(searchFilter).then((objects) => {
-          return objects.map((object) => object.identifier);
-        });
+        if (searchFilter.viewName !== undefined) {
+          // Use a view to search, instead of an _all_docs find
+          return couchProvider.getObjectsByView(searchFilter);
+        } else {
+          // Use the _find endpoint to search _all_docs
+          return couchProvider.getObjectsByFilter(searchFilter);
+        }
       }
     });
   };

@@ -34,8 +34,8 @@ class CouchSearchProvider {
   #batchIds;
   #lastAbortSignal;
   /**
-   * 
-   * @param {import('./CouchObjectProvider').default} couchObjectProvider 
+   *
+   * @param {import('./CouchObjectProvider').default} couchObjectProvider
    */
   constructor(couchObjectProvider) {
     this.couchObjectProvider = couchObjectProvider;
@@ -72,12 +72,17 @@ class CouchSearchProvider {
 
   searchForObjects(query, abortSignal) {
     const preparedQuery = query.toLowerCase().trim();
-    return this.couchObjectProvider.getObjectsByView({
-      designDoc: 'object_names',
-      viewName: 'object_names',
-      startKey: preparedQuery,
-      endKey: preparedQuery + encodeURIComponent(String.fromCharCode(0xfff0))
-    });
+    return this.couchObjectProvider.getObjectsByView(
+      {
+        designDoc: 'object_names',
+        viewName: 'object_names',
+        startKey: preparedQuery,
+        endKey: preparedQuery + '\\ufff0',
+        objectIdField: 'value',
+        limit: 1000
+      },
+      abortSignal
+    );
   }
 
   async #deferBatchAnnotationSearch() {
