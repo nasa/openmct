@@ -30,6 +30,7 @@ import MutableDomainObject from './MutableDomainObject.js';
 import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
+import { isIdentifier, isKeyString } from './object-utils.js';
 
 /**
  * Uniquely identifies a domain object.
@@ -742,11 +743,19 @@ export default class ObjectAPI {
    * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
    * @returns {Promise<Array<DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifier, path = [], abortSignal = null) {
-    const domainObject = await this.get(identifier, abortSignal);
+  async getOriginalPath(identifierOrObject, path = [], abortSignal = null) {
+    let domainObject;
+
+    if (isKeyString(identifierOrObject) || isIdentifier(identifierOrObject)) {
+      domainObject = await this.get(identifierOrObject, abortSignal);
+    } else {
+      domainObject = identifierOrObject;
+    }
+
     if (!domainObject) {
       return [];
     }
+
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
