@@ -103,6 +103,9 @@ test.describe('Flexible Layout styling @a11y', () => {
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    // Select styles tab
+    await page.getByRole('tab', { name: 'Styles' }).click();
+
     await percySnapshot(
       page,
       `Saved Styled Flex Layout with Styled StackedPlot (theme: '${theme}')`
