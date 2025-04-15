@@ -100,7 +100,7 @@ test.describe('Flexible Layout styling @a11y', () => {
     );
 
     // Save Flexible Layout
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Select styles tab
