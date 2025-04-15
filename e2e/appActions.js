@@ -116,7 +116,7 @@ async function createDomainObjectWithDefaults(
 
   if (await _isInEditMode(page, uuid)) {
     // Save (exit edit mode)
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   }
 
