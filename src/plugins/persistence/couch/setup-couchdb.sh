@@ -106,10 +106,10 @@ add_index_and_views() {
       "_id":"_design/object_names",
       "views":{
         "object_names":{
-          "map":"function (doc) { if (doc.model && doc.model.name) {const name = doc.model.name.toLowerCase(); const tokens = name.split('\'' '\'');tokens.forEach((token) => {emit(token, doc._id);});}}"
+          "map":"function(doc) { if (doc.model && doc.model.name) { const name = doc.model.name.toLowerCase().trim(); if (name.length > 0) { emit(name, doc._id); const tokens = name.split(/[^a-zA-Z0-9]/); tokens.forEach((token) => { if (token.length > 0) { emit(token, doc._id); } }); } } }"
         }
       }
-    }')
+    }');
 
     if [[ $response =~ "\"ok\":true" ]]; then
         echo "Successfully created object_names"
@@ -117,6 +117,27 @@ add_index_and_views() {
         echo "object_names already exists, skipping creation"
     else
         echo "Unable to create object_names"
+        echo $response
+    fi
+
+    # Add object types search index
+    response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request PUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_design/object_types/\
+    --header 'Content-Type: application/json' \
+    --data '{
+      "_id":"_design/object_types",
+      "views":{
+        "object_types":{
+          "map":"function(doc) { if (doc.model && doc.model.type) { const type = doc.model.type.toLowerCase().trim(); if (type.length > 0) { emit(type, null); } } }"
+        }
+      }
+    }')
+
+    if [[ $response =~ "\"ok\":true" ]]; then
+        echo "Successfully created object_types"
+    elif [[ $response =~ "\"error\":\"conflict\"" ]]; then
+        echo "object_types already exists, skipping creation"
+    else
+        echo "Unable to create object_types"
         echo $response
     fi
 
