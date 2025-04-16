@@ -33,6 +33,7 @@ class CouchSearchProvider {
   #bulkPromise;
   #batchIds;
   #lastAbortSignal;
+  #isSearchByNameViewDefined;
   /**
    *
    * @param {import('./CouchObjectProvider').default} couchObjectProvider
@@ -70,19 +71,45 @@ class CouchSearchProvider {
     }
   }
 
-  searchForObjects(query, abortSignal) {
+  #isOptimizedSearchByNameSupported() {
+    if (this.#isSearchByNameViewDefined === undefined) {
+      return (this.#isSearchByNameViewDefined = this.couchObjectProvider.isViewDefined(
+        'object_names',
+        'object_names'
+      ));
+    } else {
+      return this.#isSearchByNameViewDefined;
+    }
+  }
+
+  async searchForObjects(query, abortSignal) {
     const preparedQuery = query.toLowerCase().trim();
-    return this.couchObjectProvider.getObjectsByView(
-      {
-        designDoc: 'object_names',
-        viewName: 'object_names',
-        startKey: preparedQuery,
-        endKey: preparedQuery + '\\ufff0',
-        objectIdField: 'value',
-        limit: 1000
-      },
-      abortSignal
-    );
+    const supportsOptimizedSearchByName = await this.#isOptimizedSearchByNameSupported();
+
+    if (supportsOptimizedSearchByName) {
+      return this.couchObjectProvider.getObjectsByView(
+        {
+          designDoc: 'object_names',
+          viewName: 'object_names',
+          startKey: preparedQuery,
+          endKey: preparedQuery + '\\ufff0',
+          objectIdField: 'value',
+          limit: 1000
+        },
+        abortSignal
+      );
+    } else {
+      const filter = {
+        selector: {
+          model: {
+            name: {
+              $regex: `(?i)${query}`
+            }
+          }
+        }
+      };
+      return this.couchObjectProvider.getObjectsByFilter(filter);
+    }
   }
 
   async #deferBatchAnnotationSearch() {
