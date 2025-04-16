@@ -434,6 +434,15 @@ class CouchObjectProvider {
     return Promise.resolve([]);
   }
 
+  async isViewDefined(designDoc, viewName) {
+    const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
+    const response = await fetch(url, {
+      method: 'HEAD'
+    });
+
+    return response.ok;
+  }
+
   async getObjectsByView(
     { designDoc, viewName, keysToSearch, startKey, endKey, limit, objectIdField },
     abortSignal
