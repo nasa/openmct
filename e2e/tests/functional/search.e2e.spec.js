@@ -31,6 +31,8 @@ import { expect, test } from '../../pluginFixtures.js';
 test.describe('Grand Search', () => {
   let grandSearchInput;
 
+  test.use({ignore404s: [/_design\/object_names\/_view\/object_names$/]});
+
   test.beforeEach(async ({ page }) => {
     grandSearchInput = page
       .getByLabel('OpenMCT Search')
@@ -192,6 +194,8 @@ test.describe('Grand Search', () => {
   });
 
   test('Search results are debounced @couchdb @network', async ({ page }) => {
+    //Unfortunately 404s are always logged to the JavaScript console and can't be surpressed
+    //A 404 is now thrown when we test for the presence of the object names view used by search.
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6179'
@@ -199,6 +203,7 @@ test.describe('Grand Search', () => {
     await createObjectsForSearch(page);
 
     let networkRequests = [];
+
     page.on('request', (request) => {
       const searchRequest =
         request.url().endsWith('_find') || request.url().includes('by_keystring');

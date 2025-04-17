@@ -103,25 +103,40 @@ const extendedTest = test.extend({
    * Default: `true`
    */
   failOnConsoleError: [true, { option: true }],
+  ignore404s: [[], { option: true }],
   /**
    * Extends the base page class to enable console log error detection.
    * @see {@link https://github.com/microsoft/playwright/discussions/11690 Github Discussion}
    */
-  page: async ({ page, failOnConsoleError }, use) => {
+  page: async ({ page, failOnConsoleError, ignore404s }, use) => {
     // Capture any console errors during test execution
-    const messages = [];
+    let messages = [];
     page.on('console', (msg) => messages.push(msg));
-
+    
     await use(page);
+
+    if (ignore404s.length > 0){
+      messages = messages.filter(msg => {
+        let keep = true;
+
+        if (msg.text().match(/404 \(Object Not Found\)/) !== null) {
+          keep = ignore404s.every(ignoreRule => {
+            return msg.location().url.match(ignoreRule) === null;
+          });
+        }
+
+        return keep;
+      });
+    }
 
     // Assert against console errors during teardown
     if (failOnConsoleError) {
-      messages.forEach((msg) =>
+      messages.forEach(async (msg) => {
         // eslint-disable-next-line playwright/no-standalone-expect
         expect
           .soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`)
           .not.toEqual('error')
-      );
+      });
     }
   }
 });
