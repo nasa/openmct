@@ -25,7 +25,7 @@ const config = {
   workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
   use: {
     baseURL: 'http://localhost:8080/',
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true,
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
