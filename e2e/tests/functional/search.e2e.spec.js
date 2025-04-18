@@ -205,10 +205,16 @@ test.describe('Grand Search', () => {
     let networkRequests = [];
 
     page.on('request', (request) => {
-      const searchRequest =
-        request.url().endsWith('_find') || request.url().includes('by_keystring');
-      const fetchRequest = request.resourceType() === 'fetch';
-      if (searchRequest && fetchRequest) {
+      const isSearchRequest =
+        request.url().endsWith('object_names') ||
+        request.url().endsWith('_find') ||
+        request.url().includes('by_keystring');
+
+      const isFetchRequest = request.resourceType() === 'fetch';
+      //CouchDB search results in a one-time head request to test for the presence of an index.
+      const isHeadRequest = request.method().toLowerCase() === 'head';
+
+      if (isSearchRequest && isFetchRequest && !isHeadRequest) {
         networkRequests.push(request);
       }
     });
