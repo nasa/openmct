@@ -119,7 +119,7 @@ const extendedTest = test.extend({
       messages = messages.filter(msg => {
         let keep = true;
 
-        if (msg.text().match(/404 \(Object Not Found\)/) !== null) {
+        if (msg.text().match(/404 \((Object )?Not Found\)/) !== null) {
           keep = ignore404s.every(ignoreRule => {
             return msg.location().url.match(ignoreRule) === null;
           });
@@ -131,7 +131,7 @@ const extendedTest = test.extend({
 
     // Assert against console errors during teardown
     if (failOnConsoleError) {
-      messages.forEach(async (msg) => {
+      messages.forEach((msg) => {
         // eslint-disable-next-line playwright/no-standalone-expect
         expect
           .soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`)

@@ -193,9 +193,93 @@ test.describe('Grand Search', () => {
     await expect(searchResults).toContainText(folderName);
   });
 
+  test.describe('Search will test for the presence of the object_names index, and', () => {
+    test('use index if available @couchdb @network', async ({ page }) => {
+      await createObjectsForSearch(page);
+
+      let isObjectNamesViewAvailable = false;
+      let isObjectNamesUsedForSearch = false;
+  
+      page.on('request', async (request) => {
+        const isObjectNamesRequest =
+          request.url().endsWith('_view/object_names')
+        const isHeadRequest = request.method().toLowerCase() === 'head';
+  
+        if (isObjectNamesRequest && isHeadRequest) {
+          const response = await request.response();
+          isObjectNamesViewAvailable = response.status() === 200;  
+        }
+      });
+
+      page.on('request', async (request) => {
+        const isObjectNamesRequest =
+          request.url().endsWith('_view/object_names');
+        const isPostRequest = request.method().toLowerCase() === 'post';
+
+        if (isObjectNamesRequest && isPostRequest) {
+          isObjectNamesUsedForSearch = true;
+        }
+      });
+
+
+      // Full search for object
+      await grandSearchInput.pressSequentially('Clock', { delay: 100 });
+  
+      // Wait for search to finish
+      await waitForSearchCompletion(page);
+
+      expect(isObjectNamesViewAvailable).toBe(true);
+      expect(isObjectNamesUsedForSearch).toBe(true);
+  
+    });
+
+    test('fall-back on base index if index not available @couchdb @network', async ({ page }) => {
+      await page.route('**/_view/object_names', (route) => {
+        route.fulfill({
+          status: 404
+        });
+      });
+      await createObjectsForSearch(page);
+
+      let isObjectNamesViewAvailable = false;
+      let isFindUsedForSearch = false;
+  
+      page.on('request', async (request) => {
+        const isObjectNamesRequest =
+          request.url().endsWith('_view/object_names')
+        const isHeadRequest = request.method().toLowerCase() === 'head';
+  
+        if (isObjectNamesRequest && isHeadRequest) {
+          const response = await request.response();
+          isObjectNamesViewAvailable = response.status() === 200;  
+        }
+      });
+
+      page.on('request', async (request) => {
+        const isFindRequest =
+          request.url().endsWith('_find');
+        const isPostRequest = request.method().toLowerCase() === 'post';
+
+        if (isFindRequest && isPostRequest) {
+          isFindUsedForSearch = true;
+        }
+      });
+
+
+      // Full search for object
+      await grandSearchInput.pressSequentially('Clock', { delay: 100 });
+  
+      // Wait for search to finish
+      await waitForSearchCompletion(page);
+      console.info(`isObjectNamesViewAvailable: ${isObjectNamesViewAvailable} | isFindUsedForSearch: ${isFindUsedForSearch}`);
+      expect(isObjectNamesViewAvailable).toBe(false);
+      expect(isFindUsedForSearch).toBe(true);
+    });
+  })
+
   test('Search results are debounced @couchdb @network', async ({ page }) => {
-    //Unfortunately 404s are always logged to the JavaScript console and can't be surpressed
-    //A 404 is now thrown when we test for the presence of the object names view used by search.
+    // Unfortunately 404s are always logged to the JavaScript console and can't be surpressed
+    // A 404 is now thrown when we test for the presence of the object names view used by search.
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6179'
@@ -209,9 +293,8 @@ test.describe('Grand Search', () => {
         request.url().endsWith('object_names') ||
         request.url().endsWith('_find') ||
         request.url().includes('by_keystring');
-
       const isFetchRequest = request.resourceType() === 'fetch';
-      //CouchDB search results in a one-time head request to test for the presence of an index.
+      // CouchDB search results in a one-time head request to test for the presence of an index.
       const isHeadRequest = request.method().toLowerCase() === 'head';
 
       if (isSearchRequest && isFetchRequest && !isHeadRequest) {
