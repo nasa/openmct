@@ -443,6 +443,22 @@ class CouchObjectProvider {
     return response.ok;
   }
 
+  /**
+   * @typedef GetObjectByViewOptions
+   * @property {String} designDoc the name of the design document that the view belongs to
+   * @property {String} viewName
+   * @property {Array.<String>} [keysToSearch] a list of discrete view keys to search for. View keys are not object identifiers.
+   * @property {String} [startKey] limit the search to a range of keys starting with the provided `startKey`. One of `keysToSearch` OR `startKey` AND `endKey` must be provided
+   * @property {String} [endKey] limit the search to a range of keys ending with the provided `endKey`. One of `keysToSearch` OR `startKey` AND `endKey` must be provided
+   * @property {Number} [limit] limit the number of results returned
+   * @property {String} [objectIdField] The field (either key or value) to treat as an object key. If provided, include_docs will be set to false in the request, and the field will be used as an object identifier. A bulk request will be used to resolve objects from identifiers
+   */
+  /**
+   * Return objects based on a call to a view. See https://docs.couchdb.org/en/stable/api/ddoc/views.html.
+   * @param {GetObjectByViewOptions} options
+   * @param {AbortSignal} abortSignal
+   * @returns {Promise<Array.<import('openmct.js').DomainObject>>}
+   */
   async getObjectsByView(
     { designDoc, viewName, keysToSearch, startKey, endKey, limit, objectIdField },
     abortSignal
