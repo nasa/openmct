@@ -273,7 +273,7 @@ test.describe('Grand Search', () => {
   });
 
   test('Search results are debounced @couchdb @network', async ({ page }) => {
-    // Unfortunately 404s are always logged to the JavaScript console and can't be supressed
+    // Unfortunately 404s are always logged to the JavaScript console and can't be suppressed
     // A 404 is now thrown when we test for the presence of the object names view used by search.
     test.info().annotations.push({
       type: 'issue',

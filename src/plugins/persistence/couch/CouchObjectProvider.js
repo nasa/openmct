@@ -471,7 +471,9 @@ class CouchObjectProvider {
     }
 
     if (startKey !== undefined && endKey !== undefined) {
+      // eslint-disable-next-line
       requestBody.startkey = startKey;
+      // eslint-disable-next-line
       requestBody.endkey = endKey;
     } else {
       requestBody.keys = stringifiedKeys;
