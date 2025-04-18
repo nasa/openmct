@@ -471,10 +471,10 @@ class CouchObjectProvider {
     }
 
     if (startKey !== undefined && endKey !== undefined) {
-      // eslint-disable-next-line
+      /* spell-checker: disable */
       requestBody.startkey = startKey;
-      // eslint-disable-next-line
       requestBody.endkey = endKey;
+      /* spell-checker: enable */
     } else {
       requestBody.keys = stringifiedKeys;
     }
