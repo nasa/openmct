@@ -27,10 +27,10 @@ import ConflictError from './ConflictError.js';
 import InMemorySearchProvider from './InMemorySearchProvider.js';
 import InterceptorRegistry from './InterceptorRegistry.js';
 import MutableDomainObject from './MutableDomainObject.js';
+import { isIdentifier, isKeyString } from './object-utils.js';
 import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
-import { isIdentifier, isKeyString } from './object-utils.js';
 
 /**
  * Uniquely identifies a domain object.

@@ -31,7 +31,7 @@ import { expect, test } from '../../pluginFixtures.js';
 test.describe('Grand Search', () => {
   let grandSearchInput;
 
-  test.use({ignore404s: [/_design\/object_names\/_view\/object_names$/]});
+  test.use({ ignore404s: [/_design\/object_names\/_view\/object_names$/] });
 
   test.beforeEach(async ({ page }) => {
     grandSearchInput = page
@@ -199,21 +199,19 @@ test.describe('Grand Search', () => {
 
       let isObjectNamesViewAvailable = false;
       let isObjectNamesUsedForSearch = false;
-  
+
       page.on('request', async (request) => {
-        const isObjectNamesRequest =
-          request.url().endsWith('_view/object_names')
+        const isObjectNamesRequest = request.url().endsWith('_view/object_names');
         const isHeadRequest = request.method().toLowerCase() === 'head';
-  
+
         if (isObjectNamesRequest && isHeadRequest) {
           const response = await request.response();
-          isObjectNamesViewAvailable = response.status() === 200;  
+          isObjectNamesViewAvailable = response.status() === 200;
         }
       });
 
-      page.on('request', async (request) => {
-        const isObjectNamesRequest =
-          request.url().endsWith('_view/object_names');
+      page.on('request', (request) => {
+        const isObjectNamesRequest = request.url().endsWith('_view/object_names');
         const isPostRequest = request.method().toLowerCase() === 'post';
 
         if (isObjectNamesRequest && isPostRequest) {
@@ -221,16 +219,14 @@ test.describe('Grand Search', () => {
         }
       });
 
-
       // Full search for object
       await grandSearchInput.pressSequentially('Clock', { delay: 100 });
-  
+
       // Wait for search to finish
       await waitForSearchCompletion(page);
 
       expect(isObjectNamesViewAvailable).toBe(true);
       expect(isObjectNamesUsedForSearch).toBe(true);
-  
     });
 
     test('fall-back on base index if index not available @couchdb @network', async ({ page }) => {
@@ -243,21 +239,19 @@ test.describe('Grand Search', () => {
 
       let isObjectNamesViewAvailable = false;
       let isFindUsedForSearch = false;
-  
+
       page.on('request', async (request) => {
-        const isObjectNamesRequest =
-          request.url().endsWith('_view/object_names')
+        const isObjectNamesRequest = request.url().endsWith('_view/object_names');
         const isHeadRequest = request.method().toLowerCase() === 'head';
-  
+
         if (isObjectNamesRequest && isHeadRequest) {
           const response = await request.response();
-          isObjectNamesViewAvailable = response.status() === 200;  
+          isObjectNamesViewAvailable = response.status() === 200;
         }
       });
 
-      page.on('request', async (request) => {
-        const isFindRequest =
-          request.url().endsWith('_find');
+      page.on('request', (request) => {
+        const isFindRequest = request.url().endsWith('_find');
         const isPostRequest = request.method().toLowerCase() === 'post';
 
         if (isFindRequest && isPostRequest) {
@@ -265,20 +259,21 @@ test.describe('Grand Search', () => {
         }
       });
 
-
       // Full search for object
       await grandSearchInput.pressSequentially('Clock', { delay: 100 });
-  
+
       // Wait for search to finish
       await waitForSearchCompletion(page);
-      console.info(`isObjectNamesViewAvailable: ${isObjectNamesViewAvailable} | isFindUsedForSearch: ${isFindUsedForSearch}`);
+      console.info(
+        `isObjectNamesViewAvailable: ${isObjectNamesViewAvailable} | isFindUsedForSearch: ${isFindUsedForSearch}`
+      );
       expect(isObjectNamesViewAvailable).toBe(false);
       expect(isFindUsedForSearch).toBe(true);
     });
-  })
+  });
 
   test('Search results are debounced @couchdb @network', async ({ page }) => {
-    // Unfortunately 404s are always logged to the JavaScript console and can't be surpressed
+    // Unfortunately 404s are always logged to the JavaScript console and can't be supressed
     // A 404 is now thrown when we test for the presence of the object names view used by search.
     test.info().annotations.push({
       type: 'issue',

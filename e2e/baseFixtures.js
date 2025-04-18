@@ -112,15 +112,15 @@ const extendedTest = test.extend({
     // Capture any console errors during test execution
     let messages = [];
     page.on('console', (msg) => messages.push(msg));
-    
+
     await use(page);
 
-    if (ignore404s.length > 0){
-      messages = messages.filter(msg => {
+    if (ignore404s.length > 0) {
+      messages = messages.filter((msg) => {
         let keep = true;
 
         if (msg.text().match(/404 \((Object )?Not Found\)/) !== null) {
-          keep = ignore404s.every(ignoreRule => {
+          keep = ignore404s.every((ignoreRule) => {
             return msg.location().url.match(ignoreRule) === null;
           });
         }
@@ -135,7 +135,7 @@ const extendedTest = test.extend({
         // eslint-disable-next-line playwright/no-standalone-expect
         expect
           .soft(msg.type(), `Console error detected: ${_consoleMessageToString(msg)}`)
-          .not.toEqual('error')
+          .not.toEqual('error');
       });
     }
   }
