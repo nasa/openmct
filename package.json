@@ -29,7 +29,7 @@
     "babel-plugin-istanbul": "7.0.0",
     "comma-separated-values": "3.6.4",
     "copy-webpack-plugin": "13.0.0",
-    "cspell": "7.3.8",
+    "cspell": "8.19.2",
     "css-loader": "6.10.0",
     "d3-axis": "3.0.0",
     "d3-scale": "4.0.2",
