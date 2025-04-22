@@ -24,6 +24,9 @@ export default function (folderName, couchPlugin, searchFilter) {
             location: 'ROOT'
           });
         }
+      },
+      search() {
+        return Promise.resolve([]);
       }
     });
 
