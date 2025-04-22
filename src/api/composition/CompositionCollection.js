@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { isIdentifier } from '../objects/object-utils';
+import { isIdentifier, isKeyString } from '../objects/object-utils';
 
 /**
  * @typedef {import('openmct').DomainObject} DomainObject
@@ -212,7 +212,7 @@ export default class CompositionCollection {
     const children = await this.#provider.load(this.domainObject);
     const childObjects = await Promise.all(
       children.map((child) => {
-        if (isIdentifier(child)) {
+        if (isKeyString(child) || isIdentifier(child)) {
           return this.#publicAPI.objects.get(child, abortSignal);
         } else {
           return Promise.resolve(child);
