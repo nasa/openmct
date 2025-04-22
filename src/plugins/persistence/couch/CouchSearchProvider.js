@@ -72,14 +72,16 @@ class CouchSearchProvider {
   }
 
   #isOptimizedSearchByNameSupported() {
+    let isOptimizedSearchAvailable;
+
     if (this.#isSearchByNameViewDefined === undefined) {
-      return (this.#isSearchByNameViewDefined = this.couchObjectProvider.isViewDefined(
-        'object_names',
-        'object_names'
-      ));
+      isOptimizedSearchAvailable = this.#isSearchByNameViewDefined =
+        this.couchObjectProvider.isViewDefined('object_names', 'object_names');
     } else {
-      return this.#isSearchByNameViewDefined;
+      isOptimizedSearchAvailable = this.#isSearchByNameViewDefined;
     }
+
+    return isOptimizedSearchAvailable;
   }
 
   async searchForObjects(query, abortSignal) {
