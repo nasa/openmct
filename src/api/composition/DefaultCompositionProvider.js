@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { toRaw } from 'vue';
 
-import { makeKeyString } from '../objects/object-utils.js';
+import { makeKeyString, parseKeyString } from '../objects/object-utils.js';
 import CompositionProvider from './CompositionProvider.js';
 
 /**
@@ -75,7 +75,9 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    *          the Identifiers in this composition
    */
   load(domainObject) {
-    return Promise.all(domainObject.composition);
+    const identifiers = domainObject.composition?.map((idOrKeystring) => parseKeyString);
+
+    return Promise.all(identifiers);
   }
   /**
    * Attach listeners for changes to the composition of a given domain object.
