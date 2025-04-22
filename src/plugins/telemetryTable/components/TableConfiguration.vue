@@ -112,6 +112,15 @@ export default {
   },
   methods: {
     updateHeaders(headers) {
+      // add name column if it doesn't exist,
+      // it's always the first column when it's manually added
+      if (!headers.name) {
+          headers = {
+              name: 'Name',
+              ...headers
+          };
+      }
+
       this.headers = headers;
     },
     toggleColumn(key) {
