@@ -75,7 +75,9 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    *          the Identifiers in this composition
    */
   load(domainObject) {
-    const identifiers = domainObject.composition?.map((idOrKeystring) => parseKeyString);
+    const identifiers = domainObject.composition
+      .filter((idOrKeystring) => idOrKeystring !== null && idOrKeystring !== undefined)
+      .map((idOrKeystring) => parseKeyString(idOrKeystring));
 
     return Promise.all(identifiers);
   }

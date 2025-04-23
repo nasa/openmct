@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { isIdentifier, isKeyString } from '../objects/object-utils';
+import { isIdentifier } from '../objects/object-utils';
 
 /**
  * @typedef {import('openmct').DomainObject} DomainObject
