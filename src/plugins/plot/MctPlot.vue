@@ -537,6 +537,7 @@ export default {
       this.followTimeContext();
     },
     followTimeContext() {
+      this.updateMode();
       this.updateDisplayBounds(this.timeContext.getBounds());
       this.timeContext.on('modeChanged', this.updateMode);
       this.timeContext.on('boundsChanged', this.updateDisplayBounds);
