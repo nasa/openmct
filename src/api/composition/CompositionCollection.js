@@ -212,7 +212,7 @@ export default class CompositionCollection {
     const children = await this.#provider.load(this.domainObject);
     const childObjects = await Promise.all(
       children.map((child) => {
-        if (isKeyString(child) || isIdentifier(child)) {
+        if (isIdentifier(child)) {
           return this.#publicAPI.objects.get(child, abortSignal);
         } else {
           return Promise.resolve(child);
