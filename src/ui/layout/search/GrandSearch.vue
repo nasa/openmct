@@ -111,9 +111,8 @@ export default {
             return null;
           }
 
-          const keyStringForObject = this.openmct.objects.makeKeyString(domainObject.identifier);
           const originalPathObjects = await this.openmct.objects.getOriginalPath(
-            keyStringForObject,
+            domainObject,
             [],
             abortSignal
           );
