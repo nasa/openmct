@@ -22,37 +22,39 @@
 <template>
   <div class="c-timeline__overlay-lines">
     <div
-      v-for="(lines, key) in extendedLinesPerKey"
+      v-for="(lineData, key) in extendedLines"
       :key="key"
       class="c-timeline__event-line--extended-container"
     >
-      <div
-        v-for="(line, index) in lines"
-        :id="line.id"
-        :key="`${index - line.id}`"
-        class="c-timeline__event-line--extended"
-        :class="[
-          line.limitClass,
-          {
-            '--hilite':
-              (hoveredLineId && hoveredKeyString === key && line.id === hoveredLineId) ||
-              (selectedLineId && selectedKeyString === key && line.id === selectedLineId)
-          }
-        ]"
-        :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
-      ></div>
+      <template v-if="lineData.enabled">
+        <div
+          v-for="(line, index) in lineData.lines"
+          :id="line.id"
+          :key="`${index - line.id}`"
+          class="c-timeline__event-line--extended"
+          :class="[
+            line.limitClass,
+            {
+              '--hilite':
+                line.hoverEnabled === true ||
+                (selectedLineId && selectedKeyString === key && line.id === selectedLineId)
+            }
+          ]"
+          :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
+        ></div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
+import { inject } from 'vue';
+
+import { useExtendedLines } from '../../ui/composables/extendedLines';
+
 export default {
   name: 'ExtendedLinesOverlay',
   props: {
-    extendedLinesPerKey: {
-      type: Object,
-      required: true
-    },
     height: {
       type: Number,
       required: true
@@ -61,22 +63,20 @@ export default {
       type: Number,
       default: 0
     },
-    extendedLineHover: {
-      type: Object,
-      required: true
-    },
     extendedLineSelection: {
       type: Object,
       required: true
     }
   },
+  setup() {
+    const domainObject = inject('domainObject');
+    const path = inject('path');
+    const openmct = inject('openmct');
+    const { extendedLines: extendedLines } = useExtendedLines(domainObject, path, openmct);
+
+    return { extendedLines };
+  },
   computed: {
-    hoveredLineId() {
-      return this.extendedLineHover.id || null;
-    },
-    hoveredKeyString() {
-      return this.extendedLineHover.keyString || null;
-    },
     selectedLineId() {
       return this.extendedLineSelection.id || null;
     },
