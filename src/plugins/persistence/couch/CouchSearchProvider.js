@@ -94,7 +94,7 @@ class CouchSearchProvider {
           designDoc: 'object_names',
           viewName: 'object_names',
           startKey: preparedQuery,
-          endKey: preparedQuery + '\\ufff0',
+          endKey: preparedQuery + `\ufff0`,
           objectIdField: 'value',
           limit: 1000
         },

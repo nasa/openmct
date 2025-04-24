@@ -466,21 +466,27 @@ class CouchObjectProvider {
     let stringifiedKeys = JSON.stringify(keysToSearch);
     const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
     const requestBody = {};
+    let requestBodyString;
+
     if (objectIdField === undefined) {
       requestBody.include_docs = true;
+    }
+
+    if (limit !== undefined) {
+      requestBody.limit = limit;
     }
 
     if (startKey !== undefined && endKey !== undefined) {
       /* spell-checker: disable */
       requestBody.startkey = startKey;
       requestBody.endkey = endKey;
+      requestBodyString = JSON.stringify(requestBody);
+      requestBodyString = requestBodyString.replace('$START_KEY', startKey);
+      requestBodyString = requestBodyString.replace('$END_KEY', endKey);
       /* spell-checker: enable */
     } else {
       requestBody.keys = stringifiedKeys;
-    }
-
-    if (limit !== undefined) {
-      requestBody.limit = limit;
+      requestBodyString = JSON.stringify(requestBody);
     }
 
     let objectModels = [];
@@ -490,7 +496,7 @@ class CouchObjectProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: abortSignal,
-        body: JSON.stringify(requestBody)
+        body: requestBodyString
       });
 
       if (!response.ok) {
