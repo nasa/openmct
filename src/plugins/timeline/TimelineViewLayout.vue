@@ -76,7 +76,7 @@
 import _ from 'lodash';
 import { useDragResizer } from 'utils/vue/useDragResizer.js';
 import { useFlexContainers } from 'utils/vue/useFlexContainers.js';
-import { inject, onBeforeUnmount, onMounted, provide, ref } from 'vue';
+import { inject, onBeforeUnmount, provide, ref, toRaw } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
@@ -109,11 +109,17 @@ export default {
     const openmct = inject('openmct');
     const domainObject = inject('domainObject');
     const path = inject('path');
-    const composition = inject('composition');
     const extendedLinesBus = inject('extendedLinesBus');
 
+    const composition = ref(null);
+    let isCompositionLoaded = false;
+    const existingContainers = [];
+    const compositionCollection = openmct.composition.get(toRaw(domainObject));
+    compositionCollection.on('add', addItem);
+    compositionCollection.on('remove', removeItem);
+    compositionCollection.on('reorder', reorder);
+
     const items = ref([]);
-    const loadedComposition = ref(null);
     const extendedLinesPerKey = ref({});
 
     const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
@@ -146,6 +152,7 @@ export default {
       addContainer,
       removeContainer,
       reorderContainers,
+      setContainers,
       containers,
       startContainerResizing,
       containerResizing,
@@ -154,6 +161,28 @@ export default {
       containers: domainObject.configuration.containers,
       rowsLayout: true,
       callback: mutateContainers
+    });
+
+    compositionCollection.load().then((loadedComposition) => {
+      composition.value = loadedComposition;
+      isCompositionLoaded = true;
+
+      // sync containers to composition,
+      // in case composition modified outside of view
+      // but do not mutate until user makes a change
+      composition.value.forEach((object) => {
+        const containerIndex = domainObject.configuration.containers.findIndex((container) =>
+          openmct.objects.areIdsEqual(container.domainObjectIdentifier, object.identifier)
+        );
+        if (containerIndex > -1) {
+          existingContainers.push(domainObject.configuration.containers[containerIndex]);
+        } else {
+          const container = new Container(object);
+          existingContainers.push(container);
+        }
+      });
+
+      setContainers(existingContainers);
     });
 
     function addItem(_domainObject) {
@@ -187,14 +216,7 @@ export default {
 
       items.value.push(item);
 
-      if (
-        !containers.value.some((container) =>
-          openmct.objects.areIdsEqual(
-            container.domainObjectIdentifier,
-            item.domainObject.identifier
-          )
-        )
-      ) {
+      if (isCompositionLoaded) {
         const container = new Container(domainObject);
         addContainer(container);
       }
@@ -245,30 +267,10 @@ export default {
       openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
     }
 
-    onMounted(async () => {
-      if (composition) {
-        composition.on('add', addItem);
-        composition.on('remove', removeItem);
-        composition.on('reorder', reorder);
-
-        loadedComposition.value = await composition.load();
-
-        const containersToRemove = containers.value.filter(
-          (container) =>
-            !items.value.some((item) =>
-              openmct.objects.areIdsEqual(
-                container.domainObjectIdentifier,
-                item.domainObject.identifier
-              )
-            )
-        );
-      }
-    });
-
     onBeforeUnmount(() => {
-      composition.off('add', addItem);
-      composition.off('remove', removeItem);
-      composition.off('reorder', reorder);
+      compositionCollection.off('add', addItem);
+      compositionCollection.off('remove', removeItem);
+      compositionCollection.off('reorder', reorder);
     });
 
     return {
@@ -281,7 +283,6 @@ export default {
       containers,
       getContainerSize,
       timelineHolder,
-      loadedComposition,
       items,
       addContainer,
       removeContainer,
