@@ -42,9 +42,18 @@
           :title="`This item is ${status}`"
         ></span>
       </div>
-
       <div class="c-object-label__name">
         <slot name="label"></slot>
+      </div>
+      <div class="c-swimlane__lane-label-button-h">
+        <button
+          v-if="!hideButton"
+          class="c-button"
+          :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
+          :title="buttonTitle"
+          :aria-label="buttonTitle"
+          @click="pressOnButton"
+        />
       </div>
     </div>
     <div
@@ -115,7 +124,42 @@ export default {
     domainObject: {
       type: Object,
       default: undefined
+    },
+    hideButton: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
+    buttonTitle: {
+      type: String,
+      default() {
+        return null;
+      }
+    },
+    buttonIcon: {
+      type: String,
+      default() {
+        return null;
+      }
+    },
+    buttonClickOn: {
+      type: Function,
+      default() {
+        return () => {};
+      }
+    },
+    buttonClickOff: {
+      type: Function,
+      default() {
+        return () => {};
+      }
     }
+  },
+  data() {
+    return {
+      buttonPressed: false
+    };
   },
   computed: {
     gridRowSpan() {
@@ -128,7 +172,7 @@ export default {
 
     swimlaneClass() {
       if (!this.spanRowsCount && !this.isNested) {
-        return 'c-swimlane__lane-label--span-cols';
+        return 'c-swimlane__lane-label --span-cols';
       }
 
       return '';
@@ -142,6 +186,14 @@ export default {
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(await this.getObjectPath(), BELOW, 'swimLane');
+    },
+    pressOnButton() {
+      this.buttonPressed = !this.buttonPressed;
+      if (this.buttonPressed) {
+        this.buttonClickOn();
+      } else {
+        this.buttonClickOff();
+      }
     }
   }
 };

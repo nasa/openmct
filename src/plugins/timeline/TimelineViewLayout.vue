@@ -42,8 +42,17 @@
         :key="item.keyString"
         class="c-timeline__content js-timeline__content"
         :item="item"
+        :extended-lines-bus
       />
     </div>
+
+    <ExtendedLinesOverlay
+      :extended-lines-per-key="extendedLinesPerKey"
+      :height="height"
+      :left-offset="extendedLinesLeftOffset"
+      :extended-line-hover="extendedLineHover"
+      :extended-line-selection="extendedLineSelection"
+    />
   </div>
 </template>
 
@@ -56,6 +65,7 @@ import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue';
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
@@ -65,13 +75,17 @@ const unknownObjectType = {
   }
 };
 
+const AXES_PADDING = 20;
+const PLOT_ITEM_H_PX = 100;
+
 export default {
   components: {
     TimelineObjectView,
     TimelineAxis,
-    SwimLane
+    SwimLane,
+    ExtendedLinesOverlay
   },
-  inject: ['openmct', 'domainObject', 'path', 'composition'],
+  inject: ['openmct', 'domainObject', 'path', 'composition', 'extendedLinesBus'],
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');
@@ -90,8 +104,20 @@ export default {
       timeSystems: [],
       height: 0,
       useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
-      timeOptions: this.domainObject.configuration.timeOptions
+      timeOptions: this.domainObject.configuration.timeOptions,
+      extendedLinesPerKey: {},
+      extendedLineHover: {},
+      extendedLineSelection: {},
+      extendedLinesLeftOffset: 0
     };
+  },
+  watch: {
+    alignmentData: {
+      handler() {
+        this.calculateExtendedLinesLeftOffset();
+      },
+      deep: true
+    }
   },
   beforeUnmount() {
     this.resetAlignment();
@@ -101,10 +127,17 @@ export default {
     this.stopFollowingTimeContext();
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
+    this.openmct.selection.off('change', this.checkForLineSelection);
+    this.extendedLinesBus.removeEventListener('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.removeEventListener('update-extended-hover', this.updateExtendedHover);
   },
   mounted() {
     this.items = [];
     this.setTimeContext();
+
+    this.extendedLinesBus.addEventListener('update-extended-lines', this.updateExtendedLines);
+    this.extendedLinesBus.addEventListener('update-extended-hover', this.updateExtendedHover);
+    this.openmct.selection.on('change', this.checkForLineSelection);
 
     if (this.composition) {
       this.composition.on('add', this.addItem);
@@ -129,27 +162,41 @@ export default {
       } else if (domainObject.type === 'gantt-chart') {
         rowCount = Object.keys(domainObject.configuration.swimlaneVisibility).length;
       }
-
+      const isEventTelemetry = this.hasEventTelemetry(domainObject);
       let height =
         domainObject.type === 'telemetry.plot.stacked'
-          ? `${domainObject.composition.length * 100}px`
-          : '100px';
+          ? `${domainObject.composition.length * PLOT_ITEM_H_PX}px`
+          : 'auto';
       let item = {
         domainObject,
         objectPath,
         type,
         keyString,
         rowCount,
-        height
+        height,
+        isEventTelemetry
       };
 
       this.items.push(item);
+    },
+    hasEventTelemetry(domainObject) {
+      const metadata = this.openmct.telemetry.getMetadata(domainObject);
+      if (!metadata) {
+        return false;
+      }
+      const hasDomain = metadata.valuesForHints(['domain']).length > 0;
+      const hasNoRange = !metadata.valuesForHints(['range'])?.length;
+      // for the moment, let's also exclude telemetry with images
+      const hasNoImages = !metadata.valuesForHints(['image']).length;
+
+      return hasDomain && hasNoRange && hasNoImages;
     },
     removeItem(identifier) {
       let index = this.items.findIndex((item) =>
         this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier)
       );
       this.items.splice(index, 1);
+      delete this.extendedLinesPerKey[this.openmct.objects.makeKeyString(identifier)];
     },
     reorder(reorderPlan) {
       let oldItems = this.items.slice();
@@ -165,6 +212,7 @@ export default {
       if (this.height !== clientHeight) {
         this.height = clientHeight;
       }
+      this.calculateExtendedLinesLeftOffset();
     },
     getClientHeight() {
       let clientHeight = this.$refs.timelineHolder.getBoundingClientRect().height;
@@ -221,6 +269,43 @@ export default {
       if (this.timeContext) {
         this.timeContext.off('boundsChanged', this.updateViewBounds);
         this.timeContext.off('clockChanged', this.updateViewBounds);
+      }
+    },
+    updateExtendedLines(event) {
+      const { keyString, lines } = event.detail;
+      this.extendedLinesPerKey[keyString] = lines;
+    },
+    updateExtendedHover(event) {
+      const { keyString, id } = event.detail;
+      this.extendedLineHover = { keyString, id };
+    },
+    checkForLineSelection(selection) {
+      const selectionContext = selection?.[0]?.[0]?.context;
+      const eventType = selectionContext?.type;
+      if (eventType === 'time-strip-event-selection') {
+        const event = selectionContext.event;
+        const selectedObject = selectionContext.item;
+        const keyString = this.openmct.objects.makeKeyString(selectedObject.identifier);
+        this.extendedLineSelection = { keyString, id: event?.time };
+      } else {
+        this.extendedLineSelection = {};
+      }
+    },
+    calculateExtendedLinesLeftOffset() {
+      const swimLaneOffset = this.calculateSwimlaneOffset();
+      this.extendedLinesLeftOffset = this.alignmentData.leftWidth + swimLaneOffset;
+    },
+    calculateSwimlaneOffset() {
+      const firstSwimLane = this.$el.querySelector('.c-swimlane__lane-object');
+      if (firstSwimLane) {
+        const timelineHolderRect = this.$refs.timelineHolder.getBoundingClientRect();
+        const laneObjectRect = firstSwimLane.getBoundingClientRect();
+        const offset = laneObjectRect.left - timelineHolderRect.left;
+        const hasAxes = this.alignmentData.axes && Object.keys(this.alignmentData.axes).length > 0;
+        const swimLaneOffset = hasAxes ? offset + AXES_PADDING : offset;
+        return swimLaneOffset;
+      } else {
+        return 0;
       }
     }
   }
