@@ -100,8 +100,11 @@ test.describe('Flexible Layout styling @a11y', () => {
     );
 
     // Save Flexible Layout
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Select styles tab
+    await page.getByRole('tab', { name: 'Styles' }).click();
 
     await percySnapshot(
       page,
@@ -124,17 +127,30 @@ test.describe('Stacked Plot styling @a11y', () => {
       name: 'StackedPlot1'
     });
 
-    // Create two SWGs and attach them to the Stacked Plot
+    // Create an overlay plots to hold the SWGs
+    const overlayPlot1 = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Overlay Plot 1',
+      parent: stackedPlot.uuid
+    });
+
+    const overlayPlot2 = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Overlay Plot 2',
+      parent: stackedPlot.uuid
+    });
+
+    // Create two SWGs and attach them to the overlay plots
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Sine Wave Generator 1',
-      parent: stackedPlot.uuid
+      parent: overlayPlot1.uuid
     });
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Sine Wave Generator 2',
-      parent: stackedPlot.uuid
+      parent: overlayPlot2.uuid
     });
   });
 
@@ -177,7 +193,7 @@ test.describe('Stacked Plot styling @a11y', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Item Overlay Plot 1')
     );
 
     await percySnapshot(page, `Edit Mode StackedPlot with Styled SWG (theme: '${theme}')`);

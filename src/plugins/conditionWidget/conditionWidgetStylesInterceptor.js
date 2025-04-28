@@ -20,14 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function GaugeCompositionPolicy(openmct) {
+export default function conditionWidgetStylesInterceptor(openmct) {
   return {
-    allow: function (parent, child) {
-      if (parent.type === 'gauge') {
-        return openmct.telemetry.hasNumericTelemetry(child);
+    appliesTo: (identifier, domainObject) => {
+      return domainObject?.type === 'conditionWidget' && !domainObject.configuration?.objectStyles;
+    },
+    invoke: (identifier, domainObject) => {
+      if (!domainObject.configuration) {
+        domainObject.configuration = {};
       }
 
-      return true;
+      domainObject.configuration.objectStyles = {};
+
+      return domainObject;
     }
   };
 }

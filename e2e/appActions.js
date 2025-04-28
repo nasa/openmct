@@ -68,7 +68,11 @@ import { v4 as genUuid } from 'uuid';
  * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [options.parent='mine'] - The Identifier or uuid of the parent object. Defaults to 'mine' folder
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+async function createDomainObjectWithDefaults(
+  page,
+  { type, name, parent = 'mine' },
+  additionalOptions = {}
+) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -89,6 +93,13 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
   await page.getByLabel('Title', { exact: true }).fill('');
   await page.getByLabel('Title', { exact: true }).fill(name);
 
+  if (additionalOptions) {
+    for (const [key, value] of Object.entries(additionalOptions)) {
+      // eslint-disable-next-line playwright/no-raw-locators
+      await page.locator(`#form-${key}`).fill(value);
+    }
+  }
+
   if (page.testNotes) {
     // Fill the "Notes" section with information about the
     // currently running test and its project.
@@ -105,7 +116,7 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 
   if (await _isInEditMode(page, uuid)) {
     // Save (exit edit mode)
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   }
 

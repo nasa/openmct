@@ -63,7 +63,7 @@ export default function FaultManagementInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return openmct.priority.HIGH;
         },
         destroy: function () {
           if (_destroy) {

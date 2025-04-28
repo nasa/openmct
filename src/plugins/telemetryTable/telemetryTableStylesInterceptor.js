@@ -20,14 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function GaugeCompositionPolicy(openmct) {
+export default function telemetryTableStylesInterceptor(openmct) {
   return {
-    allow: function (parent, child) {
-      if (parent.type === 'gauge') {
-        return openmct.telemetry.hasNumericTelemetry(child);
-      }
+    appliesTo: (identifier, domainObject) => {
+      return (
+        domainObject?.type === 'table' &&
+        domainObject.configuration && // only applies to tables with existing configuration
+        !domainObject.configuration.objectStyles
+      );
+    },
+    invoke: (identifier, domainObject) => {
+      domainObject.configuration.objectStyles = {};
 
-      return true;
+      return domainObject;
     }
   };
 }
