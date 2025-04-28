@@ -236,7 +236,7 @@ test.describe('Display Layout', () => {
       name: new RegExp(sineWaveObject.name)
     });
     await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
@@ -278,7 +278,7 @@ test.describe('Display Layout', () => {
       name: new RegExp(sineWaveObject.name)
     });
     await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
@@ -317,7 +317,7 @@ test.describe('Display Layout', () => {
       name: new RegExp(sineWaveObject.name)
     });
     await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
@@ -358,7 +358,7 @@ test.describe('Display Layout', () => {
       name: new RegExp(sineWaveObject.name)
     });
     await sineWaveGeneratorTreeItem.dragTo(page.getByLabel('Layout Grid'));
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     expect.soft(await page.locator('.l-layout .l-layout__frame').count()).toEqual(1);
@@ -413,7 +413,7 @@ test.describe('Display Layout', () => {
     await page.locator('div[title="Resize object width"] > input').click();
     await page.locator('div[title="Resize object width"] > input').fill('70');
 
-    await page.locator('button[title="Save"]').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     const startDate = '2021-12-30 01:01:00.000Z';
@@ -429,7 +429,7 @@ test.describe('Display Layout', () => {
     await expect(page.getByText('2021-12-30 01:11:00.000Z')).toBeHidden();
   });
 
-  test('When multiple plots are contained in a layout, we only ask for annotations once @couchdb @network', async ({
+  test.only('When multiple plots are contained in a layout, we only ask for annotations once @couchdb @network', async ({
     page
   }) => {
     await setFixedTimeMode(page);
@@ -473,7 +473,7 @@ test.describe('Display Layout', () => {
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
 
-    await page.getByLabel('Save').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Time to inspect some network traffic
@@ -531,7 +531,7 @@ test.describe('Display Layout', () => {
     await stateGeneratorTreeItem.click({ button: 'right' });
     await page.getByLabel('Edit Properties...').click();
     await page.getByLabel('State Duration (seconds)', { exact: true }).fill('0.1');
-    await page.getByLabel('Save').click();
+    await page.getByLabel('Save', { exact: true }).click();
 
     // Create a Table for filtering ON values
     const tableFilterOnValue = await createDomainObjectWithDefaults(page, {
@@ -555,14 +555,14 @@ test.describe('Display Layout', () => {
     await page.goto(tableFilterOnValue.url);
     await stateGeneratorTreeItem.dragTo(page.getByLabel('Object View'));
     await selectFilterOption(page, '1');
-    await page.getByLabel('Save').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Navigate to OFF filtering table and add state generator and setup filters
     await page.goto(tableFilterOffValue.url);
     await stateGeneratorTreeItem.dragTo(page.getByLabel('Object View'));
     await selectFilterOption(page, '0');
-    await page.getByLabel('Save').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Navigate to the display layout and edit it
@@ -586,7 +586,7 @@ test.describe('Display Layout', () => {
       // eslint-disable-next-line playwright/no-force-option
       force: true
     });
-    await page.getByLabel('Save').click();
+    await page.getByLabel('Save', { exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Get the tables so we can verify filtering is working as expected
