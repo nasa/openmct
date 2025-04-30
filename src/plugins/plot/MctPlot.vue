@@ -1802,7 +1802,9 @@ export default {
 
     showSynchronizeDialog() {
       const isFixedTimespanMode = this.timeContext.isFixed();
-      if (!isFixedTimespanMode) {
+      const SYNC_TIME_CONDUCTOR_SUPPRESSION_KEY = 'sync-time-conductor-modal-suppression';
+      let isSuppressed = localStorage.getItem(SYNC_TIME_CONDUCTOR_SUPPRESSION_KEY);
+      if (!isFixedTimespanMode && !isSuppressed) {
         const message = `
                 This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
                 Do you want to continue?
@@ -1813,12 +1815,16 @@ export default {
           iconClass: 'alert',
           size: 'fit',
           message: message,
+          showSuppressOption: true,
           buttons: [
             {
               label: 'Ok',
-              callback: () => {
+              callback: (data) => {
                 dialog.dismiss();
                 this.synchronizeTimeConductor();
+                if (data && data.suppress) {
+                  localStorage.setItem(SYNC_TIME_CONDUCTOR_SUPPRESSION_KEY, true);
+                }
               }
             },
             {
