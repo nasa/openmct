@@ -87,7 +87,14 @@ export default class TelemetryAPI {
   get SUBSCRIBE_STRATEGY() {
     return SUBSCRIBE_STRATEGY;
   }
-
+  /**
+   * Initializes the TelemetryAPI service.
+   * Sets up internal caches, formatter maps, provider registries,
+   * and prepares the API for telemetry subscription and request handling.
+   * Logs initialization for developer visibility.
+   * 
+   * @param {TelemetryProvider} provider - The new telemetry provider
+  */
   constructor(openmct) {
     this.openmct = openmct;
 
@@ -107,7 +114,11 @@ export default class TelemetryAPI {
     this.BatchingWebSocket = BatchingWebSocket;
     this.#subscribeCache = {};
     this.#hasReturnedFirstData = false;
+
+    console.log('[TelemetryAPI] Telemetry service initialized.');
   }
+
+  
 
   abortAllRequests() {
     this.requestAbortControllers.forEach((controller) => controller.abort());
@@ -156,6 +167,7 @@ export default class TelemetryAPI {
   /**
    * Register a telemetry provider with the telemetry service. This
    * allows you to connect alternative telemetry sources.
+   * Logs the provider being registered for debugging purposes.
    * @method addProvider
    * @param {module:openmct.TelemetryAPI~TelemetryProvider} provider the new
    *        telemetry provider
@@ -180,6 +192,8 @@ export default class TelemetryAPI {
     if (provider.supportsStaleness) {
       this.stalenessProviders.unshift(provider);
     }
+
+    console.log('[TelemetryAPI] Provider registered:', provider.constructor?.name || 'Anonymous');
   }
 
   /**
@@ -356,6 +370,7 @@ export default class TelemetryAPI {
 
   /**
    * Invoke interceptors if applicable for a given domain object.
+   * 
    */
   async applyRequestInterceptors(domainObject, request) {
     const interceptors = this.#getInterceptorsForRequest(domainObject.identifier, request);
@@ -402,6 +417,7 @@ export default class TelemetryAPI {
    * The `options` argument allows you to specify filters
    * (start, end, etc.), sort order, and strategies for retrieving
    * telemetry (aggregation, latest available, etc.).
+   * Logs the request initiation for visibility.
    *
    * @method requestCollection
    * @param {import('openmct').DomainObject} domainObject the object
@@ -419,6 +435,7 @@ export default class TelemetryAPI {
    * The `options` argument allows you to specify filters
    * (start, end, etc.), sort order, time context, and strategies for retrieving
    * telemetry (aggregation, latest available, etc.).
+   * Logs the start and result of the request (number of points).
    *
    * @method request
    * @param {import('openmct').DomainObject} domainObject the object
@@ -430,6 +447,7 @@ export default class TelemetryAPI {
    */
   async request(domainObject) {
     if (this.noRequestProviderForAllObjects || domainObject.type === 'unknown') {
+      console.log('[TelemetryAPI] Starting telemetry request for:', domainObject.name || domainObject.identifier);
       return [];
     }
 
@@ -454,6 +472,7 @@ export default class TelemetryAPI {
     arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
     try {
       const telemetry = await provider.request(...arguments);
+      console.log('[TelemetryAPI] Received', telemetry.length, 'data points for:', domainObject.name || domainObject.identifier);
       if (!this.#hasReturnedFirstData) {
         this.#hasReturnedFirstData = true;
         performance.mark('firstHistoricalDataReturned');
@@ -474,7 +493,7 @@ export default class TelemetryAPI {
   }
 
   /**
-   * Subscribe to realtime telemetry for a specific domain object.
+   * Subscribe to real-time telemetry updates for a specific domain object.
    * The callback will be called whenever data is received from a
    * realtime provider.
    *
@@ -489,6 +508,7 @@ export default class TelemetryAPI {
    */
   subscribe(domainObject, callback, options = { strategy: SUBSCRIBE_STRATEGY.LATEST }) {
     const requestedStrategy = options.strategy || SUBSCRIBE_STRATEGY.LATEST;
+    console.log('Subscribed to telemetry:', domainObject.identifier);
 
     if (domainObject.type === 'unknown') {
       return () => {};
