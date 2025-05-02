@@ -89,7 +89,9 @@ export function useFlexContainers(
     const beforeContainer = getBeforeContainer(index);
     const afterContainer = getAfterContainer(index);
 
-    maxMoveSize.value = beforeContainer.size + afterContainer.size;
+    if (beforeContainer && afterContainer && !beforeContainer.fixed && !afterContainer.fixed) {
+      maxMoveSize.value = beforeContainer.size + afterContainer.size;
+    }
   }
 
   function getBeforeContainer(index) {
@@ -108,24 +110,14 @@ export function useFlexContainers(
     const afterContainer = getAfterContainer(index);
     const percentageMoved = Math.round((delta / getElSize()) * 100);
 
-    if (beforeContainer === undefined || afterContainer === undefined) {
+    if (beforeContainer && afterContainer && !beforeContainer.fixed && !afterContainer.fixed) {
+      beforeContainer.size = getContainerSize(beforeContainer.size + percentageMoved);
+      afterContainer.size = getContainerSize(afterContainer.size - percentageMoved);
+    } else {
       console.warn(
-        'Cannot drag to resize a single flex sized containers. Use Elements Tab in Inspector to resize fixed containers.'
+        'Drag requires two flexible containers. Use Elements Tab in Inspector to resize.'
       );
-
-      return;
     }
-
-    if (beforeContainer.fixed === true && afterContainer.fixed === true) {
-      console.warn(
-        'Cannot drag to resize two fixed sized containers. Use Elements Tab in Inspector to resize.'
-      );
-
-      return;
-    }
-
-    beforeContainer.size = getContainerSize(beforeContainer.size + percentageMoved);
-    afterContainer.size = getContainerSize(afterContainer.size - percentageMoved);
   }
 
   function endContainerResizing() {
@@ -163,45 +155,92 @@ export function useFlexContainers(
    * due to composition edits outside of view
    *
    * @param {*} items
+   * @param {Number} (optional) index of the item to apply excess to in the event of rounding errors
    */
-  function sizeItems(items) {
+  function sizeItems(items, index) {
     let totalSize;
-    const itemsWithSize = items.filter((item) => item.size);
-    const itemsWithoutSize = items.filter((item) => !item.size);
-    // total number of items, adjusted by each item scale
-    const totalScale = items.reduce((total, item) => {
+    const flexItems = items.filter((item) => !item.fixed);
+    const flexItemsWithSize = flexItems.filter((item) => item.size);
+    const flexItemsWithoutSize = flexItems.filter((item) => !item.size);
+    // total number of flexible items, adjusted by each item scale
+    const totalScale = flexItems.reduce((total, item) => {
       const scale = item.scale ?? 1;
       return total + scale;
     }, 0);
 
-    itemsWithoutSize.forEach((item) => {
+    flexItemsWithoutSize.forEach((item) => {
       const scale = item.scale ?? 1;
       item.size = Math.round((100 * scale) / totalScale);
     });
 
-    totalSize = items.reduce((total, item) => total + item.size, 0);
+    totalSize = flexItems.reduce((total, item) => total + item.size, 0);
 
     if (totalSize > 100) {
-      const addedSize = itemsWithoutSize.reduce((total, item) => total + item.size, 0);
+      const addedSize = flexItemsWithoutSize.reduce((total, item) => total + item.size, 0);
       const remainingSize = 100 - addedSize;
 
-      itemsWithSize.forEach((item) => {
+      flexItemsWithSize.forEach((item) => {
         const scale = item.scale ?? 1;
         item.size = Math.round((item.size * scale * remainingSize) / 100);
       });
     } else if (totalSize < 100) {
       const sizeToFill = 100 - totalSize;
 
-      items.forEach((item) => {
+      flexItems.forEach((item) => {
         const scale = item.scale ?? 1;
         item.size = Math.round((item.size * scale * 100) / sizeToFill);
       });
     }
 
     // Ensure items add up to 100 in case of rounding error.
-    totalSize = items.reduce((total, item) => total + item.size, 0);
+    totalSize = flexItems.reduce((total, item) => total + item.size, 0);
     const excess = Math.round(100 - totalSize);
-    items[items.length - 1].size += excess;
+
+    if (excess) {
+      const _index = index !== undefined && !items[index].fixed ? index : items.length - 1;
+      items[_index].size += excess;
+    }
+  }
+
+  function toggleFixed(index, fixed) {
+    let addExcessToContainer;
+    const remainingItems = containers.value.slice();
+    const container = remainingItems.splice(index, 1)[0];
+
+    if (container.fixed !== fixed) {
+      if (fixed) {
+        const sizeToFill = 100 - container.size;
+        container.size = Math.round((container.size / 100) * getElSize());
+        remainingItems.forEach((item) => {
+          const scale = item.scale ?? 1;
+          item.size = Math.round((item.size * scale * 100) / sizeToFill);
+        });
+      } else {
+        container.size = Math.round((container.size * 100) / (getElSize() + container.size));
+        addExcessToContainer = index;
+        const remainingSize = 100 - container.size;
+        remainingItems.forEach((item) => {
+          const scale = item.scale ?? 1;
+          item.size = Math.round((item.size * scale * remainingSize) / 100);
+        });
+      }
+
+      container.fixed = fixed;
+      sizeItems(containers.value, addExcessToContainer);
+      callback?.();
+    }
+  }
+
+  function sizeFixedContainer(index, size) {
+    const container = containers.value[index];
+
+    if (container.fixed) {
+      container.size = size;
+
+      callback?.();
+    } else {
+      console.warn('Use view drag resizing to resize flexible containers.');
+    }
   }
 
   return {
@@ -212,6 +251,8 @@ export function useFlexContainers(
     containers,
     startContainerResizing,
     containerResizing,
-    endContainerResizing
+    endContainerResizing,
+    toggleFixed,
+    sizeFixedContainer
   };
 }

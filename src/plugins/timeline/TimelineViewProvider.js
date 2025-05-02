@@ -61,7 +61,8 @@ export default function TimelineViewProvider(openmct, extendedLinesBus) {
                   isEditing
                 };
               },
-              template: '<timeline-view-layout :is-editing="isEditing"></timeline-view-layout>'
+              template:
+                '<timeline-view-layout ref="timeline" :is-editing="isEditing"></timeline-view-layout>'
             },
             {
               app: openmct.app,
@@ -70,6 +71,11 @@ export default function TimelineViewProvider(openmct, extendedLinesBus) {
           );
           component = vNode.componentInstance;
           _destroy = destroy;
+        },
+        contextAction(action, ...args) {
+          if (component?.$refs?.timeline?.[action]) {
+            component.$refs.timeline[action](...args);
+          }
         },
         onEditModeChange(isEditing) {
           component.isEditing = isEditing;

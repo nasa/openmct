@@ -22,22 +22,18 @@
 
 import mount from 'utils/mount';
 
-import ElementsPool from './ElementsPool.vue';
+import TimelineElementsPool from './TimelineElementsPool.vue';
 
-export default function ElementsViewProvider(openmct) {
+export default function TimelineElementsViewProvider(openmct) {
   return {
-    key: 'elementsView',
+    key: 'timelineElementsView',
     name: 'Elements',
     canView: function (selection) {
-      // TODO - only use this view provider if another custom provider has not been applied
-      const hasValidSelection = selection?.length;
-      const isOverlayPlot = selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
-      const isFolder = selection?.[0]?.[0]?.context?.item?.type === 'folder';
-
-      return hasValidSelection && !isOverlayPlot && !isFolder;
+      return selection?.[0]?.[0]?.context?.item?.type === 'time-strip';
     },
     view: function (selection) {
       let _destroy = null;
+
       const domainObject = selection?.[0]?.[0]?.context?.item;
 
       return {
@@ -46,13 +42,13 @@ export default function ElementsViewProvider(openmct) {
             {
               el: element,
               components: {
-                ElementsPool
+                TimelineElementsPool
               },
               provide: {
                 openmct,
                 domainObject
               },
-              template: `<ElementsPool />`
+              template: `<TimelineElementsPool />`
             },
             {
               app: openmct.app,
@@ -64,10 +60,10 @@ export default function ElementsViewProvider(openmct) {
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
 
-          return hasComposition;
+          return hasComposition && isEditing;
         },
         priority: function () {
-          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
+          return openmct.priority.HIGH - 1;
         },
         destroy: function () {
           if (_destroy) {
