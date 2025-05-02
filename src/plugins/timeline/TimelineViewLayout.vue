@@ -47,7 +47,7 @@
         <TimelineObjectView
           class="c-timeline__content js-timeline__content"
           :item="item"
-          :size="getContainerSize(item)"
+          :container="containers[index]"
           :extended-lines-bus
         />
         <ResizeHandle
@@ -156,7 +156,9 @@ export default {
       containers,
       startContainerResizing,
       containerResizing,
-      endContainerResizing
+      endContainerResizing,
+      toggleFixed,
+      sizeFixedContainer
     } = useFlexContainers(timelineHolder, {
       containers: domainObject.configuration.containers,
       rowsLayout: true,
@@ -167,13 +169,22 @@ export default {
       composition.value = loadedComposition;
       isCompositionLoaded = true;
 
+      // check if containers configuration matches composition
+      // in case composition has been modified outside of view
+      // if so, rebuild containers to match composition
       // sync containers to composition,
       // in case composition modified outside of view
       // but do not mutate until user makes a change
-      composition.value.forEach((object) => {
+      let isConfigurationChanged = false;
+      composition.value.forEach((object, index) => {
         const containerIndex = domainObject.configuration.containers.findIndex((container) =>
           openmct.objects.areIdsEqual(container.domainObjectIdentifier, object.identifier)
         );
+
+        if (containerIndex !== index) {
+          isConfigurationChanged = true;
+        }
+
         if (containerIndex > -1) {
           existingContainers.push(domainObject.configuration.containers[containerIndex]);
         } else {
@@ -182,7 +193,13 @@ export default {
         }
       });
 
-      setContainers(existingContainers);
+      // add check for total size not equal to 100? if comp and containers same, probably safe
+
+      if (isConfigurationChanged) {
+        console.log('yo');
+        setContainers(existingContainers);
+        mutateContainers();
+      }
     });
 
     function addItem(_domainObject) {
@@ -267,6 +284,16 @@ export default {
       openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
     }
 
+    // context action called from outside component
+    function toggleFixedContextAction(index, fixed) {
+      toggleFixed(index, fixed);
+    }
+
+    // context action called from outside component
+    function changeSizeContextAction(index, size) {
+      sizeFixedContainer(index, size);
+    }
+
     onBeforeUnmount(() => {
       compositionCollection.off('add', addItem);
       compositionCollection.off('remove', removeItem);
@@ -292,7 +319,9 @@ export default {
       startContainerResizing,
       containerResizing,
       endContainerResizing,
-      mutateContainers
+      mutateContainers,
+      toggleFixedContextAction,
+      changeSizeContextAction
     };
   },
   data() {
