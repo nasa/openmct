@@ -25,7 +25,7 @@
       class="c-create-button c-button--menu c-button--major icon-plus"
       :aria-disabled="isEditing"
       aria-labelledby="create-button-label"
-      @click.prevent.stop="showCreateMenu"
+      @click.prevent.stop="toggleCreateMenu"
     >
       <span id="create-button-label" class="c-button__label">Create</span>
     </button>
@@ -33,6 +33,7 @@
 </template>
 <script>
 import { CREATE_ACTION_KEY } from '@/plugins/formActions/CreateAction';
+import { PLUGIN_SELECTOR_ACTION_KEY } from '@/plugins/formActions/PluginSelectorAction';
 
 export default {
   inject: ['openmct'],
@@ -68,11 +69,10 @@ export default {
   methods: {
     getItems() {
       let keys = this.openmct.types.listKeys();
-
+      let unknownKeys = Object.keys(this.menuItems);
       keys.forEach((key) => {
         if (!this.menuItems[key]) {
           let typeDef = this.openmct.types.get(key).definition;
-
           if (typeDef.creatable) {
             this.menuItems[key] = {
               cssClass: typeDef.cssClass,
@@ -82,20 +82,48 @@ export default {
             };
           }
         }
+
+        const unknownKeyIndex = unknownKeys.indexOf(key);
+        if (unknownKeyIndex >= 0) {
+          unknownKeys.splice(unknownKeyIndex, 1);
+        }
+      });
+
+      unknownKeys.forEach((key) => {
+        delete this.menuItems[key];
       });
 
       return Object.values(this.menuItems);
     },
-    showCreateMenu() {
-      const elementBoundingClientRect = this.$refs.createButton.getBoundingClientRect();
-      const x = elementBoundingClientRect.x;
-      const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
+    toggleCreateMenu() {
+      const MENU_CLASS = 'c-create-menu';
+      if (
+        this.openmct.menus.menuComponent &&
+        this.openmct.menus.menuComponent.options.menuClass === MENU_CLASS
+      ) {
+        //close menu if already open
+        this.openmct.menus.menuComponent.dismiss();
+      } else {
+        //force refresh of menu items in case plugin selection changed
+        this.menuItems[Date.now()] = null;
+        const elementBoundingClientRect = this.$refs.createButton.getBoundingClientRect();
+        const x = elementBoundingClientRect.x;
+        const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
-      const menuOptions = {
-        menuClass: 'c-create-menu'
-      };
+        const menuOptions = {
+          menuClass: MENU_CLASS,
+          menuHeaderActions: [
+            {
+              cssClass: 'icon-gear',
+              name: 'Select Plugins...',
+              description: 'Add or remove plugins from the create menu.',
+              onItemClicked: () => this.selectPlugin()
+            }
+          ]
+        };
 
-      this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);
+        this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);
+      }
     },
     toggleEdit(isEditing) {
       this.isEditing = isEditing;
@@ -103,6 +131,10 @@ export default {
     create(key) {
       const createAction = this.openmct.actions.getAction(CREATE_ACTION_KEY);
       createAction.invoke(key, this.openmct.router.path[0]);
+    },
+    selectPlugin() {
+      const pluginSelectorAction = this.openmct.actions.getAction(PLUGIN_SELECTOR_ACTION_KEY);
+      pluginSelectorAction.invoke(this.openmct.router.path[0]);
     }
   }
 };

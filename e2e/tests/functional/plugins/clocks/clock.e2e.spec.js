@@ -41,7 +41,7 @@ test.describe('Clock Generator CRUD Operations', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     // Click Clock
-    await page.getByRole('menuitem').first().click();
+    await page.getByRole('menuitem', { name: 'Clock' }).click();
 
     // Click .icon-arrow-down
     await page.locator('.icon-arrow-down').click();

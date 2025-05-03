@@ -20,14 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CreateAction from './CreateAction.js';
-import EditPropertiesAction from './EditPropertiesAction.js';
-import PluginSelectorAction from './PluginSelectorAction.js';
+.plugin-selector-row {
+  padding-top: 15px;
+  display: flex;
 
-export default function () {
-  return function (openmct) {
-    openmct.actions.register(new EditPropertiesAction(openmct));
-    openmct.actions.register(new CreateAction(openmct));
-    openmct.actions.register(new PluginSelectorAction(openmct));
-  };
+  input[type='checkbox'] {
+    margin-right: 5px;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  .plugin-icon {
+    margin-left: 5px;
+    color: $colorMenuIc;
+    font-size: 1em;
+    min-width: 1em;
+  }
+}
+
+.plugin-description-row {
+  padding-top: 10px;
+
+  .plugin-description {
+    margin-left: 20px;
+  }
 }
