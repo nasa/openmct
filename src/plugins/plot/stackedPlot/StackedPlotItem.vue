@@ -121,6 +121,7 @@ export default {
       this.triggerUnsubscribeFromStaleness(domainObject);
       this.subscribeToStaleness(domainObject);
     });
+    this.setEditState(this.isEditing);
   },
   beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setEditState);
