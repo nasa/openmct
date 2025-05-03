@@ -23,13 +23,7 @@
 <template>
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
-      <textarea
-        :id="`${model.key}-textarea`"
-        v-model="field"
-        type="text"
-        :size="model.size"
-        @input="updateText()"
-      >
+      <textarea :id="fieldId" v-model="field" type="text" :size="model.size" @input="updateText()">
       </textarea>
     </span>
   </span>
@@ -48,11 +42,13 @@ export default {
   emits: ['on-change'],
   data() {
     return {
-      field: this.model.value
+      field: this.model.value,
+      fieldId: null
     };
   },
   mounted() {
     this.updateText = throttle(this.updateText.bind(this), 500);
+    this.fieldId = this.model.key ? 'form-' + this.model.key : null;
   },
   methods: {
     updateText() {

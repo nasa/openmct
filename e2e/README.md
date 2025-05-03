@@ -426,7 +426,7 @@ By adhering to this principle, we can create tests that are both robust and refl
   // Fill the "Notes" section with information about the
   // currently running test and its project.
   const { testNotes } = page;
-  const notesInput = page.locator('form[name="mctForm"] #notes-textarea');
+  const notesInput = page.locator('form[name="mctForm"] #form-notes');
   await notesInput.fill(testNotes);
   ```
 

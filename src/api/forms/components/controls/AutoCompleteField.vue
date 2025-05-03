@@ -23,6 +23,7 @@
   <div ref="autoCompleteForm" class="form-control c-input--autocomplete js-autocomplete">
     <div class="c-input--autocomplete__wrapper">
       <input
+        :id="fieldId"
         ref="autoCompleteInput"
         v-model="field"
         class="c-input--autocomplete__input js-autocomplete__input"
@@ -94,7 +95,8 @@ export default {
       hideOptions: true,
       showFilteredOptions: false,
       optionIndex: 0,
-      field: this.model.value
+      field: this.model.value,
+      fieldId: null
     };
   },
   computed: {
@@ -166,6 +168,7 @@ export default {
     } else {
       this.options = this.model.options;
     }
+    this.fieldId = this.model.key ? 'form-' + this.model.key : null;
   },
   unmounted() {
     document.body.removeEventListener('click', this.handleOutsideClick);

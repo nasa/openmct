@@ -37,6 +37,7 @@ export default function DisplayLayoutType() {
     form: [
       {
         name: 'Horizontal grid (px)',
+        key: 'horizontalGrid',
         control: 'numberfield',
         cssClass: 'l-input-sm l-numeric',
         property: ['configuration', 'layoutGrid', 0],
@@ -44,6 +45,7 @@ export default function DisplayLayoutType() {
       },
       {
         name: 'Vertical grid (px)',
+        key: 'verticalGrid',
         control: 'numberfield',
         cssClass: 'l-input-sm l-numeric',
         property: ['configuration', 'layoutGrid', 1],
@@ -51,6 +53,7 @@ export default function DisplayLayoutType() {
       },
       {
         name: 'Horizontal size (px)',
+        key: 'horizontalSize',
         control: 'numberfield',
         cssClass: 'l-input-sm l-numeric',
         property: ['configuration', 'layoutDimensions', 0],
@@ -58,6 +61,7 @@ export default function DisplayLayoutType() {
       },
       {
         name: 'Vertical size (px)',
+        key: 'verticalSize',
         control: 'numberfield',
         cssClass: 'l-input-sm l-numeric',
         property: ['configuration', 'layoutDimensions', 1],
