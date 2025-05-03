@@ -383,7 +383,7 @@ class ImportFromJSONAction {
    * @param {Object} data
    * @returns {boolean}
    */
-  _validateJSON(data) {
+  _validateJSON(data, fail) {
     const value = data.value;
     const objectTree = value && value.body;
     let json;
@@ -399,7 +399,7 @@ class ImportFromJSONAction {
     }
 
     if (!success) {
-      this.openmct.notifications.error(
+      fail(
         'Invalid File: The selected file was either invalid JSON or was not formatted properly for import into Open MCT.'
       );
     }
