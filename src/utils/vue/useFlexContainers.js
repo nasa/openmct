@@ -1,5 +1,26 @@
-import _ from 'lodash';
-import { ref } from 'vue';
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2024, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+import { computed, ref } from 'vue';
 
 /**
  * @typedef {Object} configuration
@@ -22,25 +43,29 @@ export function useFlexContainers(
 ) {
   const containers = ref(existingContainers);
   const maxMoveSize = ref(null);
-  let sizingContainers = 0;
+
+  const fixedContainersSize = computed(() => {
+    return containers.value
+      .filter((container) => container.fixed === true)
+      .reduce((size, currentContainer) => size + currentContainer.size, 0);
+  });
 
   function addContainer(container) {
     containers.value.push(container);
 
-    if (container.scale) {
-      sizingContainers += container.scale;
-    } else {
-      sizingContainers++;
-    }
-
-    sizeItems(containers.value, container);
+    sizeItems(containers.value);
 
     callback?.();
   }
 
   function removeContainer(index) {
+    const isFlexContainer = !containers.value[index].fixed;
+
     containers.value.splice(index, 1);
-    sizeToFill(containers.value);
+
+    if (isFlexContainer) {
+      sizeItems(containers.value);
+    }
 
     callback?.();
   }
@@ -55,20 +80,44 @@ export function useFlexContainers(
     callback?.();
   }
 
-  function startContainerResizing(index) {
-    const beforeContainer = containers.value[index];
-    const afterContainer = containers.value[index + 1];
+  function setContainers(_containers) {
+    containers.value = _containers;
+    sizeItems(containers.value);
+  }
 
-    maxMoveSize.value = beforeContainer.size + afterContainer.size;
+  function startContainerResizing(index) {
+    const beforeContainer = getBeforeContainer(index);
+    const afterContainer = getAfterContainer(index);
+
+    if (beforeContainer && afterContainer && !beforeContainer.fixed && !afterContainer.fixed) {
+      maxMoveSize.value = beforeContainer.size + afterContainer.size;
+    }
+  }
+
+  function getBeforeContainer(index) {
+    return containers.value
+      .slice(0, index + 1)
+      .filter((container) => !container.fixed === true)
+      .at(-1);
+  }
+
+  function getAfterContainer(index) {
+    return containers.value.slice(index + 1).filter((container) => !container.fixed === true)[0];
   }
 
   function containerResizing(index, delta, event) {
-    let percentageMoved = Math.round((delta / getElSize()) * 100);
-    let beforeContainer = containers.value[index];
-    let afterContainer = containers.value[index + 1];
+    const beforeContainer = getBeforeContainer(index);
+    const afterContainer = getAfterContainer(index);
+    const percentageMoved = Math.round((delta / getElSize()) * 100);
 
-    beforeContainer.size = getContainerSize(beforeContainer.size + percentageMoved);
-    afterContainer.size = getContainerSize(afterContainer.size - percentageMoved);
+    if (beforeContainer && afterContainer && !beforeContainer.fixed && !afterContainer.fixed) {
+      beforeContainer.size = getContainerSize(beforeContainer.size + percentageMoved);
+      afterContainer.size = getContainerSize(afterContainer.size - percentageMoved);
+    } else {
+      console.warn(
+        'Drag requires two flexible containers. Use Elements Tab in Inspector to resize.'
+      );
+    }
   }
 
   function endContainerResizing() {
@@ -76,11 +125,9 @@ export function useFlexContainers(
   }
 
   function getElSize() {
-    if (rowsLayout) {
-      return element.value.offsetHeight;
-    } else {
-      return element.value.offsetWidth;
-    }
+    const elSize = rowsLayout === true ? element.value.offsetHeight : element.value.offsetWidth;
+
+    return elSize - fixedContainersSize.value;
   }
 
   function getContainerSize(size) {
@@ -94,69 +141,118 @@ export function useFlexContainers(
   }
 
   /**
-   * Resize items so that newItem fits proportionally (newItem must be an element of items).
-   * If newItem does not have a size or is sized at 100%,
-   * newItem will have size set to (1 * newItemScale) / n * 100,
-   * where n is the total number of items and newItemScale is the scale of newItem.
-   * All other items will be resized to fit inside the remaining space.
+   * Resize flexible sized items so they fit proportionally within a viewport
+   * 1. add size to 0 sized items based on scale proportional to total scale
+   * 2. resize item sizes to equal 100
+   * if total size < 100, resize all items
+   * if total size > 100, resize only items not resized in step 1 (newly added)
+   * 3. round excess and apply to last item
+   *
+   * Items may have a scale (ie. items with composition)
+   *
+   * Handles single add or removal, as well as atypical use cases,
+   * such as composition out of sync with containers config
+   * due to composition edits outside of view
+   *
    * @param {*} items
-   * @param {*} newItem
+   * @param {Number} (optional) index of the item to apply excess to in the event of rounding errors
    */
-  function sizeItems(items, newItem) {
-    const newItemScale = newItem.scale || 1;
+  function sizeItems(items, index) {
+    let totalSize;
+    const flexItems = items.filter((item) => !item.fixed);
+    const flexItemsWithSize = flexItems.filter((item) => item.size);
+    const flexItemsWithoutSize = flexItems.filter((item) => !item.size);
+    // total number of flexible items, adjusted by each item scale
+    const totalScale = flexItems.reduce((total, item) => {
+      const scale = item.scale ?? 1;
+      return total + scale;
+    }, 0);
 
-    if (!newItem.size && items.length === 1) {
-      newItem.size = 100;
-    } else {
-      if (!newItem.size || newItem.size === 100) {
-        newItem.size = Math.round((100 * newItemScale) / sizingContainers);
+    flexItemsWithoutSize.forEach((item) => {
+      const scale = item.scale ?? 1;
+      item.size = Math.round((100 * scale) / totalScale);
+    });
 
-        // Resize oldItems to fit inside remaining space;
-        const oldItems = items.filter((item) => !_.isEqual(item, newItem));
-        const remainingSize = 100 - newItem.size;
+    totalSize = flexItems.reduce((total, item) => total + item.size, 0);
 
-        oldItems.forEach((item) => {
-          const itemScale = item.scale || 1;
-          item.size = Math.round((item.size * itemScale * remainingSize) / 100);
-        });
+    if (totalSize > 100) {
+      const addedSize = flexItemsWithoutSize.reduce((total, item) => total + item.size, 0);
+      const remainingSize = 100 - addedSize;
 
-        // Ensure items add up to 100 in case of rounding error.
-        const total = items.reduce((t, item) => t + item.size, 0);
-        const excess = Math.round(100 - total);
-        oldItems[oldItems.length - 1].size += excess;
-      }
+      flexItemsWithSize.forEach((item) => {
+        const scale = item.scale ?? 1;
+        item.size = Math.round((item.size * scale * remainingSize) / 100);
+      });
+    } else if (totalSize < 100) {
+      const sizeToFill = 100 - totalSize;
+
+      flexItems.forEach((item) => {
+        const scale = item.scale ?? 1;
+        item.size = Math.round((item.size * scale * 100) / sizeToFill);
+      });
+    }
+
+    // Ensure items add up to 100 in case of rounding error.
+    totalSize = flexItems.reduce((total, item) => total + item.size, 0);
+    const excess = Math.round(100 - totalSize);
+
+    if (excess) {
+      const _index = index !== undefined && !items[index].fixed ? index : items.length - 1;
+      items[_index].size += excess;
     }
   }
 
-  /**
-   * Scales items proportionally so total is equal to 100.
-   * Assumes that an item was removed from array.
-   * @param {*} items
-   */
-  function sizeToFill(items) {
-    if (items.length === 0) {
-      return;
+  function toggleFixed(index, fixed) {
+    let addExcessToContainer;
+    const remainingItems = containers.value.slice();
+    const container = remainingItems.splice(index, 1)[0];
+
+    if (container.fixed !== fixed) {
+      if (fixed) {
+        const sizeToFill = 100 - container.size;
+        container.size = Math.round((container.size / 100) * getElSize());
+        remainingItems.forEach((item) => {
+          const scale = item.scale ?? 1;
+          item.size = Math.round((item.size * scale * 100) / sizeToFill);
+        });
+      } else {
+        container.size = Math.round((container.size * 100) / (getElSize() + container.size));
+        addExcessToContainer = index;
+        const remainingSize = 100 - container.size;
+        remainingItems.forEach((item) => {
+          const scale = item.scale ?? 1;
+          item.size = Math.round((item.size * scale * remainingSize) / 100);
+        });
+      }
+
+      container.fixed = fixed;
+      sizeItems(containers.value, addExcessToContainer);
+      callback?.();
     }
+  }
 
-    const oldTotal = items.reduce((total, item) => total + item.size, 0);
-    items.forEach((item) => {
-      const itemScale = item.scale || 1;
-      item.size = Math.round((item.size * itemScale * 100) / oldTotal);
-    });
+  function sizeFixedContainer(index, size) {
+    const container = containers.value[index];
 
-    // Ensure items add up to 100 in case of rounding error.
-    const total = items.reduce((t, item) => t + item.size, 0);
-    const excess = Math.round(100 - total);
-    items[items.length - 1].size += excess;
+    if (container.fixed) {
+      container.size = size;
+
+      callback?.();
+    } else {
+      console.warn('Use view drag resizing to resize flexible containers.');
+    }
   }
 
   return {
     addContainer,
     removeContainer,
     reorderContainers,
+    setContainers,
     containers,
     startContainerResizing,
     containerResizing,
-    endContainerResizing
+    endContainerResizing,
+    toggleFixed,
+    sizeFixedContainer
   };
 }

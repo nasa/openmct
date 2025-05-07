@@ -32,7 +32,8 @@
     :hide-button="!item.isEventTelemetry"
     :button-click-on="enableExtendEventLines"
     :button-click-off="disableExtendEventLines"
-    :style="[{ 'flex-basis': sizeString }]"
+    :class="sizeClass"
+    :style="sizeStyle"
   >
     <template #label>
       {{ item.domainObject.name }}
@@ -64,12 +65,12 @@ export default {
       type: Object,
       required: true
     },
-    extendedLinesBus: {
+    container: {
       type: Object,
       required: true
     },
-    size: {
-      type: Number,
+    extendedLinesBus: {
+      type: Object,
       required: true
     }
   },
@@ -81,8 +82,17 @@ export default {
     };
   },
   computed: {
-    sizeString() {
-      return `${this.size}%`;
+    size() {
+      return this.container.size;
+    },
+    fixed() {
+      return this.container.fixed;
+    },
+    sizeClass() {
+      return `--${this.fixed ? 'fixed' : 'scales'}`;
+    },
+    sizeStyle() {
+      return `flex-basis: ${this.size}${this.fixed ? 'px' : '%'}`;
     }
   },
   watch: {

@@ -45,6 +45,18 @@
     }
   }
 
+  &__content {
+    &.--scales {
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+
+    &.--fixed {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+  }
+
   &__overlay-lines {
     @include abs();
     opacity: 0.5;
