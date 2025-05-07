@@ -233,8 +233,8 @@ $editUIBaseColor: #cae1ff; // Base color, toolbar bg
 $editUIBaseColorHov: pushBack($editUIBaseColor, 20%);
 $editUIBaseColorFg: #4c4c4c; // Toolbar button icon colors, etc.
 $editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
-$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
-$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
+$editUIAreaShdw: inset rgba($editUIAreaBaseColor,0.6) 0 0 0 1px; // Edit area s-selected-parent
+$editUIAreaShdwSelected: inset $editUIAreaBaseColor 0 0 0 1px; // Edit area s-selected
 $editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
 $editUIGridColorFg: rgba($editUIBaseColor, 0.3); // Grid lines in layout editing area
 $editDimensionsColor: #d7aeff;
