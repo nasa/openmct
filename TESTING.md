@@ -29,7 +29,7 @@ Unit testing is essential part of our test strategy and complements our e2e test
 #### Unit Testing Execution
 
 The unit tests can be executed in one of two ways:
-`npm run test` which runs the entire suite against headless chrome
+`npm run test` which runs the entire suite against headless chrome``
 `npm run test:debug` for debugging the tests in realtime in an active chrome session.
 
 ## e2e, performance, and visual testing
