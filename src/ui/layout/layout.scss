@@ -113,6 +113,25 @@
       .l-shell__main-container {
         top: $shellMainBrowseBarH + $interiorMarginLg;
         bottom: $shellTimeConductorH + $interiorMargin;
+
+        &.--has-toolbar {
+          .is-editing & {
+            top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
+          }
+        }
+
+        > .c-object-view {
+          border: 1px dashed transparent;
+          .is-editing & {
+            border-color: rgba($editUIAreaBaseColor, 0.6);
+          }
+
+          &[s-selected] {
+            .is-editing & {
+              border-color: $editUIAreaBaseColor
+            }
+          }
+        }
       }
 
       @include phonePortrait() {
@@ -376,28 +395,6 @@
 
   &.is-stale {
     @include isStaleHolder();
-  }
-}
-
-.is-editing {
-  .l-shell__main-container > .c-object-view {
-    box-shadow: $editUIAreaShdw;
-
-    &[s-selected] {
-      // Provide a clearer selection context articulation for the
-      //background: orange !important;
-      box-shadow: $editUIAreaShdwSelected;
-    }
-  }
-
-  .l-shell__main-container[s-selected] > .c-object-view {
-    // Provide a clearer selection context articulation for the
-    //background: purple !important;
-    box-shadow: $editUIAreaShdwSelected;
-  }
-
-  .l-shell__main-container.--has-toolbar {
-    top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
   }
 }
 
