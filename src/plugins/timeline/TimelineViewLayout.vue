@@ -199,7 +199,17 @@ export default {
       if (isConfigurationChanged) {
         console.log('yo');
         setContainers(existingContainers);
-        mutateContainers();
+      }
+
+      const selection = openmct.selection.get()[0];
+      const selectionContext = selection?.[0]?.context;
+      const selectionDomainObject = selectionContext?.item;
+      const selectionType = selectionDomainObject?.type;
+
+      if (selectionType === 'time-strip') {
+        selectionContext.containers = containers.value;
+        selectionContext.swimLaneLabelWidth = swimLaneLabelWidth.value;
+        openmct.selection.select(selection);
       }
     });
 
@@ -295,6 +305,12 @@ export default {
       sizeFixedContainer(index, size);
     }
 
+    // context action called from outside component
+    function changeSwimLaneLabelWidthContextAction(size) {
+      swimLaneLabelWidth.value = size;
+      mutateSwimLaneLabelWidth();
+    }
+
     onBeforeUnmount(() => {
       compositionCollection.off('add', addItem);
       compositionCollection.off('remove', removeItem);
@@ -322,7 +338,8 @@ export default {
       endContainerResizing,
       mutateContainers,
       toggleFixedContextAction,
-      changeSizeContextAction
+      changeSizeContextAction,
+      changeSwimLaneLabelWidthContextAction
     };
   },
   data() {

@@ -12,22 +12,22 @@
     />
     <span>px</span>
   </template>
-  <select v-model="isFixed" aria-label="fixedOrFlex">
-    <option :selected="!isFixed" :value="false">flex</option>
-    <option :selected="isFixed" :value="true">fixed</option>
+  <select v-model="fixed" aria-label="fixedOrFlex" @change="toggleFixed">
+    <option :value="false">flex</option>
+    <option :value="true">fixed</option>
   </select>
 </template>
 <script>
-import { computed, inject, ref, toRaw } from 'vue';
+import { inject, ref } from 'vue';
 
 export default {
   props: {
-    object: {
-      type: Object,
-      required: true
-    },
     index: {
       type: Number,
+      required: true
+    },
+    container: {
+      type: Object,
       required: true
     }
   },
@@ -35,21 +35,15 @@ export default {
     const openmct = inject('openmct');
     const domainObject = inject('domainObject');
 
-    openmct.objects.observe(domainObject, 'configuration.containers', updateContainer);
+    const fixed = ref(props.container.fixed ?? false);
+    const size = ref(props.container.size);
 
-    const container = ref(null);
-    const fixed = computed(() => {
-      return container.value?.fixed;
-    });
-    const isFixed = computed({ get: () => fixed, set: (_isFixed) => toggleFixed(_isFixed) });
-    const size = computed(() => container.value?.size);
-
-    function toggleFixed(_fixed) {
+    function toggleFixed() {
       openmct.objectViews.emit(
         `contextAction:${openmct.objects.makeKeyString(domainObject.identifier)}`,
         'toggleFixedContextAction',
         props.index,
-        _fixed
+        fixed.value
       );
     }
 
@@ -63,19 +57,13 @@ export default {
       );
     }
 
-    function updateContainer(containers) {
-      container.value = containers[props.index];
-    }
-
     return {
       openmct,
       domainObject,
-      container,
       fixed,
-      isFixed,
       size,
-      updateContainer,
-      changeSize
+      changeSize,
+      toggleFixed
     };
   }
 };
