@@ -22,7 +22,7 @@
 
 /********************************************* TIME STRIP */
 .c-timeline-holder {
-  overflow: hidden;
+  overflow: auto;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -41,7 +41,13 @@
     display: contents;
 
     .c-swimlane {
-      // min-height: 100px; // TEMP!! Will be replaced when heights are set by user
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    .c-object-view {
+      overflow-x: hidden;
+      overflow-y: scroll !important; // `scroll` ensures that right edges align in time
     }
   }
 

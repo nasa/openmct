@@ -29,7 +29,6 @@
     }
 
     .c-swimlane {
-      background: rgba(green, 0.3) !important;
       flex: 1 0 auto;
     }
 
@@ -71,5 +70,13 @@
 
   &__svg {
     width: 100%;
+  }
+}
+
+// When in a Time Strip view
+.c-timeline__objects {
+  .is-object-type-plan {
+    overflow-x: hidden;
+    overflow-y: scroll !important; // `scroll` ensures that right edges align in time
   }
 }
