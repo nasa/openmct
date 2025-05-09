@@ -116,7 +116,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByLabel('Conditions View').click();
     await expect(page.getByText('Current Output')).toBeVisible();
   });
-  test('ConditionSet has correct outputs when telemetry is and is not available', async ({
+  test('ConditionSet has produces an output when telemetry is available, and does not when it is not', async ({
     page
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
