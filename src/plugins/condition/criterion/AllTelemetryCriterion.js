@@ -181,13 +181,19 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
 
     if (validatedData && !this.isStalenessCheck()) {
       if (this.isOldCheck()) {
-        if (this.ageCheck?.[validatedData.id]) {
-          this.ageCheck[validatedData.id].update(validatedData);
-        }
+        Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
+          if (this.ageCheck?.[objectIdKeystring]) {
+            this.ageCheck[objectIdKeystring].update(validatedData[objectIdKeystring]);
+          }
 
-        this.telemetryDataCache[validatedData.id] = false;
+          this.telemetryDataCache[objectIdKeystring] = false;
+        });
       } else {
-        this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
+        Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
+          this.telemetryDataCache[objectIdKeystring] = this.computeResult(
+            validatedData[objectIdKeystring]
+          );
+        });
       }
     }
 

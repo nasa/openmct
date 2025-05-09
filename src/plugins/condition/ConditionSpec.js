@@ -99,6 +99,7 @@ describe('The condition', function () {
     };
     openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems', 'on', 'off']);
     openmct.time.getAllTimeSystems.and.returnValue([mockTimeSystems]);
+    openmct.time.getTimeSystem.and.returnValue();
     openmct.time.on.and.returnValue(() => {});
     openmct.time.off.and.returnValue(() => {});
 
@@ -156,12 +157,14 @@ describe('The condition', function () {
     expect(conditionObj.criteria.length).toEqual(0);
   });
 
-  it('gets the result of a condition when new telemetry data is received', function () {
-    conditionObj.updateResult({
+  fit('gets the result of a condition when new telemetry data is received', function () {
+    const latestDataTable = new Map();
+    latestDataTable.set(testTelemetryObject.identifier.key, {
       value: '0',
       utc: 'Hi',
       id: testTelemetryObject.identifier.key
     });
+    conditionObj.updateResult(latestDataTable, testTelemetryObject.identifier.key);
     expect(conditionObj.result).toBeTrue();
   });
 
