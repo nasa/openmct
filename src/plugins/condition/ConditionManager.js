@@ -474,7 +474,7 @@ export default class ConditionManager extends EventEmitter {
 
   updateTestData(testData) {
     if (!_.isEqual(testData, this.testData)) {
-      this.testData = testData;
+      this.testData = JSON.parse(JSON.stringify(testData));
       this.openmct.objects.mutate(
         this.conditionSetDomainObject,
         'configuration.conditionTestData',
