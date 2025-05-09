@@ -25,6 +25,7 @@
     ref="swimLane"
     class="u-contents"
     :class="[{ 'c-swimlane': !isNested }, statusClass]"
+    :style="gridTemplateColumnStyle"
     @mouseover.ctrl="showToolTip"
     @mouseleave="hideToolTip"
   >
@@ -55,7 +56,14 @@
           @click="pressOnButton"
         />
       </div>
+      <div
+        v-if="canShowResizeHandle"
+        class="c-swimlane__handle horizontal"
+        :style="{ height: `${resizeHandleHeight}px` }"
+        @mousedown="mousedown"
+      ></div>
     </div>
+
     <div
       class="c-swimlane__lane-object"
       :style="{ 'min-height': minHeight }"
@@ -71,7 +79,7 @@ import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 
 export default {
   mixins: [tooltipHelpers],
-  inject: ['openmct'],
+  inject: ['openmct', 'mousedown', 'swimLaneLabelWidth'],
   props: {
     iconClass: {
       type: String,
@@ -113,6 +121,19 @@ export default {
       type: Boolean,
       default() {
         return false;
+      }
+    },
+    canShowResizeHandle: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    resizeHandleHeight: {
+      type: Number,
+      required: false,
+      default() {
+        return 32;
       }
     },
     spanRowsCount: {
@@ -158,7 +179,8 @@ export default {
   },
   data() {
     return {
-      buttonPressed: false
+      buttonPressed: false,
+      labelWidth: 200
     };
   },
   computed: {
@@ -169,17 +191,25 @@ export default {
         return '';
       }
     },
-
     swimlaneClass() {
       if (!this.spanRowsCount && !this.isNested) {
         return 'c-swimlane__lane-label --span-cols';
       }
-
       return '';
     },
-
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
+    },
+    gridTemplateColumnStyle() {
+      if (this.isNested) {
+        return {};
+      }
+
+      const columnWidth = this.swimLaneLabelWidth / 2;
+
+      return {
+        'grid-template-columns': `${columnWidth}px ${columnWidth}px 1fr`
+      };
     }
   },
   methods: {

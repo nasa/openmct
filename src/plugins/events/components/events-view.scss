@@ -20,7 +20,6 @@
     &__container {
         // Holds event lines
         background-color: $colorPlotBg;
-        //box-shadow: inset $colorPlotAreaBorder 0 0 0 1px; // Using box-shadow instead of border to not affect box size
         position: absolute;
         top: $m; right: 0; bottom: $m; left: 0;
     }
@@ -80,7 +79,6 @@
 .c-timeline__event-line--extended {
     @include abs();
     width: $eventLineW;
-    opacity: 0.4;
 
     &.--hilite {
         opacity: 0.8;
