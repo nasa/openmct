@@ -29,6 +29,10 @@ import { getLatestTimestamp } from './utils/time.js';
 export default class ConditionManager extends EventEmitter {
   #latestDataTable = new Map();
 
+  /**
+   * @param {import('openmct.js').DomainObject} conditionSetDomainObject
+   * @param {import('openmct.js').OpenMCT} openmct
+   */
   constructor(conditionSetDomainObject, openmct) {
     super();
     this.openmct = openmct;
@@ -438,11 +442,13 @@ export default class ConditionManager extends EventEmitter {
     );
   }
 
-  getTestData(metadatum) {
+  getTestData(metadatum, identifier) {
     let data = undefined;
     if (this.testData.applied) {
       const found = this.testData.conditionTestInputs.find(
-        (testInput) => testInput.metadata === metadatum.source
+        (testInput) =>
+          testInput.metadata === metadatum.source &&
+          this.openmct.objects.areIdsEqual(testInput.telemetry, identifier)
       );
       if (found) {
         data = found.value;
@@ -457,9 +463,9 @@ export default class ConditionManager extends EventEmitter {
     const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
 
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
-      const testValue = this.getTestData(metadatum);
+      const testValue = this.getTestData(metadatum, endpoint.identifier);
       const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-      datum[metadatum.key] =
+      datum[metadatum.source || metadatum.key] =
         testValue !== undefined
           ? formatter.parse(testValue)
           : formatter.parse(telemetryDatum[metadatum.source]);
