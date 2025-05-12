@@ -195,7 +195,7 @@ export default class Condition extends EventEmitter {
   findCriterion(id) {
     let criterion;
 
-    for (let i = 0, ii = this.criteria.length; i < ii; i++) {
+    for (let i = 0; i < this.criteria.length; i++) {
       if (this.criteria[i].id === id) {
         criterion = {
           item: this.criteria[i],
