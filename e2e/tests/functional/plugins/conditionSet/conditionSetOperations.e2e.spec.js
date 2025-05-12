@@ -282,7 +282,9 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(exampleTelemetry.url);
   });
 
-  test('Short circuit evaluation does not cause incorrect evaluation https://github.com/nasa/openmct/issues/7992', async ({ page }) => {
+  test('Short circuit evaluation does not cause incorrect evaluation https://github.com/nasa/openmct/issues/7992', async ({
+    page
+  }) => {
     await setRealTimeMode(page);
     await page.getByLabel('Create', { exact: true }).click();
     await page.getByLabel('State Generator').click();
