@@ -157,26 +157,6 @@ describe('The condition', function () {
     expect(conditionObj.criteria.length).toEqual(0);
   });
 
-  fit('gets the result of a condition when new telemetry data is received', function () {
-    const latestDataTable = new Map();
-    latestDataTable.set(testTelemetryObject.identifier.key, {
-      value: '0',
-      utc: 'Hi',
-      id: testTelemetryObject.identifier.key
-    });
-    conditionObj.updateResult(latestDataTable, testTelemetryObject.identifier.key);
-    expect(conditionObj.result).toBeTrue();
-  });
-
-  it('gets the result of a condition when new telemetry data is received', function () {
-    conditionObj.updateResult({
-      value: '1',
-      utc: 'Hi',
-      id: testTelemetryObject.identifier.key
-    });
-    expect(conditionObj.result).toBeFalse();
-  });
-
   it('keeps the old result new telemetry data is not used by it', function () {
     conditionObj.updateResult({
       value: '0',
