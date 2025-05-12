@@ -1,101 +1,113 @@
 @keyframes rotation {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg) scale(1);
   }
 }
 
 @keyframes rotation-centered {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg) skewX(0deg);
+  }
+  50% {
+    transform: rotate(180deg) skewX(10deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg) skewX(0deg);
   }
 }
 
 @keyframes clock-hands {
   0% {
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.1);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg) scale(1);
   }
 }
 
 @keyframes clock-hands-sticky {
   0% {
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
   }
   7% {
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg) scale(1.05);
   }
   8% {
-    transform: translate(-50%, -50%) rotate(30deg);
+    transform: translate(-50%, -50%) rotate(30deg) scale(1.1);
   }
   15% {
-    transform: translate(-50%, -50%) rotate(30deg);
+    transform: translate(-50%, -50%) rotate(30deg) scale(1);
   }
   16% {
-    transform: translate(-50%, -50%) rotate(60deg);
+    transform: translate(-50%, -50%) rotate(60deg) scale(1.1);
   }
   24% {
-    transform: translate(-50%, -50%) rotate(60deg);
+    transform: translate(-50%, -50%) rotate(60deg) scale(1);
   }
   25% {
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: translate(-50%, -50%) rotate(90deg) scale(1.1);
   }
   32% {
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: translate(-50%, -50%) rotate(90deg) scale(1);
   }
   33% {
-    transform: translate(-50%, -50%) rotate(120deg);
+    transform: translate(-50%, -50%) rotate(120deg) scale(1.1);
   }
   40% {
-    transform: translate(-50%, -50%) rotate(120deg);
+    transform: translate(-50%, -50%) rotate(120deg) scale(1);
   }
   41% {
-    transform: translate(-50%, -50%) rotate(150deg);
+    transform: translate(-50%, -50%) rotate(150deg) scale(1.1);
   }
   49% {
-    transform: translate(-50%, -50%) rotate(150deg);
+    transform: translate(-50%, -50%) rotate(150deg) scale(1);
   }
   50% {
-    transform: translate(-50%, -50%) rotate(180deg);
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.1);
   }
   57% {
-    transform: translate(-50%, -50%) rotate(180deg);
+    transform: translate(-50%, -50%) rotate(180deg) scale(1);
   }
   58% {
-    transform: translate(-50%, -50%) rotate(210deg);
+    transform: translate(-50%, -50%) rotate(210deg) scale(1.1);
   }
   65% {
-    transform: translate(-50%, -50%) rotate(210deg);
+    transform: translate(-50%, -50%) rotate(210deg) scale(1);
   }
   66% {
-    transform: translate(-50%, -50%) rotate(240deg);
+    transform: translate(-50%, -50%) rotate(240deg) scale(1.1);
   }
   74% {
-    transform: translate(-50%, -50%) rotate(240deg);
+    transform: translate(-50%, -50%) rotate(240deg) scale(1);
   }
   75% {
-    transform: translate(-50%, -50%) rotate(270deg);
+    transform: translate(-50%, -50%) rotate(270deg) scale(1.1);
   }
   82% {
-    transform: translate(-50%, -50%) rotate(270deg);
+    transform: translate(-50%, -50%) rotate(270deg) scale(1);
   }
   83% {
-    transform: translate(-50%, -50%) rotate(300deg);
+    transform: translate(-50%, -50%) rotate(300deg) scale(1.1);
   }
   90% {
-    transform: translate(-50%, -50%) rotate(300deg);
+    transform: translate(-50%, -50%) rotate(300deg) scale(1);
   }
   91% {
-    transform: translate(-50%, -50%) rotate(330deg);
+    transform: translate(-50%, -50%) rotate(330deg) scale(1.1);
   }
   99% {
-    transform: translate(-50%, -50%) rotate(330deg);
+    transform: translate(-50%, -50%) rotate(330deg) scale(1);
   }
   100% {
-    transform: translate(-50%, -50%) rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg) scale(1.1);
   }
 }
