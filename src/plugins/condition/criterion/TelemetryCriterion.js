@@ -196,7 +196,9 @@ export default class TelemetryCriterion extends EventEmitter {
     return dataIsDefined && (hasTimeSystemChanged || isCacheStale);
   }
   updateResult(data, currentTimeSystemKey) {
-    const validatedData = this.isValid() ? data : {};
+    const validatedData = this.isValid()
+      ? this.createNormalizedDatum(data, this.telemetryObject)
+      : {};
 
     if (!this.isStalenessCheck()) {
       if (this.isOldCheck()) {

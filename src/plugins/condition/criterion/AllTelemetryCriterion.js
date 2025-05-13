@@ -190,8 +190,9 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         });
       } else {
         Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
+          const telemetryObject = telemetryObjects[objectIdKeystring];
           this.telemetryDataCache[objectIdKeystring] = this.computeResult(
-            validatedData[objectIdKeystring]
+            this.createNormalizedDatum(validatedData[objectIdKeystring], telemetryObject)
           );
         });
       }
