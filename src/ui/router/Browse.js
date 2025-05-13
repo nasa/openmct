@@ -68,16 +68,21 @@ class Browse {
   }
 
   #viewObject(object, viewProvider) {
+    // viewProvider is setting the 'view' param before this function is called.
     this.#currentObjectPath = this.#openmct.router.path;
+    // console.log('getSearchParam', this.#openmct.router.getSearchParam('view'));
+    console.log('#viewObject', this.#currentObjectPath, object, viewProvider);
+    const viewPrefs = JSON.parse(window.localStorage.getItem('openmct-stored-view-prefs')) || {};
+    const viewKey = viewPrefs[object.type] ? viewPrefs[object.type] : viewProvider.key;
 
     this.#openmct.layout.$refs.browseObject.show(
       object,
-      viewProvider.key,
+      viewKey,
       true,
       this.#currentObjectPath
     );
     this.#openmct.layout.$refs.browseBar.domainObject = object;
-    this.#openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
+    this.#openmct.layout.$refs.browseBar.viewKey = viewKey;
   }
 
   #handleBrowseObjectUpdate(newObject) {
