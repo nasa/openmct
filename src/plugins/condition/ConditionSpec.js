@@ -97,9 +97,15 @@ describe('The condition', function () {
     mockTimeSystems = {
       key: 'utc'
     };
-    openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems', 'on', 'off']);
+    openmct.time = jasmine.createSpyObj('time', [
+      'getTimeSystem',
+      'getAllTimeSystems',
+      'on',
+      'off'
+    ]);
+    openmct.time.getTimeSystem.and.returnValue({ key: 'utc' });
     openmct.time.getAllTimeSystems.and.returnValue([mockTimeSystems]);
-    openmct.time.getTimeSystem.and.returnValue();
+    //openmct.time.getTimeSystem.and.returnValue();
     openmct.time.on.and.returnValue(() => {});
     openmct.time.off.and.returnValue(() => {});
 
@@ -158,18 +164,23 @@ describe('The condition', function () {
   });
 
   it('keeps the old result new telemetry data is not used by it', function () {
-    conditionObj.updateResult({
+    const latestDataTable = new Map();
+    latestDataTable.set(testTelemetryObject.identifier.key, {
       value: '0',
       utc: 'Hi',
       id: testTelemetryObject.identifier.key
     });
+    conditionObj.updateResult(latestDataTable, testTelemetryObject.identifier.key);
+
     expect(conditionObj.result).toBeTrue();
 
-    conditionObj.updateResult({
+    latestDataTable.set(testTelemetryObject.identifier.key, {
       value: '1',
       utc: 'Hi',
       id: '1234'
     });
+
+    conditionObj.updateResult(latestDataTable, testTelemetryObject.identifier.key);
     expect(conditionObj.result).toBeTrue();
   });
 });
