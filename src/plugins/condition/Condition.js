@@ -103,7 +103,6 @@ export default class Condition extends EventEmitter {
         this.criteria.map((criterion) => criterion.result),
         this.trigger
       );
-
     }
   }
 
