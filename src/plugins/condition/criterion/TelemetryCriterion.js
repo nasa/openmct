@@ -91,7 +91,6 @@ export default class TelemetryCriterion extends EventEmitter {
     if (this.ageCheck) {
       this.ageCheck.clear();
     }
-
     this.ageCheck = checkIfOld(this.handleOldTelemetry.bind(this), this.input[0] * 1000);
   }
 
@@ -161,7 +160,6 @@ export default class TelemetryCriterion extends EventEmitter {
   createNormalizedDatum(telemetryDatum, endpoint) {
     const id = this.openmct.objects.makeKeyString(endpoint.identifier);
     const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
-
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
       const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
       datum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);

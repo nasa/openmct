@@ -53,6 +53,7 @@ describe('The condition', function () {
         valueMetadatas: [
           {
             key: 'some-key',
+            source: 'some-key',
             name: 'Some attribute',
             hints: {
               range: 2
@@ -60,6 +61,7 @@ describe('The condition', function () {
           },
           {
             key: 'utc',
+            source: 'utc',
             name: 'Time',
             format: 'utc',
             hints: {
@@ -88,11 +90,19 @@ describe('The condition', function () {
     openmct.telemetry = jasmine.createSpyObj('telemetry', [
       'isTelemetryObject',
       'subscribe',
-      'getMetadata'
+      'getMetadata',
+      'getValueFormatter'
     ]);
     openmct.telemetry.isTelemetryObject.and.returnValue(true);
     openmct.telemetry.subscribe.and.returnValue(function () {});
     openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
+    openmct.telemetry.getValueFormatter.and.callFake((metadatum) => {
+      return {
+        parse(input) {
+          return input;
+        }
+      };
+    });
 
     mockTimeSystems = {
       key: 'utc'
@@ -120,7 +130,7 @@ describe('The condition', function () {
             id: '1234-5678-9999-0000',
             operation: 'equalTo',
             input: ['0'],
-            metadata: 'value',
+            metadata: 'testSource',
             telemetry: testTelemetryObject.identifier
           }
         ]
@@ -174,13 +184,13 @@ describe('The condition', function () {
 
     expect(conditionObj.result).toBeTrue();
 
-    latestDataTable.set(testTelemetryObject.identifier.key, {
+    latestDataTable.set('1234', {
       value: '1',
       utc: 'Hi',
       id: '1234'
     });
 
-    conditionObj.updateResult(latestDataTable, testTelemetryObject.identifier.key);
+    conditionObj.updateResult(latestDataTable, '1234');
     expect(conditionObj.result).toBeTrue();
   });
 });
