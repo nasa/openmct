@@ -158,6 +158,10 @@ export default class TelemetryCriterion extends EventEmitter {
   }
 
   createNormalizedDatum(telemetryDatum, endpoint) {
+    if (!telemetryDatum) {
+      return;
+    }
+
     const id = this.openmct.objects.makeKeyString(endpoint.identifier);
     const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
