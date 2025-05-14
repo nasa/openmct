@@ -465,7 +465,7 @@ export default class ConditionManager extends EventEmitter {
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
       const testValue = this.getTestData(metadatum, endpoint.identifier);
       const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
-      datum[metadatum.source || metadatum.key] =
+      datum[metadatum.key] =
         testValue !== undefined
           ? formatter.parse(testValue)
           : formatter.parse(telemetryDatum[metadatum.source]);
