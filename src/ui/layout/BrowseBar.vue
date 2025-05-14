@@ -379,7 +379,6 @@ export default {
       return JSON.parse(window.localStorage.getItem(LOCALSTORAGE_VIEW_PREFS)) || {};
     },
     storeViewPrefs(view) {
-      console.log('storeViewPrefs',this.domainObject.type,view);
       let storedViews = this.retrieveViewPrefs();
       storedViews[this.domainObject.type] = view;
       window.localStorage.setItem(LOCALSTORAGE_VIEW_PREFS, JSON.stringify(storedViews));
