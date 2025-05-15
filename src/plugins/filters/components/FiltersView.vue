@@ -38,6 +38,9 @@
       @update-filters="persistFilters"
     />
   </ul>
+  <span v-else>
+    This view doesn't include any parameters that have configured filter criteria.
+  </span>
 </template>
 
 <script>
