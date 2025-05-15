@@ -213,12 +213,14 @@ export default {
     exportJPG(filename) {
       const plotElement = this.$refs.plotContainer;
       filename = filename ?? `${this.domainObject.name}-plot.jpg`;
+      console.log('exportJPG', filename);
 
       this.imageExporter.exportJPG(plotElement, filename, 'export-plot');
     },
     exportPNG(filename) {
       const plotElement = this.$refs.plotContainer;
       filename = filename ?? `${this.domainObject.name}-plot.png`;
+      console.log('exportPNG', filename);
 
       this.imageExporter.exportPNG(plotElement, filename, 'export-plot');
     },
