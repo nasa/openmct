@@ -210,12 +210,16 @@ export default {
       this.imageExporter = null;
       this.stopListening();
     },
-    exportJPG(filename = 'plot.jpg') {
+    exportJPG(filename) {
       const plotElement = this.$refs.plotContainer;
+      filename = filename ?? `${this.domainObject.name}-plot.jpg`;
+
       this.imageExporter.exportJPG(plotElement, filename, 'export-plot');
     },
-    exportPNG(filename = 'plot.png') {
+    exportPNG(filename) {
       const plotElement = this.$refs.plotContainer;
+      filename = filename ?? `${this.domainObject.name}-plot.png`;
+
       this.imageExporter.exportPNG(plotElement, filename, 'export-plot');
     },
     setStatus(status) {
