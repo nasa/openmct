@@ -27,6 +27,12 @@ import Condition from './Condition.js';
 import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
+  #latestDataTable = new Map();
+
+  /**
+   * @param {import('openmct.js').DomainObject} conditionSetDomainObject
+   * @param {import('openmct.js').OpenMCT} openmct
+   */
   constructor(conditionSetDomainObject, openmct) {
     super();
     this.openmct = openmct;
@@ -304,22 +310,6 @@ export default class ConditionManager extends EventEmitter {
     this.persistConditions();
   }
 
-  getCurrentCondition() {
-    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-    let currentCondition = conditionCollection[conditionCollection.length - 1];
-
-    for (let i = 0; i < conditionCollection.length - 1; i++) {
-      const condition = this.findConditionById(conditionCollection[i].id);
-      if (condition.result) {
-        //first condition to be true wins
-        currentCondition = conditionCollection[i];
-        break;
-      }
-    }
-
-    return currentCondition;
-  }
-
   getCurrentConditionLAD(conditionResults) {
     const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
     let currentCondition = conditionCollection[conditionCollection.length - 1];
@@ -410,26 +400,34 @@ export default class ConditionManager extends EventEmitter {
 
     const normalizedDatum = this.createNormalizedDatum(datum, endpoint);
     const timeSystemKey = this.openmct.time.getTimeSystem().key;
-    let timestamp = {};
     const currentTimestamp = normalizedDatum[timeSystemKey];
+    const timestamp = {};
+
     timestamp[timeSystemKey] = currentTimestamp;
+    this.#latestDataTable.set(normalizedDatum.id, normalizedDatum);
+
     if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
-      this.updateConditionResults(normalizedDatum);
-      this.updateCurrentCondition(timestamp);
+      const matchingCondition = this.updateConditionResults(normalizedDatum.id);
+      this.updateCurrentCondition(timestamp, matchingCondition);
     }
   }
 
-  updateConditionResults(normalizedDatum) {
+  updateConditionResults(keyStringForUpdatedTelemetryObject) {
     //We want to stop when the first condition evaluates to true.
-    this.conditions.some((condition) => {
-      condition.updateResult(normalizedDatum);
+    const matchingCondition = this.conditions.find((condition) => {
+      condition.updateResult(this.#latestDataTable, keyStringForUpdatedTelemetryObject);
 
       return condition.result === true;
     });
+
+    return matchingCondition;
   }
 
-  updateCurrentCondition(timestamp) {
-    const currentCondition = this.getCurrentCondition();
+  updateCurrentCondition(timestamp, matchingCondition) {
+    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
+    const defaultCondition = conditionCollection[conditionCollection.length - 1];
+
+    const currentCondition = matchingCondition || defaultCondition;
 
     this.emit(
       'conditionSetResultUpdated',
@@ -444,11 +442,13 @@ export default class ConditionManager extends EventEmitter {
     );
   }
 
-  getTestData(metadatum) {
+  getTestData(metadatum, identifier) {
     let data = undefined;
     if (this.testData.applied) {
       const found = this.testData.conditionTestInputs.find(
-        (testInput) => testInput.metadata === metadatum.source
+        (testInput) =>
+          testInput.metadata === metadatum.source &&
+          this.openmct.objects.areIdsEqual(testInput.telemetry, identifier)
       );
       if (found) {
         data = found.value;
@@ -463,7 +463,7 @@ export default class ConditionManager extends EventEmitter {
     const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
 
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
-      const testValue = this.getTestData(metadatum);
+      const testValue = this.getTestData(metadatum, endpoint.identifier);
       const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
       datum[metadatum.key] =
         testValue !== undefined
@@ -480,7 +480,7 @@ export default class ConditionManager extends EventEmitter {
 
   updateTestData(testData) {
     if (!_.isEqual(testData, this.testData)) {
-      this.testData = testData;
+      this.testData = JSON.parse(JSON.stringify(testData));
       this.openmct.objects.mutate(
         this.conditionSetDomainObject,
         'configuration.conditionTestData',
