@@ -29,7 +29,7 @@ export default merge(common, {
       __OPENMCT_ROOT_RELATIVE__: '"dist/"'
     })
   ],
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
   devServer: {
     devMiddleware: {
       writeToDisk: (filePathString) => {
