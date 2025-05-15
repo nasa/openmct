@@ -171,6 +171,7 @@ export default {
     }
   },
   created() {
+    console.log('PlotView created');
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
     this.loadComposition();
