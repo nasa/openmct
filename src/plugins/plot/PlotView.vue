@@ -171,7 +171,6 @@ export default {
     }
   },
   created() {
-    console.log('PlotView created');
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
     this.loadComposition();
@@ -213,15 +212,13 @@ export default {
     },
     exportJPG(filename) {
       const plotElement = this.$refs.plotContainer;
-      filename = filename ?? `${this.domainObject.name}-plot.jpg`;
-      console.log('exportJPG', filename);
+      filename = filename ?? `${this.domainObject.name} - plot`;
 
       this.imageExporter.exportJPG(plotElement, filename, 'export-plot');
     },
     exportPNG(filename) {
       const plotElement = this.$refs.plotContainer;
-      filename = filename ?? `${this.domainObject.name}-plot.png`;
-      console.log('exportPNG', filename);
+      filename = filename ?? `${this.domainObject.name} - plot`;
 
       this.imageExporter.exportPNG(plotElement, filename, 'export-plot');
     },
