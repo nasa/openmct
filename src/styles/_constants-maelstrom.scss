@@ -436,10 +436,12 @@ $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
 // Items
+$colorSelectableItemBg: transparent;
+$colorSelectableItemBgHov: rgba(#fff, 0.1);
 $colorItemBg: buttonBg($colorBtnBg);
 $colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
-$colorListItemBgHov: rgba($colorKey, 0.1);
+$colorListItemBgHov: $colorSelectableItemBgHov;
 $colorItemFg: $colorBtnFg;
 $colorItemFgDetails: pushBack($colorItemFg, 20%);
 $shdwItemText: none;
@@ -501,7 +503,7 @@ $colorGanttSelectedBorder: rgba(#fff, 0.3);
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: rgba(#fff, 0.03);
+$colorItemTreeHoverBg: $colorSelectableItemBgHov;
 $colorItemTreeHoverFg: #fff;
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon;
