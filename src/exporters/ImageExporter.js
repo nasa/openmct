@@ -26,7 +26,8 @@
  */
 
 function sanitizeFilename(filename) {
-  const safeFilename = filename.replace(/[^a-zA-Z0-9_\-.\s]/g, '');
+  const replacedPeriods = filename.replace(/\./g, '_');
+  const safeFilename = replacedPeriods.replace(/[^a-zA-Z0-9_\-.\s]/g, '');
 
   // Handle leading/trailing spaces and periods
   const trimmedFilename = safeFilename.trim().replace(/^\.+|\.+$/g, '');
