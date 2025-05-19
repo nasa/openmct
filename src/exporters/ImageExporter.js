@@ -25,10 +25,13 @@
  * Originally created by hudsonfoo on 09/02/16
  */
 
-function replaceDotsWithUnderscores(filename) {
-  const regex = /\./gi;
+function sanitizeFilename(filename) {
+  const safeFilename = filename.replace(/[^a-zA-Z0-9_\-.\s]/g, '');
 
-  return filename.replace(regex, '_');
+  // Handle leading/trailing spaces and periods
+  const trimmedFilename = safeFilename.trim().replace(/^\.+|\.+$/g, '');
+
+  return trimmedFilename;
 }
 
 import { saveAs } from 'file-saver';
@@ -150,7 +153,7 @@ class ImageExporter {
    * @returns {promise}
    */
   async exportJPG(element, filename, className) {
-    const processedFilename = replaceDotsWithUnderscores(filename);
+    const processedFilename = sanitizeFilename(filename);
 
     const img = await this.renderElement(element, {
       imageType: 'jpg',
@@ -167,7 +170,7 @@ class ImageExporter {
    * @returns {promise}
    */
   async exportPNG(element, filename, className) {
-    const processedFilename = replaceDotsWithUnderscores(filename);
+    const processedFilename = sanitizeFilename(filename);
 
     const img = await this.renderElement(element, {
       imageType: 'png',

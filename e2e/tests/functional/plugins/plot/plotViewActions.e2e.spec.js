@@ -192,3 +192,53 @@ test.describe('For a Stacked Plot View, Plot View Action:', () => {
     expect(download.suggestedFilename()).toBe(`${STACKED_PLOT_NAME} - stacked-plot.jpeg`);
   });
 });
+
+test.describe('Plot View Action:', () => {
+  let download;
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    const plot = await createDomainObjectWithDefaults(page, {
+      type: SWG_NAME,
+      name: `!@#${SWG_NAME}!@#><`
+    });
+
+    await page.goto(plot.url);
+
+    // Set up dialog handler before clicking the export button
+    await page.getByLabel('More actions').click();
+  });
+
+  test.afterEach(async ({ page }) => {
+    if (download) {
+      await download.cancel();
+    }
+  });
+
+  test('Export as PNG saved filenames will not include invalid characters', async ({ page }) => {
+    // Start waiting for download before clicking. Note no await.
+    const downloadPromise = page.waitForEvent('download');
+
+    // trigger the download
+    await page.getByLabel('Export as PNG').click();
+
+    download = await downloadPromise;
+
+    // Verify the filename contains the expected pattern
+    expect(download.suggestedFilename()).toBe(`${SWG_NAME} - plot.png`);
+  });
+
+  test('Export as JPG saved filenames will not include invalid characters', async ({ page }) => {
+    // Start waiting for download before clicking. Note no await.
+    const downloadPromise = page.waitForEvent('download');
+
+    // trigger the download
+    await page.getByLabel('Export as JPG').click();
+
+    download = await downloadPromise;
+
+    // Verify the filename contains the expected pattern
+    expect(download.suggestedFilename()).toBe(`${SWG_NAME} - plot.jpeg`);
+  });
+});
