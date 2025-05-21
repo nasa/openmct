@@ -24,7 +24,7 @@
   <div
     class="c-condition-h"
     :class="{ 'is-drag-target': draggingOver }"
-    aria-label="Condition Set Condition"
+    :aria-label="conditionSetLabel"
     @dragover.prevent
     @drop.prevent="dropCondition($event, conditionIndex)"
     @dragenter="dragEnter($event, conditionIndex)"
@@ -53,7 +53,9 @@
           @click="expanded = !expanded"
         ></span>
 
-        <span class="c-condition__name">{{ condition.configuration.name }}</span>
+        <span class="c-condition__name" aria-label="Condition Name Label">{{
+          condition.configuration.name
+        }}</span>
         <span class="c-condition__summary">
           <template v-if="!condition.isDefault && !canEvaluateCriteria"> Define criteria </template>
           <span v-else>
@@ -259,6 +261,17 @@ export default {
     };
   },
   computed: {
+    conditionSetLabel() {
+      let label;
+
+      if (this.condition.id === this.currentConditionId) {
+        label = 'Active Condition Set Condition';
+      } else {
+        label = 'Condition Set Condition';
+      }
+
+      return label;
+    },
     triggers() {
       const keys = Object.keys(TRIGGER);
       const triggerOptions = [];

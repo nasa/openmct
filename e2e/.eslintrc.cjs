@@ -2,7 +2,6 @@
 module.exports = {
   extends: ['plugin:playwright/recommended'],
   rules: {
-    'playwright/max-nested-describe': ['error', { max: 1 }],
     'playwright/expect-expect': 'off'
   },
   overrides: [

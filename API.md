@@ -31,6 +31,10 @@
         - [`latest` request strategy](#latest-request-strategy)
         - [`minmax` request strategy](#minmax-request-strategy)
       - [Telemetry Formats](#telemetry-formats)
+        - [Built-in Formats](#built-in-formats)
+          - [**Number Format (default):**](#number-format-default)
+          - [**String Format**](#string-format)
+          - [**Enum Format**](#enum-format)
         - [Registering Formats](#registering-formats)
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
@@ -59,6 +63,12 @@
     - [Custom Indicators](#custom-indicators)
   - [Priority API](#priority-api)
     - [Priority Types](#priority-types)
+  - [User API](#user-api)
+    - [Example](#example)
+  - [Visibility-Based Rendering in View Providers](#visibility-based-rendering-in-view-providers)
+    - [Overview](#overview)
+    - [Implementing Visibility-Based Rendering](#implementing-visibility-based-rendering)
+    - [Example](#example-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1301,9 +1311,11 @@ Open MCT provides some built-in priority values that can be used in the applicat
 
 Currently, the Open MCT Priority API provides (type: numeric value):
 
+- HIGHEST: Infinity
 - HIGH: 1000
 - Default: 0
 - LOW: -1000
+- LOWEST: -Infinity
 
 View provider Example:
 
