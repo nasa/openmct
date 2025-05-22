@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,19 +49,20 @@ class VisibilityObserver {
    * Constructs a VisibilityObserver instance to manage visibility-based requestAnimationFrame calls.
    *
    * @param {HTMLElement} element - The DOM element to observe for visibility changes.
+   * @param {HTMLElement} rootContainer - The DOM element that is the root of the viewport.
    * @throws {Error} If element is not provided.
    */
-  constructor(element) {
-    if (!element) {
-      throw new Error(`VisibilityObserver must be created with an element`);
+  constructor(element, rootContainer) {
+    if (!element || !rootContainer) {
+      throw new Error(`VisibilityObserver must be created with an element and a rootContainer.`);
     }
-    // set the id to some random 4 letters
-    this.id = Math.random().toString(36).substring(2, 6);
     this.#element = element;
     this.isIntersecting = true;
-
-    this.#observer = new IntersectionObserver(this.#observerCallback);
-    this.#observer.observe(this.#element);
+    this.calledOnce = false;
+    const options = {
+      root: rootContainer
+    };
+    this.#observer = new IntersectionObserver(this.#observerCallback, options);
     this.lastUnfiredFunc = null;
     this.renderWhenVisible = this.renderWhenVisible.bind(this);
   }
