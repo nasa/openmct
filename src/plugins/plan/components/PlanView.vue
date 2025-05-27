@@ -248,6 +248,7 @@ export default {
       }
     },
     handleConfigurationChange(newConfiguration) {
+      this.configuration = this.planViewConfiguration.getConfiguration();
       Object.keys(newConfiguration).forEach((key) => {
         this[key] = newConfiguration[key];
       });
