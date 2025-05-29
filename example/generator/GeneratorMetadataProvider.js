@@ -15,6 +15,14 @@ const METADATA_BY_TYPE = {
         }
       },
       {
+        key: 'µs',
+        name: 'µs Time',
+        format: 'µsf',
+        hints: {
+          domain: 2
+        }
+      },
+      {
         key: 'yesterday',
         name: 'Yesterday',
         format: 'utc',

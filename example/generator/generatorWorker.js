@@ -77,6 +77,7 @@
             data: {
               name: data.name,
               utc: nextStep,
+              µs: nextStep - Math.floor(Math.random() * 1000) / 1000,
               yesterday: nextStep - 60 * 60 * 24 * 1000,
               sin: sin(
                 nextStep,
@@ -173,6 +174,7 @@
   function createDataPoint(time, request) {
     return {
       utc: time,
+      µs: time - Math.floor(Math.random() * 1000) / 1000,
       yesterday: time - 60 * 60 * 24 * 1000,
       sin: sin(
         time,
