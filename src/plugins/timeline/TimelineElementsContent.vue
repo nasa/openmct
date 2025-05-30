@@ -18,7 +18,7 @@
   </select>
 </template>
 <script>
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 
 export default {
   props: {
@@ -37,6 +37,14 @@ export default {
 
     const fixed = ref(props.container.fixed ?? false);
     const size = ref(props.container.size);
+
+    watch(
+      () => props.container,
+      () => {
+        fixed.value = props.container.fixed;
+        size.value = props.container.size;
+      }
+    );
 
     function toggleFixed() {
       openmct.objectViews.emit(

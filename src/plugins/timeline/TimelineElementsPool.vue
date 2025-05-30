@@ -1,10 +1,7 @@
 <template>
   <ElementsPool>
     <template #content="{ index }">
-      <TimelineElementsContent
-        :index="index"
-        :container="domainObject.configuration.containers[index]"
-      />
+      <TimelineElementsContent :index="index" :container="containers[index]" />
     </template>
     <template #custom>
       <div class="c-inspector__properties c-inspect-properties" aria-label="Swim Lane Label Width">
@@ -27,7 +24,7 @@
   </ElementsPool>
 </template>
 <script>
-import { inject, ref } from 'vue';
+import { inject, onUnmounted, ref } from 'vue';
 
 import ElementsPool from '@/plugins/inspectorViews/elements/ElementsPool.vue';
 
@@ -43,27 +40,26 @@ export default {
     const openmct = inject('openmct');
     const domainObject = inject('domainObject');
 
-    const selectionContext = openmct.selection.get()[0][0].context;
-    const initialSwimLaneLabelWidth =
-      domainObject.configuration.swimLaneLabelWidth ?? configuration.swimLaneLabelWidth;
     // get initial containers configuration from selection context,
     // as domain.configuration.containers not resilient to composition modifications made outside of view
     const initialContainers =
-      selectionContext.containers ??
+      openmct.selection.get()?.[0]?.[0]?.context?.containers ??
       domainObject.configuration.containers ??
       configuration.containers;
-    const swimLaneLabelWidth = ref(initialSwimLaneLabelWidth);
+    const initialSwimLaneLabelWidth =
+      domainObject.configuration.swimLaneLabelWidth ?? configuration.swimLaneLabelWidth;
+
     const containers = ref(initialContainers);
-    openmct.objects.observe(domainObject, 'configuration.containers', updateContainers);
-    openmct.objects.observe(
+    const swimLaneLabelWidth = ref(initialSwimLaneLabelWidth);
+    const unobserveContainers = openmct.objects.observe(
       domainObject,
-      'configuration.swimLaneLabelWidth',
-      updateSwimLaneLabelWidth
+      'configuration.containers',
+      updateContainers
     );
 
-    function updateSwimLaneLabelWidth(_swimLaneLabelWidth) {
-      swimLaneLabelWidth.value = _swimLaneLabelWidth;
-    }
+    onUnmounted(() => {
+      unobserveContainers?.();
+    });
 
     function updateContainers(_containers) {
       containers.value = _containers;
@@ -78,7 +74,7 @@ export default {
       );
     }
 
-    return { domainObject, changeSwimLaneLabelWidth, swimLaneLabelWidth };
+    return { domainObject, containers, changeSwimLaneLabelWidth, swimLaneLabelWidth };
   }
 };
 </script>
