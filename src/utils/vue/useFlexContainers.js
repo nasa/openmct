@@ -126,8 +126,10 @@ export function useFlexContainers(
 
   function getElSize() {
     const elSize = rowsLayout === true ? element.value.offsetHeight : element.value.offsetWidth;
+    // TODO FIXME temporary patch for timeline
+    const timelineHeight = 32;
 
-    return elSize - fixedContainersSize.value;
+    return elSize - fixedContainersSize.value - timelineHeight;
   }
 
   function getContainerSize(size) {
@@ -160,6 +162,16 @@ export function useFlexContainers(
   function sizeItems(items, index) {
     let totalSize;
     const flexItems = items.filter((item) => !item.fixed);
+
+    if (flexItems.length === 0) {
+      return;
+    }
+
+    if (flexItems.length === 1) {
+      flexItems[0].size = 100;
+      return;
+    }
+
     const flexItemsWithSize = flexItems.filter((item) => item.size);
     const flexItemsWithoutSize = flexItems.filter((item) => !item.size);
     // total number of flexible items, adjusted by each item scale
@@ -209,24 +221,27 @@ export function useFlexContainers(
 
     if (container.fixed !== fixed) {
       if (fixed) {
-        const sizeToFill = 100 - container.size;
+        // toggle flex to fixed
         container.size = Math.round((container.size / 100) * getElSize());
-        remainingItems.forEach((item) => {
-          const scale = item.scale ?? 1;
-          item.size = Math.round((item.size * scale * 100) / sizeToFill);
-        });
+        container.fixed = fixed;
+        sizeItems(remainingItems);
       } else {
-        container.size = Math.round((container.size * 100) / (getElSize() + container.size));
+        // toggle fixed to flex
         addExcessToContainer = index;
+        container.size = Math.round((container.size * 100) / (getElSize() + container.size));
         const remainingSize = 100 - container.size;
-        remainingItems.forEach((item) => {
-          const scale = item.scale ?? 1;
-          item.size = Math.round((item.size * scale * remainingSize) / 100);
-        });
+
+        remainingItems
+          .filter((item) => !item.fixed)
+          .forEach((item) => {
+            const scale = item.scale ?? 1;
+            item.size = Math.round((item.size * scale * remainingSize) / 100);
+          });
+
+        container.fixed = fixed;
+        sizeItems(containers.value, addExcessToContainer);
       }
 
-      container.fixed = fixed;
-      sizeItems(containers.value, addExcessToContainer);
       callback?.();
     }
   }

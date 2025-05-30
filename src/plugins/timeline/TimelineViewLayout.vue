@@ -197,10 +197,13 @@ export default {
       // add check for total size not equal to 100? if comp and containers same, probably safe
 
       if (isConfigurationChanged) {
-        console.log('yo');
         setContainers(existingContainers);
       }
 
+      setSelectionContext();
+    });
+
+    function setSelectionContext() {
       const selection = openmct.selection.get()[0];
       const selectionContext = selection?.[0]?.context;
       const selectionDomainObject = selectionContext?.item;
@@ -211,7 +214,7 @@ export default {
         selectionContext.swimLaneLabelWidth = swimLaneLabelWidth.value;
         openmct.selection.select(selection);
       }
-    });
+    }
 
     function addItem(_domainObject) {
       let rowCount = 0;
