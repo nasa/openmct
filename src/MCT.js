@@ -338,7 +338,7 @@ export class MCT extends EventEmitter {
    * @param {Element?} domElement the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  start(domElement = document.body.firstElementChild, isHeadlessMode = false) {
+  start(domElement = document.getElementById('openmct-app'), isHeadlessMode = false) {
     // Create element to mount Layout if it doesn't exist
     if (domElement === null) {
       domElement = document.createElement('div');
