@@ -25,10 +25,55 @@
     <div class="c-tli__contents" :class="listItemClass">
       <div class="c-tli-row c-tli__title-and-status">
         <div class="c-tli__title">{{ formattedItem.title }}</div>
-        <div class="c-tli__status">{{ formattedItemLabel }}</div>
+        <div class="c-tli__status-and-icon-graphic">
+          <div class="c-tli__status">{{ formattedItemLabel }}</div>
+          <div class="c-tli__graphic">
+            <svg viewBox="0 0 100 100">
+              <g aria-label="Activity in progress" class="c-tli__graphic__pie">
+                <circle class="c-svg-progress__bg" r="50" cx="50" cy="50"></circle>
+                <path ref="progressElement" class="c-svg-progress__progress"></path>
+                <circle
+                  class="c-svg-progress__ticks"
+                  r="40"
+                  cx="50"
+                  cy="50"
+                  stroke-dasharray="3 7.472"
+                ></circle>
+                <rect class="c-svg-progress__sweep-hand" x="48" y="18" width="4" height="27"></rect>
+              </g>
+              <path
+                aria-label="Activity complete"
+                class="c-tli__graphic__check"
+                d="M80 20L42.5 57.5L20 35V57.5L42.5 80L80 42.5V20Z"
+              />
+              <path
+                aria-label="Activity alert"
+                class="c-tli__graphic__alert-triangle"
+                d="M79.4533 70.3034L54.004 25.7641C51.8962 22.0786 48.4636 22.0786 46.3559 25.7641L20.8946 70.3034C18.7868 73.989 20.5332 77 24.7728 77H75.563C79.8146 77 81.561 73.989 79.4533 70.3034ZM54.028 73.1459H46.3198V65.4376H54.028V73.1459ZM55.3409 50.0211L53.0645 61.5835H47.2833L45.007 50.0211V34.6045H55.3529V50.0211H55.3409Z"
+              />
+              <g aria-label="Activity aborted" class="c-tli__graphic__circle-slash">
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M50 82C67.6731 82 82 67.6731 82 50C82 32.3269 67.6731 18 50 18C32.3269 18 18 32.3269 18 50C18 67.6731 32.3269 82 50 82ZM50 72C62.1503 72 72 62.1503 72 50C72 37.8497 62.1503 28 50 28C37.8497 28 28 37.8497 28 50C28 62.1503 37.8497 72 50 72Z"
+                />
+                <path
+                  d="M63.7886 29.6404L70.8596 36.7114L36.2114 71.3596L29.1404 64.2886L63.7886 29.6404Z"
+                />
+              </g>
+              <path
+                aria-label="Activity skipped"
+                class="c-tli__graphic__skipped"
+                d="M31 48C31 42.4772 35.5152 38 41 38H59C64.4848 38 69 42.4772 69 48V55H58L74 72L90 55H79V48C79 36.9543 69.9695 28 59 28H41C30.0305 28 21 36.9543 21 48V53.0294C21 56.8792 17.8232 60 14 60V70C23.308 70 31 62.402 31 53.0294V48Z"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
       <div v-if="showTimeHero" class="c-tli-row c-tli__time-hero">
-        <div class="c-tli__time-hero-time" :class="countdownClass">{{ formattedItem.countdown }}</div>
+        <div class="c-tli__time-hero-time" :class="countdownClass">
+          {{ formattedItem.countdown }}
+        </div>
         <div class="c-tli__time-hero-context --subtle">Starts</div>
       </div>
       <div

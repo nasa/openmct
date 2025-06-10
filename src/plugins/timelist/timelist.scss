@@ -89,6 +89,7 @@
 }
 @mixin showTliGraphic($wGraphic) {
   .c-tli__graphic {
+    svg { display: block; }
     &__#{$wGraphic} {
       display: block;
     }
@@ -170,7 +171,7 @@
       }
 
       &.--is-in-progress {
-        @include showTliGraphic('pie');
+        @include showTliGraphic('in-progress');
         background-color: $colorInProgressBg;
         color: $colorInProgressFg;
       }
@@ -213,7 +214,7 @@
     }
 
 
-    /************************ TITLE AND STATUS */
+    /************************ TITLE AND STATUS + GRAPHIC ICON */
     &__title-and-status {
       align-items: center;
       display: flex;
@@ -231,10 +232,25 @@
       min-width: 100px;
     }
 
-    &__status {
+    &__status-and-icon-graphic {
+      align-items: center;
+      display: flex;
       flex: 0 0 auto;
+      gap: $interiorMarginSm;
       text-align: right;
       text-transform: uppercase;
+
+      .c-tli__graphic {
+        svg {
+          $d: 20px;
+          width: $d;
+          height: $d;
+
+          g, path {
+            display: none;
+          }
+        }
+      }
     }
 
     /************************ COUNT +/- (TIME HERO) */
@@ -323,17 +339,7 @@
 
 
 
-    &__graphic {
-      display: flex;
-      fill: $baseFg;
-      align-items: center;
 
-      svg {
-        > * {
-          display: none;
-        }
-      }
-    }
 
     //&.--is-current {
     //  background-color: $colorCurrentBg;
