@@ -21,8 +21,38 @@
 -->
 <template>
   <div ref="axisHolder" class="c-timesystem-axis">
-    <div class="c-timesystem-axis__mb-line" :style="nowMarkerStyle" aria-label="Now Marker"></div>
-    <svg :width="svgWidth" :height="svgHeight">
+    <div class="c-ta-abi" :class="aheadOrBehindCSSClass" v-if="showAheadBehind">
+      <div class="c-ta-abi__icon icon-clock"></div>
+      <div class="c-ta-abi__connector"></div>
+      <div class="c-ta-abi__text">23:59</div>
+    </div>
+    <div class="c-timesystem-axis__line-wrapper" :style="lineWrapperStyle" v-if="showAheadBehind">
+      <div class="c-timesystem-axis__mb-line" :style="nowMarkerStyle" aria-label="Now Marker">
+        <div
+          class="c-timesystem-axis__ahead-behind-line"
+          :class="aheadOrBehindCSSClass"
+          v-if="showAheadBehind"
+          :style="aheadBehindMarkerStyle"
+          aria-label="Ahead Behind Marker"
+        >
+          <svg
+            class="c-timesystem-axis__ahead-behind-connector"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <polygon
+              class="c-timesystem-axis__ahead-behind-connector--ahead"
+              points="0 0 100 0 100 100"
+            ></polygon>
+            <polygon
+              class="c-timesystem-axis__ahead-behind-connector--behind"
+              points="0 0 100 0 0 100"
+            ></polygon>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <svg class="c-timesystem-axis__ticks" :width="svgWidth" :height="svgHeight">
       <g class="axis" :transform="axisTransform"></g>
     </svg>
   </div>
@@ -72,6 +102,18 @@ export default {
       default() {
         return 'svg';
       }
+    },
+    showAheadBehind: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
+    aheadOrBehindCSSClass: {
+      type: String,
+      default() {
+        return '--ahead';
+      }
     }
   },
   setup() {
@@ -84,8 +126,13 @@ export default {
     const leftAlignmentOffset = ref(0);
     const alignmentStyle = ref({ margin: `0 0 0 0` });
     const nowMarkerStyle = reactive({
-      height: '0px',
       left: '0px'
+    });
+    const aheadBehindMarkerStyle = reactive({
+      width: '0px'
+    });
+    const lineWrapperStyle = reactive({
+      height: '0px'
     });
 
     onMounted(() => {
@@ -108,6 +155,8 @@ export default {
       leftAlignmentOffset,
       alignmentStyle,
       nowMarkerStyle,
+      aheadBehindMarkerStyle,
+      lineWrapperStyle,
       openmct
     };
   },
@@ -133,6 +182,7 @@ export default {
     bounds(newBounds) {
       this.setDimensions();
       this.drawAxis(newBounds, this.timeSystem);
+      this.updateLineWrapper();
       this.updateNowMarker();
     },
     timeSystem(newTimeSystem) {
@@ -141,6 +191,7 @@ export default {
       this.updateNowMarker();
     },
     contentHeight() {
+      this.updateLineWrapper();
       this.updateNowMarker();
     },
     containerSize: {
@@ -156,8 +207,7 @@ export default {
     }
 
     this.container = select(this.axisHolder);
-    this.svgElement = this.container.select('svg');
-    this.axisElement = this.svgElement.select('g.axis');
+    this.axisElement = this.container.select('.c-timesystem-axis__ticks').select('g.axis');
 
     this.refresh();
     this.resize();
@@ -174,19 +224,36 @@ export default {
     refresh() {
       this.setDimensions();
       this.drawAxis(this.bounds, this.timeSystem);
+      this.updateLineWrapper();
       this.updateNowMarker();
+      this.updateAheadBehindMarker();
+    },
+    updateLineWrapper() {
+      const lineWrapper = this.$el.querySelector('.c-timesystem-axis__line-wrapper');
+      if (lineWrapper) {
+        this.lineWrapperStyle.height = this.contentHeight - TIME_AXIS_LINE_Y + 'px';
+      }
     },
     updateNowMarker() {
       const nowMarker = this.$el.querySelector('.c-timesystem-axis__mb-line');
       if (nowMarker) {
         nowMarker.classList.remove('hidden');
-        this.nowMarkerStyle.height = this.contentHeight - TIME_AXIS_LINE_Y + 'px';
-        this.nowMarkerStyle.top = TIME_AXIS_LINE_Y + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
         this.nowMarkerStyle.left = `${now + this.leftAlignmentOffset}px`;
         if (now < 0 || now > this.width) {
           nowMarker.classList.add('hidden');
+        }
+      }
+    },
+    updateAheadBehindMarker() {
+      const aheadBehindMarker = this.$el.querySelector('.c-timesystem-axis__ahead-behind-line');
+      if (aheadBehindMarker) {
+        aheadBehindMarker.classList.remove('hidden');
+        this.aheadBehindMarkerStyle.width = 100 + 'px';
+        const now = this.xScale(this.openmct.time.now());
+        if (now < 0 || now > this.width) {
+          aheadBehindMarker.classList.add('hidden');
         }
       }
     },

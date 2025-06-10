@@ -265,6 +265,8 @@ $editUIBaseColor: #344b8d; // Base color, toolbar bg
 $editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
 $editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
 $editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
+$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
+$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
 $editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
 $editUIGridColorFg: rgba(#000, 0.1); // Grid lines in layout editing area
 $editDimensionsColor: #6a5ea6;
@@ -523,6 +525,8 @@ $colorEventLine: $colorBodyFg;
 $colorEventLineExtended: rgba($colorEventLine, 0.3);
 $colorTimeStripDraftBg: rgba(#a57748, 0.2);
 $colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$colorABAhead: #33c56e;
+$colorABBehind: #ffa500;
 $eventLineW: 1px;
 
 // Tree
