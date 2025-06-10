@@ -99,7 +99,8 @@
   $textSm: 0.8em;
   $textLg: 1.3em;
 
-  margin-right: $interiorMargin; // fend off from scrollbar
+  margin-right: $interiorMargin; // Fend off from scrollbar
+  padding: 0 1px; // Provide room for selected Activities border
 
   > * + * {
     margin-top: $interiorMarginSm;
@@ -111,16 +112,16 @@
     $baseFg: $colorPastFg;
     $baseFgEm: $colorPastFgEm;
 
-    background: $baseBg;
     color: $baseFg;
     border-radius: $basicCr;
-    display: grid;
-    padding: $interiorMargin;
-    grid-template-columns: min-content 3fr 40px 1fr;
-    grid-column-gap: $interiorMargin;
+    border: 1px solid transparent;
+    display: flex;
+    gap: 1px;
+    overflow: hidden;
 
     &[s-selected] {
-      box-shadow: inset rgba($colorSelectedFg, 0.8) 0 0 0 1px;
+      //border-color: rgba($colorSelectedFg, 0.4);
+      box-shadow: rgba($colorSelectedFg, 0.6) 0 0 0 1px;
       color: $colorSelectedFg !important;
 
       @include styleTliEm($colorSelectedFg);
@@ -129,77 +130,118 @@
     @include styleTliEm($baseFgEm);
 
     &__activity-color {
-      align-items: start;
+      flex: 0 0 auto;
+      width: 7px;
+    }
+
+    &__contents {
+      // 3 rows
+      background: $baseBg;
       display: flex;
-      padding-top: 1px;
-    }
+      flex-direction: column;
+      flex: 1 1 auto;
+      gap: $interiorMargin;
+      overflow: hidden;
+      padding: $interiorMargin;
 
-    &__activity-color-swatch {
-      $d: 16px;
-      border-radius: 50%;
-      box-shadow: rgba(black, 0.3) 0 0 2px 1px;
-      width: $d;
-      height: $d;
-    }
-
-    &__title-and-bounds {
-      > * + * {
-        margin-top: $interiorMargin;
+      &.--is-current {
+        background-color: $colorCurrentBg;
+        color: $colorCurrentFg;
+        @include styleTliEm($colorCurrentFgEm);
       }
+
+      &.--is-future {
+        background-color: $colorFutureBg;
+        color: $colorFutureFg;
+        @include styleTliEm($colorFutureFgEm);
+      }
+
+      /*
+    - 'In Progress' : itemState.inProgress
+    - 'Running Long' : itemState.inProgress && now > end datetime
+    - 'Overdue' : itemState.notStarted && now > start datetime
+    - 'Incomplete' : itemState.notStarted && now > end datetime
+    - 'Starts' : for Activities with now > start datetime
+    - 'Occurs' : for Events with now > start datetime
+    - 'Ends' : itemState.inProgress && now > start datetime && now < end datetime
+    - 'Completed', 'Aborted', 'Skipped' : itemState.<that state>
+    */
+      &.--is-not-started {
+      }
+
+      &.--is-in-progress {
+        @include showTliGraphic('pie');
+        background-color: $colorInProgressBg;
+        color: $colorInProgressFg;
+      }
+
+      &.--is-running-long {
+        @include showTliGraphic('alert-triangle');
+        background-color: $colorInProgressBg;
+        color: $colorInProgressFg;
+      }
+
+      &.--is-overdue,
+      &.--is-incomplete {
+        @include showTliGraphic('alert-triangle');
+      }
+
+      &.--is-completed {
+        @include showTliGraphic('check');
+      }
+
+      &.--is-aborted {
+        @include showTliGraphic('circle-slash');
+      }
+
+      &.--is-skipped {
+        @include showTliGraphic('skipped');
+      }
+
+      &__check {
+        // Overrides?
+      }
+
+      &__alert-triangle {
+        // Overrides?
+      }
+
+      &__circle-slash {
+        // Overrides?
+      }
+
     }
 
-    &__bounds {
+
+    /************************ TITLE AND STATUS */
+    &__title-and-status {
+      align-items: center;
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
-
-      > * {
-        margin-right: $interiorMargin;
-        white-space: nowrap;
-      }
-
-      &.--has-duration {
-        .c-tli__start-time {
-          display: flex;
-          align-items: start;
-
-          &:after {
-            content: $glyph-icon-play;
-            font-family: symbolsfont;
-            font-size: 0.7em;
-            display: block;
-            margin-left: $interiorMargin;
-            margin-top: 2px;
-          }
-        }
-      }
+      gap: $interiorMargin;
+      justify-content: space-between;
+      overflow: hidden;
     }
 
     &__title {
+      //background: rgba(orange, 0.3);
+      @include ellipsize();
       font-size: $textLg;
+      flex: 1 1 auto;
+      min-width: 100px;
     }
 
+    &__status {
+      flex: 0 0 auto;
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    /************************ COUNT +/- (TIME HERO) */
     &__time-hero {
       display: flex;
-      align-items: center;
-      justify-content: end;
-    }
-
-    &__time-hero-context-and-time {
-      align-items: center;
-      flex-wrap: wrap;
-      display: flex;
-      justify-content: end;
-      text-align: right;
-
-      > * + * {
-        margin-left: $interiorMargin;
-      }
-    }
-
-    &__time-hero-context {
-      font-size: $textSm;
-      text-transform: uppercase;
+      align-items: baseline;
+      gap: $interiorMargin;
     }
 
     &__time-hero-time {
@@ -228,6 +270,59 @@
       }
     }
 
+    &__time-hero-context {
+      text-transform: uppercase;
+    }
+
+    /************************ BOUNDS AND DURATION */
+    &__bounds-and-duration {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: $interiorMarginSm;
+
+      > * {
+        white-space: nowrap;
+      }
+
+
+      &.--has-duration {
+        .c-tli__start-time {
+          display: flex;
+          align-items: start;
+
+          &:after {
+            content: $glyph-icon-play;
+            font-family: symbolsfont;
+            font-size: 0.6em;
+            display: block;
+            margin-left: $interiorMargin;
+            margin-top: 4px;
+          }
+        }
+      }
+    }
+
+    /************************ EFFECTS */
+    .--subtle {
+      opacity: 0.7;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     &__graphic {
       display: flex;
       fill: $baseFg;
@@ -240,72 +335,20 @@
       }
     }
 
-    &.--is-current {
-      background-color: $colorCurrentBg;
-      color: $colorCurrentFg;
-      @include styleTliEm($colorCurrentFgEm);
-    }
-
-    &.--is-future {
-      background-color: $colorFutureBg;
-      color: $colorFutureFg;
-      @include styleTliEm($colorFutureFgEm);
-    }
+    //&.--is-current {
+    //  background-color: $colorCurrentBg;
+    //  color: $colorCurrentFg;
+    //  @include styleTliEm($colorCurrentFgEm);
+    //}
+    //
+    //&.--is-future {
+    //  background-color: $colorFutureBg;
+    //  color: $colorFutureFg;
+    //  @include styleTliEm($colorFutureFgEm);
+    //}
 
     /************************************ ACTIVITY STATE STYLES */
-    /*
-        - 'In Progress' : itemState.inProgress
-        - 'Running Long' : itemState.inProgress && now > end datetime
-        - 'Overdue' : itemState.notStarted && now > start datetime
-        - 'Incomplete' : itemState.notStarted && now > end datetime
-        - 'Starts' : for Activities with now > start datetime
-        - 'Occurs' : for Events with now > start datetime
-        - 'Ends' : itemState.inProgress && now > start datetime && now < end datetime
-        - 'Completed', 'Aborted', 'Skipped' : itemState.<that state>
-        */
-    &.--is-not-started {
-    }
 
-    &.--is-in-progress {
-      @include showTliGraphic('pie');
-      background-color: $colorInProgressBg;
-      color: $colorInProgressFg;
-    }
-
-    &.--is-running-long {
-      @include showTliGraphic('alert-triangle');
-      background-color: $colorInProgressBg;
-      color: $colorInProgressFg;
-    }
-
-    &.--is-overdue,
-    &.--is-incomplete {
-      @include showTliGraphic('alert-triangle');
-    }
-
-    &.--is-completed {
-      @include showTliGraphic('check');
-    }
-
-    &.--is-aborted {
-      @include showTliGraphic('circle-slash');
-    }
-
-    &.--is-skipped {
-      @include showTliGraphic('skipped');
-    }
-
-    &__check {
-      // Overrides?
-    }
-
-    &__alert-triangle {
-      // Overrides?
-    }
-
-    &__circle-slash {
-      // Overrides?
-    }
   }
 }
 
