@@ -500,14 +500,6 @@ export default {
       return hasDomain && hasNoRange && hasNoImages;
     }
 
-    function getContainerSize(item) {
-      const containerForItem = containers.value.find((container) =>
-        openmct.objects.areIdsEqual(container.domainObjectIdentifier, item.domainObject.identifier)
-      );
-
-      return containerForItem?.size;
-    }
-
     function mutateContainers() {
       openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
     }
