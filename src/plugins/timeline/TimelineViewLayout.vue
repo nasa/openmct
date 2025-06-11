@@ -90,7 +90,6 @@ import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue';
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const AXES_PADDING = 20;
-const PLOT_ITEM_H_PX = 100;
 
 export default {
   components: {
@@ -445,17 +444,13 @@ export default {
         rowCount = Object.keys(_domainObject.configuration.swimlaneVisibility).length;
       }
       const isEventTelemetry = hasEventTelemetry(_domainObject);
-      const itemHeight =
-        typeKey === 'telemetry.plot.stacked'
-          ? `${_domainObject.composition.length * PLOT_ITEM_H_PX}px`
-          : 'auto';
+
       const item = {
         domainObject: _domainObject,
         objectPath,
         type,
         keyString,
         rowCount,
-        height: itemHeight,
         isEventTelemetry
       };
 
