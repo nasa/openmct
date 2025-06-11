@@ -115,10 +115,9 @@ export default {
 
     // COMPOSABLE - Time Contexts
     const timeSystems = ref([]);
-    const useIndependentTime = ref(domainObject.configuration.useIndependentTime === true);
-    const timeOptions = ref(domainObject.configuration.timeOptions);
     let timeContext;
 
+    // returned from composition api setup()
     const setupTimeContexts = {
       timeSystems
     };
@@ -186,6 +185,7 @@ export default {
     let handleContentResize;
     let contentResizeObserver;
 
+    // returned from composition api setup()
     const setupContentHeight = {
       timelineHolder,
       height
@@ -255,6 +255,7 @@ export default {
       openmct
     );
 
+    // returned from composition api setup()
     const setupExtendedLines = {
       extendedLinesBus,
       extendedLinesPerKey,
@@ -328,6 +329,7 @@ export default {
     provide('swimLaneLabelWidth', swimLaneLabelWidth);
     provide('mousedown', mousedown);
 
+    // returned from composition api setup()
     const setupSwimLaneLabelWidth = {
       changeSwimLaneLabelWidthContextAction
     };
@@ -368,6 +370,7 @@ export default {
       callback: mutateContainers
     });
 
+    // returned from composition api setup()
     const setupFlexContainers = {
       containers,
       startContainerResizing,
