@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { configuration } from './configuration.js';
+
 export default function timelineInterceptor(openmct) {
   openmct.objects.addGetInterceptor({
     appliesTo: (identifier, domainObject) => {
@@ -27,10 +29,14 @@ export default function timelineInterceptor(openmct) {
     },
     invoke: (identifier, object) => {
       if (object && object.configuration === undefined) {
-        object.configuration = {
-          useIndependentTime: true
-        };
+        object.configuration = configuration;
       }
+
+      Object.keys(configuration).forEach((key) => {
+        if (object.configuration[key] === undefined) {
+          object.configuration[key] = configuration[key];
+        }
+      });
 
       return object;
     }

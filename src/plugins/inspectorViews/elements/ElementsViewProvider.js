@@ -29,6 +29,7 @@ export default function ElementsViewProvider(openmct) {
     key: 'elementsView',
     name: 'Elements',
     canView: function (selection) {
+      // TODO - only use this view provider if another custom provider has not been applied
       const hasValidSelection = selection?.length;
       const isOverlayPlot = selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
 

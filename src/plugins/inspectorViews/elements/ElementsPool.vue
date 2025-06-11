@@ -42,10 +42,15 @@
           :allow-drop="allowDrop"
           @dragstart-custom="moveFrom(index)"
           @drop-custom="moveTo(index)"
-        />
+        >
+          <template #content="slotProps">
+            <slot name="content" :index="index" v-bind="slotProps"></slot>
+          </template>
+        </ElementItem>
         <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
       </ul>
       <div v-if="elements.length === 0">No contained elements</div>
+      <slot name="custom"></slot>
     </div>
   </div>
 </template>
