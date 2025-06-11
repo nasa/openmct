@@ -54,7 +54,7 @@ export function useFlexContainers(
     containers.value.push(container);
 
     sizeItems(containers.value);
-
+    roundExcess(containers.value);
     callback?.();
   }
 
@@ -65,6 +65,7 @@ export function useFlexContainers(
 
     if (isFlexContainer) {
       sizeItems(containers.value);
+      roundExcess(containers.value);
     }
 
     callback?.();
@@ -83,6 +84,7 @@ export function useFlexContainers(
   function setContainers(_containers) {
     containers.value = _containers;
     sizeItems(containers.value);
+    roundExcess(containers.value);
   }
 
   function startContainerResizing(index) {
@@ -148,7 +150,6 @@ export function useFlexContainers(
    * 2. resize item sizes to equal 100
    * if total size < 100, resize all items
    * if total size > 100, resize only items not resized in step 1 (newly added)
-   * 3. round excess and apply to last item
    *
    * Items may have a scale (ie. items with composition)
    *
@@ -156,10 +157,11 @@ export function useFlexContainers(
    * such as composition out of sync with containers config
    * due to composition edits outside of view
    *
+   * Typically roundExcess is called afterwards to limit pixels and percents to integers
+   *
    * @param {*} items
-   * @param {Number} (optional) index of the item to apply excess to in the event of rounding errors
    */
-  function sizeItems(items, index) {
+  function sizeItems(items) {
     let totalSize;
     const flexItems = items.filter((item) => !item.fixed);
 
@@ -192,25 +194,44 @@ export function useFlexContainers(
       const remainingSize = 100 - addedSize;
 
       flexItemsWithSize.forEach((item) => {
-        const scale = item.scale ?? 1;
-        item.size = Math.round((item.size * scale * remainingSize) / 100);
+        item.size = Math.round((item.size * remainingSize) / 100);
       });
     } else if (totalSize < 100) {
-      const sizeToFill = 100 - totalSize;
-
       flexItems.forEach((item) => {
-        const scale = item.scale ?? 1;
-        item.size = Math.round((item.size * scale * 100) / sizeToFill);
+        item.size = Math.round((item.size * 100) / totalSize);
       });
     }
+  }
 
-    // Ensure items add up to 100 in case of rounding error.
-    totalSize = flexItems.reduce((total, item) => total + item.size, 0);
+  /**
+   *
+   * Rounds excess and applies to one of the items
+   * if an optional index is not specified, excess applied to last item
+   *
+   * @param {*} items
+   * @param {Number} (optional) index of the item to apply excess to in the event of rounding errors
+   */
+  function roundExcess(items, specifiedIndex) {
+    const flexItems = items.filter((item) => !item.fixed);
+
+    if (!flexItems.length) {
+      return;
+    }
+
+    const totalSize = flexItems.reduce((total, item) => total + item.size, 0);
     const excess = Math.round(100 - totalSize);
+    let index;
 
-    if (excess) {
-      const _index = index !== undefined && !items[index].fixed ? index : items.length - 1;
-      items[_index].size += excess;
+    if (specifiedIndex !== undefined && items[specifiedIndex] && !items[specifiedIndex].fixed) {
+      index = specifiedIndex;
+    }
+
+    if (index === undefined) {
+      index = items.findLastIndex((item) => !item.fixed);
+    }
+
+    if (index > -1) {
+      items[index].size += excess;
     }
   }
 
@@ -234,14 +255,13 @@ export function useFlexContainers(
         remainingItems
           .filter((item) => !item.fixed)
           .forEach((item) => {
-            const scale = item.scale ?? 1;
-            item.size = Math.round((item.size * scale * remainingSize) / 100);
+            item.size = Math.round((item.size * remainingSize) / 100);
           });
 
         container.fixed = fixed;
-        sizeItems(containers.value, addExcessToContainer);
       }
 
+      roundExcess(containers.value, addExcessToContainer);
       callback?.();
     }
   }
