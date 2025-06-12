@@ -87,12 +87,9 @@
     }
   }
 }
-@mixin showTliGraphic($wGraphic) {
-  .c-tli__graphic {
-    svg { display: block; }
-    &__#{$wGraphic} {
-      display: block;
-    }
+@mixin showTliGraphic {
+  .c-tli__graphic:before {
+    @content;
   }
 }
 
@@ -101,7 +98,7 @@
   $textLg: 1.3em;
 
   margin-right: $interiorMargin; // Fend off from scrollbar
-  padding: 0 1px; // Provide room for selected Activities border
+  padding: 1px 1px; // Provide room for selected Activities border
 
   > * + * {
     margin-top: $interiorMarginSm;
@@ -171,48 +168,42 @@
       }
 
       &.--is-in-progress {
-        @include showTliGraphic('in-progress');
         background-color: $colorInProgressBg;
         color: $colorInProgressFg;
+        @include showTliGraphic {
+          @include gearSpinner($color: $colorBodyFg);
+        }
       }
 
       &.--is-running-long {
-        @include showTliGraphic('alert-triangle');
+        //@include showTliGraphic('alert-triangle');
         background-color: $colorInProgressBg;
         color: $colorInProgressFg;
       }
 
       &.--is-overdue,
       &.--is-incomplete {
-        @include showTliGraphic('alert-triangle');
+        //@include showTliGraphic('alert-triangle');
       }
 
       &.--is-completed {
-        @include showTliGraphic('check');
+        @include showTliGraphic {
+          @include bgCheckMark($color: #5e945e); // TODO: convert to theme constant
+        }
       }
 
       &.--is-aborted {
-        @include showTliGraphic('circle-slash');
+        @include showTliGraphic {
+          @include bgCircleSlash($color: #ab7b48); // TODO: convert to theme constant
+        }
       }
 
       &.--is-skipped {
-        @include showTliGraphic('skipped');
+        @include showTliGraphic {
+          @include bgSkip($color: $colorBodyFg);
+        }
       }
-
-      &__check {
-        // Overrides?
-      }
-
-      &__alert-triangle {
-        // Overrides?
-      }
-
-      &__circle-slash {
-        // Overrides?
-      }
-
     }
-
 
     /************************ TITLE AND STATUS + GRAPHIC ICON */
     &__title-and-status {
@@ -236,20 +227,20 @@
       align-items: center;
       display: flex;
       flex: 0 0 auto;
-      gap: $interiorMarginSm;
+      gap: $interiorMargin;
       text-align: right;
       text-transform: uppercase;
+    }
 
-      .c-tli__graphic {
-        svg {
-          $d: 20px;
-          width: $d;
-          height: $d;
-
-          g, path {
-            display: none;
-          }
-        }
+    .c-tli__graphic {
+      $d: 20px;
+      width: $d;
+      height: $d;
+      &:before {
+        content: '';
+        display: block;
+        height: 100%;
+        width: 100%;
       }
     }
 
@@ -323,72 +314,5 @@
     .--subtle {
       opacity: 0.7;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //&.--is-current {
-    //  background-color: $colorCurrentBg;
-    //  color: $colorCurrentFg;
-    //  @include styleTliEm($colorCurrentFgEm);
-    //}
-    //
-    //&.--is-future {
-    //  background-color: $colorFutureBg;
-    //  color: $colorFutureFg;
-    //  @include styleTliEm($colorFutureFgEm);
-    //}
-
-    /************************************ ACTIVITY STATE STYLES */
-
-  }
-}
-
-.c-svg-progress {
-  &__bg {
-    fill: rgba(black, 0.2);
-  }
-
-  &__ticks {
-    fill: none;
-    stroke: $colorInProgressFg;
-    stroke-width: 6;
-  }
-
-  &__progress {
-    fill: $colorInProgressFgEm;
-    transform: translateX(50%) translateY(50%);
-  }
-
-  &__sweep-hand {
-    animation-name: sweep-hand;
-    animation-duration: 10s;
-    animation-iteration-count: infinite;
-    animation-timing-function: steps(12);
-    fill: $colorInProgressFg;
-    transform-origin: center;
-  }
-}
-
-@keyframes sweep-hand {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
