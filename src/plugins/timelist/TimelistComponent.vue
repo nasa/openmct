@@ -32,6 +32,7 @@
         :duration="item.duration"
         :countdown="item.countdown"
         :css-class="item.cssClass"
+        :activity-color="item.color"
         :item-properties="itemProperties"
         :execution-state="persistedActivityStates[item.id]"
         @click.stop="setSelectionForActivity(item, $event.currentTarget)"
