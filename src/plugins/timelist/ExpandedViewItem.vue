@@ -46,7 +46,7 @@
           <span class="--subtle">DUR</span>
           {{ formattedItem.duration }}
         </div>
-        <div v-else class="c-tli__start-time">Event</div>
+        <div v-else class="c-tli__duration --subtle">EVENT TIME</div>
       </div>
     </div>
   </div>
@@ -68,7 +68,7 @@ const EXECUTION_STATES = {
 };
 
 const TIME_CONTEXTS = {
-  starts: 'Planned Start',
+  start: 'Planned Start',
   end: 'Planned End',
   event: 'Planned Event'
 };
@@ -163,11 +163,11 @@ export default {
         let value = this[itemProperty.key];
         let formattedValue;
         if (itemProperty.format) {
-          const itemStartDate = new Date(value).toDateString();
-          const timestampDate = new Date(this.timestamp).toDateString();
+          // const itemStartDate = new Date(value).toDateString();
+          // const timestampDate = new Date(this.timestamp).toDateString();
           formattedValue = itemProperty.format(value, undefined, itemProperty.key, this.openmct, {
             skipPrefix: true,
-            skipDateForToday: itemStartDate === timestampDate
+            skipDateForToday: false
           });
         }
         itemValue[itemProperty.key] = formattedValue;
@@ -226,8 +226,11 @@ export default {
       this.formattedExecutionLabel = label;
     },
     formatTimeContextLabel() {
-      this.formattedTimeContextLabel =
-        this.start < this.timestamp ? TIME_CONTEXTS.end : TIME_CONTEXTS.start;
+      let label = this.start < this.timestamp ? TIME_CONTEXTS.end : TIME_CONTEXTS.start;
+      if (!this.eventHasDuration) {
+        label = TIME_CONTEXTS.event;
+      }
+      this.formattedTimeContextLabel = label;
     }
   }
 };

@@ -77,17 +77,6 @@
 }
 
 /**************************************************** LARGE TIME LIST */
-@mixin styleTliEm($colorEm) {
-  // Styles emphasized elements within c-tli.
-  .c-tli {
-    &__duration,
-    &__title,
-    &__time-hero-time {
-      color: $colorEm;
-    }
-  }
-}
-
 @mixin showTliGraphic {
   .c-tli__graphic {
     display: block;
@@ -109,12 +98,10 @@
   }
 
   .c-tli {
-    // TODO: add styles for various activity statuses
     $baseBg: $colorPastBg;
     $baseFg: $colorPastFg;
     $baseFgEm: $colorPastFgEm;
-    $opSubtle: 0.6;
-
+    $opSubtle: $opacitySubtle;
 
     border-radius: $basicCr;
     border: 1px solid transparent;
@@ -126,6 +113,9 @@
       box-shadow: rgba($colorSelectedFg, 0.8) 0 0 0 1px;
     }
 
+    .--subtle {
+      opacity: $opSubtle;
+    }
 
     &__activity-color {
       flex: 0 0 auto;
@@ -133,7 +123,6 @@
     }
 
     &__contents {
-      // 3 rows
       color: $baseFg;
       display: flex;
       flex-direction: column;
@@ -144,30 +133,36 @@
 
       &.--is-past {
         background-color: $colorPastBg;
+        color: $colorPastFg;
         font-style: italic;
 
+        .--subtle {
+          opacity: $opSubtle * 1.5;
+        }
+
         > * {
-          opacity: 0.4;
+          opacity: $opSubtle * 0.9;
         }
 
         &.--is-in-progress {
           > * {
-            opacity: 0.5;
+            opacity: $opSubtle;
           }
         }
       }
 
       &.--is-current {
         background-color: $colorCurrentBg;
+        color: $colorCurrentFg;
       }
 
       &.--is-future {
         background-color: $colorFutureBg;
+        color: $colorFutureFg;
       }
 
       &.--is-in-progress {
         background-color: $colorInProgressBg;
-        //color: $colorInProgressFg;
 
         @include showTliGraphic {
           @include gearSpinner($color: $colorInProgressFg);
@@ -176,13 +171,13 @@
 
       &.--is-completed {
         @include showTliGraphic {
-          @include bgCheckMark($color: #5e945e); // TODO: convert to theme constant
+          @include bgCheckMark($color: $colorActivityStatusGreen);
         }
       }
 
       &.--is-aborted {
         @include showTliGraphic {
-          @include bgCircleSlash($color: #ab7b48); // TODO: convert to theme constant
+          @include bgCircleSlash($color: $colorActivityStatusOrange);
         }
       }
 
@@ -204,7 +199,6 @@
     }
 
     &__title {
-      //background: rgba(orange, 0.3);
       @include ellipsize();
       font-size: $textLg;
       flex: 1 1 auto;
@@ -269,6 +263,7 @@
 
     &__time-hero-context {
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     /************************ BOUNDS AND DURATION */
@@ -299,11 +294,6 @@
           }
         }
       }
-    }
-
-    /************************ EFFECTS */
-    .--subtle {
-      opacity: $opSubtle;
     }
   }
 }
