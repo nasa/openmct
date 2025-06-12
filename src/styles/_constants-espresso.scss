@@ -467,19 +467,19 @@ $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, 0);
 
 // Time Strip and Lists
-$colorPastBg: #444;
-$colorPastFg: pushBack($colorBodyFg, 10%);
-$colorPastFgEm: $colorBodyFg;
-$colorCurrentBg: #666;
-$colorCurrentFg: pullForward($colorBodyFg, 10%);
-$colorCurrentFgEm: $colorBodyFgEm;
+$colorPastBg: #343434;
+$colorPastFg: white;
+$colorPastFgEm: $colorPastFg;
+$colorCurrentBg: #666666;
+$colorCurrentFg: white;
+$colorCurrentFgEm: $colorCurrentFg;
 $colorCurrentBorder: $colorBodyBg;
-$colorFutureBg: $colorPastBg;
+$colorFutureBg: #494949;
 $colorFutureFg: $colorCurrentFg;
-$colorFutureFgEm: $colorCurrentFgEm;
+$colorFutureFgEm: $colorFutureFg;
 $colorFutureBorder: $colorCurrentBorder;
 $colorInProgressBg: $colorTimeRealtimeBg;
-$colorInProgressFg: $colorTimeRealtimeFgSubtle;
+$colorInProgressFg: #ffffff;
 $colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
 

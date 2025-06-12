@@ -87,9 +87,13 @@
     }
   }
 }
+
 @mixin showTliGraphic {
-  .c-tli__graphic:before {
-    @content;
+  .c-tli__graphic {
+    display: block;
+    &:before {
+      @content;
+    }
   }
 }
 
@@ -109,8 +113,9 @@
     $baseBg: $colorPastBg;
     $baseFg: $colorPastFg;
     $baseFgEm: $colorPastFgEm;
+    $opSubtle: 0.6;
 
-    color: $baseFg;
+
     border-radius: $basicCr;
     border: 1px solid transparent;
     display: flex;
@@ -118,14 +123,9 @@
     overflow: hidden;
 
     &[s-selected] {
-      //border-color: rgba($colorSelectedFg, 0.4);
-      box-shadow: rgba($colorSelectedFg, 0.6) 0 0 0 1px;
-      color: $colorSelectedFg !important;
-
-      @include styleTliEm($colorSelectedFg);
+      box-shadow: rgba($colorSelectedFg, 0.8) 0 0 0 1px;
     }
 
-    @include styleTliEm($baseFgEm);
 
     &__activity-color {
       flex: 0 0 auto;
@@ -134,7 +134,7 @@
 
     &__contents {
       // 3 rows
-      background: $baseBg;
+      color: $baseFg;
       display: flex;
       flex-direction: column;
       flex: 1 1 auto;
@@ -142,48 +142,36 @@
       overflow: hidden;
       padding: $interiorMargin;
 
+      &.--is-past {
+        background-color: $colorPastBg;
+        font-style: italic;
+
+        > * {
+          opacity: 0.4;
+        }
+
+        &.--is-in-progress {
+          > * {
+            opacity: 0.5;
+          }
+        }
+      }
+
       &.--is-current {
         background-color: $colorCurrentBg;
-        color: $colorCurrentFg;
-        @include styleTliEm($colorCurrentFgEm);
       }
 
       &.--is-future {
         background-color: $colorFutureBg;
-        color: $colorFutureFg;
-        @include styleTliEm($colorFutureFgEm);
-      }
-
-      /*
-    - 'In Progress' : itemState.inProgress
-    - 'Running Long' : itemState.inProgress && now > end datetime
-    - 'Overdue' : itemState.notStarted && now > start datetime
-    - 'Incomplete' : itemState.notStarted && now > end datetime
-    - 'Starts' : for Activities with now > start datetime
-    - 'Occurs' : for Events with now > start datetime
-    - 'Ends' : itemState.inProgress && now > start datetime && now < end datetime
-    - 'Completed', 'Aborted', 'Skipped' : itemState.<that state>
-    */
-      &.--is-not-started {
       }
 
       &.--is-in-progress {
         background-color: $colorInProgressBg;
-        color: $colorInProgressFg;
+        //color: $colorInProgressFg;
+
         @include showTliGraphic {
-          @include gearSpinner($color: $colorBodyFg);
+          @include gearSpinner($color: $colorInProgressFg);
         }
-      }
-
-      &.--is-running-long {
-        //@include showTliGraphic('alert-triangle');
-        background-color: $colorInProgressBg;
-        color: $colorInProgressFg;
-      }
-
-      &.--is-overdue,
-      &.--is-incomplete {
-        //@include showTliGraphic('alert-triangle');
       }
 
       &.--is-completed {
@@ -236,6 +224,8 @@
       $d: 20px;
       width: $d;
       height: $d;
+      display: none;
+
       &:before {
         content: '';
         display: block;
@@ -305,6 +295,7 @@
             display: block;
             margin-left: $interiorMargin;
             margin-top: 4px;
+            opacity: $opSubtle;
           }
         }
       }
@@ -312,7 +303,7 @@
 
     /************************ EFFECTS */
     .--subtle {
-      opacity: 0.7;
+      opacity: $opSubtle;
     }
   }
 }
