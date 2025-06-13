@@ -119,10 +119,10 @@ export default {
       // add name column if it doesn't exist,
       // it's always the first column when it's manually added
       if (!headers.name) {
-          headers = {
-              name: 'Name',
-              ...headers
-          };
+        headers = {
+          name: 'Name',
+          ...headers
+        };
       }
 
       this.headers = headers;
