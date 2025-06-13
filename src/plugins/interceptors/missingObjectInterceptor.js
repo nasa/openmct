@@ -38,6 +38,7 @@ export default function MissingObjectInterceptor(openmct) {
       }
 
       return object;
-    }
+    },
+    priority: openmct.priority.HIGH
   });
 }

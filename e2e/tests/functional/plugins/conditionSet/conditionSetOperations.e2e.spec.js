@@ -27,7 +27,8 @@ demonstrate some playwright for test developers. This pattern should not be re-u
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject
+  createExampleTelemetryObject,
+  setRealTimeMode
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -116,7 +117,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByLabel('Conditions View').click();
     await expect(page.getByText('Current Output')).toBeVisible();
   });
-  test('ConditionSet has correct outputs when telemetry is and is not available', async ({
+  test('ConditionSet produces an output when telemetry is available, and does not when it is not', async ({
     page
   }) => {
     const exampleTelemetry = await createExampleTelemetryObject(page);
@@ -279,6 +280,101 @@ test.describe('Basic Condition Set Use', () => {
     await expect(outputValue).toHaveText('false');
 
     await page.goto(exampleTelemetry.url);
+  });
+
+  test('Short circuit evaluation does not cause incorrect evaluation https://github.com/nasa/openmct/issues/7992', async ({
+    page
+  }) => {
+    await setRealTimeMode(page);
+    await page.getByLabel('Create', { exact: true }).click();
+    await page.getByLabel('State Generator').click();
+    await page.getByLabel('Title', { exact: true }).fill('P1');
+    await page.getByLabel('State Duration (seconds)').fill('1');
+    await page.getByLabel('Save').click();
+    await page.getByLabel('Create', { exact: true }).click();
+    await page.getByLabel('State Generator').click();
+    await page.getByLabel('Title', { exact: true }).fill('P2');
+    await page.getByLabel('State Duration (seconds)', { exact: true }).fill('1');
+    await page.getByRole('treeitem', { name: 'Test Condition Set' }).click();
+    await page.getByLabel('Save').click();
+    await page.getByLabel('Expand My Items folder').click();
+    await page.getByRole('treeitem', { name: 'Test Condition Set' }).click();
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Add Condition').click();
+    await page.getByLabel('Condition Name Input').first().fill('P1 IS ON AND P2 IS ON');
+    await page.getByLabel('Criterion Telemetry Selection').selectOption({ label: 'P1' });
+    await page.getByLabel('Criterion Metadata Selection').selectOption('value');
+    await page.getByLabel('Criterion Comparison Selection').selectOption('equalTo');
+    await page.getByLabel('Criterion Input').fill('1');
+    await page.getByLabel('Add Criteria - Enabled').click();
+    await page.getByLabel('Criterion Telemetry Selection').nth(1).selectOption({ label: 'P2' });
+    await page.getByLabel('Criterion Metadata Selection').nth(1).selectOption('value');
+    await page.getByLabel('Criterion Comparison Selection').nth(1).selectOption('equalTo');
+    await page.getByLabel('Criterion Input').nth(1).fill('1');
+    await page.getByLabel('Add Condition').click();
+    await page.getByLabel('Condition Name Input').first().fill('P1 IS OFF OR P2 IS OFF');
+    await page.getByLabel('Condition Trigger').first().selectOption('any');
+    await page.getByLabel('Criterion Telemetry Selection').first().selectOption({ label: 'P1' });
+    await page.getByLabel('Criterion Metadata Selection').first().selectOption('value');
+    await page.getByLabel('Criterion Comparison Selection').first().selectOption('equalTo');
+    await page.getByLabel('Criterion Input').first().fill('0');
+    await page.getByLabel('Add Criteria - Enabled').first().click();
+    await page.getByLabel('Criterion Telemetry Selection').nth(1).selectOption({ label: 'P2' });
+    await page.getByLabel('Criterion Metadata Selection').nth(1).selectOption('value');
+    await page.getByLabel('Criterion Comparison Selection').nth(1).selectOption('equalTo');
+    await page.getByLabel('Criterion Input').nth(1).fill('0');
+    await page.getByLabel('Condition Name Input').first().dblclick();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await page.getByLabel('Edit Object').click();
+
+    /**
+     * Create default conditions for test. Start with invalid values to put condition set into
+     * "default" state
+     */
+    await page.getByLabel('Test Data Telemetry Selection').selectOption({ label: 'P1' });
+    await page.getByLabel('Test Data Metadata Selection').selectOption({ label: 'Value' });
+    await page.getByLabel('Test Data Input').fill('3');
+    await page.getByLabel('Add Test Datum').click();
+    await page.getByLabel('Test Data Telemetry Selection').nth(1).selectOption({ label: 'P2' });
+    await page.getByLabel('Test Data Metadata Selection').nth(1).selectOption({ label: 'Value' });
+    await page.getByLabel('Test Data Input').nth(1).fill('3');
+    await page.getByLabel('Apply Test Data').nth(1).click();
+
+    let activeCondition = page.getByLabel('Active Condition Set Condition');
+    let activeConditionName = activeCondition.getByLabel('Condition Name Label');
+
+    await expect(activeConditionName).toHaveText('Default');
+
+    /**
+     * Set P1 to 0
+     */
+    await page.getByLabel('Test Data Input').nth(0).fill('0');
+
+    activeCondition = page.getByLabel('Active Condition Set Condition');
+    activeConditionName = activeCondition.getByLabel('Condition Name Label');
+
+    await expect(activeConditionName).toHaveText('P1 IS OFF OR P2 IS OFF');
+
+    /**
+     * Set P2 to 1
+     */
+    await page.getByLabel('Test Data Input').nth(1).fill('1');
+
+    activeCondition = page.getByLabel('Active Condition Set Condition');
+    activeConditionName = activeCondition.getByLabel('Condition Name Label');
+
+    await expect(activeConditionName).toHaveText('P1 IS OFF OR P2 IS OFF');
+
+    /**
+     * Set P1 to 1
+     */
+    await page.getByLabel('Test Data Input').nth(0).fill('1');
+
+    activeCondition = page.getByLabel('Active Condition Set Condition');
+    activeConditionName = activeCondition.getByLabel('Condition Name Label');
+
+    await expect(activeConditionName).toHaveText('P1 IS ON AND P2 IS ON');
   });
 
   test.fixme('Ensure condition sets work with telemetry like operator status', ({ page }) => {
