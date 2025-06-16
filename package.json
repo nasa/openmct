@@ -73,7 +73,7 @@
     "npm-run-all2": "7.0.2",
     "nyc": "17.1.0",
     "painterro": "1.2.87",
-    "plotly.js-basic-dist-min": "2.29.1",
+    "plotly.js-basic-dist-min": "3.0.1",
     "plotly.js-gl2d-dist-min": "2.20.0",
     "prettier": "3.2.5",
     "prettier-eslint": "16.3.0",
