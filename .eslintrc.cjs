@@ -16,14 +16,15 @@ const config = {
     __OPENMCT_REVISION__: 'readonly',
     __OPENMCT_BUILD_BRANCH__: 'readonly'
   },
-  plugins: ['prettier', 'unicorn', 'simple-import-sort'],
+  plugins: ['prettier', 'unicorn', 'simple-import-sort', 'vuejs-accessibility'],
   extends: [
     'eslint:recommended',
     'plugin:compat/recommended',
     'plugin:vue/vue3-recommended',
     'plugin:you-dont-need-lodash-underscore/compatible',
     'plugin:prettier/recommended',
-    'plugin:no-unsanitized/DOM'
+    'plugin:no-unsanitized/DOM',
+    'plugin:vuejs-accessibility/recommended'
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
@@ -167,7 +168,20 @@ const config = {
     'vue/first-attribute-linebreak': 'error',
     'vue/multiline-html-element-content-newline': 'off',
     'vue/singleline-html-element-content-newline': 'off',
-    'vue/no-mutating-props': 'off' // TODO: Remove this rule and fix resulting errors
+    'vue/no-mutating-props': 'off', // TODO: Remove this rule and fix resulting errors
+    // TODO: A11y rules -> fix step by step
+    'vuejs-accessibility/no-static-element-interactions': 'warn',
+    'vuejs-accessibility/click-events-have-key-events': 'off',
+    'vuejs-accessibility/interactive-supports-focus': 'off',
+    // Bug in the eslint rule when using :for and :id instead of static classes
+    'vuejs-accessibility/label-has-for': 'off',
+    'vuejs-accessibility/mouse-events-have-key-events': 'off',
+    'vuejs-accessibility/role-has-required-aria-props': 'off',
+    'vuejs-accessibility/anchor-has-content': 'off',
+    'vuejs-accessibility/iframe-has-title': 'off',
+    'vuejs-accessibility/form-control-has-label': 'off',
+    'vuejs-accessibility/alt-text': 'off',
+    'vuejs-accessibility/aria-props': 'off'
   },
   overrides: [
     {
