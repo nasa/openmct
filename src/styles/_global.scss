@@ -310,6 +310,25 @@ body.desktop .has-local-controls {
   transform: translate(-50%, -50%);
 }
 
+@keyframes geartooth {
+  to { transform: translate(-50%, -50%) rotate(50deg);  }
+}
+
+@mixin gearSpinner($anim: "geartooth", $animDur: 0.25s, $steps: 6, $color: "#ffffff") {
+  @include absCenter();
+  @include bgDashedCircle($color: $color);
+  animation: #{$anim} $animDur steps($steps) infinite;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+}
+
+.gear-spinner {
+  @include gearSpinner($color: $colorKey);
+}
+
 .wait-spinner {
   @include spinner($waitSpinnerBorderW, $colorKey);
   pointer-events: none;
