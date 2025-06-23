@@ -56,13 +56,23 @@ export default {
       'configuration.containers',
       updateContainers
     );
+    const unobserveSwimLaneLabelWidth = openmct.objects.observe(
+      domainObject,
+      'configuration.swimLaneLabelWidth',
+      updateSwimLaneLabelWidth
+    );
 
     onUnmounted(() => {
       unobserveContainers?.();
+      unobserveSwimLaneLabelWidth?.();
     });
 
     function updateContainers(_containers) {
       containers.value = _containers;
+    }
+
+    function updateSwimLaneLabelWidth(_swimLaneLabelWidth) {
+      swimLaneLabelWidth.value = _swimLaneLabelWidth;
     }
 
     function changeSwimLaneLabelWidth(event) {
