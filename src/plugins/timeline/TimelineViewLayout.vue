@@ -42,7 +42,7 @@
       </template>
     </SwimLane>
 
-    <div ref="contentHolder" class="c-timeline__objects">
+    <div v-if="isCompositionLoaded" ref="contentHolder" class="c-timeline__objects">
       <template v-for="(item, index) in items" :key="item.keyString">
         <TimelineObjectView
           class="c-timeline__content js-timeline__content"
@@ -225,7 +225,7 @@ export default {
 
     // COMPOSABLE - Composition
     const composition = ref(null);
-    let isCompositionLoaded = false;
+    const isCompositionLoaded = ref(false);
 
     const compositionCollection = openmct.composition.get(toRaw(domainObject));
 
@@ -240,6 +240,11 @@ export default {
       compositionCollection.off('remove', removeItem);
       compositionCollection.off('reorder', reorder);
     });
+
+    const setupComposition = {
+      composition,
+      isCompositionLoaded
+    };
 
     // COMPOSABLE - Extended Lines
     const extendedLinesBus = inject('extendedLinesBus');
@@ -381,7 +386,7 @@ export default {
 
     compositionCollection.load().then((loadedComposition) => {
       composition.value = loadedComposition;
-      isCompositionLoaded = true;
+      isCompositionLoaded.value = true;
 
       // check if containers configuration matches composition
       // in case composition has been modified outside of view
@@ -456,7 +461,7 @@ export default {
 
       items.value.push(item);
 
-      if (isCompositionLoaded) {
+      if (isCompositionLoaded.value) {
         const container = new Container(domainObject);
         addContainer(container);
       }
@@ -513,8 +518,8 @@ export default {
       openmct,
       domainObject,
       path,
-      composition,
       items,
+      ...setupComposition,
       ...setupTimeContexts,
       ...setupContentHeight,
       ...setupExtendedLines,
