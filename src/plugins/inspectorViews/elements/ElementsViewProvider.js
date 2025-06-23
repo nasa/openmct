@@ -24,16 +24,18 @@ import mount from 'utils/mount';
 
 import ElementsPool from './ElementsPool.vue';
 
+const CUSTOM_ELEMENTS_VIEW_PROVIDER_TYPES = ['time-strip', 'telemetry.plot.overlay'];
+
 export default function ElementsViewProvider(openmct) {
   return {
     key: 'elementsView',
     name: 'Elements',
     canView: function (selection) {
-      // TODO - only use this view provider if another custom provider has not been applied
       const hasValidSelection = selection?.length;
-      const isOverlayPlot = selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
+      const type = selection?.[0]?.[0]?.context?.item?.type;
+      const hasCustomElementsViewProvider = CUSTOM_ELEMENTS_VIEW_PROVIDER_TYPES.includes(type);
 
-      return hasValidSelection && !isOverlayPlot;
+      return hasValidSelection && !hasCustomElementsViewProvider;
     },
     view: function (selection) {
       let _destroy = null;
