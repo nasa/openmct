@@ -78,7 +78,7 @@ import { inject } from 'vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
-import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
+import { generateTimestampTicks, getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
 
@@ -96,13 +96,19 @@ export default {
     tickCount: {
       type: Number,
       default() {
-        return 6;
+        return 8;
       }
     },
     axisId: {
       type: Number,
       default() {
         return null;
+      }
+    },
+    isUtc: {
+      type: Boolean,
+      default() {
+        return false;
       }
     },
     position: {
@@ -128,7 +134,9 @@ export default {
   },
   data() {
     return {
-      ticks: []
+      ticks: [],
+      interval: undefined,
+      min: undefined
     };
   },
   mounted() {
@@ -219,6 +227,8 @@ export default {
 
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
+      } else if (this.isUtc) {
+        return generateTimestampTicks(range.min, range.max, number);
       } else {
         return ticks(range.min, range.max, number);
       }
