@@ -20,32 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Container from '@/ui/layout/Container.js';
-
-import FlexibleLayoutViewProvider from './flexibleLayoutViewProvider.js';
-import ToolBarProvider from './toolbarProvider.js';
-
-export default function plugin() {
-  return function install(openmct) {
-    openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
-
-    openmct.types.addType('flexible-layout', {
-      name: 'Flexible Layout',
-      creatable: true,
-      description:
-        'A fluid, flexible layout canvas that can display multiple objects in rows or columns.',
-      cssClass: 'icon-flexible-layout',
-      initialize: function (domainObject) {
-        domainObject.configuration = {
-          containers: [new Container(50), new Container(50)],
-          rowsLayout: false
-        };
-        domainObject.composition = [];
-      }
-    });
-
-    let toolbar = ToolBarProvider(openmct);
-
-    openmct.toolbars.addProvider(toolbar);
-  };
+/**
+ * a sizing container for objects in a layout
+ */
+class Container {
+  constructor(domainObject, size) {
+    /**
+     * the identifier of the associated domain object
+     * @type {import('@/api/objects/ObjectAPI.js').Identifier}
+     */
+    this.domainObjectIdentifier = domainObject.identifier;
+    /**
+     * the size in percentage or pixels
+     * @type {number}
+     */
+    this.size = size;
+    /**
+     * the default percentage scale of an object
+     * @type {number}
+     */
+    this.scale = getContainerScale(domainObject);
+    /**
+     * true if the container should be a fixed pixel size
+     * false if the container should be a flexible percentage size
+     * containers are added as flex
+     * @type {boolean}
+     */
+    this.fixed = false;
+  }
 }
+
+function getContainerScale(domainObject) {
+  if (domainObject.type === 'telemetry.plot.stacked') {
+    return domainObject?.composition?.length;
+  }
+
+  return 1;
+}
+
+export default Container;

@@ -45,6 +45,7 @@
         :object-path="[elementObject, domainObject]"
         @context-click-active="setContextClickState"
       />
+      <slot name="content"></slot>
     </div>
   </li>
 </template>

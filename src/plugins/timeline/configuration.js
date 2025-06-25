@@ -20,32 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Container from '@/ui/layout/Container.js';
-
-import FlexibleLayoutViewProvider from './flexibleLayoutViewProvider.js';
-import ToolBarProvider from './toolbarProvider.js';
-
-export default function plugin() {
-  return function install(openmct) {
-    openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
-
-    openmct.types.addType('flexible-layout', {
-      name: 'Flexible Layout',
-      creatable: true,
-      description:
-        'A fluid, flexible layout canvas that can display multiple objects in rows or columns.',
-      cssClass: 'icon-flexible-layout',
-      initialize: function (domainObject) {
-        domainObject.configuration = {
-          containers: [new Container(50), new Container(50)],
-          rowsLayout: false
-        };
-        domainObject.composition = [];
-      }
-    });
-
-    let toolbar = ToolBarProvider(openmct);
-
-    openmct.toolbars.addProvider(toolbar);
-  };
-}
+/**
+ * @typedef {Object} TimeStripConfig configuration for Time Strip views
+ * @property {boolean} useIndependentTime true for independent time, false for global time
+ * @property {Array<import('./Container').default>} containers
+ * @property {number} swimLaneLabelWidth
+ */
+export const configuration = {
+  useIndependentTime: false,
+  containers: [],
+  swimLaneLabelWidth: 200
+};
