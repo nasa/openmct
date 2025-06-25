@@ -5,7 +5,7 @@
     </template>
     <template #custom>
       <div class="c-inspector__properties c-inspect-properties" aria-label="Swim Lane Label Width">
-        <div class="c-inspect-properties__header">Swin Lane Label Width</div>
+        <div class="c-inspect-properties__header">Swim Lane Label Width</div>
         <div class="c-inspect-properties__row">
           <input
             :value="swimLaneLabelWidth"
