@@ -21,13 +21,14 @@
 -->
 
 <template>
-  <div ref="timelineHolder" class="c-timeline-holder">
+  <div ref="timelineHolder" class="c-timeline-holder" aria-label="Time Strip">
     <SwimLane
       v-for="timeSystemItem in timeSystems"
       :key="timeSystemItem.timeSystem.key"
       :can-show-resize-handle="true"
       :resize-handle-height="height"
       class="c-swimlane__time-axis"
+      aria-label="Time Axis"
     >
       <template #label>
         {{ timeSystemItem.timeSystem.name }}
