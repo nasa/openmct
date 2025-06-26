@@ -23,6 +23,7 @@ import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 const MIN_CONTAINER_SIZE = 5;
+const SWIM_LANE_DEFAULT_WIDTH = 200;
 
 // Helper function to get container sizes
 async function getContainerSizes(page) {
@@ -40,10 +41,14 @@ async function getContainerHeights(page) {
   return heights;
 }
 
-test.describe('Timeline Container Resizing', () => {
+test.describe('Timeline Swim Lane Configuration', () => {
   /** @type {import('@playwright/test').Locator} */
   let timeStrip;
-  let containers;
+  let timeStripContentHolder;
+  let timeAxis;
+  let swimLaneLabels;
+  // TODO: why the extra pixel?
+  const fudge = 1;
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -53,50 +58,103 @@ test.describe('Timeline Container Resizing', () => {
       name: 'Time Strip'
     });
 
-    containers = [];
-
-    for (let i = 1; i <= 5; i++) {
-      const container = await createDomainObjectWithDefaults(page, {
+    // Create
+    for (let i = 1; i <= 2; i++) {
+      await createDomainObjectWithDefaults(page, {
         type: 'Overlay Plot',
-        name: `Swim Lane ${i}`,
-        parent: timeStrip.uuid
+        name: `Swim Lane ${i}`
       });
-      containers.push(container);
     }
+
+    await page.goto(timeStrip.url);
+    timeAxis = page.getByLabel('Time Axis');
+    timeStripContentHolder = page.getByLabel('Time Strip');
+    swimLaneLabels = timeStripContentHolder.locator('.c-swimlane__lane-label');
   });
 
-  test('default configuration', async ({ page }) => {
-    let timeStripObject = await page.evaluate(async (uuid) => await window.openmct.objects.get(uuid), timeStrip.uuid);
+  test('allows for swim lane widths to be configured', async ({ page }) => {
+    const timeAxisLabelCount = await swimLaneLabels.count();
+    await expect(timeAxisLabelCount).toBe(1);
 
-    await test.step('default swim lane label width', async () => {
-      expect(timeStripObject.configuration.swimLaneLabelWidth).toBe(200);
-    });
-
-    await test.step('will not have containers if composition modified outside of view', async () => {
-      expect(timeStripObject.configuration.containers.length).not.toBe(5);
-    });
-
-    // Now go to the time strip view
-    await page.goto(timeStrip.url);
     // Click the Edit button
     await page.getByRole('button', { name: 'Edit Object', exact: true }).click();
-
-    // Click the Save button
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-    
-    // get the updated object
-    timeStripObject = await page.evaluate(async (uuid) => await window.openmct.objects.get(uuid), timeStrip.uuid);
-      
-    console.log(timeStripObject);
-    await test.step('will create default containers if none exist', async () => {
-      expect(timeStripObject.configuration.containers.length).toBe(5);
+    // Expand the 'My Items' folder in the left tree
+    await page.getByLabel('Show selected item in tree').click();
+    // Add objects to the time strip
+    const treePane = page.getByRole('tree', {
+      name: 'Main Tree'
     });
-  });
+    const overlayPlot1TreeItem = treePane.getByRole('treeitem', {
+      name: 'Swim Lane 1'
+    });
+    const overlayPlot2TreeItem = treePane.getByRole('treeitem', {
+      name: 'Swim Lane 2'
+    });
 
-  test.beforeEach(async ({ page }) => {
-    // Now go to the time strip view
-    await page.goto(timeStrip.url);
+    await overlayPlot1TreeItem.dragTo(timeAxis);
+    await overlayPlot2TreeItem.dragTo(timeAxis);
+
+    const labelCount = await swimLaneLabels.count();
+    await expect(labelCount).toBe(2 + timeAxisLabelCount);
+
+    await test.step(`swim lane widths default to ${SWIM_LANE_DEFAULT_WIDTH}px`, async () => {
+      for (let i = 0; i < labelCount; i++) {
+        await expect((await swimLaneLabels.nth(i).boundingBox()).width).toBe(
+          SWIM_LANE_DEFAULT_WIDTH + fudge
+        );
+      }
+    });
+
+    await test.step('using drag and drop to resize swim lanes', async () => {
+      let widthAfterDragRight;
+      let widthAfterDragLeft;
+      const dragDistance = 50;
+      const swimLaneLabelWidthHandle = page.locator('.c-swimlane__handle');
+      const box = await swimLaneLabelWidthHandle.first().boundingBox();
+      await swimLaneLabelWidthHandle.first().hover();
+      await page.mouse.down();
+      await page.mouse.move(box.x + dragDistance, box.y);
+      await page.mouse.up();
+      widthAfterDragRight = (await swimLaneLabels.nth(0).boundingBox()).width;
+      for (let i = 1; i < labelCount; i++) {
+        const currentWidth = (await swimLaneLabels.nth(i).boundingBox()).width;
+
+        await expect(currentWidth).toBe(widthAfterDragRight);
+        await expect(currentWidth).toBeGreaterThan(SWIM_LANE_DEFAULT_WIDTH + fudge);
+
+        widthAfterDragRight = currentWidth;
+      }
+
+      const bigBox = await swimLaneLabelWidthHandle.first().boundingBox();
+      await swimLaneLabelWidthHandle.first().hover();
+      await page.mouse.down();
+      await page.mouse.move(bigBox.x - dragDistance / 2, bigBox.y);
+      await page.mouse.up();
+
+      widthAfterDragLeft = (await swimLaneLabels.nth(0).boundingBox()).width;
+      for (let i = 1; i < labelCount; i++) {
+        const currentWidth = (await swimLaneLabels.nth(i).boundingBox()).width;
+
+        await expect(currentWidth).toBe(widthAfterDragLeft);
+        await expect(currentWidth).toBeGreaterThan(SWIM_LANE_DEFAULT_WIDTH + fudge);
+        await expect(currentWidth).toBeLessThan(widthAfterDragRight);
+
+        widthAfterDragLeft = currentWidth;
+      }
+    });
+
+    await test.step('using input entry in inspector Elements tab to resize swim lanes ', async () => {
+      // Click the Elements tag in the Inspector
+      await page.getByRole('tab', { name: 'Elements' }).click();
+
+      const input = page.getByLabel('Swim Lane Label Width').locator('input[type="number"]');
+      await input.fill('100');
+      await input.blur();
+
+      for (let i = 0; i < (await swimLaneLabels.count()); i++) {
+        await expect((await swimLaneLabels.nth(i).boundingBox()).width).toBe(100 + fudge);
+      }
+    });
   });
 
   test('should resize containers vertically through drag and drop', async ({ page }) => {
@@ -226,5 +284,71 @@ test.describe('Timeline Container Resizing', () => {
     // Verify total height remains approximately the same
     // Allow small margin of error due to rounding
     expect(Math.abs(newTotal - initialTotal)).toBeLessThan(10);
+  });
+});
+
+test.describe('Timeline Container Edge Cases', () => {
+  /** @type {import('@playwright/test').Locator} */
+  let timeStrip;
+  let timeStripDomainObject;
+  let containers;
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+
+    timeStrip = await createDomainObjectWithDefaults(page, {
+      type: 'Time Strip',
+      name: 'Time Strip'
+    });
+
+    containers = [];
+
+    for (let i = 1; i <= 2; i++) {
+      const container = await createDomainObjectWithDefaults(page, {
+        type: 'Overlay Plot',
+        name: `Swim Lane ${i}`,
+        parent: timeStrip.uuid
+      });
+      containers.push(container);
+    }
+  });
+  test('something', async ({ page }) => {
+    const timeStripDomainObjectBeforeView = await page.evaluate(
+      (uuid) => window.openmct.objects.get(uuid),
+      timeStrip.uuid
+    );
+
+    await test.step('default swim lane label width', () => {
+      expect(timeStripDomainObject.configuration.swimLaneLabelWidth).toBe(200);
+    });
+
+    await test.step('will not have containers if composition modified outside of view', () => {
+      expect(timeStripDomainObject.configuration.containers.length).not.toBe(5);
+    });
+
+    // Now go to the time strip view
+    await page.goto(timeStrip.url);
+    // Click the Edit button
+    await page.getByRole('button', { name: 'Edit Object', exact: true }).click();
+
+    // Click the Save button
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // get the updated object
+    timeStripDomainObject = await page.evaluate(
+      (uuid) => window.openmct.objects.get(uuid),
+      timeStrip.uuid
+    );
+
+    console.log(timeStripDomainObject);
+    await test.step('will create default containers if none exist', () => {
+      expect(timeStripDomainObject.configuration.containers.length).toBe(5);
+    });
+
+    test.beforeEach(async ({ page }) => {
+      // Now go to the time strip view
+      await page.goto(timeStrip.url);
+    });
   });
 });
