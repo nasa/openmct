@@ -200,6 +200,7 @@ export default class ConditionManager extends EventEmitter {
       this.conditionSetDomainObject.configuration.conditionCollection[index] =
         conditionConfiguration;
       this.persistConditions();
+      this.evaluateCurrentCondition()
     }
   }
 
@@ -506,6 +507,19 @@ export default class ConditionManager extends EventEmitter {
 
     this.conditions.forEach((condition) => {
       condition.destroy();
+    });
+  }
+
+  evaluateCurrentCondition() {
+    const matched = this.conditions.find((cond) => cond.result === true);
+
+    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
+    const current = matched || conditionCollection.at(-1); // fallback to default
+
+    this.emit('conditionSetResultUpdated', {
+      output: current.configuration.output,
+      id: this.conditionSetDomainObject.identifier,
+      conditionId: current.id
     });
   }
 }

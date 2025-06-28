@@ -114,7 +114,7 @@ export default {
     'condition-set-result-updated',
     'no-telemetry-objects',
     'telemetry-updated',
-    'telemetry-staleness'
+    'telemetry-staleness', 'update-condition'
   ],
   data() {
     return {
