@@ -200,7 +200,7 @@ export default class ConditionManager extends EventEmitter {
       this.conditionSetDomainObject.configuration.conditionCollection[index] =
         conditionConfiguration;
       this.persistConditions();
-      this.evaluateCurrentCondition()
+      this.evaluateCurrentCondition();
     }
   }
 
