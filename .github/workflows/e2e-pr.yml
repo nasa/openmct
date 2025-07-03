@@ -45,9 +45,11 @@ jobs:
           npm run cov:e2e:full:publish
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-pr-test-results
           path: test-results
+          overwrite: true
 
       - name: Remove pr:e2e label (if present)
         if: always()
