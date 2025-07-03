@@ -329,7 +329,7 @@ test.describe('Properties Form', () => {
     await page.keyboard.press('Escape');
     await expect(page.getByRole('heading', { name: 'Properties' })).toBeHidden();
   });
-})
+});
 
 test.describe('Form Correctness by Object Type', () => {
   test.fixme('Verify correct behavior of number object (SWG)', async ({ page }) => {});
