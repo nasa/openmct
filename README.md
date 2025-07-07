@@ -129,7 +129,7 @@ naming convention is otherwise the same.)
 ### Test Reporting
 
 When `npm test` is run, test results will be written as HTML to
-`target/tests`. Code coverage information is written to `target/coverage`.
+`target/tests`.
 
 # Glossary
 
