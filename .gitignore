@@ -15,7 +15,8 @@
 *.idea
 *.iml
 
-# External dependencies
+# VSCode
+.vscode/settings.json
 
 # Build output
 target
@@ -24,17 +25,28 @@ dist
 # Mac OS X Finder
 .DS_Store
 
-# Closed source libraries
-closed-lib
-
 # Node, Bower dependencies
 node_modules
 bower_components
 
-# Protractor logs
-protractor/logs
-
 # npm-debug log
 npm-debug.log
 
-package-lock.json
+# karma reports
+report.*.json
+
+# e2e test artifacts
+test-results
+html-test-results
+
+# couchdb scripting artifacts
+src/plugins/persistence/couch/.env.local
+index.html.bak
+
+# codecov artifacts
+.nyc_output
+coverage
+codecov
+
+# Don't commit MacOS screenshots
+*-darwin.png

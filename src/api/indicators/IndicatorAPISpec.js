@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,97 +19,102 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { defineComponent } from 'vue';
 
-define(
-    [
-        "../../MCT",
-        "../../../platform/commonUI/general/src/directives/MCTIndicators"
-    ],
-    function (
-        MCT,
-        MCTIndicators
-    ) {
-        describe("The Indicator API", function () {
-            var openmct;
-            var directive;
-            var holderElement;
+import { createOpenMct, resetApplicationState } from '../../utils/testing.js';
+import SimpleIndicator from './SimpleIndicator.js';
 
-            beforeEach(function () {
-                openmct = new MCT();
-                directive = new MCTIndicators(openmct);
-                holderElement = document.createElement('div');
-            });
+describe('The Indicator API', () => {
+  let openmct;
 
-            describe("The simple indicator", function () {
-                var simpleIndicator;
+  beforeEach(() => {
+    openmct = createOpenMct();
+  });
 
-                beforeEach(function () {
-                    simpleIndicator = openmct.indicators.simpleIndicator();
-                    openmct.indicators.add(simpleIndicator);
-                    renderIndicators();
-                });
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
 
-                it("applies the set icon class", function () {
-                    simpleIndicator.iconClass('testIconClass');
+  function generateHTMLIndicator(className, label, priority) {
+    const element = document.createElement('div');
+    element.classList.add(className);
+    const textNode = document.createTextNode(label);
+    element.appendChild(textNode);
+    const testIndicator = {
+      element,
+      priority
+    };
 
-                    expect(getIconElement().classList.contains('testIconClass')).toBe(true);
+    return testIndicator;
+  }
 
-                    simpleIndicator.iconClass('anotherIconClass');
-                    expect(getIconElement().classList.contains('testIconClass')).toBe(false);
-                    expect(getIconElement().classList.contains('anotherIconClass')).toBe(true);
-                });
+  function generateVueIndicator(priority) {
+    return {
+      vueComponent: defineComponent({
+        template: '<div class="test-indicator">This is a test indicator</div>'
+      }),
+      priority
+    };
+  }
 
-                it("applies the set status class", function () {
-                    simpleIndicator.statusClass('testStatusClass');
+  it('can register an HTML indicator', () => {
+    const testIndicator = generateHTMLIndicator('test-indicator', 'This is a test indicator', 2);
+    openmct.indicators.add(testIndicator);
+    expect(openmct.indicators.indicatorObjects).toBeDefined();
+    // notifier indicator is installed by default
+    expect(openmct.indicators.indicatorObjects.length).toBe(2);
+  });
 
-                    expect(getIconElement().classList.contains('testStatusClass')).toBe(true);
-                    simpleIndicator.statusClass('anotherStatusClass');
-                    expect(getIconElement().classList.contains('testStatusClass')).toBe(false);
-                    expect(getIconElement().classList.contains('anotherStatusClass')).toBe(true);
-                });
+  it('can register a Vue indicator', () => {
+    const testIndicator = generateVueIndicator(2);
+    openmct.indicators.add(testIndicator);
+    expect(openmct.indicators.indicatorObjects).toBeDefined();
+    // notifier indicator is installed by default
+    expect(openmct.indicators.indicatorObjects.length).toBe(2);
+  });
 
-                it("displays the set text", function () {
-                    simpleIndicator.text('some test text');
-                    expect(getTextElement().textContent.trim()).toEqual('some test text');
-                });
+  it('can order indicators based on priority', () => {
+    const testIndicator1 = generateHTMLIndicator(
+      'test-indicator-1',
+      'This is a test indicator',
+      openmct.priority.LOW
+    );
+    openmct.indicators.add(testIndicator1);
 
-                it("sets the indicator's title", function () {
-                    simpleIndicator.description('a test description');
-                    expect(getIndicatorElement().getAttribute('title')).toEqual('a test description');
-                });
+    const testIndicator2 = generateHTMLIndicator(
+      'test-indicator-2',
+      'This is another test indicator',
+      openmct.priority.DEFAULT
+    );
+    openmct.indicators.add(testIndicator2);
 
-                it("Hides indicator icon if no text is set", function () {
-                    simpleIndicator.text('');
-                    expect(getIndicatorElement().classList.contains('hidden')).toBe(true);
-                });
+    const testIndicator3 = generateHTMLIndicator(
+      'test-indicator-3',
+      'This is yet another test indicator',
+      openmct.priority.LOW
+    );
+    openmct.indicators.add(testIndicator3);
 
-                function getIconElement() {
-                    return holderElement.querySelector('.ls-indicator');
-                }
+    const testIndicator4 = generateHTMLIndicator(
+      'test-indicator-4',
+      'This is yet another test indicator',
+      openmct.priority.HIGH
+    );
+    openmct.indicators.add(testIndicator4);
 
-                function getIndicatorElement() {
-                    return holderElement.querySelector('.ls-indicator');
-                }
+    const testIndicator5 = generateVueIndicator(openmct.priority.DEFAULT);
+    openmct.indicators.add(testIndicator5);
 
-                function getTextElement() {
-                    return holderElement.querySelector('.indicator-text');
-                }
-            });
+    expect(openmct.indicators.indicatorObjects.length).toBe(6);
+    const indicatorObjectsByPriority = openmct.indicators.getIndicatorObjectsByPriority();
+    expect(indicatorObjectsByPriority.length).toBe(6);
+    expect(indicatorObjectsByPriority[2].priority).toBe(openmct.priority.DEFAULT);
+  });
 
-            it("Supports registration of a completely custom indicator", function () {
-                var customIndicator = document.createElement('div');
-                customIndicator.classList.add('customIndicator');
-                customIndicator.textContent = 'A custom indicator';
+  it('the simple indicator can be added', () => {
+    const simpleIndicator = new SimpleIndicator(openmct);
+    openmct.indicators.add(simpleIndicator);
 
-                openmct.indicators.add({element: customIndicator});
-                renderIndicators();
-
-                expect(holderElement.querySelector('.customIndicator').textContent.trim()).toEqual('A custom indicator');
-            });
-
-            function renderIndicators() {
-                directive.link({}, holderElement);
-            }
-
-        });
-    });
+    expect(openmct.indicators.indicatorObjects.length).toBe(2);
+  });
+});

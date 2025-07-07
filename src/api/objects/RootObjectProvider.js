@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,28 +20,78 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-], function (
-) {
-
-    function RootObjectProvider(rootRegistry) {
-        this.rootRegistry = rootRegistry;
+/**
+ * Provides the root object for the Open MCT application.
+ */
+class RootObjectProvider {
+  /**
+   * @param {RootRegistry} rootRegistry - The registry containing root objects.
+   */
+  constructor(rootRegistry) {
+    if (!RootObjectProvider.instance) {
+      this.rootRegistry = rootRegistry;
+      this.rootObject = {
+        identifier: {
+          key: 'ROOT',
+          namespace: ''
+        },
+        name: 'Open MCT',
+        type: 'root',
+        composition: []
+      };
+      RootObjectProvider.instance = this;
+    } else if (rootRegistry) {
+      // if called twice, update instance rootRegistry
+      RootObjectProvider.instance.rootRegistry = rootRegistry;
     }
 
-    RootObjectProvider.prototype.get = function () {
-        return this.rootRegistry.getRoots()
-            .then(function (roots) {
-                return {
-                    identifier: {
-                        key: "ROOT",
-                        namespace: ""
-                    },
-                    name: 'The root object',
-                    type: 'root',
-                    composition: roots
-                };
-            });
-    };
+    return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
+  }
 
-    return RootObjectProvider;
-});
+  /**
+   * Updates the name of the root object.
+   * @param {string} name - The new name for the root object.
+   */
+  updateName(name) {
+    this.rootObject.name = name;
+  }
+
+  /**
+   * Retrieves the root object with updated composition.
+   * @returns {Promise<RootObject>} A promise that resolves to the root object.
+   */
+  async get() {
+    let roots = await this.rootRegistry.getRoots();
+    this.rootObject.composition = roots;
+
+    return this.rootObject;
+  }
+}
+
+/**
+ * Creates or returns an instance of RootObjectProvider.
+ * @param {RootRegistry} rootRegistry - The registry containing root objects.
+ * @returns {RootObjectProvider} An instance of RootObjectProvider.
+ */
+function instance(rootRegistry) {
+  return new RootObjectProvider(rootRegistry);
+}
+
+export default instance;
+
+/**
+ * @typedef {import('openmct').Identifier} Identifier
+ */
+
+/**
+ * @typedef {Object} RootObject
+ * @property {Identifier} identifier - The identifier of the root object.
+ * @property {string} name - The name of the root object.
+ * @property {string} type - The type of the root object.
+ * @property {Identifier[]} composition - The composition of the root object.
+ */
+
+/**
+ * @typedef {Object} RootRegistry
+ * @property {() => Promise<Identifier[]>} getRoots - A method that returns a promise resolving to an array of root identifiers.
+ */

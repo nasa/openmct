@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,23 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) {
-    /**
-     * A {@link Clock} that mocks a "latest available data" type tick source.
-     * This is for testing purposes only, and behaves identically to a local clock.
-     * It DOES NOT tick on receipt of data.
-     * @constructor
-     */
-    function LADClock(period) {
-        LocalClock.call(this, period);
+import LocalClock from '../../../src/plugins/utcTimeSystem/LocalClock.js';
 
-        this.key = 'test-lad';
-        this.mode = 'lad';
-        this.cssClass = 'icon-database';
-        this.name = 'Latest available data';
-        this.description = "Updates when when new data is available";
-    }
-    LADClock.prototype = Object.create(LocalClock.prototype);
+class LADClock extends LocalClock {
+  /**
+   * A {@link Clock} that mocks a "latest available data" type tick source.
+   * This is for testing purposes only, and behaves identically to a local clock.
+   * It DOES NOT tick on receipt of data.
+   * @constructor
+   */
+  constructor(period) {
+    super(period);
 
-    return LADClock;
-});
+    this.key = 'test-lad';
+    this.mode = 'lad';
+    this.cssClass = 'icon-suitcase';
+    this.name = 'Latest available data';
+    this.description = 'Updates when new data is available';
+  }
+}
+
+export default LADClock;

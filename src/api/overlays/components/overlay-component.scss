@@ -1,0 +1,200 @@
+@mixin overlaySizing($marginTB: auto, $marginLR: auto, $width: auto, $height: auto) {
+  position: absolute;
+  top: $marginTB;
+  right: $marginLR;
+  bottom: $marginTB;
+  left: $marginLR;
+  width: $width;
+  height: $height;
+}
+
+.l-overlay-wrapper {
+  // Created by overlayService.js, contains this template.
+  // Acts as an anchor for one or more overlays.
+  display: contents;
+}
+
+.c-overlay {
+  @include abs();
+  z-index: 70;
+
+  &__blocker {
+    // Mobile-first: use the blocker to create a full look to dialogs
+    @include abs();
+    background: $colorBodyBg;
+  }
+
+  &__outer {
+    @include abs();
+    background: $colorBodyBg;
+    display: flex;
+    flex-direction: column;
+
+    body.mobile .l-overlay-fit & {
+      // Vertically center small dialogs in mobile
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+  }
+
+  &__close-button {
+    $p: $interiorMargin + 2px;
+    font-size: 1.5em;
+    position: absolute;
+    top: $p;
+    right: $p;
+    z-index: 99;
+  }
+
+  &__content-wrapper {
+    display: flex;
+    height: 100%;
+    overflow: auto;
+    flex-direction: column;
+    gap: $interiorMargin;
+
+    body.desktop & {
+      overflow: hidden;
+    }
+
+    .l-overlay-fit &,
+    .l-overlay-dialog & {
+      margin: $overlayInnerMargin;
+    }
+  }
+
+  &__contents {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    outline: none;
+    overflow: auto;
+    body.mobile & {
+      flex: none;
+    }
+  }
+
+  &__top-bar {
+    flex: 0 0 auto;
+    flex-direction: column;
+    display: flex;
+
+    > * {
+      flex: 0 0 auto;
+      margin-bottom: $interiorMargin;
+    }
+  }
+
+  &__dialog-title {
+    @include ellipsize();
+    font-size: 1.5em;
+    line-height: 120%;
+  }
+
+  &__contents-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    height: 0; // Chrome 73 overflow bug fix
+    overflow: auto;
+    padding-right: $interiorMargin; // fend off scroll bar
+  }
+
+  &__button-bar {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: $interiorMargin;
+    body.mobile & {
+      justify-content: flex-end;
+      padding-right: $interiorMargin;
+    }
+
+    > * + * {
+      margin-left: $interiorMargin;
+    }
+  }
+
+  .c-object-label__name {
+    color: $objectLabelNameColorFg;
+  }
+}
+
+body.desktop {
+  .c-overlay {
+    &__blocker {
+      @include abs();
+      background: $colorOvrBlocker;
+      cursor: pointer;
+      display: block;
+    }
+  }
+
+  // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
+  .l-overlay-large,
+  .l-overlay-small,
+  .l-overlay-dialog,
+  .l-overlay-fit {
+    .c-overlay__outer {
+      border-radius: $overlayCr;
+      box-shadow: rgba(black, 0.5) 0 2px 25px;
+    }
+  }
+
+  .l-overlay-fullscreen {
+    // Used by About > Licenses display
+    .c-overlay__outer {
+      @include overlaySizing(
+        nth($overlayOuterMarginFullscreen, 1),
+        nth($overlayOuterMarginFullscreen, 2)
+      );
+    }
+  }
+
+  .l-overlay-large {
+    // Default
+    $pad: $interiorMarginLg;
+    $tbPad: floor($pad * 0.8);
+    $lrPad: $pad;
+    .c-overlay {
+      &__outer {
+        @include overlaySizing(nth($overlayOuterMarginLarge, 1), nth($overlayOuterMarginLarge, 2));
+        padding: $tbPad $lrPad;
+      }
+
+      &__close-button {
+        //top: $interiorMargin;
+        //right: $interiorMargin;
+      }
+    }
+
+    .l-browse-bar {
+      margin-right: 50px; // Don't cover close button
+      margin-bottom: $interiorMargin;
+    }
+  }
+
+  .l-overlay-small {
+    .c-overlay__outer {
+      @include overlaySizing(nth($overlayOuterMarginSmall, 1), nth($overlayOuterMarginSmall, 2));
+    }
+  }
+
+  .l-overlay-dialog {
+    .c-overlay__outer {
+      @include overlaySizing(nth($overlayOuterMarginDialog, 1), nth($overlayOuterMarginDialog, 2));
+    }
+  }
+
+  .t-dialog-sm .l-overlay-small, // Legacy dialog support
+    .l-overlay-fit {
+    .c-overlay__outer {
+      @include overlaySizing(auto, auto);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 20%;
+    }
+  }
+}

@@ -1,0 +1,262 @@
+$plotLimitLineSize: 1px;
+$plotLimitDashWidthOffset: 10px;
+$lineBlocker: $colorPlotLimitLineBg;
+$plotLimitDashWidthSeverity: 50px;
+$plotLimitDashWidthCritical: $plotLimitDashWidthSeverity - $plotLimitDashWidthOffset;
+$plotLimitDashWidthDistress: $plotLimitDashWidthCritical - $plotLimitDashWidthOffset;
+$plotLimitDashWidthWarning: $plotLimitDashWidthDistress - $plotLimitDashWidthOffset;
+$plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset;
+
+@mixin plotLimitLine($c, $breakPerc) {
+  background: $lineBlocker
+    linear-gradient(90deg, $c $breakPerc, transparent $breakPerc, transparent 100%) repeat-x;
+}
+
+@mixin plotLimitDirectionGradient($c, $deg: 0deg) {
+  background: linear-gradient($deg, $c, transparent);
+}
+
+@mixin plotLimitLineUpper($c) {
+  $breakPerc: 80%;
+  @include plotLimitLine($c: $c, $breakPerc: $breakPerc);
+}
+
+@mixin plotLimitLineLower($c) {
+  $breakPerc: 30%;
+  @include plotLimitLine($c: $c, $breakPerc: $breakPerc);
+}
+
+.c-plot-limit-line {
+  box-shadow: $lineBlocker 0 0 0 2px;
+  height: $plotLimitLineSize;
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+
+  // Colors and directions
+  &--purple.c-plot-limit-line--upr {
+    @include plotLimitLineUpper($colorLimitPurpleIc);
+  }
+
+  &--purple.c-plot-limit-line--lwr {
+    @include plotLimitLineLower($colorLimitPurpleIc);
+  }
+
+  &--red.c-plot-limit-line--upr {
+    @include plotLimitLineUpper($colorLimitRedIc);
+  }
+
+  &--red.c-plot-limit-line--lwr {
+    @include plotLimitLineLower($colorLimitRedIc);
+  }
+
+  &--orange.c-plot-limit-line--upr {
+    @include plotLimitLineUpper($colorLimitOrangeIc);
+  }
+
+  &--orange.c-plot-limit-line--lwr {
+    @include plotLimitLineLower($colorLimitOrangeIc);
+  }
+
+  &--yellow.c-plot-limit-line--upr {
+    @include plotLimitLineUpper($colorLimitYellowIc);
+  }
+
+  &--yellow.c-plot-limit-line--lwr {
+    @include plotLimitLineLower($colorLimitYellowIc);
+  }
+
+  &--cyan.c-plot-limit-line--upr {
+    @include plotLimitLineUpper($colorLimitCyanIc);
+  }
+
+  &--cyan.c-plot-limit-line--lwr {
+    @include plotLimitLineLower($colorLimitCyanIc);
+  }
+
+  // Severities
+  &--severe {
+    background-size: $plotLimitDashWidthSeverity 100% !important;
+  }
+
+  &--critical {
+    background-size: $plotLimitDashWidthCritical 100% !important;
+  }
+
+  &--distress {
+    background-size: $plotLimitDashWidthDistress 100% !important;
+  }
+
+  &--warning {
+    background-size: $plotLimitDashWidthWarning 100% !important;
+  }
+
+  &--watch {
+    background-size: $plotLimitDashWidthWatch 100% !important;
+  }
+}
+
+.c-plot-limit {
+  // Holds both label and directional gradient
+  $labelCr: $basicCr;
+  display: flex;
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+
+  &__label {
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    border-radius: 0 $labelCr 0 0;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 2px 4px;
+    transform: translateY(-100%);
+
+    > * + * {
+      margin-left: $interiorMarginSm;
+    }
+  }
+
+  &.--align-label-right {
+    justify-content: flex-end;
+    .c-plot-limit__label {
+      border-radius: $labelCr 0 0 0;
+      border-width: 1px 0 0 1px;
+    }
+  }
+
+  &.--align-label-below {
+    .c-plot-limit__label {
+      border-radius: 0 0 $labelCr 0;
+      border-width: 0 1px 1px 0;
+      transform: translateY(0);
+    }
+    &.--align-label-right {
+      .c-plot-limit__label {
+        border-radius: 0 0 0 $labelCr;
+        border-width: 0 0 1px 1px;
+      }
+    }
+  }
+
+  [class*='icon'] {
+    &:before {
+      display: block;
+      font-family: symbolsfont;
+      font-size: 0.9em;
+    }
+  }
+
+  &__series-color-swatch {
+    @include colorSwatch();
+    display: block;
+    flex: 0 0 auto;
+  }
+
+  &:before {
+    // Direction gradient
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%;
+    opacity: 0.2;
+  }
+
+  &--upr:before {
+    transform: translateY(-100%);
+  }
+
+  &--lwr:before {
+    transform: scaleY(-1); // This inverts the gradient direction
+  }
+
+  // Label styling
+  &--purple [class*='label'] {
+    background-color: $colorLimitPurpleBg;
+    border-color: $colorLimitPurpleIc;
+    color: $colorLimitPurpleFg;
+  }
+
+  &--red [class*='label'] {
+    background-color: $colorLimitRedBg;
+    border-color: $colorLimitRedIc;
+    color: $colorLimitRedFg;
+  }
+
+  &--orange [class*='label'] {
+    background-color: $colorLimitOrangeBg;
+    border-color: $colorLimitOrangeIc;
+    color: $colorLimitOrangeFg;
+  }
+
+  &--yellow [class*='label'] {
+    background-color: $colorLimitYellowBg;
+    border-color: $colorLimitYellowIc;
+    color: $colorLimitYellowFg;
+  }
+
+  &--cyan [class*='label'] {
+    background-color: $colorLimitCyanBg;
+    border-color: $colorLimitCyanIc;
+    color: $colorLimitCyanFg;
+  }
+
+  // Directional gradients
+  &--purple:before {
+    @include plotLimitDirectionGradient($c: $colorLimitPurpleIc);
+  }
+
+  &--red:before {
+    @include plotLimitDirectionGradient($c: $colorLimitRedIc);
+  }
+
+  &--orange:before {
+    @include plotLimitDirectionGradient($c: $colorLimitOrangeIc);
+  }
+
+  &--yellow:before {
+    @include plotLimitDirectionGradient($c: $colorLimitYellowIc);
+  }
+
+  &--cyan:before {
+    @include plotLimitDirectionGradient($c: $colorLimitCyanIc);
+  }
+}
+
+// Severity icons
+.c-plot-limit__label .c-plot-limit__severity-icon:before {
+  .c-plot-limit--severe & {
+    content: $glyph-icon-alert-triangle;
+  }
+
+  .c-plot-limit--critical & {
+    content: $glyph-icon-alert-rect;
+  }
+
+  .c-plot-limit--distress & {
+    content: $glyph-icon-bell;
+  }
+
+  .c-plot-limit--warning & {
+    content: $glyph-icon-asterisk;
+  }
+
+  .c-plot-limit--watch & {
+    content: $glyph-icon-eye-open;
+  }
+}
+
+// Direction icons
+.c-plot-limit__label .c-plot-limit__direction-icon:before {
+  .c-plot-limit--upr & {
+    content: $glyph-icon-arrow-up;
+  }
+
+  .c-plot-limit--lwr & {
+    content: $glyph-icon-arrow-down;
+  }
+}

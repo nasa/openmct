@@ -1,0 +1,94 @@
+@mixin displayMarquee() {
+  > .c-frame-edit {
+    // All other frames
+    //@include test($c, 0.4);
+    display: block;
+  }
+  > .c-frame > .c-frame-edit {
+    // Line object frame
+    //@include test($c, 0.4);
+    display: block;
+  }
+}
+
+@mixin displayGrid() {
+  background: $editUIGridColorBg;
+
+  > [class*='__dimensions'] {
+    display: block;
+  }
+
+  > [class*='grid-holder'] {
+    display: block;
+  }
+}
+
+.l-layout {
+  @include abs();
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+
+  &__grid-holder,
+  &__dimensions {
+    display: none;
+  }
+
+  &__dimensions {
+    $b: 1px dashed $editDimensionsColor;
+    border-right: $b;
+    border-bottom: $b;
+    pointer-events: none;
+    position: absolute;
+
+    &-vals {
+      $p: 2px;
+      color: $editDimensionsColor;
+      display: inline-block;
+      font-style: italic;
+      position: absolute;
+      bottom: $p;
+      right: $p;
+      opacity: 0.7;
+    }
+  }
+
+  &__frame {
+    position: absolute;
+  }
+}
+
+.is-editing {
+  .l-shell__main-container {
+    [s-selected],
+    [s-selected-parent] {
+      // Display grid in main layout holder when editing
+      > .l-layout {
+        @include displayGrid();
+      }
+    }
+  }
+
+  .l-layout__frame {
+    &[s-selected-parent] {
+      // Display grid in nested layouts when editing
+      > * > * > * > .l-layout.allow-editing {
+        box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
+      
+        @include displayGrid();
+      }
+    }
+  }
+
+  /*********************** EDIT MARQUEE CONTROL */
+  *[s-selected-parent] {
+    > .l-layout {
+      // When main shell layout is the parent
+      @include displayMarquee();
+    }
+    > * > * > * > * {
+      // When a sub-layout is the parent
+      @include displayMarquee();
+    }
+  }
+}

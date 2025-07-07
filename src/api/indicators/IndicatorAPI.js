@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,50 +19,91 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    './SimpleIndicator',
-    'lodash'
-], function (
-    SimpleIndicator,
-    _
-) {
-    function IndicatorAPI(openmct) {
-        this.openmct = openmct;
-        this.indicatorElements = [];
+
+import { EventEmitter } from 'eventemitter3';
+
+import vueWrapHtmlElement from '../../utils/vueWrapHtmlElement.js';
+import SimpleIndicator from './SimpleIndicator.js';
+
+/**
+ * The Indicator API is used to add indicators to the Open MCT UI.
+ * An indicator appears in the top navigation bar and can be used to
+ * display information or trigger actions.
+ *
+ * @extends EventEmitter
+ */
+class IndicatorAPI extends EventEmitter {
+  /** @type {import('../../../openmct.js').OpenMCT} */
+  openmct;
+  constructor(openmct) {
+    super();
+
+    this.openmct = openmct;
+    this.indicatorObjects = [];
+  }
+
+  getIndicatorObjectsByPriority() {
+    const sortedIndicators = this.indicatorObjects.sort((a, b) => b.priority - a.priority);
+
+    return sortedIndicators;
+  }
+
+  simpleIndicator() {
+    return new SimpleIndicator(this.openmct);
+  }
+
+  /**
+   * @typedef {import('vue').Component} VueComponent
+   */
+
+  /**
+   * @typedef {Object} Indicator
+   * @property {HTMLElement} [element] - The HTML element of the indicator. Optional if using vueComponent.
+   * @property {VueComponent|Promise<VueComponent>} [vueComponent] - The Vue component for the indicator. Optional if using element.
+   * @property {string} key - The unique key for the indicator.
+   * @property {number} priority - The priority of the indicator (default: -1).
+   */
+
+  /**
+   * Adds an indicator to the API.
+   *
+   * @param {Indicator} indicator - The indicator object to add.
+   *
+   * @description
+   * The indicator object is a simple object with two main attributes:
+   * - 'element': An HTMLElement (optional if using vueComponent).
+   * - 'priority': An integer specifying its order in the layout. Lower priority
+   *   places the element further to the right. If undefined, defaults to -1.
+   *
+   * A convenience function `.simpleIndicator()` is provided to create a default
+   * Open MCT indicator that can be passed to `.add(indicator)`. This indicator
+   * exposes functions for customizing its appearance and behavior.
+   *
+   * Example usage:
+   * ```
+   * const myIndicator = openmct.indicators.simpleIndicator();
+   * openmct.indicators.add(myIndicator);
+   *
+   * myIndicator.text("Hello World!");
+   * myIndicator.iconClass("icon-info");
+   * ```
+   *
+   * For Vue components, pass the component directly as the 'vueComponent'
+   * attribute. This can be a Vue component or a promise resolving to a
+   * Vue component for asynchronous rendering.
+   */
+  add(indicator) {
+    if (!indicator.priority) {
+      indicator.priority = this.openmct.priority.DEFAULT;
+    }
+    if (!indicator.vueComponent) {
+      indicator.vueComponent = vueWrapHtmlElement(indicator.element);
     }
 
-    IndicatorAPI.prototype.simpleIndicator = function () {
-        return new SimpleIndicator(this.openmct);
-    };
+    this.indicatorObjects.push(indicator);
 
-    /**
-     * Accepts an indicator object, which is a simple object
-     * with a single attribute, 'element' which has an HTMLElement
-     * as its value.
-     *
-     * We provide .simpleIndicator() as a convenience function
-     * which will create a default Open MCT indicator that can
-     * be passed to .add(indicator). This indicator also exposes
-     * functions for changing its appearance to support customization
-     * and dynamic behavior.
-     *
-     * Eg.
-     * var myIndicator = openmct.indicators.simpleIndicator();
-     * openmct.indicators.add(myIndicator);
-     *
-     * myIndicator.text("Hello World!");
-     * myIndicator.iconClass("icon-info");
-     *
-     */
-    IndicatorAPI.prototype.add = function (indicator) {
-        // So that we can consistently position indicator elements,
-        // guarantee that they are wrapped in an element we control
-        var wrapperNode = document.createElement('div');
-        wrapperNode.className = 'h-indicator';
-        wrapperNode.appendChild(indicator.element);
-        this.indicatorElements.push(wrapperNode);
-    };
+    this.emit('addIndicator', indicator);
+  }
+}
 
-    return IndicatorAPI;
-
-});
+export default IndicatorAPI;

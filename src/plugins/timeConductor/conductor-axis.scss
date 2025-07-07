@@ -1,0 +1,67 @@
+@use 'sass:math';
+
+.c-conductor-axis {
+  $h: 18px;
+  $tickYPos: math.div($h, 2) + 12px;
+
+  @include userSelectNone();
+  @include bgTicks($c: rgba($colorBodyFg, 0.4));
+  background-position: 0 50%;
+  background-size: 5px 2px;
+  border-radius: $controlCr;
+  height: $h;
+
+  svg {
+    text-rendering: geometricPrecision;
+    width: 100%;
+    height: 100%;
+    > g.axis {
+      // Overall Tick holder
+      transform: translateY($tickYPos);
+      path {
+        // Domain line
+        display: none;
+      }
+
+      g {
+        // Each tick. These move on drag.
+        line {
+          // Line beneath ticks
+          display: none;
+        }
+      }
+    }
+
+    text {
+      // Tick labels
+      fill: $colorBodyFg;
+      font-size: 1em;
+      paint-order: stroke;
+      font-weight: bold;
+      stroke: $colorBodyBg;
+      stroke-linecap: butt;
+      stroke-linejoin: bevel;
+      stroke-width: 6px;
+    }
+  }
+
+  body.desktop .is-fixed-mode & {
+    background-size: 3px 30%;
+    background-color: $colorBodyBgSubtle;
+    box-shadow: inset rgba(black, 0.4) 0 1px 1px;
+
+    svg text {
+      fill: $colorBodyFg;
+      stroke: $colorBodyBgSubtle;
+    }
+  }
+
+  .is-realtime-mode & {
+    $c: 1px solid rgba($colorTimeRealtime, 0.7);
+    border-left: $c;
+    border-right: $c;
+    svg text {
+      fill: $colorTimeRealtime;
+    }
+  }
+}

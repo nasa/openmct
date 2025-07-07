@@ -1,0 +1,104 @@
+{
+  "openmct": {
+    "a9122832-4b6e-43ea-8219-5359c14c5de8": {
+      "composition": [
+        "483c00d4-bb1d-4b42-b29a-c58e06b322a0",
+        "d2ac3ae4-0af2-49fe-81af-adac09936215"
+      ],
+      "name": "import-provider-test",
+      "type": "folder",
+      "notes": null,
+      "modified": 1508522673278,
+      "location": "mine",
+      "persisted": 1508522673278
+    },
+    "483c00d4-bb1d-4b42-b29a-c58e06b322a0": {
+      "telemetry": {
+        "period": 10,
+        "amplitude": 1,
+        "offset": 0,
+        "dataRateInHz": 1,
+        "values": [
+          {
+            "key": "utc",
+            "name": "Time",
+            "format": "utc",
+            "hints": { "domain": 1, "priority": 0 },
+            "source": "utc"
+          },
+          {
+            "key": "yesterday",
+            "name": "Yesterday",
+            "format": "utc",
+            "hints": { "domain": 2, "priority": 1 },
+            "source": "yesterday"
+          },
+          { "key": "sin", "name": "Sine", "hints": { "range": 1, "priority": 2 }, "source": "sin" },
+          {
+            "key": "cos",
+            "name": "Cosine",
+            "hints": { "range": 2, "priority": 3 },
+            "source": "cos"
+          }
+        ]
+      },
+      "name": "SWG-10",
+      "type": "generator",
+      "modified": 1508522652874,
+      "location": "a9122832-4b6e-43ea-8219-5359c14c5de8",
+      "persisted": 1508522652874
+    },
+    "d2ac3ae4-0af2-49fe-81af-adac09936215": {
+      "composition": [
+        "483c00d4-bb1d-4b42-b29a-c58e06b322a0",
+        "20273193-f069-49e9-b4f7-b97a87ed755d"
+      ],
+      "name": "Layout",
+      "type": "layout",
+      "configuration": {
+        "layout": {
+          "panels": {
+            "483c00d4-bb1d-4b42-b29a-c58e06b322a0": { "position": [0, 0], "dimensions": [17, 8] },
+            "20273193-f069-49e9-b4f7-b97a87ed755d": {
+              "position": [0, 8],
+              "dimensions": [17, 1],
+              "hasFrame": false
+            }
+          }
+        }
+      },
+      "modified": 1508522745580,
+      "location": "a9122832-4b6e-43ea-8219-5359c14c5de8",
+      "persisted": 1508522745580
+    },
+    "20273193-f069-49e9-b4f7-b97a87ed755d": {
+      "layoutGrid": [64, 16],
+      "composition": ["483c00d4-bb1d-4b42-b29a-c58e06b322a0"],
+      "name": "FP Test",
+      "type": "telemetry.fixed",
+      "configuration": {
+        "fixed-display": {
+          "elements": [
+            {
+              "type": "fixed.telemetry",
+              "x": 0,
+              "y": 0,
+              "id": "483c00d4-bb1d-4b42-b29a-c58e06b322a0",
+              "stroke": "transparent",
+              "color": "",
+              "titled": true,
+              "width": 8,
+              "height": 2,
+              "useGrid": true,
+              "size": "24px"
+            }
+          ]
+        }
+      },
+      "modified": 1508522717619,
+      "location": "d2ac3ae4-0af2-49fe-81af-adac09936215",
+      "persisted": 1508522717619
+    }
+  },
+  "rootId": "a9122832-4b6e-43ea-8219-5359c14c5de8"
+}

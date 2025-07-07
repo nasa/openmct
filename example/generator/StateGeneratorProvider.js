@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,63 +20,70 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+export default function StateGeneratorProvider() {}
 
-], function (
+function pointForTimestamp(timestamp, duration, name) {
+  return {
+    name: name,
+    utc: Math.floor(timestamp / duration) * duration,
+    value: Math.floor(timestamp / duration) % 2
+  };
+}
 
-) {
+StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
+  return domainObject.type === 'example.state-generator';
+};
 
-    function StateGeneratorProvider() {
+StateGeneratorProvider.prototype.subscribe = function (domainObject, callback, options) {
+  var duration = domainObject.telemetry.duration * 1000;
 
+  var interval = setInterval(() => {
+    var now = Date.now();
+    var datum = pointForTimestamp(now, duration, domainObject.name);
+    if (!this.shouldBeFiltered(datum, options)) {
+      datum.value = String(datum.value);
+      callback(datum);
     }
+  }, duration);
 
-    function pointForTimestamp(timestamp, duration, name) {
-        return {
-            name: name,
-            utc: Math.floor(timestamp / duration) * duration,
-            value: Math.floor(timestamp / duration) % 2
-        };
+  return function () {
+    clearInterval(interval);
+  };
+};
+
+StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
+  return domainObject.type === 'example.state-generator';
+};
+
+StateGeneratorProvider.prototype.request = function (domainObject, options) {
+  var start = options.start;
+  var end = Math.min(Date.now(), options.end); // no future values
+  var duration = domainObject.telemetry.duration * 1000;
+  if (options.strategy === 'latest' || options.size === 1) {
+    start = end;
+  }
+
+  var data = [];
+  while (start <= end && data.length < 5000) {
+    const point = pointForTimestamp(start, duration, domainObject.name);
+
+    if (!this.shouldBeFiltered(point, options)) {
+      data.push(point);
     }
+    start += duration;
+  }
 
-    StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
-        return domainObject.type === 'example.state-generator';
-    };
+  return Promise.resolve(data);
+};
 
-    StateGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-        var duration = domainObject.telemetry.duration * 1000;
+StateGeneratorProvider.prototype.shouldBeFiltered = function (point, options) {
+  const valueToFilter = options?.filters?.state?.equals?.[0];
 
-        var interval = setInterval(function () {
-            var now = Date.now();
-            var datum = pointForTimestamp(now, duration, domainObject.name);
-            datum.value += "";
-            callback(datum);
-        }, duration);
+  if (!valueToFilter) {
+    return false;
+  }
 
-        return function () {
-            clearInterval(interval);
-        };
-    };
+  const { value } = point;
 
-
-    StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
-        return domainObject.type === 'example.state-generator';
-    };
-
-    StateGeneratorProvider.prototype.request = function (domainObject, options) {
-        var start = options.start;
-        var end = options.end;
-        var duration = domainObject.telemetry.duration * 1000;
-        if (options.strategy === 'latest' || options.size === 1) {
-            start = end;
-        }
-        var data = [];
-        while (start <= end && data.length < 5000) {
-            data.push(pointForTimestamp(start, duration, domainObject.name));
-            start += duration;
-        }
-        return Promise.resolve(data);
-    };
-
-    return StateGeneratorProvider;
-
-});
+  return value !== Number(valueToFilter);
+};

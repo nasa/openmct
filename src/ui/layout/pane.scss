@@ -1,0 +1,364 @@
+@use 'sass:math';
+
+/**************************** BASE - MOBILE AND DESKTOP */
+.l-multipane {
+  display: flex;
+  flex: 1 1 auto;
+  overflow: hidden;
+  
+
+  &--horizontal,
+  > .l-pane {
+    flex-flow: row nowrap;
+  }
+
+  &--vertical,
+  > .l-pane {
+    flex-flow: column nowrap;
+  }
+
+  &--vertical {
+    height: 100%;
+  }
+}
+
+.l-pane {
+  backface-visibility: hidden;
+  display: flex;
+  min-width: 0px;
+  min-height: 0px;
+  opacity: 1;
+  pointer-events: inherit;
+
+  &__handle,
+  &__label {
+    // __handle and __label don't appear in mobile
+    display: none;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    @include desktop() {
+      margin-bottom: $interiorMargin;
+    }
+  }
+
+  &--reacts {
+    // This is the pane that doesn't hold the handle
+    // It reacts to other panes that are able to resize
+    flex: 1 1 0;
+  }
+
+  &--collapsed {
+    flex-basis: 0px !important;
+    transition: all 350ms ease;
+
+    .l-pane__contents {
+      transition: opacity 150ms ease;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden; // Prevents toolbar from extending into Inspector
+
+      > * {
+        min-width: 0 !important;
+        min-height: 0 !important;
+      }
+    }
+  }
+
+  &[class*='--horizontal'] {
+    padding-left: $interiorMargin;
+    padding-right: $interiorMargin;
+    &.l-pane--collapsed {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  &[class*='--vertical'] {
+    padding-top: $interiorMargin;
+    padding-bottom: $interiorMargin;
+    min-height: 30px; // For Recents holder
+
+    &.l-pane--collapsed {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+  }
+
+  /************************ CONTENTS */
+  &__contents {
+    flex: 1 1 100%;
+    opacity: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    pointer-events: inherit;
+    transition: opacity 250ms ease 250ms;
+
+    .l-pane__contents {
+      // Don't pad all nested __contents
+      padding: 0;
+    }
+  }
+
+  /************************************************ DESKTOP STYLES */
+  body.desktop & {
+    &__handle {
+      background-color: $colorSplitterBg;
+      display: block;
+      position: absolute;
+      @include transition(background-color, $transOutTime);
+
+      &:before {
+        // Extended hit area
+        content: '';
+        display: block;
+        position: absolute;
+        z-index: -1;
+      }
+
+      &:hover {
+        background-color: $colorSplitterHover;
+        @include transition(background-color);
+      }
+    }
+
+    &__header {
+      font-size: 11px;
+    }
+
+    &__label {
+      // Name of the pane
+      @include ellipsize();
+      @include userSelectNone();
+      color: $splitterBtnLabelColorFg;
+      display: block;
+      text-transform: uppercase;
+      flex: 1 1 auto;
+    }
+
+    [class*='expand-button'] {
+      display: none; // Hidden by default
+      background-color: $splitterCollapsedBtnColorBg;
+      color: $splitterCollapsedBtnColorFg;
+
+      &:before {
+        // '+' icon
+        font-size: 0.8em;
+        margin-bottom: $interiorMarginSm; // margin-bottom is needed for Tree and Inspector
+        margin-right: $interiorMarginSm; // margin-right and margin-left are needed for Recent Objects
+        margin-left: $interiorMarginSm;
+      }
+
+      &:hover {
+        background-color: $splitterCollapsedBtnColorBgHov;
+        color: $splitterCollapsedBtnColorFgHov;
+        @include transition(background-color);
+      }
+    }
+
+    &--resizing {
+      // User is dragging the handle and resizing a pane
+      @include userSelectNone();
+
+      + .l-pane {
+        @include userSelectNone();
+      }
+
+      .l-pane {
+        &__handle {
+          background-color: $colorSplitterHover;
+        }
+      }
+    }
+
+    &[class*='--collapsed'] {
+      /********************************* STYLES FOR DESKTOP COLLAPSED PANES, ALL ORIENTATIONS */
+      $d: nth($splitterBtnD, 1);
+      flex-basis: $d;
+      min-width: $d;
+      min-height: $d;
+
+      > .l-pane__handle {
+        display: none;
+      }
+
+      [class*='collapse-button'] {
+        display: none;
+      }
+
+      [class*='expand-button'] {
+        display: block;
+      }
+    }
+
+    &[class*='--collapsed'] { // For Recent Objects Button
+      &.collapse-horizontal {
+        [class*='expand-button'] {
+          display: block;
+          position: absolute;
+          top: 0;
+          width: 100%;
+          border-top-right-radius: $controlCr;
+          border-top-left-radius: $controlCr;
+        }
+      }
+      [class*='expand-button'] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: auto;
+        width: 100%;
+        padding: $interiorMarginSm 1px;
+        font-size: 11px;
+
+        [class*='label'] {
+          text-orientation: mixed;
+          text-transform: uppercase;
+          writing-mode: horizontal-tb;
+        }
+      }
+    }
+
+    &[class*='--horizontal'] {
+      > .l-pane__handle {
+        cursor: col-resize;
+        top: 0;
+        bottom: 0;
+        width: $splitterHandleD;
+
+        &:before {
+          // Extended hit area
+          top: 0;
+          right: $splitterHandleHitMargin * -1;
+          bottom: 0;
+          left: $splitterHandleHitMargin * -1;
+        }
+      }
+
+      .l-pane__collapse-button {
+        &:before {
+          content: $glyph-icon-line-horz;
+        }
+      }
+
+      &[class*='--collapsed'] {
+        /************************ COLLAPSED HORIZONTAL SPLITTER, EITHER DIRECTION */
+        [class*='__header'] {
+          display: none;
+        }
+
+        [class*='expand-button'] {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          height: auto;
+          width: 100%;
+          padding: $interiorMargin 1px;
+          font-size: 11px;
+
+          [class*='label'] {
+            text-orientation: mixed;
+            text-transform: uppercase;
+            writing-mode: vertical-lr;
+          }
+        }
+      }
+
+      /************************** Horizontal Splitter Before */
+      // Example: Inspector pane
+      &[class*='-before'] {
+        margin-left: nth($shellPanePad, 2);
+        padding-left: nth($shellPanePad, 2);
+
+        > .l-pane__handle {
+          left: 0;
+          transform: translateX(floor(math.div($splitterHandleD, -2))); // Center over the pane edge
+        }
+
+        [class*='expand-button'] {
+          border-top-left-radius: $controlCr;
+          border-bottom-left-radius: $controlCr;
+        }
+      }
+
+      /************************** Horizontal Splitter After */
+      // Example: Tree pane and Recent Objects
+      &[class*='-after'] {
+        margin-right: nth($shellPanePad, 2);
+        padding-right: nth($shellPanePad, 2);
+
+        > .l-pane__handle {
+          right: 0;
+          transform: translateX(floor(math.div($splitterHandleD, 2)));
+        }
+
+        [class*='expand-button'] {
+          border-top-right-radius: $controlCr;
+          border-bottom-right-radius: $controlCr;
+        }
+      }
+    }
+
+    &[class*='--vertical'] {
+      // l-pane--vertical
+
+      > .l-pane__handle {
+        cursor: row-resize;
+        left: 0;
+        right: 0;
+        height: $splitterHandleD;
+
+        &:before {
+          // Extended hit area
+          left: 0;
+          top: $splitterHandleHitMargin * -1;
+          right: 0;
+          bottom: $splitterHandleHitMargin * -1;
+        }
+      }
+
+      /************************** Vertical Splitter Before */
+      // Pane collapses downward. Used by Recent Objects in Tree
+      &[class*='-before'] {
+        $m: $interiorMarginLg;
+        margin-top: $m;
+        padding-top: $m;
+        > .l-pane__handle {
+          top: 0;
+          transform: translateY(floor(math.div($splitterHandleD, -1)));
+        }
+
+        .l-pane__collapse-button:before {
+          content: $glyph-icon-line-horz;
+        }
+
+        &.l-pane--collapsed {
+          > .l-pane__collapse-button {
+            transform: scaleY(-1);
+          }
+        }
+      }
+
+      /************************** Vertical Splitter After */
+      // Pane collapses upward. Not sure we'll ever use this...
+      &[class*='-after'] {
+        > .l-pane__handle {
+          bottom: 0;
+          transform: translateY(floor(math.div($splitterHandleD, 1)));
+        }
+
+        &:not(.l-pane--collapsed) > .l-pane__collapse-button {
+          &:after {
+            transform: scaleY(-1);
+          }
+        }
+      }
+    }
+  } // Ends .body.desktop
+} // Ends .l-pane

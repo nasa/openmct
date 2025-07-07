@@ -1,0 +1,99 @@
+name: 'e2e-couchdb'
+on:
+  push:
+    branches: master
+  workflow_dispatch:
+  pull_request:
+    types:
+      - labeled
+      - opened
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  e2e-couchdb:
+    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/hydrogen'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm ci --no-audit --progress=false
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        continue-on-error: true
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - run: npx playwright@1.48.1 install
+
+      - name: Start CouchDB Docker Container and Init with Setup Scripts
+        run: |
+          export $(cat src/plugins/persistence/couch/.env.ci | xargs)
+          docker compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          sleep 3
+          bash src/plugins/persistence/couch/setup-couchdb.sh
+          bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
+
+      - name: Run CouchDB Tests
+        env:
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
+        run: npm run test:e2e:couchdb
+
+      - name: Generate Code Coverage Report
+        run: npm run cov:e2e:report
+
+      - name: Publish Results to Codecov.io
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/e2e/lcov.info
+          flags: e2e-full
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: Archive test results
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-couchdb-test-results
+          path: test-results
+          overwrite: true
+
+      - name: Archive html test results
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-couchdb-html-test-results
+          path: html-test-results
+          overwrite: true
+
+      - name: Remove pr:e2e:couchdb label (if present)
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e:couchdb';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
+            }

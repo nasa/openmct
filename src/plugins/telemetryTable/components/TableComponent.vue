@@ -1,0 +1,1263 @@
+<!--
+ Open MCT, Copyright (c) 2014-2024, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<template>
+  <div ref="root" class="c-table-wrapper" :class="tableClasses">
+    <div v-if="enableLegacyToolbar" class="c-table-control-bar c-control-bar" role="menubar">
+      <button
+        v-if="allowExport"
+        v-show="!markedRows.length"
+        class="c-button icon-download labeled"
+        aria-label="Export this view's data"
+        title="Export this view's data"
+        @click="exportAllDataAsCSV()"
+      >
+        <span class="c-button__label">Export Table Data</span>
+      </button>
+      <button
+        v-if="allowExport"
+        v-show="markedRows.length"
+        class="c-button icon-download labeled"
+        aria-label="Export marked rows as CSV"
+        title="Export marked rows as CSV"
+        @click="exportMarkedDataAsCSV()"
+      >
+        <span class="c-button__label">Export Marked Rows</span>
+      </button>
+      <button
+        v-show="markedRows.length"
+        class="c-button icon-x labeled"
+        aria-label="Unmark all rows"
+        title="Unmark all rows"
+        @click="unmarkAllRows()"
+      >
+        <span class="c-button__label">Unmark All Rows</span>
+      </button>
+      <div v-if="marking.enable" class="c-separator"></div>
+      <button
+        v-if="marking.enable"
+        :aria-label="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
+        class="c-button icon-pause pause-play labeled"
+        :class="paused ? 'icon-play is-paused' : 'icon-pause'"
+        :title="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
+        @click="togglePauseByButton()"
+      >
+        <span class="c-button__label">
+          {{ paused ? 'Play' : 'Pause' }}
+        </span>
+      </button>
+
+      <template v-if="!isEditing">
+        <div class="c-separator" role="separator"></div>
+        <button
+          v-if="isAutosizeEnabled"
+          class="c-button icon-arrows-right-left labeled"
+          aria-label="Increase column widths to fit currently available data."
+          title="Increase column widths to fit currently available data."
+          @click="recalculateColumnWidths"
+        >
+          <span class="c-button__label">Expand Columns</span>
+        </button>
+        <button
+          v-else
+          aria-label="Automatically size columns to fit the table into the available space."
+          class="c-button icon-expand labeled"
+          title="Automatically size columns to fit the table into the available space."
+          @click="autosizeColumns"
+        >
+          <span class="c-button__label">Autosize Columns</span>
+        </button>
+      </template>
+
+      <slot name="buttons"></slot>
+    </div>
+
+    <!-- alternate controlbar start -->
+    <div v-if="marking.useAlternateControlBar" class="c-table-control-bar c-control-bar">
+      <div class="c-control-bar__label">
+        {{
+          markedRows.length > 1
+            ? `${markedRows.length} ${marking.rowNamePlural} selected`
+            : `${markedRows.length} ${marking.rowName} selected`
+        }}
+      </div>
+
+      <ToggleSwitch
+        id="show-filtered-rows-toggle"
+        label="Show selected items only"
+        :checked="isShowingMarkedRowsOnly"
+        @change="toggleMarkedRows"
+      />
+
+      <button
+        :class="{ 'hide-nice': !markedRows.length }"
+        class="c-icon-button icon-x labeled"
+        aria-label="Deselect All"
+        title="Deselect All"
+        @click="unmarkAllRows()"
+      >
+        <span class="c-icon-button__label"
+          >{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }}
+        </span>
+      </button>
+
+      <slot name="buttons"></slot>
+    </div>
+    <!-- alternate controlbar end  -->
+
+    <div
+      class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar u-style-receiver js-style-receiver"
+      :class="{
+        'is-paused': paused
+      }"
+    >
+      <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px' }">
+        <slot></slot>
+      </div>
+
+      <div
+        v-if="isDropTargetActive"
+        class="c-telemetry-table__drop-target"
+        :style="dropTargetStyle"
+      ></div>
+
+      <ProgressBar
+        v-if="loading"
+        class="c-telemetry-table__progress-bar"
+        :model="{ progressPerc: null }"
+      />
+
+      <!-- Headers table -->
+      <div
+        v-show="!hideHeaders"
+        ref="headersHolderEl"
+        class="c-telemetry-table__headers-w js-table__headers-w"
+        :style="{ 'max-width': widthWithScroll }"
+      >
+        <table class="c-table__headers c-telemetry-table__headers">
+          <thead>
+            <tr class="c-telemetry-table__headers__labels">
+              <TableColumnHeader
+                v-for="(title, key, headerIndex) in headers"
+                :key="key"
+                :header-key="key"
+                :header-index="headerIndex"
+                :column-width="columnWidths[key]"
+                :sort-options="sortOptions"
+                :is-editing="isEditing"
+                @sort="allowSorting && sortBy(key)"
+                @resize-column="resizeColumn"
+                @drop-target-offset-changed="setDropTargetOffset"
+                @drop-target-active="dropTargetActive"
+                @reorder-column="reorderColumn"
+                @resize-column-end="updateConfiguredColumnWidths"
+              >
+                <span class="c-telemetry-table__headers__label">{{ title }}</span>
+              </TableColumnHeader>
+            </tr>
+            <tr v-if="allowFiltering" class="c-telemetry-table__headers__filter">
+              <TableColumnHeader
+                v-for="(title, key, headerIndex) in headers"
+                :key="key"
+                :header-key="key"
+                :header-index="headerIndex"
+                :column-width="columnWidths[key]"
+                :is-editing="isEditing"
+                :aria-label="`${headers[key]} filter header`"
+                @resize-column="resizeColumn"
+                @drop-target-offset-changed="setDropTargetOffset"
+                @drop-target-active="dropTargetActive"
+                @reorder-column="reorderColumn"
+                @resize-column-end="updateConfiguredColumnWidths"
+              >
+                <Search
+                  :value="filters[key]"
+                  class="c-table__search"
+                  :aria-label="`${key} filter input`"
+                  @input="filterChanged(key, $event)"
+                  @clear="clearFilter(key)"
+                >
+                  <button
+                    class="c-search__use-regex"
+                    :class="{ 'is-active': enableRegexSearch[key] }"
+                    aria-label="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
+                    title="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
+                    @click="toggleRegex(key)"
+                  >
+                    /R/
+                  </button>
+                </Search>
+              </TableColumnHeader>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <!-- Content table -->
+      <div
+        ref="scrollable"
+        class="c-table__body-w c-telemetry-table__body-w js-telemetry-table__body-w"
+        :style="{ 'max-width': widthWithScroll }"
+        @scroll="scroll"
+      >
+        <div class="c-telemetry-table__scroll-forcer" :style="{ width: totalWidth + 'px' }"></div>
+        <table
+          ref="contentTable"
+          class="c-table__body c-telemetry-table__body js-telemetry-table__content"
+          :style="{ height: totalHeight + 'px' }"
+          :aria-label="`${table.domainObject.name} table content`"
+        >
+          <tbody>
+            <TelemetryTableRow
+              v-for="(row, rowIndex) in visibleRows"
+              :key="rowIndex"
+              :headers="headers"
+              :column-widths="columnWidths"
+              :row-index="rowIndex"
+              :object-path="objectPath"
+              :row-offset="rowOffset"
+              :row-height="rowHeight"
+              :row="getRow(rowIndex)"
+              :marked="row.marked"
+              @mark="markRow"
+              @unmark="unmarkRow"
+              @mark-multiple-concurrent="markMultipleConcurrentRows"
+              @row-context-click="updateViewContext"
+            />
+          </tbody>
+        </table>
+      </div>
+      <!-- Sizing table -->
+      <table
+        ref="sizingTable"
+        class="c-telemetry-table__sizing js-telemetry-table__sizing"
+        :style="sizingTableWidth"
+      >
+        <SizingRow :is-editing="isEditing" @change-height="setRowHeight" />
+        <tr>
+          <template v-for="(title, key) in headers" :key="key">
+            <th
+              :style="{
+                width: configuredColumnWidths[key] + 'px',
+                'max-width': configuredColumnWidths[key] + 'px'
+              }"
+            >
+              {{ title }}
+            </th>
+          </template>
+        </tr>
+        <TelemetryTableRow
+          v-for="(sizingRowData, objectKeyString) in sizingRows"
+          :key="objectKeyString"
+          :headers="headers"
+          :column-widths="configuredColumnWidths"
+          :row="sizingRowData"
+          :object-path="objectPath"
+          @row-context-click="updateViewContext"
+        />
+      </table>
+      <TableFooterIndicator
+        class="c-telemetry-table__footer"
+        :marked-rows="markedRows.length"
+        :total-rows="totalNumberOfRows"
+        :telemetry-mode="telemetryMode"
+        @telemetry-mode-change="updateTelemetryMode"
+      />
+    </div>
+  </div>
+  <!-- closes c-table-wrapper -->
+</template>
+
+<script>
+import _ from 'lodash';
+import { onMounted, ref, toRaw } from 'vue';
+
+import stalenessMixin from '@/ui/mixins/staleness-mixin';
+
+import CSVExporter from '../../../exporters/CSVExporter.js';
+import ProgressBar from '../../../ui/components/ProgressBar.vue';
+import Search from '../../../ui/components/SearchComponent.vue';
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import { useResizeObserver } from '../../../ui/composables/resize.js';
+import { MODE, ORDER } from '../constants.js';
+import SizingRow from './SizingRow.vue';
+import TableColumnHeader from './TableColumnHeader.vue';
+import TableFooterIndicator from './TableFooterIndicator.vue';
+import TelemetryTableRow from './TableRow.vue';
+
+const VISIBLE_ROW_COUNT = 100;
+const ROW_HEIGHT = 17;
+const AUTO_SCROLL_TRIGGER_HEIGHT = ROW_HEIGHT * 3;
+
+export default {
+  components: {
+    TelemetryTableRow,
+    TableColumnHeader,
+    Search,
+    TableFooterIndicator,
+    ToggleSwitch,
+    SizingRow,
+    ProgressBar
+  },
+  mixins: [stalenessMixin],
+  inject: ['openmct', 'objectPath', 'table', 'currentView', 'renderWhenVisible'],
+  props: {
+    isEditing: {
+      type: Boolean,
+      default: false
+    },
+    marking: {
+      type: Object,
+      required: true,
+      default() {
+        return {
+          enable: false,
+          disableMultiSelect: false,
+          useAlternateControlBar: false,
+          rowName: '',
+          rowNamePlural: ''
+        };
+      }
+    },
+    allowExport: {
+      type: Boolean,
+      default: true
+    },
+    allowFiltering: {
+      type: Boolean,
+      default: true
+    },
+    allowSorting: {
+      type: Boolean,
+      default: true
+    },
+    enableLegacyToolbar: {
+      type: Boolean,
+      default: false
+    }
+  },
+  emits: ['marked-rows-updated', 'filter'],
+  setup() {
+    const root = ref(null);
+    const { size: containerSize, startObserving } = useResizeObserver();
+    onMounted(() => {
+      startObserving(root.value);
+    });
+
+    return { containerSize, root };
+  },
+  data() {
+    let configuration = this.table.configuration.getConfiguration();
+
+    return {
+      headers: {},
+      visibleRows: [],
+      columnWidths: {},
+      configuredColumnWidths: configuration.columnWidths,
+      sizingRows: {},
+      rowHeight: ROW_HEIGHT,
+      totalHeight: 0,
+      totalWidth: 0,
+      rowOffset: 0,
+      autoScroll: true,
+      sortOptions: {},
+      filters: {},
+      loading: false,
+      scrollable: undefined,
+      tableEl: undefined,
+      headersHolderEl: undefined,
+      processingScroll: false,
+      updatingView: false,
+      dropOffsetLeft: undefined,
+      isDropTargetActive: false,
+      isAutosizeEnabled: configuration.autosize,
+      scrollW: 0,
+      markCounter: 0,
+      paused: false,
+      markedRows: [],
+      isShowingMarkedRowsOnly: false,
+      enableRegexSearch: {},
+      hideHeaders: configuration.hideHeaders,
+      totalNumberOfRows: 0,
+      rowContext: {},
+      telemetryMode: configuration.telemetryMode,
+      rowLimit: configuration.rowLimit,
+      persistModeChange: configuration.persistModeChange,
+      afterLoadActions: [],
+      existingConfiguration: configuration
+    };
+  },
+  computed: {
+    dropTargetStyle() {
+      return {
+        top: this.$refs.headersHolderEl.offsetTop + 'px',
+        height: this.totalHeight + this.$refs.headersHolderEl.offsetHeight + 'px',
+        left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
+      };
+    },
+    lastHeaderKey() {
+      let headerKeys = Object.keys(this.headers);
+
+      return headerKeys[headerKeys.length - 1];
+    },
+    widthWithScroll() {
+      return this.totalWidth + this.scrollW + 'px';
+    },
+    sizingTableWidth() {
+      let style;
+
+      if (this.isAutosizeEnabled) {
+        style = { width: 'calc(100% - ' + this.scrollW + 'px)' };
+      } else {
+        let totalWidth = Object.keys(this.headers).reduce((total, key) => {
+          total += this.configuredColumnWidths[key];
+
+          return total;
+        }, 0);
+
+        style = { width: totalWidth + 'px' };
+      }
+
+      return style;
+    },
+    tableClasses() {
+      let classes = [];
+
+      if (this.paused) {
+        classes.push('is-paused');
+      }
+
+      if (this.isStale) {
+        classes.push('is-stale');
+      }
+
+      return classes;
+    }
+  },
+  watch: {
+    //This should be refactored so that it doesn't require an explicit watch. Should be doable.
+    containerSize: {
+      handler() {
+        this.debouncedRescaleToContainer();
+      },
+      deep: true
+    },
+    loading: {
+      handler(isLoading) {
+        if (!isLoading) {
+          this.runAfterLoadActions();
+        }
+
+        if (this.viewActionsCollection) {
+          let action = isLoading ? 'disable' : 'enable';
+          this.viewActionsCollection[action](['export-csv-all']);
+        }
+      }
+    },
+    markedRows: {
+      handler(newVal, oldVal) {
+        this.$emit('marked-rows-updated', newVal, oldVal);
+
+        if (this.viewActionsCollection) {
+          if (newVal.length > 0) {
+            this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
+          } else if (newVal.length === 0) {
+            this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+          }
+        }
+      },
+      deep: true
+    },
+    paused: {
+      handler(newVal) {
+        if (this.viewActionsCollection) {
+          if (newVal) {
+            this.viewActionsCollection.hide(['pause-data']);
+            this.viewActionsCollection.show(['play-data']);
+          } else {
+            this.viewActionsCollection.hide(['play-data']);
+            this.viewActionsCollection.show(['pause-data']);
+          }
+        }
+      }
+    },
+    isAutosizeEnabled: {
+      handler(newVal) {
+        if (this.viewActionsCollection) {
+          if (newVal) {
+            this.viewActionsCollection.show(['expand-columns']);
+            this.viewActionsCollection.hide(['autosize-columns']);
+          } else {
+            this.viewActionsCollection.show(['autosize-columns']);
+            this.viewActionsCollection.hide(['expand-columns']);
+          }
+        }
+      }
+    }
+  },
+  created() {
+    this.filterTelemetry = _.debounce(this.filterTelemetry, 500);
+  },
+  mounted() {
+    this.throttledUpdateVisibleRows = _.throttle(this.updateVisibleRows, 1000, { leading: true });
+    this.debouncedRescaleToContainer = _.debounce(this.rescaleToContainer, 300);
+
+    this.csvExporter = new CSVExporter();
+    this.scroll = _.throttle(this.scroll, 100);
+
+    if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
+      this.$nextTick(() => {
+        this.viewActionsCollection = this.openmct.actions.getActionsCollection(
+          this.objectPath,
+          this.currentView
+        );
+        this.initializeViewActions();
+      });
+    }
+
+    this.table.on('object-added', this.addObject);
+    this.table.on('object-removed', this.removeObject);
+    this.table.on('refresh', this.clearRowsAndRerender);
+    this.table.on('historical-rows-processed', this.checkForMarkedRows);
+    this.table.on('outstanding-requests', this.outstandingRequests);
+    this.table.on('telemetry-staleness', this.handleStaleness);
+
+    this.table.configuration.on('change', this.handleConfigurationChanges);
+
+    this.table.tableRows.on('add', this.rowsAdded);
+    this.table.tableRows.on('remove', this.rowsRemoved);
+    this.table.tableRows.on('sort', this.throttledUpdateVisibleRows);
+    this.table.tableRows.on('filter', this.throttledUpdateVisibleRows);
+
+    this.openmct.time.on('boundsChanged', this.boundsChanged);
+
+    //Default sort
+    this.sortOptions = this.table.tableRows.sortBy();
+    this.scrollable = this.$refs.scrollable;
+    this.lastScrollLeft = this.scrollable.scrollLeft;
+    this.contentTable = this.$refs.contentTable;
+    this.sizingTable = this.$refs.sizingTable;
+    this.headersHolderEl = this.$refs.headersHolderEl;
+    this.table.configuration.on('change', this.updateConfiguration);
+
+    this.calculateTableSize();
+    this.calculateScrollbarWidth();
+
+    this.table.initialize();
+    this.rescaleToContainer();
+
+    // Scroll to the top of the table after loading
+    this.addToAfterLoadActions(this.scroll);
+  },
+  beforeUnmount() {
+    this.table.off('object-added', this.addObject);
+    this.table.off('object-removed', this.removeObject);
+    this.table.off('historical-rows-processed', this.checkForMarkedRows);
+    this.table.off('refresh', this.clearRowsAndRerender);
+    this.table.off('outstanding-requests', this.outstandingRequests);
+    this.table.off('telemetry-staleness', this.handleStaleness);
+
+    this.table.configuration.off('change', this.handleConfigurationChanges);
+
+    this.table.tableRows.off('add', this.rowsAdded);
+    this.table.tableRows.off('remove', this.rowsRemoved);
+    this.table.tableRows.off('sort', this.throttledUpdateVisibleRows);
+    this.table.tableRows.off('filter', this.throttledUpdateVisibleRows);
+
+    this.table.configuration.off('change', this.updateConfiguration);
+
+    this.openmct.time.off('boundsChanged', this.boundsChanged);
+
+    this.table.configuration.destroy();
+
+    this.table.destroy();
+  },
+  methods: {
+    addToAfterLoadActions(func) {
+      this.afterLoadActions.push(func);
+    },
+    runAfterLoadActions() {
+      if (this.afterLoadActions.length > 0) {
+        this.afterLoadActions.forEach((action) => action());
+        this.afterLoadActions = [];
+      }
+    },
+    handleConfigurationChanges(changes) {
+      const { rowLimit, telemetryMode, persistModeChange } = changes;
+      const telemetryModeChanged = this.existingConfiguration.telemetryMode !== telemetryMode;
+      let rowLimitChanged = false;
+
+      this.persistModeChange = persistModeChange;
+
+      // both rowLimit changes and telemetryMode changes
+      // require a re-request of telemetry
+
+      if (this.rowLimit !== rowLimit) {
+        rowLimitChanged = true;
+        this.rowLimit = rowLimit;
+        this.table.updateRowLimit(rowLimit);
+      }
+
+      // check for telemetry mode change, because you could technically have persist mode changes
+      // set to false, which could create a state where the configuration saved telemetry mode is
+      // different from the currently set telemetry mode
+      if (telemetryModeChanged && this.telemetryMode !== telemetryMode) {
+        this.telemetryMode = telemetryMode;
+
+        // this method also re-requests telemetry
+        this.table.updateTelemetryMode(telemetryMode);
+      }
+
+      if (rowLimitChanged && !telemetryModeChanged) {
+        this.table.clearAndResubscribe();
+      }
+
+      this.existingConfiguration = changes;
+    },
+    updateVisibleRows() {
+      if (!this.updatingView) {
+        this.updatingView = this.renderWhenVisible(() => {
+          let start = 0;
+          let end = VISIBLE_ROW_COUNT;
+          let tableRows = this.table.tableRows.getRows();
+          let tableRowsLength = tableRows.length;
+
+          this.totalNumberOfRows = tableRowsLength;
+
+          if (tableRowsLength < VISIBLE_ROW_COUNT) {
+            end = tableRowsLength;
+          } else {
+            let firstVisible = this.calculateFirstVisibleRow();
+            let lastVisible = this.calculateLastVisibleRow();
+            let totalVisible = lastVisible - firstVisible;
+
+            let numberOffscreen = VISIBLE_ROW_COUNT - totalVisible;
+            start = firstVisible - Math.floor(numberOffscreen / 2);
+            end = lastVisible + Math.ceil(numberOffscreen / 2);
+
+            if (start < 0) {
+              start = 0;
+              end = Math.min(VISIBLE_ROW_COUNT, tableRowsLength);
+            } else if (end >= tableRowsLength) {
+              end = tableRowsLength;
+              start = end - VISIBLE_ROW_COUNT + 1;
+            }
+          }
+
+          this.rowOffset = start;
+          this.visibleRows = tableRows.slice(start, end);
+
+          this.updatingView = false;
+        });
+      }
+    },
+    calculateFirstVisibleRow() {
+      let scrollTop = this.scrollable.scrollTop;
+
+      return Math.floor(scrollTop / this.rowHeight);
+    },
+    calculateLastVisibleRow() {
+      let scrollBottom = this.scrollable.scrollTop + this.scrollable.offsetHeight;
+
+      return Math.ceil(scrollBottom / this.rowHeight);
+    },
+    updateHeaders() {
+      this.headers = this.table.configuration.getVisibleHeaders();
+    },
+    calculateScrollbarWidth() {
+      // Scroll width seems to vary by a pixel for reasons that are not clear.
+      this.scrollW = this.scrollable.offsetWidth - this.scrollable.clientWidth + 1;
+    },
+    calculateColumnWidths() {
+      let columnWidths = {};
+      let totalWidth = 0;
+      let headerKeys = Object.keys(this.headers);
+      let sizingTableRow = this.sizingTable.children[1];
+      let sizingCells = sizingTableRow.children;
+
+      headerKeys.forEach((headerKey, headerIndex, array) => {
+        if (this.isAutosizeEnabled) {
+          columnWidths[headerKey] = this.sizingTable.clientWidth / array.length;
+        } else {
+          let cell = sizingCells[headerIndex];
+          columnWidths[headerKey] = cell.offsetWidth;
+        }
+
+        totalWidth += columnWidths[headerKey];
+      });
+
+      this.columnWidths = columnWidths;
+      this.totalWidth = totalWidth;
+
+      this.calculateScrollbarWidth();
+    },
+    getRow(rowIndex) {
+      return toRaw(this.visibleRows[rowIndex]);
+    },
+    sortBy(columnKey) {
+      let timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === MODE.PERFORMANCE && columnKey !== timeSystemKey) {
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Sort', () => {
+          this.initiateSort(columnKey);
+        });
+      } else {
+        this.initiateSort(columnKey);
+      }
+    },
+    initiateSort(columnKey) {
+      // If sorting by the same column, flip the sort direction.
+      if (this.sortOptions.key === columnKey) {
+        if (this.sortOptions.direction === ORDER.ASCENDING) {
+          this.sortOptions.direction = ORDER.DESCENDING;
+        } else {
+          this.sortOptions.direction = ORDER.ASCENDING;
+        }
+      } else {
+        this.sortOptions = {
+          key: columnKey,
+          direction: ORDER.DESCENDING
+        };
+      }
+
+      this.table.sortBy(this.sortOptions);
+    },
+    scroll() {
+      if (this.lastScrollLeft === this.scrollable.scrollLeft) {
+        this.throttledUpdateVisibleRows();
+      }
+      this.synchronizeScrollX();
+
+      if (this.shouldAutoScroll()) {
+        this.autoScroll = true;
+      } else {
+        // If user scrolls away from bottom, disable auto-scroll.
+        // Auto-scroll will be re-enabled if user scrolls to bottom again.
+        this.autoScroll = false;
+      }
+    },
+    shouldAutoScroll() {
+      if (this.sortOptions.direction === ORDER.DESCENDING) {
+        return false;
+      }
+
+      return (
+        this.scrollable.scrollTop >=
+        this.scrollable.scrollHeight - this.scrollable.offsetHeight - AUTO_SCROLL_TRIGGER_HEIGHT
+      );
+    },
+    initiateAutoScroll() {
+      this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
+    },
+    synchronizeScrollX() {
+      this.lastScrollLeft = this.scrollable.scrollLeft;
+
+      if (this.$refs.headersHolderEl && this.scrollable) {
+        this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
+      }
+    },
+    filterTelemetry(columnKey) {
+      if (this.enableRegexSearch[columnKey]) {
+        if (this.isCompleteRegex(this.filters[columnKey])) {
+          this.table.tableRows.setColumnRegexFilter(
+            columnKey,
+            this.filters[columnKey].slice(1, -1)
+          );
+        } else {
+          return;
+        }
+      } else {
+        this.table.tableRows.setColumnFilter(columnKey, this.filters[columnKey]);
+      }
+
+      this.setHeight();
+    },
+    filterChanged(columnKey, newFilterValue) {
+      this.filters[columnKey] = newFilterValue;
+      this.filterTelemetry(columnKey);
+    },
+    clearFilter(columnKey) {
+      this.filters[columnKey] = '';
+      this.table.tableRows.setColumnFilter(columnKey, '');
+      this.setHeight();
+    },
+    rowsAdded(rows) {
+      this.setHeight();
+
+      let sizingRow;
+      if (Array.isArray(rows)) {
+        sizingRow = rows[0];
+      } else {
+        sizingRow = rows;
+      }
+
+      if (!this.sizingRows[sizingRow.objectKeyString]) {
+        this.sizingRows[sizingRow.objectKeyString] = sizingRow;
+        this.$nextTick().then(this.calculateColumnWidths);
+      }
+
+      if (this.autoScroll) {
+        this.initiateAutoScroll();
+      }
+
+      this.throttledUpdateVisibleRows();
+    },
+    rowsRemoved(rows) {
+      this.setHeight();
+      this.throttledUpdateVisibleRows();
+    },
+    /**
+     * Calculates height based on total number of rows, and sets table height.
+     */
+    setHeight() {
+      let tableRowsLength = this.table.tableRows.getRowsLength();
+      this.totalHeight = this.rowHeight * tableRowsLength - 1;
+      // Set element height directly to avoid having to wait for Vue to update DOM
+      // which causes subsequent scroll to use an out of date height.
+      this.contentTable.style.height = this.totalHeight + 'px';
+    },
+    exportAsCSV(data) {
+      const headerKeys = Object.keys(this.headers);
+
+      this.csvExporter.export(data, {
+        filename: this.table.domainObject.name + '.csv',
+        headers: headerKeys
+      });
+    },
+    getTableRowData() {
+      const justTheData = this.table.tableRows
+        .getRows()
+        .map((row) => row.getFormattedDatum(this.headers));
+
+      return justTheData;
+    },
+    exportAllDataAsCSV() {
+      if (this.telemetryMode === MODE.PERFORMANCE) {
+        this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Export', () => {
+          const data = this.getTableRowData();
+
+          this.exportAsCSV(data);
+        });
+      } else {
+        const data = this.getTableRowData();
+
+        this.exportAsCSV(data);
+      }
+    },
+    exportMarkedDataAsCSV() {
+      const data = this.table.tableRows
+        .getRows()
+        .filter((row) => row.marked === true)
+        .map((row) => row.getFormattedDatum(this.headers));
+
+      this.exportAsCSV(data);
+    },
+    outstandingRequests(loading) {
+      this.loading = loading;
+    },
+    handleStaleness({ keyString, stalenessResponse }) {
+      this.addOrRemoveStaleObject(keyString, stalenessResponse);
+    },
+    calculateTableSize() {
+      this.$nextTick().then(this.calculateColumnWidths);
+    },
+    updateConfiguration(configuration) {
+      this.isAutosizeEnabled = configuration.autosize;
+      this.hideHeaders = configuration.hideHeaders;
+
+      this.updateHeaders();
+      this.$nextTick().then(this.calculateColumnWidths);
+    },
+    addObject() {
+      this.updateHeaders();
+      this.$nextTick().then(this.calculateColumnWidths);
+    },
+    removeObject(objectIdentifier) {
+      let objectKeyString = this.openmct.objects.makeKeyString(objectIdentifier);
+      delete this.sizingRows[objectKeyString];
+      this.updateHeaders();
+      this.$nextTick().then(this.calculateColumnWidths);
+    },
+    resizeColumn(key, newWidth) {
+      let delta = newWidth - this.columnWidths[key];
+      this.columnWidths[key] = newWidth;
+      this.totalWidth += delta;
+    },
+    updateConfiguredColumnWidths() {
+      this.configuredColumnWidths = this.columnWidths;
+
+      let configuration = this.table.configuration.getConfiguration();
+      configuration.autosize = false;
+      configuration.columnWidths = this.configuredColumnWidths;
+
+      this.table.configuration.updateConfiguration(configuration);
+    },
+    setDropTargetOffset(dropOffsetLeft) {
+      this.dropOffsetLeft = dropOffsetLeft - this.scrollable.scrollLeft;
+    },
+    reorderColumn(from, to) {
+      let newHeaderKeys = Object.keys(this.headers);
+      let moveFromKey = newHeaderKeys[from];
+
+      if (to < from) {
+        newHeaderKeys.splice(from, 1);
+        newHeaderKeys.splice(to, 0, moveFromKey);
+      } else {
+        newHeaderKeys.splice(from, 1);
+        newHeaderKeys.splice(to, 0, moveFromKey);
+      }
+
+      let newHeaders = newHeaderKeys.reduce((headers, headerKey) => {
+        headers[headerKey] = this.headers[headerKey];
+
+        return headers;
+      }, {});
+
+      this.table.configuration.setColumnOrder(Object.keys(newHeaders));
+
+      this.headers = newHeaders;
+      this.dropOffsetLeft = undefined;
+
+      this.dropTargetActive(false);
+    },
+    dropTargetActive(isActive) {
+      this.isDropTargetActive = isActive;
+    },
+    rescaleToContainer() {
+      let scrollTop = this.scrollable.scrollTop;
+
+      this.renderWhenVisible(() => {
+        if (this.isAutosizeEnabled) {
+          this.calculateTableSize();
+          // On some resize events scrollTop is reset to 0. Possibly due to a transition we're using?
+          // Need to preserve scroll position in this case.
+          if (this.autoScroll) {
+            this.initiateAutoScroll();
+          } else {
+            this.scrollable.scrollTop = scrollTop;
+          }
+        }
+
+        scrollTop = this.scrollable.scrollTop;
+      });
+    },
+    clearRowsAndRerender() {
+      this.visibleRows = [];
+      this.$nextTick().then(this.throttledUpdateVisibleRows);
+    },
+    pause(byButton) {
+      if (byButton) {
+        this.pausedByButton = true;
+      }
+
+      this.paused = true;
+      this.table.pause();
+    },
+    unpause(byButtonOrUserBoundsChange) {
+      if (byButtonOrUserBoundsChange) {
+        this.undoMarkedRows();
+        this.table.unpause();
+        this.paused = false;
+        this.pausedByButton = false;
+      } else {
+        if (!this.pausedByButton) {
+          this.undoMarkedRows();
+          this.table.unpause();
+          this.paused = false;
+        }
+      }
+
+      this.isShowingMarkedRowsOnly = false;
+    },
+    boundsChanged(_bounds, isTick) {
+      if (isTick) {
+        return;
+      }
+
+      // User bounds change.
+      if (this.paused) {
+        this.unpause(true);
+      }
+    },
+    togglePauseByButton() {
+      if (this.paused) {
+        this.unpause(true);
+      } else {
+        this.pause(true);
+      }
+    },
+    undoMarkedRows() {
+      this.markedRows.forEach((r) => (r.marked = false));
+      this.markedRows = [];
+    },
+    unmarkRow(rowIndex) {
+      if (this.markedRows.length > 1) {
+        let row = this.visibleRows[rowIndex];
+        let positionInMarkedArray = this.markedRows.indexOf(row);
+
+        row.marked = false;
+        this.markedRows.splice(positionInMarkedArray, 1);
+
+        if (this.isShowingMarkedRowsOnly) {
+          this.visibleRows.splice(rowIndex, 1);
+        }
+      } else if (this.markedRows.length === 1) {
+        this.unmarkAllRows();
+      }
+
+      if (this.markedRows.length === 0) {
+        this.unpause();
+      }
+    },
+    markRow(rowIndex, keyModifier) {
+      if (!this.marking.enable) {
+        return;
+      }
+
+      let insertMethod = 'unshift';
+
+      if (this.markedRows.length && !keyModifier) {
+        this.undoMarkedRows();
+        insertMethod = 'push';
+      }
+
+      let markedRow = this.visibleRows[rowIndex];
+
+      markedRow.marked = true;
+      this.pause();
+
+      if (this.marking.disableMultiSelect) {
+        this.unmarkAllRows();
+        insertMethod = 'push';
+      }
+
+      this.markedRows[insertMethod](markedRow);
+    },
+    unmarkAllRows(skipUnpause) {
+      this.undoMarkedRows();
+      this.isShowingMarkedRowsOnly = false;
+      this.unpause();
+      this.restorePreviousRows();
+    },
+    markMultipleConcurrentRows(rowIndex) {
+      if (!this.marking.enable) {
+        return;
+      }
+
+      if (!this.markedRows.length || this.marking.disableMultiSelect) {
+        this.markRow(rowIndex);
+      } else {
+        if (this.markedRows.length > 1) {
+          this.markedRows.forEach((r, i) => {
+            if (i !== 0) {
+              r.marked = false;
+            }
+          });
+          this.markedRows.splice(1);
+        }
+
+        const lastRowToBeMarked = this.visibleRows[rowIndex];
+
+        const allRows = this.table.tableRows.getRows();
+        let firstRowIndex = allRows.indexOf(toRaw(this.markedRows[0]));
+        let lastRowIndex = allRows.indexOf(toRaw(lastRowToBeMarked));
+
+        //supports backward selection
+        if (lastRowIndex < firstRowIndex) {
+          [firstRowIndex, lastRowIndex] = [lastRowIndex, firstRowIndex];
+        }
+
+        let baseRow = this.markedRows[0];
+
+        for (let i = firstRowIndex; i <= lastRowIndex; i++) {
+          let row = allRows[i];
+          row.marked = true;
+
+          if (row !== baseRow && this.markedRows.indexOf(row) === -1) {
+            this.markedRows.push(row);
+          }
+        }
+      }
+    },
+    checkForMarkedRows() {
+      this.isShowingMarkedRowsOnly = false;
+      this.markedRows = this.table.tableRows.getRows().filter((row) => row.marked);
+    },
+    showRows(rows) {
+      this.table.tableRows.rows = rows;
+      this.table.emit('filter');
+    },
+    toggleMarkedRows(flag) {
+      if (flag) {
+        this.isShowingMarkedRowsOnly = true;
+        this.userScroll = this.scrollable.scrollTop;
+        this.allRows = this.table.tableRows.getRows();
+
+        this.showRows(this.markedRows);
+        this.setHeight();
+      } else {
+        this.isShowingMarkedRowsOnly = false;
+        this.restorePreviousRows();
+      }
+    },
+    restorePreviousRows() {
+      if (this.allRows && this.allRows.length) {
+        this.showRows(this.allRows);
+        this.allRows = [];
+        this.setHeight();
+        this.scrollable.scrollTop = this.userScroll;
+      }
+    },
+    updateWidthsAndClearSizingTable() {
+      this.calculateColumnWidths();
+      this.configuredColumnWidths = this.columnWidths;
+
+      this.visibleRows.forEach((row, i) => {
+        this.sizingRows[i] = undefined;
+        delete this.sizingRows[i];
+      });
+    },
+    recalculateColumnWidths() {
+      this.visibleRows.forEach((row, i) => {
+        this.sizingRows[i] = row;
+      });
+
+      this.configuredColumnWidths = {};
+      this.isAutosizeEnabled = false;
+
+      this.$nextTick().then(this.updateWidthsAndClearSizingTable);
+    },
+    autosizeColumns() {
+      this.isAutosizeEnabled = true;
+
+      this.$nextTick().then(this.calculateColumnWidths);
+    },
+    toggleRegex(key) {
+      this.filters[key] = '';
+
+      if (this.enableRegexSearch[key] === undefined) {
+        this.enableRegexSearch[key] = true;
+      } else {
+        this.enableRegexSearch[key] = !this.enableRegexSearch[key];
+      }
+    },
+    isCompleteRegex(string) {
+      return string.length > 2 && string[0] === '/' && string[string.length - 1] === '/';
+    },
+    getViewContext() {
+      return {
+        type: 'telemetry-table',
+        exportAllDataAsCSV: this.exportAllDataAsCSV,
+        exportMarkedDataAsCSV: this.exportMarkedDataAsCSV,
+        unmarkAllRows: this.unmarkAllRows,
+        togglePauseByButton: this.togglePauseByButton,
+        expandColumns: this.recalculateColumnWidths,
+        autosizeColumns: this.autosizeColumns,
+        row: this.rowContext
+      };
+    },
+    initializeViewActions() {
+      if (this.markedRows.length > 0) {
+        this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
+      } else if (this.markedRows.length === 0) {
+        this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+      }
+
+      if (this.loading) {
+        this.viewActionsCollection.disable(['export-csv-all']);
+      } else {
+        this.viewActionsCollection.enable(['export-csv-all']);
+      }
+
+      if (this.paused) {
+        this.viewActionsCollection.hide(['pause-data']);
+        this.viewActionsCollection.show(['play-data']);
+      } else {
+        this.viewActionsCollection.hide(['play-data']);
+        this.viewActionsCollection.show(['pause-data']);
+      }
+
+      if (this.isAutosizeEnabled) {
+        this.viewActionsCollection.show(['expand-columns']);
+        this.viewActionsCollection.hide(['autosize-columns']);
+      } else {
+        this.viewActionsCollection.show(['autosize-columns']);
+        this.viewActionsCollection.hide(['expand-columns']);
+      }
+    },
+    confirmUnlimitedMode(
+      label,
+      callback,
+      message = 'A new data request for all telemetry values for all endpoints will be made which will take some time. Do you want to continue?'
+    ) {
+      const dialog = this.openmct.overlays.dialog({
+        iconClass: 'alert',
+        message,
+        buttons: [
+          {
+            label,
+            emphasis: true,
+            callback: () => {
+              this.addToAfterLoadActions(callback);
+              this.updateTelemetryMode();
+
+              dialog.dismiss();
+            }
+          },
+          {
+            label: 'Cancel',
+            callback: () => {
+              dialog.dismiss();
+            }
+          }
+        ]
+      });
+    },
+    updateTelemetryMode() {
+      this.telemetryMode =
+        this.telemetryMode === MODE.UNLIMITED ? MODE.PERFORMANCE : MODE.UNLIMITED;
+
+      if (this.persistModeChange) {
+        this.table.configuration.setTelemetryMode(this.telemetryMode);
+      }
+
+      this.table.updateTelemetryMode(this.telemetryMode);
+
+      const timeSystemKey = this.openmct.time.getTimeSystem().key;
+
+      if (this.telemetryMode === MODE.PERFORMANCE && this.sortOptions.key !== timeSystemKey) {
+        this.openmct.notifications.info(
+          'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
+        );
+        this.initiateSort(timeSystemKey);
+      }
+    },
+    setRowHeight(height) {
+      this.rowHeight = height;
+      this.setHeight();
+      this.calculateTableSize();
+      this.clearRowsAndRerender();
+    },
+    updateViewContext(rowContext) {
+      this.rowContext = rowContext;
+    }
+  }
+};
+</script>

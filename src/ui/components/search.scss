@@ -1,0 +1,99 @@
+@mixin visibleRegexButton {
+  opacity: 1;
+  padding: 1px 3px;
+  min-width: 24px;
+}
+
+.c-search {
+  @include wrappedInput();
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+  &:before {
+    // Mag glass icon
+    content: $glyph-icon-magnify;
+    body.mobile & { // Make search icon stand out in mobile
+      opacity: 1;
+    }
+  }
+
+  &__use-regex {
+    // Button
+    $c: $colorBodyFg;
+    background: rgba($c, 0.2);
+    border: 1px solid rgba($c, 0.3);
+    color: $c;
+    border-radius: $controlCr;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 0.8em;
+    margin-left: $interiorMarginSm;
+    min-width: 0;
+    opacity: 0;
+    order: 2;
+    overflow: hidden;
+    padding: 1px 0;
+    transform-origin: left;
+    @include transition($prop: min-width, $dur: $transOutTime);
+    width: 0;
+
+    &.is-active {
+      $c: $colorBtnActiveBg;
+      @include visibleRegexButton();
+      background: rgba($c, 0.3);
+      border-color: $c;
+      color: $c;
+    }
+  }
+
+  &__clear-input {
+    display: none;
+    order: 99;
+    padding: 1px 0;
+    body.mobile & {
+      display: block;
+    }
+
+  }
+
+  &.is-active {
+    body.mobile & { // In mobile, persist the expanded search bar instead of collapsing upon clicking away
+      background-color: rgba($colorHeadFg, 0.2) !important; 
+      width: 50vw !important;
+    }
+    .c-search__use-regex {
+      margin-left: 0;
+    }
+
+    &:before {
+      width: 0;
+      body.mobile & {
+        width: auto;
+      }
+    }
+
+    input[type='text'],
+    input[type='search'] {
+      margin-left: 0;
+    }
+
+    @include hover {
+      .c-search__clear-input {
+        display: block;
+      }
+    }
+  }
+
+  input[type='text'],
+  input[type='search'] {
+    margin-left: $interiorMargin;
+    order: 3;
+    text-align: left;
+  }
+
+  @include hover {
+    .c-search__use-regex {
+      @include visibleRegexButton();
+    }
+  }
+}

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,38 +20,76 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
+import { isIdentifier } from './object-utils.js';
 
-    function RootRegistry() {
-        this.providers = [];
+/**
+ * Registry for managing root items in Open MCT.
+ */
+export default class RootRegistry {
+  /**
+   * @param {OpenMCT} openmct - The Open MCT instance.
+   */
+  constructor(openmct) {
+    /** @type {Array<RootItemEntry>} */
+    this._rootItems = [];
+    /** @type {OpenMCT} */
+    this._openmct = openmct;
+  }
+
+  /**
+   * Get all registered root items.
+   * @returns {Promise<Array<Identifier>>} A promise that resolves to an array of root item identifiers.
+   */
+  getRoots() {
+    const sortedItems = this._rootItems.sort((a, b) => b.priority - a.priority);
+    const promises = sortedItems.map((rootItem) => rootItem.provider());
+
+    return Promise.all(promises).then((rootItems) => rootItems.flat());
+  }
+
+  /**
+   * Add a root item to the registry.
+   * @param {RootItemInput} rootItem - The root item to add.
+   * @param {number} [priority] - The priority of the root item.
+   */
+  addRoot(rootItem, priority) {
+    if (!this._isValid(rootItem)) {
+      return;
     }
 
-    RootRegistry.prototype.getRoots = function () {
-        var promises = this.providers.map(function (provider) {
-            return provider();
-        });
-        return Promise.all(promises)
-            .then(_.flatten);
-    };
+    this._rootItems.push({
+      priority: priority || this._openmct.priority.DEFAULT,
+      provider: typeof rootItem === 'function' ? rootItem : () => rootItem
+    });
+  }
 
-    function isKey(key) {
-        return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
+  /**
+   * Validate a root item.
+   * @param {RootItemInput} rootItem - The root item to validate.
+   * @returns {boolean} True if the root item is valid, false otherwise.
+   * @private
+   */
+  _isValid(rootItem) {
+    if (isIdentifier(rootItem) || typeof rootItem === 'function') {
+      return true;
     }
 
-    RootRegistry.prototype.addRoot = function (key) {
-        if (isKey(key) || (_.isArray(key) && _.every(key, isKey))) {
-            this.providers.push(function () {
-                return key;
-            });
-        } else if (_.isFunction(key)) {
-            this.providers.push(key);
-        }
-    };
+    if (Array.isArray(rootItem)) {
+      return rootItem.every(isIdentifier);
+    }
 
-    return RootRegistry;
+    return false;
+  }
+}
 
-});
+/**
+ * @typedef {Object} RootItemEntry
+ * @property {number} priority - The priority of the root item.
+ * @property {() => Promise<Identifier | Identifier[]>} provider - A function that returns a promise resolving to a root item or an array of root items.
+ */
+
+/**
+ * @typedef {import('openmct').Identifier} Identifier
+ * @typedef {Identifier | Identifier[] | (() => Promise<Identifier | Identifier[]>)} RootItemInput
+ * @typedef {import('openmct').OpenMCT} OpenMCT
+ */

@@ -1,0 +1,66 @@
+.c-box-view,
+.c-ellipse-view {
+  border-width: $drawingObjBorderW !important;
+  display: flex;
+  align-items: stretch;
+
+  .c-frame & {
+    @include abs();
+  }
+}
+
+.c-ellipse-view {
+  border-radius: 50%;
+}
+
+.c-line-view {
+  &.c-frame {
+    box-shadow: none !important;
+  }
+
+  .c-frame-edit {
+    border: none;
+  }
+
+  .c-handle-info {
+    background: rgba(#999, 0.2);
+    padding: 2px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    white-space: nowrap;
+  }
+
+  svg {
+    // Prevent clipping when line is horizontal and vertical
+    min-height: 1px;
+    min-width: 1px;
+    // Must use !important to counteract setting in normalize.min.css
+    overflow: visible;
+  }
+
+  &__line {
+    stroke-linecap: round;
+    stroke-width: $drawingObjBorderW;
+  }
+
+  &__hover-indicator {
+    display: none;
+    opacity: 0.5;
+    stroke: $editFrameColorHov;
+    stroke-width: $drawingObjBorderW + 4;
+  }
+
+  .is-editing & {
+    // Needed to allow line to be moved
+    $w: 4px;
+    min-width: $w;
+    min-height: $w;
+
+    &:hover {
+      [class*='__hover-indicator'] {
+        display: inline;
+      }
+    }
+  }
+}

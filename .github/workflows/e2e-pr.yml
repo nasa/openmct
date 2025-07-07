@@ -1,0 +1,70 @@
+name: 'e2e-pr'
+on:
+  push:
+    branches: master
+  workflow_dispatch:
+  pull_request:
+    types:
+      - labeled
+      - opened
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  e2e-full:
+    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/hydrogen'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npx playwright@1.47.2 install
+      - run: npx playwright install chrome-beta
+      - run: npm ci --no-audit --progress=false
+      - run: npm run test:e2e:full -- --max-failures=40
+      - run: npm run cov:e2e:report || true
+      - shell: bash
+        env:
+          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          npm run cov:e2e:full:publish
+      - name: Archive test results
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-pr-test-results
+          path: test-results
+          overwrite: true
+
+      - name: Remove pr:e2e label (if present)
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
+            }

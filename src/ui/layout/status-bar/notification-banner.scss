@@ -1,0 +1,74 @@
+@mixin statusBannerColors($bg, $fg: $colorStatusFg) {
+  $bgPb: 10%;
+  $bgPbD: 10%;
+  background-color: darken($bg, $bgPb);
+  color: $fg;
+  &:hover {
+    background-color: darken($bg, $bgPb - $bgPbD);
+  }
+  .s-action {
+    background-color: darken($bg, $bgPb + $bgPbD);
+    &:hover {
+      background-color: darken($bg, $bgPb);
+    }
+  }
+}
+
+.c-message-banner {
+  $closeBtnSize: 7px;
+
+  border-radius: $controlCr;
+  @include statusBannerColors($colorStatusDefault, $colorStatusFg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  left: 50%;
+  top: 50%;
+  max-width: 50%;
+  max-height: 25px;
+  padding: $interiorMarginSm $interiorMargin $interiorMarginSm $interiorMarginLg;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+
+  > * + * {
+    margin-left: $interiorMargin;
+  }
+
+  &.ok {
+    @include statusBannerColors($colorOk, $colorOkFg);
+  }
+
+  &.info {
+    @include statusBannerColors($colorInfo, $colorInfoFg);
+  }
+  &.caution,
+  &.warning,
+  &.alert {
+    @include statusBannerColors($colorWarningLo, $colorWarningLoFg);
+  }
+  &.error {
+    @include statusBannerColors($colorWarningHi, $colorWarningHiFg);
+  }
+
+  &__message {
+    @include ellipsize();
+    flex: 1 1 auto;
+  }
+
+  &__progress-bar {
+    height: 7px;
+    width: 70px;
+
+    // Only show the progress bar
+    .c-progress-bar {
+      &__text {
+        display: none;
+      }
+    }
+  }
+
+  &__close-button {
+    font-size: 1.25em;
+  }
+}

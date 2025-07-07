@@ -1,0 +1,18 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:8080",
+      "localStorage": [
+        {
+          "name": "mct",
+          "value": "{\"mine\":{\"identifier\":{\"key\":\"mine\",\"namespace\":\"\"},\"name\":\"My Items\",\"type\":\"folder\",\"composition\":[{\"key\":\"f34f457e-d7f4-4fc4-ba71-52e19e925646\",\"namespace\":\"\"}],\"location\":\"ROOT\",\"modified\":1732413605044,\"created\":1732413603140,\"persisted\":1732413605044},\"f34f457e-d7f4-4fc4-ba71-52e19e925646\":{\"identifier\":{\"key\":\"f34f457e-d7f4-4fc4-ba71-52e19e925646\",\"namespace\":\"\"},\"name\":\"Overlay Plot with 5s Delay\",\"type\":\"telemetry.plot.overlay\",\"composition\":[{\"key\":\"c568fa66-62e0-4eee-97eb-cdbc7421e556\",\"namespace\":\"\"}],\"configuration\":{\"series\":[{\"identifier\":{\"key\":\"c568fa66-62e0-4eee-97eb-cdbc7421e556\",\"namespace\":\"\"}}]},\"notes\":\"framework/generateLocalStorageData.e2e.spec.js\\nGenerate Visual Test Data @localStorage @generatedata @clock\\nGenerate Overlay Plot with 5s Delay\\nchrome\",\"modified\":1732413606208.9,\"location\":\"mine\",\"created\":1732413605044,\"persisted\":1732413606208.9},\"c568fa66-62e0-4eee-97eb-cdbc7421e556\":{\"identifier\":{\"key\":\"c568fa66-62e0-4eee-97eb-cdbc7421e556\",\"namespace\":\"\"},\"name\":\"VIPER Rover Heading\",\"type\":\"generator\",\"telemetry\":{\"period\":10,\"amplitude\":1,\"offset\":0,\"dataRateInHz\":1,\"phase\":0,\"randomness\":0,\"loadDelay\":5000,\"infinityValues\":false,\"exceedFloat32\":false,\"staleness\":false},\"modified\":1732413606049,\"location\":\"f34f457e-d7f4-4fc4-ba71-52e19e925646\",\"created\":1732413605554,\"persisted\":1732413606049}}"
+        },
+        {
+          "name": "mct-tree-expanded",
+          "value": "[]"
+        }
+      ]
+    }
+  ]
+}

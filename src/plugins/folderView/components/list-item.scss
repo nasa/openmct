@@ -1,0 +1,32 @@
+/******************************* LIST ITEM */
+.c-list-item {
+  color: $colorItemFgDetails;
+
+  &__name__type-icon {
+    color: $colorItemTreeIcon;
+  }
+
+  &__name__name {
+    @include ellipsize();
+
+    a & {
+      // .c-list-item_name a element
+      color: $colorItemFg;
+    }
+  }
+
+  &:not(.c-list-item__name) {
+  }
+
+  &.is-alias {
+    // Object is an alias to an original.
+    [class*='__type-icon'] {
+      @include isAlias();
+    }
+  }
+
+  [class*='l-overlay'] & {
+    // When this view is in an overlay, prevent navigation
+    pointer-events: none;
+  }
+}

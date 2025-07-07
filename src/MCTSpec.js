@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,81 +20,98 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './MCT',
-    './plugins/plugins',
-    'legacyRegistry'
-], function (MCT, plugins, legacyRegistry) {
-    describe("MCT", function () {
-        var openmct;
-        var mockPlugin;
-        var mockPlugin2;
-        var mockListener;
-        var oldBundles;
+import * as testUtils from 'utils/testing';
 
-        beforeEach(function () {
-            mockPlugin = jasmine.createSpy('plugin');
-            mockPlugin2 = jasmine.createSpy('plugin2');
-            mockListener = jasmine.createSpy('listener');
-            oldBundles = legacyRegistry.list();
+import plugins from './plugins/plugins.js';
 
-            openmct = new MCT();
+describe('MCT', function () {
+  let openmct;
+  let mockPlugin;
+  let mockPlugin2;
+  let mockListener;
 
-            openmct.install(mockPlugin);
-            openmct.install(mockPlugin2);
-            openmct.on('start', mockListener);
-        });
+  beforeEach(function () {
+    mockPlugin = jasmine.createSpy('plugin');
+    mockPlugin2 = jasmine.createSpy('plugin2');
+    mockListener = jasmine.createSpy('listener');
 
-        // Clean up the dirty singleton.
-        afterEach(function () {
-            legacyRegistry.list().forEach(function (bundle) {
-                if (oldBundles.indexOf(bundle) === -1) {
-                    legacyRegistry.delete(bundle);
-                }
-            });
-        });
+    openmct = testUtils.createOpenMct();
 
-        it("exposes plugins", function () {
-            expect(openmct.plugins).toEqual(plugins);
-        });
+    openmct.install(mockPlugin);
+    openmct.install(mockPlugin2);
+    openmct.on('start', mockListener);
+  });
 
-        it("does not issue a start event before started", function () {
-            expect(mockListener).not.toHaveBeenCalled();
-        });
+  // Clean up the dirty singleton.
+  afterEach(function () {
+    return testUtils.resetApplicationState(openmct);
+  });
 
-        describe("start", function () {
-            beforeEach(function () {
-                openmct.start();
-            });
+  it('exposes plugins', function () {
+    expect(openmct.plugins).toEqual(plugins);
+  });
 
-            it("calls plugins for configuration", function () {
-                expect(mockPlugin).toHaveBeenCalledWith(openmct);
-                expect(mockPlugin2).toHaveBeenCalledWith(openmct);
-            });
+  it('does not issue a start event before started', function () {
+    expect(mockListener).not.toHaveBeenCalled();
+  });
 
-            it("emits a start event", function () {
-                expect(mockListener).toHaveBeenCalled();
-            });
-        });
-
-        describe("setAssetPath", function () {
-            var testAssetPath;
-
-            beforeEach(function () {
-                testAssetPath = "some/path";
-                openmct.legacyExtension = jasmine.createSpy('legacyExtension');
-                openmct.setAssetPath(testAssetPath);
-            });
-
-            it("internally configures the path for assets", function () {
-                expect(openmct.legacyExtension).toHaveBeenCalledWith(
-                    'constants',
-                    {
-                        key: "ASSETS_PATH",
-                        value: testAssetPath
-                    }
-                );
-            });
-        });
+  describe('start', function () {
+    let appHolder;
+    beforeEach(function (done) {
+      appHolder = document.createElement('div');
+      openmct.on('start', done);
+      openmct.start(appHolder);
     });
+
+    it('calls plugins for configuration', function () {
+      expect(mockPlugin).toHaveBeenCalledWith(openmct);
+      expect(mockPlugin2).toHaveBeenCalledWith(openmct);
+    });
+
+    it('emits a start event', function () {
+      expect(mockListener).toHaveBeenCalled();
+    });
+
+    it('Renders the application into the provided container element', function () {
+      let openMctShellElements = appHolder.querySelectorAll('div.l-shell');
+      expect(openMctShellElements.length).toBe(1);
+    });
+  });
+
+  describe('startHeadless', function () {
+    beforeEach(function (done) {
+      openmct.on('start', done);
+      openmct.startHeadless();
+    });
+
+    it('calls plugins for configuration', function () {
+      expect(mockPlugin).toHaveBeenCalledWith(openmct);
+      expect(mockPlugin2).toHaveBeenCalledWith(openmct);
+    });
+
+    it('emits a start event', function () {
+      expect(mockListener).toHaveBeenCalled();
+    });
+
+    it('Does not render Open MCT', function () {
+      let openMctShellElements = document.body.querySelectorAll('div.l-shell');
+      expect(openMctShellElements.length).toBe(0);
+    });
+  });
+
+  describe('setAssetPath', function () {
+    let testAssetPath;
+
+    it('configures the path for assets', function () {
+      testAssetPath = 'some/path/';
+      openmct.setAssetPath(testAssetPath);
+      expect(openmct.getAssetPath()).toBe(testAssetPath);
+    });
+
+    it('adds a trailing /', function () {
+      testAssetPath = 'some/path';
+      openmct.setAssetPath(testAssetPath);
+      expect(openmct.getAssetPath()).toBe(testAssetPath + '/');
+    });
+  });
 });

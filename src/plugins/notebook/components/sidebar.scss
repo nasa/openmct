@@ -1,0 +1,94 @@
+.c-sidebar {
+  @include userSelectNone();
+  background: $sideBarBg;
+  display: flex;
+  justify-content: stretch;
+  max-width: 600px;
+
+  &.c-drawer--push.is-expanded {
+    margin-right: $interiorMargin;
+    width: 30%;
+  }
+
+  &.c-drawer--overlays.is-expanded {
+    width: 95%;
+  }
+
+  &__pane {
+    background: $sideBarBg;
+    display: flex;
+    flex: 1 1 50%;
+    flex-direction: column;
+
+    + * {
+      margin-left: $interiorMarginSm;
+    }
+
+    > * + * {
+      // Add margin-top to first and second level children
+      margin-top: $interiorMargin;
+    }
+  }
+
+  &__right-edge {
+    flex: 0 0 auto;
+    padding: $interiorMarginSm;
+  }
+
+  &__header-w {
+    // Wraps header, used for page pane with collapse buttons
+    display: flex;
+    flex: 0 0 auto;
+    background: $sideBarHeaderBg;
+    align-items: center;
+  }
+
+  &__header {
+    color: $sideBarHeaderFg;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    padding: $interiorMarginSm $interiorMargin;
+    text-transform: uppercase;
+
+    &-label {
+      @include ellipsize();
+      flex: 1 1 auto;
+    }
+  }
+
+  &__contents-and-controls {
+    // Encloses pane buttons and contents elements
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+
+    > * + * {
+      margin-top: $interiorMargin;
+    }
+  }
+
+  &__contents {
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: auto $interiorMargin;
+  }
+
+  .c-list__item {
+    > * + * {
+      margin-left: $interiorMargin;
+    }
+
+    &__name {
+      flex: 1 1 auto;
+    }
+
+    &__menu-indicator {
+      // Not sure this is being used
+      flex: 0 0 auto;
+      font-size: 0.8em;
+      opacity: 0;
+    }
+  }
+}

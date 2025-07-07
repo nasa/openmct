@@ -1,35 +1,27 @@
-*.scssc
-*.zip
-*.gzip
-*.tgz
-*.DS_Store
+# Ignore everything first (will not ignore special files like LICENSE.md,
+# README.md, and package.json)...
+/**/*
 
-*.sass-cache
-*COMPILE.css
+# ...but include these folders...
+!/dist/**/*
+!/src/**/*
 
-# Intellij project configuration files
-*.idea
-*.iml
+# We might be able to remove this if it is not imported by any project directly.
+# https://github.com/nasa/openmct/issues/4992
+!/example/**/*
 
-# External dependencies
+# ...except for these files in the above folders.
+/src/**/*Spec.js
+/src/**/test/
+# TODO move test utils into test/ folders
+/src/utils/testing.js
 
-# Build output
-target
+# Also include these special top-level files.
+!copyright-notice.js
+!copyright-notice.html
+!index.html
+!openmct.js
+!SECURITY.md
 
-# Mac OS X Finder
-.DS_Store
-
-# Closed source libraries
-closed-lib
-
-# Node, Bower dependencies
-node_modules
-bower_components
-
-Procfile
-
-# Protractor logs
-protractor/logs
-
-# npm-debug log
-npm-debug.log
+# Dont include the example html
+dist/index.html

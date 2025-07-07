@@ -14,24 +14,13 @@
  extend the platform are provided in the following documentation.
 
 ## Sections
- 
- * The [API](api/) document is generated from inline documentation 
- using [JSDoc](http://usejsdoc.org/), and describes the JavaScript objects and
+
+* The [API](api/) uses inline documentation.
+ using [TypeScript](https://www.typescriptlang.org) and some legacy [JSDoc](https://jsdoc.app/). It describes the JavaScript objects and
  functions that make up the software platform.
 
- * The [Development Process](process/) document describes the
+* The [Development Process](process/) document describes the
  Open MCT software development cycle.
 
-## Legacy Documentation
-
-As we transition to a new API, the following documentation for the old API
-(which is supported during the transtion) may be useful as well:
-
- * The [Architecture Overview](architecture/) describes the concepts used
- throughout Open MCT, and gives a high level overview of the platform's design.
-
- * The [Developer's Guide](guide/) goes into more detail about how to use the
- platform and the functionality that it provides.
-
- * The [Tutorials](tutorials/) give examples of extending the platform to add
- functionality, and integrate with data sources.
+* The [tutorial](https://github.com/nasa/openmct-tutorial) and [plugin template](https://github.com/nasa/openmct-hello) give examples of extending the platform to add
+ functionality and integrate with data sources.

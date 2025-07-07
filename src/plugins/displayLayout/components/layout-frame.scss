@@ -1,0 +1,135 @@
+@use 'sass:math';
+
+/******************* FRAME */
+.c-frame {
+  display: flex;
+  flex-direction: column;
+
+  // Whatever is placed into the slot, make it fill the entirety of the space, obeying padding
+  > *:first-child {
+    flex: 1 1 auto;
+  }
+}
+
+.c-frame__move-bar {
+  display: none;
+}
+
+.is-editing {
+  /******************* STYLES FOR C-FRAME WHILE EDITING */
+  .c-frame {
+    border: 1px solid rgba($editFrameColorHov, 0.3);
+
+    &:not([s-selected]) {
+      &:hover {
+        border: $editFrameBorderHov;
+      }
+    }
+
+    &[s-selected] {
+      // All frames selected while editing
+      box-shadow: $editFrameSelectedShdw;
+
+      .c-frame__move-bar {
+        cursor: move;
+      }
+    }
+  }
+
+  /******************* DEFAULT STYLES FOR -EDIT__MOVE */
+  // All object types
+  .c-frame__move-bar {
+    @include abs();
+    display: block;
+  }
+
+  // Has-complex-content objects
+  .c-so-view.has-complex-content {
+    @include transition($prop: transform, $dur: $transOutTime, $delay: $moveBarOutDelay);
+
+    > .c-so-view__local-controls {
+      @include transition($prop: transform, $dur: 250ms, $delay: $moveBarOutDelay);
+    }
+
+    + .c-frame__move-bar {
+      display: none;
+    }
+  }
+
+  .l-layout {
+    /******************* 0 - 1 ITEM SELECTED */
+    &:not(.is-multi-selected) {
+      > .l-layout__frame {
+        > .c-so-view.has-complex-content {
+          > .c-so-view__local-controls {
+            @include transition($prop: transform, $dur: $transOutTime, $delay: $moveBarOutDelay);
+          }
+
+          + .c-frame__move-bar {
+            @include transition($prop: height, $delay: $moveBarOutDelay);
+            @include userSelectNone();
+            background: $editFrameMovebarColorBg;
+            box-shadow: rgba(black, 0.3) 0 2px;
+            bottom: auto;
+            display: block;
+            height: 0; // Height is set on hover below
+            opacity: 0.9;
+            max-height: 100%;
+            overflow: hidden;
+            text-align: center;
+            z-index: 10;
+
+            &:before {
+              // Grippy
+              $h: 4px;
+              $tbOffset: math.div($editFrameMovebarH - $h, 2);
+              $lrOffset: 25%;
+              @include grippy($editFrameMovebarColorFg);
+              content: '';
+              display: none;
+              position: absolute;
+              top: $tbOffset;
+              right: $lrOffset;
+              bottom: $tbOffset;
+              left: $lrOffset;
+            }
+          }
+        }
+
+        &:hover {
+          > .c-so-view.has-complex-content {
+            transition: $transInTransform;
+            transition-delay: 0s;
+
+            > .c-so-view__local-controls {
+              transform: translateY($editFrameMovebarH);
+              @include transition(height, $transOutTime);
+              transition-delay: 0s;
+            }
+
+            + .c-frame__move-bar {
+              @include transition(height);
+              height: $editFrameMovebarH;
+            }
+          }
+        }
+      }
+      > .l-layout__frame[s-selected] {
+        > .c-so-view.has-complex-content {
+          + .c-frame__move-bar:before {
+            display: block;
+          }
+        }
+      }
+    }
+
+    /******************* > 1 ITEMS SELECTED */
+    &.is-multi-selected {
+      .l-layout__frame[s-selected] {
+        > .c-so-view.has-complex-content + .c-frame__move-bar {
+          display: block;
+        }
+      }
+    }
+  }
+}

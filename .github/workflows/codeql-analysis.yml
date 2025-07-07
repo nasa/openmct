@@ -1,0 +1,44 @@
+name: 'CodeQL'
+
+on:
+  push:
+    branches: [master, 'release/*']
+  pull_request:
+    branches: [master, 'release/*']
+    paths-ignore:
+      - '**/*Spec.js'
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.spec.js'
+      - '**/*.config.js'
+  schedule:
+    - cron: '28 21 * * 3'
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          config-file: ./.github/codeql/codeql-config.yml
+          languages: javascript
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

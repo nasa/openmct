@@ -1,0 +1,15 @@
+.c-inspector {
+  .c-filter-indication {
+    border-radius: $smallCr;
+    font-size: inherit;
+    padding: $interiorMarginSm $interiorMargin;
+    text-transform: inherit;
+  }
+  .c-filter-tree {
+    // Filters UI uses a tree-based structure
+    .c-inspect-properties {
+      // Add extra margin to account for filter-indicator
+      margin-left: 38px;
+    }
+  }
+}

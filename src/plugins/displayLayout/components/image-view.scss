@@ -1,0 +1,10 @@
+.c-image-view {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  .c-frame & {
+    @include abs();
+    border: 1px solid transparent;
+  }
+}

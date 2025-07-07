@@ -1,0 +1,28 @@
+.l-preview-window {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  > * + * {
+    margin-top: $interiorMargin;
+  }
+
+  &__object-name {
+    flex: 0 0 auto;
+  }
+
+  &__object-view {
+    flex: 1 1 auto;
+    height: 100%; // Chrome 73
+    overflow: auto;
+
+    > div:not([class]) {
+      // Target an immediate child div without a class and make it display: contents
+      display: contents;
+    }
+  }
+}

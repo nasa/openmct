@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,98 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['EventEmitter'], function (EventEmitter) {
-    /**
-     * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
-     * application based on UTC time values provided by a ticking local clock,
-     * with the periodicity specified.
-     * @param {number} period The periodicity with which the clock should tick
-     * @constructor
-     */
-    function LocalClock(period) {
-        EventEmitter.call(this);
+import DefaultClock from '../../utils/clock/DefaultClock.js';
+/**
+ * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
+ * application based on UTC time values provided by a ticking local clock,
+ * with the periodicity specified.
+ * @param {number} period The periodicity with which the clock should tick
+ * @constructor
+ */
 
-        /*
-        Metadata fields
-         */
-        this.key = 'local';
-        this.cssClass = 'icon-clock';
-        this.name = 'Local Clock';
-        this.description = "Provides UTC timestamps every second from the local system clock.";
+export default class LocalClock extends DefaultClock {
+  constructor(period = 100) {
+    super();
 
-        this.period = period;
-        this.timeoutHandle = undefined;
-        this.lastTick = Date.now();
+    this.key = 'local';
+    this.name = 'Local Clock';
+    this.description = 'Provides UTC timestamps every second from the local system clock.';
+
+    this.period = period;
+    this.timeoutHandle = undefined;
+    this.lastTick = Date.now();
+  }
+
+  start() {
+    super.tick(this.lastTick);
+    this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
+  }
+
+  stop() {
+    if (this.timeoutHandle) {
+      clearTimeout(this.timeoutHandle);
+      this.timeoutHandle = undefined;
     }
+  }
 
-    LocalClock.prototype = Object.create(EventEmitter.prototype);
-
-    /**
-     * @private
-     */
-    LocalClock.prototype.start = function () {
-        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
-    };
-
-    /**
-     * @private
-     */
-    LocalClock.prototype.stop = function () {
-        if (this.timeoutHandle) {
-            clearTimeout(this.timeoutHandle);
-            this.timeoutHandle = undefined;
-        }
-    };
-
-    /**
-     * @private
-     */
-    LocalClock.prototype.tick = function () {
-        var now = Date.now();
-        this.emit("tick", now);
-        this.lastTick = now;
-        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
-    };
-
-    /**
-     * Register a listener for the local clock. When it ticks, the local
-     * clock will provide the current local system time
-     *
-     * @param listener
-     * @returns {function} a function for deregistering the provided listener
-     */
-    LocalClock.prototype.on = function (event) {
-        var result = EventEmitter.prototype.on.apply(this, arguments);
-
-        if (this.listeners(event).length === 1) {
-            this.start();
-        }
-        return result;
-    };
-
-    /**
-     * Register a listener for the local clock. When it ticks, the local
-     * clock will provide the current local system time
-     *
-     * @param listener
-     * @returns {function} a function for deregistering the provided listener
-     */
-    LocalClock.prototype.off = function (event) {
-        var result = EventEmitter.prototype.off.apply(this, arguments);
-
-        if (this.listeners(event).length === 0) {
-            this.stop();
-        }
-
-        return result;
-    };
-
-    /**
-     * @returns {number} The last value provided for a clock tick
-     */
-    LocalClock.prototype.currentValue = function () {
-        return this.lastTick;
-    };
-
-    return LocalClock;
-});
+  tick() {
+    const now = Date.now();
+    super.tick(now);
+    this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
+  }
+}

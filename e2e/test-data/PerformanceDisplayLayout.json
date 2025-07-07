@@ -1,0 +1,90 @@
+{
+  "openmct": {
+    "b3cee102-86dd-4c0a-8eec-4d5d276f8691": {
+      "identifier": { "key": "b3cee102-86dd-4c0a-8eec-4d5d276f8691", "namespace": "" },
+      "name": "Performance Display Layout",
+      "type": "layout",
+      "composition": [{ "key": "9666e7b4-be0c-47a5-94b8-99accad7155e", "namespace": "" }],
+      "configuration": {
+        "items": [
+          {
+            "width": 32,
+            "height": 18,
+            "x": 12,
+            "y": 9,
+            "identifier": { "key": "9666e7b4-be0c-47a5-94b8-99accad7155e", "namespace": "" },
+            "hasFrame": true,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "23ca351d-a67d-46aa-a762-290eb742d2f1"
+          }
+        ],
+        "layoutGrid": [10, 10]
+      },
+      "modified": 1654299875432,
+      "location": "mine",
+      "persisted": 1654299878751
+    },
+    "9666e7b4-be0c-47a5-94b8-99accad7155e": {
+      "identifier": { "key": "9666e7b4-be0c-47a5-94b8-99accad7155e", "namespace": "" },
+      "name": "Performance Example Imagery",
+      "type": "example.imagery",
+      "configuration": {
+        "imageLocation": "",
+        "imageLoadDelayInMilliSeconds": 20000,
+        "imageSamples": [],
+        "layers": [
+          {
+            "source": "dist/imagery/example-imagery-layer-16x9.png",
+            "name": "16:9",
+            "visible": false
+          },
+          {
+            "source": "dist/imagery/example-imagery-layer-safe.png",
+            "name": "Safe",
+            "visible": false
+          },
+          {
+            "source": "dist/imagery/example-imagery-layer-scale.png",
+            "name": "Scale",
+            "visible": false
+          }
+        ]
+      },
+      "telemetry": {
+        "values": [
+          { "name": "Name", "key": "name" },
+          { "name": "Time", "key": "utc", "format": "utc", "hints": { "domain": 2 } },
+          {
+            "name": "Local Time",
+            "key": "local",
+            "format": "local-format",
+            "hints": { "domain": 1 }
+          },
+          {
+            "name": "Image",
+            "key": "url",
+            "format": "image",
+            "hints": { "image": 1 },
+            "layers": [
+              { "source": "dist/imagery/example-imagery-layer-16x9.png", "name": "16:9" },
+              { "source": "dist/imagery/example-imagery-layer-safe.png", "name": "Safe" },
+              { "source": "dist/imagery/example-imagery-layer-scale.png", "name": "Scale" }
+            ]
+          },
+          {
+            "name": "Image Download Name",
+            "key": "imageDownloadName",
+            "format": "imageDownloadName",
+            "hints": { "imageDownloadName": 1 }
+          }
+        ]
+      },
+      "modified": 1654299840077,
+      "location": "b3cee102-86dd-4c0a-8eec-4d5d276f8691",
+      "persisted": 1654299840078
+    }
+  },
+  "rootId": "b3cee102-86dd-4c0a-8eec-4d5d276f8691"
+}

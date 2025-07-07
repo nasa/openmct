@@ -1,0 +1,5 @@
+name: 'Custom CodeQL config'
+
+paths-ignore:
+  # Ignore e2e tests and framework
+  - e2e

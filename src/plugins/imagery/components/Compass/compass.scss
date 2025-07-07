@@ -1,0 +1,194 @@
+/***************************** THEME/UI CONSTANTS AND MIXINS */
+$interfaceKeyColor: #fff;
+$elemBg: rgba(black, 0.7);
+
+@mixin sun($position: 'circle closest-side') {
+  $color: #ff9900;
+  $gradEdgePerc: 60%;
+  background: radial-gradient(
+    #{$position},
+    $color,
+    $color $gradEdgePerc,
+    rgba($color, 0.4) $gradEdgePerc + 5%,
+    transparent
+  );
+}
+
+.c-compass {
+  pointer-events: none; // This allows the image element to receive a browser-level context click
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  @include userSelectNone;
+}
+
+/***************************** COMPASS HUD */
+.c-hud {
+  // To be placed within a imagery view, in the bounding box of the image
+  $m: 1px;
+  $padTB: 2px;
+  $padLR: $padTB;
+  color: $interfaceKeyColor;
+  font-size: 0.8em;
+  position: absolute;
+  top: $m;
+  right: $m;
+  left: $m;
+  height: 18px;
+
+  svg,
+  div {
+    position: absolute;
+  }
+
+  &__display {
+    height: 30px;
+    pointer-events: all;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+
+  &__range {
+    border: 1px solid $interfaceKeyColor;
+    border-top-color: transparent;
+    position: absolute;
+    top: 50%;
+    right: $padLR;
+    bottom: $padTB;
+    left: $padLR;
+  }
+
+  [class*='__dir'] {
+    // NSEW
+    display: inline-block;
+    font-weight: bold;
+    text-shadow: 0 1px 2px black;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+
+  [class*='__dir--sub'] {
+    font-weight: normal;
+    opacity: 0.5;
+  }
+
+  &__sun {
+    $s: 10px;
+    @include sun('circle farthest-side at bottom');
+    bottom: $padTB + 2px;
+    height: $s;
+    width: $s * 2;
+    opacity: 0.8;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+}
+
+/***************************** COMPASS SVG */
+.c-compass-rose-svg {
+  $color: $interfaceKeyColor;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  g,
+  path,
+  rect {
+    // In an SVG, rotation occurs about the center of the SVG, not the element
+    transform-origin: center;
+  }
+
+  .c-cr {
+    &__bg {
+      fill: #000;
+      opacity: 0.8;
+    }
+
+    &__edge {
+      opacity: 0.2;
+    }
+
+    &__sun {
+      opacity: 0.7;
+    }
+
+    &__cam {
+      fill: $interfaceKeyColor;
+      transform-origin: center;
+      transform: scale(0.15);
+    }
+
+    &__cam-fov-l,
+    &__cam-fov-r {
+      // Cam FOV indication
+      opacity: 0.2;
+      fill: #fff;
+    }
+
+    &__nsew-text,
+    &__ticks-major,
+    &__ticks-minor {
+      fill: $color;
+    }
+
+    &__ticks-minor {
+      opacity: 0.5;
+      transform: rotate(45deg);
+    }
+
+    &__spacecraft-body {
+      opacity: 0.3;
+    }
+  }
+}
+
+/***************************** DIRECTION ROSE */
+.w-direction-rose {
+  $s: 10%;
+  $m: 2%;
+  cursor: pointer;
+  pointer-events: all;
+  position: absolute;
+  bottom: $m;
+  left: $m;
+  width: $s;
+  padding-top: $s;
+  z-index: 2;
+
+  &.--rose-min {
+    $s: 30px;
+    width: $s;
+    padding-top: $s;
+    .--hide-min {
+      display: none;
+    }
+  }
+
+  &.--rose-small {
+    .--hide-small {
+      display: none;
+    }
+  }
+
+  &.--rose-max {
+    $s: 100px;
+    width: $s;
+    padding-top: $s;
+  }
+}
+
+/************************** ROVER */
+.cr-vrover {
+  $scale: 0.4;
+  transform-origin: center;
+
+  &__body {
+    fill: $interfaceKeyColor;
+    opacity: 0.3;
+    transform-origin: center 7% !important; // Places rotation center at mast position
+  }
+}

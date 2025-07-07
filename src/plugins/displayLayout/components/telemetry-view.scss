@@ -1,0 +1,49 @@
+.c-telemetry-view {
+  display: flex;
+  align-items: stretch;
+
+  > * {
+    // Label and value holders
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    padding: $interiorMargin;
+
+    > * {
+      // Text elements
+      @include ellipsize();
+    }
+  }
+
+  &__value {
+    @include telemetryView();
+    @include isLimit();
+  }
+
+  &__label {
+    margin-right: $interiorMargin;
+  }
+
+  &.is-stale {
+    .c-telemetry-view__value {
+      @include isStaleElement();
+    }
+  }
+
+  .c-frame & {
+    @include abs();
+    border: 1px solid transparent;
+  }
+
+  .is-status__indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  &[class*='is-status'] {
+    border: $borderMissing;
+  }
+}

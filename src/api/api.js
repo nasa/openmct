@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,33 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './ui/Dialog',
-    './ui/GestureAPI',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI'
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    Dialog,
-    GestureAPI,
-    TelemetryAPI,
-    IndicatorAPI
-) {
-    return {
-        TimeAPI: TimeAPI,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        Dialog: Dialog,
-        TypeRegistry: TypeRegistry,
-        GestureAPI: GestureAPI,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI
-    };
-});
+import ActionsAPI from './actions/ActionsAPI.js';
+import AnnotationAPI from './annotation/AnnotationAPI.js';
+import CompositionAPI from './composition/CompositionAPI.js';
+import EditorAPI from './Editor.js';
+import FaultManagementAPI from './faultmanagement/FaultManagementAPI.js';
+import FormsAPI from './forms/FormsAPI.js';
+import IndicatorAPI from './indicators/IndicatorAPI.js';
+import MenuAPI from './menu/MenuAPI.js';
+import NotificationAPI from './notifications/NotificationAPI.js';
+import ObjectAPI from './objects/ObjectAPI.js';
+import PriorityAPI from './priority/PriorityAPI.js';
+import StatusAPI from './status/StatusAPI.js';
+import TelemetryAPI from './telemetry/TelemetryAPI.js';
+import TimeAPI from './time/TimeAPI.js';
+import TypeRegistry from './types/TypeRegistry.js';
+import UserAPI from './user/UserAPI.js';
+
+export default {
+  ActionsAPI,
+  CompositionAPI,
+  EditorAPI,
+  FaultManagementAPI,
+  FormsAPI,
+  IndicatorAPI,
+  MenuAPI,
+  NotificationAPI,
+  ObjectAPI,
+  PriorityAPI,
+  StatusAPI,
+  TelemetryAPI,
+  TimeAPI,
+  TypeRegistry,
+  UserAPI,
+  AnnotationAPI
+};

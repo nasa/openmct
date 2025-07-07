@@ -1,0 +1,96 @@
+{
+  "openmct": {
+    "6d2fa9fd-f2aa-461a-a1e1-164ac44bec9d": {
+      "identifier": { "key": "6d2fa9fd-f2aa-461a-a1e1-164ac44bec9d", "namespace": "" },
+      "name": "Performance Notebook",
+      "type": "notebook",
+      "configuration": {
+        "defaultSort": "oldest",
+        "entries": {
+          "3e31c412-33ba-4757-8ade-e9821f6ba321": {
+            "8c8f6035-631c-45af-8c24-786c60295335": [
+              {
+                "id": "entry-1652815305457",
+                "createdOn": 1652815305457,
+                "createdBy": "",
+                "text": "Existing Entry 1",
+                "embeds": []
+              },
+              {
+                "id": "entry-1652815313465",
+                "createdOn": 1652815313465,
+                "createdBy": "",
+                "text": "Existing Entry 2",
+                "embeds": []
+              },
+              {
+                "id": "entry-1652815399955",
+                "createdOn": 1652815399955,
+                "createdBy": "",
+                "text": "Existing Entry 3",
+                "embeds": []
+              }
+            ]
+          }
+        },
+        "imageMigrationVer": "v1",
+        "pageTitle": "Page",
+        "sections": [
+          {
+            "id": "3e31c412-33ba-4757-8ade-e9821f6ba321",
+            "isDefault": false,
+            "isSelected": false,
+            "name": "Section1",
+            "pages": [
+              {
+                "id": "8c8f6035-631c-45af-8c24-786c60295335",
+                "isDefault": false,
+                "isSelected": false,
+                "name": "Page1",
+                "pageTitle": "Page"
+              },
+              {
+                "id": "36555942-c9aa-439c-bbdb-0aaf50db50f5",
+                "isDefault": false,
+                "isSelected": false,
+                "name": "Page2",
+                "pageTitle": "Page"
+              }
+            ],
+            "sectionTitle": "Section"
+          },
+          {
+            "id": "dab0bd1d-2c5a-405c-987f-107123d6189a",
+            "isDefault": false,
+            "isSelected": true,
+            "name": "Section2",
+            "pages": [
+              {
+                "id": "f625a86a-cb99-4898-8082-80543c8de534",
+                "isDefault": false,
+                "isSelected": false,
+                "name": "Page1",
+                "pageTitle": "Page"
+              },
+              {
+                "id": "e77ef810-f785-42a7-942e-07e999b79c59",
+                "isDefault": false,
+                "isSelected": true,
+                "name": "Page2",
+                "pageTitle": "Page"
+              }
+            ],
+            "sectionTitle": "Section"
+          }
+        ],
+        "sectionTitle": "Section",
+        "type": "General",
+        "showTime": "0"
+      },
+      "modified": 1652815915219,
+      "location": "mine",
+      "persisted": 1652815915222
+    }
+  },
+  "rootId": "6d2fa9fd-f2aa-461a-a1e1-164ac44bec9d"
+}

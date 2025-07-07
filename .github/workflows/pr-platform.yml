@@ -1,0 +1,70 @@
+name: 'pr-platform'
+on:
+  push:
+    branches: master
+  workflow_dispatch:
+  pull_request:
+    types:
+      - labeled
+      - opened
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  pr-platform:
+    if: contains(github.event.pull_request.labels.*.name, 'pr:platform') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        node_version:
+          - lts/iron
+          - lts/hydrogen
+        architecture:
+          - x64
+
+    name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node_version }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ matrix.node_version }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node_version }}-
+
+      - run: npm ci --no-audit --progress=false
+
+      - run: npm test
+
+      - run: npm run lint -- --quiet
+
+      - name: Remove pr:platform label (if present)
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:platform';
+            try {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+              });
+            } catch (error) {
+              core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
+            }
