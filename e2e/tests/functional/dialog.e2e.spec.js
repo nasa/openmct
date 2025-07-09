@@ -74,6 +74,3 @@ test.describe('Dialog', () => {
     await expect(page.getByRole('treeitem', { name: 'Clock' })).toBeHidden();
   });
 });
-
-// test.todo('overlay dialog with buttons, Enter and Escape will simulate "Ok" and "Cancel"');
-// test.todo('Time popups (realtime/fixed) added Enter and Escape to simulate the ✅ and ❎');
