@@ -76,6 +76,7 @@ export async function createTags({ page, canvas, xEnd = 700, yEnd = 520 }) {
 export async function testTelemetryItem(page, telemetryItem) {
   // Check that telemetry item also received the tag
   await page.goto(telemetryItem.url);
+  await page.getByRole('tab', { name: 'Annotations' }).click();
 
   await expect(page.getByText('No tags to display for this item')).toBeVisible();
 
@@ -93,6 +94,7 @@ export async function testTelemetryItem(page, telemetryItem) {
       y: 100
     }
   });
+  await page.getByRole('tab', { name: 'Annotations' }).click();
 
   await expect(page.getByText('Science')).toBeVisible();
   await expect(page.getByText('Driving')).toBeHidden();
@@ -107,6 +109,8 @@ export async function basicTagsTests(page) {
   // Search for Driving
   await page.getByRole('searchbox', { name: 'Search Input' }).click();
 
+  await page.getByRole('tab', { name: 'Annotations' }).click();
+
   // Clicking elsewhere should cause annotation selection to be cleared
   await expect(page.getByText('No tags to display for this item')).toBeVisible();
   //
@@ -118,6 +122,8 @@ export async function basicTagsTests(page) {
     .getByText(/Sine Wave/)
     .first()
     .click();
+
+  await page.getByRole('tab', { name: 'Annotations' }).click();
 
   // Delete Driving Tag
   await page.hover('[aria-label="Tag"]:has-text("Driving")');
@@ -155,6 +161,8 @@ export async function basicTagsTests(page) {
     }
   });
 
+  await page.getByRole('tab', { name: 'Annotations' }).click();
+
   //Expect Science to be visible but Driving to be hidden
   await expect(page.getByText('Science')).toBeVisible();
   await expect(page.getByText('Driving')).toBeHidden();
@@ -170,7 +178,7 @@ export async function basicTagsTests(page) {
   });
 
   // Add Driving Tag again
-  await page.getByText('Annotations').click();
+  await page.getByRole('tab', { name: 'Annotations' }).click();
   await page.getByRole('button', { name: /Add Tag/ }).click();
   await page.getByPlaceholder('Type to select tag').click();
   await page.getByText('Driving').click();
