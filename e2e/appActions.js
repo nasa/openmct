@@ -479,6 +479,45 @@ async function setTimeConductorOffset(
 }
 
 /**
+ * Set the values (hours, mins, secs) for the TimeConductor offsets when in realtime mode and submit with enter key
+ * @param {import('@playwright/test').Page} page
+ * @param {OffsetValues} offset - Object containing offset values
+ */
+async function submitTimeConductorOffsetWithEnterKey(
+  page,
+  { startHours, startMins, startSecs, endHours, endMins, endSecs }
+) {
+  await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+  if (startHours) {
+    await page.getByLabel('Start offset hours').fill(startHours);
+  }
+
+  if (startMins) {
+    await page.getByLabel('Start offset minutes').fill(startMins);
+  }
+
+  if (startSecs) {
+    await page.getByLabel('Start offset seconds').fill(startSecs);
+  }
+
+  if (endHours) {
+    await page.getByLabel('End offset hours').fill(endHours);
+  }
+
+  if (endMins) {
+    await page.getByLabel('End offset minutes').fill(endMins);
+  }
+
+  if (endSecs) {
+    await page.getByLabel('End offset seconds').fill(endSecs);
+  }
+
+  // Click the check button
+  await page.keyboard.press('Enter');
+}
+
+/**
  * Set the values (hours, mins, secs) for the start time offset when in realtime mode
  * @param {import('@playwright/test').Page} page
  * @param {OffsetValues} offset
@@ -726,5 +765,6 @@ export {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
+  submitTimeConductorOffsetWithEnterKey,
   waitForPlotsToRender
 };
