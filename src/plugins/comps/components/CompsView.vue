@@ -340,7 +340,7 @@ function getValueFormatter() {
 }
 
 function applyTestData() {
-  if (!expression.value || !parameters.value) {
+  if (expression.value === undefined || parameters.value === undefined) {
     return;
   }
   const scope = parameters.value.reduce((acc, parameter) => {
