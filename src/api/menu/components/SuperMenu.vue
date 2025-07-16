@@ -131,7 +131,7 @@ export default {
   },
   mounted() {
     this.filteredActions = this.options.actions;
-
+    console.log('mounted', this.filteredActions);
     if (this.options.filterable) {
       this.$nextTick(() => {
         this.$refs.filterInput.focus();
