@@ -47,6 +47,9 @@ test.describe('Timeline Swim Lane Configuration', () => {
   let timeStripContentHolder;
   let timeAxis;
   let swimLaneLabels;
+  let showItemInTreeButton;
+  let editButton;
+  let treePane;
   // TODO: why the extra pixel?
   const fudge = 1;
 
@@ -58,8 +61,8 @@ test.describe('Timeline Swim Lane Configuration', () => {
       name: 'Time Strip'
     });
 
-    // Create
-    for (let i = 1; i <= 2; i++) {
+    // Create Swim Lanes
+    for (let i = 0; i <= 4; i++) {
       await createDomainObjectWithDefaults(page, {
         type: 'Overlay Plot',
         name: `Swim Lane ${i}`
@@ -70,34 +73,35 @@ test.describe('Timeline Swim Lane Configuration', () => {
     timeAxis = page.getByLabel('Time Axis');
     timeStripContentHolder = page.getByLabel('Time Strip');
     swimLaneLabels = timeStripContentHolder.locator('.c-swimlane__lane-label');
+    showItemInTreeButton = page.getByLabel('Show selected item in tree');
+    editButton = page.getByRole('button', { name: 'Edit Object', exact: true });
+    treePane = page.getByRole('tree', {
+      name: 'Main Tree'
+    });
   });
 
   test('allows for swim lane widths to be configured', async ({ page }) => {
+    // The Time Axis is a special instance of a swim lane
     const timeAxisLabelCount = await swimLaneLabels.count();
     await expect(timeAxisLabelCount).toBe(1);
 
-    // Click the Edit button
-    await page.getByRole('button', { name: 'Edit Object', exact: true }).click();
+    // Edit the Time Strip
+    await editButton.click();
     // Expand the 'My Items' folder in the left tree
-    await page.getByLabel('Show selected item in tree').click();
-    // Add objects to the time strip
-    const treePane = page.getByRole('tree', {
-      name: 'Main Tree'
-    });
-    const overlayPlot1TreeItem = treePane.getByRole('treeitem', {
-      name: 'Swim Lane 1'
-    });
-    const overlayPlot2TreeItem = treePane.getByRole('treeitem', {
-      name: 'Swim Lane 2'
-    });
-
-    await overlayPlot1TreeItem.dragTo(timeAxis);
-    await overlayPlot2TreeItem.dragTo(timeAxis);
+    await showItemInTreeButton.click();
+    // Add objects to the Time Strip
+    for (let i = 0; i <= 1; i++) {
+      const overlayPlotTreeItem = treePane.getByRole('treeitem', {
+        name: `Swim Lane ${i}`
+      });
+      await overlayPlotTreeItem.dragTo(timeAxis);
+    }
 
     const labelCount = await swimLaneLabels.count();
     await expect(labelCount).toBe(2 + timeAxisLabelCount);
 
     await test.step(`swim lane widths default to ${SWIM_LANE_DEFAULT_WIDTH}px`, async () => {
+      // Verify the swim lane widths are identical
       for (let i = 0; i < labelCount; i++) {
         await expect((await swimLaneLabels.nth(i).boundingBox()).width).toBe(
           SWIM_LANE_DEFAULT_WIDTH + fudge
@@ -116,7 +120,9 @@ test.describe('Timeline Swim Lane Configuration', () => {
       await page.mouse.move(box.x + dragDistance, box.y);
       await page.mouse.up();
       widthAfterDragRight = (await swimLaneLabels.nth(0).boundingBox()).width;
-      for (let i = 1; i < labelCount; i++) {
+
+      // Verify the swim lane widths are identical and updated
+      for (let i = 0; i < labelCount; i++) {
         const currentWidth = (await swimLaneLabels.nth(i).boundingBox()).width;
 
         await expect(currentWidth).toBe(widthAfterDragRight);
@@ -132,7 +138,9 @@ test.describe('Timeline Swim Lane Configuration', () => {
       await page.mouse.up();
 
       widthAfterDragLeft = (await swimLaneLabels.nth(0).boundingBox()).width;
-      for (let i = 1; i < labelCount; i++) {
+
+      // Verify the swim lane widths are identical and updated
+      for (let i = 0; i < labelCount; i++) {
         const currentWidth = (await swimLaneLabels.nth(i).boundingBox()).width;
 
         await expect(currentWidth).toBe(widthAfterDragLeft);
@@ -151,80 +159,67 @@ test.describe('Timeline Swim Lane Configuration', () => {
       await input.fill('100');
       await input.blur();
 
+      // Verify the swim lane widths are identical and updated
       for (let i = 0; i < (await swimLaneLabels.count()); i++) {
         await expect((await swimLaneLabels.nth(i).boundingBox()).width).toBe(100 + fudge);
       }
     });
   });
 
-  test('should resize containers vertically through drag and drop', async ({ page }) => {
-    // Click the Edit button
-    await page.getByRole('button', { name: 'Edit Object', exact: true }).click();
+  test('allows for swim lane heights to be configured', async ({ page }) => {
+    let swimLaneHeights;
+    const swimLanes = page
+      .locator('.c-timeline__objects')
+      .locator('.c-timeline__content.js-timeline__content');
 
-    // Get initial container sizes
-    const initialSizes = await getContainerSizes(page);
+    // Edit the Time Strip
+    await editButton.click();
+    // Expand the 'My Items' folder in the left tree
+    await showItemInTreeButton.click();
+    // Add objects to the Time Strip
+    for (let i = 0; i <= 3; i++) {
+      const overlayPlotTreeItem = treePane.getByRole('treeitem', {
+        name: `Swim Lane ${i}`
+      });
+      await overlayPlotTreeItem.dragTo(timeAxis);
+    }
 
-    // Find the first container and its resizer
-    const container = page.locator('.timeline-container').first();
-    const resizer = container.locator('.drag-resizer');
-
-    // Get initial height
-    const initialHeight = await container.evaluate((el) => el.offsetHeight);
-
-    // Drag down to resize
-    await resizer.hover();
-    await page.mouse.down();
-    await page.mouse.move(0, 50); // Move down 50 pixels
-    await page.mouse.up();
-
-    // Get new height
-    const newHeight = await container.evaluate((el) => el.offsetHeight);
-
-    // Verify container resized correctly
-    expect(newHeight).toBeGreaterThan(initialHeight);
-  });
-
-  test('should maintain minimum container size during drag', async ({ page }) => {
-    // Get first container
-    const container = page.locator('.timeline-container').first();
-    const resizer = container.locator('.drag-resizer');
-
-    // Try to resize container below minimum size
-    await resizer.hover();
-    await page.mouse.down();
-    await page.mouse.move(0, -100); // Move up significantly
-    await page.mouse.up();
-
-    // Get final size
-    const finalSize = await container.evaluate((el) =>
-      parseFloat(window.getComputedStyle(el).flexGrow)
+    swimLaneHeights = await swimLanes.evaluateAll((elements) =>
+      elements.map((el) => el.offsetHeight)
     );
 
-    // Verify size is not below minimum
-    expect(finalSize).toBeGreaterThan(MIN_CONTAINER_SIZE - 1);
+    expect(swimLaneHeights[0]).toBe(swimLaneHeights[3]);
+    expect(swimLaneHeights[1]).toBe(swimLaneHeights[3]);
+    expect(swimLaneHeights[2]).toBe(swimLaneHeights[3]);
+
+    await test.step('using drag and drop to resize swim lanes', async () => {
+      const swimLaneHeightHandle = page.locator('.c-fl-frame__resize-handle.vertical');
+
+      const originBox = await swimLaneHeightHandle.first().boundingBox();
+      await swimLaneHeightHandle.first().hover();
+      await page.mouse.down();
+      await page.mouse.move(originBox.x, originBox.y + 50);
+      await page.mouse.up();
+
+      swimLaneHeights = await swimLanes.evaluateAll((elements) =>
+        elements.map((el) => el.offsetHeight)
+      );
+
+      expect(swimLaneHeights[0]).toBeGreaterThan(swimLaneHeights[3]);
+      expect(swimLaneHeights[1]).toBeLessThan(swimLaneHeights[3]);
+      expect(swimLaneHeights[2]).toBe(swimLaneHeights[3]);
+    });
+
+    await test.step('using input entry in inspector Elements tab to resize swim lanes', async () => {});
+
+    await test.step('as fixed pixel heights', async () => {});
   });
 
-  test('should set fixed pixel height through inspector', async ({ page }) => {
-    // Get first container
-    const container = page.locator('.timeline-container').first();
+  test('retains fixed heights on fixed containters during drag resizing', async ({ page }) => {});
 
-    // Open inspector
-    await page.locator('.inspector-button').click();
+  test('drag resizing requires multiple flex containers', async ({ page }) => {});
 
-    // Set fixed height
-    const heightInput = page.locator('.inspector .height-input');
-    await heightInput.fill('200');
-    await heightInput.press('Enter');
-
-    // Verify container has fixed height
-    const height = await container.evaluate((el) => el.offsetHeight);
-    expect(height).toBe(200);
-
-    // Verify container has fixed class
-    await expect(container).toHaveClass(/fixed/);
-  });
-
-  test('should maintain fixed height during window resize', async ({ page }) => {
+  test('should maintain fixed heights during window resize', async ({ page }) => {
     // Set fixed height on container
     const container = page.locator('.timeline-container').first();
     await page.locator('.inspector-button').click();
@@ -241,27 +236,6 @@ test.describe('Timeline Swim Lane Configuration', () => {
     // Verify height remains the same
     const newHeight = await container.evaluate((el) => el.offsetHeight);
     expect(newHeight).toBe(initialHeight);
-  });
-
-  test('should toggle between fixed and flexible height', async ({ page }) => {
-    // Get first container
-    const container = page.locator('.timeline-container').first();
-
-    // Set fixed height
-    await page.locator('.inspector-button').click();
-    const heightInput = page.locator('.inspector .height-input');
-    await heightInput.fill('200');
-    await heightInput.press('Enter');
-
-    // Verify container has fixed class
-    await expect(container).toHaveClass(/fixed/);
-
-    // Remove fixed height
-    await heightInput.fill('');
-    await heightInput.press('Enter');
-
-    // Verify container is no longer fixed
-    await expect(container).not.toHaveClass(/fixed/);
   });
 
   test('should maintain total container height during resize operations', async ({ page }) => {
@@ -284,6 +258,66 @@ test.describe('Timeline Swim Lane Configuration', () => {
     // Verify total height remains approximately the same
     // Allow small margin of error due to rounding
     expect(Math.abs(newTotal - initialTotal)).toBeLessThan(10);
+  });
+
+  test('should maintain minimum container size during drag', async ({ page }) => {
+    // Get first container
+    const container = page.locator('.timeline-container').first();
+    const resizer = container.locator('.drag-resizer');
+
+    // Try to resize container below minimum size
+    await resizer.hover();
+    await page.mouse.down();
+    await page.mouse.move(0, -100); // Move up significantly
+    await page.mouse.up();
+
+    // Get final size
+    const finalSize = await container.evaluate((el) =>
+      parseFloat(window.getComputedStyle(el).flexGrow)
+    );
+
+    // Verify size is not below minimum
+    expect(finalSize).toBeGreaterThan(MIN_CONTAINER_SIZE - 1);
+  });
+  test('should toggle between fixed and flexible height', async ({ page }) => {
+    // Get first container
+    const container = page.locator('.timeline-container').first();
+
+    // Set fixed height
+    await page.locator('.inspector-button').click();
+    const heightInput = page.locator('.inspector .height-input');
+    await heightInput.fill('200');
+    await heightInput.press('Enter');
+
+    // Verify container has fixed class
+    await expect(container).toHaveClass(/fixed/);
+
+    // Remove fixed height
+    await heightInput.fill('');
+    await heightInput.press('Enter');
+
+    // Verify container is no longer fixed
+    await expect(container).not.toHaveClass(/fixed/);
+  });
+
+  test('should set fixed pixel height through inspector', async ({ page }) => {
+    // Get first container
+    const container = page.locator('.timeline-container').first();
+
+    // Open inspector
+    await page.locator('.inspector-button').click();
+
+    // Set fixed height
+    const heightInput = page.locator('.inspector .height-input');
+    await heightInput.fill('200');
+    await heightInput.press('Enter');
+
+    // Verify container has fixed height
+    const height = await container.evaluate((el) => el.offsetHeight);
+    expect(height).toBe(200);
+
+    // Verify container has fixed class
+    await expect(container).toHaveClass(/fixed/);
   });
 });
 
