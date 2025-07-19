@@ -1,6 +1,6 @@
 {
   "name": "openmct-e2e",
-  "version": "4.0.0-next",
+  "version": "4.1.0-next",
   "description": "The Open MCT e2e framework",
   "type": "module",
   "module": "index.js",
@@ -16,7 +16,7 @@
   "devDependencies": {
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
-    "@playwright/test": "1.45.2",
+    "@playwright/test": "1.48.1",
     "@axe-core/playwright": "4.8.5"
   },
   "author": {

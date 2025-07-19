@@ -28,16 +28,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npx playwright@1.45.2 install
+      - run: npx playwright@1.48.1 install
       - run: npm ci --no-audit --progress=false
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
       - run: npm run test:perf:memory
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-perf-test-results
           path: test-results
+          overwrite: true
 
       - name: Remove pr:e2e:perf label (if present)
         if: always()

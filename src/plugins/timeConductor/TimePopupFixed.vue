@@ -69,7 +69,7 @@
       <div class="pr-time-input pr-time-input--buttons">
         <button
           class="c-button c-button--major icon-check"
-          :disabled="isDisabled"
+          :disabled="hasInputValidityError"
           aria-label="Submit time bounds"
           @click.prevent="handleFormSubmission(true)"
         ></button>
@@ -157,11 +157,22 @@ export default {
         return false;
       }
     },
-    handleFormSubmission(shouldDismiss) {
-      this.validateAllBounds('startDate');
-      this.validateAllBounds('endDate');
+    clearAllValidation() {
+      Object.keys(this.inputValidityMap).forEach(this.clearValidation);
+    },
+    clearValidation(refName) {
+      const input = this.getInput(refName);
 
-      if (!this.isDisabled) {
+      input.setCustomValidity('');
+      input.title = '';
+    },
+    handleFormSubmission(shouldDismiss) {
+      this.validateLimit();
+      this.reportValidity('limit');
+      this.validateBounds();
+      this.reportValidity('bounds');
+
+      if (this.isValid) {
         this.setBoundsFromView(shouldDismiss);
       }
     },
@@ -238,15 +249,20 @@ export default {
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
-        this.isDisabled = true;
+        this.hasLogicalValidationErrors = true;
       } else {
         input.setCustomValidity('');
         input.title = '';
       }
 
       this.$refs.fixedDeltaInput.reportValidity();
+    },
+    getInput(refName) {
+      if (Object.keys(this.inputValidityMap).includes(refName)) {
+        return this.$refs[refName];
+      }
 
-      return validationResult.valid;
+      return this.$refs.startDate;
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {

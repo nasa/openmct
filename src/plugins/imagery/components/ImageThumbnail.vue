@@ -38,7 +38,7 @@
       <img
         ref="img"
         class="c-thumb__image"
-        :src="`${image.thumbnailUrl || image.url}`"
+        :src="imageSrc"
         fetchpriority="low"
         @load="imageLoadCompleted"
       />
@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import { encode_url } from '../../../utils/encoding';
+
 const THUMB_PADDING = 4;
 const BORDER_WIDTH = 2;
 
@@ -96,6 +98,9 @@ export default {
     };
   },
   computed: {
+    imageSrc() {
+      return `${encode_url(this.image.thumbnailUrl) || encode_url(this.image.url)}`;
+    },
     ariaLabel() {
       return `Image thumbnail from ${this.image.formattedTime}${this.showAnnotationIndicator ? ', has annotations' : ''}`;
     },

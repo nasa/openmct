@@ -296,6 +296,7 @@ import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import { useResizeObserver } from '../../../ui/composables/resize.js';
+import { MODE, ORDER } from '../constants.js';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -372,7 +373,6 @@ export default {
       configuredColumnWidths: configuration.columnWidths,
       sizingRows: {},
       rowHeight: ROW_HEIGHT,
-      scrollOffset: 0,
       totalHeight: 0,
       totalWidth: 0,
       rowOffset: 0,
@@ -551,6 +551,7 @@ export default {
     //Default sort
     this.sortOptions = this.table.tableRows.sortBy();
     this.scrollable = this.$refs.scrollable;
+    this.lastScrollLeft = this.scrollable.scrollLeft;
     this.contentTable = this.$refs.contentTable;
     this.sizingTable = this.$refs.sizingTable;
     this.headersHolderEl = this.$refs.headersHolderEl;
@@ -713,7 +714,7 @@ export default {
     sortBy(columnKey) {
       let timeSystemKey = this.openmct.time.getTimeSystem().key;
 
-      if (this.telemetryMode === 'performance' && columnKey !== timeSystemKey) {
+      if (this.telemetryMode === MODE.PERFORMANCE && columnKey !== timeSystemKey) {
         this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Sort', () => {
           this.initiateSort(columnKey);
         });
@@ -724,22 +725,24 @@ export default {
     initiateSort(columnKey) {
       // If sorting by the same column, flip the sort direction.
       if (this.sortOptions.key === columnKey) {
-        if (this.sortOptions.direction === 'asc') {
-          this.sortOptions.direction = 'desc';
+        if (this.sortOptions.direction === ORDER.ASCENDING) {
+          this.sortOptions.direction = ORDER.DESCENDING;
         } else {
-          this.sortOptions.direction = 'asc';
+          this.sortOptions.direction = ORDER.ASCENDING;
         }
       } else {
         this.sortOptions = {
           key: columnKey,
-          direction: 'desc'
+          direction: ORDER.DESCENDING
         };
       }
 
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-      this.throttledUpdateVisibleRows();
+      if (this.lastScrollLeft === this.scrollable.scrollLeft) {
+        this.throttledUpdateVisibleRows();
+      }
       this.synchronizeScrollX();
 
       if (this.shouldAutoScroll()) {
@@ -751,7 +754,7 @@ export default {
       }
     },
     shouldAutoScroll() {
-      if (this.sortOptions.direction === 'desc') {
+      if (this.sortOptions.direction === ORDER.DESCENDING) {
         return false;
       }
 
@@ -764,6 +767,8 @@ export default {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
+      this.lastScrollLeft = this.scrollable.scrollLeft;
+
       if (this.$refs.headersHolderEl && this.scrollable) {
         this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
       }
@@ -844,7 +849,7 @@ export default {
       return justTheData;
     },
     exportAllDataAsCSV() {
-      if (this.telemetryMode === 'performance') {
+      if (this.telemetryMode === MODE.PERFORMANCE) {
         this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Export', () => {
           const data = this.getTableRowData();
 
@@ -1226,7 +1231,8 @@ export default {
       });
     },
     updateTelemetryMode() {
-      this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
+      this.telemetryMode =
+        this.telemetryMode === MODE.UNLIMITED ? MODE.PERFORMANCE : MODE.UNLIMITED;
 
       if (this.persistModeChange) {
         this.table.configuration.setTelemetryMode(this.telemetryMode);
@@ -1236,7 +1242,7 @@ export default {
 
       const timeSystemKey = this.openmct.time.getTimeSystem().key;
 
-      if (this.telemetryMode === 'performance' && this.sortOptions.key !== timeSystemKey) {
+      if (this.telemetryMode === MODE.PERFORMANCE && this.sortOptions.key !== timeSystemKey) {
         this.openmct.notifications.info(
           'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
         );

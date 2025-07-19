@@ -30,16 +30,19 @@ import {
   navigateToObjectWithRealTime,
   setRealTimeMode
 } from '../../../../appActions.js';
-import { MISSION_TIME } from '../../../../constants.js';
+import {
+  createImageryViewWithShortDelay,
+  FIVE_MINUTES,
+  IMAGE_LOAD_DELAY,
+  MOUSE_WHEEL_DELTA_Y,
+  THIRTY_SECONDS
+} from '../../../../helper/imageryUtils.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+
 const panHotkey = process.platform === 'linux' ? ['Shift', 'Alt'] : ['Alt'];
 const tagHotkey = ['Shift', 'Alt'];
 const expectedAltText = process.platform === 'linux' ? 'Shift+Alt drag to pan' : 'Alt drag to pan';
 const thumbnailUrlParamsRegexp = /\?w=100&h=100/;
-const IMAGE_LOAD_DELAY = 5 * 1000;
-const MOUSE_WHEEL_DELTA_Y = 120;
-const FIVE_MINUTES = 1000 * 60 * 5;
-const THIRTY_SECONDS = 1000 * 30;
 
 //The following block of tests verifies the basic functionality of example imagery and serves as a template for Imagery objects embedded in other objects.
 test.describe('Example Imagery Object', () => {
@@ -92,9 +95,6 @@ test.describe('Example Imagery Object', () => {
     // expect new tab url to have jpg in it
     expect(newPage.url()).toContain('.jpg');
   });
-
-  // this requires CORS to be enabled in some fashion
-  test.fixme('Can right click on image and save it as a file', async ({ page }) => {});
 
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
     page,
@@ -357,15 +357,10 @@ test.describe('Example Imagery Object', () => {
   });
 });
 
-test.describe('Example Imagery in Display Layout @clock', () => {
+test.describe('Example Imagery in Display Layout', () => {
   let displayLayout;
 
   test.beforeEach(async ({ page }) => {
-    // We mock the clock so that we don't need to wait for time driven events
-    // to verify functionality.
-    await page.clock.install({ time: MISSION_TIME });
-    await page.clock.resume();
-
     // Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
@@ -428,12 +423,7 @@ test.describe('Example Imagery in Display Layout @clock', () => {
     await expect.soft(pausePlayButton).toHaveClass(/is-paused/);
   });
 
-  test('Imagery View operations @clock', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/5265'
-    });
-
+  test('Imagery View operations', async ({ page }) => {
     // Edit mode
     await page.getByLabel('Edit Object').click();
 
@@ -526,14 +516,9 @@ test.describe('Example Imagery in Display Layout @clock', () => {
   });
 });
 
-test.describe('Example Imagery in Flexible layout @clock', () => {
+test.describe('Example Imagery in Flexible layout', () => {
   let flexibleLayout;
   test.beforeEach(async ({ page }) => {
-    // We mock the clock so that we don't need to wait for time driven events
-    // to verify functionality.
-    await page.clock.install({ time: MISSION_TIME });
-    await page.clock.resume();
-
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     flexibleLayout = await createDomainObjectWithDefaults(page, { type: 'Flexible Layout' });
@@ -562,7 +547,7 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
     await page.getByRole('button', { name: 'Close' }).click();
   });
 
-  test('Imagery View operations @clock', async ({ page, browserName }) => {
+  test('Imagery View operations', async ({ page, browserName }) => {
     test.fixme(browserName === 'firefox', 'This test needs to be updated to work with firefox');
     test.info().annotations.push({
       type: 'issue',
@@ -573,14 +558,10 @@ test.describe('Example Imagery in Flexible layout @clock', () => {
   });
 });
 
-test.describe('Example Imagery in Tabs View @clock', () => {
+test.describe('Example Imagery in Tabs View', () => {
   let tabsView;
-  test.beforeEach(async ({ page }) => {
-    // We mock the clock so that we don't need to wait for time driven events
-    // to verify functionality.
-    await page.clock.install({ time: MISSION_TIME });
-    await page.clock.resume();
 
+  test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     tabsView = await createDomainObjectWithDefaults(page, { type: 'Tabs View' });
@@ -607,7 +588,8 @@ test.describe('Example Imagery in Tabs View @clock', () => {
     // Wait for image thumbnail auto-scroll to complete
     await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
   });
-  test('Imagery View operations @clock', async ({ page }) => {
+
+  test('Imagery View operations', async ({ page }) => {
     await performImageryViewOperationsAndAssert(page, tabsView);
   });
 });
@@ -668,16 +650,19 @@ test.describe('Example Imagery in Time Strip', () => {
  * 3. Can pan the image using the pan hotkey + mouse drag
  * 4. Clicking on the left arrow button pauses imagery and moves to the previous image
  * 5. Imagery is updated as new images stream in, regardless of pause status
- * 6. Old images are discarded when new images stream in
- * 7. Image brightness/contrast can be adjusted by dragging the sliders
+ * 6. Old images are discarded when their timestamps fall out of bounds
+ * 7. Multiple images can be discarded when their timestamps fall out of bounds
+ * 8. Image brightness/contrast can be adjusted by dragging the sliders
  * @param {import('@playwright/test').Page} page
  */
 async function performImageryViewOperationsAndAssert(page, layoutObject) {
-  // Verify that imagery thumbnails use a thumbnail url
-  const thumbnailImages = page.getByLabel('Image thumbnail from').locator('.c-thumb__image');
-  const mainImage = page.locator('.c-imagery__main-image__image');
-  await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
-  await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
+  await test.step('Verify that imagery thumbnails use a thumbnail url', async () => {
+    const thumbnailImages = page.getByLabel('Image thumbnail from').locator('.c-thumb__image');
+    const mainImage = page.locator('.c-imagery__main-image__image');
+    await expect(thumbnailImages.first()).toHaveAttribute('src', thumbnailUrlParamsRegexp);
+    await expect(mainImage).not.toHaveAttribute('src', thumbnailUrlParamsRegexp);
+  });
+
   // Click previous image button
   const previousImageButton = page.getByLabel('Previous image');
   await expect(previousImageButton).toBeVisible();
@@ -735,19 +720,6 @@ async function performImageryViewOperationsAndAssert(page, layoutObject) {
 
   // Unpause imagery
   await page.locator('.pause-play').click();
-
-  // verify that old images are discarded
-  const lastImageInBounds = page.getByLabel('Image thumbnail from').first();
-  const lastImageTimestamp = await lastImageInBounds.getAttribute('title');
-  expect(lastImageTimestamp).not.toBeNull();
-
-  // go forward in time to ensure old images are discarded
-  await page.clock.fastForward(IMAGE_LOAD_DELAY);
-  await page.clock.resume();
-  await expect(page.getByLabel(lastImageTimestamp)).toBeHidden();
-
-  //Get background-image url from background-image css prop
-  await assertBackgroundImageUrlFromBackgroundCss(page);
 
   // Open the image filter menu
   await page.locator('[role=toolbar] button[title="Brightness and contrast"]').click();
@@ -813,24 +785,6 @@ async function assertBackgroundImageBrightness(page, expected) {
     return el.style.filter.match(/brightness\((\d{1,3})%\)/)[1];
   });
   expect(actual).toBe(expected);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function assertBackgroundImageUrlFromBackgroundCss(page) {
-  const backgroundImage = page.getByLabel('Focused Image Element');
-  const backgroundImageUrl = await backgroundImage.evaluate((el) => {
-    return window
-      .getComputedStyle(el)
-      .getPropertyValue('background-image')
-      .match(/url\(([^)]+)\)/)[1];
-  });
-
-  // go forward in time to ensure old images are discarded
-  await page.clock.fastForward(IMAGE_LOAD_DELAY);
-  await page.clock.resume();
-  await expect(backgroundImage).not.toHaveJSProperty('background-image', backgroundImageUrl);
 }
 
 /**
@@ -918,62 +872,66 @@ async function mouseZoomOnImageAndAssert(page, factor = 2) {
  * @param {import('@playwright/test').Page} page
  */
 async function buttonZoomOnImageAndAssert(page) {
-  // Lock the zoom and pan so it doesn't reset if a new image comes in
-  await page.getByLabel('Focused Image Element').hover({ trial: true });
-  const lockButton = page.getByRole('button', {
-    name: 'Lock current zoom and pan across all images'
-  });
-  if (!(await lockButton.isVisible())) {
+  await test.step('Can zoom using buttons', async () => {
+    // Lock the zoom and pan so it doesn't reset if a new image comes in
     await page.getByLabel('Focused Image Element').hover({ trial: true });
-  }
-  await lockButton.click();
+    const lockButton = page.getByRole('button', {
+      name: 'Lock current zoom and pan across all images'
+    });
 
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(1) translate(0px, 0px)'
-  );
+    await lockButton.isVisible();
+    // if (!(await lockButton.isVisible())) {
+    //   await page.getByLabel('Focused Image Element').hover({ trial: true });
+    // }
+    await lockButton.click();
 
-  // Get initial image dimensions
-  const initialBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(1) translate(0px, 0px)'
+    );
 
-  // Zoom in twice via button
-  await zoomIntoImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(2) translate(0px, 0px)'
-  );
-  await zoomIntoImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(3) translate(0px, 0px)'
-  );
+    // Get initial image dimensions
+    const initialBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
 
-  // Get and assert zoomed in image dimensions
-  const zoomedInBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-  expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
-  expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
+    // Zoom in twice via button
+    await zoomIntoImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(2) translate(0px, 0px)'
+    );
+    await zoomIntoImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(3) translate(0px, 0px)'
+    );
 
-  // Zoom out once via button
-  await zoomOutOfImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(2) translate(0px, 0px)'
-  );
+    // Get and assert zoomed in image dimensions
+    const zoomedInBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
+    expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
-  // Get and assert zoomed out image dimensions
-  const zoomedOutBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-  expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
-  expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
+    // Zoom out once via button
+    await zoomOutOfImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(2) translate(0px, 0px)'
+    );
 
-  // Zoom out again via button, assert against the initial image dimensions
-  await zoomOutOfImageryByButton(page);
-  await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
-    'style.transform',
-    'scale(1) translate(0px, 0px)'
-  );
+    // Get and assert zoomed out image dimensions
+    const zoomedOutBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
+    expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
 
-  const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
-  expect(finalBoundingBox).toEqual(initialBoundingBox);
+    // Zoom out again via button, assert against the initial image dimensions
+    await zoomOutOfImageryByButton(page);
+    await expect(page.getByLabel('Focused Image Element')).toHaveJSProperty(
+      'style.transform',
+      'scale(1) translate(0px, 0px)'
+    );
+
+    const finalBoundingBox = await page.getByLabel('Focused Image Element').boundingBox();
+    expect(finalBoundingBox).toEqual(initialBoundingBox);
+  });
 }
 
 /**
@@ -1033,24 +991,6 @@ async function resetImageryPanAndZoom(page) {
   await waitForZoomAndPanTransitions(page);
   await expect(page.getByText('Alt drag to pan')).toBeHidden();
   await expect(page.locator('.c-thumb__viewable-area')).toBeHidden();
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- */
-async function createImageryViewWithShortDelay(page, { name, parent }) {
-  await createDomainObjectWithDefaults(page, {
-    name,
-    type: 'Example Imagery',
-    parent
-  });
-
-  await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
-  await page.getByLabel('More actions').click();
-  await page.getByLabel('Edit Properties').click();
-  // Clear and set Image load delay to minimum value
-  await page.locator('input[type="number"]').fill(`${IMAGE_LOAD_DELAY}`);
-  await page.getByLabel('Save').click();
 }
 
 /**

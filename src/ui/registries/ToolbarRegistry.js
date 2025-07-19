@@ -25,64 +25,66 @@
  *
  * @interface ToolbarRegistry
  */
-export default function ToolbarRegistry() {
-  this.providers = {};
+export default class ToolbarRegistry {
+  constructor() {
+    this.providers = {};
+  }
+
+  /**
+   * Gets toolbar controls from providers which can provide a toolbar for this selection.
+   *
+   * @param {Object} selection the selection object
+   * @returns {Object[]} an array of objects defining controls for the toolbar
+   * @private for platform-internal use
+   */
+  get(selection) {
+    const providers = this.getAllProviders().filter(function (provider) {
+      return provider.forSelection(selection);
+    });
+
+    const structure = [];
+
+    providers.forEach((provider) => {
+      provider.toolbar(selection).forEach((item) => structure.push(item));
+    });
+
+    return structure;
+  }
+
+  /**
+   * @private
+   */
+  getAllProviders() {
+    return Object.values(this.providers);
+  }
+
+  /**
+   * @private
+   */
+  getByProviderKey(key) {
+    return this.providers[key];
+  }
+
+  /**
+   * Registers a new type of toolbar.
+   *
+   * @param {module:openmct.ToolbarRegistry} provider the provider for this toolbar
+   * @method addProvider
+   */
+  addProvider(provider) {
+    const key = provider.key;
+
+    if (key === undefined) {
+      throw "Toolbar providers must have a unique 'key' property defined.";
+    }
+
+    if (this.providers[key] !== undefined) {
+      console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
+    }
+
+    this.providers[key] = provider;
+  }
 }
-
-/**
- * Gets toolbar controls from providers which can provide a toolbar for this selection.
- *
- * @param {Object} selection the selection object
- * @returns {Object[]} an array of objects defining controls for the toolbar
- * @private for platform-internal use
- */
-ToolbarRegistry.prototype.get = function (selection) {
-  const providers = this.getAllProviders().filter(function (provider) {
-    return provider.forSelection(selection);
-  });
-
-  const structure = [];
-
-  providers.forEach((provider) => {
-    provider.toolbar(selection).forEach((item) => structure.push(item));
-  });
-
-  return structure;
-};
-
-/**
- * @private
- */
-ToolbarRegistry.prototype.getAllProviders = function () {
-  return Object.values(this.providers);
-};
-
-/**
- * @private
- */
-ToolbarRegistry.prototype.getByProviderKey = function (key) {
-  return this.providers[key];
-};
-
-/**
- * Registers a new type of toolbar.
- *
- * @param {module:openmct.ToolbarRegistry} provider the provider for this toolbar
- * @method addProvider
- */
-ToolbarRegistry.prototype.addProvider = function (provider) {
-  const key = provider.key;
-
-  if (key === undefined) {
-    throw "Toolbar providers must have a unique 'key' property defined.";
-  }
-
-  if (this.providers[key] !== undefined) {
-    console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
-  }
-
-  this.providers[key] = provider;
-};
 
 /**
  * Exposes types of toolbars in Open MCT.
