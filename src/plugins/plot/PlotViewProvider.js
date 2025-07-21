@@ -93,7 +93,7 @@ export default function PlotViewProvider(openmct) {
       };
     },
     priority() {
-      return this.openmct.priority.LOW;
+      return openmct.priority.LOW;
     }
   };
 }

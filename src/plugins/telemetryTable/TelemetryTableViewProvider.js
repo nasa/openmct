@@ -47,7 +47,7 @@ export default function TelemetryTableViewProvider(openmct, options) {
       return new TelemetryTableView(openmct, domainObject, objectPath, options);
     },
     priority() {
-      return this.openmct.priority.LOW;
+      return openmct.priority.LOW;
     }
   };
 }
