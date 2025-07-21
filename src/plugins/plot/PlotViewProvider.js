@@ -91,6 +91,9 @@ export default function PlotViewProvider(openmct) {
           return component;
         }
       };
+    },
+    priority() {
+      return this.openmct.priority.LOW;
     }
   };
 }

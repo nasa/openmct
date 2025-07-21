@@ -85,9 +85,6 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
           if (_destroy) {
             _destroy();
           }
-        },
-        priority() {
-          return openmct.priority.HIGH;
         }
       };
     }

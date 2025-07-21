@@ -69,7 +69,7 @@ export default class FiltersInspectorViewProvider {
         }
       },
       priority: function () {
-        return openmct.priority.DEFAULT;
+        return openmct.priority.LOW;
       },
       destroy: function () {
         if (_destroy) {

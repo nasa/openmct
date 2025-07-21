@@ -22,6 +22,7 @@
 
 import mount from 'utils/mount';
 
+import PRIORITIES from '../../api/priority/PriorityAPI';
 import LadTableConfiguration from './components/LadTableConfiguration.vue';
 
 export default function LADTableConfigurationViewProvider(openmct) {
