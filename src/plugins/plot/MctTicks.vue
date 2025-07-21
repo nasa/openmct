@@ -34,6 +34,14 @@
         :title="tick.fullText || tick.text"
       >
         {{ tick.text }}
+        <div
+          v-for="(subTick, j) in subTicks"
+          :key="'tick-left-sub' + j"
+          class="gl-plot-tick gl-plot-x-tick-label"
+          :style="{
+            left: (100 * (tick.value - min)) / interval + subTick + '%'
+          }"
+        ></div>
       </div>
     </div>
     <div v-if="position === 'top'" class="gl-plot-tick-wrapper">
@@ -46,7 +54,9 @@
         :title="tick.fullText || tick.text"
         style="margin-top: -0.5em; direction: ltr"
       >
-        <span>{{ tick.text }}</span>
+        <span v-if="i % subTickCount === 0">
+          {{ tick.text }}
+        </span>
       </div>
     </div>
     <!-- grid lines follow -->
@@ -81,6 +91,7 @@ import eventHelpers from './lib/eventHelpers.js';
 import { generateTimestampTicks, getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
+const GRANULAR_TICK_COUNT = 5;
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],
@@ -96,7 +107,7 @@ export default {
     tickCount: {
       type: Number,
       default() {
-        return 8;
+        return 12;
       }
     },
     axisId: {
@@ -136,8 +147,23 @@ export default {
     return {
       ticks: [],
       interval: undefined,
-      min: undefined
+      min: undefined,
+      subTickCount: GRANULAR_TICK_COUNT
     };
+  },
+  computed: {
+    subTicks() {
+      let sub = [];
+      if (this.ticks.length) {
+        const step = (this.ticks[1] - this.ticks[0]) / GRANULAR_TICK_COUNT;
+        let result = 0;
+        while (result + step < this.ticks[1] && result + step > this.ticks[0]) {
+          sub.push(result);
+          result = result + step;
+        }
+      }
+      return sub;
+    }
   },
   mounted() {
     eventHelpers.extend(this);

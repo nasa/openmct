@@ -32,6 +32,7 @@ const COMMON_INTERVALS_MS = [
   10 * 60 * 60 * 1000, // 10 hours
   12 * 60 * 60 * 1000, // 12 hours
   1 * 24 * 60 * 60 * 1000, // 1 day
+  3 * 24 * 60 * 60 * 1000, // 3 days
   7 * 24 * 60 * 60 * 1000, // 1 week
   14 * 24 * 60 * 60 * 1000, // 2 weeks
   30 * 24 * 60 * 60 * 1000, // ~1 month (30 days approximation)
