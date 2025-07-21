@@ -56,7 +56,7 @@ jobs:
         run: npm run cov:e2e:report
 
       - name: Publish Results to Codecov.io
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/e2e/lcov.info

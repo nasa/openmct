@@ -39,6 +39,7 @@
           :key="element.identifier.key"
           :index="index"
           :element-object="element"
+          :allow-drag="isEditing"
           :allow-drop="allowDrop"
           @dragstart-custom="moveFrom(index)"
           @drop-custom="moveTo(index)"
