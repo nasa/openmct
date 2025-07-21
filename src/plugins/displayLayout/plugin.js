@@ -120,10 +120,6 @@ export default function DisplayLayoutPlugin(options) {
       view: function (domainObject, objectPath) {
         return new DisplayLayoutView(openmct, domainObject, objectPath, options);
       }
-      // priority() {
-      //   // Was a priority of 100 in commit: https://github.com/nasa/openmct/pull/2185/commits/b654f651dc08fca466525c16e892c6e65bf2d99c
-      //   return PRIORITIES.MEDIUM;
-      // }
     });
     openmct.objects.addGetInterceptor(displayLayoutStylesInterceptor(openmct));
     openmct.types.addType('layout', DisplayLayoutType());
