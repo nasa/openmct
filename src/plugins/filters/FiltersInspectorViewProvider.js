@@ -69,7 +69,8 @@ export default class FiltersInspectorViewProvider {
         }
       },
       priority: function () {
-        return openmct.priority.LOW;
+        // Needs to be Default so that filters tab shows up correctly for Overlay Plots
+        return openmct.priority.DEFAULT;
       },
       destroy: function () {
         if (_destroy) {
