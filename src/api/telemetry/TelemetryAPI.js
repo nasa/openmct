@@ -239,6 +239,7 @@ export default class TelemetryAPI {
       options.domain = options.timeContext.getTimeSystem().key;
     }
 
+    // if no specific start/end bounds are passed, use the timeContext bounds
     if (!Object.hasOwn(options, 'start')) {
       options.start = options.timeContext.getBounds().start;
     }

@@ -281,17 +281,12 @@ function updateOutputFormat() {
   openmct.telemetry.removeMetadataFromCache(domainObject);
 }
 
-function reloadParameters(passedDomainObject) {
-  // Because this is triggered by a composition change, we have
-  // to defer mutation of our domain object, otherwise we might
-  // mutate an outdated version of the domain object.
-  setTimeout(function () {
-    domainObject.configuration.comps.parameters = passedDomainObject.configuration.comps.parameters;
-    parameters.value = domainObject.configuration.comps.parameters;
-    openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
-    compsManager.setDomainObject(domainObject);
-    applyTestData();
-  });
+function reloadParameters() {
+  domainObject.configuration.comps.parameters = compsManager.getParameters();
+  parameters.value = domainObject.configuration.comps.parameters;
+  openmct.objects.mutate(domainObject, `configuration.comps.parameters`, parameters.value);
+  compsManager.setDomainObject(domainObject);
+  applyTestData();
 }
 
 function updateParameters() {

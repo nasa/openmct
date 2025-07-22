@@ -85,14 +85,7 @@ export default class TelemetryCollection extends EventEmitter {
       this.options.timeContext = this.openmct.time;
     }
     this._setTimeSystem(this.options.timeContext.getTimeSystem());
-    this.lastBounds = this.options.timeContext.getBounds();
-    // prioritize passed options over time bounds
-    if (this.options.start) {
-      this.lastBounds.start = this.options.start;
-    }
-    if (this.options.end) {
-      this.lastBounds.end = this.options.end;
-    }
+
     this._watchBounds();
     this._watchTimeSystem();
     this._watchTimeModeChange();
@@ -138,6 +131,11 @@ export default class TelemetryCollection extends EventEmitter {
    */
   async _requestHistoricalTelemetry() {
     const options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
+    this.lastBounds = {
+      start: options.start,
+      end: options.end
+    };
+
     const historicalProvider = this.openmct.telemetry.findRequestProvider(
       this.domainObject,
       options
@@ -223,19 +221,21 @@ export default class TelemetryCollection extends EventEmitter {
     let hasDataBeforeStartBound = false;
     let size = this.options.size;
     let enforceSize = size !== undefined && this.options.enforceSize;
-    const boundsToUse = this.lastBounds;
-    if (!isSubscriptionData && this.options.start) {
-      boundsToUse.start = this.options.start;
-    }
-    if (!isSubscriptionData && this.options.end) {
-      boundsToUse.end = this.options.end;
-    }
+    // const boundsToUse = this.lastBounds;
+    // if (!isSubscriptionData && this.options.start) {
+    //   boundsToUse.start = this.options.start;
+    // }
+    // if (!isSubscriptionData && this.options.end) {
+    //   boundsToUse.end = this.options.end;
+    // }
 
     // loop through, sort and dedupe
     for (let datum of data) {
       parsedValue = this.parseTime(datum);
-      beforeStartOfBounds = parsedValue < boundsToUse.start;
-      afterEndOfBounds = parsedValue > boundsToUse.end;
+      // beforeStartOfBounds = parsedValue < boundsToUse.start;
+      // afterEndOfBounds = parsedValue > boundsToUse.end;
+      beforeStartOfBounds = parsedValue < this.lastBounds.start;
+      afterEndOfBounds = parsedValue > this.lastBounds.end;
 
       if (
         !afterEndOfBounds &&
@@ -414,10 +414,7 @@ export default class TelemetryCollection extends EventEmitter {
         this.emit('add', added, [this.boundedTelemetry.length]);
       }
     } else {
-      // user bounds change, reset and remove initial requested bounds (we're using new bounds)
-      delete this.options?.start;
-      delete this.options?.end;
-      this.lastBounds = bounds;
+      // user bounds change, reset
       this._reset();
     }
   }
