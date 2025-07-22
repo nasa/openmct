@@ -51,6 +51,7 @@
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
+  gap: $interiorMargin;
   height: 100%;
   overflow: hidden;
 
@@ -89,23 +90,24 @@
   &__conditions {
     flex: 1 1 auto;
 
-    > * + * {
-      margin-top: $interiorMarginSm;
-    }
+    //> * + * {
+    //  margin-top: $interiorMarginSm;
+    //}
   }
 
   &__content {
     display: flex;
     flex-direction: column;
+    gap: $interiorMarginSm;
     flex: 0 1 auto;
     overflow: hidden;
 
     > * {
       flex: 0 0 auto;
       overflow: hidden;
-      + * {
-        margin-top: $interiorMarginSm;
-      }
+      //+ * {
+      //  margin-top: $interiorMarginSm;
+      //}
     }
 
     .c-button {
@@ -121,6 +123,7 @@
   section {
     display: flex;
     flex-direction: column;
+    gap: $interiorMargin;
     overflow: hidden;
   }
 
