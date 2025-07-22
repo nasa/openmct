@@ -222,8 +222,9 @@ export default class CompsManager extends EventEmitter {
     const allTimestampsSet = new Set();
 
     Object.values(this.#telemetryCollections).forEach((collection) => {
+      const timeSystemKey = collection.timeKey;
       collection.getAll().forEach((dataPoint) => {
-        allTimestampsSet.add(dataPoint.timestamp);
+        allTimestampsSet.add(dataPoint[timeSystemKey]);
       });
     });
 
