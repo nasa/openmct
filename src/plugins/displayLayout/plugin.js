@@ -119,9 +119,6 @@ export default function DisplayLayoutPlugin(options) {
       },
       view: function (domainObject, objectPath) {
         return new DisplayLayoutView(openmct, domainObject, objectPath, options);
-      },
-      priority() {
-        return 100;
       }
     });
     openmct.objects.addGetInterceptor(displayLayoutStylesInterceptor(openmct));
