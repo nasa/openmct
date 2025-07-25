@@ -157,6 +157,10 @@ export default {
       this.disableExtendEventLines
     );
     this.extendedLinesBus.removeEventListener('enable-extended-lines', this.enableExtendEventLines);
+
+    if (this.unsubscribeSelection) {
+      this.unsubscribeSelection();
+    }
   },
   methods: {
     setTimeContext() {
@@ -308,31 +312,15 @@ export default {
       const eventWrapper = this.$refs[`wrapper-${event.time}`][0];
       const eventContext = {
         type: 'time-strip-event-selection',
-        event
+        event,
+        item: this.domainObject
       };
 
-      const selection = this.createPathSelection(eventWrapper);
-      if (
-        selection.length &&
-        this.openmct.objects.areIdsEqual(
-          selection[0].context.item.identifier,
-          this.domainObject.identifier
-        )
-      ) {
-        selection[0].context = {
-          ...selection[0].context,
-          ...eventContext
-        };
-      } else {
-        selection.unshift({
-          element: eventWrapper,
-          context: {
-            item: this.domainObject,
-            ...eventContext
-          }
-        });
-      }
-      this.openmct.selection.select(selection, true);
+      this.unsubscribeSelection = this.openmct.selection.selectable(
+        eventWrapper,
+        eventContext,
+        true
+      );
     },
     getLimitClass(event) {
       const limitEvaluation = this.limitEvaluator.evaluate(event, this.valueMetadata);
