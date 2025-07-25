@@ -20,14 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <TimePopupFixed
-    v-if="readOnly === false"
-    :input-bounds="bounds"
-    :input-time-system="timeSystem"
-    @focus="$event.target.select()"
-    @update="setBoundsFromView"
-    @dismiss="dismiss"
-  />
+  <DateTimePopupFixed v-if="delimiter && !readOnly" :delimiter="delimiter" @focus="$event.target.select()" @dismiss="dismiss" />
+  <TimePopupFixed v-else-if="!readOnly" @focus="$event.target.select()" @dismiss="dismiss" />
   <div v-else class="c-compact-tc__setting-wrapper">
     <div
       class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
@@ -48,29 +42,16 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import TimePopupFixed from './TimePopupFixed.vue';
+import DateTimePopupFixed from './DateTimePopupFixed.vue';
 
 export default {
   components: {
-    TimePopupFixed
+    TimePopupFixed,
+    DateTimePopupFixed
   },
-  inject: ['openmct'],
+  inject: ['openmct', 'timeContext', 'bounds', 'timeSystemFormatter'],
   props: {
-    inputBounds: {
-      type: Object,
-      default() {
-        return undefined;
-      }
-    },
-    objectPath: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
     readOnly: {
       type: Boolean,
       default() {
@@ -84,94 +65,19 @@ export default {
       }
     }
   },
-  emits: ['bounds-updated', 'dismiss-inputs-fixed'],
-  data() {
-    const timeSystem = this.openmct.time.getTimeSystem();
-    const timeFormatter = this.getFormatter(timeSystem.timeFormat);
-    let bounds = this.inputBounds || this.openmct.time.getBounds();
-
-    return {
-      timeSystem,
-      timeFormatter,
-      bounds: {
-        start: bounds.start,
-        end: bounds.end
-      },
-      formattedBounds: {
-        start: timeFormatter.format(bounds.start),
-        end: timeFormatter.format(bounds.end)
-      },
-      isUTCBased: timeSystem.isUTCBased
-    };
-  },
-  watch: {
-    objectPath: {
-      handler(newPath, oldPath) {
-        if (newPath === oldPath) {
-          return;
-        }
-
-        this.setTimeContext();
-      },
-      deep: true
+  emits: ['dismiss-inputs-fixed'],
+  computed: {
+    delimiter() {
+      return this.timeSystemFormatter.getDelimiter?.();
     },
-    inputBounds: {
-      handler(newBounds) {
-        this.handleNewBounds(newBounds);
-      },
-      deep: true
+    formattedBounds() {
+      return {
+        start: this.timeSystemFormatter.format(this.bounds.start),
+        end: this.timeSystemFormatter.format(this.bounds.end)
+      };
     }
   },
-  mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
-    this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
-    this.setTimeContext();
-  },
-  beforeUnmount() {
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
-    this.stopFollowingTimeContext();
-  },
   methods: {
-    setTimeContext() {
-      this.stopFollowingTimeContext();
-      this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-
-      this.handleNewBounds(this.timeContext.getBounds());
-      this.timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
-    },
-    stopFollowingTimeContext() {
-      if (this.timeContext) {
-        this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
-      }
-    },
-    handleNewBounds(bounds) {
-      this.setBounds(bounds);
-      this.setViewFromBounds(bounds);
-    },
-    setBounds(bounds) {
-      this.bounds = bounds;
-    },
-    setViewFromBounds(bounds) {
-      this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-      this.formattedBounds.end = this.timeFormatter.format(bounds.end);
-    },
-    setTimeSystem(timeSystem) {
-      this.timeSystem = timeSystem;
-      this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
-      this.isUTCBased = timeSystem.isUTCBased;
-    },
-    getFormatter(key) {
-      return this.openmct.telemetry.getValueFormatter({
-        format: key
-      }).formatter;
-    },
-    setBoundsFromView(bounds) {
-      this.$emit('bounds-updated', {
-        start: bounds.start,
-        end: bounds.end
-      });
-    },
     dismiss() {
       this.$emit('dismiss-inputs-fixed');
     }

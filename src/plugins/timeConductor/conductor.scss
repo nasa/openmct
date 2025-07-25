@@ -629,7 +629,6 @@
         }
         &-label-end-time{
             grid-area: eTime;
-
         }
         &-input-end-date{
             grid-area: eDateInput;
@@ -639,6 +638,14 @@
         }
         &-label-blank-grid{
             grid-area: blank;
+        }
+
+        // FIXED TIME MODE non utc
+        &-input-start{
+            grid-area: sInput;
+        }
+        &-input-end{
+            grid-area: eInput;
         }
 
         //REAL TIME MODE
@@ -691,14 +698,20 @@
     }
 
     &--fixed-mode {
-        .c-tc-input-popup__input-grid {
+        .c-tc-input-popup__input-grid-utc {
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
             grid-template-areas: 
                "sDate sTime . eDate eTime ."
                "sDateInput sTimeInput arrowIcon eDateInput eTimeInput buttons";
         }
+        .c-tc-input-popup__input-grid {
+            grid-template-columns: 1fr 1fr 1fr 2fr;
+            grid-template-areas: 
+               "sTime . eTime ."
+               "sInput arrowIcon eInput buttons";
+        }
         @include phonePortrait(){ 
-            .c-tc-input-popup__input-grid {
+            .c-tc-input-popup__input-grid-utc {
                 grid-template-columns: repeat(2, max-content) 1fr;
                 grid-template-areas:
                     "sDate sTime ."
@@ -708,19 +721,29 @@
                 padding: 2px; 
                 overflow: hidden;
             }
+            .c-tc-input-popup__input-grid {
+              grid-template-columns: repeat(2, max-content) 1fr;
+              grid-template-areas:
+                  "sTime ."
+                  "sInput ."
+                  "eTime ."
+                  "eInput buttons";
+              padding: 2px; 
+              overflow: hidden;
+          }
         }
 
     }
 
     &--realtime-mode {
-        .c-tc-input-popup__input-grid {
+        .c-tc-input-popup__input-grid, .c-tc-input-popup__input-grid-utc {
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 2fr;
             grid-template-areas:
                 "labelMinusHrs labelMinusMins labelMinusSecs . labelPlusHrs labelPlusMins labelPlusSecs ."
                 "inputMinusHrs inputMinusMins inputMinusSecs arrowIcon inputPlusHrs inputPlusMins inputPlusSecs buttons";
         }
         @include phonePortrait(){ 
-            .c-tc-input-popup__input-grid {
+            .c-tc-input-popup__input-grid, .c-tc-input-popup__input-grid-utc {
                 grid-template-columns: repeat(3, max-content) 1fr;
                 grid-template-areas:
                     "labelMinusHrs labelMinusMins labelMinusSecs ."
@@ -733,7 +756,7 @@
         }
     }
 
-    &__input-grid {
+    &__input-grid, &__input-grid-utc {
         display: grid;
         grid-row-gap: $interiorMargin;
         grid-column-gap: $interiorMarginSm;

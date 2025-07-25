@@ -27,62 +27,50 @@
       { 'is-zooming': isZooming },
       { 'is-panning': isPanning },
       { 'alt-pressed': altPressed },
-      isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
+      isFixedTimeMode ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
     <div class="c-compact-tc__setting-value u-fade-truncate">
-      <ConductorMode :mode="mode" :read-only="true" />
+      <ConductorMode :read-only="true" />
       <ConductorClock :read-only="true" />
       <ConductorTimeSystem :read-only="true" />
     </div>
-    <ConductorInputsFixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
+    <ConductorInputsFixed v-if="isFixedTimeMode" :input-bounds="viewBounds" :read-only="true" />
     <ConductorInputsRealtime v-else :input-bounds="viewBounds" :read-only="true" />
     <ConductorAxis
-      v-if="isFixed"
+      v-if="isFixedTimeMode"
       class="c-conductor__ticks"
       :view-bounds="viewBounds"
-      :is-fixed="isFixed"
       :alt-pressed="altPressed"
       @end-pan="endPan"
       @end-zoom="endZoom"
       @pan-axis="pan"
       @zoom-axis="zoom"
     />
-    <div
-      role="button"
-      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
-      aria-label="Time Conductor Settings"
-    ></div>
-
+    <ConductorHistory
+      v-if="!isIndependent"
+      class="c-conductor__history-select"
+      title="Select and apply previously entered time intervals."
+    />
     <ConductorPopUp
       v-if="showConductorPopup"
       ref="conductorPopup"
       :bottom="false"
       :position-x="positionX"
       :position-y="positionY"
-      :is-fixed="isFixed"
       @popup-loaded="initializePopup"
-      @mode-updated="saveMode"
-      @clock-updated="saveClock"
-      @fixed-bounds-updated="saveFixedBounds"
-      @clock-offsets-updated="saveClockOffsets"
       @dismiss="clearPopup"
     />
   </div>
 </template>
 
 <script>
-import _ from 'lodash';
+import { inject, provide } from 'vue';
 
-import {
-  FIXED_MODE_KEY,
-  MODES,
-  REALTIME_MODE_KEY,
-  TIME_CONTEXT_EVENTS
-} from '../../api/time/constants.js';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorClock from './ConductorClock.vue';
+import ConductorHistory from './ConductorHistory.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
 import ConductorMode from './ConductorMode.vue';
@@ -90,14 +78,19 @@ import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorPopUp from './ConductorPopUp.vue';
 import conductorPopUpManager from './conductorPopUpManager.js';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
-
-const DEFAULT_DURATION_FORMATTER = 'duration';
+import { useClock } from './useClock.js';
+import { useClockOffsets } from './useClockOffsets.js';
+import { useTimeBounds } from './useTimeBounds.js';
+import { useTimeContext } from './useTimeContext.js';
+import { useTimeMode } from './useTimeMode.js';
+import { useTimeSystem } from './useTimeSystem.js';
 
 export default {
   components: {
     ConductorTimeSystem,
     ConductorClock,
     ConductorMode,
+    ConductorHistory,
     ConductorInputsRealtime,
     ConductorInputsFixed,
     ConductorAxis,
@@ -106,38 +99,45 @@ export default {
   },
   mixins: [conductorPopUpManager],
   inject: ['openmct', 'configuration'],
-  data() {
-    const isFixed = this.openmct.time.isFixed();
-    const bounds = this.openmct.time.getBounds();
-    const offsets = this.openmct.time.getClockOffsets();
-    const timeSystem = this.openmct.time.getTimeSystem();
-    const timeFormatter = this.getFormatter(timeSystem.timeFormat);
-    const durationFormatter = this.getFormatter(
-      timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
-    );
+  setup(props) {
+    const openmct = inject('openmct');
+    const { timeContext } = useTimeContext(openmct);
+    const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
+      useTimeSystem(openmct, timeContext);
+    const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
+      useTimeMode(openmct, timeContext);
+    const { bounds, isTick } = useTimeBounds(openmct, timeContext);
+    const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
+    const { offsets } = useClockOffsets(openmct, timeContext);
+
+    provide('timeSystemFormatter', timeSystemFormatter);
+    provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
+    provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
+    provide('timeContext', timeContext);
+    provide('timeMode', timeMode);
+    provide('isFixedTimeMode', isFixedTimeMode);
+    provide('isRealTimeMode', isRealTimeMode);
+    provide('getAllModeMetadata', getAllModeMetadata);
+    provide('getModeMetadata', getModeMetadata);
+    provide('bounds', bounds);
+    provide('isTick', isTick);
+    provide('offsets', offsets);
+    provide('clock', clock);
+    provide('getAllClockMetadata', getAllClockMetadata);
+    provide('getClockMetadata', getClockMetadata);
 
     return {
-      timeSystem,
-      timeFormatter,
-      durationFormatter,
-      offsets: {
-        start: offsets && durationFormatter.format(Math.abs(offsets.start)),
-        end: offsets && durationFormatter.format(Math.abs(offsets.end))
-      },
-      bounds: {
-        start: bounds.start,
-        end: bounds.end
-      },
-      formattedBounds: {
-        start: timeFormatter.format(bounds.start),
-        end: timeFormatter.format(bounds.end)
-      },
+      timeSystemFormatter,
+      isFixedTimeMode,
+      bounds
+    };
+  },
+  data() {
+    return {
       viewBounds: {
-        start: bounds.start,
-        end: bounds.end
+        start: this.bounds.start,
+        end: this.bounds.end
       },
-      isFixed,
-      isUTCBased: timeSystem.isUTCBased,
       showDatePicker: false,
       showConductorPopup: false,
       altPressed: false,
@@ -146,38 +146,30 @@ export default {
     };
   },
   computed: {
-    mode() {
-      return this.isFixed ? FIXED_MODE_KEY : REALTIME_MODE_KEY;
+    formattedBounds() {
+      return {
+        start: this.timeSystemFormatter.format(this.bounds.start),
+        end: this.timeSystemFormatter.format(this.bounds.end)
+      };
+    }
+  },
+  watch: {
+    bounds: {
+      handler() {
+        this.setViewBounds(this.bounds);
+      },
+      deep: true
     }
   },
   mounted() {
     document.addEventListener('keydown', this.handleKeyDown);
     document.addEventListener('keyup', this.handleKeyUp);
-
-    this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
-
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
-
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, _.throttle(this.handleNewBounds, 300));
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.modeChanged, this.setMode);
   },
   methods: {
-    handleNewBounds(bounds, isTick) {
-      if (this.openmct.time.isRealTime() || !isTick) {
-        this.setBounds(bounds);
-        this.setViewFromBounds(bounds);
-      }
-    },
-    setBounds(bounds) {
-      this.bounds = bounds;
-    },
     handleKeyDown(event) {
       if (event.key === 'Alt') {
         this.altPressed = true;
@@ -190,7 +182,7 @@ export default {
     },
     pan(bounds) {
       this.isPanning = true;
-      this.setViewFromBounds(bounds);
+      this.setViewBounds(bounds);
     },
     endPan(bounds) {
       this.isPanning = false;
@@ -203,8 +195,8 @@ export default {
         this.isZooming = false;
       } else {
         this.isZooming = true;
-        this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-        this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+        this.formattedBounds.start = this.timeSystemFormatter.format(bounds.start);
+        this.formattedBounds.end = this.timeSystemFormatter.format(bounds.end);
       }
     },
     endZoom(bounds) {
@@ -212,49 +204,12 @@ export default {
       if (bounds) {
         this.openmct.time.setBounds(bounds);
       } else {
-        this.setViewFromBounds(this.bounds);
+        this.setViewBounds(this.bounds);
       }
     },
-    setTimeSystem(timeSystem) {
-      this.timeSystem = timeSystem;
-      this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
-      this.durationFormatter = this.getFormatter(
-        timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
-      );
-      this.isUTCBased = timeSystem.isUTCBased;
-    },
-    setMode() {
-      this.isFixed = this.openmct.time.isFixed();
-    },
-    setViewFromBounds(bounds) {
-      this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-      this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+    setViewBounds(bounds) {
       this.viewBounds.start = bounds.start;
       this.viewBounds.end = bounds.end;
-    },
-    getFormatter(key) {
-      return this.openmct.telemetry.getValueFormatter({
-        format: key
-      }).formatter;
-    },
-    getBoundsForMode(mode) {
-      const isRealTime = mode === MODES.realtime;
-      return isRealTime ? this.openmct.time.getClockOffsets() : this.openmct.time.getBounds();
-    },
-    saveFixedBounds(bounds) {
-      this.openmct.time.setBounds(bounds);
-    },
-    saveClockOffsets(offsets) {
-      this.openmct.time.setClockOffsets(offsets);
-    },
-    saveClock(clockOptions) {
-      this.openmct.time.setClock(clockOptions.clockKey);
-    },
-    saveMode(mode) {
-      this.openmct.time.setMode(mode, this.getBoundsForMode(mode));
-    },
-    copy(object) {
-      return JSON.parse(JSON.stringify(object));
     }
   }
 };
