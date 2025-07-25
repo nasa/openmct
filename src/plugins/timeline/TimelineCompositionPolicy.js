@@ -20,7 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const ALLOWED_TYPES = ['telemetry.plot.overlay', 'telemetry.plot.stacked', 'plan', 'gantt-chart'];
+const ALLOWED_TYPES = [
+  'telemetry.plot.overlay',
+  'telemetry.plot.stacked',
+  'plan',
+  'gantt-chart',
+  'eventGenerator',
+  'yamcs.events',
+  'yamcs.commands'
+];
 const DISALLOWED_TYPES = ['telemetry.plot.bar-graph', 'telemetry.plot.scatter-plot'];
 export default function TimelineCompositionPolicy(openmct) {
   function hasImageTelemetry(domainObject, metadata) {
