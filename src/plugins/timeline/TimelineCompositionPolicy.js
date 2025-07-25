@@ -27,7 +27,9 @@ const ALLOWED_TYPES = [
   'gantt-chart',
   'eventGenerator',
   'yamcs.events',
-  'yamcs.commands'
+  'yamcs.event.specific.severity',
+  'yamcs.commands',
+  'yamcs.commands.queue'
 ];
 const DISALLOWED_TYPES = ['telemetry.plot.bar-graph', 'telemetry.plot.scatter-plot'];
 export default function TimelineCompositionPolicy(openmct) {
