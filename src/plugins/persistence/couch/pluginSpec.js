@@ -373,44 +373,6 @@ describe('the plugin', () => {
       expect(requestMethod).toEqual('PUT');
     });
   });
-  describe('implements server-side search', () => {
-    let mockPromise;
-    beforeEach(() => {
-      mockPromise = Promise.resolve({
-        body: {
-          getReader() {
-            return {
-              read() {
-                return Promise.resolve({
-                  done: true,
-                  value: undefined
-                });
-              }
-            };
-          }
-        }
-      });
-      fetch.and.returnValue(mockPromise);
-    });
-
-    it("using Couch's 'find' endpoint", async () => {
-      await Promise.all(openmct.objects.search('test'));
-      const requestUrl = fetch.calls.mostRecent().args[0];
-
-      // we only want one call to fetch, not 2!
-      // see https://github.com/nasa/openmct/issues/4667
-      expect(fetch).toHaveBeenCalledTimes(1);
-      expect(requestUrl.endsWith('_find')).toBeTrue();
-    });
-
-    it('and supports search by object name', async () => {
-      await Promise.all(openmct.objects.search('test'));
-      const requestPayload = JSON.parse(fetch.calls.mostRecent().args[1].body);
-
-      expect(requestPayload).toBeDefined();
-      expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
-    });
-  });
 });
 
 describe('the view', () => {

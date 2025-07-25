@@ -54,8 +54,8 @@ test.describe('Testing numeric data with inspector data visualization (i.e., dat
 
     await page.goto(exampleDataVisualizationSource.url);
 
-    await page.getByRole('tab', { name: 'Data Visualization' }).click();
     await page.getByRole('cell', { name: /First Sine Wave Generator/ }).click();
+    await page.getByRole('tab', { name: 'Data Visualization' }).click();
     await expect(page.getByText('Numeric Data')).toBeVisible();
     await expect(
       page.locator('span.plot-series-name', { hasText: 'First Sine Wave Generator Hz' })
@@ -63,6 +63,7 @@ test.describe('Testing numeric data with inspector data visualization (i.e., dat
     await expect(page.locator('.js-series-data-loaded')).toBeVisible();
 
     await page.getByRole('cell', { name: /Second Sine Wave Generator/ }).click();
+    await page.getByRole('tab', { name: 'Data Visualization' }).click();
     await expect(page.getByText('Numeric Data')).toBeVisible();
     await expect(
       page.locator('span.plot-series-name', { hasText: 'Second Sine Wave Generator Hz' })
@@ -77,6 +78,8 @@ test.describe('Testing numeric data with inspector data visualization (i.e., dat
     // ensure our new tab's title is correct
     const newPage = await pagePromise;
     await newPage.waitForLoadState();
+    await page.getByRole('tab', { name: 'Data Visualization' }).click();
+
     // expect new tab title to contain 'Second Sine Wave Generator'
     await expect(newPage).toHaveTitle('Second Sine Wave Generator');
 
