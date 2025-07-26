@@ -20,38 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExtendedLinesBus from './ExtendedLinesBus.js';
-import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
-import timelineInterceptor from './timelineInterceptor.js';
-import TimelineViewProvider from './TimelineViewProvider.js';
-
-const extendedLinesBus = new ExtendedLinesBus();
-
-export { extendedLinesBus };
-
-export default function () {
-  function install(openmct) {
-    openmct.types.addType('time-strip', {
-      name: 'Time Strip',
-      key: 'time-strip',
-      description:
-        'Compose and display time-based telemetry and other object types in a timeline-like view.',
-      creatable: true,
-      cssClass: 'icon-timeline',
-      initialize: function (domainObject) {
-        domainObject.composition = [];
-        domainObject.configuration = {
-          useIndependentTime: false
-        };
-      }
-    });
-    timelineInterceptor(openmct);
-    openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
-
-    openmct.objectViews.addProvider(new TimelineViewProvider(openmct, extendedLinesBus));
+export default class ExtendedLinesBus extends EventTarget {
+  updateExtendedLines(keyString, lines) {
+    this.dispatchEvent(
+      new CustomEvent('update-extended-lines', {
+        detail: { keyString, lines }
+      })
+    );
   }
 
-  install.extendedLinesBus = extendedLinesBus;
+  disableExtendEventLines(keyString) {
+    this.dispatchEvent(
+      new CustomEvent('disable-extended-lines', {
+        detail: keyString
+      })
+    );
+  }
 
-  return install;
+  enableExtendEventLines(keyString) {
+    this.dispatchEvent(
+      new CustomEvent('enable-extended-lines', {
+        detail: keyString
+      })
+    );
+  }
+
+  updateHoverExtendEventLine(keyString, id) {
+    this.dispatchEvent(
+      new CustomEvent('update-extended-hover', {
+        detail: { keyString, id }
+      })
+    );
+  }
 }

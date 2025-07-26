@@ -20,38 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExtendedLinesBus from './ExtendedLinesBus.js';
-import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
-import timelineInterceptor from './timelineInterceptor.js';
-import TimelineViewProvider from './TimelineViewProvider.js';
+import EventInspectorViewProvider from './EventInspectorViewProvider.js';
+import EventTimelineViewProvider from './EventTimelineViewProvider.js';
 
-const extendedLinesBus = new ExtendedLinesBus();
-
-export { extendedLinesBus };
-
-export default function () {
-  function install(openmct) {
-    openmct.types.addType('time-strip', {
-      name: 'Time Strip',
-      key: 'time-strip',
-      description:
-        'Compose and display time-based telemetry and other object types in a timeline-like view.',
-      creatable: true,
-      cssClass: 'icon-timeline',
-      initialize: function (domainObject) {
-        domainObject.composition = [];
-        domainObject.configuration = {
-          useIndependentTime: false
-        };
-      }
-    });
-    timelineInterceptor(openmct);
-    openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
-
-    openmct.objectViews.addProvider(new TimelineViewProvider(openmct, extendedLinesBus));
-  }
-
-  install.extendedLinesBus = extendedLinesBus;
-
-  return install;
+export default function plugin(extendedLinesBus) {
+  return function install(openmct) {
+    openmct.objectViews.addProvider(new EventTimelineViewProvider(openmct, extendedLinesBus));
+    openmct.inspectorViews.addProvider(new EventInspectorViewProvider(openmct));
+  };
 }
