@@ -113,7 +113,8 @@
           creatable: true
         })
       );
-      openmct.install(openmct.plugins.Timeline());
+      const timeLinePlugin = openmct.plugins.Timeline();
+      openmct.install(timeLinePlugin);
       openmct.install(openmct.plugins.Hyperlink());
       openmct.install(openmct.plugins.UTCTimeSystem());
       openmct.install(
@@ -234,6 +235,7 @@
       openmct.install(openmct.plugins.Timelist());
       openmct.install(openmct.plugins.BarChart());
       openmct.install(openmct.plugins.ScatterPlot());
+      openmct.install(openmct.plugins.EventTimestripPlugin(timeLinePlugin.extendedLinesBus));
       document.addEventListener('DOMContentLoaded', function () {
         openmct.start();
       });
