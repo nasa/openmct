@@ -26,6 +26,7 @@ const ALLOWED_TYPES = [
   'plan',
   'gantt-chart',
   'eventGenerator',
+  'eventGeneratorWithAcknowledge',
   'yamcs.events',
   'yamcs.event.specific.severity',
   'yamcs.commands',
