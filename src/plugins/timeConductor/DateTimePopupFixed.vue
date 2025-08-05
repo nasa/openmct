@@ -105,7 +105,7 @@
           class="c-button c-button--major icon-check"
           :disabled="hasInputValidityError"
           aria-label="Submit time bounds"
-          @click.prevent="submit"
+          @click.prevent="submitForm"
         ></button>
         <button
           class="c-button icon-x"
@@ -124,12 +124,6 @@ export default {
   components: {
     DatePicker
   },
-  props: {
-    delimiter: {
-      type: String,
-      required: true
-    }
-  },
   inject: [
     'openmct',
     'isTimeSystemUTCBased',
@@ -138,6 +132,12 @@ export default {
     'timeSystemDurationFormatter',
     'bounds'
   ],
+  props: {
+    delimiter: {
+      type: String,
+      required: true
+    }
+  },
   emits: ['update', 'dismiss'],
   data() {
     return {
@@ -154,6 +154,19 @@ export default {
       }
     };
   },
+  computed: {
+    hasInputValidityError() {
+      return Object.values(this.inputValidityMap).some((inputValidity) => !inputValidity.valid);
+    },
+    hasLogicalValidationErrors() {
+      return Object.values(this.logicalValidityMap).some(
+        (logicalValidity) => !logicalValidity.valid
+      );
+    },
+    isValid() {
+      return !this.hasInputValidityError && !this.hasLogicalValidationErrors;
+    }
+  },
   watch: {
     bounds: {
       handler() {
@@ -167,27 +180,13 @@ export default {
   beforeUnmount() {
     this.clearAllValidation();
   },
-  computed: {
-    hasInputValidityError() {
-      return Object.values(this.inputValidityMap).some((inputValidity) => !inputValidity.valid);
-    }
-  },
-  hasLogicalValidationErrors() {
-    return Object.values(this.logicalValidityMap).some((logicalValidity) => !logicalValidity.valid);
-  },
-  isValid() {
-    return !this.hasInputValidityError && !this.hasLogicalValidationErrors;
-  },
   methods: {
     setViewFromBounds() {
-      const formattedStartBounds = this.timeSystemFormatter.format(this.bounds.start);
-      const formattedEndBounds = this.timeSystemFormatter.format(this.bounds.end);
-
       this.formattedBounds = {
-        startDate: formattedStartBounds.split(this.delimiter)[0],
-        startTime: formattedStartBounds.split(this.delimiter)[1],
-        endDate: formattedEndBounds.split(this.delimiter)[0],
-        endTime: formattedEndBounds.split(this.delimiter)[1]
+        startDate: this.timeSystemFormatter.format(this.bounds.start).split(this.delimiter)[0],
+        startTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.start)),
+        endDate: this.timeSystemFormatter.format(this.bounds.end).split(this.delimiter)[0],
+        endTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.end))
       };
     },
     setBoundsFromView(dismiss) {
@@ -220,7 +219,7 @@ export default {
       input.setCustomValidity('');
       input.title = '';
     },
-    submit() {
+    submitForm() {
       this.validateLimit();
       this.reportValidity('limit');
       this.validateBounds();
@@ -233,7 +232,8 @@ export default {
     validateInput(refName) {
       this.clearAllValidation();
       const inputType = refName.includes('Date') ? 'Date' : 'Time';
-      const formatter = inputType === 'Date' ? this.timeSystemFormatter : this.timeSystemDurationFormatter;
+      const formatter =
+        inputType === 'Date' ? this.timeSystemFormatter : this.timeSystemDurationFormatter;
       const validationResult = formatter.validate(this.formattedBounds[refName])
         ? { valid: true }
         : { valid: false, message: `Invalid ${inputType}` };
@@ -289,7 +289,9 @@ export default {
       return this.$refs.startDate;
     },
     startDateSelected(date) {
-      this.formattedBounds.startDate = this.timeSystemFormatter.format(date).split(this.delimiter)[0];
+      this.formattedBounds.startDate = this.timeSystemFormatter
+        .format(date)
+        .split(this.delimiter)[0];
       this.validateInput('startDate');
       this.reportValidity('startDate');
     },
