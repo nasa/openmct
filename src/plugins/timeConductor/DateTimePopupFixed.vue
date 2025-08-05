@@ -105,7 +105,7 @@
           class="c-button c-button--major icon-check"
           :disabled="hasInputValidityError"
           aria-label="Submit time bounds"
-          @click.prevent="submitForm"
+          @click.prevent="submitForm(true)"
         ></button>
         <button
           class="c-button icon-x"
@@ -189,7 +189,7 @@ export default {
         endTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.end))
       };
     },
-    setBoundsFromView(dismiss) {
+    setBoundsFromView(shouldDismiss) {
       if (this.$refs.fixedDeltaInput.checkValidity()) {
         const start = this.timeSystemFormatter.parse(
           `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
@@ -204,7 +204,7 @@ export default {
         });
       }
 
-      if (dismiss) {
+      if (shouldDismiss) {
         this.$emit('dismiss');
 
         return false;
@@ -219,14 +219,14 @@ export default {
       input.setCustomValidity('');
       input.title = '';
     },
-    submitForm() {
+    submitForm(shouldDismiss) {
       this.validateLimit();
       this.reportValidity('limit');
       this.validateBounds();
       this.reportValidity('bounds');
 
       if (this.isValid) {
-        this.setBoundsFromView(true);
+        this.setBoundsFromView(shouldDismiss);
       }
     },
     validateInput(refName) {
