@@ -24,7 +24,11 @@
     ref="timeConductorOptionsHolder"
     class="c-compact-tc"
     :class="[
-      isFixedTimeMode ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
+      isFixedTimeMode
+        ? 'is-fixed-mode'
+        : independentTCEnabled
+          ? 'is-realtime-mode'
+          : 'is-fixed-mode',
       { 'is-expanded': independentTCEnabled }
     ]"
     aria-label="Independent Time Conductor Panel"
@@ -198,9 +202,6 @@ export default {
         this.initialize();
       }
     },
-    independentTCEnabled() {
-      this.handleIndependentTimeConductorChange();
-    },
     clock() {
       if (this.independentTCEnabled) {
         this.saveClock();
@@ -255,7 +256,6 @@ export default {
         'configuration.useIndependentTime',
         this.independentTCEnabled
       );
-
     },
     setTimeOptions() {
       this.timeOptions = toRaw(this.domainObject.configuration.timeOptions);
@@ -320,7 +320,6 @@ export default {
         // if (this.isRealTimeMode) {
         //   independentTimeContext.setClock(this.timeOptions.clock);
         // }
-
         // independentTimeContext.setMode(this.timeOptions.mode, independentTimeContextBoundsOrOffsets);
       }
     },

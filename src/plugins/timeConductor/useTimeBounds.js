@@ -26,6 +26,9 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import throttle from '../../utils/throttle.js';
 
 const THROTTLE_RATE = 300;
+/**
+ * @typedef {import('@/api/time/TimeContext.js').default} TimeContext
+ */
 
 /**
  * Provides reactive `bounds`,
@@ -33,7 +36,7 @@ const THROTTLE_RATE = 300;
  * which automatically stops observing when the component is unmounted.
  *
  * @param {OpenMCT} [openmct] the Open MCT API
- * @param {Array} objectPath The view's objectPath
+ * @param {TimeContext} timeContext The view's timeContext
  * @returns {{
  *   bounds: import('vue').Ref<object>,
  *   isTick: import('vue').Ref<boolean>
@@ -57,9 +60,15 @@ export function useTimeBounds(openmct, timeContext) {
   );
 
   function observeTimeBounds() {
-    timeContext.value.on(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
+    timeContext.value.on(
+      TIME_CONTEXT_EVENTS.boundsChanged,
+      throttle(updateTimeBounds, THROTTLE_RATE)
+    );
     stopObservingTimeBounds = () =>
-      timeContext.value.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
+      timeContext.value.off(
+        TIME_CONTEXT_EVENTS.boundsChanged,
+        throttle(updateTimeBounds, THROTTLE_RATE)
+      );
   }
 
   function updateTimeBounds(_timeBounds, _isTick) {

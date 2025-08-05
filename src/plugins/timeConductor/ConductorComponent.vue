@@ -78,12 +78,7 @@ import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorPopUp from './ConductorPopUp.vue';
 import conductorPopUpManager from './conductorPopUpManager.js';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
-import { useClock } from './useClock.js';
-import { useClockOffsets } from './useClockOffsets.js';
-import { useTimeBounds } from './useTimeBounds.js';
-import { useTimeContext } from './useTimeContext.js';
-import { useTimeMode } from './useTimeMode.js';
-import { useTimeSystem } from './useTimeSystem.js';
+import { useTime } from './useTime.js';
 
 export default {
   components: {
@@ -101,14 +96,23 @@ export default {
   inject: ['openmct', 'configuration'],
   setup(props) {
     const openmct = inject('openmct');
-    const { timeContext } = useTimeContext(openmct);
-    const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
-      useTimeSystem(openmct, timeContext);
-    const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
-      useTimeMode(openmct, timeContext);
-    const { bounds, isTick } = useTimeBounds(openmct, timeContext);
-    const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
-    const { offsets } = useClockOffsets(openmct, timeContext);
+    const {
+      timeContext,
+      timeSystemFormatter,
+      timeSystemDurationFormatter,
+      isTimeSystemUTCBased,
+      timeMode,
+      isFixedTimeMode,
+      isRealTimeMode,
+      getAllModeMetadata,
+      getModeMetadata,
+      bounds,
+      isTick,
+      offsets,
+      clock,
+      getAllClockMetadata,
+      getClockMetadata
+    } = useTime(openmct);
 
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);

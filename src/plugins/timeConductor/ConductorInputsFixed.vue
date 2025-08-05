@@ -20,7 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <DateTimePopupFixed v-if="delimiter && !readOnly" :delimiter="delimiter" @focus="$event.target.select()" @dismiss="dismiss" />
+  <DateTimePopupFixed
+    v-if="delimiter && !readOnly"
+    :delimiter="delimiter"
+    @focus="$event.target.select()"
+    @dismiss="dismiss"
+  />
   <TimePopupFixed v-else-if="!readOnly" @focus="$event.target.select()" @dismiss="dismiss" />
   <div v-else class="c-compact-tc__setting-wrapper">
     <div

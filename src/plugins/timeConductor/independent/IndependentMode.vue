@@ -35,7 +35,6 @@
 </template>
 
 <script>
-
 export default {
   inject: ['openmct', 'timeMode', 'getAllModeMetadata', 'getModeMetadata'],
   props: {
