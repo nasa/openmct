@@ -3,8 +3,7 @@
 This document describes the process of contributing to Open MCT as well
 as the standards that will be applied when evaluating contributions.
 
-Please be aware that additional agreements will be necessary before we can
-accept changes from external contributors.
+In order for external contributions to be merged, contributors must have on record a signed [Contributor License Agreement (CLA)](https://nasa.github.io/openmct/static/files/ind-cla-open-mct.pdf). More information on this process can be found [in this discussion](https://github.com/nasa/openmct/discussions/3821).
 
 ## Summary
 
