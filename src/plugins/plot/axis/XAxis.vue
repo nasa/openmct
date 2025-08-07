@@ -132,7 +132,7 @@ export default {
           };
         });
       }
-
+      console.log('xKeyOptions', this.xKeyOptions, 'this.xAxis', this.xAxis);
       this.xAxisLabel = this.xAxis.get('label');
       this.selectedXKeyOptionKey =
         this.xKeyOptions.length > 0 ? this.getXKeyOption(xAxisKey).key : xAxisKey;
