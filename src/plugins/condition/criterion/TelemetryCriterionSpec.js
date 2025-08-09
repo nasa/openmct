@@ -125,11 +125,14 @@ describe('The telemetry criterion', function () {
   });
 
   it('returns a result on new data from relevant telemetry providers', function () {
-    telemetryCriterion.updateResult({
-      value: 'Hello',
-      utc: 'Hi',
-      id: testTelemetryObject.identifier.key
-    });
+    telemetryCriterion.updateResult(
+      {
+        testSource: 'Hello',
+        utc: 'Hi',
+        id: testTelemetryObject.identifier.key
+      },
+      'utc'
+    );
     expect(telemetryCriterion.result).toBeTrue();
   });
 
