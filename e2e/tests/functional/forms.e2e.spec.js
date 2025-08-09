@@ -290,6 +290,47 @@ test.describe('Persistence operations @couchdb @network', () => {
   });
 });
 
+test.describe('Properties Form', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('Enter and Escape will simulate "Ok" and "Cancel"', async ({ page }) => {
+    // Create a new 'Clock' object with default settings
+    await createDomainObjectWithDefaults(page, {
+      type: 'Clock'
+    });
+
+    // Open the edit form for the clock object
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+
+    // Verify that the form is open
+    await expect(page.getByRole('heading', { name: 'Properties' })).toBeVisible();
+
+    const newName = 'Changed Name';
+    // change name
+    await page.getByLabel('Title', { exact: true }).fill(newName);
+
+    // Press Enter
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('heading', { name: 'Properties' })).toBeHidden();
+    await page.getByLabel('Expand My Items folder').click();
+    await expect(page.getByRole('treeitem', { name: newName })).toBeVisible();
+
+    // Open the edit form for the clock object
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+
+    // Verify that the form is open
+    await expect(page.getByRole('heading', { name: 'Properties' })).toBeVisible();
+
+    // Press Escape
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('heading', { name: 'Properties' })).toBeHidden();
+  });
+});
+
 test.describe('Form Correctness by Object Type', () => {
   test.fixme('Verify correct behavior of number object (SWG)', async ({ page }) => {});
   test.fixme('Verify correct behavior of number object Timer', async ({ page }) => {});

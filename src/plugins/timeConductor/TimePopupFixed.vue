@@ -182,13 +182,22 @@ export default {
     this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
   },
   mounted() {
+    document.addEventListener('keydown', this.handleKeyDown);
     this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
     this.setViewFromBounds(this.bounds);
   },
   beforeUnmount() {
     this.clearAllValidation();
+    document.removeEventListener('keydown', this.handleKeyDown);
   },
   methods: {
+    handleKeyDown({ key }) {
+      if (key === 'Enter' && !this.hasInputValidityError) {
+        this.handleFormSubmission(true);
+      } else if (key === 'Escape') {
+        this.dismiss();
+      }
+    },
     handleNewBounds(bounds) {
       this.setBounds(bounds);
       this.setViewFromBounds(bounds);
@@ -322,8 +331,11 @@ export default {
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
-        this.$emit('dismiss');
+        this.dismiss();
       }
+    },
+    dismiss() {
+      this.$emit('dismiss');
     }
   }
 };

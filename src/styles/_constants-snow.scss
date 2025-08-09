@@ -316,7 +316,7 @@ $colorMenuElementHilite: darken($colorMenuBg, 10%);
 $shdwMenu: rgba(black, 0.8) 0 2px 10px;
 $shdwMenuInner: none;
 $shdwMenuText: none;
-$menuItemPad: $interiorMargin, floor($interiorMargin * 1.25);
+$menuItemPad: 4px, 6px;
 
 // Palettes and Swatches
 $paletteItemBorderOuterColorSelected: black;
