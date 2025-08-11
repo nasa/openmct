@@ -37,8 +37,8 @@
       </div>
       <button
         :aria-label="'Dismiss notification of ' + notification.model.message"
-        class="c-click-icon c-overlay__close-button icon-x"
-        @click="dismiss()"
+        class="c-click-icon icon-x c-notification-dismiss"
+        @click="dismissNotification($event)"
       ></button>
       <div class="c-overlay__button-bar">
         <button
@@ -82,6 +82,7 @@ export default {
       required: true
     }
   },
+  emits: ['notification-dismissed'],
   data() {
     return {
       isProgressNotification: false,
@@ -107,6 +108,24 @@ export default {
     updateProgressBar(progressPerc, progressText) {
       this.progressPerc = progressPerc;
       this.progressText = progressText;
+    },
+    dismissNotification(event) {
+      // Prevenir completamente a propagação do evento
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      // Debug: log para verificar se o método está sendo chamado
+      console.log('Dismissing notification:', this.notification.model.message);
+
+      // Executar o dismiss da notificação
+      this.notification.dismiss();
+
+      // Forçar atualização do componente pai
+      this.$emit('notification-dismissed');
+
+      // NÃO fechar o overlay - deixar o usuário navegar pelas notificações restantes
+      // O overlay só deve ser fechado manualmente ou quando não houver mais notificações
     },
     dismiss() {
       this.notification.dismiss();

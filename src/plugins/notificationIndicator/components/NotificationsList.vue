@@ -34,6 +34,7 @@
         :close-overlay="closeOverlay"
         :notification="notification"
         :notifications-count="notifications.length"
+        @notification-dismissed="onNotificationDismissed"
       />
     </div>
   </div>
@@ -53,7 +54,7 @@ export default {
       required: true
     }
   },
-  emits: ['close', 'clear-all'],
+  emits: ['close', 'clear-all', 'notification-dismissed'],
   data() {
     return {};
   },
@@ -83,6 +84,13 @@ export default {
     },
     closeOverlay() {
       this.overlay.dismiss();
+    },
+    onNotificationDismissed() {
+      // Forçar atualização da lista quando uma notificação é removida
+      this.$emit('notification-dismissed');
+
+      // Não fechar o overlay automaticamente - deixar o usuário fechar manualmente
+      // O painel deve permanecer aberto mesmo quando vazio
     },
     notificationsCountDisplayMessage(count) {
       if (count > 1 || count === 0) {
