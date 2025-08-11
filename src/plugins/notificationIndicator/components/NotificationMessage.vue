@@ -110,22 +110,12 @@ export default {
       this.progressText = progressText;
     },
     dismissNotification(event) {
-      // Prevenir completamente a propagação do evento
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
-      // Debug: log para verificar se o método está sendo chamado
-      console.log('Dismissing notification:', this.notification.model.message);
-
-      // Executar o dismiss da notificação
       this.notification.dismiss();
-
-      // Forçar atualização do componente pai
       this.$emit('notification-dismissed');
-
-      // NÃO fechar o overlay - deixar o usuário navegar pelas notificações restantes
-      // O overlay só deve ser fechado manualmente ou quando não houver mais notificações
     },
     dismiss() {
       this.notification.dismiss();
