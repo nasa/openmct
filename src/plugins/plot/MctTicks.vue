@@ -34,14 +34,6 @@
         :title="tick.fullText || tick.text"
       >
         {{ tick.text }}
-        <div
-          v-for="(subTick, j) in subTicks"
-          :key="'tick-left-sub' + j"
-          class="gl-plot-tick gl-plot-x-tick-label"
-          :style="{
-            left: (100 * (tick.value - min)) / interval + subTick + '%'
-          }"
-        ></div>
       </div>
     </div>
     <div v-if="position === 'top'" class="gl-plot-tick-wrapper">
@@ -54,9 +46,7 @@
         :title="tick.fullText || tick.text"
         style="margin-top: -0.5em; direction: ltr"
       >
-        <span v-if="i % subTickCount === 0">
-          {{ tick.text }}
-        </span>
+        <span>{{ tick.text }}</span>
       </div>
     </div>
     <!-- grid lines follow -->
@@ -88,10 +78,9 @@ import { inject } from 'vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
-import { generateTimestampTicks, getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
+import { getFormattedTicks, getLogTicks, getTimeTicks, ticks } from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
-const GRANULAR_TICK_COUNT = 5;
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],
@@ -107,7 +96,7 @@ export default {
     tickCount: {
       type: Number,
       default() {
-        return 12;
+        return 10;
       }
     },
     axisId: {
@@ -147,23 +136,8 @@ export default {
     return {
       ticks: [],
       interval: undefined,
-      min: undefined,
-      subTickCount: GRANULAR_TICK_COUNT
+      min: undefined
     };
-  },
-  computed: {
-    subTicks() {
-      let sub = [];
-      if (this.ticks.length) {
-        const step = (this.ticks[1] - this.ticks[0]) / GRANULAR_TICK_COUNT;
-        let result = 0;
-        while (result + step < this.ticks[1] && result + step > this.ticks[0]) {
-          sub.push(result);
-          result = result + step;
-        }
-      }
-      return sub;
-    }
   },
   mounted() {
     eventHelpers.extend(this);
@@ -254,7 +228,7 @@ export default {
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
       } else if (this.isUtc) {
-        return generateTimestampTicks(range.min, range.max, number);
+        return getTimeTicks(range.min, range.max, number);
       } else {
         return ticks(range.min, range.max, number);
       }
