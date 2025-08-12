@@ -37,7 +37,7 @@
       </div>
       <button
         :aria-label="'Dismiss notification of ' + notification.model.message"
-        class="c-click-icon icon-x c-notification-dismiss"
+        class="c-click-icon c-overlay__close-button icon-x"
         @click="dismissNotification($event)"
       ></button>
       <div class="c-overlay__button-bar">
