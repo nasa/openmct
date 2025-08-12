@@ -19,52 +19,37 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Moment from 'moment';
-import mount from 'utils/mount';
 
-import ListViewComponent from './components/ListView.vue';
-import { ALLOWED_FOLDER_TYPES } from './constants.js';
-
-export default class FolderListView {
-  constructor(openmct) {
-    this.openmct = openmct;
-    this.key = 'list-view';
-    this.name = 'List View';
-    this.cssClass = 'icon-list-view';
+export default class ExtendedLinesBus extends EventTarget {
+  updateExtendedLines(keyString, lines) {
+    this.dispatchEvent(
+      new CustomEvent('update-extended-lines', {
+        detail: { keyString, lines }
+      })
+    );
   }
 
-  canView(domainObject) {
-    return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
+  disableExtendEventLines(keyString) {
+    this.dispatchEvent(
+      new CustomEvent('disable-extended-lines', {
+        detail: keyString
+      })
+    );
   }
 
-  view(domainObject) {
-    return {
-      show: (element) => {
-        const { destroy } = mount(
-          {
-            el: element,
-            components: {
-              ListViewComponent
-            },
-            provide: {
-              openmct: this.openmct,
-              domainObject,
-              Moment
-            },
-            template: '<ListViewComponent></ListViewComponent>'
-          },
-          {
-            app: this.openmct.app,
-            element
-          }
-        );
-        this._destroy = destroy;
-      },
-      destroy: () => {
-        if (this._destroy) {
-          this._destroy();
-        }
-      }
-    };
+  enableExtendEventLines(keyString) {
+    this.dispatchEvent(
+      new CustomEvent('enable-extended-lines', {
+        detail: keyString
+      })
+    );
+  }
+
+  updateHoverExtendEventLine(keyString, id) {
+    this.dispatchEvent(
+      new CustomEvent('update-extended-hover', {
+        detail: { keyString, id }
+      })
+    );
   }
 }

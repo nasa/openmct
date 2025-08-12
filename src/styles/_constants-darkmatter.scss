@@ -443,6 +443,10 @@ $colorEventPurpleBg: #31204a;
 $colorEventRedBg: #3c1616;
 $colorEventOrangeBg: #3e2a13;
 $colorEventYellowBg: #3e3316;
+$colorEventPurpleLine: #9e36ff;
+$colorEventRedLine: #ff2525;
+$colorEventOrangeLine: #ff8800;
+$colorEventYellowLine: #fdce22;
 
 // Bubble colors
 $colorInfoBubbleBg: #dddddd;
@@ -517,6 +521,11 @@ $colorInProgressBg: $colorTimeRealtimeBg;
 $colorInProgressFg: $colorTimeRealtimeFgSubtle;
 $colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
+$colorTimeStripDraftBg: rgba(#a57748, 0.2);
+$colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$eventLineW: 1px;
 
 // Tree
 $colorTreeBg: transparent;
