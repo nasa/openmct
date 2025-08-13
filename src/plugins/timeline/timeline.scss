@@ -28,6 +28,10 @@
     flex-direction: column;
     gap: 1px;
 
+    .c-swimlane.c-timeline__content {
+        height: 100px; // TEMP!! Will be replaced when heights are set by user
+    }
+
     // Plot view overrides
     .gl-plot-display-area,
     .gl-plot-axis-area.gl-plot-y {
@@ -36,16 +40,7 @@
 }
 
 .c-timeline {
-    &__objects {
-        display: contents;
-
-        .c-swimlane {
-            min-height: 100px; // TEMP!! Will be replaced when heights are set by user
-        }
-    }
-
     &__overlay-lines {
-        //background: rgba(deeppink, 0.2);
         @include abs();
         top: 20px; // Offset down to line up with time axis ticks line
         pointer-events: none; // Allows clicks to pass through

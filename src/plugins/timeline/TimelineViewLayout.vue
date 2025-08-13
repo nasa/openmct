@@ -36,15 +36,13 @@
       </template>
     </SwimLane>
 
-    <div ref="contentHolder" class="c-timeline__objects">
-      <TimelineObjectView
-        v-for="item in items"
-        :key="item.keyString"
-        class="c-timeline__content js-timeline__content"
-        :item="item"
-        :extended-lines-bus
-      />
-    </div>
+    <TimelineObjectView
+      v-for="item in items"
+      :key="item.keyString"
+      class="c-timeline__content js-timeline__content"
+      :item="item"
+      :extended-lines-bus
+    />
 
     <ExtendedLinesOverlay
       :extended-lines-per-key="extendedLinesPerKey"
