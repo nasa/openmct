@@ -25,6 +25,8 @@
     <SwimLane
       v-for="timeSystemItem in timeSystems"
       :key="timeSystemItem.timeSystem.key"
+      :can-show-resize-handle="true"
+      :resize-handle-height="height"
       class="c-swimlane__time-axis"
     >
       <template #label>
@@ -124,7 +126,56 @@ export default {
     provide('swimLaneLabelWidth', swimLaneLabelWidth);
     provide('mousedown', mousedown);
 
-    return { alignmentData, resetAlignment };
+    // Flex containers - Swimlane height
+    const timelineHolder = ref(null);
+
+    const {
+      addContainer,
+      removeContainer,
+      reorderContainers,
+      containers,
+      startContainerResizing,
+      containerResizing,
+      endContainerResizing
+    } = useFlexContainers(timelineHolder, {
+      containers: domainObject.configuration.containers,
+      rowsLayout: true,
+      callback: mutateContainers
+    });
+
+    function getContainerSize(item) {
+      const containerforItem = containers.value.find((container) =>
+        openmct.objects.areIdsEqual(container.domainObjectIdentifier, item.domainObject.identifier)
+      );
+
+      return containerforItem?.size;
+    }
+
+    function mutateContainers() {
+      openmct.objects.mutate(domainObject, 'configuration.containers', containers.value);
+    }
+
+    return {
+      openmct,
+      domainObject,
+      path,
+      composition,
+      extendedLinesBus,
+      containers,
+      getContainerSize,
+      timelineHolder,
+      loadedComposition,
+      items,
+      addContainer,
+      removeContainer,
+      reorderContainers,
+      alignmentData,
+      resetAlignment,
+      startContainerResizing,
+      containerResizing,
+      endContainerResizing,
+      mutateContainers
+    };
   },
   data() {
     return {
@@ -206,24 +257,25 @@ export default {
       };
 
       this.items.push(item);
-    },
-    hasEventTelemetry(domainObject) {
-      const metadata = this.openmct.telemetry.getMetadata(domainObject);
-      if (!metadata) {
-        return false;
-      }
-      const hasDomain = metadata.valuesForHints(['domain']).length > 0;
-      const hasNoRange = !metadata.valuesForHints(['range'])?.length;
-      // for the moment, let's also exclude telemetry with images
-      const hasNoImages = !metadata.valuesForHints(['image']).length;
 
-      return hasDomain && hasNoRange && hasNoImages;
+      if (
+        !this.containers.some((container) =>
+          this.openmct.objects.areIdsEqual(
+            container.domainObjectIdentifier,
+            item.domainObject.identifier
+          )
+        )
+      ) {
+        const container = new Container(domainObject);
+        this.addContainer(container);
+      }
     },
     removeItem(identifier) {
       let index = this.items.findIndex((item) =>
         this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier)
       );
       this.items.splice(index, 1);
+      this.removeContainer(index);
       delete this.extendedLinesPerKey[this.openmct.objects.makeKeyString(identifier)];
     },
     reorder(reorderPlan) {
@@ -231,6 +283,8 @@ export default {
       reorderPlan.forEach((reorderEvent) => {
         this.items[reorderEvent.newIndex] = oldItems[reorderEvent.oldIndex];
       });
+
+      this.reorderContainers(reorderPlan);
     },
     handleContentResize() {
       this.updateContentHeight();
