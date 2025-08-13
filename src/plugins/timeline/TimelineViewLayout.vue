@@ -46,6 +46,7 @@
       <template v-for="(item, index) in items" :key="item.keyString">
         <TimelineObjectView
           class="c-timeline__content js-timeline__content"
+          :class="`${'is-object-type-' + item.domainObject.type}`"
           :item="item"
           :extended-lines-bus
         />
