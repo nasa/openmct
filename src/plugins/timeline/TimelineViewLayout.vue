@@ -22,7 +22,11 @@
 
 <template>
   <div ref="timelineHolder" class="c-timeline-holder">
-    <SwimLane v-for="timeSystemItem in timeSystems" :key="timeSystemItem.timeSystem.key">
+    <SwimLane
+      v-for="timeSystemItem in timeSystems"
+      :key="timeSystemItem.timeSystem.key"
+      class="c-swimlane__time-axis"
+    >
       <template #label>
         {{ timeSystemItem.timeSystem.name }}
       </template>
@@ -37,13 +41,22 @@
     </SwimLane>
 
     <div ref="contentHolder" class="c-timeline__objects">
-      <TimelineObjectView
-        v-for="item in items"
-        :key="item.keyString"
-        class="c-timeline__content js-timeline__content"
-        :item="item"
-        :extended-lines-bus
-      />
+      <template v-for="(item, index) in items" :key="item.keyString">
+        <TimelineObjectView
+          class="c-timeline__content js-timeline__content"
+          :item="item"
+          :extended-lines-bus
+        />
+        <ResizeHandle
+          v-if="index !== items.length - 1"
+          :index="index"
+          drag-orientation="'vertical'"
+          :is-editing="isEditing"
+          @init-move="startContainerResizing"
+          @move="containerResizing"
+          @end-move="endContainerResizing"
+        />
+      </template>
     </div>
 
     <ExtendedLinesOverlay
@@ -58,9 +71,11 @@
 
 <script>
 import _ from 'lodash';
-import { inject } from 'vue';
+import { useDragResizer } from 'utils/vue/useDragResizer.js';
+import { inject, provide } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
 
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
@@ -80,12 +95,19 @@ const PLOT_ITEM_H_PX = 100;
 
 export default {
   components: {
+    ResizeHandle,
     TimelineObjectView,
     TimelineAxis,
     SwimLane,
     ExtendedLinesOverlay
   },
   inject: ['openmct', 'domainObject', 'path', 'composition', 'extendedLinesBus'],
+  props: {
+    isEditing: {
+      type: Boolean,
+      default: false
+    }
+  },
   setup() {
     const domainObject = inject('domainObject');
     const path = inject('path');
@@ -95,6 +117,12 @@ export default {
       path,
       openmct
     );
+
+    // Drag resizer - Swimlane column width
+    const { x: swimLaneLabelWidth, mousedown } = useDragResizer({ initialX: 200 });
+
+    provide('swimLaneLabelWidth', swimLaneLabelWidth);
+    provide('mousedown', mousedown);
 
     return { alignmentData, resetAlignment };
   },
