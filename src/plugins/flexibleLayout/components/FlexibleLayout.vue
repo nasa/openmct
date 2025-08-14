@@ -159,6 +159,7 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
+
     this.unObserveContainers = this.openmct.objects.observe(
       this.domainObject,
       'configuration.containers',

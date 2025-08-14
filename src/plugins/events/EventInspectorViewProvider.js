@@ -42,7 +42,7 @@ export default function EventInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH;
+          return openmct.priority.HIGHEST;
         },
         destroy: function () {
           if (_destroy) {

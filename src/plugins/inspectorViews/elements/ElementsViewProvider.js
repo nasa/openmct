@@ -35,7 +35,7 @@ export default function ElementsViewProvider(openmct) {
       const type = selection?.[0]?.[0]?.context?.item?.type;
       const hasCustomElementsViewProvider = CUSTOM_ELEMENTS_VIEW_PROVIDER_TYPES.includes(type);
 
-      return hasValidSelection && !hasCustomElementsViewProvider;
+      return hasValidSelection && type !== 'folder' && !hasCustomElementsViewProvider;
     },
     view: function (selection) {
       let _destroy = null;
@@ -65,10 +65,10 @@ export default function ElementsViewProvider(openmct) {
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
 
-          return hasComposition && isEditing;
+          return hasComposition;
         },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
         },
         destroy: function () {
           if (_destroy) {

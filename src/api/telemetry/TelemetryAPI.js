@@ -285,6 +285,40 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Determines whether a domain object has numeric telemetry data.
+   * A domain object has numeric telemetry if it:
+   * 1. Has a telemetry property
+   * 2. Has telemetry metadata with domain values (like timestamps)
+   * 3. Has range values (measurements) where at least one is numeric
+   *
+   * @method hasNumericTelemetry
+   * @param {import('openmct').DomainObject} domainObject The domain object to check
+   * @returns {boolean} True if the object has numeric telemetry, false otherwise
+   */
+  hasNumericTelemetry(domainObject) {
+    const hasTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
+
+    if (!hasTelemetry) {
+      return false;
+    }
+
+    const metadata = this.openmct.telemetry.getMetadata(domainObject);
+
+    if (!metadata) {
+      return false;
+    }
+
+    const rangeValues = metadata.valuesForHints(['range']);
+    const domains = metadata.valuesForHints(['domain']);
+
+    return (
+      domains.length > 0 &&
+      rangeValues.length > 0 &&
+      !rangeValues.every((value) => value.format === 'string')
+    );
+  }
+
+  /**
    * Generates a numeric hash value for an options object. The hash is consistent
    * for equivalent option objects regardless of property order.
    *

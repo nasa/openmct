@@ -106,7 +106,7 @@ describe('The telemetry criterion', function () {
       id: 'test-criterion-id',
       telemetry: openmct.objects.makeKeyString(testTelemetryObject.identifier),
       operation: 'textContains',
-      metadata: 'value',
+      metadata: 'testSource',
       input: ['Hell'],
       telemetryObjects: { [testTelemetryObject.identifier.key]: testTelemetryObject }
     };

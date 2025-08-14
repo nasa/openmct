@@ -30,6 +30,10 @@ const extendedLinesBus = new ExtendedLinesBus();
 
 export { extendedLinesBus };
 
+const extendedLinesBus = new ExtendedLinesBus();
+
+export { extendedLinesBus };
+
 export default function () {
   function install(openmct) {
     openmct.types.addType('time-strip', {

@@ -20,7 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const ALLOWED_TYPES = ['telemetry.plot.overlay', 'telemetry.plot.stacked', 'plan', 'gantt-chart'];
+const ALLOWED_TYPES = [
+  'telemetry.plot.overlay',
+  'telemetry.plot.stacked',
+  'plan',
+  'gantt-chart',
+  'eventGenerator',
+  'eventGeneratorWithAcknowledge',
+  'yamcs.events',
+  'yamcs.event.specific.severity',
+  'yamcs.commands',
+  'yamcs.commands.queue'
+];
 const DISALLOWED_TYPES = ['telemetry.plot.bar-graph', 'telemetry.plot.scatter-plot'];
 export default function TimelineCompositionPolicy(openmct) {
   function hasNumericTelemetry(domainObject, metadata) {
@@ -51,7 +62,7 @@ export default function TimelineCompositionPolicy(openmct) {
 
         if (
           !DISALLOWED_TYPES.includes(child.type) &&
-          (hasNumericTelemetry(child, metadata) ||
+          (openmct.telemetry.hasNumericTelemetry(child) ||
             hasImageTelemetry(child, metadata) ||
             ALLOWED_TYPES.includes(child.type))
         ) {

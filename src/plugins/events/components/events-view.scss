@@ -79,6 +79,7 @@
 .c-timeline__event-line--extended {
     @include abs();
     width: $eventLineW;
+    opacity: 0.4;
 
     &.--hilite {
         opacity: 0.8;

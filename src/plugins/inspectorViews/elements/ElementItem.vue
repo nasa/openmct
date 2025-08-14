@@ -22,6 +22,7 @@
 
 <template>
   <li
+    v-if="allowDrag"
     draggable="true"
     :aria-label="`${elementObject.name} Element Item`"
     :aria-grabbed="hover"
@@ -46,6 +47,22 @@
         @context-click-active="setContextClickState"
       />
       <slot name="content"></slot>
+    </div>
+  </li>
+  <li v-else :aria-label="`${elementObject.name} Element Item`">
+    <div
+      class="c-tree__item c-elements-pool__item js-elements-pool__item"
+      :class="{
+        'is-context-clicked': contextClickActive,
+        hover: hover,
+        'is-alias': isAlias
+      }"
+    >
+      <ObjectLabel
+        :domain-object="elementObject"
+        :object-path="[elementObject, domainObject]"
+        @context-click-active="setContextClickState"
+      />
     </div>
   </li>
 </template>
@@ -74,6 +91,9 @@ export default {
       }
     },
     allowDrop: {
+      type: Boolean
+    },
+    allowDrag: {
       type: Boolean
     }
   },
