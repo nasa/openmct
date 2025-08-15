@@ -46,7 +46,7 @@ export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
     cssClass: 'icon-event',
     priority: function () {
       // We want this to be higher priority than the TelemetryTableView
-      return openmct.priority.HIGH + 1;
+      return openmct.priority.HIGH;
     },
     canView: function (domainObject, objectPath) {
       const isChildOfTimeStrip = objectPath.some((object) => object.type === 'time-strip');

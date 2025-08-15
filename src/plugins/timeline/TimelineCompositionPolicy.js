@@ -34,6 +34,7 @@ const ALLOWED_TYPES = [
 ];
 const DISALLOWED_TYPES = ['telemetry.plot.bar-graph', 'telemetry.plot.scatter-plot'];
 export default function TimelineCompositionPolicy(openmct) {
+<<<<<<< HEAD
   function hasNumericTelemetry(domainObject, metadata) {
     const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
     if (!hasTelemetry || !metadata) {
@@ -47,6 +48,8 @@ export default function TimelineCompositionPolicy(openmct) {
     return metadata.valuesForHints(['domain']).length > 0;
   }
 
+=======
+>>>>>>> 7936-add-discrete-event-visualization
   function hasImageTelemetry(domainObject, metadata) {
     if (!metadata) {
       return false;
