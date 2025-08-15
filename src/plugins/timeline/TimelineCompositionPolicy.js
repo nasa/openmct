@@ -20,20 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const ALLOWED_TYPES = [
-  'telemetry.plot.overlay',
-  'telemetry.plot.stacked',
-  'plan',
-  'gantt-chart',
-  'eventGenerator',
-  'eventGeneratorWithAcknowledge',
-  'yamcs.events',
-  'yamcs.event.specific.severity',
-  'yamcs.commands',
-  'yamcs.commands.queue'
-];
+const ALLOWED_TYPES = ['telemetry.plot.overlay', 'telemetry.plot.stacked', 'plan', 'gantt-chart'];
 const DISALLOWED_TYPES = ['telemetry.plot.bar-graph', 'telemetry.plot.scatter-plot'];
 export default function TimelineCompositionPolicy(openmct) {
+  function hasNumericTelemetry(domainObject, metadata) {
+    const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
+    if (!hasTelemetry || !metadata) {
+      return false;
+    }
+
+    return metadata.values().length > 0 && hasDomainAndRange(metadata);
+  }
+
+  function hasDomainAndRange(metadata) {
+    return (
+      metadata.valuesForHints(['range']).length > 0 &&
+      metadata.valuesForHints(['domain']).length > 0
+    );
+  }
+
   function hasImageTelemetry(domainObject, metadata) {
     if (!metadata) {
       return false;
@@ -49,7 +54,7 @@ export default function TimelineCompositionPolicy(openmct) {
 
         if (
           !DISALLOWED_TYPES.includes(child.type) &&
-          (openmct.telemetry.hasNumericTelemetry(child) ||
+          (hasNumericTelemetry(child, metadata) ||
             hasImageTelemetry(child, metadata) ||
             ALLOWED_TYPES.includes(child.type))
         ) {

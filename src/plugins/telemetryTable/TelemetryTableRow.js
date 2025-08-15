@@ -91,19 +91,15 @@ export default class TelemetryTableRow {
     return [VIEW_DATUM_ACTION_KEY, VIEW_HISTORICAL_DATA_ACTION_KEY];
   }
 
-  /**
-   * Merges the row parameter's datum with the current row datum
-   * @param {TelemetryTableRow} row
-   */
-  updateWithDatum(row) {
+  updateWithDatum(updatesToDatum) {
+    const normalizedUpdatesToDatum = createNormalizedDatum(updatesToDatum, this.columns);
     this.datum = {
       ...this.datum,
-      ...row.datum
+      ...normalizedUpdatesToDatum
     };
-
     this.fullDatum = {
       ...this.fullDatum,
-      ...row.fullDatum
+      ...updatesToDatum
     };
   }
 }

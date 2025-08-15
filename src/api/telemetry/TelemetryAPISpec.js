@@ -269,40 +269,36 @@ describe('Telemetry API', () => {
 
       await telemetryAPI.request(domainObject);
       const { signal } = new AbortController();
-      expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(domainObject, {
+      expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(jasmine.any(Object), {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: openmct.time
+        domain: 'system'
       });
 
-      expect(telemetryProvider.request).toHaveBeenCalledWith(domainObject, {
+      expect(telemetryProvider.request).toHaveBeenCalledWith(jasmine.any(Object), {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: openmct.time
+        domain: 'system'
       });
 
       telemetryProvider.supportsRequest.calls.reset();
       telemetryProvider.request.calls.reset();
 
       await telemetryAPI.request(domainObject, {});
-      expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(domainObject, {
+      expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(jasmine.any(Object), {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: openmct.time
+        domain: 'system'
       });
 
-      expect(telemetryProvider.request).toHaveBeenCalledWith(domainObject, {
+      expect(telemetryProvider.request).toHaveBeenCalledWith(jasmine.any(Object), {
         signal,
         start: 0,
         end: 1,
-        domain: 'system',
-        timeContext: openmct.time
+        domain: 'system'
       });
     });
 
@@ -317,20 +313,18 @@ describe('Telemetry API', () => {
         domain: 'someDomain'
       });
       const { signal } = new AbortController();
-      expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(domainObject, {
+      expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(jasmine.any(Object), {
         start: 20,
         end: 30,
         domain: 'someDomain',
-        signal,
-        timeContext: openmct.time
+        signal
       });
 
-      expect(telemetryProvider.request).toHaveBeenCalledWith(domainObject, {
+      expect(telemetryProvider.request).toHaveBeenCalledWith(jasmine.any(Object), {
         start: 20,
         end: 30,
         domain: 'someDomain',
-        signal,
-        timeContext: openmct.time
+        signal
       });
     });
     describe('telemetry batching support', () => {

@@ -150,7 +150,7 @@ export default {
   mounted() {
     this.handleNewBounds = _.throttle(this.handleNewBounds, 300, {
       leading: true,
-      trailing: true
+      trailing: false
     });
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
@@ -181,8 +181,6 @@ export default {
       }
     },
     stopFollowingTime() {
-      this.handleNewBounds.cancel();
-
       if (this.timeContext) {
         this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
         this.timeContext.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);

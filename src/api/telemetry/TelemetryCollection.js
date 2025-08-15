@@ -62,6 +62,9 @@ export default class TelemetryCollection extends EventEmitter {
     this.futureBuffer = [];
     this.parseTime = undefined;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+    if (!Object.hasOwn(options, 'timeContext')) {
+      options.timeContext = this.openmct.time;
+    }
     this.options = options;
     this.unsubscribe = undefined;
     this.pageState = undefined;
@@ -81,9 +84,6 @@ export default class TelemetryCollection extends EventEmitter {
       this._error(LOADED_ERROR);
     }
 
-    if (!Object.hasOwn(this.options, 'timeContext')) {
-      this.options.timeContext = this.openmct.time;
-    }
     this._setTimeSystem(this.options.timeContext.getTimeSystem());
     this.lastBounds = this.options.timeContext.getBounds();
     this._watchBounds();
@@ -116,7 +116,8 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   /**
-   * @returns {Array} All bounded telemetry
+   * This will start the requests for historical and realtime data,
+   * as well as setting up initial values and watchers
    */
   getAll() {
     return this.boundedTelemetry;
@@ -127,7 +128,7 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   async _requestHistoricalTelemetry() {
-    const options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
+    let options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
     const historicalProvider = this.openmct.telemetry.findRequestProvider(
       this.domainObject,
       options

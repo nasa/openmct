@@ -44,57 +44,48 @@ import { getLatestTimestamp } from './utils/time.js';
  * }
  */
 export default class Condition extends EventEmitter {
-  #definition;
   /**
    * Manages criteria and emits the result of - true or false - based on criteria evaluated.
    * @constructor
-   * @param definition: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+   * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
    * @param openmct
    * @param conditionManager
    */
-  constructor(definition, openmct, conditionManager) {
+  constructor(conditionConfiguration, openmct, conditionManager) {
     super();
 
     this.openmct = openmct;
     this.conditionManager = conditionManager;
+    this.id = conditionConfiguration.id;
     this.criteria = [];
     this.result = undefined;
     this.timeSystems = this.openmct.time.getAllTimeSystems();
-    this.#definition = definition;
-
-    if (definition.configuration.criteria) {
-      this.createCriteria(definition.configuration.criteria);
+    if (conditionConfiguration.configuration.criteria) {
+      this.createCriteria(conditionConfiguration.configuration.criteria);
     }
 
-    this.trigger = definition.configuration.trigger;
+    this.trigger = conditionConfiguration.configuration.trigger;
     this.summary = '';
     this.handleCriterionUpdated = this.handleCriterionUpdated.bind(this);
     this.handleOldTelemetryCriterion = this.handleOldTelemetryCriterion.bind(this);
     this.handleTelemetryStaleness = this.handleTelemetryStaleness.bind(this);
   }
-  get id() {
-    return this.#definition.id;
-  }
-  get configuration() {
-    return this.#definition.configuration;
-  }
 
-  updateResult(latestDataTable, telemetryIdThatChanged) {
-    if (!latestDataTable) {
+  updateResult(datum) {
+    if (!datum || !datum.id) {
       console.log('no data received');
+
       return;
     }
 
     // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
-    if (this.hasNoTelemetry() || this.isTelemetryUsed(telemetryIdThatChanged)) {
-      const currentTimeSystemKey = this.openmct.time.getTimeSystem().key;
+    if (this.hasNoTelemetry() || this.isTelemetryUsed(datum.id)) {
       this.criteria.forEach((criterion) => {
         if (this.isAnyOrAllTelemetry(criterion)) {
-          criterion.updateResult(latestDataTable, this.conditionManager.telemetryObjects);
+          criterion.updateResult(datum, this.conditionManager.telemetryObjects);
         } else {
-          const relevantDatum = latestDataTable.get(criterion.telemetryObjectIdAsString);
-          if (criterion.shouldUpdateResult(relevantDatum, currentTimeSystemKey)) {
-            criterion.updateResult(relevantDatum, currentTimeSystemKey);
+          if (criterion.usesTelemetry(datum.id)) {
+            criterion.updateResult(datum);
           }
         }
       });
@@ -111,11 +102,9 @@ export default class Condition extends EventEmitter {
   }
 
   hasNoTelemetry() {
-    const usesSomeTelemetry = this.criteria.some((criterion) => {
-      return this.isAnyOrAllTelemetry(criterion) || criterion.telemetry !== '';
+    return this.criteria.every((criterion) => {
+      return !this.isAnyOrAllTelemetry(criterion) && criterion.telemetry === '';
     });
-
-    return !usesSomeTelemetry;
   }
 
   isTelemetryUsed(id) {
@@ -193,7 +182,7 @@ export default class Condition extends EventEmitter {
   findCriterion(id) {
     let criterion;
 
-    for (let i = 0; i < this.criteria.length; i++) {
+    for (let i = 0, ii = this.criteria.length; i < ii; i++) {
       if (this.criteria[i].id === id) {
         criterion = {
           item: this.criteria[i],
@@ -258,7 +247,7 @@ export default class Condition extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.conditionManager.updateCurrentCondition(latestTimestamp, this);
+    this.conditionManager.updateCurrentCondition(latestTimestamp);
   }
 
   handleTelemetryStaleness() {

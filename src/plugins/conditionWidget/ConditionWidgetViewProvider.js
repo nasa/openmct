@@ -65,6 +65,9 @@ export default function ConditionWidget(openmct) {
           }
         }
       };
+    },
+    priority: function () {
+      return 1;
     }
   };
 }

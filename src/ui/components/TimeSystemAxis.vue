@@ -21,9 +21,9 @@
 -->
 <template>
   <div ref="axisHolder" class="c-timesystem-axis">
-    <div class="c-timesystem-axis__mb-line" :style="nowMarkerStyle" aria-label="Now Marker"></div>
+    <div class="nowMarker" :style="nowMarkerStyle"><span class="icon-arrow-down"></span></div>
     <svg :width="svgWidth" :height="svgHeight">
-      <g class="axis" :transform="axisTransform"></g>
+      <g class="axis" font-size="1.3em" :transform="axisTransform"></g>
     </svg>
   </div>
 </template>
@@ -44,7 +44,6 @@ import { useResizeObserver } from '../composables/resize';
 const PADDING = 1;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
-const TIME_AXIS_LINE_Y = 20;
 
 export default {
   inject: ['openmct', 'domainObject', 'path'],
@@ -79,10 +78,7 @@ export default {
     const { size: containerSize, startObserving } = useResizeObserver();
     const svgWidth = ref(0);
     const svgHeight = ref(0);
-    const axisTransform = ref(`translate(0,${TIME_AXIS_LINE_Y})`);
-    const alignmentOffset = ref(0);
-    const leftAlignmentOffset = ref(0);
-    const alignmentStyle = ref({ margin: `0 0 0 0` });
+    const axisTransform = ref('translate(0,20)');
     const nowMarkerStyle = reactive({
       height: '0px',
       left: '0px'
@@ -104,9 +100,6 @@ export default {
       svgWidth,
       svgHeight,
       axisTransform,
-      alignmentOffset,
-      leftAlignmentOffset,
-      alignmentStyle,
       nowMarkerStyle,
       openmct
     };
@@ -115,17 +108,14 @@ export default {
     alignmentData: {
       handler() {
         let leftOffset = 0;
-        const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
         if (this.alignmentData.leftWidth) {
           leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
         }
         this.axisTransform = `translate(${this.alignmentData.leftWidth + leftOffset}, 20)`;
-        this.leftAlignmentOffset = this.alignmentData.leftWidth + leftOffset;
+
+        const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
         this.alignmentOffset =
-          this.leftAlignmentOffset + this.alignmentData.rightWidth + rightOffset;
-        this.alignmentStyle = {
-          margin: `0 ${this.leftAlignmentOffset + this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
-        };
+          this.alignmentData.leftWidth + leftOffset + this.alignmentData.rightWidth + rightOffset;
         this.refresh();
       },
       deep: true
@@ -177,15 +167,14 @@ export default {
       this.updateNowMarker();
     },
     updateNowMarker() {
-      const nowMarker = this.$el.querySelector('.c-timesystem-axis__mb-line');
+      const nowMarker = this.$el.querySelector('.nowMarker');
       if (nowMarker) {
         nowMarker.classList.remove('hidden');
-        this.nowMarkerStyle.height = this.contentHeight - TIME_AXIS_LINE_Y + 'px';
-        this.nowMarkerStyle.top = TIME_AXIS_LINE_Y + 'px';
+        this.nowMarkerStyle.height = this.contentHeight + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
-        this.nowMarkerStyle.left = `${now + this.leftAlignmentOffset}px`;
-        if (now < 0 || now > this.width) {
+        this.nowMarkerStyle.left = `${now + this.alignmentOffset}px`;
+        if (now > this.width) {
           nowMarker.classList.add('hidden');
         }
       }

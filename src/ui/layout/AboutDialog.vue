@@ -33,7 +33,7 @@
         <h1 class="l-title s-title">Open MCT</h1>
         <div class="l-description s-description">
           <p>
-            Open MCT, Copyright &copy; 2014-2024, United States Government as represented by the
+            Open MCT, Copyright &copy; 2014-2023, United States Government as represented by the
             Administrator of the National Aeronautics and Space Administration. All rights reserved.
           </p>
           <p>

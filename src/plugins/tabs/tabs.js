@@ -86,4 +86,8 @@ export default class Tabs {
       }
     };
   }
+
+  priority() {
+    return 1;
+  }
 }

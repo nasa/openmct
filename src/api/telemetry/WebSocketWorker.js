@@ -25,6 +25,10 @@ export default function installWorker() {
   const FALLBACK_AND_WAIT_MS = [1000, 5000, 5000, 10000, 10000, 30000];
 
   /**
+   * @typedef {import('./BatchingWebSocket').BatchingStrategy} BatchingStrategy
+   */
+
+  /**
    * Provides a WebSocket connection that is resilient to errors and dropouts.
    * On an error or dropout, will automatically reconnect.
    *
@@ -211,17 +215,17 @@ export default function installWorker() {
         case 'message':
           this.#websocket.enqueueMessage(message.data.message);
           break;
+        case 'setBatchingStrategy':
+          this.setBatchingStrategy(message);
+          break;
         case 'readyForNextBatch':
           this.#messageBatcher.readyForNextBatch();
           break;
-        case 'setMaxBufferSize':
-          this.#messageBatcher.setMaxBufferSize(message.data.maxBufferSize);
+        case 'setMaxBatchSize':
+          this.#messageBatcher.setMaxBatchSize(message.data.maxBatchSize);
           break;
-        case 'setThrottleRate':
-          this.#messageBatcher.setThrottleRate(message.data.throttleRate);
-          break;
-        case 'setThrottleMessagePattern':
-          this.#messageBatcher.setThrottleMessagePattern(message.data.throttleMessagePattern);
+        case 'setMaxBatchWait':
+          this.#messageBatcher.setMaxBatchWait(message.data.maxBatchWait);
           break;
         default:
           throw new Error(`Unknown message type: ${type}`);
@@ -234,69 +238,122 @@ export default function installWorker() {
     disconnect() {
       this.#websocket.disconnect();
     }
+    setBatchingStrategy(message) {
+      const { serializedStrategy } = message.data;
+      const batchingStrategy = {
+        // eslint-disable-next-line no-new-func
+        shouldBatchMessage: new Function(`return ${serializedStrategy.shouldBatchMessage}`)(),
+        // eslint-disable-next-line no-new-func
+        getBatchIdFromMessage: new Function(`return ${serializedStrategy.getBatchIdFromMessage}`)()
+        // Will also include maximum batch length here
+      };
+      this.#messageBatcher.setBatchingStrategy(batchingStrategy);
+    }
   }
 
   /**
-   * Responsible for buffering messages
+   * Received messages from the WebSocket, and passes them along to the
+   * Worker interface and back to the main thread.
    */
-  class MessageBuffer {
-    #buffer;
-    #currentBufferLength;
-    #dropped;
-    #maxBufferSize;
+  class WebSocketToWorkerMessageBroker {
+    #worker;
+    #messageBatcher;
+
+    constructor(messageBatcher, worker) {
+      this.#messageBatcher = messageBatcher;
+      this.#worker = worker;
+    }
+
+    routeMessageToHandler(data) {
+      if (this.#messageBatcher.shouldBatchMessage(data)) {
+        this.#messageBatcher.addMessageToBatch(data);
+      } else {
+        this.#worker.postMessage({
+          type: 'message',
+          message: data
+        });
+      }
+    }
+  }
+
+  /**
+   * Responsible for batching messages according to the defined batching strategy.
+   */
+  class MessageBatcher {
+    #batch;
+    #batchingStrategy;
+    #hasBatch = false;
+    #maxBatchSize;
     #readyForNextBatch;
     #worker;
     #throttledSendNextBatch;
-    #throttleMessagePattern;
 
     constructor(worker) {
       // No dropping telemetry unless we're explicitly told to.
-      this.#maxBufferSize = Number.POSITIVE_INFINITY;
+      this.#maxBatchSize = Number.POSITIVE_INFINITY;
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
-      this.setThrottleRate(ONE_SECOND);
+      this.setMaxBatchWait(ONE_SECOND);
     }
     #resetBatch() {
-      //this.#batch = {};
-      this.#buffer = [];
-      this.#currentBufferLength = 0;
-      this.#dropped = false;
+      this.#batch = {};
+      this.#hasBatch = false;
     }
-
-    addMessageToBuffer(message) {
-      this.#buffer.push(message);
-      this.#currentBufferLength += message.length;
-
-      for (
-        let i = 0;
-        this.#currentBufferLength > this.#maxBufferSize && i < this.#buffer.length;
-        i++
-      ) {
-        const messageToConsider = this.#buffer[i];
-        if (this.#shouldThrottle(messageToConsider)) {
-          this.#buffer.splice(i, 1);
-          this.#currentBufferLength -= messageToConsider.length;
-          this.#dropped = true;
-        }
+    /**
+     * @param {BatchingStrategy} strategy
+     */
+    setBatchingStrategy(strategy) {
+      this.#batchingStrategy = strategy;
+    }
+    /**
+     * Applies the `shouldBatchMessage` function from the supplied batching strategy
+     * to each message to determine if it should be added to a batch. If not batched,
+     * the message is immediately sent over the worker to the main thread.
+     * @param {any} message the message received from the WebSocket. See the WebSocket
+     * documentation for more details -
+     * https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/data
+     * @returns
+     */
+    shouldBatchMessage(message) {
+      return (
+        this.#batchingStrategy.shouldBatchMessage &&
+        this.#batchingStrategy.shouldBatchMessage(message)
+      );
+    }
+    /**
+     * Adds the given message to a batch. The batch group that the message is added
+     * to will be determined by the value returned by `getBatchIdFromMessage`.
+     * @param {any} message the message received from the WebSocket. See the WebSocket
+     * documentation for more details -
+     * https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/data
+     */
+    addMessageToBatch(message) {
+      const batchId = this.#batchingStrategy.getBatchIdFromMessage(message);
+      let batch = this.#batch[batchId];
+      if (batch === undefined) {
+        this.#hasBatch = true;
+        batch = this.#batch[batchId] = [message];
+      } else {
+        batch.push(message);
+      }
+      if (batch.length > this.#maxBatchSize) {
+        console.warn(
+          `Exceeded max batch size of ${this.#maxBatchSize} for ${batchId}. Dropping value.`
+        );
+        batch.shift();
+        this.#batch.dropped = true;
       }
 
       if (this.#readyForNextBatch) {
         this.#throttledSendNextBatch();
       }
     }
-
-    #shouldThrottle(message) {
-      return (
-        this.#throttleMessagePattern !== undefined && this.#throttleMessagePattern.test(message)
-      );
+    setMaxBatchSize(maxBatchSize) {
+      this.#maxBatchSize = maxBatchSize;
     }
-
-    setMaxBufferSize(maxBufferSize) {
-      this.#maxBufferSize = maxBufferSize;
-    }
-    setThrottleRate(throttleRate) {
-      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), throttleRate);
+    setMaxBatchWait(maxBatchWait) {
+      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), maxBatchWait);
     }
     /**
      * Indicates that client code is ready to receive the next batch of
@@ -305,33 +362,21 @@ export default function installWorker() {
      * any new data is available.
      */
     readyForNextBatch() {
-      if (this.#hasData()) {
+      if (this.#hasBatch) {
         this.#throttledSendNextBatch();
       } else {
         this.#readyForNextBatch = true;
       }
     }
     #sendNextBatch() {
-      const buffer = this.#buffer;
-      const dropped = this.#dropped;
-      const currentBufferLength = this.#currentBufferLength;
-
+      const batch = this.#batch;
       this.#resetBatch();
       this.#worker.postMessage({
         type: 'batch',
-        dropped,
-        currentBufferLength: currentBufferLength,
-        maxBufferSize: this.#maxBufferSize,
-        batch: buffer
+        batch
       });
-
       this.#readyForNextBatch = false;
-    }
-    #hasData() {
-      return this.#currentBufferLength > 0;
-    }
-    setThrottleMessagePattern(priorityMessagePattern) {
-      this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
+      this.#hasBatch = false;
     }
   }
 
@@ -363,14 +408,15 @@ export default function installWorker() {
   }
 
   const websocket = new ResilientWebSocket(self);
-  const messageBuffer = new MessageBuffer(self);
-  const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBuffer);
+  const messageBatcher = new MessageBatcher(self);
+  const workerBroker = new WorkerToWebSocketMessageBroker(websocket, messageBatcher);
+  const websocketBroker = new WebSocketToWorkerMessageBroker(messageBatcher, self);
 
   self.addEventListener('message', (message) => {
     workerBroker.routeMessageToHandler(message);
   });
   websocket.registerMessageCallback((data) => {
-    messageBuffer.addMessageToBuffer(data);
+    websocketBroker.routeMessageToHandler(data);
   });
 
   self.websocketInstance = websocket;

@@ -271,23 +271,23 @@ export default {
       this.compositionObjects = [];
     },
 
-    exportJPG(filename) {
+    exportJPG() {
       this.hideExportButtons = true;
       const plotElement = this.$el;
-      filename = filename ?? `${this.domainObject.name} - stacked-plot`;
 
-      this.imageExporter.exportJPG(plotElement, filename, 'export-plot').finally(
+      this.imageExporter.exportJPG(plotElement, 'stacked-plot.jpg', 'export-plot').finally(
         function () {
           this.hideExportButtons = false;
         }.bind(this)
       );
     },
 
-    exportPNG(filename) {
+    exportPNG() {
       this.hideExportButtons = true;
+
       const plotElement = this.$el;
-      filename = filename ?? `${this.domainObject.name} - stacked-plot`;
-      this.imageExporter.exportPNG(plotElement, filename, 'export-plot').finally(
+
+      this.imageExporter.exportPNG(plotElement, 'stacked-plot.png', 'export-plot').finally(
         function () {
           this.hideExportButtons = false;
         }.bind(this)

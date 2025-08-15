@@ -20,17 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExtendedLinesBus from './ExtendedLinesBus.js';
 import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
 import timelineInterceptor from './timelineInterceptor.js';
 import TimelineViewProvider from './TimelineViewProvider.js';
 
-const extendedLinesBus = new ExtendedLinesBus();
-
-export { extendedLinesBus };
-
 export default function () {
-  function install(openmct) {
+  return function install(openmct) {
     openmct.types.addType('time-strip', {
       name: 'Time Strip',
       key: 'time-strip',
@@ -48,10 +43,6 @@ export default function () {
     timelineInterceptor(openmct);
     openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
 
-    openmct.objectViews.addProvider(new TimelineViewProvider(openmct, extendedLinesBus));
-  }
-
-  install.extendedLinesBus = extendedLinesBus;
-
-  return install;
+    openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
+  };
 }

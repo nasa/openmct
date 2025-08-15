@@ -67,4 +67,7 @@ export default class FolderListView {
       }
     };
   }
+  priority() {
+    return 1;
+  }
 }

@@ -68,6 +68,7 @@
 import {
   FAULT_MANAGEMENT_ALARMS,
   FAULT_MANAGEMENT_GLOBAL_ALARMS,
+  FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS,
   FILTER_ITEMS,
   SORT_ITEMS
 } from './constants.js';
@@ -86,13 +87,6 @@ const SEARCH_KEYS = [
   'shortDescription',
   'namespace'
 ];
-
-// Helper function for filtering faults
-function filterFaultsByTerm(faults, searchTerm) {
-  return faults.filter((fault) =>
-    SEARCH_KEYS.some((key) => fault[key]?.toString().toLowerCase().includes(searchTerm))
-  );
-}
 
 export default {
   components: {
@@ -117,18 +111,23 @@ export default {
     },
     filteredFaultsList() {
       const filterName = FILTER_ITEMS[this.filterIndex];
-      let list = this.faultsList.filter((fault) =>
-        filterName === 'Shelved' ? fault.shelved : !fault.shelved
-      );
+      let list = this.faultsList;
+
+      // Exclude shelved alarms from all views except the Shelved view
+      if (filterName !== 'Shelved') {
+        list = list.filter((fault) => fault.shelved !== true);
+      }
 
       if (filterName === 'Acknowledged') {
         list = list.filter((fault) => fault.acknowledged);
       } else if (filterName === 'Unacknowledged') {
         list = list.filter((fault) => !fault.acknowledged);
+      } else if (filterName === 'Shelved') {
+        list = list.filter((fault) => fault.shelved);
       }
 
       if (this.searchTerm.length > 0) {
-        list = filterFaultsByTerm(list, this.searchTerm);
+        list = list.filter(this.filterUsingSearchTerm);
       }
 
       list.sort(SORT_ITEMS[this.sortBy].sortFunction);
@@ -138,9 +137,6 @@ export default {
     showToolbar() {
       return this.openmct.faults.supportsActions();
     }
-  },
-  created() {
-    this.shelveDurations = this.openmct.faults.getShelveDurations();
   },
   mounted() {
     this.unsubscribe = this.openmct.faults.subscribe(this.domainObject, this.updateFault);
@@ -162,13 +158,14 @@ export default {
         });
       }
     },
-    async updateFaultList() {
-      const faultsData = await this.openmct.faults.request(this.domainObject);
-      if (faultsData?.length > 0) {
-        this.faultsList = faultsData.map((fd) => fd.fault);
-      } else {
-        this.faultsList = [];
-      }
+    updateFaultList() {
+      this.openmct.faults.request(this.domainObject).then((faultsData) => {
+        if (faultsData?.length > 0) {
+          this.faultsList = faultsData.map((fd) => fd.fault);
+        } else {
+          this.faultsList = [];
+        }
+      });
     },
     filterUsingSearchTerm(fault) {
       if (!fault) {
@@ -226,29 +223,14 @@ export default {
       );
     },
     async toggleAcknowledgeSelected(faults = this.selectedFaults) {
-      const title = this.getAcknowledgeTitle(faults);
-
-      const formStructure = this.getAcknowledgeFormStructure(title);
-
-      try {
-        const data = await this.openmct.forms.showForm(formStructure);
-        this.acknowledgeFaults(faults, data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.resetSelectedFaultMap();
-      }
-    },
-    getAcknowledgeTitle(faults) {
+      let title = '';
       if (faults.length > 1) {
-        return `Acknowledge ${faults.length} selected faults`;
+        title = `Acknowledge ${faults.length} selected faults`;
       } else if (faults.length === 1) {
-        return `Acknowledge fault: ${faults[0].name}`;
+        title = `Acknowledge fault: ${faults[0].name}`;
       }
-      return '';
-    },
-    getAcknowledgeFormStructure(title) {
-      return {
+
+      const formStructure = {
         title,
         sections: [
           {
@@ -271,11 +253,17 @@ export default {
           }
         }
       };
-    },
-    acknowledgeFaults(faults, data) {
-      faults.forEach((fault) => {
-        this.openmct.faults.acknowledgeFault(fault, data);
-      });
+
+      try {
+        const data = await this.openmct.forms.showForm(formStructure);
+        faults.forEach((fault) => {
+          this.openmct.faults.acknowledgeFault(fault, data);
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.resetSelectedFaultMap();
+      }
     },
     resetSelectedFaultMap() {
       Object.keys(this.selectedFaultMap).forEach((key) => {
@@ -285,7 +273,7 @@ export default {
     async toggleShelveSelected(faults = this.selectedFaults, shelveData = {}) {
       const { shelved = true } = shelveData;
       if (shelved) {
-        const title =
+        let title =
           faults.length > 1
             ? `Shelve ${faults.length} selected faults`
             : `Shelve fault: ${faults[0].name}`;
@@ -307,10 +295,10 @@ export default {
                   key: 'shelveDuration',
                   control: 'select',
                   name: 'Shelve duration',
-                  options: this.shelveDurations,
+                  options: FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS,
                   required: false,
                   cssClass: 'l-input-lg',
-                  value: this.shelveDurations[0].value
+                  value: FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS[0].value
                 }
               ]
             }
@@ -331,16 +319,18 @@ export default {
 
         shelveData.comment = data.comment || '';
         shelveData.shelveDuration =
-          data.shelveDuration === undefined ? this.shelveDurations[0].value : data.shelveDuration;
+          data.shelveDuration !== undefined
+            ? data.shelveDuration
+            : FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS[0].value;
       } else {
         shelveData = {
           shelved: false
         };
       }
 
-      await Promise.all(
-        faults.map((selectedFault) => this.openmct.faults.shelveFault(selectedFault, shelveData))
-      );
+      Object.values(faults).forEach((selectedFault) => {
+        this.openmct.faults.shelveFault(selectedFault, shelveData);
+      });
 
       this.selectedFaultMap = {};
     },

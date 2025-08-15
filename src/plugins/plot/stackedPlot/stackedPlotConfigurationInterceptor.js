@@ -23,25 +23,14 @@
 export default function stackedPlotConfigurationInterceptor(openmct) {
   openmct.objects.addGetInterceptor({
     appliesTo: (identifier, domainObject) => {
-      return (
-        domainObject?.type === 'telemetry.plot.stacked' &&
-        (!domainObject.configuration?.series || !domainObject.configuration?.objectStyles)
-      );
+      return domainObject && domainObject.type === 'telemetry.plot.stacked';
     },
-    invoke: (identifier, domainObject) => {
-      if (!domainObject.configuration) {
-        domainObject.configuration = {};
+    invoke: (identifier, object) => {
+      if (object && object.configuration && object.configuration.series === undefined) {
+        object.configuration.series = [];
       }
 
-      if (!domainObject.configuration.series) {
-        domainObject.configuration.series = [];
-      }
-
-      if (!domainObject.configuration.objectStyles) {
-        domainObject.configuration.objectStyles = {};
-      }
-
-      return domainObject;
+      return object;
     }
   });
 }

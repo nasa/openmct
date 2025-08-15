@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { DEFAULT_SHELVE_DURATIONS } from '../../src/api/faultmanagement/FaultManagementAPI.js';
 import { acknowledgeFault, randomFaults, shelveFault } from './utils.js';
 
 export default function (staticFaults = false) {
@@ -57,9 +56,6 @@ export default function (staticFaults = false) {
         return Promise.resolve({
           success: true
         });
-      },
-      getShelveDurations() {
-        return DEFAULT_SHELVE_DURATIONS;
       }
     });
   };

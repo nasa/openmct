@@ -582,15 +582,4 @@ export default class AnnotationAPI extends EventEmitter {
       _.isEqual(targets, otherTargets)
     );
   }
-
-  /**
-   * Checks if the given type is annotatable
-   * @param {string} type The type to check
-   * @returns {boolean} Returns true if the type is annotatable
-   */
-  isAnnotatableType(type) {
-    const types = this.openmct.types.getAllTypes();
-
-    return types[type]?.definition?.annotatable;
-  }
 }

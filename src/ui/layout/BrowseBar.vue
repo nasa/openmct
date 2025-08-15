@@ -20,11 +20,10 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-browse-bar" aria-label="Browse bar">
+  <div class="l-browse-bar">
     <div class="l-browse-bar__start">
       <button
         v-if="hasParent"
-        aria-label="Navigate up to parent"
         class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
         title="Navigate up to parent"
         @click="goToParent"
@@ -35,10 +34,9 @@
         </div>
         <span
           ref="objectName"
-          aria-label="Browse bar object name"
           class="l-browse-bar__object-name c-object-label__name"
           :class="{ 'c-input-inline': isPersistable }"
-          :contenteditable="isNameEditable"
+          :contenteditable="isPersistable"
           @blur="updateName"
           @keydown.enter.prevent
           @keyup.enter.prevent="updateNameOnEnterKeyPress"
@@ -80,7 +78,7 @@
         ></button>
 
         <button
-          v-if="shouldShowLock"
+          v-if="isViewEditable & !isEditing"
           :aria-label="lockedOrUnlockedTitle"
           :title="lockedOrUnlockedTitle"
           :class="{
@@ -89,13 +87,6 @@
           }"
           @click="toggleLock(!domainObject.locked)"
         ></button>
-
-        <span
-          v-else-if="domainObject?.locked"
-          class="icon-lock"
-          aria-label="Locked for editing, cannot be unlocked."
-          title="Locked for editing, cannot be unlocked."
-        ></span>
 
         <button
           v-if="isViewEditable && !isEditing && !domainObject.locked"
@@ -189,18 +180,6 @@ export default {
     };
   },
   computed: {
-    isNameEditable() {
-      return this.isPersistable && !this.domainObject.locked;
-    },
-    shouldShowLock() {
-      if (this.domainObject === undefined) {
-        return false;
-      }
-      if (this.domainObject.disallowUnlock) {
-        return false;
-      }
-      return this.domainObject.locked || (this.isViewEditable && !this.isEditing);
-    },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
     },
@@ -274,19 +253,11 @@ export default {
       return false;
     },
     lockedOrUnlockedTitle() {
-      let title;
       if (this.domainObject.locked) {
-        if (this.domainObject.lockedBy !== undefined) {
-          title = `Locked for editing by ${this.domainObject.lockedBy}. `;
-        } else {
-          title = 'Locked for editing. ';
-        }
-        title += 'Click to unlock.';
+        return 'Locked for editing - click to unlock.';
       } else {
-        title = 'Unlocked for editing, click to lock.';
+        return 'Unlocked for editing - click to lock.';
       }
-
-      return title;
     },
     domainObjectName() {
       return this.domainObject?.name ?? '';
@@ -317,6 +288,7 @@ export default {
     document.addEventListener('click', this.closeViewAndSaveMenu);
     this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
     window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
+
     this.openmct.editor.on('isEditing', (isEditing) => {
       this.isEditing = isEditing;
     });
@@ -449,27 +421,8 @@ export default {
       this.actionCollection.off('update', this.updateActionItems);
       delete this.actionCollection;
     },
-    async toggleLock(flag) {
-      if (!this.domainObject.disallowUnlock) {
-        const wasTransactionActive = this.openmct.objects.isTransactionActive();
-        let transaction;
-
-        if (!wasTransactionActive) {
-          transaction = this.openmct.objects.startTransaction();
-        }
-
-        this.openmct.objects.mutate(this.domainObject, 'locked', flag);
-        const user = await this.openmct.user.getCurrentUser();
-
-        if (user !== undefined) {
-          this.openmct.objects.mutate(this.domainObject, 'lockedBy', user.id);
-        }
-
-        if (!wasTransactionActive) {
-          await transaction.commit();
-          this.openmct.objects.endTransaction();
-        }
-      }
+    toggleLock(flag) {
+      this.openmct.objects.mutate(this.domainObject, 'locked', flag);
     },
     setStatus(status) {
       this.status = status;

@@ -32,7 +32,6 @@
 <script>
 import mount from 'utils/mount';
 
-import { encode_url } from '../../utils/encoding';
 import AboutDialog from './AboutDialog.vue';
 
 export default {
@@ -40,7 +39,7 @@ export default {
   mounted() {
     const branding = this.openmct.branding();
     if (branding.smallLogoImage) {
-      this.$refs.aboutLogo.style.backgroundImage = `url('${encode_url(branding.smallLogoImage)}')`;
+      this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`;
     }
   },
   methods: {

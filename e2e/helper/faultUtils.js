@@ -25,7 +25,6 @@ import { expect } from '../pluginFixtures.js';
 
 /**
  * @param {import('@playwright/test').Page} page
- * @returns {Promise<void>}
  */
 export async function navigateToFaultManagementWithExample(page) {
   await page.addInitScript({
@@ -37,7 +36,6 @@ export async function navigateToFaultManagementWithExample(page) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @returns {Promise<void>}
  */
 export async function navigateToFaultManagementWithStaticExample(page) {
   await page.addInitScript({
@@ -49,7 +47,6 @@ export async function navigateToFaultManagementWithStaticExample(page) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @returns {Promise<void>}
  */
 export async function navigateToFaultManagementWithoutExample(page) {
   await page.addInitScript({
@@ -61,7 +58,6 @@ export async function navigateToFaultManagementWithoutExample(page) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @returns {Promise<void>}
  */
 async function navigateToFaultItemInTree(page) {
   await page.goto('./', { waitUntil: 'domcontentloaded' });
@@ -81,8 +77,6 @@ async function navigateToFaultItemInTree(page) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {Promise<void>}
  */
 export async function acknowledgeFault(page, rowNumber) {
   await openFaultRowMenu(page, rowNumber);
@@ -92,8 +86,6 @@ export async function acknowledgeFault(page, rowNumber) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {...number} nums
- * @returns {Promise<void>}
  */
 export async function shelveMultipleFaults(page, ...nums) {
   const selectRows = nums.map((num) => {
@@ -107,8 +99,6 @@ export async function shelveMultipleFaults(page, ...nums) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {...number} nums
- * @returns {Promise<void>}
  */
 export async function acknowledgeMultipleFaults(page, ...nums) {
   const selectRows = nums.map((num) => {
@@ -116,43 +106,50 @@ export async function acknowledgeMultipleFaults(page, ...nums) {
   });
   await Promise.all(selectRows);
 
-  await page.getByLabel('Acknowledge selected faults').click();
+  await page.locator('button:has-text("Acknowledge")').click();
   await page.getByLabel('Save').click();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {Promise<void>}
  */
 export async function shelveFault(page, rowNumber) {
   await openFaultRowMenu(page, rowNumber);
-  await page.getByLabel('Shelve', { exact: true }).click();
+  await page.locator('.c-menu >> text="Shelve"').click();
+  // Click [aria-label="Save"]
   await page.getByLabel('Save').click();
 }
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {'severity' | 'newest-first' | 'oldest-first'} sort
- * @returns {Promise<void>}
- */
-export async function sortFaultsBy(page, sort) {
-  await page.getByTitle('Sort By').getByRole('combobox').selectOption(sort);
-}
-
-/**
- * @param {import('@playwright/test').Page} page
- * @param {'acknowledged' | 'shelved' | 'standard view'} view
- * @returns {Promise<void>}
  */
 export async function changeViewTo(page, view) {
-  await page.getByTitle('View Filter').getByRole('combobox').selectOption(view);
+  await page.locator('.c-fault-mgmt__search-row select').first().selectOption(view);
 }
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {Promise<void>}
+ */
+export async function sortFaultsBy(page, sort) {
+  await page.locator('.c-fault-mgmt__list-header-sortButton select').selectOption(sort);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+export async function enterSearchTerm(page, term) {
+  await page.locator('.c-fault-mgmt-search [aria-label="Search Input"]').fill(term);
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+export async function clearSearch(page) {
+  await enterSearchTerm(page, '');
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
  */
 export async function selectFaultItem(page, rowNumber) {
   await page
@@ -168,37 +165,71 @@ export async function selectFaultItem(page, rowNumber) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {import('@playwright/test').Locator}
+ */
+export async function getHighestSeverity(page) {
+  const criticalCount = await page.locator('[title=CRITICAL]').count();
+  const warningCount = await page.locator('[title=WARNING]').count();
+
+  if (criticalCount > 0) {
+    return 'CRITICAL';
+  } else if (warningCount > 0) {
+    return 'WARNING';
+  }
+
+  return 'WATCH';
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+export async function getLowestSeverity(page) {
+  const warningCount = await page.locator('[title=WARNING]').count();
+  const watchCount = await page.locator('[title=WATCH]').count();
+
+  if (watchCount > 0) {
+    return 'WATCH';
+  } else if (warningCount > 0) {
+    return 'WARNING';
+  }
+
+  return 'CRITICAL';
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+export async function getFaultResultCount(page) {
+  const count = await page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').count();
+
+  return count;
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
  */
 export function getFault(page, rowNumber) {
-  const fault = page.getByLabel('Fault triggered at').nth(rowNumber - 1);
+  const fault = page.locator(
+    `.c-faults-list-view-item-body > .c-fault-mgmt__list >> nth=${rowNumber - 1}`
+  );
 
   return fault;
 }
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {string} name
- * @returns {import('@playwright/test').Locator}
  */
 export function getFaultByName(page, name) {
-  const fault = page.getByLabel('Fault triggered at').filter({
-    hasText: name
-  });
+  const fault = page.locator(`.c-fault-mgmt__list-faultname:has-text("${name}")`);
 
   return fault;
 }
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {Promise<string>}
  */
 export async function getFaultName(page, rowNumber) {
   const faultName = await page
-    .getByLabel('Fault name', { exact: true })
-    .nth(rowNumber - 1)
+    .locator(`.c-fault-mgmt__list-faultname >> nth=${rowNumber - 1}`)
     .textContent();
 
   return faultName;
@@ -206,13 +237,21 @@ export async function getFaultName(page, rowNumber) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {Promise<string>}
+ */
+export async function getFaultSeverity(page, rowNumber) {
+  const faultSeverity = await page
+    .locator(`.c-faults-list-view-item-body .c-fault-mgmt__list-severity >> nth=${rowNumber - 1}`)
+    .getAttribute('title');
+
+  return faultSeverity;
+}
+
+/**
+ * @param {import('@playwright/test').Page} page
  */
 export async function getFaultNamespace(page, rowNumber) {
   const faultNamespace = await page
-    .getByLabel('Fault namespace')
-    .nth(rowNumber - 1)
+    .locator(`.c-fault-mgmt__list-path >> nth=${rowNumber - 1}`)
     .textContent();
 
   return faultNamespace;
@@ -220,13 +259,10 @@ export async function getFaultNamespace(page, rowNumber) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {Promise<string>}
  */
 export async function getFaultTriggerTime(page, rowNumber) {
   const faultTriggerTime = await page
-    .getByLabel('Last Trigger Time')
-    .nth(rowNumber - 1)
+    .locator(`.c-fault-mgmt__list-trigTime >> nth=${rowNumber - 1} >> .c-fault-mgmt-item__value`)
     .textContent();
 
   return faultTriggerTime.toString().trim();
@@ -234,14 +270,11 @@ export async function getFaultTriggerTime(page, rowNumber) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {number} rowNumber
- * @returns {Promise<void>}
  */
 export async function openFaultRowMenu(page, rowNumber) {
   // select
   await page
-    .getByLabel('Fault triggered at')
+    .getByLabel('Disposition actions')
     .nth(rowNumber - 1)
-    .getByLabel('Disposition Actions')
     .click();
 }

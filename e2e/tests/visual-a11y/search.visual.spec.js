@@ -53,7 +53,7 @@ test.describe('Grand Search @a11y', () => {
     theme
   }) => {
     // Navigate to display layout
-    await page.goto(displayLayout.url, { waitUntil: 'networkidle' });
+    await page.goto(displayLayout.url);
 
     // Search for the object
     await page.getByRole('searchbox', { name: 'Search Input' }).click();
@@ -83,7 +83,7 @@ test.describe('Grand Search @a11y', () => {
     );
 
     // Save and finish editing the Display Layout
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Search for the object

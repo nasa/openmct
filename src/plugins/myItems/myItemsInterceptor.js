@@ -45,7 +45,7 @@ function myItemsInterceptor({ openmct, identifierObject, name }) {
 
       return object;
     },
-    priority: openmct.priority.HIGHEST
+    priority: openmct.priority.HIGH
   };
 }
 

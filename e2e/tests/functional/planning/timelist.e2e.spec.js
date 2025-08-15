@@ -132,7 +132,7 @@ test("View a timelist in expanded view, verify all the activities are displayed 
     await page.getByRole('button', { name: 'Edit Object' }).click();
 
     // Find the display properties section in the inspector
-    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('tab', { name: 'View Properties' }).click();
     // Switch to expanded view and save the setting
     await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
 

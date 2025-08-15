@@ -27,8 +27,8 @@ const exportPNG = {
   description: "Export This View's Data as PNG",
   cssClass: 'icon-download',
   group: 'view',
-  invoke(objectPath, view, filename) {
-    view.getViewContext().exportPNG(filename);
+  invoke(objectPath, view) {
+    view.getViewContext().exportPNG();
   }
 };
 
@@ -38,8 +38,8 @@ const exportJPG = {
   description: "Export This View's Data as JPG",
   cssClass: 'icon-download',
   group: 'view',
-  invoke(objectPath, view, filename) {
-    view.getViewContext().exportJPG(filename);
+  invoke(objectPath, view) {
+    view.getViewContext().exportJPG();
   }
 };
 

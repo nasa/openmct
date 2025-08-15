@@ -23,7 +23,6 @@ import PlotViewActions from './actions/ViewActions.js';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider.js';
 import StackedPlotsInspectorViewProvider from './inspector/StackedPlotsInspectorViewProvider.js';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy.js';
-import overlayPlotStylesInterceptor from './overlayPlot/overlayPlotStylesInterceptor.js';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider.js';
 import PlotViewProvider from './PlotViewProvider.js';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy.js';
@@ -39,19 +38,15 @@ export default function () {
       description:
         'Combine multiple telemetry elements and view them together as a plot with common X and Y axes. Can be added to Display Layouts.',
       creatable: true,
-      annotatable: true,
       initialize: function (domainObject) {
         domainObject.composition = [];
         domainObject.configuration = {
           //series is an array of objects of type: {identifier, series: {color...}, yAxis:{}}
-          series: [],
-          objectStyles: {}
+          series: []
         };
       },
       priority: 891
     });
-
-    openmct.objects.addGetInterceptor(overlayPlotStylesInterceptor(openmct));
 
     openmct.types.addType('telemetry.plot.stacked', {
       key: 'telemetry.plot.stacked',
@@ -60,14 +55,12 @@ export default function () {
       description:
         'Combine multiple telemetry elements and view them together as a plot with a common X axis and individual Y axes. Can be added to Display Layouts.',
       creatable: true,
-      annotatable: true,
       initialize: function (domainObject) {
         domainObject.composition = [];
         domainObject.configuration = {
           series: [],
           yAxis: {},
-          xAxis: {},
-          objectStyles: {}
+          xAxis: {}
         };
       },
       priority: 890

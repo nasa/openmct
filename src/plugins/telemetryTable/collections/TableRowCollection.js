@@ -23,11 +23,6 @@ import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import { ORDER } from '../constants.js';
-
-/**
- * @typedef {import('.TelemetryTableRow.js').default} TelemetryTableRow
- */
-
 /**
  * @constructor
  */
@@ -129,22 +124,10 @@ export default class TableRowCollection extends EventEmitter {
     return foundIndex;
   }
 
-  /**
-   * `incomingRow` exists in the collection,
-   * so merge existing and incoming row properties
-   *
-   * Do to reactivity of Vue, we want to replace the existing row with the updated row
-   * @param {TelemetryTableRow} incomingRow to update
-   * @param {number} index of the existing row in the collection to update
-   */
-  updateRowInPlace(incomingRow, index) {
-    // Update the incoming row, not the existing row
-    const existingRow = this.rows[index];
-    incomingRow.updateWithDatum(existingRow);
-
-    // Replacing the existing row with the updated, incoming row will trigger Vue reactivity
-    // because the reference to the row has changed
-    this.rows.splice(index, 1, incomingRow);
+  updateRowInPlace(row, index) {
+    const foundRow = this.rows[index];
+    foundRow.updateWithDatum(row.datum);
+    this.rows[index] = foundRow;
   }
 
   setLimit(rowLimit) {
@@ -167,13 +150,13 @@ export default class TableRowCollection extends EventEmitter {
   }
 
   insertOrUpdateRows(rowsToAdd, addToBeginning) {
-    rowsToAdd.forEach((row, addRowsIndex) => {
+    rowsToAdd.forEach((row) => {
       const index = this.getInPlaceUpdateIndex(row);
       if (index > -1) {
         this.updateRowInPlace(row, index);
       } else {
         if (addToBeginning) {
-          this.rows.splice(addRowsIndex, 0, row);
+          this.rows.unshift(row);
         } else {
           this.rows.push(row);
         }
@@ -290,7 +273,7 @@ export default class TableRowCollection extends EventEmitter {
    */
   sortBy(sortOptions) {
     if (arguments.length > 0) {
-      this.setSortOptions(sortOptions);
+      this.sortOptions = sortOptions;
       this.rows = _.orderBy(
         this.rows,
         (row) => row.getParsedValue(sortOptions.key),
@@ -301,10 +284,6 @@ export default class TableRowCollection extends EventEmitter {
 
     // Return duplicate to avoid direct modification of underlying object
     return Object.assign({}, this.sortOptions);
-  }
-
-  setSortOptions(sortOptions) {
-    this.sortOptions = sortOptions;
   }
 
   setColumnFilter(columnKey, filter) {

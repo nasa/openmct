@@ -27,7 +27,6 @@ import ConflictError from './ConflictError.js';
 import InMemorySearchProvider from './InMemorySearchProvider.js';
 import InterceptorRegistry from './InterceptorRegistry.js';
 import MutableDomainObject from './MutableDomainObject.js';
-import { isIdentifier, isKeyString } from './object-utils.js';
 import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
@@ -743,19 +742,11 @@ export default class ObjectAPI {
    * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
    * @returns {Promise<Array<DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifierOrObject, path = [], abortSignal = null) {
-    let domainObject;
-
-    if (isKeyString(identifierOrObject) || isIdentifier(identifierOrObject)) {
-      domainObject = await this.get(identifierOrObject, abortSignal);
-    } else {
-      domainObject = identifierOrObject;
-    }
-
+  async getOriginalPath(identifier, path = [], abortSignal = null) {
+    const domainObject = await this.get(identifier, abortSignal);
     if (!domainObject) {
       return [];
     }
-
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {

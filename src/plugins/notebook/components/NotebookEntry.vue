@@ -344,19 +344,12 @@ export default {
   },
   beforeMount() {
     this.marked = new Marked();
-    this.marked.use({
-      breaks: true,
-      extensions: [
-        {
-          name: 'link',
-          renderer: (options) => {
-            return this.validateLink(options);
-          }
-        }
-      ]
-    });
+    this.renderer = new this.marked.Renderer();
   },
   mounted() {
+    const originalLinkRenderer = this.renderer.link;
+    this.renderer.link = this.validateLink.bind(this, originalLinkRenderer);
+
     this.manageEmbedLayout = _.debounce(this.manageEmbedLayout, 400);
 
     if (this.$refs.embedsWrapper) {
@@ -444,7 +437,10 @@ export default {
       }
     },
     convertMarkDownToHtml(text = '') {
-      let markDownHtml = this.marked.parse(text);
+      let markDownHtml = this.marked.parse(text, {
+        breaks: true,
+        renderer: this.renderer
+      });
       markDownHtml = sanitizeHtml(markDownHtml, SANITIZATION_SCHEMA);
       return markDownHtml;
     },
@@ -455,19 +451,21 @@ export default {
         this.$refs.entryInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     },
-    validateLink(options) {
-      const { href, text } = options;
+    validateLink(originalLinkRenderer, href, title, text) {
       try {
         const domain = new URL(href).hostname;
         const urlIsWhitelisted = this.urlWhitelist.some((partialDomain) => {
           return domain.endsWith(partialDomain);
         });
-
         if (!urlIsWhitelisted) {
           return text;
         }
-
-        return `<a class="c-hyperlink" target="_blank" href="${href}">${text}</a>`;
+        const linkHtml = originalLinkRenderer.call(this.renderer, href, title, text);
+        const linkHtmlWithTarget = linkHtml.replace(
+          /^<a /,
+          '<a class="c-hyperlink" target="_blank"'
+        );
+        return linkHtmlWithTarget;
       } catch (error) {
         // had error parsing this URL, just return the text
         return text;

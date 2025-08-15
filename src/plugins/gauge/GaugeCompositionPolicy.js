@@ -21,10 +21,28 @@
  *****************************************************************************/
 
 export default function GaugeCompositionPolicy(openmct) {
+  function hasNumericTelemetry(domainObject) {
+    const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
+    if (!hasTelemetry) {
+      return false;
+    }
+
+    const metadata = openmct.telemetry.getMetadata(domainObject);
+
+    return metadata.values().length > 0 && hasDomainAndRange(metadata);
+  }
+
+  function hasDomainAndRange(metadata) {
+    return (
+      metadata.valuesForHints(['range']).length > 0 &&
+      metadata.valuesForHints(['domain']).length > 0
+    );
+  }
+
   return {
     allow: function (parent, child) {
       if (parent.type === 'gauge') {
-        return openmct.telemetry.hasNumericTelemetry(child);
+        return hasNumericTelemetry(child);
       }
 
       return true;

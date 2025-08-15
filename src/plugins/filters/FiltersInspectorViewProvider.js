@@ -43,6 +43,8 @@ export default class FiltersInspectorViewProvider {
     let openmct = this.openmct;
     let _destroy = null;
 
+    const domainObject = selection?.[0]?.[0]?.context?.item;
+
     return {
       show: function (element) {
         const { destroy } = mount(
@@ -67,9 +69,15 @@ export default class FiltersInspectorViewProvider {
         if (isEditing) {
           return true;
         }
+
+        const metadata = openmct.telemetry.getMetadata(domainObject);
+        const metadataWithFilters = metadata
+          ? metadata.valueMetadatas.filter((value) => value.filters)
+          : [];
+
+        return metadataWithFilters.length;
       },
       priority: function () {
-        // Needs to be Default so that filters tab shows up correctly for Overlay Plots
         return openmct.priority.DEFAULT;
       },
       destroy: function () {

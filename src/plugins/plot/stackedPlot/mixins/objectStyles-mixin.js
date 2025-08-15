@@ -133,18 +133,21 @@ export default {
       if (!styleObj || !elemToStyle) {
         return;
       }
+
       // handle visibility separately
       if (styleObj.isStyleInvisible !== undefined) {
         elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
         styleObj.isStyleInvisible = null;
       }
 
-      Object.entries(styleObj).forEach(([key, value]) => {
-        if (typeof value !== 'string' || !value.includes('__no_value')) {
-          elemToStyle.style[key] = value;
-        } else {
-          elemToStyle.style[key] = ''; // remove the property
-        }
+      requestAnimationFrame(() => {
+        Object.entries(styleObj).forEach(([key, value]) => {
+          if (typeof value !== 'string' || !value.includes('__no_value')) {
+            elemToStyle.style[key] = value;
+          } else {
+            elemToStyle.style[key] = ''; // remove the property
+          }
+        });
       });
     }
   }

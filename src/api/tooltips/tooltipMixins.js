@@ -48,7 +48,7 @@ const tooltipHelpers = {
         .reverse()
         .join(' / ');
     },
-    buildToolTip(tooltipText, tooltipLocation, elementRef, cssClasses) {
+    buildToolTip(tooltipText, tooltipLocation, elementRef) {
       if (!tooltipText || tooltipText.length < 1) {
         return;
       }
@@ -59,8 +59,7 @@ const tooltipHelpers = {
       this.tooltip = this.openmct.tooltips.tooltip({
         toolTipText: tooltipText,
         toolTipLocation: tooltipLocation,
-        parentElement: parentElement,
-        cssClasses
+        parentElement: parentElement
       });
     },
     hideToolTip() {

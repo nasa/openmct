@@ -22,8 +22,7 @@ at runtime from the About dialog for additional information.
 <template>
   <div
     ref="tooltip-wrapper"
-    class="c-tooltip-wrapper"
-    :class="cssClasses"
+    class="c-menu c-tooltip-wrapper"
     :style="toolTipLocationStyle"
     role="tooltip"
     aria-labelledby="tooltip-text"
@@ -37,7 +36,7 @@ at runtime from the About dialog for additional information.
 
 <script>
 export default {
-  inject: ['toolTipText', 'toolTipLocation', 'parentElement', 'cssClasses'],
+  inject: ['toolTipText', 'toolTipLocation', 'parentElement'],
   computed: {
     toolTipCoordinates() {
       return this.parentElement.getBoundingClientRect();

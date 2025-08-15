@@ -22,7 +22,6 @@
 
 import { MODE } from './constants.js';
 import TableConfigurationViewProvider from './TableConfigurationViewProvider.js';
-import telemetryTableStylesInterceptor from './telemetryTableStylesInterceptor.js';
 import getTelemetryTableType from './TelemetryTableType.js';
 import TelemetryTableViewProvider from './TelemetryTableViewProvider.js';
 import TelemetryTableViewActions from './ViewActions.js';
@@ -34,7 +33,6 @@ export default function plugin(
     openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct, options));
     openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct, options));
     openmct.types.addType('table', getTelemetryTableType(options));
-    openmct.objects.addGetInterceptor(telemetryTableStylesInterceptor(openmct));
     openmct.composition.addPolicy((parent, child) => {
       if (parent.type === 'table') {
         return Object.prototype.hasOwnProperty.call(child, 'telemetry');

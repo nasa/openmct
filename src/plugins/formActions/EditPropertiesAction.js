@@ -45,7 +45,7 @@ class EditPropertiesAction extends PropertiesAction {
     const definition = this._getTypeDefinition(object.type);
     const persistable = this.openmct.objects.isPersistable(object.identifier);
 
-    return persistable && definition && definition.creatable && !object.locked;
+    return persistable && definition && definition.creatable;
   }
 
   invoke(objectPath) {

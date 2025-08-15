@@ -96,9 +96,8 @@ export default class CompositionProvider {
    * object.
    * @param {DomainObject} domainObject the domain object
    *        for which to load composition
-   * @returns {Promise<Identifier[] | DomainObject[]>} a promise for
-   *          the Identifiers or Domain Objects in this composition. If Identifiers are returned,
-   *          they will be automatically resolved to domain objects by the API.
+   * @returns {Promise<Identifier[]>} a promise for
+   *          the Identifiers in this composition
    */
   load(domainObject) {
     throw new Error('This method must be implemented by a subclass.');

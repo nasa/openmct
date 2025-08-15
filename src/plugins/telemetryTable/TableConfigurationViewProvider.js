@@ -66,10 +66,10 @@ export default function TableConfigurationViewProvider(openmct, options) {
           _destroy = destroy;
         },
         showTab: function (isEditing) {
-          return true;
+          return isEditing;
         },
         priority: function () {
-          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
+          return 1;
         },
         destroy: function () {
           if (_destroy) {

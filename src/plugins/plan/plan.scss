@@ -27,10 +27,6 @@
     text {
       stroke: none;
     }
-
-    .c-swimlane__lane-object {
-      display: flex;
-    }
   }
 
   &__activity {
@@ -55,16 +51,5 @@
 
   canvas {
     display: none;
-  }
-}
-
-.c-plan-av {
-  // Activities view
-  background-color: $colorPlotBg;
-  flex: 1 1 auto;
-  height: 100%;
-
-  &__svg {
-    width: 100%;
   }
 }

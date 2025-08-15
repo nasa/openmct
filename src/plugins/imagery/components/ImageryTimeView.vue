@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="imagery" class="c-imagery-tsv js-imagery-tsv" :style="alignmentStyle">
+  <div ref="imagery" class="c-imagery-tsv c-timeline-holder">
     <div ref="imageryHolder" class="c-imagery-tsv__contents u-contents"></div>
   </div>
 </template>
@@ -30,32 +30,24 @@
 import { scaleLinear, scaleUtc } from 'd3-scale';
 import _ from 'lodash';
 import mount from 'utils/mount';
-import { inject } from 'vue';
 
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 
-import { useAlignment } from '../../../ui/composables/alignmentContext';
 import imageryData from '../../imagery/mixins/imageryData.js';
 
-const AXES_PADDING = 20;
 const PADDING = 1;
+const ROW_HEIGHT = 100;
+const IMAGE_SIZE = 85;
 const IMAGE_WIDTH_THRESHOLD = 25;
 const CONTAINER_CLASS = 'c-imagery-tsv-container';
-const NO_ITEMS_CLASS = 'c-timeline__no-items';
+const NO_ITEMS_CLASS = 'c-imagery-tsv__no-items';
 const IMAGE_WRAPPER_CLASS = 'c-imagery-tsv__image-wrapper';
 const ID_PREFIX = 'wrapper-';
 
 export default {
   mixins: [imageryData],
   inject: ['openmct', 'domainObject', 'objectPath'],
-  setup() {
-    const domainObject = inject('domainObject');
-    const objectPath = inject('objectPath');
-    const openmct = inject('openmct');
-    const { alignment: alignmentData } = useAlignment(domainObject, objectPath, openmct);
-    return { alignmentData };
-  },
   data() {
     let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -70,18 +62,6 @@ export default {
       keyString: undefined
     };
   },
-  computed: {
-    alignmentStyle() {
-      let leftOffset = 0;
-      const rightOffset = this.alignmentData.rightWidth ? AXES_PADDING : 0;
-      if (this.alignmentData.leftWidth) {
-        leftOffset = this.alignmentData.multiple ? 2 * AXES_PADDING : AXES_PADDING;
-      }
-      return {
-        margin: `0 ${this.alignmentData.rightWidth + rightOffset}px 0 ${this.alignmentData.leftWidth + leftOffset}px`
-      };
-    }
-  },
   watch: {
     imageHistory: {
       handler(newHistory, oldHistory) {
@@ -93,11 +73,9 @@ export default {
   mounted() {
     this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
 
-    // Why are we doing this? This element causes scroll problems in the swimlane.
-    // this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
-    // this.canvas.height = 0;
-    // this.canvas.width = 10;
-    // this.canvasContext = this.canvas.getContext('2d');
+    this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
+    this.canvas.height = 0;
+    this.canvasContext = this.canvas.getContext('2d');
     this.setDimensions();
 
     this.setScaleAndPlotImagery = this.setScaleAndPlotImagery.bind(this);
@@ -229,8 +207,8 @@ export default {
     setDimensions() {
       const imageryHolder = this.$refs.imagery;
       this.width = this.getClientWidth();
+
       this.height = Math.round(imageryHolder.getBoundingClientRect().height);
-      this.imageHeight = this.height - 10;
     },
     setScale(timeSystem) {
       if (!this.width) {
@@ -255,11 +233,14 @@ export default {
       return imageObj.time <= this.viewBounds.end && imageObj.time >= this.viewBounds.start;
     },
     getImageryContainer() {
+      let containerHeight = 100;
+      let containerWidth = this.imageHistory.length ? this.width : 200;
       let imageryContainer;
 
       let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
       if (existingContainer) {
         imageryContainer = existingContainer;
+        imageryContainer.style.maxWidth = `${containerWidth}px`;
       } else {
         if (this.destroyImageryContainer) {
           this.destroyImageryContainer();
@@ -289,6 +270,8 @@ export default {
         this.$refs.imageryHolder.appendChild(component.$el);
 
         imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
+        imageryContainer.style.maxWidth = `${containerWidth}px`;
+        imageryContainer.style.height = `${containerHeight}px`;
       }
 
       return imageryContainer;
@@ -324,7 +307,7 @@ export default {
       }
     },
     plotNoItems(containerElement) {
-      let textElement = document.createElement('div');
+      let textElement = document.createElement('text');
       textElement.classList.add(NO_ITEMS_CLASS);
       textElement.innerHTML = 'No images within timeframe';
 
@@ -387,7 +370,6 @@ export default {
     createImageWrapper(index, image, showImagePlaceholders) {
       const id = `${ID_PREFIX}${image.time}`;
       let imageWrapper = document.createElement('div');
-      imageWrapper.ariaLabel = id;
       imageWrapper.classList.add(IMAGE_WRAPPER_CLASS);
       imageWrapper.style.left = `${this.xScale(image.time)}px`;
       this.setNSAttributesForElement(imageWrapper, {
@@ -397,11 +379,15 @@ export default {
       //create image vertical tick indicator
       let imageTickElement = document.createElement('div');
       imageTickElement.classList.add('c-imagery-tsv__image-handle');
+      imageTickElement.style.width = '2px';
+      imageTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
       imageWrapper.appendChild(imageTickElement);
 
       //create placeholder - this will also hold the actual image
       let imagePlaceholder = document.createElement('div');
       imagePlaceholder.classList.add('c-imagery-tsv__image-placeholder');
+      imagePlaceholder.style.width = `${IMAGE_SIZE}px`;
+      imagePlaceholder.style.height = `${IMAGE_SIZE}px`;
       imageWrapper.appendChild(imagePlaceholder);
 
       //create image element
@@ -409,6 +395,8 @@ export default {
       this.setNSAttributesForElement(imageElement, {
         src: image.thumbnailUrl || image.url
       });
+      imageElement.style.width = `${IMAGE_SIZE}px`;
+      imageElement.style.height = `${IMAGE_SIZE}px`;
       this.setImageDisplay(imageElement, showImagePlaceholders);
 
       //handle mousedown event to show the image in a large view

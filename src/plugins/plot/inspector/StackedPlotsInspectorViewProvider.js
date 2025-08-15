@@ -50,7 +50,7 @@ export default function StackedPlotsInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
+          return openmct.priority.HIGH + 1;
         },
         destroy: function () {
           if (_destroy) {

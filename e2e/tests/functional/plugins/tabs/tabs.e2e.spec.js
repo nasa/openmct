@@ -57,7 +57,7 @@ test.describe('Tabs View', () => {
     await page.goto(tabsView.url);
 
     // select first tab
-    await page.getByLabel(`${table.name} tab - selected`, { exact: true }).click();
+    await page.getByLabel(`${table.name} tab`, { exact: true }).click();
     // ensure table header visible
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 
@@ -91,38 +91,6 @@ test.describe('Tabs View', () => {
 
     // no canvas (i.e., sine wave generator) in the document should be visible
     await expect(page.locator('canvas[id=webglContext]')).toBeHidden();
-  });
-
-  test('Changing the displayed tab should not be persisted if the view is locked', async ({
-    page
-  }) => {
-    await page.goto(tabsView.url);
-    //lock the view
-    await page.getByLabel('Unlocked for editing, click to lock.', { exact: true }).click();
-    // get the initial tab index
-    const initialTab = page.getByLabel(/- selected/);
-    // switch to a different tab in the view
-    const swgTab = page.getByLabel(`${sineWaveGenerator.name} tab`, { exact: true });
-    await swgTab.click();
-    await page.getByLabel(`${sineWaveGenerator.name} Object View`).isVisible();
-    // navigate away from the tabbed view and back
-    await page.getByRole('treeitem', { name: 'My Items' }).click();
-    await page.goto(tabsView.url);
-    // check that the initial tab is displayed
-    const lockedSelectedTab = page.getByLabel(/- selected/);
-    await expect(lockedSelectedTab).toHaveText(await initialTab.textContent());
-
-    //unlock the view
-    await page.getByLabel('Locked for editing. Click to unlock.', { exact: true }).click();
-    // switch to a different tab in the view
-    await swgTab.click();
-    await page.getByLabel(`${sineWaveGenerator.name} Object View`).isVisible();
-    // navigate away from the tabbed view and back
-    await page.getByRole('treeitem', { name: 'My Items' }).click();
-    await page.goto(tabsView.url);
-    // check that the newly selected tab is displayed
-    const unlockedSelectedTab = page.getByLabel(/- selected/);
-    await expect(unlockedSelectedTab).toBeVisible();
   });
 });
 

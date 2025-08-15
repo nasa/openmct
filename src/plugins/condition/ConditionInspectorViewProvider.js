@@ -1,36 +1,33 @@
+// src/plugins/condition/ConditionInspectorView.js
+
 import mount from 'utils/mount';
 
-import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants.js';
-import PlotOptions from './PlotOptions.vue';
+import ConditionConfigView from './components/ConditionInspectorConfigView.vue';
 
-export default function ScatterPlotInspectorViewProvider(openmct) {
+export default function ConditionInspectorView(openmct) {
   return {
-    key: SCATTER_PLOT_INSPECTOR_KEY,
+    key: 'condition-config',
     name: 'Config',
     canView: function (selection) {
-      if (selection.length === 0 || selection[0].length === 0) {
-        return false;
-      }
-
-      let object = selection[0][0].context.item;
-
-      return object && object.type === SCATTER_PLOT_KEY;
+      return selection.length > 0 && selection[0][0].context.item.type === 'conditionSet';
     },
     view: function (selection) {
       let _destroy = null;
+      const domainObject = selection[0][0].context.item;
+
       return {
         show: function (element) {
           const { destroy } = mount(
             {
               el: element,
               components: {
-                PlotOptions
+                ConditionConfigView: ConditionConfigView
               },
               provide: {
                 openmct,
-                domainObject: selection[0][0].context.item
+                domainObject
               },
-              template: '<plot-options></plot-options>'
+              template: '<condition-config-view></condition-config-view>'
             },
             {
               app: openmct.app,
@@ -39,8 +36,11 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
           );
           _destroy = destroy;
         },
+        showTab: function (isEditing) {
+          return isEditing;
+        },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return 1;
         },
         destroy: function () {
           if (_destroy) {

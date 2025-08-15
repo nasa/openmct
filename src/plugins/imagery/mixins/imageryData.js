@@ -90,17 +90,16 @@ export default {
     dataCleared() {
       this.imageHistory = [];
     },
-    dataRemoved(removed) {
-      const removedTimestamps = {};
-      removed.forEach((_removed) => {
-        const removedTimestamp = this.parseTime(_removed);
-        removedTimestamps[removedTimestamp] = true;
-      });
+    dataRemoved(dataToRemove) {
+      this.imageHistory = this.imageHistory.filter((existingDatum) => {
+        const shouldKeep = dataToRemove.some((datumToRemove) => {
+          const existingDatumTimestamp = this.parseTime(existingDatum);
+          const datumToRemoveTimestamp = this.parseTime(datumToRemove);
 
-      this.imageHistory = this.imageHistory.filter((image) => {
-        const imageTimestamp = this.parseTime(image);
+          return existingDatumTimestamp !== datumToRemoveTimestamp;
+        });
 
-        return !removedTimestamps[imageTimestamp];
+        return shouldKeep;
       });
     },
     setDataTimeContext() {

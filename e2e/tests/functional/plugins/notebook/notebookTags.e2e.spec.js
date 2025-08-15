@@ -65,11 +65,9 @@ test.describe('Tagging in Notebooks @addInit', () => {
   });
   test('Can add tags with blank entry', async ({ page }) => {
     await createDomainObjectWithDefaults(page, { type: 'Notebook' });
-
-    await enterTextEntry(page, '');
-
     await page.getByRole('tab', { name: 'Annotations' }).click();
 
+    await enterTextEntry(page, '');
     await page.hover(`button:has-text("Add Tag")`);
     await page.locator(`button:has-text("Add Tag")`).click();
 

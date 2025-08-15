@@ -54,7 +54,8 @@ const examplePlanSmall1 = JSON.parse(
 const TIME_TO_FROM_COLUMN = 2;
 const HEADER_ROW = 0;
 const NUM_COLUMNS = 5;
-const FULL_CIRCLE_PATH = 'M0,-50A50,50,0,1,1,0,50A50,50,0,1,1,0,-50Z';
+const FULL_CIRCLE_PATH =
+  'M3.061616997868383e-15,-50A50,50,0,1,1,-3.061616997868383e-15,50A50,50,0,1,1,3.061616997868383e-15,-50Z';
 
 /**
  * The regular expression used to parse the countdown string.

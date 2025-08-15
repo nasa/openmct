@@ -52,7 +52,7 @@ export default function PlotsInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.priority.HIGH + 1;
         },
         destroy: function () {
           if (_destroy) {

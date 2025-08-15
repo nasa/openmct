@@ -23,7 +23,6 @@
 import { FIXED_MODE_KEY, REALTIME_MODE_KEY } from '@/api/time/constants';
 import IndependentTimeContext from '@/api/time/IndependentTimeContext';
 
-import { TIME_CONTEXT_EVENTS } from './constants';
 import GlobalTimeContext from './GlobalTimeContext.js';
 
 /**
@@ -143,7 +142,7 @@ class TimeAPI extends GlobalTimeContext {
   addIndependentContext(key, value, clockKey) {
     let timeContext = this.getIndependentContext(key);
 
-    //stop following upstream time context since the view has its own
+    //stop following upstream time context since the view has it's own
     timeContext.resetContext();
 
     if (clockKey) {
@@ -152,9 +151,6 @@ class TimeAPI extends GlobalTimeContext {
     } else {
       timeContext.setMode(FIXED_MODE_KEY, value);
     }
-
-    // Also emit the mode in case it's different from the previous time context
-    timeContext.emit(TIME_CONTEXT_EVENTS.modeChanged, structuredClone(timeContext.getMode()));
 
     // Notify any nested views to update, pass in the viewKey so that particular view can skip getting an upstream context
     this.emit('refreshContext', key);

@@ -31,8 +31,7 @@ export default function DisplayLayoutType() {
       domainObject.composition = [];
       domainObject.configuration = {
         items: [],
-        layoutGrid: [10, 10],
-        objectStyles: {}
+        layoutGrid: [10, 10]
       };
     },
     form: [

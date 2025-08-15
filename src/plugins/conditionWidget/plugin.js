@@ -20,13 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import conditionWidgetStylesInterceptor from './conditionWidgetStylesInterceptor.js';
 import ConditionWidgetViewProvider from './ConditionWidgetViewProvider.js';
 
 export default function plugin() {
   return function install(openmct) {
     openmct.objectViews.addProvider(new ConditionWidgetViewProvider(openmct));
-    openmct.objects.addGetInterceptor(conditionWidgetStylesInterceptor(openmct));
 
     openmct.types.addType('conditionWidget', {
       key: 'conditionWidget',
@@ -36,9 +34,7 @@ export default function plugin() {
       creatable: true,
       cssClass: 'icon-condition-widget',
       initialize(domainObject) {
-        domainObject.configuration = {
-          objectStyles: {}
-        };
+        domainObject.configuration = {};
         domainObject.label = 'Condition Widget';
         domainObject.conditionalLabel = '';
         domainObject.url = '';

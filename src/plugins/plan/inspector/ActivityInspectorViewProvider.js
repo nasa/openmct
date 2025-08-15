@@ -62,7 +62,7 @@ export default function ActivityInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH;
+          return openmct.priority.HIGH + 1;
         },
         destroy: function () {
           if (_destroy) {

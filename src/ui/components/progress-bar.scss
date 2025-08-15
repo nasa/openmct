@@ -1,13 +1,16 @@
 /******************************************************** PROGRESS BAR */
 @keyframes progressIndeterminate {
   0% {
-    transform:scaleX(0);
+    left: 0;
+    width: 0;
   }
-  90% {
-    transform:scaleX(1);
+  70% {
+    left: 0;
+    width: 100%;
     opacity: 1;
   }
   100% {
+    left: 100%;
     opacity: 0;
   }
 }
@@ -21,10 +24,11 @@
 
   &__bar {
     background: $colorProgressBar;
-    transform-origin: left;
+    height: 100%;
+    min-height: $progressBarMinH;
 
     &.--indeterminate {
-      @include abs();
+      position: absolute;
       animation: progressIndeterminate 1.5s ease-in infinite;
     }
   }

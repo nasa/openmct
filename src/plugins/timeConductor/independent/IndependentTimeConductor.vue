@@ -243,20 +243,12 @@ export default {
       this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setTimeOptionsMode);
     },
     setTimeOptionsClock(clock) {
-      // If the user has persisted any time options, then don't override them with global settings.
-      if (this.independentTCEnabled) {
-        return;
-      }
       this.setTimeOptionsOffsets();
       this.timeOptions.clock = clock.key;
     },
     setTimeOptionsMode(mode) {
-      // If the user has persisted any time options, then don't override them with global settings.
-      if (this.independentTCEnabled) {
-        this.setTimeOptionsOffsets();
-        this.timeOptions.mode = mode;
-        this.isFixed = this.timeOptions.mode === FIXED_MODE_KEY;
-      }
+      this.setTimeOptionsOffsets();
+      this.timeOptions.mode = mode;
     },
     setTimeOptionsOffsets() {
       this.timeOptions.clockOffsets =

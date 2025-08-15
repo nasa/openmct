@@ -1,13 +1,9 @@
 .c-tooltip-wrapper {
-  @include menuOuter();
   max-width: 200px;
   height: auto;
   width: auto;
-  padding: $interiorMargin $interiorMarginLg;
+  padding: $interiorMargin;
   overflow-wrap: break-word;
-  pointer-events: none;
-  position: absolute;
-  z-index: 100;
 }
 
 .c-tooltip {

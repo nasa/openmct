@@ -62,6 +62,9 @@ export default function PlotElementsViewProvider(openmct) {
 
           return hasComposition && isEditing;
         },
+        priority: function () {
+          return openmct.priority.DEFAULT;
+        },
         destroy: function () {
           if (_destroy) {
             _destroy();

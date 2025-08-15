@@ -65,9 +65,7 @@ class AlphanumericFormatView {
   }
 
   priority() {
-    return this.openmct.editor.isEditing()
-      ? this.openmct.priority.DEFAULT
-      : this.openmct.priority.LOW;
+    return 1;
   }
 
   destroy() {

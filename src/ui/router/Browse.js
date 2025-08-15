@@ -80,11 +80,13 @@ class Browse {
     this.#openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
   }
 
-  #handleBrowseObjectUpdate(newObject) {
-    this.#openmct.layout.$refs.browseBar.domainObject = newObject;
-
-    if (typeof newObject.name === 'string' && newObject.name !== document.title) {
-      document.title = newObject.name;
+  #updateDocumentTitleOnNameMutation(newName) {
+    if (typeof newName === 'string' && newName !== document.title) {
+      document.title = newName;
+      this.#openmct.layout.$refs.browseBar.domainObject = {
+        ...this.#openmct.layout.$refs.browseBar.domainObject,
+        name: newName
+      };
     }
   }
 
@@ -96,7 +98,7 @@ class Browse {
       this.#unobserve();
       this.#unobserve = undefined;
     }
-    path = decodeURIComponent(path);
+
     if (!Array.isArray(path)) {
       path = path.split('/');
     }
@@ -118,8 +120,8 @@ class Browse {
     document.title = this.#browseObject.name; //change document title to current object in main view
     this.#unobserve = this.#openmct.objects.observe(
       this.#browseObject,
-      '*',
-      this.#handleBrowseObjectUpdate.bind(this)
+      'name',
+      this.#updateDocumentTitleOnNameMutation.bind(this)
     );
     const currentProvider = this.#openmct.objectViews.getByProviderKey(currentViewKey);
     if (currentProvider && currentProvider.canView(this.#browseObject, this.#openmct.router.path)) {

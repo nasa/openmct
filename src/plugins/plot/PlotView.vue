@@ -162,6 +162,14 @@ export default {
       }
     }
   },
+  watch: {
+    gridLines(newGridLines) {
+      this.gridLines = newGridLines;
+    },
+    cursorGuide(newCursorGuide) {
+      this.cursorGuide = newCursorGuide;
+    }
+  },
   created() {
     eventHelpers.extend(this);
     this.imageExporter = new ImageExporter(this.openmct);
@@ -202,17 +210,13 @@ export default {
       this.imageExporter = null;
       this.stopListening();
     },
-    exportJPG(filename) {
+    exportJPG() {
       const plotElement = this.$refs.plotContainer;
-      filename = filename ?? `${this.domainObject.name} - plot`;
-
-      this.imageExporter.exportJPG(plotElement, filename, 'export-plot');
+      this.imageExporter.exportJPG(plotElement, 'plot.jpg', 'export-plot');
     },
-    exportPNG(filename) {
+    exportPNG() {
       const plotElement = this.$refs.plotContainer;
-      filename = filename ?? `${this.domainObject.name} - plot`;
-
-      this.imageExporter.exportPNG(plotElement, filename, 'export-plot');
+      this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
     },
     setStatus(status) {
       this.status = status;

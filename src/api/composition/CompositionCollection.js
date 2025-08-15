@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { isIdentifier } from '../objects/object-utils';
-
 /**
  * @typedef {import('openmct').DomainObject} DomainObject
  */
@@ -211,15 +209,9 @@ export default class CompositionCollection {
     this.#cleanUpMutables();
     const children = await this.#provider.load(this.domainObject);
     const childObjects = await Promise.all(
-      children.map((child) => {
-        if (isIdentifier(child)) {
-          return this.#publicAPI.objects.get(child, abortSignal);
-        } else {
-          return Promise.resolve(child);
-        }
-      })
+      children.map((c) => this.#publicAPI.objects.get(c, abortSignal))
     );
-    childObjects.forEach((child) => this.add(child, true));
+    childObjects.forEach((c) => this.add(c, true));
     this.#emit('load');
 
     return childObjects;

@@ -34,16 +34,14 @@ StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
   return domainObject.type === 'example.state-generator';
 };
 
-StateGeneratorProvider.prototype.subscribe = function (domainObject, callback, options) {
+StateGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
   var duration = domainObject.telemetry.duration * 1000;
 
-  var interval = setInterval(() => {
+  var interval = setInterval(function () {
     var now = Date.now();
     var datum = pointForTimestamp(now, duration, domainObject.name);
-    if (!this.shouldBeFiltered(datum, options)) {
-      datum.value = String(datum.value);
-      callback(datum);
-    }
+    datum.value = String(datum.value);
+    callback(datum);
   }, duration);
 
   return function () {
@@ -65,25 +63,9 @@ StateGeneratorProvider.prototype.request = function (domainObject, options) {
 
   var data = [];
   while (start <= end && data.length < 5000) {
-    const point = pointForTimestamp(start, duration, domainObject.name);
-
-    if (!this.shouldBeFiltered(point, options)) {
-      data.push(point);
-    }
+    data.push(pointForTimestamp(start, duration, domainObject.name));
     start += duration;
   }
 
   return Promise.resolve(data);
-};
-
-StateGeneratorProvider.prototype.shouldBeFiltered = function (point, options) {
-  const valueToFilter = options?.filters?.state?.equals?.[0];
-
-  if (!valueToFilter) {
-    return false;
-  }
-
-  const { value } = point;
-
-  return value !== Number(valueToFilter);
 };

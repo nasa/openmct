@@ -40,9 +40,6 @@ test.describe('Visual - Inspector @ally @clock', () => {
   });
 
   test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
-    // navigate to the plot
-    await page.getByRole('gridcell', { name: 'Overlay Plot with 5s Delay' }).click();
-
     //Expand the Inspector Pane
     await page.getByRole('button', { name: 'Inspect' }).click();
 

@@ -47,6 +47,8 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
   });
 
   test('Inspect Notebook Entry Network Requests', async ({ page }) => {
+    //Ensure we're on the annotations Tab in the inspector
+    await page.getByText('Annotations').click();
     // Expand sidebar
     await page.locator('.c-notebook__toggle-nav-button').click();
 
@@ -83,9 +85,6 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
     await nbUtils.enterTextEntry(page, 'First Entry');
     await page.waitForLoadState('networkidle');
     expect(notebookElementsRequests.length).toBeLessThanOrEqual(2);
-
-    //Ensure we're on the annotations Tab in the inspector
-    await page.getByText('Annotations').click();
 
     // Add some tags
     // Network Requests are for each tag creation are:
@@ -181,8 +180,8 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
       type: 'issue',
       description: 'https://github.com/akhenry/openmct-yamcs/issues/69'
     });
-    await nbUtils.enterTextEntry(page, 'First Entry');
     await page.getByText('Annotations').click();
+    await nbUtils.enterTextEntry(page, 'First Entry');
 
     // Add three tags
     await addTagAndAwaitNetwork(page, 'Science');

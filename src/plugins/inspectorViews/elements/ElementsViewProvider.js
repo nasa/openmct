@@ -31,9 +31,8 @@ export default function ElementsViewProvider(openmct) {
     canView: function (selection) {
       const hasValidSelection = selection?.length;
       const isOverlayPlot = selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
-      const isFolder = selection?.[0]?.[0]?.context?.item?.type === 'folder';
 
-      return hasValidSelection && !isOverlayPlot && !isFolder;
+      return hasValidSelection && !isOverlayPlot;
     },
     view: function (selection) {
       let _destroy = null;
@@ -63,10 +62,10 @@ export default function ElementsViewProvider(openmct) {
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
 
-          return hasComposition;
+          return hasComposition && isEditing;
         },
         priority: function () {
-          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
+          return openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {

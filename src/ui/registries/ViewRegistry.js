@@ -22,7 +22,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 
-import PRIORITIES from '../../api/priority/PriorityAPI';
+const DEFAULT_VIEW_PRIORITY = 100;
 
 /**
  * A ViewRegistry maintains the definitions for different kinds of views
@@ -49,8 +49,8 @@ export default class ViewRegistry extends EventEmitter {
     }
 
     function byPriority(providerA, providerB) {
-      let priorityA = providerA.priority ? providerA.priority(item) : PRIORITIES.DEFAULT;
-      let priorityB = providerB.priority ? providerB.priority(item) : PRIORITIES.DEFAULT;
+      let priorityA = providerA.priority ? providerA.priority(item) : DEFAULT_VIEW_PRIORITY;
+      let priorityB = providerB.priority ? providerB.priority(item) : DEFAULT_VIEW_PRIORITY;
 
       return priorityB - priorityA;
     }

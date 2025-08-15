@@ -164,13 +164,11 @@
           <div
             v-show="cursorGuide"
             ref="cursorGuideVertical"
-            aria-label="Vertical cursor guide"
             class="c-cursor-guide--v js-cursor-guide--v"
           ></div>
           <div
             v-show="cursorGuide"
             ref="cursorGuideHorizontal"
-            aria-label="Horizontal cursor guide"
             class="c-cursor-guide--h js-cursor-guide--h"
           ></div>
         </div>
@@ -539,7 +537,6 @@ export default {
       this.followTimeContext();
     },
     followTimeContext() {
-      this.updateMode();
       this.updateDisplayBounds(this.timeContext.getBounds());
       this.timeContext.on('modeChanged', this.updateMode);
       this.timeContext.on('boundsChanged', this.updateDisplayBounds);
@@ -857,11 +854,13 @@ export default {
 
       this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
 
-      this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
-      this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
-      this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-      this.listenTo(this.canvas, 'click', this.selectNearbyAnnotations, this);
-      this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+      if (!this.options.compact) {
+        this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
+        this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
+        this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
+        this.listenTo(this.canvas, 'click', this.selectNearbyAnnotations, this);
+        this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+      }
     },
 
     marqueeAnnotations(annotationsToSelect) {
@@ -1116,21 +1115,19 @@ export default {
       this.listenTo(window, 'mouseup', this.onMouseUp, this);
       this.listenTo(window, 'mousemove', this.trackMousePosition, this);
 
-      if (!this.options.compact) {
-        // track frozen state on mouseDown to be read on mouseUp
-        const isFrozen =
-          this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
-        this.isFrozenOnMouseDown = isFrozen;
+      // track frozen state on mouseDown to be read on mouseUp
+      const isFrozen =
+        this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+      this.isFrozenOnMouseDown = isFrozen;
 
-        if (event.altKey && !event.shiftKey) {
-          return this.startPan(event);
-        } else if (event.altKey && event.shiftKey) {
-          this.freeze();
+      if (event.altKey && !event.shiftKey) {
+        return this.startPan(event);
+      } else if (event.altKey && event.shiftKey) {
+        this.freeze();
 
-          return this.startMarquee(event, true);
-        } else {
-          return this.startMarquee(event, false);
-        }
+        return this.startMarquee(event, true);
+      } else {
+        return this.startMarquee(event, false);
       }
     },
 
@@ -1161,15 +1158,11 @@ export default {
     },
 
     isMouseClick() {
-      // We may not have a marquee if we've disabled pan/zoom, but we still need to know if it's a mouse click for highlights and lock points.
-      if (!this.marquee && !this.positionOverPlot) {
+      if (!this.marquee) {
         return false;
       }
 
-      const { start, end } = this.marquee ?? {
-        start: this.positionOverPlot,
-        end: this.positionOverPlot
-      };
+      const { start, end } = this.marquee;
       const someYPositionOverPlot = start.y.some((y) => y);
 
       return start.x === end.x && someYPositionOverPlot;

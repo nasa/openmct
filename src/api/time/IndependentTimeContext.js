@@ -360,18 +360,6 @@ class IndependentTimeContext extends TimeContext {
   }
 
   /**
-   * @returns {boolean}
-   * @override
-   */
-  isFixed() {
-    if (this.upstreamTimeContext) {
-      return this.upstreamTimeContext.isFixed(...arguments);
-    } else {
-      return super.isFixed(...arguments);
-    }
-  }
-
-  /**
    * @returns {number}
    * @override
    */
@@ -412,7 +400,7 @@ class IndependentTimeContext extends TimeContext {
   }
 
   /**
-   * Reset the time context from the global time context
+   * Reset the time context to the global time context
    */
   resetContext() {
     if (this.upstreamTimeContext) {
@@ -440,10 +428,6 @@ class IndependentTimeContext extends TimeContext {
     // Emit bounds so that views that are changing context get the upstream bounds
     this.emit('bounds', this.getBounds());
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
-    // Also emit the mode in case it's different from previous time context
-    if (this.getMode()) {
-      this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
-    }
   }
 
   /**
@@ -518,10 +502,6 @@ class IndependentTimeContext extends TimeContext {
       // Emit bounds so that views that are changing context get the upstream bounds
       this.emit('bounds', this.getBounds());
       this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
-      // Also emit the mode in case it's different from the global time context
-      if (this.getMode()) {
-        this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
-      }
       // now that the view's context is set, tell others to check theirs in case they were following this view's context.
       this.globalTimeContext.emit('refreshContext', viewKey);
     }

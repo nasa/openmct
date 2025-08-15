@@ -129,7 +129,6 @@ export async function setBoundsToSpanAllActivities(page, planJson, planObjectUrl
  */
 export function getEarliestStartTime(planJson) {
   const activities = Object.values(planJson).flat();
-
   return Math.min(...activities.map((activity) => activity.start));
 }
 
@@ -140,7 +139,6 @@ export function getEarliestStartTime(planJson) {
  */
 export function getLatestEndTime(planJson) {
   const activities = Object.values(planJson).flat();
-
   return Math.max(...activities.map((activity) => activity.end));
 }
 
@@ -153,7 +151,6 @@ export function getFirstActivity(planJson) {
   const groups = Object.keys(planJson);
   const firstGroupKey = groups[0];
   const firstGroupItems = planJson[firstGroupKey];
-
   return firstGroupItems[0];
 }
 
@@ -224,7 +221,7 @@ export async function createTimelistWithPlanAndSetActivityInProgress(page, planJ
   await page.getByRole('button', { name: 'Edit Object' }).click();
 
   // Find the display properties section in the inspector
-  await page.getByRole('tab', { name: 'Config' }).click();
+  await page.getByRole('tab', { name: 'View Properties' }).click();
   // Switch to expanded view and save the setting
   await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
 

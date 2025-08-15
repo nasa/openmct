@@ -2,6 +2,7 @@
 module.exports = {
   extends: ['plugin:playwright/recommended'],
   rules: {
+    'playwright/max-nested-describe': ['error', { max: 1 }],
     'playwright/expect-expect': 'off'
   },
   overrides: [
@@ -25,12 +26,6 @@ module.exports = {
       files: ['**/*.contract.perf.spec.js'],
       rules: {
         'playwright/no-raw-locators': 'off'
-      }
-    },
-    {
-      files: ['**/*.visual.spec.js'],
-      rules: {
-        'playwright/no-networkidle': 'off' //https://github.com/nasa/openmct/issues/7549
       }
     }
   ]

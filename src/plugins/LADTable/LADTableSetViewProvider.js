@@ -35,6 +35,9 @@ export default function LADTableSetViewProvider(openmct) {
     },
     view: function (domainObject, objectPath) {
       return new LadTableSetView(openmct, domainObject, objectPath);
+    },
+    priority: function () {
+      return 1;
     }
   };
 }

@@ -222,7 +222,6 @@ import { TIME_CONTEXT_EVENTS } from '@/api/time/constants.js';
 import imageryData from '@/plugins/imagery/mixins/imageryData.js';
 import { VIEW_LARGE_ACTION_KEY } from '@/plugins/viewLargeAction/viewLargeAction.js';
 
-import { encode_url } from '../../../utils/encoding';
 import eventHelpers from '../lib/eventHelpers.js';
 import AnnotationsCanvas from './AnnotationsCanvas.vue';
 import Compass from './Compass/CompassComponent.vue';
@@ -365,7 +364,7 @@ export default {
         filter: `brightness(${this.filters.brightness}%) contrast(${this.filters.contrast}%)`,
         backgroundImage: `${
           this.imageUrl
-            ? `url(${encode_url(this.imageUrl)}),
+            ? `url(${this.imageUrl}),
                             repeating-linear-gradient(
                                 45deg,
                                 transparent,
@@ -621,7 +620,7 @@ export default {
           if (matchIndex > -1) {
             this.setFocusedImage(matchIndex);
           } else {
-            this.paused(false);
+            this.paused();
           }
         }
 
@@ -790,7 +789,7 @@ export default {
     },
     getVisibleLayerStyles(layer) {
       return {
-        backgroundImage: `url(${encode_url(layer.source)})`,
+        backgroundImage: `url(${layer.source})`,
         transform: `scale(${this.zoomFactor}) translate(${this.imageTranslateX / 2}px, ${
           this.imageTranslateY / 2
         }px)`,
@@ -1083,7 +1082,7 @@ export default {
     paused(state) {
       this.isPaused = Boolean(state);
 
-      if (!this.isPaused) {
+      if (!state) {
         this.previousFocusedImage = null;
         this.setFocusedImage(this.nextImageIndex);
         this.autoScroll = true;

@@ -41,10 +41,9 @@ export default class LADTableConfiguration extends EventEmitter {
   }
 
   getConfiguration() {
-    const configuration = this.domainObject.configuration ?? {};
-    configuration.hiddenColumns = configuration.hiddenColumns ?? {};
+    const configuration = this.domainObject.configuration || {};
+    configuration.hiddenColumns = configuration.hiddenColumns || {};
     configuration.isFixedLayout = configuration.isFixedLayout ?? true;
-    configuration.objectStyles = configuration.objectStyles ?? {};
 
     return configuration;
   }

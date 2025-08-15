@@ -373,6 +373,7 @@ export default {
       configuredColumnWidths: configuration.columnWidths,
       sizingRows: {},
       rowHeight: ROW_HEIGHT,
+      scrollOffset: 0,
       totalHeight: 0,
       totalWidth: 0,
       rowOffset: 0,
@@ -551,7 +552,6 @@ export default {
     //Default sort
     this.sortOptions = this.table.tableRows.sortBy();
     this.scrollable = this.$refs.scrollable;
-    this.lastScrollLeft = this.scrollable.scrollLeft;
     this.contentTable = this.$refs.contentTable;
     this.sizingTable = this.$refs.sizingTable;
     this.headersHolderEl = this.$refs.headersHolderEl;
@@ -740,9 +740,7 @@ export default {
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-      if (this.lastScrollLeft === this.scrollable.scrollLeft) {
-        this.throttledUpdateVisibleRows();
-      }
+      this.throttledUpdateVisibleRows();
       this.synchronizeScrollX();
 
       if (this.shouldAutoScroll()) {
@@ -767,8 +765,6 @@ export default {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
-      this.lastScrollLeft = this.scrollable.scrollLeft;
-
       if (this.$refs.headersHolderEl && this.scrollable) {
         this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
       }

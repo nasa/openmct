@@ -126,7 +126,7 @@ test.describe('Gantt Chart', () => {
     await page.goto(ganttChart.url);
 
     // Assert that the Plan's status is displayed as draft
-    expect(await page.locator('.c-swimlane.is-status--draft').count()).toBe(
+    expect(await page.locator('.u-contents.c-swimlane.is-status--draft').count()).toBe(
       Object.keys(testPlan1).length
     );
   });

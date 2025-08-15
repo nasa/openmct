@@ -64,7 +64,7 @@ test.describe('Tabs View', () => {
     page.goto(tabsView.url);
 
     // select first tab
-    await page.getByLabel(`${table.name} tab - selected`, { exact: true }).click();
+    await page.getByLabel(`${table.name} tab`, { exact: true }).click();
     // ensure table header visible
     await expect(page.getByRole('searchbox', { name: 'message filter input' })).toBeVisible();
 

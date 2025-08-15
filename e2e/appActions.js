@@ -68,11 +68,7 @@ import { v4 as genUuid } from 'uuid';
  * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [options.parent='mine'] - The Identifier or uuid of the parent object. Defaults to 'mine' folder
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(
-  page,
-  { type, name, parent = 'mine' },
-  additionalOptions = {}
-) {
+async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -93,13 +89,6 @@ async function createDomainObjectWithDefaults(
   await page.getByLabel('Title', { exact: true }).fill('');
   await page.getByLabel('Title', { exact: true }).fill(name);
 
-  if (additionalOptions) {
-    for (const [key, value] of Object.entries(additionalOptions)) {
-      // eslint-disable-next-line playwright/no-raw-locators
-      await page.locator(`#form-${key}`).fill(value);
-    }
-  }
-
   if (page.testNotes) {
     // Fill the "Notes" section with information about the
     // currently running test and its project.
@@ -116,7 +105,7 @@ async function createDomainObjectWithDefaults(
 
   if (await _isInEditMode(page, uuid)) {
     // Save (exit edit mode)
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   }
 
@@ -125,6 +114,22 @@ async function createDomainObjectWithDefaults(
     uuid,
     url: objectUrl
   };
+}
+
+/**
+ * Retrieves the properties of an OpenMCT domain object by its identifier.
+ *
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {string | identifier - The identifier or UUID of the domain object.
+ * @returns {Promise<Object>} An object containing the properties of the domain object.
+ */
+async function getDomainObject(page, identifier) {
+  const domainObject = await page.evaluate(async (objIdentifier) => {
+    const object = await window.openmct.objects.get(objIdentifier);
+    return object;
+  }, identifier);
+
+  return domainObject;
 }
 
 /**
@@ -233,37 +238,6 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
 
   return {
     name,
-    uuid,
-    url
-  };
-}
-
-/**
- * Create a Stable State Telemetry Object (State Generator) for use in visual tests
- * and tests against plotting telemetry (e.g. logPlot tests). This will change state every 2 seconds.
- * @param {import('@playwright/test').Page} page
- * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
- * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
- */
-async function createStableStateTelemetry(page, parent = 'mine') {
-  const parentUrl = await getHashUrlToDomainObject(page, parent);
-
-  await page.goto(`${parentUrl}`);
-  const createdObject = await createDomainObjectWithDefaults(page, {
-    type: 'State Generator',
-    name: 'Stable State Generator'
-  });
-  // edit the state generator to have a 1 second update rate
-  await page.getByLabel('More actions').click();
-  await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
-  await page.getByLabel('State Duration (seconds)', { exact: true }).fill('2');
-  await page.getByLabel('Save').click();
-  // Wait until the URL is updated
-  const uuid = await getFocusedObjectUuid(page);
-  const url = await getHashUrlToDomainObject(page, uuid);
-
-  return {
-    name: createdObject.name,
     uuid,
     url
   };
@@ -521,10 +495,6 @@ async function setTimeConductorBounds(page, { submitChanges = true, ...bounds })
   // Open the time conductor popup
   await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-  // FIXME: https://github.com/nasa/openmct/pull/7818
-  // eslint-disable-next-line playwright/no-wait-for-timeout
-  await page.waitForTimeout(500);
-
   if (startDate) {
     await page.getByLabel('Start date').fill(startDate);
   }
@@ -675,51 +645,16 @@ async function getCanvasPixels(page, canvasSelector) {
   );
 }
 
-/**
- * Search for telemetry and link it to an object. objectName should come from the domainObject.name function.
- * @param {import('@playwright/test').Page} page
- * @param {string} parameterName
- * @param {string} objectName
- */
-async function linkParameterToObject(page, parameterName, objectName) {
-  await page.getByRole('searchbox', { name: 'Search Input' }).click();
-  await page.getByRole('searchbox', { name: 'Search Input' }).fill(parameterName);
-  await page.getByLabel('Object Results').getByText(parameterName).click();
-  await page.getByLabel('More actions').click();
-  await page.getByLabel('Create Link').click();
-  await page.getByLabel('Modal Overlay').getByLabel('Search Input').click();
-  await page.getByLabel('Modal Overlay').getByLabel('Search Input').fill(objectName);
-  await page.getByLabel('Modal Overlay').getByLabel(`Navigate to ${objectName}`).click();
-  await page.getByLabel('Save').click();
-}
-
-/**
- * Rename the currently viewed `domainObject` from the browse bar.
- *
- * @param {import('@playwright/test').Page} page
- * @param {string} newName
- */
-async function renameCurrentObjectFromBrowseBar(page, newName) {
-  const nameInput = page.getByLabel('Browse bar object name');
-  await nameInput.click();
-  await nameInput.fill('');
-  await nameInput.fill(newName);
-  // Click the browse bar container to save changes
-  await page.getByLabel('Browse bar', { exact: true }).click();
-}
-
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
   createPlanFromJSON,
-  createStableStateTelemetry,
   expandEntireTree,
   getCanvasPixels,
-  linkParameterToObject,
+  getDomainObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
-  renameCurrentObjectFromBrowseBar,
   setEndOffset,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,

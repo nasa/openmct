@@ -41,34 +41,11 @@ class EventMetadataProvider {
           {
             key: 'message',
             name: 'Message',
-            format: 'string',
-            hints: {
-              // this is used in the EventTimelineView to provide a title for the event
-              // label can be changed to other properties for the title (e.g., the `name` property)
-              label: 0
-            }
+            format: 'string'
           }
         ]
       }
     };
-
-    const inPlaceUpdateMetadataValue = {
-      key: 'messageId',
-      name: 'row identifier',
-      format: 'string',
-      useToUpdateInPlace: true
-    };
-    const eventAcknowledgeMetadataValue = {
-      key: 'acknowledge',
-      name: 'Acknowledge',
-      format: 'string'
-    };
-
-    const eventGeneratorWithAcknowledge = structuredClone(this.METADATA_BY_TYPE.eventGenerator);
-    eventGeneratorWithAcknowledge.values.push(inPlaceUpdateMetadataValue);
-    eventGeneratorWithAcknowledge.values.push(eventAcknowledgeMetadataValue);
-
-    this.METADATA_BY_TYPE.eventGeneratorWithAcknowledge = eventGeneratorWithAcknowledge;
   }
 
   supportsMetadata(domainObject) {

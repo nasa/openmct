@@ -27,11 +27,10 @@ import TooltipComponent from './components/TooltipComponent.vue';
 
 class Tooltip extends EventEmitter {
   constructor(
-    { toolTipText, toolTipLocation, parentElement, cssClasses } = {
+    { toolTipText, toolTipLocation, parentElement } = {
       tooltipText: '',
       toolTipLocation: 'below',
-      parentElement: null,
-      cssClasses: []
+      parentElement: null
     }
   ) {
     super();
@@ -43,8 +42,7 @@ class Tooltip extends EventEmitter {
       provide: {
         toolTipText,
         toolTipLocation,
-        parentElement,
-        cssClasses
+        parentElement
       },
       template: '<tooltip-component toolTipText="toolTipText"></tooltip-component>'
     });

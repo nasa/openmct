@@ -22,24 +22,28 @@
 
 <template>
   <div class="c-inspect-properties">
-    <div class="c-inspect-properties__header">Table Column Visibility</div>
-    <ul class="c-inspect-properties__section">
-      <li v-for="(title, key) in headers" :key="key" class="c-inspect-properties__row">
-        <div class="c-inspect-properties__label" title="Show or hide column">
-          <label :for="key + 'ColumnControl'">{{ title }}</label>
-        </div>
-        <div class="c-inspect-properties__value">
-          <input
-            v-if="isEditing"
-            :id="key + 'ColumnControl'"
-            type="checkbox"
-            :checked="configuration.hiddenColumns[key] !== true"
-            @change="toggleColumn(key)"
-          />
-          <span v-if="!isEditing && configuration.hiddenColumns[key] !== true">Visible</span>
-        </div>
-      </li>
-    </ul>
+    <template v-if="isEditing">
+      <div class="c-inspect-properties__header">Table Column Visibility</div>
+      <ul class="c-inspect-properties__section">
+        <li v-for="(title, key) in headers" :key="key" class="c-inspect-properties__row">
+          <div class="c-inspect-properties__label" title="Show or hide column">
+            <label :for="key + 'ColumnControl'">{{ title }}</label>
+          </div>
+          <div class="c-inspect-properties__value">
+            <input
+              :id="key + 'ColumnControl'"
+              type="checkbox"
+              :checked="configuration.hiddenColumns[key] !== true"
+              @change="toggleColumn(key)"
+            />
+          </div>
+        </li>
+      </ul>
+    </template>
+    <template v-else>
+      <div class="c-inspect-properties__header">LAD Table Configuration</div>
+      <div class="c-inspect-properties__row--span-all">Only available in edit mode.</div>
+    </template>
   </div>
 </template>
 
@@ -58,8 +62,7 @@ export default {
       isEditing: this.openmct.editor.isEditing(),
       configuration: ladTableConfiguration.getConfiguration(),
       items: [],
-      ladTableObjects: [],
-      ladTelemetryObjects: {}
+      ladTableObjects: []
     };
   },
   computed: {
@@ -147,14 +150,11 @@ export default {
       this.ladTableObjects.push(ladTable);
 
       const composition = this.openmct.composition.get(ladTable.domainObject);
-      composition.on('add', this.addItem);
-      composition.on('remove', this.removeItem);
+
       composition.load();
 
       this.compositions.push({
-        composition,
-        addCallback: this.addItem,
-        removeCallback: this.removeItem
+        composition
       });
     },
     removeLadTable(identifier) {

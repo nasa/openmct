@@ -53,7 +53,6 @@ describe('The condition', function () {
         valueMetadatas: [
           {
             key: 'some-key',
-            source: 'some-key',
             name: 'Some attribute',
             hints: {
               range: 2
@@ -61,7 +60,6 @@ describe('The condition', function () {
           },
           {
             key: 'utc',
-            source: 'utc',
             name: 'Time',
             format: 'utc',
             hints: {
@@ -69,7 +67,7 @@ describe('The condition', function () {
             }
           },
           {
-            key: 'value',
+            key: 'testSource',
             source: 'value',
             name: 'Test',
             format: 'string'
@@ -90,32 +88,17 @@ describe('The condition', function () {
     openmct.telemetry = jasmine.createSpyObj('telemetry', [
       'isTelemetryObject',
       'subscribe',
-      'getMetadata',
-      'getValueFormatter'
+      'getMetadata'
     ]);
     openmct.telemetry.isTelemetryObject.and.returnValue(true);
     openmct.telemetry.subscribe.and.returnValue(function () {});
     openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
-    openmct.telemetry.getValueFormatter.and.callFake((metadatum) => {
-      return {
-        parse(input) {
-          return input;
-        }
-      };
-    });
 
     mockTimeSystems = {
       key: 'utc'
     };
-    openmct.time = jasmine.createSpyObj('time', [
-      'getTimeSystem',
-      'getAllTimeSystems',
-      'on',
-      'off'
-    ]);
-    openmct.time.getTimeSystem.and.returnValue({ key: 'utc' });
+    openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems', 'on', 'off']);
     openmct.time.getAllTimeSystems.and.returnValue([mockTimeSystems]);
-    //openmct.time.getTimeSystem.and.returnValue();
     openmct.time.on.and.returnValue(() => {});
     openmct.time.off.and.returnValue(() => {});
 
@@ -173,24 +156,37 @@ describe('The condition', function () {
     expect(conditionObj.criteria.length).toEqual(0);
   });
 
-  it('keeps the old result new telemetry data is not used by it', function () {
-    const latestDataTable = new Map();
-    latestDataTable.set(testTelemetryObject.identifier.key, {
+  it('gets the result of a condition when new telemetry data is received', function () {
+    conditionObj.updateResult({
       value: '0',
       utc: 'Hi',
       id: testTelemetryObject.identifier.key
     });
-    conditionObj.updateResult(latestDataTable, testTelemetryObject.identifier.key);
+    expect(conditionObj.result).toBeTrue();
+  });
 
+  it('gets the result of a condition when new telemetry data is received', function () {
+    conditionObj.updateResult({
+      value: '1',
+      utc: 'Hi',
+      id: testTelemetryObject.identifier.key
+    });
+    expect(conditionObj.result).toBeFalse();
+  });
+
+  it('keeps the old result new telemetry data is not used by it', function () {
+    conditionObj.updateResult({
+      value: '0',
+      utc: 'Hi',
+      id: testTelemetryObject.identifier.key
+    });
     expect(conditionObj.result).toBeTrue();
 
-    latestDataTable.set('1234', {
+    conditionObj.updateResult({
       value: '1',
       utc: 'Hi',
       id: '1234'
     });
-
-    conditionObj.updateResult(latestDataTable, '1234');
     expect(conditionObj.result).toBeTrue();
   });
 });

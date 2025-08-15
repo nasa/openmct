@@ -71,8 +71,7 @@ export default function getTelemetryTableType(options) {
         hiddenColumns: {},
         telemetryMode,
         persistModeChange,
-        rowLimit,
-        objectStyles: {}
+        rowLimit
       };
     }
   };

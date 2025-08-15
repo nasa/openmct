@@ -29,29 +29,21 @@ import { getOperatorText, OPERATIONS } from '../utils/operations.js';
 import { checkIfOld } from '../utils/time.js';
 
 export default class TelemetryCriterion extends EventEmitter {
-  #lastUpdated;
-  #lastTimeSystem;
-  #comparator;
-
   /**
    * Subscribes/Unsubscribes to telemetry and emits the result
    * of operations performed on the telemetry data returned and a given input value.
    * @constructor
    * @param telemetryDomainObjectDefinition {id: uuid, operation: enum, input: Array, metadata: string, key: {domainObject.identifier} }
-   * @param {import('../../../MCT.js').OpenMCT} openmct
+   * @param openmct
    */
   constructor(telemetryDomainObjectDefinition, openmct) {
     super();
 
-    /**
-     * @type {import('../../../MCT.js').MCT}
-     */
     this.openmct = openmct;
     this.telemetryDomainObjectDefinition = telemetryDomainObjectDefinition;
     this.id = telemetryDomainObjectDefinition.id;
     this.telemetry = telemetryDomainObjectDefinition.telemetry;
     this.operation = telemetryDomainObjectDefinition.operation;
-    this.#comparator = this.#findOperation(this.operation);
     this.input = telemetryDomainObjectDefinition.input;
     this.metadata = telemetryDomainObjectDefinition.metadata;
     this.result = undefined;
@@ -91,6 +83,7 @@ export default class TelemetryCriterion extends EventEmitter {
     if (this.ageCheck) {
       this.ageCheck.clear();
     }
+
     this.ageCheck = checkIfOld(this.handleOldTelemetry.bind(this), this.input[0] * 1000);
   }
 
@@ -160,6 +153,7 @@ export default class TelemetryCriterion extends EventEmitter {
   createNormalizedDatum(telemetryDatum, endpoint) {
     const id = this.openmct.objects.makeKeyString(endpoint.identifier);
     const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
+
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
       const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
       datum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
@@ -185,15 +179,8 @@ export default class TelemetryCriterion extends EventEmitter {
 
     return datum;
   }
-  shouldUpdateResult(datum, timesystem) {
-    const dataIsDefined = datum !== undefined;
-    const hasTimeSystemChanged =
-      this.#lastTimeSystem === undefined || this.#lastTimeSystem !== timesystem;
-    const isCacheStale = this.#lastUpdated === undefined || datum[timesystem] > this.#lastUpdated;
 
-    return dataIsDefined && (hasTimeSystemChanged || isCacheStale);
-  }
-  updateResult(data, currentTimeSystemKey) {
+  updateResult(data) {
     const validatedData = this.isValid() ? data : {};
 
     if (!this.isStalenessCheck()) {
@@ -206,8 +193,6 @@ export default class TelemetryCriterion extends EventEmitter {
       } else {
         this.result = this.computeResult(validatedData);
       }
-      this.#lastUpdated = data[currentTimeSystemKey];
-      this.#lastTimeSystem = currentTimeSystemKey;
     }
   }
 
@@ -251,8 +236,8 @@ export default class TelemetryCriterion extends EventEmitter {
       });
   }
 
-  #findOperation(operation) {
-    for (let i = 0; i < OPERATIONS.length; i++) {
+  findOperation(operation) {
+    for (let i = 0, ii = OPERATIONS.length; i < ii; i++) {
       if (operation === OPERATIONS[i].name) {
         return OPERATIONS[i].operation;
       }
@@ -264,14 +249,15 @@ export default class TelemetryCriterion extends EventEmitter {
   computeResult(data) {
     let result = false;
     if (data) {
+      let comparator = this.findOperation(this.operation);
       let params = [];
       params.push(data[this.metadata]);
       if (this.isValidInput()) {
         this.input.forEach((input) => params.push(input));
       }
 
-      if (typeof this.#comparator === 'function') {
-        result = Boolean(this.#comparator(params));
+      if (typeof comparator === 'function') {
+        result = Boolean(comparator(params));
       }
     }
 

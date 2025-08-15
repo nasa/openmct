@@ -24,13 +24,19 @@ import {
   acknowledgeFault,
   acknowledgeMultipleFaults,
   changeViewTo,
+  clearSearch,
+  enterSearchTerm,
   getFault,
   getFaultByName,
   getFaultName,
   getFaultNamespace,
+  getFaultResultCount,
+  getFaultSeverity,
   getFaultTriggerTime,
+  getHighestSeverity,
+  getLowestSeverity,
+  navigateToFaultManagementWithExample,
   navigateToFaultManagementWithoutExample,
-  navigateToFaultManagementWithStaticExample,
   selectFaultItem,
   shelveFault,
   shelveMultipleFaults,
@@ -40,7 +46,7 @@ import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('The Fault Management Plugin using example faults', () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToFaultManagementWithStaticExample(page);
+    await navigateToFaultManagementWithExample(page);
   });
 
   test('Shows a criticality icon for every fault', async ({ page }) => {
@@ -50,7 +56,7 @@ test.describe('The Fault Management Plugin using example faults', () => {
     expect(faultCount).toEqual(criticalityIconCount);
   });
 
-  test('When selecting a fault, it has an "is-selected" class and its information shows in the inspector', async ({
+  test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector', async ({
     page
   }) => {
     await selectFaultItem(page, 1);
@@ -61,7 +67,9 @@ test.describe('The Fault Management Plugin using example faults', () => {
       .getByLabel('Source inspector properties')
       .getByLabel('inspector property value');
 
-    await expect(page.getByLabel('Fault triggered at').first()).toHaveClass(/is-selected/);
+    await expect(
+      page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').first()
+    ).toHaveClass(/is-selected/);
     await expect(inspectorFaultName).toHaveCount(1);
   });
 
@@ -71,18 +79,23 @@ test.describe('The Fault Management Plugin using example faults', () => {
     await selectFaultItem(page, 1);
     await selectFaultItem(page, 2);
 
-    const selectedRows = page.getByRole('checkbox', { checked: true });
-    await expect(selectedRows).toHaveCount(2);
+    const selectedRows = page.locator(
+      '.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname'
+    );
+    expect(await selectedRows.count()).toEqual(2);
 
     await page.getByRole('tab', { name: 'Config' }).click();
     const firstSelectedFaultName = await selectedRows.nth(0).textContent();
     const secondSelectedFaultName = await selectedRows.nth(1).textContent();
-    await expect(
-      page.locator(`.c-inspector__properties >> :text("${firstSelectedFaultName}")`)
-    ).toHaveCount(0);
-    await expect(
-      page.locator(`.c-inspector__properties >> :text("${secondSelectedFaultName}")`)
-    ).toHaveCount(0);
+    const firstNameInInspectorCount = await page
+      .locator(`.c-inspector__properties >> :text("${firstSelectedFaultName}")`)
+      .count();
+    const secondNameInInspectorCount = await page
+      .locator(`.c-inspector__properties >> :text("${secondSelectedFaultName}")`)
+      .count();
+
+    expect(firstNameInInspectorCount).toEqual(0);
+    expect(secondNameInInspectorCount).toEqual(0);
   });
 
   test('Allows you to shelve a fault', async ({ page }) => {
@@ -173,60 +186,44 @@ test.describe('The Fault Management Plugin using example faults', () => {
     const faultFiveTriggerTime = await getFaultTriggerTime(page, 5);
 
     // should be all faults (5)
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(5);
+    let faultResultCount = await getFaultResultCount(page);
+    expect(faultResultCount).toEqual(5);
 
     // search namespace
-    await page
-      .getByLabel('Fault Management Object View')
-      .getByLabel('Search Input')
-      .fill(faultThreeNamespace);
+    await enterSearchTerm(page, faultThreeNamespace);
 
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(1);
+    faultResultCount = await getFaultResultCount(page);
+    expect(faultResultCount).toEqual(1);
     expect(await getFaultNamespace(page, 1)).toEqual(faultThreeNamespace);
 
     // all faults
-    await page.getByLabel('Fault Management Object View').getByLabel('Search Input').fill('');
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(5);
+    await clearSearch(page);
+    faultResultCount = await getFaultResultCount(page);
+    expect(faultResultCount).toEqual(5);
 
     // search name
-    await page
-      .getByLabel('Fault Management Object View')
-      .getByLabel('Search Input')
-      .fill(faultTwoName);
+    await enterSearchTerm(page, faultTwoName);
 
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(1);
+    faultResultCount = await getFaultResultCount(page);
+    expect(faultResultCount).toEqual(1);
     expect(await getFaultName(page, 1)).toEqual(faultTwoName);
 
     // all faults
-    await page.getByLabel('Fault Management Object View').getByLabel('Search Input').fill('');
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(5);
+    await clearSearch(page);
+    faultResultCount = await getFaultResultCount(page);
+    expect(faultResultCount).toEqual(5);
 
     // search triggerTime
-    await page
-      .getByLabel('Fault Management Object View')
-      .getByLabel('Search Input')
-      .fill(faultFiveTriggerTime);
+    await enterSearchTerm(page, faultFiveTriggerTime);
 
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(1);
+    faultResultCount = await getFaultResultCount(page);
+    expect(faultResultCount).toEqual(1);
     expect(await getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
   });
 
   test('Allows you to sort faults', async ({ page }) => {
-    /**
-     * Compares two severity levels and returns a number indicating their relative order.
-     *
-     * @param {'CRITICAL' | 'WARNING' | 'WATCH'} severity1 - The first severity level to compare.
-     * @param {'CRITICAL' | 'WARNING' | 'WATCH'} severity2 - The second severity level to compare.
-     * @returns {number} - A negative number if severity1 is less severe than severity2,
-     *                     a positive number if severity1 is more severe than severity2,
-     *                     or 0 if they are equally severe.
-     */
-    // eslint-disable-next-line func-style
-    const compareSeverity = (severity1, severity2) => {
-      const severityOrder = ['WATCH', 'WARNING', 'CRITICAL'];
-      return severityOrder.indexOf(severity1) - severityOrder.indexOf(severity2);
-    };
-
+    const highestSeverity = await getHighestSeverity(page);
+    const lowestSeverity = await getLowestSeverity(page);
     const faultOneName = 'Example Fault 1';
     const faultFiveName = 'Example Fault 5';
     let firstFaultName = await getFaultName(page, 1);
@@ -240,19 +237,10 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     await sortFaultsBy(page, 'severity');
 
-    const firstFaultSeverityLabel = await page
-      .getByLabel('Severity:')
-      .first()
-      .getAttribute('aria-label');
-    const firstFaultSeverity = firstFaultSeverityLabel.split(' ').slice(1).join(' ');
-
-    const lastFaultSeverityLabel = await page
-      .getByLabel('Severity:')
-      .last()
-      .getAttribute('aria-label');
-    const lastFaultSeverity = lastFaultSeverityLabel.split(' ').slice(1).join(' ');
-
-    expect(compareSeverity(firstFaultSeverity, lastFaultSeverity)).toBeGreaterThan(0);
+    const sortedHighestSeverity = await getFaultSeverity(page, 1);
+    const sortedLowestSeverity = await getFaultSeverity(page, 5);
+    expect(sortedHighestSeverity).toEqual(highestSeverity);
+    expect(sortedLowestSeverity).toEqual(lowestSeverity);
   });
 });
 
@@ -262,18 +250,24 @@ test.describe('The Fault Management Plugin without using example faults', () => 
   });
 
   test('Shows no faults when no faults are provided', async ({ page }) => {
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
+    const faultCount = await page.locator('c-fault-mgmt__list').count();
+
+    expect(faultCount).toEqual(0);
 
     await changeViewTo(page, 'acknowledged');
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
+    const acknowledgedCount = await page.locator('c-fault-mgmt__list').count();
+    expect(acknowledgedCount).toEqual(0);
 
     await changeViewTo(page, 'shelved');
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
+    const shelvedCount = await page.locator('c-fault-mgmt__list').count();
+    expect(shelvedCount).toEqual(0);
   });
 
   test('Will return no faults when searching', async ({ page }) => {
-    await page.getByLabel('Fault Management Object View').getByLabel('Search Input').fill('fault');
+    await enterSearchTerm(page, 'fault');
 
-    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
+    const faultCount = await page.locator('c-fault-mgmt__list').count();
+
+    expect(faultCount).toEqual(0);
   });
 });

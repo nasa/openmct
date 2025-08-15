@@ -649,11 +649,6 @@ export default {
     },
     request(domainObject = this.telemetryObject) {
       this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-
-      if (!this.metadata) {
-        return;
-      }
-
       this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
       const LimitEvaluator = this.openmct.telemetry.getLimits(domainObject);
       LimitEvaluator.limits().then(this.updateLimits);

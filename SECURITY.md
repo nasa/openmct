@@ -1,7 +1,5 @@
 # Security Policy
 
-Open MCT is an open source project and may contain externally provided code. External contributions must follow the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md).
-
 The Open MCT team secures our code base using a combination of code review, dependency review, and periodic security reviews. Static analysis performed during automated verification additionally safeguards against common coding errors which may result in vulnerabilities.
 
 ### Reporting a Vulnerability

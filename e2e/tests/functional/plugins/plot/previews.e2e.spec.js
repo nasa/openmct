@@ -50,7 +50,7 @@ test.describe('Plots work in Previews', () => {
     });
     const layoutGridHolder = page.getByLabel('Test Display Layout Layout Grid');
     await sineWaveGeneratorTreeItem.dragTo(layoutGridHolder);
-    await page.getByLabel('Save', { exact: true }).click();
+    await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // right click on the plot and select view large
@@ -67,7 +67,7 @@ test.describe('Plots work in Previews', () => {
     await page.getByLabel('Move Sub-object Frame').click();
     await page.getByText('View type').click();
     await page.getByText('Overlay Plot').click();
-    await page.getByLabel('Save', { exact: true }).click();
+    await page.getByLabel('Save').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
     await expect(
       page.getByLabel('Test Display Layout Layout', { exact: true }).getByLabel('Plot Canvas')

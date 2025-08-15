@@ -27,9 +27,9 @@ To define a filter, you'll need to add a new `filter` property to the domain obj
         singleSelectionThreshold: true,
         comparator: 'equals',
         possibleValues: [
-            { label: 'Apple', value: 'apple' },
-            { label: 'Banana', value: 'banana' },
-            { label: 'Orange', value: 'orange' }
+            { name: 'Apple', value: 'apple' },
+            { name: 'Banana', value: 'banana' },
+            { name: 'Orange', value: 'orange' }
         ]
     }]
 }

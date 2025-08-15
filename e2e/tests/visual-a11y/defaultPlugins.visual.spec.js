@@ -85,6 +85,16 @@ test.describe('Visual - Default @a11y', () => {
     await percySnapshot(page, `Display Layout Create Menu (theme: '${theme}')`);
   });
 
+  test('Visual - Default Gauge', async ({ page, theme }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Default Gauge'
+    });
+
+    // Take a snapshot of the newly created Gauge object
+    await percySnapshot(page, `Default Gauge (theme: '${theme}')`);
+  });
+
   test.afterEach(async ({ page }, testInfo) => {
     await scanForA11yViolations(page, testInfo.title);
   });
