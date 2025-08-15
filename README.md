@@ -102,7 +102,12 @@ tested by `src/foo/BarSpec.js`.
 
 ### e2e, Visual, and Performance Testing
 
+<<<<<<< HEAD
+When `npm test` is run, test results will be written as HTML to
+`target/tests`.
+=======
 Our e2e (end-to-end), Visual, and Performance tests leverage the Playwright framework and are executed using Playwright's test runner, [@playwright/test](https://playwright.dev/).
+>>>>>>> master
 
 #### How to Run Tests
 
