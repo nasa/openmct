@@ -92,9 +92,6 @@ import TimelineObjectView from './TimelineObjectView.vue';
 
 const AXES_PADDING = 20;
 
-const AXES_PADDING = 20;
-const PLOT_ITEM_H_PX = 100;
-
 export default {
   components: {
     ResizeHandle,
