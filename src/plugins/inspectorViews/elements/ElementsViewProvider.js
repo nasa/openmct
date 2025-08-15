@@ -37,7 +37,7 @@ export default function ElementsViewProvider(openmct) {
 
       const hasCustomElementsViewProvider = CUSTOM_ELEMENTS_VIEW_PROVIDER_TYPES.includes(type);
 
-      return hasValidSelection && !hasCustomElementsViewProvider && !isFolder;;
+      return hasValidSelection && !hasCustomElementsViewProvider && !isFolder;
     },
     view: function (selection) {
       let _destroy = null;
