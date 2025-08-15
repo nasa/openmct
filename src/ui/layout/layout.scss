@@ -98,6 +98,7 @@
       .l-shell__main-.l-shell__main-view-browse-bar {
         position: relative;
       }
+
       // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
       .l-shell__time-conductor,
       .l-shell__main-container {
@@ -108,9 +109,29 @@
         width: auto;
       }
 
+      // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
       .l-shell__main-container {
         top: $shellMainBrowseBarH + $interiorMarginLg;
         bottom: $shellTimeConductorH + $interiorMargin;
+
+        &.--has-toolbar {
+          .is-editing & {
+            top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
+          }
+        }
+
+        > .c-object-view {
+          border: 1px dashed transparent;
+          .is-editing & {
+            border-color: rgba($editUIAreaBaseColor, 0.6);
+          }
+
+          &[s-selected] {
+            .is-editing & {
+              border-color: $editUIAreaBaseColor
+            }
+          }
+        }
       }
 
       @include phonePortrait() {
@@ -290,6 +311,7 @@
     flex: 1 1 auto !important;
     height: 100%; // Chrome 73 overflow bug fix
     overflow: auto;
+
     > * + * {
       margin-top: $interiorMargin;
     }
@@ -373,25 +395,6 @@
 
   &.is-stale {
     @include isStaleHolder();
-  }
-}
-
-.is-editing {
-  .l-shell__main-container {
-    $m: 3px;
-    box-shadow:
-      $colorBodyBg 0 0 0 1px,
-      $editUIAreaShdw;
-    margin-left: $m;
-    margin-right: $m;
-    top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
-
-    &[s-selected] {
-      // Provide a clearer selection context articulation for the main edit area
-      box-shadow:
-        $colorBodyBg 0 0 0 1px,
-        $editUIAreaShdwSelected;
-    }
   }
 }
 

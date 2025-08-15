@@ -20,63 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.c-plan {
-  svg {
-    text-rendering: geometricPrecision;
-
-    text {
-      stroke: none;
-    }
-
-    .c-swimlane {
-      flex: 1 0 auto;
-    }
-
-    .c-swimlane__lane-object {
-      display: flex;
-    }
-  }
-
-  &__activity {
-    cursor: pointer;
-
-    &[s-selected] {
-      rect,
-      use {
-        outline-style: dotted;
-        outline-width: 2px;
-        stroke: $colorGanttSelectedBorder;
-        stroke-width: 2px;
-      }
-    }
-  }
-
-  &__activity-label {
-    &--outside-rect {
-      fill: $colorBodyFg !important;
-    }
-  }
-
-  canvas {
-    display: none;
-  }
-}
-
-.c-plan-av {
-  // Activities view
-  background-color: $colorPlotBg;
-  flex: 1 1 auto;
-  height: 100%;
-
-  &__svg {
-    width: 100%;
-  }
-}
-
-// When in a Time Strip view
-.c-timeline__objects {
-  .is-object-type-plan {
-    overflow-x: hidden;
-    overflow-y: scroll !important; // `scroll` ensures that right edges align in time
-  }
-}
+/**
+ * @typedef {Object} TimeStripConfig configuration for Time Strip views
+ * @property {boolean} useIndependentTime true for independent time, false for global time
+ * @property {Array<import('./Container').default>} containers
+ * @property {number} swimLaneLabelWidth
+ */
+export const configuration = {
+  useIndependentTime: false,
+  containers: [],
+  swimLaneLabelWidth: 200
+};
