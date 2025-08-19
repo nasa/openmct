@@ -6,6 +6,7 @@
 
   .c-frame & {
     @include abs();
+    @include telemetryView();
     border: 1px solid transparent;
   }
 }

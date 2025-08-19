@@ -101,6 +101,7 @@
     &.is-navigated-object,
     &.is-selected {
       background: $colorItemTreeSelectedBg;
+      box-shadow: $colorItemTreeShdw;
 
       [class*='__name'] {
         color: $colorItemTreeSelectedFg;
