@@ -403,14 +403,18 @@ $colorLimitCyanFg: #d3faff;
 $colorLimitCyanIc: #1795c0;
 
 // Events
-$colorEventPurpleFg: #6433ff;
+$colorEventPurpleFg: #6f07ed;
 $colorEventRedFg: #aa0000;
 $colorEventOrangeFg: #b84900;
-$colorEventYellowFg: #867109;
+$colorEventYellowFg: #a98c04;
 $colorEventPurpleBg: #ebe7fb;
 $colorEventRedBg: #fcefef;
 $colorEventOrangeBg: #ffece3;
 $colorEventYellowBg: #fdf8eb;
+$colorEventPurpleLine: $colorEventPurpleFg;
+$colorEventRedLine: $colorEventRedFg;
+$colorEventOrangeLine: $colorEventOrangeFg;
+$colorEventYellowLine: $colorEventYellowFg;
 
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
@@ -484,6 +488,11 @@ $colorGanttSelectedBorder: #fff;
 $colorActivityStatusGreen: #4bad4b;
 $colorActivityStatusOrange: #b67e41;
 $opacitySubtle: 0.6;
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
+$colorTimeStripDraftBg: rgba(#a57748, 0.2);
+$colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$eventLineW: 1px;
 
 // Tree
 $colorTreeBg: transparent;

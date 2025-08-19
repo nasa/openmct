@@ -96,7 +96,7 @@ class Browse {
       this.#unobserve();
       this.#unobserve = undefined;
     }
-
+    path = decodeURIComponent(path);
     if (!Array.isArray(path)) {
       path = path.split('/');
     }
