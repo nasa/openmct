@@ -43,7 +43,7 @@
       </template>
     </SwimLane>
 
-    <div v-if="isCompositionLoaded" ref="contentHolder" class="c-timeline__objects">
+    <template v-if="isCompositionLoaded">
       <template v-for="(item, index) in items" :key="item.keyString">
         <TimelineObjectView
           class="c-timeline__content js-timeline__content"
@@ -62,7 +62,7 @@
           @end-move="endContainerResizing"
         />
       </template>
-    </div>
+    </template>
 
     <ExtendedLinesOverlay
       :extended-lines-per-key="extendedLinesPerKey"

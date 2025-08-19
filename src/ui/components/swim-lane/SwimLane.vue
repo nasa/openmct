@@ -23,8 +23,7 @@
 <template>
   <div
     ref="swimLane"
-    class="u-contents"
-    :class="[{ 'c-swimlane': !isNested }, statusClass]"
+    :class="[{ 'c-swimlane': !isNested, 'u-contents': isNested }, statusClass]"
     :style="gridTemplateColumnStyle"
     @mouseover.ctrl="showToolTip"
     @mouseleave="hideToolTip"
