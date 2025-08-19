@@ -6,7 +6,7 @@
     <template #custom>
       <div class="c-inspector__properties c-inspect-properties" aria-label="Swim Lane Label Width">
         <div class="c-inspect-properties__header">Swim Lane Label Width</div>
-        <div class="c-inspect-properties__row">
+        <div v-if="isEditing" class="c-inspect-properties__row">
           <input
             :value="swimLaneLabelWidth"
             aria-labelledby="Width in pixels"
@@ -19,11 +19,13 @@
           />
           <span>px</span>
         </div>
+        <div v-else class="c-inspect-properties__row">{{ swimLaneLabelWidth }}px</div>
       </div>
     </template>
   </ElementsPool>
 </template>
 <script>
+import useIsEditing from 'utils/vue/useIsEditing.js';
 import { inject, onUnmounted, ref } from 'vue';
 
 import ElementsPool from '@/plugins/inspectorViews/elements/ElementsPool.vue';
@@ -39,6 +41,7 @@ export default {
   setup() {
     const openmct = inject('openmct');
     const domainObject = inject('domainObject');
+    const { isEditing } = useIsEditing(openmct);
 
     // get initial containers configuration from selection context,
     // as domain.configuration.containers not resilient to composition modifications made outside of view
@@ -84,7 +87,7 @@ export default {
       );
     }
 
-    return { domainObject, containers, changeSwimLaneLabelWidth, swimLaneLabelWidth };
+    return { domainObject, containers, changeSwimLaneLabelWidth, swimLaneLabelWidth, isEditing };
   }
 };
 </script>
