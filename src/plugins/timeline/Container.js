@@ -20,63 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.c-plan {
-  svg {
-    text-rendering: geometricPrecision;
-
-    text {
-      stroke: none;
-    }
-
-    .c-swimlane {
-      flex: 1 0 auto;
-    }
-
-    .c-swimlane__lane-object {
-      display: flex;
-    }
-  }
-
-  &__activity {
-    cursor: pointer;
-
-    &[s-selected] {
-      rect,
-      use {
-        outline-style: dotted;
-        outline-width: 2px;
-        stroke: $colorGanttSelectedBorder;
-        stroke-width: 2px;
-      }
-    }
-  }
-
-  &__activity-label {
-    &--outside-rect {
-      fill: $colorBodyFg !important;
-    }
-  }
-
-  canvas {
-    display: none;
+/**
+ * a sizing container for objects in a layout
+ */
+class Container {
+  constructor(domainObject, size) {
+    /**
+     * the identifier of the associated domain object
+     * @type {import('@/api/objects/ObjectAPI.js').Identifier}
+     */
+    this.domainObjectIdentifier = domainObject.identifier;
+    /**
+     * the size in percentage or pixels
+     * @type {number}
+     */
+    this.size = size;
+    /**
+     * the default percentage scale of an object
+     * @type {number}
+     */
+    this.scale = getContainerScale(domainObject);
+    /**
+     * true if the container should be a fixed pixel size
+     * false if the container should be a flexible percentage size
+     * containers are added as flex
+     * @type {boolean}
+     */
+    this.fixed = false;
   }
 }
 
-.c-plan-av {
-  // Activities view
-  background-color: $colorPlotBg;
-  flex: 1 1 auto;
-  height: 100%;
-
-  &__svg {
-    width: 100%;
+function getContainerScale(domainObject) {
+  if (domainObject.type === 'telemetry.plot.stacked') {
+    return domainObject?.composition?.length;
   }
+
+  return 1;
 }
 
-// When in a Time Strip view
-.c-timeline__objects {
-  .is-object-type-plan {
-    overflow-x: hidden;
-    overflow-y: scroll !important; // `scroll` ensures that right edges align in time
-  }
-}
+export default Container;

@@ -20,63 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.c-plan {
-  svg {
-    text-rendering: geometricPrecision;
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 
-    text {
-      stroke: none;
-    }
+export default function useIsEditing(openmct) {
+  const isEditing = ref(openmct.editor.isEditing());
 
-    .c-swimlane {
-      flex: 1 0 auto;
-    }
+  onMounted(() => {
+    openmct.editor.on('isEditing', setIsEditing);
+  });
 
-    .c-swimlane__lane-object {
-      display: flex;
-    }
+  onBeforeUnmount(() => {
+    openmct.editor.off('isEditing', setIsEditing);
+  });
+
+  function setIsEditing(_isEditing) {
+    isEditing.value = _isEditing;
   }
 
-  &__activity {
-    cursor: pointer;
-
-    &[s-selected] {
-      rect,
-      use {
-        outline-style: dotted;
-        outline-width: 2px;
-        stroke: $colorGanttSelectedBorder;
-        stroke-width: 2px;
-      }
-    }
-  }
-
-  &__activity-label {
-    &--outside-rect {
-      fill: $colorBodyFg !important;
-    }
-  }
-
-  canvas {
-    display: none;
-  }
-}
-
-.c-plan-av {
-  // Activities view
-  background-color: $colorPlotBg;
-  flex: 1 1 auto;
-  height: 100%;
-
-  &__svg {
-    width: 100%;
-  }
-}
-
-// When in a Time Strip view
-.c-timeline__objects {
-  .is-object-type-plan {
-    overflow-x: hidden;
-    overflow-y: scroll !important; // `scroll` ensures that right edges align in time
-  }
+  return {
+    isEditing
+  };
 }

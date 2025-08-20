@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import Container from '@/ui/layout/Container.js';
+
 import flexibleLayoutStylesInterceptor from './flexibleLayoutStylesInterceptor.js';
 import FlexibleLayoutViewProvider from './flexibleLayoutViewProvider.js';
 import ToolBarProvider from './toolbarProvider.js';
-import Container from './utils/container.js';
 
 export default function plugin() {
   return function install(openmct) {

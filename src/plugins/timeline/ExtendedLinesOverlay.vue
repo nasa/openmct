@@ -24,7 +24,7 @@
     <div
       v-for="(lines, key) in extendedLinesPerKey"
       :key="key"
-      class="c-timeline__event-line--extended-container"
+      class="c-timeline__overlay-lines__extended-line-container"
     >
       <div
         v-for="(line, index) in lines"
@@ -39,7 +39,7 @@
               (selectedLineId && selectedKeyString === key && line.id === selectedLineId)
           }
         ]"
-        :style="{ left: `${line.x + leftOffset}px`, height: `${height}px` }"
+        :style="{ left: `${line.x + leftOffset}px` }"
       ></div>
     </div>
   </div>

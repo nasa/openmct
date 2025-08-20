@@ -46,6 +46,7 @@
         :object-path="[elementObject, domainObject]"
         @context-click-active="setContextClickState"
       />
+      <slot name="content"></slot>
     </div>
   </li>
   <li v-else :aria-label="`${elementObject.name} Element Item`">
