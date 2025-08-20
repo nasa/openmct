@@ -70,6 +70,7 @@ test.describe('Visual - Time Strip @a11y', () => {
     await waitForAnimations(page.getByLabel('Plot Canvas'));
 
     // FIXME: https://github.com/nasa/openmct/issues/8005
+    // eslint-disable-next-line playwright/no-wait-for-timeout
     await page.waitForTimeout(500);
 
     await percySnapshot(page, `Time Strip View (theme: ${theme}) - With SWG and Plan`);
