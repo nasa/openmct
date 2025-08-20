@@ -76,6 +76,10 @@
 }
 
 // Extended event lines
+.c-timeline__overlay-lines__extended-line-container {
+    display: contents;
+}
+
 .c-timeline__event-line--extended {
     @include abs();
     width: $eventLineW;
