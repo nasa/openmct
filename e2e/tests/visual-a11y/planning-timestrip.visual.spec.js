@@ -69,6 +69,9 @@ test.describe('Visual - Time Strip @a11y', () => {
     //This will stabilize the state of the test and allow the SWG to render as empty
     await waitForAnimations(page.getByLabel('Plot Canvas'));
 
+    // FIXME: https://github.com/nasa/openmct/issues/8005
+    await page.waitForTimeout(500);
+
     await percySnapshot(page, `Time Strip View (theme: ${theme}) - With SWG and Plan`);
   });
 });
