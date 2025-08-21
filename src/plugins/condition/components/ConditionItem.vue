@@ -484,6 +484,10 @@ export default {
       this.persist();
     },
     persist() {
+      const valueMetadata = this.getOutputMetadata();
+      if (valueMetadata) {
+        this.condition.configuration.valueMetadata = valueMetadata;
+      }
       this.$emit('update-condition', {
         condition: this.condition
       });
