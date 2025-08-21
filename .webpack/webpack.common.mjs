@@ -48,6 +48,7 @@ const config = {
     generatorWorker: './example/generator/generatorWorker.js',
     couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
     inMemorySearchWorker: './src/api/objects/InMemorySearchWorker.js',
+    historicalTelemetryWorker: './src/plugins/condition/historicalTelemetryWorker.js',
     espressoTheme: './src/plugins/themes/espresso-theme.scss',
     snowTheme: './src/plugins/themes/snow-theme.scss',
     darkmatterTheme: './src/plugins/themes/darkmatter-theme.scss'
