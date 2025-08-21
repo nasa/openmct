@@ -147,7 +147,8 @@ export default {
       expanded: true,
       isApplied: false,
       testInputs: [],
-      telemetryMetadataOptions: {}
+      telemetryMetadataOptions: {},
+      telemetryPaths: []
     };
   },
   watch: {
