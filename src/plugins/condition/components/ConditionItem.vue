@@ -107,13 +107,47 @@
           </span>
           <span class="c-cdef__control">
             <input
-              v-if="selectedOutputSelection === outputOptions[2]"
+              v-if="selectedOutputSelection === outputOptions[3]"
               v-model="condition.configuration.output"
               aria-label="Condition Output String"
               class="t-condition-name-input"
               type="text"
               @change="persist"
             />
+          </span>
+          <span v-if="selectedOutputSelection === telemetryValueString" class="c-cdef__control">
+            <select
+              v-model="condition.configuration.outputTelemetry"
+              aria-label="Output Telemetry Selection"
+              @change="persist"
+            >
+              <option value="">- Select Telemetry -</option>
+              <option
+                v-for="telemetryOption in telemetry"
+                :key="openmct.objects.makeKeyString(telemetryOption.identifier)"
+                :value="openmct.objects.makeKeyString(telemetryOption.identifier)"
+              >
+                {{ telemetryOption.path }}
+              </option>
+            </select>
+          </span>
+          <span v-if="condition.configuration.outputTelemetry" class="c-cdef__control">
+            <select
+              v-model="condition.configuration.outputMetadata"
+              aria-label="Output Telemetry Metadata Selection"
+              @change="persist"
+            >
+              <option value="">- Select Field -</option>
+              <option
+                v-for="(option, index) in telemetryMetadataOptions[
+                  condition.configuration.outputTelemetry
+                ]"
+                :key="index"
+                :value="option.key"
+              >
+                {{ option.name }}
+              </option>
+            </select>
           </span>
         </span>
 
@@ -185,7 +219,12 @@
         <span class="c-condition__name">
           {{ condition.configuration.name }}
         </span>
-        <span class="c-condition__output"> Output: {{ condition.configuration.output }} </span>
+        <span class="c-condition__output">
+          Output:
+          {{
+            condition.configuration.output === undefined ? 'none' : condition.configuration.output
+          }}
+        </span>
       </div>
       <div class="c-condition__summary">
         <ConditionDescription :show-label="false" :condition="condition" />
@@ -199,6 +238,7 @@ import { v4 as uuid } from 'uuid';
 
 import { TRIGGER, TRIGGER_LABEL } from '@/plugins/condition/utils/constants';
 
+import { TELEMETRY_VALUE } from '../utils/constants.js';
 import ConditionDescription from './ConditionDescription.vue';
 import Criterion from './CriterionItem.vue';
 
@@ -254,10 +294,13 @@ export default {
       expanded: true,
       trigger: 'all',
       selectedOutputSelection: '',
-      outputOptions: ['false', 'true', 'string'],
+      telemetryValueString: TELEMETRY_VALUE,
+      outputOptions: ['none', 'false', 'true', 'string', TELEMETRY_VALUE],
       criterionIndex: 0,
       draggingOver: false,
-      isDefault: this.condition.isDefault
+      isDefault: this.condition.isDefault,
+      telemetryMetadataOptions: {},
+      telemetryFormats: new Map()
     };
   },
   computed: {
@@ -302,31 +345,62 @@ export default {
       return false;
     }
   },
+  watch: {
+    condition: {
+      handler() {
+        const config = this.condition?.configuration;
+        if (config?.output !== TELEMETRY_VALUE) {
+          config.outputTelemetry = null;
+          config.outputMetadata = null;
+        }
+      },
+      deep: true
+    },
+    telemetry: {
+      handler() {
+        this.initializeMetadata();
+      },
+      deep: true
+    }
+  },
   unmounted() {
     this.destroy();
   },
   mounted() {
     this.setOutputSelection();
+    this.initializeMetadata();
   },
   methods: {
     setOutputSelection() {
       let conditionOutput = this.condition.configuration.output;
-      if (conditionOutput) {
-        if (conditionOutput !== 'false' && conditionOutput !== 'true') {
-          this.selectedOutputSelection = 'string';
-        } else {
-          this.selectedOutputSelection = conditionOutput;
-        }
+      if (conditionOutput === undefined) {
+        this.selectedOutputSelection = 'none';
+      } else if (['false', 'true', TELEMETRY_VALUE].includes(conditionOutput)) {
+        this.selectedOutputSelection = conditionOutput;
+      } else {
+        this.selectedOutputSelection = 'string';
       }
     },
     setOutputValue() {
       if (this.selectedOutputSelection === 'string') {
         this.condition.configuration.output = '';
+      } else if (this.selectedOutputSelection === 'none') {
+        this.condition.configuration.output = undefined;
       } else {
         this.condition.configuration.output = this.selectedOutputSelection;
       }
 
       this.persist();
+    },
+    getOutputMetadata() {
+      const config = this.condition.configuration;
+      let valueMetadata;
+      if (config?.outputTelemetry && config?.outputMetadata) {
+        valueMetadata = this.telemetryFormats.get(
+          `${config?.outputTelemetry}_${config?.outputMetadata}`
+        );
+      }
+      return valueMetadata;
     },
     addCriteria() {
       const criteriaObject = {
@@ -416,6 +490,26 @@ export default {
     },
     initCap(str) {
       return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    initializeMetadata() {
+      this.telemetry.forEach((telemetryObject) => {
+        const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+        if (telemetryMetadata) {
+          this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+          telemetryMetadata.values().forEach((telemetryValue) => {
+            this.telemetryFormats.set(`${id}_${telemetryValue.key}`, telemetryValue);
+          });
+        } else {
+          this.telemetryMetadataOptions[id] = [];
+        }
+      });
+    },
+    getId(identifier) {
+      if (identifier) {
+        return this.openmct.objects.makeKeyString(identifier);
+      }
+      return [];
     }
   }
 };
