@@ -394,7 +394,6 @@ export default class ConditionManager extends EventEmitter {
     }
 
     const currentCondition = this.getCurrentConditionLAD(conditionResults);
-    console.log('currentCondition', currentCondition);
     let output = currentCondition?.configuration?.output;
     if (output === TELEMETRY_VALUE) {
       const { outputTelemetry, outputMetadata } = currentCondition.configuration;
@@ -413,14 +412,14 @@ export default class ConditionManager extends EventEmitter {
         output = latestData?.[0]?.[outputMetadata];
       }
     }
-    console.log('conditionResults', conditionResults, conditionResults[currentCondition.id]);
     let result = currentCondition?.isDefault ? false : conditionResults[currentCondition.id];
     const currentOutput = {
-      output: output,
-      id: this.conditionSetDomainObject.identifier,
       conditionId: currentCondition.id,
+      id: this.conditionSetDomainObject.identifier,
+      output: output,
+      ...latestTimestamp,
       result,
-      ...latestTimestamp
+      isDefault: currentCondition?.isDefault
     };
 
     return [currentOutput];
@@ -469,19 +468,15 @@ export default class ConditionManager extends EventEmitter {
     });
   }
 
-  emitConditionSetResult(currentCondition, timestamp, outputValue, result) {
-    this.emit(
-      'conditionSetResultUpdated',
-      Object.assign(
-        {
-          id: this.conditionSetDomainObject.identifier,
-          conditionId: currentCondition.id,
-          output: outputValue,
-          result
-        },
-        timestamp
-      )
-    );
+  emitConditionSetResult(currentCondition, timestamp, outputValue, result, isDefault) {
+    this.emit('conditionSetResultUpdated', {
+      conditionId: currentCondition.id,
+      id: this.conditionSetDomainObject.identifier,
+      output: outputValue,
+      ...timestamp,
+      result,
+      isDefault
+    });
   }
 
   updateCurrentCondition(timestamp, telemetryObject, telemetryData) {
@@ -539,7 +534,13 @@ export default class ConditionManager extends EventEmitter {
       }
     }
 
-    this.emitConditionSetResult(currentCondition, timestamp, telemetryValue, conditionResult);
+    this.emitConditionSetResult(
+      currentCondition,
+      timestamp,
+      telemetryValue,
+      conditionResult,
+      currentCondition?.isDefault
+    );
   }
 
   getTestData(metadatum) {

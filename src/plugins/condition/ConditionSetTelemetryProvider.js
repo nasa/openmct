@@ -44,7 +44,7 @@ export default class ConditionSetTelemetryProvider {
     let conditionManager = this.getConditionManager(domainObject);
     const formattedHistoricalData = await conditionManager.getHistoricalData(options);
     let latestOutput = await conditionManager.requestLADConditionSetOutput(options);
-    console.log('conditionsettelemetryprovider', [...formattedHistoricalData, ...latestOutput]);
+
     return [...formattedHistoricalData, ...latestOutput];
   }
 
