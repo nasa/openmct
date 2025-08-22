@@ -46,6 +46,7 @@ test.describe('Timeline Swim Lane Configuration', () => {
   let timeStrip;
   let timeStripContentHolder;
   let timeAxis;
+  let swimLanes;
   let swimLaneLabels;
   let showItemInTreeButton;
   let editButton;
@@ -72,7 +73,8 @@ test.describe('Timeline Swim Lane Configuration', () => {
     await page.goto(timeStrip.url);
     timeAxis = page.getByLabel('Time Axis');
     timeStripContentHolder = page.getByLabel('Time Strip');
-    swimLaneLabels = timeStripContentHolder.locator('.c-swimlane__lane-label');
+    swimLanes = timeStripContentHolder.locator('.c-timeline__content');
+    swimLaneLabels = swimLanes.locator('.c-swimlane__lane-label');
     showItemInTreeButton = page.getByLabel('Show selected item in tree');
     editButton = page.getByRole('button', { name: 'Edit Object', exact: true });
     treePane = page.getByRole('tree', {
@@ -80,17 +82,13 @@ test.describe('Timeline Swim Lane Configuration', () => {
     });
   });
 
-  test('allows for swim lane widths to be configured', async ({ page }) => {
-    // The Time Axis is a special instance of a swim lane
-    const timeAxisLabelCount = await swimLaneLabels.count();
-    await expect(timeAxisLabelCount).toBe(1);
-
+  test('allows for swim lane label widths to be configured', async ({ page }) => {
     // Edit the Time Strip
     await editButton.click();
     // Expand the 'My Items' folder in the left tree
     await showItemInTreeButton.click();
     // Add objects to the Time Strip
-    for (let i = 0; i <= 1; i++) {
+    for (let i = 0; i <= 4; i++) {
       const overlayPlotTreeItem = treePane.getByRole('treeitem', {
         name: `Swim Lane ${i}`
       });
@@ -98,18 +96,22 @@ test.describe('Timeline Swim Lane Configuration', () => {
     }
 
     const labelCount = await swimLaneLabels.count();
-    await expect(labelCount).toBe(2 + timeAxisLabelCount);
+    await expect(labelCount).toBe(5);
 
-    await test.step(`swim lane widths default to ${SWIM_LANE_DEFAULT_WIDTH}px`, async () => {
-      // Verify the swim lane widths are identical
+    await test.step(`swim lane label widths default to ${SWIM_LANE_DEFAULT_WIDTH}px`, async () => {
+      // Verify the swim lane label widths are identical
       for (let i = 0; i < labelCount; i++) {
         await expect((await swimLaneLabels.nth(i).boundingBox()).width).toBe(
           SWIM_LANE_DEFAULT_WIDTH + fudge
         );
       }
+      // The Time Axis is also a swim lane and should have an identical label width
+      await expect((await timeAxis.locator('.c-swimlane__lane-label').boundingBox()).width).toBe(
+        SWIM_LANE_DEFAULT_WIDTH + fudge
+      );
     });
 
-    await test.step('using drag and drop to resize swim lanes', async () => {
+    await test.step('using drag and drop to resize', async () => {
       let widthAfterDragRight;
       let widthAfterDragLeft;
       const dragDistance = 50;
@@ -121,7 +123,7 @@ test.describe('Timeline Swim Lane Configuration', () => {
       await page.mouse.up();
       widthAfterDragRight = (await swimLaneLabels.nth(0).boundingBox()).width;
 
-      // Verify the swim lane widths are identical and updated
+      // Verify the swim lane label widths are identical and updated
       for (let i = 0; i < labelCount; i++) {
         const currentWidth = (await swimLaneLabels.nth(i).boundingBox()).width;
 
@@ -130,6 +132,11 @@ test.describe('Timeline Swim Lane Configuration', () => {
 
         widthAfterDragRight = currentWidth;
       }
+
+      // The Time Axis is also a swim lane and should have an identical label width
+      await expect((await timeAxis.locator('.c-swimlane__lane-label').boundingBox()).width).toBe(
+        widthAfterDragRight
+      );
 
       const bigBox = await swimLaneLabelWidthHandle.first().boundingBox();
       await swimLaneLabelWidthHandle.first().hover();
@@ -149,20 +156,31 @@ test.describe('Timeline Swim Lane Configuration', () => {
 
         widthAfterDragLeft = currentWidth;
       }
+
+      // The Time Axis is also a swim lane and should have an identical label width
+      await expect((await timeAxis.locator('.c-swimlane__lane-label').boundingBox()).width).toBe(
+        widthAfterDragLeft
+      );
     });
 
-    await test.step('using input entry in inspector Elements tab to resize swim lanes ', async () => {
+    await test.step('using input entry in inspector Elements tab to resize', async () => {
+      const size = 100;
       // Click the Elements tag in the Inspector
       await page.getByRole('tab', { name: 'Elements' }).click();
 
       const input = page.getByLabel('Swim Lane Label Width').locator('input[type="number"]');
-      await input.fill('100');
+      await input.fill(`${size}`);
       await input.blur();
 
-      // Verify the swim lane widths are identical and updated
+      // Verify the swim lane label widths are identical and updated
       for (let i = 0; i < (await swimLaneLabels.count()); i++) {
-        await expect((await swimLaneLabels.nth(i).boundingBox()).width).toBe(100 + fudge);
+        await expect((await swimLaneLabels.nth(i).boundingBox()).width).toBe(size + fudge);
       }
+
+      // The Time Axis is also a swim lane and should have an identical label width
+      await expect((await timeAxis.locator('.c-swimlane__lane-label').boundingBox()).width).toBe(
+        size + fudge
+      );
     });
   });
 });
