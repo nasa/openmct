@@ -28,6 +28,7 @@ import { checkIfOld, getLatestTimestamp } from '../utils/time.js';
 import TelemetryCriterion from './TelemetryCriterion.js';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
+  #emptyMap = new Map();
   /**
    * Subscribes/Unsubscribes to telemetry and emits the result
    * of operations performed on the telemetry data returned and a given input value.
@@ -176,23 +177,22 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     return datum;
   }
 
-  updateResult(data, telemetryObjects) {
-    const validatedData = this.isValid() ? data : {};
+  updateResult(allTelemetryDataMap, telemetryObjects) {
+    const validatedData = this.isValid() ? allTelemetryDataMap : this.#emptyMap;
 
     if (validatedData && !this.isStalenessCheck()) {
       if (this.isOldCheck()) {
         Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
           if (this.ageCheck?.[objectIdKeystring]) {
-            this.ageCheck[objectIdKeystring].update(validatedData[objectIdKeystring]);
+            this.ageCheck[objectIdKeystring].update(validatedData.get(objectIdKeystring));
           }
 
           this.telemetryDataCache[objectIdKeystring] = false;
         });
       } else {
         Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
-          const telemetryObject = telemetryObjects[objectIdKeystring];
           this.telemetryDataCache[objectIdKeystring] = this.computeResult(
-            this.createNormalizedDatum(validatedData[objectIdKeystring], telemetryObject)
+            validatedData.get(objectIdKeystring)
           );
         });
       }
