@@ -4,14 +4,15 @@
   $h: 30px;
   height: $h;
 
-  svg {
-    $lineC: $colorInteriorBorder; //rgba($colorBodyFg, 0.3) !important;
+  &__ticks {
+    // Ticks SVG
+    $lineC: $colorInteriorBorder;
     text-rendering: geometricPrecision;
     width: 100%;
     height: 100%;
 
     .domain {
-      stroke: $lineC;
+      display: none;
     }
 
     .tick {
@@ -28,9 +29,32 @@
     }
   }
 
+  /******************************************** LINES */
+  $mbMarkerW: 16px;
+  $mbMarkerH: math.floor(math.div($mbMarkerW, 2));
+  &__line-wrapper,
+  &__mb-line,
+  &__ahead-behind-line {
+    pointer-events: none;
+    position: absolute;
+    z-index: 10;
+
+    &.hidden {
+      display: none;
+    }
+  }
+
+  &__line-wrapper {
+    position: absolute;
+    left: 0;
+    top: 20px;  // This must be kept in parity with JS constant TIME_AXIS_LINE_Y
+    right: 0;
+    overflow: hidden;
+  }
+
   &__mb-line {
     $c: $colorTimeRealtimeBtnBgMajor;
-    $w: 13px;
+    $w: 15px;
     $wHalf: math.floor(math.div($w, 2));
     //$h: 5px;
     //$hHalf: math.floor(math.div($h, 2));
@@ -39,31 +63,146 @@
     border-right: 2px dashed $c;
     pointer-events: none;
     width: 1px;
-    position: absolute;
     z-index: 10;
 
     &:before,
     &:after {
-      //background: $c;
       content: '';
       display: block;
       position: absolute;
       width: 0;
       height: 0;
       transform: $transform;
-      border-left: $wHalf solid transparent;
-      border-right: $wHalf solid transparent;
-      border-top: $wHalf solid $c;
+      border-left: $mbMarkerH solid transparent;
+      border-right: $mbMarkerH solid transparent;
+      border-top: $mbMarkerH solid $c;
     }
 
     &:after {
       bottom: 0;
       transform: $transform rotate(180deg);
     }
+  }
 
-    &.hidden {
-      display: none;
+  &__ahead-behind-line {
+    $lineOffset: 1px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+
+    .c-timesystem-axis__ahead-behind-connector {
+      // SVG that holds "connector" polygon
+      height: $mbMarkerH;
+      position: absolute;
+      width: 100%;
+      top: 0;
     }
 
+    &.--ahead {
+      $c: $colorABAhead;
+      border-right: 2px dashed $c;
+      left: 0;
+
+      .c-timesystem-axis__ahead-behind-connector {
+        right: $lineOffset;
+        polygon {
+          fill: $c;
+        }
+        &--behind {
+          display: none;
+        }
+      }
+    }
+
+    &.--behind {
+      $c: $colorABBehind;
+      border-left: 2px dashed $c;
+      right: 0;
+
+      .c-timesystem-axis__ahead-behind-connector {
+        left: $lineOffset;
+        polygon {
+          fill: $c;
+        }
+        &--ahead {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.c-ta-abi {
+  // .c-timesystem-axis ahead-behind-indicator
+  $m: 0;
+  $p: 3px;
+  background: rgba($colorBodyBg, 0.7);
+  display: flex;
+  flex-direction: row;
+  font-size: 0.9em;
+  align-items: center;
+  gap: $interiorMarginSm;
+  position: absolute;
+  left: $m;
+  top: $m;
+  padding: $p;
+  white-space: nowrap;
+
+  &__icon {
+    order: 1;
+
+    .--behind & {
+      order: 2;
+    }
+  }
+
+  &__connector {
+    order: 2;
+
+    .--behind & {
+      order: 1;
+    }
+    &:before {
+      $s: 4.5px;
+      content: '';
+      height: 0;
+      width: 0;
+      display: block;
+      border: $s solid transparent;
+
+      .--ahead & {
+        $c: $colorABAhead;
+        border-top-color: $c;
+        border-right-color: $c;
+      }
+
+      .--behind & {
+        $c: $colorABBehind;
+        border-top-color: $c;
+        border-left-color: $c;
+      }
+    }
+  }
+
+  &__text {
+    order: 3;
+
+    &:before {
+      content: 'AHEAD ';
+    }
+
+    .--behind & {
+      &:before {
+        content: 'BEHIND ';
+      }
+    }
+  }
+
+  &.--ahead {
+    color: $colorABAhead;
+  }
+  &.--behind {
+    color: $colorABBehind;
   }
 }

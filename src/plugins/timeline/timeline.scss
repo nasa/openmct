@@ -52,11 +52,12 @@
         z-index: 10; // Ensure it sits atop swimlanes
     }
 
-    &__no-items {
-        font-style: italic;
-        position: absolute;
-        left: $interiorMargin;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+  &__no-items {
+    font-style: italic;
+    position: absolute;
+    left: $interiorMargin;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+  }
 }
