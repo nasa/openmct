@@ -56,7 +56,7 @@
 import _ from 'lodash';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
-import { CURRENT_CSS_SUFFIX, FUTURE_CSS_SUFFIX, PAST_CSS_SUFFIX } from './constants.js';
+import { PAST_CSS_SUFFIX } from './constants.js';
 import { updateProgress } from './svg-progress.js';
 
 const EXECUTION_STATES = {
