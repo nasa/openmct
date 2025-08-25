@@ -127,7 +127,6 @@ export default {
   data() {
     return {
       formattedExecutionLabel: '',
-      formattedItemLabel: '',
       formattedTimeContextLabel: ''
     };
   },
@@ -163,12 +162,7 @@ export default {
         let value = this[itemProperty.key];
         let formattedValue;
         if (itemProperty.format) {
-          // const itemStartDate = new Date(value).toDateString();
-          // const timestampDate = new Date(this.timestamp).toDateString();
-          formattedValue = itemProperty.format(value, undefined, itemProperty.key, this.openmct, {
-            skipPrefix: true,
-            skipDateForToday: false
-          });
+          formattedValue = itemProperty.format(value, undefined, itemProperty.key, this.openmct);
         }
         itemValue[itemProperty.key] = formattedValue;
       });
