@@ -94,7 +94,7 @@ export function ticks(start, stop, count) {
 }
 
 export function commonPrefix(a, b) {
-  const maxLen = Math.min(a.length, b.length);
+  const maxLen = Math.min(a.length, b?.length);
   let breakpoint = 0;
   for (let i = 0; i < maxLen; i++) {
     if (a[i] !== b[i]) {
@@ -110,7 +110,7 @@ export function commonPrefix(a, b) {
 }
 
 export function commonSuffix(a, b) {
-  const maxLen = Math.min(a.length, b.length);
+  const maxLen = Math.min(a.length, b?.length);
   let breakpoint = 0;
   for (let i = 0; i <= maxLen; i++) {
     if (a[a.length - i] !== b[b.length - i]) {
