@@ -239,7 +239,6 @@ export default class HistoricalTelemetryProvider {
   }
 
   async getHistoricalData() {
-    console.log('🌟🌟🌟🌟🌟🌟🌟🌟🌟 getHistoricalData 🌟🌟🌟🌟🌟🌟🌟🌟🌟');
     this.setTimeBounds(this.openmct.time.getBounds());
     const outputTelemetryMap = await this.getHistoricalInputsByDate();
     const formattedOutputTelemetry = this.formatOutputData(outputTelemetryMap);
