@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { configuration } from './configuration.js';
+import getDefaultConfiguration from './configuration.js';
 import ExtendedLinesBus from './ExtendedLinesBus.js';
 import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
 import TimelineElementsViewProvider from './TimelineElementsViewProvider.js';
@@ -41,7 +41,7 @@ export default function () {
       cssClass: 'icon-timeline',
       initialize: function (domainObject) {
         domainObject.composition = [];
-        domainObject.configuration = configuration;
+        domainObject.configuration = getDefaultConfiguration();
       }
     });
     timelineInterceptor(openmct);

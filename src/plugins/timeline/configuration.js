@@ -26,8 +26,14 @@
  * @property {Array<import('./Container').default>} containers
  * @property {number} swimLaneLabelWidth
  */
-export const configuration = {
-  useIndependentTime: false,
-  containers: [],
-  swimLaneLabelWidth: 200
-};
+
+/**
+ * @returns {TimeStripConfig} configuration
+ */
+export default function getDefaultConfiguration() {
+  return {
+    useIndependentTime: false,
+    containers: [],
+    swimLaneLabelWidth: 200
+  };
+}

@@ -30,7 +30,7 @@ import { inject, onUnmounted, ref } from 'vue';
 
 import ElementsPool from '@/plugins/inspectorViews/elements/ElementsPool.vue';
 
-import { configuration } from './configuration.js';
+import getDefaultConfiguration from './configuration.js';
 import TimelineElementsContent from './TimelineElementsContent.vue';
 
 export default {
@@ -39,6 +39,7 @@ export default {
     TimelineElementsContent
   },
   setup() {
+    const configuration = getDefaultConfiguration();
     const openmct = inject('openmct');
     const domainObject = inject('domainObject');
     const { isEditing } = useIsEditing(openmct);

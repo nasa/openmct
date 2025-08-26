@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { configuration } from './configuration.js';
+import getDefaultConfiguration from './configuration.js';
 
 export default function timelineInterceptor(openmct) {
   openmct.objects.addGetInterceptor({
@@ -28,6 +28,7 @@ export default function timelineInterceptor(openmct) {
       return domainObject && domainObject.type === 'time-strip';
     },
     invoke: (identifier, object) => {
+      const configuration = getDefaultConfiguration();
       if (object && object.configuration === undefined) {
         object.configuration = configuration;
       }
