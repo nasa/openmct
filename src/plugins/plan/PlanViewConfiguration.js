@@ -50,6 +50,12 @@ export default class PlanViewConfiguration extends EventEmitter {
     for (const configKey of Object.keys(DEFAULT_CONFIGURATION)) {
       configuration[configKey] = configuration[configKey] ?? DEFAULT_CONFIGURATION[configKey];
     }
+    if (!Object.hasOwn(configuration, 'aheadBehind')) {
+      configuration.aheadBehind = {
+        duration: 0,
+        isBehind: false
+      };
+    }
 
     return configuration;
   }
@@ -76,6 +82,13 @@ export default class PlanViewConfiguration extends EventEmitter {
     this.#updateConfiguration(configuration);
   }
 
+  resetAheadBehind() {
+    const configuration = this.getConfiguration();
+    const aheadBehind = { duration: 0, isBehind: false };
+    configuration.aheadBehind = aheadBehind;
+    this.#updateConfiguration(configuration);
+  }
+
   initializeSwimlaneVisibility(swimlaneNames) {
     const configuration = this.getConfiguration();
     const { swimlaneVisibility } = configuration;
@@ -99,6 +112,16 @@ export default class PlanViewConfiguration extends EventEmitter {
   setClipActivityNames(isEnabled) {
     const configuration = this.getConfiguration();
     configuration.clipActivityNames = isEnabled;
+    this.#updateConfiguration(configuration);
+  }
+  setAheadBehindDuration(duration) {
+    const configuration = this.getConfiguration();
+    configuration.aheadBehind.duration = duration;
+    this.#updateConfiguration(configuration);
+  }
+  setAheadOrBehind(isBehind) {
+    const configuration = this.getConfiguration();
+    configuration.aheadBehind.isBehind = isBehind;
     this.#updateConfiguration(configuration);
   }
 

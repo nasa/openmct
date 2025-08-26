@@ -65,6 +65,44 @@
         </div>
       </li>
     </ul>
+    <div class="c-inspect-properties__header">Situational awareness settings</div>
+    <ul class="c-inspect-properties__section">
+      <li class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Duration">
+          <label for="duration">Duration</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            id="duration"
+            v-model="configuration.aheadBehind.duration"
+            class="c-input--flex"
+            type="text"
+            @change="toggleDuration"
+          />
+          <div v-else class="value">
+            {{ configuration.aheadBehind.duration }}
+          </div>
+        </div>
+      </li>
+      <li class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Are we behind">
+          <label for="isBehind">Are we behind?</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            id="isBehind"
+            type="checkbox"
+            :checked="configuration.aheadBehind.isBehind === true"
+            @change="toggleIsBehind"
+          />
+          <div v-else class="value">
+            {{ configuration.aheadBehind.isBehind === true ? 'Yes' : 'No' }}
+          </div>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 <script>
@@ -115,6 +153,12 @@ export default {
     },
     toggleClipActivityNames() {
       this.planViewConfiguration.setClipActivityNames(!this.configuration.clipActivityNames);
+    },
+    toggleDuration() {
+      this.planViewConfiguration.setAheadBehindDuration(this.configuration.aheadBehind.duration);
+    },
+    toggleIsBehind() {
+      this.planViewConfiguration.setAheadOrBehind(!this.configuration.aheadBehind.isBehind);
     },
     /**
      * @param {string} swimlaneName

@@ -63,7 +63,11 @@ export default function (options = {}) {
       ],
       initialize: function (domainObject) {
         domainObject.configuration = {
-          clipActivityNames: DEFAULT_CONFIGURATION.clipActivityNames
+          clipActivityNames: DEFAULT_CONFIGURATION.clipActivityNames,
+          aheadBehind: {
+            duration: 0,
+            isBehind: false
+          }
         };
       }
     });

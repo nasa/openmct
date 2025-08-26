@@ -24,9 +24,9 @@
     <div v-if="showAheadBehind" class="c-ta-abi" :class="aheadOrBehindCSSClass">
       <div class="c-ta-abi__icon icon-clock"></div>
       <div class="c-ta-abi__connector"></div>
-      <div class="c-ta-abi__text">23:59</div>
+      <div class="c-ta-abi__text">{{ formattedAheadBehindDuration }}</div>
     </div>
-    <div class="c-timesystem-axis__line-wrapper" :style="lineWrapperStyle">
+    <div ref="lineWrapper" class="c-timesystem-axis__line-wrapper" :style="lineWrapperStyle">
       <div
         ref="nowMarker"
         class="c-timesystem-axis__mb-line"
@@ -74,6 +74,7 @@ import { inject, onMounted, reactive, ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
+import { getPreciseDuration } from '../../utils/duration';
 import { useAlignment } from '../composables/alignmentContext';
 import { useResizeObserver } from '../composables/resize';
 
@@ -108,6 +109,15 @@ export default {
       default() {
         return 'svg';
       }
+    },
+    aheadBehind: {
+      type: Object,
+      default() {
+        return {
+          duration: 0,
+          isBehind: false
+        };
+      }
     }
   },
   setup() {
@@ -129,9 +139,10 @@ export default {
     const lineWrapperStyle = reactive({
       height: '0px'
     });
-    const showAheadBehind = ref(null);
+    const showAheadBehind = ref(false);
     // The aheadOrBehindCSSClass has a default value of --ahead, but it will be hidden if there is not value for ahead/behind time
     const aheadOrBehindCSSClass = ref('--ahead');
+    const formattedAheadBehindDuration = ref('');
 
     onMounted(() => {
       startObserving(axisHolder.value);
@@ -157,7 +168,8 @@ export default {
       aheadBehindMarkerStyle,
       lineWrapperStyle,
       showAheadBehind,
-      aheadOrBehindCSSClass
+      aheadOrBehindCSSClass,
+      formattedAheadBehindDuration
     };
   },
   watch: {
@@ -182,17 +194,28 @@ export default {
     bounds(newBounds) {
       this.setDimensions();
       this.drawAxis(newBounds, this.timeSystem);
-      this.updateLineWrapper();
-      this.updateNowMarker();
+      this.updateTimeAxisMarkers();
     },
     timeSystem(newTimeSystem) {
       this.setDimensions();
       this.drawAxis(this.bounds, newTimeSystem);
-      this.updateNowMarker();
+      this.updateTimeAxisMarkers();
     },
     contentHeight() {
       this.updateLineWrapper();
-      this.updateNowMarker();
+      this.updateTimeAxisMarkers();
+    },
+    aheadBehind() {
+      this.showAheadBehind = this.aheadBehind.duration > 0;
+      this.aheadOrBehindCSSClass = this.aheadBehind.isBehind ? '--behind' : '--ahead';
+      this.formattedAheadBehindDuration = getPreciseDuration(
+        this.aheadBehind.duration * 60 * 1000,
+        {
+          excludeMilliSeconds: true,
+          useDayFormat: true
+        }
+      );
+      this.updateTimeAxisMarkers();
     },
     containerSize: {
       handler() {
@@ -224,12 +247,25 @@ export default {
     refresh() {
       this.setDimensions();
       this.drawAxis(this.bounds, this.timeSystem);
+      this.showAheadBehind = this.aheadBehind.duration > 0;
+      this.aheadOrBehindCSSClass = this.aheadBehind.isBehind ? '--behind' : '--ahead';
+      this.formattedAheadBehindDuration = getPreciseDuration(
+        this.aheadBehind.duration * 60 * 1000,
+        {
+          excludeMilliSeconds: true,
+          useDayFormat: true
+        }
+      );
       this.updateLineWrapper();
       this.updateNowMarker();
       this.updateAheadBehindMarker();
     },
+    updateTimeAxisMarkers() {
+      this.updateNowMarker();
+      this.updateAheadBehindMarker();
+    },
     updateLineWrapper() {
-      const lineWrapper = this.$el.querySelector('.c-timesystem-axis__line-wrapper');
+      const lineWrapper = this.$refs.lineWrapper;
       if (lineWrapper) {
         this.lineWrapperStyle.height = this.contentHeight - TIME_AXIS_LINE_Y + 'px';
       }
@@ -251,10 +287,14 @@ export default {
       const aheadBehindMarker = this.$refs.aheadBehindMarker;
       if (aheadBehindMarker) {
         aheadBehindMarker.classList.remove('hidden');
-        //TODO: Calculate the actual width based on ahead/behind time
-        this.aheadBehindMarkerStyle.width = 100 + 'px';
+
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
+        //We need the delta - we don't care if it's ahead or behind here.
+        const aheadBehindDuration = this.aheadBehind.duration * 60 * 1000 + nowTimeStamp;
+        const delta = this.xScale(aheadBehindDuration) - now;
+        this.aheadBehindMarkerStyle.width = delta + 'px';
+
         if (now < 0 || now > this.width) {
           aheadBehindMarker.classList.add('hidden');
         }
@@ -278,6 +318,7 @@ export default {
       this.setAxis(viewBounds);
       this.axisElement.call(this.xAxis);
       this.updateNowMarker();
+      this.updateAheadBehindMarker();
     },
     setScale(bounds, timeSystem) {
       if (!this.width) {
