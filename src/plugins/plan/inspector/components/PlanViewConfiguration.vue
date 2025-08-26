@@ -69,7 +69,7 @@
     <ul class="c-inspect-properties__section">
       <li class="c-inspect-properties__row">
         <div class="c-inspect-properties__label" title="Duration">
-          <label for="duration">Duration</label>
+          <label for="duration">Duration (minutes)</label>
         </div>
         <div class="c-inspect-properties__value">
           <input
