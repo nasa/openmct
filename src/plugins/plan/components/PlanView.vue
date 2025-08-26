@@ -30,6 +30,7 @@
             :bounds="viewBounds"
             :time-system="timeSystem"
             :content-height="height"
+            :ahead-behind="aheadBehind"
             :rendering-engine="renderingEngine"
           />
         </template>
@@ -107,7 +108,8 @@ export default {
       swimlaneVisibility: {},
       clipActivityNames: false,
       height: 0,
-      rowHeight: ROW_HEIGHT
+      rowHeight: ROW_HEIGHT,
+      aheadBehind: { duration: 0, isBehind: false }
     };
   },
   computed: {
@@ -133,6 +135,7 @@ export default {
     this.isNested = this.options.isChildObject;
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
+    this.aheadBehind = this.configuration.aheadBehind;
     // This view is used for both gantt-chart and plan domain objects
     if (this.domainObject.type === 'plan') {
       this.setupPlan(this.domainObject);
@@ -260,6 +263,7 @@ export default {
       ) {
         this.planObject = null;
         this.planData = {};
+        this.planViewConfiguration.resetAheadBehind();
         this.planViewConfiguration.resetSwimlaneVisibility();
       }
 
