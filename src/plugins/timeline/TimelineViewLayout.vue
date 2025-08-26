@@ -356,8 +356,6 @@ export default {
     // COMPOSABLE - flexible containers for swimlane vertical resizing
     const existingContainers = [];
 
-    watch(items, () => console.log('changed'));
-
     const {
       addContainer,
       removeContainer,

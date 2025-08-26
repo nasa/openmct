@@ -32,8 +32,6 @@
   grid-column-gap: 1px;
   grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
   min-height: $btnStdH;
-  //overflow: auto; // Only do this when in a Time Strip
-  // flex: 1 0 auto; // Only do this when in main view as Plan or Gantt
   width: 100%;
 
   &__time-axis {
