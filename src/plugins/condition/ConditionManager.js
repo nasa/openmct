@@ -343,6 +343,7 @@ export default class ConditionManager extends EventEmitter {
     );
     const historicalData = historicalTelemetry.getHistoricalData();
     historicalTelemetry = null;
+
     return historicalData;
   }
 
@@ -402,6 +403,7 @@ export default class ConditionManager extends EventEmitter {
 
     const currentCondition = this.getCurrentConditionLAD(conditionResults);
     let output = currentCondition?.configuration?.output;
+
     if (output === TELEMETRY_VALUE) {
       const { outputTelemetry, outputMetadata } = currentCondition.configuration;
       const outputTelemetryObject = await this.openmct.objects.get(outputTelemetry);
@@ -429,7 +431,7 @@ export default class ConditionManager extends EventEmitter {
       isDefault: currentCondition?.isDefault
     };
 
-    return [currentOutput];
+    return output !== undefined ? [currentOutput] : [];
   }
 
   isTelemetryUsed(endpoint) {
@@ -517,7 +519,8 @@ export default class ConditionManager extends EventEmitter {
     )?.[0];
     const conditionResult = currentCondition?.isDefault ? false : conditionDetails?.result;
     let telemetryValue = currentCondition.configuration.output;
-    if (currentCondition?.configuration?.outputTelemetry) {
+
+    if (telemetryValue !== undefined && currentCondition?.configuration?.outputTelemetry) {
       const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
       const outputMetadata = currentCondition?.configuration?.outputMetadata;
       const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -544,15 +547,15 @@ export default class ConditionManager extends EventEmitter {
           telemetryValue = undefined;
         }
       }
-    }
 
-    this.emitConditionSetResult(
-      currentCondition,
-      timestamp,
-      telemetryValue,
-      conditionResult,
-      currentCondition?.isDefault
-    );
+      this.emitConditionSetResult(
+        currentCondition,
+        timestamp,
+        telemetryValue,
+        conditionResult,
+        currentCondition?.isDefault
+      );
+    }
   }
 
   getTestData(metadatum, identifier) {

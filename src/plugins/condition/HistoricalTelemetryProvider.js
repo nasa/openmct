@@ -34,19 +34,20 @@ export default class HistoricalTelemetryProvider {
     const telemetryData = historicalDateMap.get(timestamp);
     const conditionConfiguration = conditionCollectionMap.get(condition.id)?.configuration;
     const { outputTelemetry, outputMetadata } = conditionConfiguration;
-    let output = {};
-    output.condition = condition;
+    let output = outputTelemetry || conditionConfiguration?.output ? {} : undefined;
+
     if (outputTelemetry) {
       const outputTelemetryID = this.openmct.objects.makeKeyString(outputTelemetry);
       const outputTelemetryData = telemetryData.get(outputTelemetryID);
+      output.condition = condition;
       output.telemetry = outputTelemetryData;
       output.value = outputTelemetryData?.[outputMetadata];
     } else if (conditionConfiguration?.output) {
+      output.condition = condition;
       output.telemetry = null;
       output.value = conditionConfiguration?.output;
-    } else {
-      output.value = undefined;
     }
+
     return output;
   }
 
@@ -159,31 +160,29 @@ export default class HistoricalTelemetryProvider {
 
   evaluateConditionsByDate(historicalTelemetryDateMap, conditionCollectionMap) {
     const outputTelemetryDateMap = new Map();
+
     historicalTelemetryDateMap.forEach((historicalTelemetryMap, timestamp) => {
       let isConditionValid = false;
-      const evaluatedConditions = [];
+
       this.conditions.forEach((condition) => {
         if (isConditionValid) {
           return;
         }
-        const { id } = condition;
-        const conditionMetadata = { condition };
+
         const conditionCriteria = condition.criteria[0];
         let result;
+
         if (conditionCriteria?.telemetry) {
           const conditionInputTelemetryId = this.openmct.objects.makeKeyString(
             conditionCriteria.telemetry
           );
           const inputTelemetry = historicalTelemetryMap.get(conditionInputTelemetryId);
-          conditionMetadata.inputTelemetry = inputTelemetry;
-          result = conditionCriteria.computeResult({
-            id,
-            ...inputTelemetry
-          });
+          result = conditionCriteria.computeResult(inputTelemetry);
         } else if (!conditionCriteria) {
-          const conditionDetails = conditionCollectionMap.get(id);
+          const conditionDetails = conditionCollectionMap.get(condition.id);
           const { isDefault } = conditionDetails;
-          if (isDefault) {
+
+          if (isDefault && result !== undefined) {
             const conditionOutput = this.evaluateCondition(
               historicalTelemetryDateMap,
               timestamp,
@@ -195,8 +194,7 @@ export default class HistoricalTelemetryProvider {
             outputTelemetryDateMap.set(timestamp, conditionOutput);
           }
         }
-        conditionMetadata.result = result;
-        evaluatedConditions.push(conditionMetadata);
+
         if (result === true) {
           isConditionValid = true;
           const conditionOutput = this.evaluateCondition(
@@ -216,10 +214,8 @@ export default class HistoricalTelemetryProvider {
 
   async getHistoricalInputsByDate() {
     const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-
     const { historicalTelemetriesPool, conditionCollectionMap } =
       await this.getAllTelemetries(conditionCollection);
-
     const historicalTelemetryDateMap =
       await this.sortTelemetriesInWorker(historicalTelemetriesPool);
     const outputTelemetryDateMap = this.evaluateConditionsByDate(
