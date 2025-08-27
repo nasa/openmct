@@ -202,9 +202,9 @@ export default class HistoricalTelemetryProvider {
           result = conditionCriteria.computeResult(inputTelemetry);
         } else if (!conditionCriteria) {
           const conditionDetails = conditionCollectionMap.get(condition.id);
-          const { isDefault } = conditionDetails;
+          const { isDefault, outputTelemetry } = conditionDetails;
 
-          if (isDefault && result !== undefined) {
+          if (isDefault && (outputTelemetry || condition.configuration.output)) {
             const conditionOutput = this.evaluateCondition(
               historicalTelemetryDateMap,
               timestamp,
