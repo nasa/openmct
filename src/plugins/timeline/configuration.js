@@ -20,26 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import getDefaultConfiguration from './configuration.js';
+/**
+ * @typedef {Object} TimeStripConfig configuration for Time Strip views
+ * @property {boolean} useIndependentTime true for independent time, false for global time
+ * @property {Array<import('./Container').default>} containers
+ * @property {number} swimLaneLabelWidth
+ */
 
-export default function timelineInterceptor(openmct) {
-  openmct.objects.addGetInterceptor({
-    appliesTo: (identifier, domainObject) => {
-      return domainObject && domainObject.type === 'time-strip';
-    },
-    invoke: (identifier, object) => {
-      const configuration = getDefaultConfiguration();
-      if (object && object.configuration === undefined) {
-        object.configuration = configuration;
-      }
-
-      Object.keys(configuration).forEach((key) => {
-        if (object.configuration[key] === undefined) {
-          object.configuration[key] = configuration[key];
-        }
-      });
-
-      return object;
-    }
-  });
+/**
+ * @returns {TimeStripConfig} configuration
+ */
+export default function getDefaultConfiguration() {
+  return {
+    useIndependentTime: false,
+    containers: [],
+    swimLaneLabelWidth: 200
+  };
 }

@@ -28,6 +28,10 @@
       stroke: none;
     }
 
+    .c-swimlane {
+      flex: 1 0 auto;
+    }
+
     .c-swimlane__lane-object {
       display: flex;
     }
@@ -66,5 +70,13 @@
 
   &__svg {
     width: 100%;
+  }
+}
+
+// When in a Time Strip view
+.c-timeline__objects {
+  .is-object-type-plan {
+    overflow-x: hidden;
+    overflow-y: scroll !important; // `scroll` ensures that right edges align in time
   }
 }
