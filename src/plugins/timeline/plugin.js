@@ -20,11 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import getDefaultConfiguration from './configuration.js';
 import ExtendedLinesBus from './ExtendedLinesBus.js';
 import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
+import TimelineElementsViewProvider from './TimelineElementsViewProvider.js';
 import timelineInterceptor from './timelineInterceptor.js';
 import TimelineViewProvider from './TimelineViewProvider.js';
-
 const extendedLinesBus = new ExtendedLinesBus();
 
 export { extendedLinesBus };
@@ -40,15 +41,14 @@ export default function () {
       cssClass: 'icon-timeline',
       initialize: function (domainObject) {
         domainObject.composition = [];
-        domainObject.configuration = {
-          useIndependentTime: false
-        };
+        domainObject.configuration = getDefaultConfiguration();
       }
     });
     timelineInterceptor(openmct);
     openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
 
     openmct.objectViews.addProvider(new TimelineViewProvider(openmct, extendedLinesBus));
+    openmct.inspectorViews.addProvider(new TimelineElementsViewProvider(openmct));
   }
 
   install.extendedLinesBus = extendedLinesBus;

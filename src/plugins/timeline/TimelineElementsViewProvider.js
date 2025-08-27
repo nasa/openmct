@@ -22,63 +22,48 @@
 
 import mount from 'utils/mount';
 
-import TimelineViewLayout from './TimelineViewLayout.vue';
+import TimelineElementsPool from './TimelineElementsPool.vue';
 
-export default function TimelineViewProvider(openmct, extendedLinesBus) {
+export default function TimelineElementsViewProvider(openmct) {
   return {
-    key: 'time-strip.view',
-    name: 'TimeStrip',
-    cssClass: 'icon-clock',
-    canView(domainObject) {
-      return domainObject.type === 'time-strip';
+    key: 'timelineElementsView',
+    name: 'Elements',
+    canView: function (selection) {
+      return selection?.[0]?.[0]?.context?.item?.type === 'time-strip';
     },
-
-    canEdit(domainObject) {
-      return domainObject.type === 'time-strip';
-    },
-
-    view: function (domainObject, objectPath) {
-      let component = null;
+    view: function (selection) {
       let _destroy = null;
 
+      const domainObject = selection?.[0]?.[0]?.context?.item;
+
       return {
-        show: function (element, isEditing) {
-          const { vNode, destroy } = mount(
+        show: function (element) {
+          const { destroy } = mount(
             {
               el: element,
               components: {
-                TimelineViewLayout
+                TimelineElementsPool
               },
               provide: {
                 openmct,
-                domainObject,
-                path: objectPath,
-                composition: openmct.composition.get(domainObject),
-                extendedLinesBus
+                domainObject
               },
-              data() {
-                return {
-                  isEditing
-                };
-              },
-              template:
-                '<timeline-view-layout ref="timeline" :is-editing="isEditing"></timeline-view-layout>'
+              template: `<TimelineElementsPool />`
             },
             {
               app: openmct.app,
               element
             }
           );
-          component = vNode.componentInstance;
           _destroy = destroy;
         },
-        contextAction(action, ...args) {
-          if (component?.$refs?.timeline?.[action]) {
-            component.$refs.timeline[action](...args);
-          }
+        showTab: function (isEditing) {
+          const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
+
+          return hasComposition;
         },
-        onEditModeChange(isEditing) {
-          component.isEditing = isEditing;
+        priority: function () {
+          return openmct.priority.HIGH - 1;
         },
         destroy: function () {
           if (_destroy) {

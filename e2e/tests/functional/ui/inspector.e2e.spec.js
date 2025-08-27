@@ -186,7 +186,7 @@ test.describe('Inspector tests', () => {
       const objectInfo = await createDomainObjectWithDefaults(
         page,
         createOptions,
-        viewConfig.required ? viewConfig.required : {}
+        viewConfig.required ?? {}
       );
       await page.goto(objectInfo.url);
 
