@@ -35,16 +35,17 @@ export default class HistoricalTelemetryProvider {
     const conditionConfiguration = conditionCollectionMap.get(condition.id)?.configuration;
     const { outputTelemetry, outputMetadata } = conditionConfiguration;
     let output = {};
+    output.condition = condition;
     if (outputTelemetry) {
       const outputTelemetryID = this.openmct.objects.makeKeyString(outputTelemetry);
       const outputTelemetryData = telemetryData.get(outputTelemetryID);
       output.telemetry = outputTelemetryData;
       output.value = outputTelemetryData?.[outputMetadata];
-      output.condition = condition;
     } else if (conditionConfiguration?.output) {
       output.telemetry = null;
       output.value = conditionConfiguration?.output;
-      output.condition = condition;
+    } else {
+      output.value = undefined;
     }
     return output;
   }
@@ -209,18 +210,15 @@ export default class HistoricalTelemetryProvider {
         }
       });
     });
+
     return outputTelemetryDateMap;
   }
 
   async getHistoricalInputsByDate() {
     const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
 
-    const {
-      historicalTelemetriesPool,
-      // inputTelemetries,
-      // outputTelemetries,
-      conditionCollectionMap
-    } = await this.getAllTelemetries(conditionCollection);
+    const { historicalTelemetriesPool, conditionCollectionMap } =
+      await this.getAllTelemetries(conditionCollection);
 
     const historicalTelemetryDateMap =
       await this.sortTelemetriesInWorker(historicalTelemetriesPool);
