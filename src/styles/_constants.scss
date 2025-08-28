@@ -20,17 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
 /************************** PATHS */
+
 // Paths need to be relative to /platform/commonUI/theme/<theme-name>/css/ directory
 $dirImgs: 'images/';
 
 /************************** TIMINGS */
+
 $controlFadeMs: 100ms;
 $browseToEditAnimMs: 400ms;
 $editBorderPulseMs: 500ms;
 $moveBarOutDelay: 500ms;
 
 /************************** SPATIAL */
+
 $interiorMarginSm: 3px;
 $interiorMargin: 5px;
 $interiorMarginLg: 10px;
@@ -51,15 +55,21 @@ $shellMainBrowseBarH: 22px;
 $shellTimeConductorH: 25px;
 $shellToolBarH: 29px;
 $fadeTruncateW: 7px;
+
 /*************** Items */
+
 $itemPadLR: 5px;
 $gridItemDesk: 175px;
 $gridItemMobile: 32px;
+
 /*************** Tabular */
+
 $tabularHeaderH: 22px;
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 2px;
+
 /*************** Plots */
+
 $plotYBarW: 60px;
 $plotYLabelMinH: 20px;
 $plotYLabelW: 10px;
@@ -71,48 +81,90 @@ $plotSwatchD: 12px;
 $plotDisplayArea: (0, 0, $plotXBarH, $plotYBarW); // 1: Top, 2: right, 3: bottom, 4: left
 $plotMinH: 95px;
 $controlBarH: 25px;
+
 /*************** Imagery */
+
 $imageMainControlBarH: 25px;
 $imageThumbsD: 100px;
 $imageThumbsWrapperH: 155px;
 $imageThumbPad: 1px;
+
 /*************** Bubbles */
+
 $bubbleArwSize: 10px;
 $bubblePad: $interiorMargin;
 $bubbleMinW: 100px;
 $bubbleMaxW: 300px;
+
 /*************** Menus */
+
 $paletteMenuMinW: 128px; // Min-width of palettes when in a dropdown menu
+
 /*************** Forms */
+
 $formLabelMinW: 120px;
 $formLabelW: 30%;
+
 /*************** Wait Spinner */
+
 $waitSpinnerD: 32px;
 $waitSpinnerBorderW: 5px;
 $waitSpinnerTreeD: 20px;
 $waitSpinnerTreeBorderW: 3px;
+
 /*************** Messages */
+
 $messageIconD: 80px;
 $messageListIconD: 32px;
+
 /*************** Tables */
+
 $tableResizeColHitareaD: 6px;
+
 /*************** Misc */
+
 $drawingObjBorderW: 3px;
 $tagBorderRadius: 3px;
+
 /************************** MOBILE */
+
 $mobileMenuIconD: 24px; // Used
 $mobileTreeItemH: 35px; // Used
 
 /************************** UI ELEMENTS */
+
+
 /*************** Progress Bar */
+
 $colorProgressBarHolder: rgba(black, 0.2);
 $colorProgressBar: #0085ad;
 $progressAnimW: 500px;
 $progressBarMinH: 4px;
+
 /************************** FONT STYLING */
-$listFontSizes: 8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 24, 28, 32, 36, 42, 48, 72, 96, 128;
+
+$listFontSizes: 8,
+9,
+10,
+11,
+12,
+13,
+14,
+16,
+18,
+20,
+24,
+28,
+32,
+36,
+42,
+48,
+72,
+96,
+128;
 
 /************************** GLYPH CHAR UNICODES */
+
 $glyph-icon-alert-rect: '\e900';
 $glyph-icon-alert-triangle: '\e901';
 $glyph-icon-arrow-up: '\e902';
@@ -281,6 +333,7 @@ $glyph-icon-notebook-shift-log: '\eb31';
 $glyph-icon-plot-scatter: '\eb30';
 
 /************************** GLYPHS AS DATA URI */
+
 // Only objects have been converted, for use in Create menu and folder views
 $bg-icon-alert-rect: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath d='M448 0H64C28.7.1.1 28.7 0 64v384c.1 35.3 28.7 63.9 64 64h384c35.3-.1 63.9-28.7 64-64V64c-.1-35.3-28.7-63.9-64-64zM288 448h-64v-64h64v64zm10.9-192L280 352h-48l-18.9-96V64H299v192z' fill='%23000000'/%3e%3c/svg%3e");
 $bg-icon-alert-triangle: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath d='M499.1 424.4L287.8 54.6c-17.5-30.6-46-30.6-63.5 0L12.9 424.4C-4.6 455 9.9 480 45.1 480h421.7c35.3 0 49.8-25 32.3-55.6zM288 448h-64v-64h64v64zm10.9-192L280 352h-48l-18.9-96V128H299v128z' fill='%23000000'/%3e%3c/svg%3e");
