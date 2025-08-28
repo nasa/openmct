@@ -34,6 +34,7 @@ import ClearData from './clearData/plugin.js';
 import Clock from './clock/plugin.js';
 import ConditionPlugin from './condition/plugin.js';
 import ConditionWidgetPlugin from './conditionWidget/plugin.js';
+import CorrelationTelemetryPlugin from './correlationTelemetryPlugin/plugin.js';
 import CouchDBSearchFolder from './CouchDBSearchFolder/plugin.js';
 import DefaultRootName from './defaultRootName/plugin.js';
 import DeviceClassifier from './DeviceClassifier/plugin.js';
@@ -176,5 +177,6 @@ plugins.Gauge = GaugePlugin;
 plugins.Timelist = TimeList;
 plugins.InspectorViews = InspectorViews;
 plugins.InspectorDataVisualization = InspectorDataVisualization;
+plugins.CorrelationTelemetry = CorrelationTelemetryPlugin;
 
 export default plugins;
