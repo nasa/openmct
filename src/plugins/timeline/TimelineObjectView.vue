@@ -24,7 +24,6 @@
   <SwimLane
     :icon-class="item.type.definition.cssClass"
     :status="status"
-    :min-height="item.height"
     :show-ucontents="isPlanLikeObject(item.domainObject)"
     :span-rows-count="item.rowCount"
     :domain-object="item.domainObject"
@@ -33,6 +32,8 @@
     :hide-button="!item.isEventTelemetry"
     :button-click-on="enableExtendEventLines"
     :button-click-off="disableExtendEventLines"
+    :class="sizeClass"
+    :style="sizeStyle"
   >
     <template #label>
       {{ item.domainObject.name }}
@@ -64,6 +65,10 @@ export default {
       type: Object,
       required: true
     },
+    container: {
+      type: Object,
+      required: true
+    },
     extendedLinesBus: {
       type: Object,
       required: true
@@ -75,6 +80,20 @@ export default {
       mutablePromise: null,
       status: ''
     };
+  },
+  computed: {
+    size() {
+      return this.container.size;
+    },
+    fixed() {
+      return this.container.fixed;
+    },
+    sizeClass() {
+      return `--${this.fixed ? 'fixed' : 'scales'}`;
+    },
+    sizeStyle() {
+      return `flex-basis: ${this.size}${this.fixed ? 'px' : '%'}`;
+    }
   },
   watch: {
     item(newItem) {
