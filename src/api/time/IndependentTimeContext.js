@@ -321,8 +321,16 @@ class IndependentTimeContext extends TimeContext {
       return this.upstreamTimeContext.setMode(...arguments);
     }
 
-    if (mode === MODES.realtime && this.activeClock === undefined) {
-      throw `Unknown clock. Has a clock been registered with 'addClock'?`;
+    if (mode === MODES.realtime) {
+      // TODO: This should probably happen up front in creating an independent time context
+      // TODO: not just in time every time setMode is called
+      if (this.activeClock === undefined) {
+        this.activeClock = this.globalTimeContext.getClock();
+      }
+
+      if (this.activeClock === undefined) {
+        throw `Unknown clock. Has a clock been registered with 'addClock'?`;
+      }
     }
 
     if (mode !== this.mode) {
