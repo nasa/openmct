@@ -97,7 +97,4 @@ export default class FlexibleLayoutViewProvider {
       }
     };
   }
-  priority() {
-    return 1;
-  }
 }

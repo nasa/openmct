@@ -233,8 +233,6 @@ $editUIBaseColor: #cae1ff; // Base color, toolbar bg
 $editUIBaseColorHov: pushBack($editUIBaseColor, 20%);
 $editUIBaseColorFg: #4c4c4c; // Toolbar button icon colors, etc.
 $editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
-$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
-$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
 $editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
 $editUIGridColorFg: rgba($editUIBaseColor, 0.3); // Grid lines in layout editing area
 $editDimensionsColor: #d7aeff;
@@ -403,14 +401,18 @@ $colorLimitCyanFg: #d3faff;
 $colorLimitCyanIc: #1795c0;
 
 // Events
-$colorEventPurpleFg: #6433ff;
+$colorEventPurpleFg: #6f07ed;
 $colorEventRedFg: #aa0000;
 $colorEventOrangeFg: #b84900;
-$colorEventYellowFg: #867109;
+$colorEventYellowFg: #a98c04;
 $colorEventPurpleBg: #ebe7fb;
 $colorEventRedBg: #fcefef;
 $colorEventOrangeBg: #ffece3;
 $colorEventYellowBg: #fdf8eb;
+$colorEventPurpleLine: $colorEventPurpleFg;
+$colorEventRedLine: $colorEventRedFg;
+$colorEventOrangeLine: $colorEventOrangeFg;
+$colorEventYellowLine: $colorEventYellowFg;
 
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
@@ -481,6 +483,11 @@ $colorInProgressBg: #b1e8ff;
 $colorInProgressFg: $colorCurrentFg;
 $colorInProgressFgEm: $colorCurrentFgEm;
 $colorGanttSelectedBorder: #fff;
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
+$colorTimeStripDraftBg: rgba(#a57748, 0.2);
+$colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$eventLineW: 1px;
 
 // Tree
 $colorTreeBg: transparent;

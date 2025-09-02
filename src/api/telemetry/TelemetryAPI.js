@@ -296,11 +296,18 @@ export default class TelemetryAPI {
    * @returns {boolean} True if the object has numeric telemetry, false otherwise
    */
   hasNumericTelemetry(domainObject) {
-    if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+    const hasTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
+
+    if (!hasTelemetry) {
       return false;
     }
 
     const metadata = this.openmct.telemetry.getMetadata(domainObject);
+
+    if (!metadata) {
+      return false;
+    }
+
     const rangeValues = metadata.valuesForHints(['range']);
     const domains = metadata.valuesForHints(['domain']);
 

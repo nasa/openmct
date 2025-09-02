@@ -69,9 +69,6 @@ export default function GaugeViewProvider(openmct) {
           }
         }
       };
-    },
-    priority: function () {
-      return 1;
     }
   };
 }
