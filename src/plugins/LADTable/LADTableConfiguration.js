@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { markRaw } from 'vue';
 export default class LADTableConfiguration extends EventEmitter {
   constructor(domainObject, openmct) {
@@ -41,9 +41,10 @@ export default class LADTableConfiguration extends EventEmitter {
   }
 
   getConfiguration() {
-    const configuration = this.domainObject.configuration || {};
-    configuration.hiddenColumns = configuration.hiddenColumns || {};
+    const configuration = this.domainObject.configuration ?? {};
+    configuration.hiddenColumns = configuration.hiddenColumns ?? {};
     configuration.isFixedLayout = configuration.isFixedLayout ?? true;
+    configuration.objectStyles = configuration.objectStyles ?? {};
 
     return configuration;
   }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,19 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 
 import PreviewContainer from './PreviewContainer.vue';
 
-export default class PreviewAction extends EventEmitter {
+const PREVIEW_ACTION_KEY = 'preview';
+
+class PreviewAction extends EventEmitter {
   constructor(openmct) {
     super();
     /**
      * Metadata
      */
     this.name = 'View';
-    this.key = 'preview';
+    this.key = PREVIEW_ACTION_KEY;
     this.description = 'View in large dialog';
     this.cssClass = 'icon-items-expand';
     this.group = 'windowing';
@@ -69,20 +71,23 @@ export default class PreviewAction extends EventEmitter {
       }
     );
 
-    let overlay = this._openmct.overlays.overlay({
+    const overlay = this._openmct.overlays.overlay({
       element: vNode.el,
       size: 'large',
       autoHide: false,
       buttons: [
         {
           label: 'Done',
-          callback: () => overlay.dismiss()
+          callback: () => {
+            overlay.dismiss();
+          }
         }
       ],
       onDestroy: () => {
         PreviewAction.isVisible = false;
         destroy();
         this.emit('isVisible', false);
+        overlay.dismiss();
       }
     });
 
@@ -107,3 +112,7 @@ export default class PreviewAction extends EventEmitter {
     return noPreviewTypes.includes(objectPath[0].type);
   }
 }
+
+export { PREVIEW_ACTION_KEY };
+
+export default PreviewAction;

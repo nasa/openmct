@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,6 +24,7 @@
   <div
     class="c-condition-h"
     :class="{ 'is-drag-target': draggingOver }"
+    :aria-label="conditionSetLabel"
     @dragover.prevent
     @drop.prevent="dropCondition($event, conditionIndex)"
     @dragenter="dragEnter($event, conditionIndex)"
@@ -52,11 +53,13 @@
           @click="expanded = !expanded"
         ></span>
 
-        <span class="c-condition__name">{{ condition.configuration.name }}</span>
+        <span class="c-condition__name" aria-label="Condition Name Label">{{
+          condition.configuration.name
+        }}</span>
         <span class="c-condition__summary">
           <template v-if="!condition.isDefault && !canEvaluateCriteria"> Define criteria </template>
           <span v-else>
-            <condition-description :show-label="false" :condition="condition" />
+            <ConditionDescription :show-label="false" :condition="condition" />
           </span>
         </span>
 
@@ -83,6 +86,7 @@
           <input
             v-model="condition.configuration.name"
             class="t-condition-input__name"
+            aria-label="Condition Name Input"
             type="text"
             @change="persist"
           />
@@ -91,7 +95,11 @@
         <span class="c-cdef__label">Output</span>
         <span class="c-cdef__controls">
           <span class="c-cdef__control">
-            <select v-model="selectedOutputSelection" @change="setOutputValue">
+            <select
+              v-model="selectedOutputSelection"
+              aria-label="Condition Output Type"
+              @change="setOutputValue"
+            >
               <option v-for="option in outputOptions" :key="option" :value="option">
                 {{ initCap(option) }}
               </option>
@@ -101,6 +109,7 @@
             <input
               v-if="selectedOutputSelection === outputOptions[2]"
               v-model="condition.configuration.output"
+              aria-label="Condition Output String"
               class="t-condition-name-input"
               type="text"
               @change="persist"
@@ -153,8 +162,10 @@
             </div>
           </template>
           <div class="c-cdef__separator c-row-separator"></div>
-          <div class="c-cdef__controls" :disabled="!telemetry.length">
+          <div class="c-cdef__controls">
             <button
+              :disabled="!telemetry.length"
+              :aria-label="`Add Criteria - ${!telemetry.length ? 'Disabled' : 'Enabled'}`"
               class="c-cdef__add-criteria-button c-button c-button--labeled icon-plus"
               @click="addCriteria"
             >
@@ -177,7 +188,7 @@
         <span class="c-condition__output"> Output: {{ condition.configuration.output }} </span>
       </div>
       <div class="c-condition__summary">
-        <condition-description :show-label="false" :condition="condition" />
+        <ConditionDescription :show-label="false" :condition="condition" />
       </div>
     </div>
   </div>
@@ -250,6 +261,17 @@ export default {
     };
   },
   computed: {
+    conditionSetLabel() {
+      let label;
+
+      if (this.condition.id === this.currentConditionId) {
+        label = 'Active Condition Set Condition';
+      } else {
+        label = 'Condition Set Condition';
+      }
+
+      return label;
+    },
     triggers() {
       const keys = Object.keys(TRIGGER);
       const triggerOptions = [];

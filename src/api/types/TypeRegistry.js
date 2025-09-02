@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Type from './Type';
+import Type from './Type.js';
 
 const UNKNOWN_TYPE = new Type({
   key: 'unknown',
@@ -29,12 +29,11 @@ const UNKNOWN_TYPE = new Type({
 
 /**
  * @typedef TypeDefinition
- * @memberof module:openmct.TypeRegistry~
  * @property {string} label the name for this type of object
  * @property {string} description a longer-form description of this type
- * @property {function (object)} [initialize] a function which initializes
+ * @property {function(domainObject:DomainObject): void} [initialize] a function which initializes
  *           the model for new domain objects of this type
- * @property {boolean} [creatable] true if users should be allowed to
+ * @property {boolean} [creatable=false] true if users should be allowed to
  *           create this type (default: false)
  * @property {string} [cssClass] the CSS class to apply for icons
  */
@@ -43,19 +42,19 @@ const UNKNOWN_TYPE = new Type({
  * A TypeRegistry maintains the definitions for different types
  * that domain objects may have.
  * @interface TypeRegistry
- * @memberof module:openmct
  */
 export default class TypeRegistry {
   constructor() {
+    /**
+     * @type {Record<string, Type>}
+     */
     this.types = {};
   }
   /**
    * Register a new object type.
    *
    * @param {string} typeKey a string identifier for this type
-   * @param {module:openmct.Type} type the type to add
-   * @method addType
-   * @memberof module:openmct.TypeRegistry#
+   * @param {TypeDefinition} typeDef the type to add
    */
   addType(typeKey, typeDef) {
     this.standardizeType(typeDef);
@@ -77,8 +76,6 @@ export default class TypeRegistry {
   }
   /**
    * List keys for all registered types.
-   * @method listKeys
-   * @memberof module:openmct.TypeRegistry#
    * @returns {string[]} all registered type keys
    */
   listKeys() {
@@ -86,14 +83,23 @@ export default class TypeRegistry {
   }
   /**
    * Retrieve a registered type by its key.
-   * @method get
    * @param {string} typeKey the key for this type
-   * @memberof module:openmct.TypeRegistry#
-   * @returns {module:openmct.Type} the registered type
+   * @returns {Type} the registered type
    */
   get(typeKey) {
     return this.types[typeKey] || UNKNOWN_TYPE;
   }
+  /**
+   * List all registered types.
+   * @returns {Type[]} all registered types
+   */
+  getAllTypes() {
+    return this.types;
+  }
+  /**
+   * Import legacy types.
+   * @param {TypeDefinition[]} types the types to import
+   */
   importLegacyTypes(types) {
     types
       .filter((t) => this.get(t.key) === UNKNOWN_TYPE)

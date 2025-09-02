@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -25,44 +25,47 @@
     class="c-fl-container"
     :style="[{ 'flex-basis': sizeString }]"
     :class="{ 'is-empty': !frames.length }"
-    role="group"
-    :aria-label="`Container ${container.id}`"
+    role="grid"
   >
     <div
       v-show="isEditing"
       class="c-fl-container__header"
       draggable="true"
+      role="columnheader"
+      :aria-label="`Container Handle ${index + 1}`"
       @dragstart="startContainerDrag"
     >
       <span class="c-fl-container__size-indicator">{{ sizeString }}</span>
     </div>
 
-    <drop-hint
+    <DropHint
       class="c-fl-frame__drop-hint"
       :index="-1"
       :allow-drop="allowDrop"
       @object-drop-to="moveOrCreateNewFrame"
     />
 
-    <div class="c-fl-container__frames-holder">
+    <div role="row" class="c-fl-container__frames-holder" :class="flexLayoutCssClass">
       <template v-for="(frame, i) in frames" :key="frame.id">
-        <frame-component
+        <FrameComponent
           class="c-fl-container__frame"
           :frame="frame"
           :index="i"
+          role="gridcell"
+          :aria-label="`Container Frame ${index}`"
           :container-index="index"
           :is-editing="isEditing"
           :object-path="objectPath"
         />
 
-        <drop-hint
+        <DropHint
           class="c-fl-frame__drop-hint"
           :index="i"
           :allow-drop="allowDrop"
           @object-drop-to="moveOrCreateNewFrame"
         />
 
-        <resize-handle
+        <ResizeHandle
           v-if="i !== frames.length - 1"
           :index="i"
           :drag-orientation="rowsLayout ? 'horizontal' : 'vertical'"
@@ -77,9 +80,10 @@
 </template>
 
 <script>
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
+
 import DropHint from './DropHint.vue';
 import FrameComponent from './FrameComponent.vue';
-import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_FRAME_SIZE = 5;
 
@@ -115,6 +119,9 @@ export default {
   },
   emits: ['new-frame', 'move-frame', 'persist'],
   computed: {
+    flexLayoutCssClass() {
+      return this.rowsLayout ? '--layout-rows' : '--layout-cols';
+    },
     frames() {
       return this.container.frames;
     },

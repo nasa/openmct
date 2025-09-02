@@ -1,4 +1,27 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2024, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 const SEVERITIES = ['WATCH', 'WARNING', 'CRITICAL'];
+const MOONWALK_TIMESTAMP = 14159040000;
 const NAMESPACE = '/Example/fault-';
 const getRandom = {
   severity: () => SEVERITIES[Math.floor(Math.random() * 3)],
@@ -13,7 +36,8 @@ const getRandom = {
 
       val = num;
       severity = SEVERITIES[severityIndex - 1];
-      time = num;
+      // Subtract `num` from the timestamp so that the faults are in order
+      time = MOONWALK_TIMESTAMP - num; // Mon, 21 Jul 1969 02:56:00 GMT 🌔👨‍🚀👨‍🚀👨‍🚀
     }
 
     return {
@@ -43,14 +67,7 @@ const getRandom = {
   }
 };
 
-function shelveFault(
-  fault,
-  opts = {
-    shelved: true,
-    comment: '',
-    shelveDuration: 90000
-  }
-) {
+export function shelveFault(fault, opts = { shelved: true, comment: '', shelveDuration: 90000 }) {
   fault.shelved = true;
 
   setTimeout(() => {
@@ -58,22 +75,16 @@ function shelveFault(
   }, opts.shelveDuration);
 }
 
-function acknowledgeFault(fault) {
+export function acknowledgeFault(fault) {
   fault.acknowledged = true;
 }
 
-function randomFaults(staticFaults, count = 5) {
+export function randomFaults(staticFaults, count = 5) {
   let faults = [];
 
-  for (let x = 1, y = count + 1; x < y; x++) {
-    faults.push(getRandom.fault(x, staticFaults));
+  for (let i = 1; i <= count; i++) {
+    faults.push(getRandom.fault(i, staticFaults));
   }
 
   return faults;
 }
-
-export default {
-  randomFaults,
-  shelveFault,
-  acknowledgeFault
-};

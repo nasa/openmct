@@ -1,14 +1,15 @@
-import { addNotebookEntry } from '../utils/notebook-entries';
-import { getDefaultNotebook, getNotebookSectionAndPage } from '../utils/notebook-storage';
+import { addNotebookEntry } from '../utils/notebook-entries.js';
+import { getDefaultNotebook, getNotebookSectionAndPage } from '../utils/notebook-storage.js';
 
-export default class CopyToNotebookAction {
+const COPY_TO_NOTEBOOK_ACTION_KEY = 'copyToNotebook';
+class CopyToNotebookAction {
   constructor(openmct) {
     this.openmct = openmct;
 
     this.cssClass = 'icon-duplicate';
     this.description = 'Copy value to notebook as an entry';
     this.group = 'action';
-    this.key = 'copyToNotebook';
+    this.key = COPY_TO_NOTEBOOK_ACTION_KEY;
     this.name = 'Copy to Notebook';
     this.priority = 1;
   }
@@ -49,3 +50,7 @@ export default class CopyToNotebookAction {
     return row.formattedValueForCopy && typeof row.formattedValueForCopy === 'function';
   }
 }
+
+export { COPY_TO_NOTEBOOK_ACTION_KEY };
+
+export default CopyToNotebookAction;

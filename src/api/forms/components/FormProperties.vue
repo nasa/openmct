@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -115,7 +115,7 @@ export default {
         return this.model.buttons.submit.label;
       }
 
-      return 'OK';
+      return 'Ok';
     },
     cancelLabel() {
       if (this.model.buttons && this.model.buttons.cancel && this.model.buttons.cancel.label) {

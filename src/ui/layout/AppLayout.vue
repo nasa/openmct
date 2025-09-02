@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -37,7 +37,7 @@
     >
       <CreateButton class="l-shell__create-button" />
       <GrandSearch ref="grand-search" />
-      <StatusIndicators class="l-shell__head-section l-shell__indicators" />
+      <StatusIndicators />
       <button
         class="l-shell__head__collapse-button c-icon-button"
         :class="
@@ -45,10 +45,11 @@
             ? 'l-shell__head__collapse-button--collapse'
             : 'l-shell__head__collapse-button--expand'
         "
+        :aria-label="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
         @click="toggleShellHead"
       ></button>
-      <notification-banner />
+      <NotificationBanner />
       <div class="l-shell__head-section l-shell__controls">
         <button
           class="c-icon-button c-icon-button--major icon-new-window"
@@ -61,17 +62,18 @@
             'c-icon-button c-icon-button--major',
             fullScreen ? 'icon-fullscreen-collapse' : 'icon-fullscreen-expand'
           ]"
+          :aria-label="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           :title="`${fullScreen ? 'Exit' : 'Enable'} full screen mode`"
           @click="fullScreenToggle"
         ></button>
       </div>
-      <app-logo />
+      <AppLogo />
     </div>
 
     <div class="l-shell__drawer c-drawer c-drawer--push c-drawer--align-top"></div>
 
-    <multipane class="l-shell__main" :class="[resizingClass]" type="horizontal">
-      <pane
+    <Multipane class="l-shell__main" :class="[resizingClass]" type="horizontal">
+      <Pane
         class="l-shell__pane-tree"
         handle="after"
         label="Browse"
@@ -83,25 +85,33 @@
         <template #controls>
           <button
             class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+            aria-label="Collapse all tree items"
             title="Collapse all tree items"
             @click="handleTreeReset"
           ></button>
           <button
             class="c-icon-button l-shell__sync-tree-button icon-target"
+            aria-label="Show selected item in tree"
             title="Show selected item in tree"
             @click="handleSyncTreeNavigation"
           ></button>
         </template>
-        <multipane type="vertical">
-          <pane>
-            <mct-tree
+        <Multipane type="vertical">
+          <Pane>
+            <MctTree
               ref="mctTree"
               :sync-tree-navigation="triggerSync"
               :reset-tree-navigation="triggerReset"
               class="l-shell__tree"
             />
-          </pane>
-          <pane handle="before" label="Recently Viewed" :persist-position="true">
+          </Pane>
+          <Pane
+            handle="before"
+            label="Recently Viewed"
+            :persist-position="true"
+            collapse-type="horizontal"
+            hide-param="hideRecents"
+          >
             <RecentObjectsList
               ref="recentObjectsList"
               class="l-shell__tree"
@@ -117,27 +127,32 @@
                 @click="handleClearRecentObjects"
               ></button>
             </template>
-          </pane>
-        </multipane>
-      </pane>
-      <pane class="l-shell__pane-main">
-        <browse-bar
+          </Pane>
+        </Multipane>
+      </Pane>
+      <Pane class="l-shell__pane-main" role="main">
+        <BrowseBar
           ref="browseBar"
           class="l-shell__main-view-browse-bar"
           :action-collection="actionCollection"
           @sync-tree-navigation="handleSyncTreeNavigation"
         />
-        <toolbar v-if="toolbar" class="l-shell__toolbar" />
-        <object-view
+        <Toolbar v-if="toolbar" class="l-shell__toolbar" />
+        <ObjectView
           ref="browseObject"
           class="l-shell__main-container js-main-container js-notebook-snapshot-item"
+          :class="{ '--has-toolbar': toolbar }"
           data-selectable
           :show-edit-view="true"
           @change-action-collection="setActionCollection"
         />
-        <component :is="conductorComponent" class="l-shell__time-conductor" />
-      </pane>
-      <pane
+        <component
+          :is="conductorComponent"
+          class="l-shell__time-conductor"
+          aria-label="Global Time Conductor"
+        />
+      </Pane>
+      <Pane
         class="l-shell__pane-inspector l-pane--holds-multipane"
         handle="before"
         label="Inspect"
@@ -147,8 +162,8 @@
         @end-resizing="onEndResizing"
       >
         <Inspector ref="inspector" :is-editing="isEditing" />
-      </pane>
-    </multipane>
+      </Pane>
+    </Multipane>
   </div>
 </template>
 

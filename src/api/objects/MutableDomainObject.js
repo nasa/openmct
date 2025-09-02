@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
-import utils from './object-utils.js';
+import { makeKeyString, refresh } from './object-utils.js';
 
 const ANY_OBJECT_EVENT = 'mutation';
 
@@ -38,7 +38,6 @@ const ANY_OBJECT_EVENT = 'mutation';
  * (via openmct.objects.destroy) when you're done with it.
  *
  * @typedef MutableDomainObject
- * @memberof module:openmct
  */
 class MutableDomainObject {
   constructor(eventEmitter) {
@@ -152,7 +151,7 @@ class MutableDomainObject {
 
     mutable.$observe('$_synchronize_model', (updatedObject) => {
       let clone = JSON.parse(JSON.stringify(updatedObject));
-      utils.refresh(mutable, clone);
+      refresh(mutable, clone);
     });
 
     return mutable;
@@ -168,7 +167,7 @@ class MutableDomainObject {
 }
 
 function qualifiedEventName(object, eventName) {
-  let keystring = utils.makeKeyString(object.identifier);
+  let keystring = makeKeyString(object.identifier);
 
   return [keystring, eventName].join(':');
 }

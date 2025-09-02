@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 
 import OverlayComponent from './components/OverlayComponent.vue';
@@ -15,7 +15,7 @@ class Overlay extends EventEmitter {
   constructor({
     buttons,
     autoHide = true,
-    dismissable = true,
+    dismissible = true,
     element,
     onDestroy,
     onDismiss,
@@ -27,18 +27,18 @@ class Overlay extends EventEmitter {
     this.container.classList.add('l-overlay-wrapper', cssClasses[size]);
 
     this.autoHide = autoHide;
-    this.dismissable = dismissable !== false;
+    this.dismissible = dismissible !== false;
 
     const { destroy } = mount(
       {
         components: {
-          OverlayComponent: OverlayComponent
+          OverlayComponent
         },
         provide: {
           dismiss: this.notifyAndDismiss.bind(this),
           element,
           buttons,
-          dismissable: this.dismissable
+          dismissible: this.dismissible
         },
         template: '<overlay-component></overlay-component>'
       },
@@ -60,8 +60,8 @@ class Overlay extends EventEmitter {
 
   dismiss() {
     this.emit('destroy');
-    document.body.removeChild(this.container);
     this.destroy();
+    this.container.remove();
   }
 
   //Ensures that any callers are notified that the overlay is dismissed

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,7 +21,7 @@
 -->
 <template>
   <ul>
-    <li class="c-tree__item menus-to-left" :class="aliasCss">
+    <li class="c-tree__item menus-to-left" :class="aliasCss" role="treeitem">
       <span
         class="c-disclosure-triangle is-enabled flex-elem"
         :class="expandedCssClass"

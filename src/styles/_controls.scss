@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,6 +30,7 @@
     box-shadow: $shdwMenuInner, $shdwMenu;
   }
   background: $colorMenuBg;
+  backdrop-filter: blur($formRowCtrlsH);
   color: $colorMenuFg;
   text-shadow: $shdwMenuText;
   padding: $interiorMarginSm;
@@ -82,6 +83,52 @@
       &:not([class*='icon']):before {
         content: ''; // Enable :before so that menu items without an icon still indent properly
       }
+    }
+  }
+}
+
+@mixin resizeHandleStyle($size: 1px, $margin: 3px) {
+  // Used by Flexible Layouts and Time Strip views
+  &:before {
+    // The visible resize line
+    background-color: $editUIColor;
+    content: '';
+    display: block;
+    @include abs();
+    min-height: $size;
+    min-width: $size;
+  }
+
+  &:hover {
+    &:before {
+      // The visible resize line
+      background-color: $editUIColorHov;
+    }
+  }
+
+  &.vertical {
+    // Resizes in Y dimension
+    padding: $margin $size;
+    &:before {
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+    &:hover {
+      cursor: row-resize;
+    }
+  }
+
+  &.horizontal {
+    // Resizes in X dimension
+    padding: $size $margin;
+    &:before {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
+    &:hover {
+      cursor: col-resize;
     }
   }
 }
@@ -193,7 +240,6 @@ button {
 
 .c-icon-button {
   [class*='label'] {
-    opacity: 0.8;
     padding: 1px 0;
   }
 
@@ -221,6 +267,10 @@ button {
       flex: 1 1 auto;
       font-size: 1.1em;
     }
+  }
+
+  &--sm {
+    padding: $interiorMarginSm $interiorMargin;
   }
 }
 
@@ -496,7 +546,9 @@ select {
   color: $colorSelectFg;
   box-shadow: $shdwSelect;
   background-repeat: no-repeat, no-repeat;
-  background-position: right 0.4em top 80%, 0 0;
+  background-position:
+    right 0.4em top 80%,
+    0 0;
   border: none;
   border-radius: $controlCr;
   padding: 2px 20px 2px $interiorMargin;
@@ -715,15 +767,15 @@ select {
   .c-super-menu__item-description {
     flex: 1 1 70%;
 
-    [class*="__icon"] {
+    [class*='__icon'] {
       display: none !important;
     }
 
-    [class*="__name"] {
+    [class*='__name'] {
       margin-top: 0 !important;
     }
 
-    [class*="__item-description"] {
+    [class*='__item-description'] {
       min-width: 200px;
     }
   }
@@ -1130,7 +1182,7 @@ input[type='range'] {
     // Hidden by default; requires a hover 1 - 3 levels above to display
     @include transition(opacity, $transOutTime);
     opacity: 0;
-    pointer-events: none;
+    pointer-events: auto;
   }
 }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { isIdentifier } from '../objects/object-utils';
+
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
@@ -33,7 +35,7 @@
  */
 
 /**
- * @typedef {object} ListenerMap
+ * @typedef {Object} ListenerMap
  * @property {Array.<any>} add
  * @property {Array.<any>} remove
  * @property {Array.<any>} load
@@ -200,19 +202,24 @@ export default class CompositionCollection {
   /**
    * Load the domain objects in this composition.
    *
-   * @param {AbortSignal} abortSignal
+   * @param {AbortSignal} [abortSignal]
    * @returns {Promise.<Array.<DomainObject>>} a promise for
    *          the domain objects in this composition
-   * @memberof {module:openmct.CompositionCollection#}
    * @name load
    */
   async load(abortSignal) {
     this.#cleanUpMutables();
     const children = await this.#provider.load(this.domainObject);
     const childObjects = await Promise.all(
-      children.map((c) => this.#publicAPI.objects.get(c, abortSignal))
+      children.map((child) => {
+        if (isIdentifier(child)) {
+          return this.#publicAPI.objects.get(child, abortSignal);
+        } else {
+          return Promise.resolve(child);
+        }
+      })
     );
-    childObjects.forEach((c) => this.add(c, true));
+    childObjects.forEach((child) => this.add(child, true));
     this.#emit('load');
 
     return childObjects;
@@ -271,7 +278,7 @@ export default class CompositionCollection {
   /**
    * Handle reorder from provider.
    * @private
-   * @param {object} reorderMap
+   * @param {Object} reorderMap
    */
   #onProviderReorder(reorderMap) {
     this.#emit('reorder', reorderMap);
@@ -280,7 +287,7 @@ export default class CompositionCollection {
   /**
    * Handle adds from provider.
    * @private
-   * @param {import('../objects/ObjectAPI').Identifier} childId
+   * @param {import('openmct').Identifier} childId
    * @returns {DomainObject}
    */
   #onProviderAdd(childId) {

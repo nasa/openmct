@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,15 +22,16 @@
 
 import _ from 'lodash';
 
-import CreateWizard from './CreateWizard';
-import PropertiesAction from './PropertiesAction';
+import CreateWizard from './CreateWizard.js';
+import PropertiesAction from './PropertiesAction.js';
+const EDIT_PROPERTIES_ACTION_KEY = 'properties';
 
-export default class EditPropertiesAction extends PropertiesAction {
+class EditPropertiesAction extends PropertiesAction {
   constructor(openmct) {
     super(openmct);
 
     this.name = 'Edit Properties...';
-    this.key = 'properties';
+    this.key = EDIT_PROPERTIES_ACTION_KEY;
     this.description = 'Edit properties of this object.';
     this.cssClass = 'major icon-pencil';
     this.hideInDefaultMenu = true;
@@ -44,7 +45,7 @@ export default class EditPropertiesAction extends PropertiesAction {
     const definition = this._getTypeDefinition(object.type);
     const persistable = this.openmct.objects.isPersistable(object.identifier);
 
-    return persistable && definition && definition.creatable;
+    return persistable && definition && definition.creatable && !object.locked;
   }
 
   invoke(objectPath) {
@@ -100,3 +101,7 @@ export default class EditPropertiesAction extends PropertiesAction {
       .catch(this._onCancel.bind(this));
   }
 }
+
+export { EDIT_PROPERTIES_ACTION_KEY };
+
+export default EditPropertiesAction;

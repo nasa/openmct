@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,9 +24,10 @@
  * This test suite is dedicated to testing the Scatter Plot component.
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../../../appActions');
-const uuid = require('uuid').v4;
+import { v4 as uuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Scatter Plot', () => {
   let scatterPlot;
@@ -40,9 +41,6 @@ test.describe('Scatter Plot', () => {
   });
 
   test('Can add and remove telemetry sources', async ({ page }) => {
-    const editButton = page.locator('button[title="Edit"]');
-    const saveButton = page.locator('button[title="Save"]');
-
     // Create a sine wave generator within the scatter plot
     const swg1 = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
@@ -53,10 +51,10 @@ test.describe('Scatter Plot', () => {
     // Navigate to the scatter plot and verify that
     // the SWG appears in the elements pool
     await page.goto(scatterPlot.url);
-    await editButton.click();
+    await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Elements' }).click();
-    await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeVisible();
-    await saveButton.click();
+    await expect(page.getByLabel(`Preview ${swg1.name}`)).toBeVisible();
+    await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Create another sine wave generator within the scatter plot
@@ -67,43 +65,39 @@ test.describe('Scatter Plot', () => {
     });
 
     // Verify that the 'Replace telemetry source' modal appears and accept it
-    await expect
-      .soft(
-        page.locator(
-          'text=This action will replace the current telemetry source. Do you want to continue?'
-        )
+    await expect(
+      page.getByText(
+        'This action will replace the current telemetry source. Do you want to continue?'
       )
-      .toBeVisible();
-    await page.click('text=Ok');
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Navigate to the scatter plot and verify that the new SWG
     // appears in the elements pool and the old one is gone
     await page.goto(scatterPlot.url);
-    await editButton.click();
+    await page.getByLabel('Edit Object').click();
 
     // Click the "Elements" tab
     await page.getByRole('tab', { name: 'Elements' }).click();
-    await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg1.name}`)).toBeHidden();
-    await expect.soft(page.locator(`#inspector-elements-tree >> text=${swg2.name}`)).toBeVisible();
-    await saveButton.click();
+    await expect(page.getByLabel(`Preview ${swg1.name}`)).toBeHidden();
+    await expect(page.getByLabel(`Preview ${swg2.name}`)).toBeVisible();
+    await page.getByRole('button', { name: 'Save' }).click();
 
     // Right click on the new SWG in the elements pool and delete it
-    await page.locator(`#inspector-elements-tree >> text=${swg2.name}`).click({
+    await page.getByLabel(`Preview ${swg2.name}`).click({
       button: 'right'
     });
-    await page.locator('li[title="Remove this object from its containing object."]').click();
+    await page.getByLabel('Remove').click();
 
     // Verify that the 'Remove object' confirmation modal appears and accept it
-    await expect
-      .soft(
-        page.locator(
-          'text=Warning! This action will remove this object. Are you sure you want to continue?'
-        )
+    await expect(
+      page.getByText(
+        'Warning! This action will remove this object. Are you sure you want to continue?'
       )
-      .toBeVisible();
-    await page.click('text=Ok');
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     // Verify that the elements pool shows no elements
-    await expect(page.locator('text="No contained elements"')).toBeVisible();
+    await expect(page.getByText('No contained elements')).toBeVisible();
   });
 });

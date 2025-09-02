@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class GoToOriginalAction {
+const GO_TO_ORIGINAL_ACTION_KEY = 'goToOriginal';
+
+class GoToOriginalAction {
   constructor(openmct) {
     this.name = 'Go To Original';
-    this.key = 'goToOriginal';
+    this.key = GO_TO_ORIGINAL_ACTION_KEY;
     this.description = 'Go to the original unlinked instance of this object';
     this.group = 'action';
     this.priority = 4;
@@ -62,3 +64,7 @@ export default class GoToOriginalAction {
     return parentKeystring !== objectPath[0].location;
   }
 }
+
+export { GO_TO_ORIGINAL_ACTION_KEY };
+
+export default GoToOriginalAction;

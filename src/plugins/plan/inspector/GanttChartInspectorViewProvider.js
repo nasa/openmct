@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -62,7 +62,7 @@ export default function GanttChartInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {

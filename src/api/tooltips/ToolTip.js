@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,17 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 
 import TooltipComponent from './components/TooltipComponent.vue';
 
 class Tooltip extends EventEmitter {
   constructor(
-    { toolTipText, toolTipLocation, parentElement } = {
+    { toolTipText, toolTipLocation, parentElement, cssClasses } = {
       tooltipText: '',
       toolTipLocation: 'below',
-      parentElement: null
+      parentElement: null,
+      cssClasses: []
     }
   ) {
     super();
@@ -42,7 +43,8 @@ class Tooltip extends EventEmitter {
       provide: {
         toolTipText,
         toolTipLocation,
-        parentElement
+        parentElement,
+        cssClasses
       },
       template: '<tooltip-component toolTipText="toolTipText"></tooltip-component>'
     });

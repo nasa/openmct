@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,10 @@
 
 <template>
   <li
+    v-if="allowDrag"
     draggable="true"
+    :aria-label="`${elementObject.name} Element Item`"
+    :aria-grabbed="hover"
     @dragstart="emitDragStartEvent"
     @dragenter="onDragenter"
     @dragover.prevent
@@ -38,7 +41,24 @@
       }"
     >
       <span class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"></span>
-      <object-label
+      <ObjectLabel
+        :domain-object="elementObject"
+        :object-path="[elementObject, domainObject]"
+        @context-click-active="setContextClickState"
+      />
+      <slot name="content"></slot>
+    </div>
+  </li>
+  <li v-else :aria-label="`${elementObject.name} Element Item`">
+    <div
+      class="c-tree__item c-elements-pool__item js-elements-pool__item"
+      :class="{
+        'is-context-clicked': contextClickActive,
+        hover: hover,
+        'is-alias': isAlias
+      }"
+    >
+      <ObjectLabel
         :domain-object="elementObject"
         :object-path="[elementObject, domainObject]"
         @context-click-active="setContextClickState"
@@ -72,19 +92,25 @@ export default {
     },
     allowDrop: {
       type: Boolean
+    },
+    allowDrag: {
+      type: Boolean
     }
   },
   emits: ['drop-custom', 'dragstart-custom'],
   data() {
-    const isAlias =
-      this.elementObject.location !==
-      this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
     return {
       contextClickActive: false,
-      hover: false,
-      isAlias
+      hover: false
     };
+  },
+  computed: {
+    isAlias() {
+      return (
+        this.elementObject.location !==
+        this.openmct.objects.makeKeyString(this.domainObject.identifier)
+      );
+    }
   },
   methods: {
     emitDropEvent(event) {

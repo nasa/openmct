@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class StartTimerAction {
+const START_TIMER_ACTION_KEY = 'timer.start';
+
+class StartTimerAction {
   constructor(openmct) {
     this.name = 'Start';
-    this.key = 'timer.start';
+    this.key = START_TIMER_ACTION_KEY;
     this.description = 'Start the currently displayed timer';
     this.group = 'view';
     this.cssClass = 'icon-play';
@@ -72,3 +74,7 @@ export default class StartTimerAction {
       : domainObject.type === 'timer' && timerState !== 'started';
   }
 }
+
+export { START_TIMER_ACTION_KEY };
+
+export default StartTimerAction;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,25 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-  /**
-   * A ToolbarRegistry maintains the definitions for toolbars.
-   *
-   * @interface ToolbarRegistry
-   * @memberof module:openmct
-   */
-  function ToolbarRegistry() {
+/**
+ * A ToolbarRegistry maintains the definitions for toolbars.
+ *
+ * @interface ToolbarRegistry
+ */
+export default class ToolbarRegistry {
+  constructor() {
     this.providers = {};
   }
 
   /**
    * Gets toolbar controls from providers which can provide a toolbar for this selection.
    *
-   * @param {object} selection the selection object
+   * @param {Object} selection the selection object
    * @returns {Object[]} an array of objects defining controls for the toolbar
    * @private for platform-internal use
    */
-  ToolbarRegistry.prototype.get = function (selection) {
+  get(selection) {
     const providers = this.getAllProviders().filter(function (provider) {
       return provider.forSelection(selection);
     });
@@ -50,30 +49,29 @@ define([], function () {
     });
 
     return structure;
-  };
+  }
 
   /**
    * @private
    */
-  ToolbarRegistry.prototype.getAllProviders = function () {
+  getAllProviders() {
     return Object.values(this.providers);
-  };
+  }
 
   /**
    * @private
    */
-  ToolbarRegistry.prototype.getByProviderKey = function (key) {
+  getByProviderKey(key) {
     return this.providers[key];
-  };
+  }
 
   /**
    * Registers a new type of toolbar.
    *
    * @param {module:openmct.ToolbarRegistry} provider the provider for this toolbar
    * @method addProvider
-   * @memberof module:openmct.ToolbarRegistry#
    */
-  ToolbarRegistry.prototype.addProvider = function (provider) {
+  addProvider(provider) {
     const key = provider.key;
 
     if (key === undefined) {
@@ -85,37 +83,32 @@ define([], function () {
     }
 
     this.providers[key] = provider;
-  };
+  }
+}
 
-  /**
-   * Exposes types of toolbars in Open MCT.
-   *
-   * @interface ToolbarProvider
-   * @property {string} key a unique identifier for this toolbar
-   * @property {string} name the human-readable name of this toolbar
-   * @property {string} [description] a longer-form description (typically
-   *           a single sentence or short paragraph) of this kind of toolbar
-   * @memberof module:openmct
-   */
+/**
+ * Exposes types of toolbars in Open MCT.
+ *
+ * @interface ToolbarProvider
+ * @property {string} key a unique identifier for this toolbar
+ * @property {string} name the human-readable name of this toolbar
+ * @property {string} [description] a longer-form description (typically
+ *           a single sentence or short paragraph) of this kind of toolbar
+ */
 
-  /**
-   * Checks if this provider can supply toolbar for a selection.
-   *
-   * @method forSelection
-   * @memberof module:openmct.ToolbarProvider#
-   * @param {module:openmct.selection} selection
-   * @returns {boolean} 'true' if the toolbar applies to the provided selection,
-   *          otherwise 'false'.
-   */
+/**
+ * Checks if this provider can supply toolbar for a selection.
+ *
+ * @method forSelection
+ * @param {module:openmct.selection} selection
+ * @returns {boolean} 'true' if the toolbar applies to the provided selection,
+ *          otherwise 'false'.
+ */
 
-  /**
-   * Provides controls that comprise a toolbar.
-   *
-   * @method toolbar
-   * @memberof module:openmct.ToolbarProvider#
-   * @param {object} selection the selection object
-   * @returns {Object[]} an array of objects defining controls for the toolbar.
-   */
-
-  return ToolbarRegistry;
-});
+/**
+ * Provides controls that comprise a toolbar.
+ *
+ * @method toolbar
+ * @param {Object} selection the selection object
+ * @returns {Object[]} an array of objects defining controls for the toolbar.
+ */

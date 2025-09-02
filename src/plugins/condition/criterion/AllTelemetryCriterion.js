@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,11 +23,12 @@
 import { getOperatorText } from '@/plugins/condition/utils/operations';
 import StalenessUtils from '@/utils/staleness';
 
-import { evaluateResults } from '../utils/evaluator';
-import { checkIfOld, getLatestTimestamp } from '../utils/time';
-import TelemetryCriterion from './TelemetryCriterion';
+import { evaluateResults } from '../utils/evaluator.js';
+import { checkIfOld, getLatestTimestamp } from '../utils/time.js';
+import TelemetryCriterion from './TelemetryCriterion.js';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
+  #emptyMap = new Map();
   /**
    * Subscribes/Unsubscribes to telemetry and emits the result
    * of operations performed on the telemetry data returned and a given input value.
@@ -176,18 +177,24 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     return datum;
   }
 
-  updateResult(data, telemetryObjects) {
-    const validatedData = this.isValid() ? data : {};
+  updateResult(allTelemetryDataMap, telemetryObjects) {
+    const validatedData = this.isValid() ? allTelemetryDataMap : this.#emptyMap;
 
     if (validatedData && !this.isStalenessCheck()) {
       if (this.isOldCheck()) {
-        if (this.ageCheck?.[validatedData.id]) {
-          this.ageCheck[validatedData.id].update(validatedData);
-        }
+        Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
+          if (this.ageCheck?.[objectIdKeystring]) {
+            this.ageCheck[objectIdKeystring].update(validatedData.get(objectIdKeystring));
+          }
 
-        this.telemetryDataCache[validatedData.id] = false;
+          this.telemetryDataCache[objectIdKeystring] = false;
+        });
       } else {
-        this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
+        Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
+          this.telemetryDataCache[objectIdKeystring] = this.computeResult(
+            validatedData.get(objectIdKeystring)
+          );
+        });
       }
     }
 
@@ -227,7 +234,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     return Promise.all(telemetryRequests).then((telemetryRequestsResults) => {
       let latestTimestamp;
       const timeSystems = this.openmct.time.getAllTimeSystems();
-      const timeSystem = this.openmct.time.timeSystem();
+      const timeSystem = this.openmct.time.getTimeSystem();
 
       telemetryRequestsResults.forEach((results, index) => {
         const latestDatum =

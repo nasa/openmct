@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -26,6 +26,7 @@
       :key="itemValue.key"
       class="c-list-item__value js-list-item__value"
       :class="['--' + itemValue.key]"
+      :aria-label="itemValue.text"
       :title="itemValue.text"
     >
       {{ itemValue.text }}
@@ -52,7 +53,6 @@ export default {
     formattedItemValues() {
       let values = [];
       this.itemProperties.forEach((property) => {
-        // eslint-disable-next-line you-dont-need-lodash-underscore/get
         let value = _.get(this.item, property.key);
         if (property.format) {
           value = property.format(value, this.item, property.key, this.openmct);

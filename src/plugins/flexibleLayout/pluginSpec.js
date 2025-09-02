@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import FlexibleLayout from './plugin';
+import FlexibleLayout from './plugin.js';
 
 describe('the plugin', function () {
   let element;
@@ -106,7 +106,6 @@ describe('the plugin', function () {
       flexibleView.show(child, false);
 
       await nextTick();
-      console.log(child);
       const flexTitle = child.querySelector('.c-fl');
 
       expect(flexTitle).not.toBeNull();

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -185,7 +185,7 @@
 <script>
 import { throttle } from 'lodash';
 
-import { rotate } from './utils';
+import { rotate } from './utils.js';
 
 export default {
   props: {
@@ -327,10 +327,7 @@ export default {
   },
   mounted() {
     this.debounceResizeSvg = throttle(this.resizeSvg, 100);
-
-    this.$nextTick(() => {
-      this.debounceResizeSvg();
-    });
+    this.debounceResizeSvg();
   },
   methods: {
     resizeSvg() {

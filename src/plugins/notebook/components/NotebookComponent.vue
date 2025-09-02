@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -96,18 +96,20 @@
         </div>
         <div
           v-if="selectedPage && !selectedPage.isLocked"
-          :class="{ disabled: activeTransaction }"
+          :aria-disabled="activeTransaction"
           class="c-notebook__drag-area icon-plus"
+          aria-dropeffect="link"
+          aria-labelledby="newEntryLabel"
           @click="newEntry(null, $event)"
           @dragover="dragOver"
           @drop.capture="dropCapture"
           @drop="dropOnEntry($event)"
         >
-          <span class="c-notebook__drag-area__label">
+          <span id="newEntryLabel" class="c-notebook__drag-area__label">
             To start a new entry, click here or drag and drop any object
           </span>
         </div>
-        <progress-bar
+        <ProgressBar
           v-if="savingTransaction"
           class="c-telemetry-table__progress-bar"
           :model="{ progressPerc: null }"
@@ -139,6 +141,7 @@
             @editing-entry="startTransaction"
             @delete-entry="deleteEntry"
             @update-entry="updateEntry"
+            @update-annotations="loadAnnotations"
             @entry-selection="entrySelection(entry)"
           />
         </div>
@@ -149,9 +152,10 @@
           <button
             class="c-button commit-button icon-lock"
             title="Commit entries and lock this page from further changes"
+            aria-labelledby="commitEntriesLabel"
             @click="lockPage()"
           >
-            <span class="c-button__label">Commit Entries</span>
+            <span id="commitEntriesLabel" class="c-button__label">Commit Entries</span>
           </button>
         </div>
       </div>
@@ -165,8 +169,8 @@ import { debounce } from 'lodash';
 import Search from '@/ui/components/SearchComponent.vue';
 
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
-import objectLink from '../../../ui/mixins/object-link';
-import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
+import objectLink from '../../../ui/mixins/object-link.js';
+import { isNotebookViewType, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants.js';
 import {
   addNotebookEntry,
   createNewEmbed,
@@ -175,18 +179,18 @@ import {
   getNotebookEntries,
   mutateObject,
   selectEntry
-} from '../utils/notebook-entries';
+} from '../utils/notebook-entries.js';
 import {
   saveNotebookImageDomainObject,
   updateNamespaceOfDomainObject
-} from '../utils/notebook-image';
+} from '../utils/notebook-image.js';
 import {
   clearDefaultNotebook,
   getDefaultNotebook,
   setDefaultNotebook,
   setDefaultNotebookPageId,
   setDefaultNotebookSectionId
-} from '../utils/notebook-storage';
+} from '../utils/notebook-storage.js';
 import NotebookEntry from './NotebookEntry.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './SidebarComponent.vue';
@@ -298,6 +302,12 @@ export default {
     },
     showTime() {
       mutateObject(this.openmct, this.domainObject, 'configuration.showTime', this.showTime);
+    },
+    notebookAnnotations: {
+      handler() {
+        this.filterAndSortEntries();
+      },
+      deep: true
     }
   },
   beforeMount() {
@@ -673,7 +683,7 @@ export default {
       } else if (domainObjectData) {
         // plain domain object
         const objectPath = JSON.parse(domainObjectData);
-        const bounds = this.openmct.time.bounds();
+        const bounds = this.openmct.time.getBounds();
         const snapshotMeta = {
           bounds,
           link: null,

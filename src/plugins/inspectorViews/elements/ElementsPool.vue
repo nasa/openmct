@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -34,24 +34,32 @@
         id="inspector-elements-tree"
         class="c-tree c-elements-pool__tree"
       >
-        <element-item
+        <ElementItem
           v-for="(element, index) in elements"
           :key="element.identifier.key"
           :index="index"
           :element-object="element"
+          :allow-drag="isEditing"
           :allow-drop="allowDrop"
           @dragstart-custom="moveFrom(index)"
           @drop-custom="moveTo(index)"
-        />
+        >
+          <template #content="slotProps">
+            <slot name="content" :index="index" v-bind="slotProps"></slot>
+          </template>
+        </ElementItem>
         <li class="js-last-place" @drop="moveToIndex(elements.length)"></li>
       </ul>
       <div v-if="elements.length === 0">No contained elements</div>
+      <slot name="custom"></slot>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash';
+import useIsEditing from 'utils/vue/useIsEditing.js';
+import { inject } from 'vue';
 
 import Search from '../../../ui/components/SearchComponent.vue';
 import ElementItem from './ElementItem.vue';
@@ -61,16 +69,30 @@ export default {
     Search,
     ElementItem
   },
-  inject: ['openmct', 'domainObject'],
+  setup() {
+    const openmct = inject('openmct');
+    const domainObject = inject('domainObject');
+    const { isEditing } = useIsEditing(openmct);
+
+    return {
+      openmct,
+      domainObject,
+      isEditing
+    };
+  },
   data() {
     return {
       elements: [],
-      isEditing: this.openmct.editor.isEditing(),
       currentSearch: '',
       selection: [],
       contextClickTracker: {},
       allowDrop: false
     };
+  },
+  watch: {
+    isEditing() {
+      this.showSelection(this.openmct.selection.get());
+    }
   },
   mounted() {
     let selection = this.openmct.selection.get();
@@ -79,10 +101,8 @@ export default {
     }
 
     this.openmct.selection.on('change', this.showSelection);
-    this.openmct.editor.on('isEditing', this.setEditState);
   },
   unmounted() {
-    this.openmct.editor.off('isEditing', this.setEditState);
     this.openmct.selection.off('change', this.showSelection);
 
     if (this.compositionUnlistener) {
@@ -90,10 +110,6 @@ export default {
     }
   },
   methods: {
-    setEditState(isEditing) {
-      this.isEditing = isEditing;
-      this.showSelection(this.openmct.selection.get());
-    },
     showSelection(selection) {
       if (_.isEqual(this.selection, selection)) {
         return;

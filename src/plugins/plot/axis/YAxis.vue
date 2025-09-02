@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -60,7 +60,7 @@
       </option>
     </select>
 
-    <mct-ticks
+    <MctTicks
       :axis-id="id"
       :axis-type="'yAxis'"
       class="gl-plot-ticks"
@@ -71,8 +71,11 @@
 </template>
 
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import { inject } from 'vue';
+
+import { useAlignment } from '../../../ui/composables/alignmentContext.js';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import MctTicks from '../MctTicks.vue';
 
 const AXIS_PADDING = 20;
@@ -81,36 +84,12 @@ export default {
   components: {
     MctTicks
   },
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     id: {
       type: Number,
       default() {
         return 1;
-      }
-    },
-    tickWidth: {
-      type: Number,
-      default() {
-        return 0;
-      }
-    },
-    plotLeftTickWidth: {
-      type: Number,
-      default() {
-        return 0;
-      }
-    },
-    usedTickWidth: {
-      type: Number,
-      default() {
-        return 0;
-      }
-    },
-    hasMultipleLeftAxes: {
-      type: Boolean,
-      default() {
-        return false;
       }
     },
     position: {
@@ -120,7 +99,15 @@ export default {
       }
     }
   },
-  emits: ['plot-y-tick-width', 'toggle-axis-visibility', 'y-key-changed'],
+  emits: ['toggle-axis-visibility', 'y-key-changed'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData } = useAlignment(domainObject, objectPath, openmct);
+
+    return { alignmentData };
+  },
   data() {
     return {
       yAxisLabel: 'none',
@@ -131,7 +118,8 @@ export default {
       mainYAxisId: null,
       hasAdditionalYAxes: false,
       seriesColors: [],
-      visible: true
+      visible: true,
+      selfTickWidth: 0
     };
   },
   computed: {
@@ -143,19 +131,20 @@ export default {
     },
     yAxisStyle() {
       let style = {
-        width: `${this.tickWidth + AXIS_PADDING}px`
+        width: `${this.selfTickWidth + AXIS_PADDING}px`
       };
-      const multipleAxesPadding = this.hasMultipleLeftAxes ? AXIS_PADDING : 0;
+      const multipleAxesPadding = this.alignmentData.multiple ? AXIS_PADDING : 0;
 
       if (this.position === 'right') {
-        style.left = `-${this.tickWidth + AXIS_PADDING}px`;
+        style.left = `-${this.selfTickWidth + AXIS_PADDING}px`;
       } else {
         const thisIsTheSecondLeftAxis = this.id - 1 > 0;
-        if (this.hasMultipleLeftAxes && thisIsTheSecondLeftAxis) {
-          style.left = `${this.plotLeftTickWidth - this.usedTickWidth - this.tickWidth}px`;
+        if (this.alignmentData.multiple && thisIsTheSecondLeftAxis) {
+          const otherAxisWidth = this.alignmentData.leftWidth - this.selfTickWidth;
+          style.left = `${this.alignmentData.leftWidth - otherAxisWidth - this.selfTickWidth}px`;
           style['border-right'] = `1px solid`;
         } else {
-          style.left = `${this.plotLeftTickWidth - this.tickWidth + multipleAxesPadding}px`;
+          style.left = `${this.alignmentData.leftWidth - this.selfTickWidth + multipleAxesPadding}px`;
         }
       }
 
@@ -265,10 +254,7 @@ export default {
       }
     },
     onTickWidthChange(data) {
-      this.$emit('plot-y-tick-width', {
-        width: data.width,
-        yAxisId: this.id
-      });
+      this.selfTickWidth = data.width;
     },
     toggleSeriesVisibility() {
       this.visible = !this.visible;

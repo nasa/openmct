@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,20 +27,27 @@
       'is-legend-hidden': isLegendHidden
     }"
   >
-    <div
+    <button
       class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
       :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
-      @click="expandLegend"
-    ></div>
+      :aria-label="ariaLabelValue"
+      tabindex="0"
+      @click="toggleLegend"
+    ></button>
 
     <div class="c-plot-legend__wrapper" :class="{ 'is-cursor-locked': cursorLocked }">
       <!-- COLLAPSED PLOT LEGEND -->
-      <div class="plot-wrapper-collapsed-legend" :class="{ 'is-cursor-locked': cursorLocked }">
+      <div
+        v-if="!isLegendExpanded"
+        class="plot-wrapper-collapsed-legend"
+        aria-label="Plot Legend Collapsed"
+        :class="{ 'is-cursor-locked': cursorLocked }"
+      >
         <div
           class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
           title="Cursor is point locked. Click anywhere in the plot to unlock."
         ></div>
-        <plot-legend-item-collapsed
+        <PlotLegendItemCollapsed
           v-for="(seriesObject, seriesIndex) in seriesModels"
           :key="`${seriesObject.keyString}-${seriesIndex}-collapsed`"
           :highlights="highlights"
@@ -50,7 +57,12 @@
         />
       </div>
       <!-- EXPANDED PLOT LEGEND -->
-      <div class="plot-wrapper-expanded-legend" :class="{ 'is-cursor-locked': cursorLocked }">
+      <div
+        v-else
+        class="plot-wrapper-expanded-legend"
+        aria-label="Plot Legend Expanded"
+        :class="{ 'is-cursor-locked': cursorLocked }"
+      >
         <div
           class="c-state-indicator__alert-cursor-lock--verbose icon-cursor-lock"
           title="Click anywhere in the plot to unlock."
@@ -69,7 +81,7 @@
             </tr>
           </thead>
           <tbody>
-            <plot-legend-item-expanded
+            <PlotLegendItemExpanded
               v-for="(seriesObject, seriesIndex) in seriesModels"
               :key="`${seriesObject.keyString}-${seriesIndex}-expanded`"
               :series-key-string="seriesObject.keyString"
@@ -83,8 +95,8 @@
   </div>
 </template>
 <script>
-import configStore from '../configuration/ConfigStore';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import PlotLegendItemCollapsed from './PlotLegendItemCollapsed.vue';
 import PlotLegendItemExpanded from './PlotLegendItemExpanded.vue';
 
@@ -117,6 +129,11 @@ export default {
     };
   },
   computed: {
+    ariaLabelValue() {
+      const name = this.domainObject.name ? ` ${this.domainObject.name}` : '';
+
+      return `${this.isLegendExpanded ? 'Collapse' : 'Expand'}${name} Legend`;
+    },
     showUnitsWhenExpanded() {
       return this.loaded && this.legend.get('showUnitsWhenExpanded') === true;
     },
@@ -145,11 +162,21 @@ export default {
     this.legend = this.config.legend;
     this.seriesModels = [];
     this.listenTo(this.config.legend, 'change:position', this.updatePosition, this);
-    this.initialize();
+
+    if (this.domainObject.type === 'telemetry.plot.stacked') {
+      this.objectComposition = this.openmct.composition.get(this.domainObject);
+      this.objectComposition.on('add', this.addTelemetryObject);
+      this.objectComposition.on('remove', this.removeTelemetryObject);
+      this.objectComposition.load();
+    } else {
+      this.registerListeners(this.config);
+    }
+    this.listenTo(this.config.legend, 'change:expandByDefault', this.changeExpandDefault, this);
   },
   mounted() {
     this.loaded = true;
     this.isLegendExpanded = this.legend.get('expanded') === true;
+    this.$emit('expanded', this.isLegendExpanded);
     this.updatePosition();
   },
   beforeUnmount() {
@@ -161,15 +188,10 @@ export default {
     this.stopListening();
   },
   methods: {
-    initialize() {
-      if (this.domainObject.type === 'telemetry.plot.stacked') {
-        this.objectComposition = this.openmct.composition.get(this.domainObject);
-        this.objectComposition.on('add', this.addTelemetryObject);
-        this.objectComposition.on('remove', this.removeTelemetryObject);
-        this.objectComposition.load();
-      } else {
-        this.registerListeners(this.config);
-      }
+    changeExpandDefault() {
+      this.isLegendExpanded = this.config.legend.model.expandByDefault;
+      this.legend.set('expanded', this.isLegendExpanded);
+      this.$emit('expanded', this.isLegendExpanded);
     },
     getConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -198,9 +220,12 @@ export default {
       config.series.forEach(this.addSeries, this);
     },
     addSeries(series) {
-      this.seriesModels[this.seriesModels.length] = series;
+      const existingSeries = this.getSeries(series.keyString);
+      if (existingSeries) {
+        return;
+      }
+      this.seriesModels.push(series);
     },
-
     removeSeries(plotSeries) {
       this.stopListening(plotSeries);
 
@@ -209,7 +234,13 @@ export default {
       );
       this.seriesModels.splice(seriesIndex, 1);
     },
-    expandLegend() {
+    getSeries(keyStringToFind) {
+      const foundSeries = this.seriesModels.find((series) => {
+        return series.keyString === keyStringToFind;
+      });
+      return foundSeries;
+    },
+    toggleLegend() {
       this.isLegendExpanded = !this.isLegendExpanded;
       this.legend.set('expanded', this.isLegendExpanded);
       this.$emit('expanded', this.isLegendExpanded);

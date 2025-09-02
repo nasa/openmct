@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,7 @@
 <template>
   <div class="c-tree-and-search l-shell__tree">
     <ul class="c-tree-and-search__tree c-tree c-tree__scrollable" aria-label="Recent Objects">
-      <recent-objects-list-item
+      <RecentObjectsListItem
         v-for="recentObject in recentObjects"
         :key="recentObject.navigationPath"
         :object-path="recentObject.objectPath"
@@ -251,7 +251,7 @@ export default {
     /**
      * Returns true if the `domainObject` supports composition and we are not already
      * tracking its composition.
-     * @param {import('../../api/objects/ObjectAPI').DomainObject} domainObject
+     * @param {import('openmct').DomainObject} domainObject
      * @param {string} navigationPath
      */
     shouldTrackCompositionFor(domainObject, navigationPath) {
@@ -272,7 +272,7 @@ export default {
           'This action will clear the Recently Viewed Objects list. Are you sure you want to continue?',
         buttons: [
           {
-            label: 'OK',
+            label: 'Ok',
             callback: () => {
               localStorage.removeItem(LOCAL_STORAGE_KEY__RECENT_OBJECTS);
               Object.values(this.nameChangeListeners).forEach((unlisten) => {

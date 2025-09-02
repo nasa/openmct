@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
  Open MCT is licensed under the Apache License, Version 2.0 (the
@@ -39,7 +39,7 @@
       >{{ getLinkProps.text }}</span
     >
 
-    <progress-bar
+    <ProgressBar
       v-if="activeModel.progressPerc"
       class="c-message-banner__progress-bar"
       :model="activeModel"

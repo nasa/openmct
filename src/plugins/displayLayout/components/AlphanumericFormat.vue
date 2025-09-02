@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -32,13 +32,16 @@
         </div>
         <div class="c-inspect-properties__value">
           <input
+            v-if="isEditing"
             id="telemetryPrintfFormat"
             type="text"
-            :disabled="!isEditing"
             :value="telemetryFormat"
             :placeholder="nonMixedFormat ? '' : 'Mixed'"
             @change="formatTelemetry"
           />
+          <template v-if="!isEditing && telemetryFormat?.length">
+            {{ telemetryFormat }}
+          </template>
         </div>
       </li>
     </ul>

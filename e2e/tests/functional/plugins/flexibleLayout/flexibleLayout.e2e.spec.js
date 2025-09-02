@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,18 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const {
+import { fileURLToPath } from 'url';
+
+import {
   createDomainObjectWithDefaults,
-  setIndependentTimeConductorBounds
-} = require('../../../../appActions');
-const path = require('path');
+  setFixedIndependentTimeConductorBounds
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
-const LOCALSTORAGE_PATH = path.resolve(
-  __dirname,
-  '../../../../test-data/flexible_layout_with_child_layouts.json'
+const LOCALSTORAGE_PATH = fileURLToPath(
+  new URL('../../../../test-data/flexible_layout_with_child_layouts.json', import.meta.url)
 );
 
 test.describe('Flexible Layout', () => {
@@ -74,13 +73,13 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator and Clock to the Flexible Layout
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
-    await clockTreeItem.dragTo(page.locator('.c-fl__container.is-empty'));
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
+    await clockTreeItem.dragTo(page.locator('.c-fl-container.is-empty'));
     // Check that panes can be dragged while Flexible Layout is in Edit mode
     let dragWrapper = page
       .locator('.c-fl-container__frames-holder .c-fl-frame__drag-wrapper')
@@ -106,8 +105,8 @@ test.describe('Flexible Layout', () => {
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator and Clock to the Flexible Layout
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
-    await clockTreeItem.dragTo(page.locator('.c-fl__container.is-empty'));
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
+    await clockTreeItem.dragTo(page.locator('.c-fl-container.is-empty'));
 
     // Click on the first frame to select it
     await page.locator('.c-fl-container__frame').first().click();
@@ -123,7 +122,7 @@ test.describe('Flexible Layout', () => {
     expect(await page.locator('.c-fl--rows').count()).toEqual(0);
 
     // Change the layout to rows orientation
-    await page.getByTitle('Columns layout').click();
+    await page.getByTitle('Switch to rows layout').click();
 
     // Assert the layout is in rows orientation
     expect(await page.locator('.c-fl--rows').count()).toBeGreaterThan(0);
@@ -167,12 +166,12 @@ test.describe('Flexible Layout', () => {
   }) => {
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').first().click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -198,12 +197,12 @@ test.describe('Flexible Layout', () => {
     });
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await sineWaveGeneratorTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -235,7 +234,7 @@ test.describe('Flexible Layout', () => {
 
     await page.goto(flexibleLayout.url);
     // Edit Flexible Layout
-    await page.locator('[title="Edit"]').click();
+    await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
     await page.locator('.c-tree__item__view-control.c-disclosure-triangle').click();
@@ -243,17 +242,16 @@ test.describe('Flexible Layout', () => {
       name: new RegExp(exampleImageryObject.name)
     });
     // Add the Sine Wave Generator to the Flexible Layout and save changes
-    await exampleImageryTreeItem.dragTo(page.locator('.c-fl__container.is-empty').first());
+    await exampleImageryTreeItem.dragTo(page.locator('.c-fl-container.is-empty').first());
 
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // flip on independent time conductor
-    await setIndependentTimeConductorBounds(
-      page,
-      '2021-12-30 01:01:00.000Z',
-      '2021-12-30 01:11:00.000Z'
-    );
+    await setFixedIndependentTimeConductorBounds(page, {
+      start: '2021-12-30 01:01:00.000Z',
+      end: '2021-12-30 01:11:00.000Z'
+    });
 
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
@@ -267,7 +265,7 @@ test.describe('Flexible Layout', () => {
 
 test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
   test.use({
-    storageState: path.resolve(__dirname, LOCALSTORAGE_PATH)
+    storageState: LOCALSTORAGE_PATH
   });
 
   test.beforeEach(async ({ page }) => {
@@ -277,40 +275,43 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
       .filter({ hasText: 'Parent Flexible Layout Flexible Layout' })
       .first()
       .click();
-    await page.getByLabel('Edit').click();
+    await page.getByLabel('Edit Object').click();
   });
   test('Add/Remove Container', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7234'
     });
-    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(2);
-    await page.getByRole('group', { name: 'Container' }).nth(1).click();
+
+    const containerHandles = page.getByRole('columnheader', { name: 'Handle' });
+    expect(await containerHandles.count()).toEqual(2);
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
     await page.getByTitle('Add Container').click();
-    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(3);
+    expect(await containerHandles.count()).toEqual(3);
     await page.getByTitle('Remove Container').click();
-    await expect(page.getByRole('dialog')).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK' }).click();
-    expect(await page.getByRole('group', { name: 'Container' }).count()).toEqual(2);
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    expect(await containerHandles.count()).toEqual(2);
   });
   test('Remove Frame', async ({ page }) => {
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(2);
     await page.getByRole('group', { name: 'Child Layout 1' }).click();
     await page.getByTitle('Remove Frame').click();
-    await expect(page.getByRole('dialog')).toHaveText(
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will remove this frame from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK' }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
-    await page.getByRole('group', { name: 'Container' }).nth(1).click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
-    await page.getByTitle('Columns layout').click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(1);
-    await page.getByTitle('Rows layout').click();
-    expect(await page.locator('.c-fl--rows').count()).toEqual(0);
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    const flexRows = page.getByLabel('Flexible Layout Row');
+    expect(await flexRows.count()).toEqual(0);
+    await page.getByTitle('Switch to rows layout').click();
+    expect(await flexRows.count()).toEqual(1);
+    await page.getByTitle('Switch to columns layout').click();
+    expect(await flexRows.count()).toEqual(0);
   });
 });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,8 +25,12 @@
  *
  */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, getCanvasPixels } = require('../../../../appActions');
+import {
+  createDomainObjectWithDefaults,
+  getCanvasPixels,
+  setRealTimeMode
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Rendering', () => {
   let sineWaveGeneratorObject;
@@ -50,6 +54,34 @@ test.describe('Plot Rendering', () => {
       createMineFolderRequests.push(req);
     });
     expect(createMineFolderRequests.length).toEqual(0);
+    await page.getByLabel('Plot Canvas').hover();
+  });
+
+  test('Time conductor synchronizes with plot time range when that plot control is clicked', async ({
+    page
+  }) => {
+    // Navigate to Sine Wave Generator
+    await page.goto(sineWaveGeneratorObject.url);
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on pause control
+    await page.getByTitle('Pause incoming real-time data').click();
+
+    // expect plot to be paused
+    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on synchronize with time conductor
+    await page.getByTitle('Synchronize Time Conductor').click();
+
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+
+    //confirm that you're now in fixed mode with the correct range
+    await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
   });
 
   test('Plot is rendered when infinity values exist', async ({ page }) => {
@@ -73,7 +105,7 @@ test.describe('Plot Rendering', () => {
 async function editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject) {
   await page.goto(sineWaveGeneratorObject.url);
   // Edit SWG properties to include infinity values
-  await page.locator('[title="More options"]').click();
+  await page.locator('[title="More actions"]').click();
   await page.locator('[title="Edit properties of this object."]').click();
   await page
     .getByRole('switch', {

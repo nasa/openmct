@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,36 +20,41 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="plotWrapper" class="c-plot holder holder-plot has-control-bar" :class="staleClass">
+  <div
+    ref="plotWrapper"
+    class="c-plot holder holder-plot has-control-bar"
+    :class="isStale && 'is-stale'"
+  >
     <div
       ref="plotContainer"
       class="l-view-section u-style-receiver js-style-receiver"
-      :class="{ 's-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced' }"
+      aria-label="Plot Container Style Target"
+      :class="{
+        's-status-timeconductor-unsynced': status === 'timeconductor-unsynced'
+      }"
     >
-      <progress-bar
+      <ProgressBar
         v-show="!!loading"
         class="c-telemetry-table__progress-bar"
         :model="{ progressPerc: null }"
       />
-      <mct-plot
+      <MctPlot
         ref="mctPlot"
         :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
         :init-grid-lines="gridLinesProp"
         :init-cursor-guide="cursorGuide"
         :options="options"
         :limit-line-labels="limitLineLabelsProp"
-        :parent-y-tick-width="parentYTickWidth"
         :color-palette="colorPalette"
         @loading-updated="loadingUpdated"
         @status-updated="setStatus"
         @config-loaded="updateReady"
         @lock-highlight-point="lockHighlightPointUpdated"
         @highlights="highlightsUpdated"
-        @plot-y-tick-width="onYTickWidthChange"
         @cursor-guide="onCursorGuideChange"
         @grid-lines="onGridLinesChange"
       >
-        <plot-legend
+        <PlotLegend
           v-if="configReady && hideLegend === false"
           :cursor-locked="lockHighlightPoint"
           :highlights="highlights"
@@ -57,7 +62,7 @@
           @expanded="updateExpanded"
           @position="updatePosition"
         />
-      </mct-plot>
+      </MctPlot>
     </div>
   </div>
 </template>
@@ -65,10 +70,10 @@
 <script>
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import ImageExporter from '../../exporters/ImageExporter';
+import ImageExporter from '../../exporters/ImageExporter.js';
 import ProgressBar from '../../ui/components/ProgressBar.vue';
 import PlotLegend from './legend/PlotLegend.vue';
-import eventHelpers from './lib/eventHelpers';
+import eventHelpers from './lib/eventHelpers.js';
 import MctPlot from './MctPlot.vue';
 
 export default {
@@ -78,7 +83,7 @@ export default {
     PlotLegend
   },
   mixins: [stalenessMixin],
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     options: {
       type: Object,
@@ -112,16 +117,6 @@ export default {
         return undefined;
       }
     },
-    parentYTickWidth: {
-      type: Object,
-      default() {
-        return {
-          leftTickWidth: 0,
-          rightTickWidth: 0,
-          hasMultipleLeftAxes: false
-        };
-      }
-    },
     hideLegend: {
       type: Boolean,
       default() {
@@ -135,7 +130,6 @@ export default {
     'grid-lines',
     'highlights',
     'config-loaded',
-    'plot-y-tick-width',
     'cursor-guide'
   ],
   data() {
@@ -157,9 +151,6 @@ export default {
     gridLinesProp() {
       return this.gridLines ?? !this.options.compact;
     },
-    staleClass() {
-      return this.isStale ? 'is-stale' : '';
-    },
     plotLegendPositionClass() {
       return this.position ? `plot-legend-${this.position}` : '';
     },
@@ -169,14 +160,6 @@ export default {
       } else {
         return 'plot-legend-collapsed';
       }
-    }
-  },
-  watch: {
-    gridLines(newGridLines) {
-      this.gridLines = newGridLines;
-    },
-    cursorGuide(newCursorGuide) {
-      this.cursorGuide = newCursorGuide;
     }
   },
   created() {
@@ -197,9 +180,14 @@ export default {
 
       if (this.compositionCollection) {
         this.compositionCollection.on('add', this.subscribeToStaleness);
-        this.compositionCollection.on('remove', this.triggerUnsubscribeFromStaleness);
+        this.compositionCollection.on('remove', this.removeSubscription);
         this.compositionCollection.load();
       }
+    },
+    removeSubscription(identifier) {
+      this.triggerUnsubscribeFromStaleness({
+        identifier
+      });
     },
     loadingUpdated(loading) {
       this.loading = loading;
@@ -208,19 +196,23 @@ export default {
     destroy() {
       if (this.compositionCollection) {
         this.compositionCollection.off('add', this.subscribeToStaleness);
-        this.compositionCollection.off('remove', this.triggerUnsubscribeFromStaleness);
+        this.compositionCollection.off('remove', this.removeSubscription);
       }
 
       this.imageExporter = null;
       this.stopListening();
     },
-    exportJPG() {
+    exportJPG(filename) {
       const plotElement = this.$refs.plotContainer;
-      this.imageExporter.exportJPG(plotElement, 'plot.jpg', 'export-plot');
+      filename = filename ?? `${this.domainObject.name} - plot`;
+
+      this.imageExporter.exportJPG(plotElement, filename, 'export-plot');
     },
-    exportPNG() {
+    exportPNG(filename) {
       const plotElement = this.$refs.plotContainer;
-      this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
+      filename = filename ?? `${this.domainObject.name} - plot`;
+
+      this.imageExporter.exportPNG(plotElement, filename, 'export-plot');
     },
     setStatus(status) {
       this.status = status;
@@ -251,9 +243,6 @@ export default {
     updateReady(ready) {
       this.configReady = ready;
       this.$emit('config-loaded', ...arguments);
-    },
-    onYTickWidthChange() {
-      this.$emit('plot-y-tick-width', ...arguments);
     },
     onCursorGuideChange() {
       this.$emit('cursor-guide', ...arguments);

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -41,7 +41,7 @@
       @click.capture="itemClick"
       @contextmenu.capture="handleContextMenu"
     >
-      <view-control
+      <ViewControl
         ref="action"
         class="c-tree__item__view-control"
         :domain-object="node.object"
@@ -49,7 +49,7 @@
         :enabled="!activeSearch && hasComposition"
         @input="itemAction()"
       />
-      <object-label
+      <ObjectLabel
         ref="objectLabel"
         :domain-object="node.object"
         :object-path="node.objectPath"

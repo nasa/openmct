@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -391,7 +391,7 @@ class InMemorySearchProvider {
    * Dispatch a search query to the worker and return a queryId.
    *
    * @private
-   * @returns {String} a unique query Id for the query.
+   * @returns {string} a unique query Id for the query.
    */
   #dispatchSearchToWorker({ queryId, searchType, query, maxResults }) {
     const message = {

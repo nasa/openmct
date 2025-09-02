@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,10 +23,11 @@
 <template>
   <div
     v-if="loaded"
-    class="c-plot c-plot--stacked holder holder-plot has-control-bar"
+    class="c-plot c-plot--stacked holder holder-plot has-control-bar u-style-receiver js-style-receiver"
     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
+    aria-label="Stacked Plot Style Target"
   >
-    <plot-legend
+    <PlotLegend
       v-if="compositionObjectsConfigLoaded && showLegendsForChildren === false"
       :cursor-locked="!!lockHighlightPoint"
       :highlights="highlights"
@@ -36,7 +37,7 @@
       @position="updatePosition"
     />
     <div class="l-view-section">
-      <stacked-plot-item
+      <StackedPlotItem
         v-for="objectWrapper in compositionObjects"
         ref="stackedPlotItems"
         :key="objectWrapper.keyString"
@@ -47,9 +48,7 @@
         :color-palette="colorPalette"
         :cursor-guide="cursorGuide"
         :show-limit-line-labels="showLimitLineLabels"
-        :parent-y-tick-width="maxTickWidth"
         :hide-legend="showLegendsForChildren === false"
-        @plot-y-tick-width="onYTickWidthChange"
         @loading-updated="loadingUpdated"
         @cursor-guide="onCursorGuideChange"
         @grid-lines="onGridLinesChange"
@@ -62,13 +61,16 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 import ColorPalette from '@/ui/color/ColorPalette';
 
-import ImageExporter from '../../../exporters/ImageExporter';
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import ImageExporter from '../../../exporters/ImageExporter.js';
+import { useAlignment } from '../../../ui/composables/alignmentContext.js';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotLegend from '../legend/PlotLegend.vue';
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 import StackedPlotItem from './StackedPlotItem.vue';
 
 export default {
@@ -76,7 +78,7 @@ export default {
     StackedPlotItem,
     PlotLegend
   },
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   props: {
     options: {
       type: Object,
@@ -85,6 +87,18 @@ export default {
       }
     }
   },
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { alignment: alignmentData, reset: resetAlignment } = useAlignment(
+      domainObject,
+      objectPath,
+      openmct
+    );
+
+    return { alignmentData, resetAlignment };
+  },
   data() {
     return {
       hideExportButtons: false,
@@ -92,7 +106,6 @@ export default {
       gridLines: true,
       configLoaded: {},
       compositionObjects: [],
-      tickWidthMap: {},
       loaded: false,
       lockHighlightPoint: false,
       highlights: [],
@@ -122,28 +135,6 @@ export default {
       }
 
       return legendExpandedStateClass;
-    },
-    /**
-     * Returns the maximum width of the left and right y axes ticks of this stacked plots children
-     * @returns {{rightTickWidth: number, leftTickWidth: number, hasMultipleLeftAxes: boolean}}
-     */
-    maxTickWidth() {
-      const tickWidthValues = Object.values(this.tickWidthMap);
-      const maxLeftTickWidth = Math.max(
-        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.leftTickWidth)
-      );
-      const maxRightTickWidth = Math.max(
-        ...tickWidthValues.map((tickWidthItem) => tickWidthItem.rightTickWidth)
-      );
-      const hasMultipleLeftAxes = tickWidthValues.some(
-        (tickWidthItem) => tickWidthItem.hasMultipleLeftAxes === true
-      );
-
-      return {
-        leftTickWidth: maxLeftTickWidth,
-        rightTickWidth: maxRightTickWidth,
-        hasMultipleLeftAxes
-      };
     }
   },
   beforeUnmount() {
@@ -208,6 +199,7 @@ export default {
       }
     },
     destroy() {
+      this.resetAlignment();
       this.composition.off('add', this.addChild);
       this.composition.off('remove', this.removeChild);
       this.composition.off('reorder', this.compositionReorder);
@@ -218,12 +210,12 @@ export default {
     },
 
     addChild(child) {
-      const id = this.openmct.objects.makeKeyString(child.identifier);
+      if (this.openmct.objects.isMissing(child)) {
+        console.warn('Missing domain object for stacked plot: ', child);
+        return;
+      }
 
-      this.tickWidthMap[id] = {
-        leftTickWidth: 0,
-        rightTickWidth: 0
-      };
+      const id = this.openmct.objects.makeKeyString(child.identifier);
 
       this.compositionObjects.push({
         object: child,
@@ -234,8 +226,6 @@ export default {
 
     removeChild(childIdentifier) {
       const id = this.openmct.objects.makeKeyString(childIdentifier);
-
-      delete this.tickWidthMap[id];
 
       const childObj = this.compositionObjects.filter((c) => {
         const identifier = c.keyString;
@@ -277,48 +267,31 @@ export default {
       });
     },
 
-    resetTelemetryAndTicks(domainObject) {
+    resetTelemetry(domainObject) {
       this.compositionObjects = [];
-      this.tickWidthMap = {
-        leftTickWidth: 0,
-        rightTickWidth: 0
-      };
     },
 
-    exportJPG() {
+    exportJPG(filename) {
       this.hideExportButtons = true;
       const plotElement = this.$el;
+      filename = filename ?? `${this.domainObject.name} - stacked-plot`;
 
-      this.imageExporter.exportJPG(plotElement, 'stacked-plot.jpg', 'export-plot').finally(
+      this.imageExporter.exportJPG(plotElement, filename, 'export-plot').finally(
         function () {
           this.hideExportButtons = false;
         }.bind(this)
       );
     },
 
-    exportPNG() {
+    exportPNG(filename) {
       this.hideExportButtons = true;
-
       const plotElement = this.$el;
-
-      this.imageExporter.exportPNG(plotElement, 'stacked-plot.png', 'export-plot').finally(
+      filename = filename ?? `${this.domainObject.name} - stacked-plot`;
+      this.imageExporter.exportPNG(plotElement, filename, 'export-plot').finally(
         function () {
           this.hideExportButtons = false;
         }.bind(this)
       );
-    },
-    /**
-     * @typedef {Object} PlotYTickData
-     * @property {Number} leftTickWidth the width of the ticks for all the y axes on the left of the plot.
-     * @property {Number} rightTickWidth the width of the ticks for all the y axes on the right of the plot.
-     * @property {Boolean} hasMultipleLeftAxes whether or not there is more than one left y axis.
-     */
-    onYTickWidthChange(data, plotId) {
-      if (!Object.prototype.hasOwnProperty.call(this.tickWidthMap, plotId)) {
-        return;
-      }
-
-      this.tickWidthMap[plotId] = data;
     },
     legendHoverChanged(data) {
       this.showLimitLineLabels = data;

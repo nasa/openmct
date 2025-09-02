@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,8 @@ import {
   simulateKeyEvent
 } from 'utils/testing';
 import { nextTick } from 'vue';
+
+import { PREVIEW_ACTION_KEY } from '../../ui/preview/PreviewAction.js';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
@@ -81,11 +83,10 @@ describe('The Imagery View Layouts', () => {
   const START = Date.now();
   const COUNT = 10;
 
-  // let resolveFunction;
   let originalRouterPath;
   let telemetryPromise;
   let telemetryPromiseResolve;
-  let cleanupFirst;
+  let previewAction;
 
   let openmct;
   let parent;
@@ -172,8 +173,6 @@ describe('The Imagery View Layouts', () => {
 
   // this setups up the app
   beforeEach((done) => {
-    cleanupFirst = [];
-
     openmct = createOpenMct();
 
     telemetryPromise = new Promise((resolve) => {
@@ -192,6 +191,8 @@ describe('The Imagery View Layouts', () => {
 
       return telemetryPromise;
     });
+
+    previewAction = openmct.actions.getAction(PREVIEW_ACTION_KEY);
 
     parent = document.createElement('div');
     parent.style.width = '640px';
@@ -222,20 +223,11 @@ describe('The Imagery View Layouts', () => {
     openmct.startHeadless();
   });
 
-  afterEach((done) => {
+  afterEach(async () => {
     openmct.router.path = originalRouterPath;
+    document.body.removeChild(parent);
 
-    // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
-    // teardown, which causes problems
-    // This is hacky, we should find a better approach here.
-    setTimeout(() => {
-      //Cleanup code that needs to happen before dom elements start being destroyed
-      cleanupFirst.forEach((cleanup) => cleanup());
-      cleanupFirst = [];
-      document.body.removeChild(parent);
-
-      resetApplicationState(openmct).then(done).catch(done);
-    });
+    await resetApplicationState(openmct);
   });
 
   it('should provide an imagery time strip view when in a time strip', () => {
@@ -609,7 +601,7 @@ describe('The Imagery View Layouts', () => {
       imageryTimeView.show(child);
 
       componentView = imageryTimeView.getComponent().$refs.root;
-      spyOn(componentView.previewAction, 'invoke').and.callThrough();
+      spyOn(previewAction, 'invoke').and.callThrough();
 
       return nextTick();
     });
@@ -633,13 +625,12 @@ describe('The Imagery View Layouts', () => {
       imageWrapper[2].dispatchEvent(mouseDownEvent);
       await nextTick();
       const timestamp = imageWrapper[2].id.replace('wrapper-', '');
-      const mockInvoke = componentView.previewAction.invoke;
       // Make sure the function was called
-      expect(mockInvoke).toHaveBeenCalled();
+      expect(previewAction.invoke).toHaveBeenCalled();
 
       // Get the arguments of the first call
-      const firstArg = mockInvoke.calls.mostRecent().args[0];
-      const secondArg = mockInvoke.calls.mostRecent().args[1];
+      const firstArg = previewAction.invoke.calls.mostRecent().args[0];
+      const secondArg = previewAction.invoke.calls.mostRecent().args[1];
 
       // Compare the first argument
       expect(firstArg).toEqual([componentView.objectPath[0]]);

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -28,8 +28,10 @@
       role="tab"
       class="c-inspector__tab c-tab"
       :class="{ 'is-current': isSelected(tab) }"
+      tabindex="0"
       :title="tab.name"
       @click="selectTab(tab)"
+      @keydown.enter="selectTab(tab)"
     >
       <span class="c-inspector__tab-name c-tab__name">{{ tab.name }}</span>
     </div>
@@ -69,14 +71,18 @@ export default {
   },
   mounted() {
     this.updateSelection();
+    this.openmct.editor.on('isEditing', this.updateSelection);
     this.openmct.selection.on('change', this.updateSelection);
   },
   unmounted() {
+    this.openmct.editor.off('isEditing', this.updateSelection);
     this.openmct.selection.off('change', this.updateSelection);
   },
   methods: {
     updateSelection() {
+      const previousSelectedTab = this.selectedTab?.key;
       const inspectorViews = this.openmct.inspectorViews.get(this.openmct.selection.get());
+      const isEditing = this.openmct.editor.isEditing();
 
       this.tabs = inspectorViews.map((view) => {
         return {
@@ -86,6 +92,14 @@ export default {
           showTab: view.showTab
         };
       });
+
+      const stylesTabIndex = this.tabs.findIndex((tab) => tab.key === 'stylesInspectorView');
+
+      if (isEditing && previousSelectedTab === 'stylesInspectorView' && stylesTabIndex !== -1) {
+        this.selectTab(this.tabs[stylesTabIndex]);
+      } else {
+        this.selectTab(this.visibleTabs[0]);
+      }
     },
     isSelected(tab) {
       return this.selectedTab?.key === tab.key;

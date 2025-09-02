@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,12 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineCompositionPolicy from './TimelineCompositionPolicy';
-import timelineInterceptor from './timelineInterceptor';
-import TimelineViewProvider from './TimelineViewProvider';
+import getDefaultConfiguration from './configuration.js';
+import ExtendedLinesBus from './ExtendedLinesBus.js';
+import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
+import TimelineElementsViewProvider from './TimelineElementsViewProvider.js';
+import timelineInterceptor from './timelineInterceptor.js';
+import TimelineViewProvider from './TimelineViewProvider.js';
+const extendedLinesBus = new ExtendedLinesBus();
+
+export { extendedLinesBus };
 
 export default function () {
-  return function install(openmct) {
+  function install(openmct) {
     openmct.types.addType('time-strip', {
       name: 'Time Strip',
       key: 'time-strip',
@@ -35,14 +41,17 @@ export default function () {
       cssClass: 'icon-timeline',
       initialize: function (domainObject) {
         domainObject.composition = [];
-        domainObject.configuration = {
-          useIndependentTime: false
-        };
+        domainObject.configuration = getDefaultConfiguration();
       }
     });
     timelineInterceptor(openmct);
     openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
 
-    openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-  };
+    openmct.objectViews.addProvider(new TimelineViewProvider(openmct, extendedLinesBus));
+    openmct.inspectorViews.addProvider(new TimelineElementsViewProvider(openmct));
+  }
+
+  install.extendedLinesBus = extendedLinesBus;
+
+  return install;
 }

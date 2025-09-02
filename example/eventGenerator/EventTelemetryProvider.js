@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,8 +24,11 @@
  * Module defining EventTelemetryProvider. Created by chacskaylo on 06/18/2015.
  */
 
+import { SEVERITY_CSS } from './EventLimitProvider.js';
 import messages from './transcript.json';
 
+const DUR_MIN = 1000;
+const DUR_MAX = 10000;
 class EventTelemetryProvider {
   constructor() {
     this.defaultSize = 25;
@@ -33,14 +36,23 @@ class EventTelemetryProvider {
 
   generateData(firstObservedTime, count, startTime, duration, name) {
     const millisecondsSinceStart = startTime - firstObservedTime;
-    const utc = startTime + count * duration;
+    const randStartDelay = Math.max(DUR_MIN, Math.random() * DUR_MAX);
+    const utc = startTime + randStartDelay + count * duration;
     const ind = count % messages.length;
     const message = messages[ind] + ' - [' + millisecondsSinceStart + ']';
+    // pick a random severity level + 1 for an undefined level so we can do nominal
+    const severity =
+      Math.random() > 0.4
+        ? Object.keys(SEVERITY_CSS)[
+            Math.floor(Math.random() * Object.keys(SEVERITY_CSS).length + 1)
+          ]
+        : undefined;
 
     return {
       name,
       utc,
-      message
+      message,
+      severity
     };
   }
 
@@ -53,7 +65,7 @@ class EventTelemetryProvider {
   }
 
   subscribe(domainObject, callback) {
-    const duration = domainObject.telemetry.duration * 1000;
+    const duration = domainObject.telemetry.duration * DUR_MIN;
     const firstObservedTime = Date.now();
     let count = 0;
 
@@ -78,7 +90,7 @@ class EventTelemetryProvider {
   request(domainObject, options) {
     let start = options.start;
     const end = Math.min(Date.now(), options.end); // no future values
-    const duration = domainObject.telemetry.duration * 1000;
+    const duration = domainObject.telemetry.duration * DUR_MIN;
     const size = options.size ? options.size : this.defaultSize;
     const data = [];
     const firstObservedTime = options.start;

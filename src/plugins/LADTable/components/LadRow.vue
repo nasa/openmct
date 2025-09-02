@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,37 +24,54 @@
   <tr
     ref="tableRow"
     class="js-lad-table__body__row c-table__selectable-row"
+    aria-label="lad row"
     @click="clickedRow"
     @contextmenu.prevent="showContextMenu"
   >
     <td
       ref="tableCell"
+      scope="row"
+      aria-label="lad name"
       class="js-first-data"
       @mouseover.ctrl="showToolTip"
       @mouseleave="hideToolTip"
     >
       {{ domainObject.name }}
     </td>
-    <td v-if="showTimestamp" class="js-second-data">{{ formattedTimestamp }}</td>
-    <td class="js-third-data" :class="valueClasses">{{ value }}</td>
+    <td v-if="showTimestamp" aria-label="lad timestamp" class="js-second-data">
+      {{ formattedTimestamp }}
+    </td>
+    <td aria-label="lad value" class="js-third-data" :class="valueClasses">{{ value }}</td>
     <td v-if="hasUnits" class="js-units">
       {{ unit }}
     </td>
-    <td v-if="showType" class="js-type-data">{{ typeLabel }}</td>
-    <td v-for="limit in formattedLimitValues" :key="limit.key" class="js-limit-data">
+    <td v-if="showType" aria-label="lad type" class="js-type-data">{{ typeLabel }}</td>
+    <td
+      v-for="limit in formattedLimitValues"
+      :key="limit.key"
+      aria-label="lad limit value"
+      class="js-limit-data"
+    >
       {{ limit.value }}
     </td>
   </tr>
 </template>
 
 <script>
-const CONTEXT_MENU_ACTIONS = ['viewDatumAction', 'viewHistoricalData', 'remove'];
+import { objectPathToUrl } from '/src/tools/url.js';
+import { REMOVE_ACTION_KEY } from '@/plugins/remove/RemoveAction.js';
+import { VIEW_DATUM_ACTION_KEY } from '@/plugins/viewDatumAction/ViewDatumAction.js';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+import { VIEW_HISTORICAL_DATA_ACTION_KEY } from '@/ui/preview/ViewHistoricalDataAction.js';
+
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
+
 const BLANK_VALUE = '---';
-
-import identifierToString from '/src/tools/url';
-import PreviewAction from '@/ui/preview/PreviewAction.js';
-
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+const CONTEXT_MENU_ACTIONS = [
+  VIEW_DATUM_ACTION_KEY,
+  VIEW_HISTORICAL_DATA_ACTION_KEY,
+  REMOVE_ACTION_KEY
+];
 
 export default {
   mixins: [tooltipHelpers],
@@ -203,7 +220,7 @@ export default {
 
     this.openmct.time.on('timeSystem', this.updateTimeSystem);
 
-    this.timestampKey = this.openmct.time.timeSystem().key;
+    this.timestampKey = this.openmct.time.getTimeSystem().key;
 
     this.valueMetadata = undefined;
 
@@ -227,14 +244,12 @@ export default {
       this.setUnit();
     }
 
-    this.previewAction = new PreviewAction(this.openmct);
-    this.previewAction.on('isVisible', this.togglePreviewState);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
   },
   unmounted() {
     this.openmct.time.off('timeSystem', this.updateTimeSystem);
     this.telemetryCollection.off('add', this.setLatestValues);
     this.telemetryCollection.off('clear', this.resetValues);
-    this.previewAction.off('isVisible', this.togglePreviewState);
 
     this.telemetryCollection.destroy();
   },
@@ -253,7 +268,7 @@ export default {
         event.preventDefault();
         this.preview(this.objectPath);
       } else {
-        const resultUrl = identifierToString(this.openmct, this.objectPath);
+        const resultUrl = objectPathToUrl(this.openmct, this.objectPath);
         this.openmct.router.navigate(resultUrl);
       }
     },

@@ -1,19 +1,20 @@
+import { saveAs } from 'file-saver';
 import Moment from 'moment';
-import { saveAs } from 'saveAs';
 
-import { NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants';
+import { NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE } from '../notebook-constants.js';
 const UNKNOWN_USER = 'Unknown';
 const UNKNOWN_TIME = 'Unknown';
 const ALLOWED_TYPES = [NOTEBOOK_TYPE, RESTRICTED_NOTEBOOK_TYPE];
+const EXPORT_NOTEBOOK_AS_TEXT_ACTION_KEY = 'exportNotebookAsText';
 
-export default class ExportNotebookAsTextAction {
+class ExportNotebookAsTextAction {
   constructor(openmct) {
     this.openmct = openmct;
 
     this.cssClass = 'icon-export';
     this.description = 'Exports notebook contents as a text file';
     this.group = 'export';
-    this.key = 'exportNotebookAsText';
+    this.key = EXPORT_NOTEBOOK_AS_TEXT_ACTION_KEY;
     this.name = 'Export Notebook as Text';
   }
 
@@ -179,3 +180,7 @@ export default class ExportNotebookAsTextAction {
     return this.onSave(changes, objectPath);
   }
 }
+
+export { EXPORT_NOTEBOOK_AS_TEXT_ACTION_KEY };
+
+export default ExportNotebookAsTextAction;

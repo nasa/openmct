@@ -1,6 +1,6 @@
 import mount from 'utils/mount';
 
-import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants';
+import { SCATTER_PLOT_INSPECTOR_KEY, SCATTER_PLOT_KEY } from '../scatterPlotConstants.js';
 import PlotOptions from './PlotOptions.vue';
 
 export default function ScatterPlotInspectorViewProvider(openmct) {
@@ -40,7 +40,7 @@ export default function ScatterPlotInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {

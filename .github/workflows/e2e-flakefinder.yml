@@ -1,0 +1,63 @@
+name: 'pr:e2e:flakefinder'
+
+on:
+#  push:
+#    branches: master
+  workflow_dispatch:
+#  pull_request:
+#    types:
+#      - labeled
+#      - opened
+#  schedule:
+#    - cron: '0 0 * * *'
+
+jobs:
+  e2e-flakefinder:
+    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e:flakefinder') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/hydrogen'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npx playwright@1.48.1 install
+      - run: npm ci --no-audit --progress=false
+
+      - name: Run E2E Tests (Repeated 10 Times)
+        run: npm run test:e2e:ci -- --retries=0 --repeat-each=10 --max-failures=50
+
+      - name: Archive test results
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-flakefinder-test-results
+          path: test-results
+          overwrite: true
+
+      - name: Remove pr:e2e:flakefinder label (if present)
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labelToRemove = 'pr:e2e:flakefinder';
+            try {
+                await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: labelToRemove
+                });
+            } catch (error) {
+                core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
+            }

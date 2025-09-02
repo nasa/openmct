@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,8 +23,6 @@
 import mount from 'utils/mount';
 
 import ConditionSet from './components/ConditionSet.vue';
-
-const DEFAULT_VIEW_PRIORITY = 100;
 
 export default class ConditionSetViewProvider {
   constructor(openmct) {
@@ -85,15 +83,16 @@ export default class ConditionSetViewProvider {
         if (_destroy) {
           _destroy();
         }
+        component = null;
       }
     };
   }
 
   priority(domainObject) {
     if (domainObject.type === 'conditionSet') {
-      return Number.MAX_VALUE;
+      return this.openmct.priority.HIGHEST;
     } else {
-      return DEFAULT_VIEW_PRIORITY;
+      return this.openmct.priority.DEFAULT;
     }
   }
 }

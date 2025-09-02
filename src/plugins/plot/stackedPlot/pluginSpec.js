@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 import {
   createMouseEvent,
@@ -31,10 +31,10 @@ import {
 } from 'utils/testing';
 import { nextTick, ref } from 'vue';
 
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
 import PlotOptions from '../inspector/PlotOptions.vue';
-import PlotVuePlugin from '../plugin';
+import PlotVuePlugin from '../plugin.js';
 import StackedPlot from './StackedPlot.vue';
 
 describe('the plugin', function () {
@@ -330,7 +330,7 @@ describe('the plugin', function () {
           provide: {
             openmct,
             domainObject: stackedPlotObject,
-            path: [stackedPlotObject],
+            objectPath: [stackedPlotObject],
             renderWhenVisible
           },
           template: '<stacked-plot ref="stackedPlotRef"></stacked-plot>'
@@ -360,13 +360,15 @@ describe('the plugin', function () {
       expect(legend[0].innerHTML).toEqual('Test Object');
     });
 
-    it('Renders an expanded legend for every telemetry', () => {
+    it('Renders an expanded legend for every telemetry', async () => {
       let legendControl = element.querySelector(
         '.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle'
       );
       const clickEvent = createMouseEvent('click');
 
       legendControl.dispatchEvent(clickEvent);
+
+      await nextTick();
 
       let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
       expect(legend.length).toBe(6);
@@ -490,7 +492,7 @@ describe('the plugin', function () {
         max: 10
       });
       expect(
-        plotViewComponentObject.$refs.stackedPlotItems[0].component.$refs.plotComponent.$refs.mctPlot.xScale.domain()
+        plotViewComponentObject.$refs.stackedPlotItems[0].$refs.plotComponent.$refs.mctPlot.xScale.domain()
       ).toEqual({
         min: 0,
         max: 10
@@ -507,8 +509,7 @@ describe('the plugin', function () {
       });
 
       const yAxesScales =
-        plotViewComponentObject.$refs.stackedPlotItems[0].component.$refs.plotComponent.$refs
-          .mctPlot.yScale;
+        plotViewComponentObject.$refs.stackedPlotItems[0].$refs.plotComponent.$refs.mctPlot.yScale;
       yAxesScales.forEach((yAxisScale) => {
         expect(yAxisScale.scale.domain()).toEqual({
           min: 10,
@@ -523,7 +524,7 @@ describe('the plugin', function () {
       );
       let hasStyles = 0;
       conditionalStylesContainer.forEach((el) => {
-        if (el.style.backgroundColor !== '') {
+        if (el.style.backgroundColor) {
           hasStyles++;
         }
       });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,7 +33,11 @@ class CouchSearchProvider {
   #bulkPromise;
   #batchIds;
   #lastAbortSignal;
-
+  #isSearchByNameViewDefined;
+  /**
+   *
+   * @param {import('./CouchObjectProvider').default} couchObjectProvider
+   */
   constructor(couchObjectProvider) {
     this.couchObjectProvider = couchObjectProvider;
     this.searchTypes = couchObjectProvider.openmct.objects.SEARCH_TYPES;
@@ -51,6 +55,10 @@ class CouchSearchProvider {
     return this.supportedSearchTypes.includes(searchType);
   }
 
+  isReadOnly() {
+    return true;
+  }
+
   search(query, abortSignal, searchType) {
     if (searchType === this.searchTypes.OBJECTS) {
       return this.searchForObjects(query, abortSignal);
@@ -63,18 +71,47 @@ class CouchSearchProvider {
     }
   }
 
-  searchForObjects(query, abortSignal) {
-    const filter = {
-      selector: {
-        model: {
-          name: {
-            $regex: `(?i)${query}`
+  #isOptimizedSearchByNameSupported() {
+    let isOptimizedSearchAvailable;
+
+    if (this.#isSearchByNameViewDefined === undefined) {
+      isOptimizedSearchAvailable = this.#isSearchByNameViewDefined =
+        this.couchObjectProvider.isViewDefined('object_names', 'object_names');
+    } else {
+      isOptimizedSearchAvailable = this.#isSearchByNameViewDefined;
+    }
+
+    return isOptimizedSearchAvailable;
+  }
+
+  async searchForObjects(query, abortSignal) {
+    const preparedQuery = query.toLowerCase().trim();
+    const supportsOptimizedSearchByName = await this.#isOptimizedSearchByNameSupported();
+
+    if (supportsOptimizedSearchByName) {
+      return this.couchObjectProvider.getObjectsByView(
+        {
+          designDoc: 'object_names',
+          viewName: 'object_names',
+          startKey: preparedQuery,
+          endKey: preparedQuery + `\ufff0`,
+          objectIdField: 'value',
+          limit: 1000
+        },
+        abortSignal
+      );
+    } else {
+      const filter = {
+        selector: {
+          model: {
+            name: {
+              $regex: `(?i)${query}`
+            }
           }
         }
-      }
-    };
-
-    return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+      };
+      return this.couchObjectProvider.getObjectsByFilter(filter);
+    }
   }
 
   async #deferBatchAnnotationSearch() {

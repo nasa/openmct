@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,56 +20,70 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-  function StateGeneratorProvider() {}
+export default function StateGeneratorProvider() {}
 
-  function pointForTimestamp(timestamp, duration, name) {
-    return {
-      name: name,
-      utc: Math.floor(timestamp / duration) * duration,
-      value: Math.floor(timestamp / duration) % 2
-    };
-  }
-
-  StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
-    return domainObject.type === 'example.state-generator';
+function pointForTimestamp(timestamp, duration, name) {
+  return {
+    name: name,
+    utc: Math.floor(timestamp / duration) * duration,
+    value: Math.floor(timestamp / duration) % 2
   };
+}
 
-  StateGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-    var duration = domainObject.telemetry.duration * 1000;
+StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
+  return domainObject.type === 'example.state-generator';
+};
 
-    var interval = setInterval(function () {
-      var now = Date.now();
-      var datum = pointForTimestamp(now, duration, domainObject.name);
+StateGeneratorProvider.prototype.subscribe = function (domainObject, callback, options) {
+  var duration = domainObject.telemetry.duration * 1000;
+
+  var interval = setInterval(() => {
+    var now = Date.now();
+    var datum = pointForTimestamp(now, duration, domainObject.name);
+    if (!this.shouldBeFiltered(datum, options)) {
       datum.value = String(datum.value);
       callback(datum);
-    }, duration);
-
-    return function () {
-      clearInterval(interval);
-    };
-  };
-
-  StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
-    return domainObject.type === 'example.state-generator';
-  };
-
-  StateGeneratorProvider.prototype.request = function (domainObject, options) {
-    var start = options.start;
-    var end = Math.min(Date.now(), options.end); // no future values
-    var duration = domainObject.telemetry.duration * 1000;
-    if (options.strategy === 'latest' || options.size === 1) {
-      start = end;
     }
+  }, duration);
 
-    var data = [];
-    while (start <= end && data.length < 5000) {
-      data.push(pointForTimestamp(start, duration, domainObject.name));
-      start += duration;
-    }
-
-    return Promise.resolve(data);
+  return function () {
+    clearInterval(interval);
   };
+};
 
-  return StateGeneratorProvider;
-});
+StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
+  return domainObject.type === 'example.state-generator';
+};
+
+StateGeneratorProvider.prototype.request = function (domainObject, options) {
+  var start = options.start;
+  var end = Math.min(Date.now(), options.end); // no future values
+  var duration = domainObject.telemetry.duration * 1000;
+  if (options.strategy === 'latest' || options.size === 1) {
+    start = end;
+  }
+
+  var data = [];
+  while (start <= end && data.length < 5000) {
+    const point = pointForTimestamp(start, duration, domainObject.name);
+
+    if (!this.shouldBeFiltered(point, options)) {
+      data.push(point);
+    }
+    start += duration;
+  }
+
+  return Promise.resolve(data);
+};
+
+StateGeneratorProvider.prototype.shouldBeFiltered = function (point, options) {
+  const valueToFilter = options?.filters?.state?.equals?.[0];
+
+  if (!valueToFilter) {
+    return false;
+  }
+
+  const { value } = point;
+
+  return value !== Number(valueToFilter);
+};

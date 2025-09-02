@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -115,7 +115,7 @@ describe('EditPropertiesAction plugin', () => {
       expect(notes.value).toEqual(domainObject.notes);
 
       const buttons = form.querySelectorAll('button');
-      expect(buttons[0].textContent.trim()).toEqual('OK');
+      expect(buttons[0].textContent.trim()).toEqual('Ok');
       expect(buttons[1].textContent.trim()).toEqual('Cancel');
 
       const clickEvent = createMouseEvent('click');
@@ -159,7 +159,7 @@ describe('EditPropertiesAction plugin', () => {
       const notes = form.querySelector('textArea');
 
       const buttons = form.querySelectorAll('button');
-      expect(buttons[0].textContent.trim()).toEqual('OK');
+      expect(buttons[0].textContent.trim()).toEqual('Ok');
       expect(buttons[1].textContent.trim()).toEqual('Cancel');
 
       expect(title.value).toEqual(domainObject.name);

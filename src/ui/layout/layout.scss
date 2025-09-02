@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,6 +29,7 @@
   display: flex;
   flex-flow: column nowrap;
   overflow: hidden;
+
 
   &__drawer {
     background: $drawerBg;
@@ -97,6 +98,7 @@
       .l-shell__main-.l-shell__main-view-browse-bar {
         position: relative;
       }
+
       // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
       .l-shell__time-conductor,
       .l-shell__main-container {
@@ -107,9 +109,29 @@
         width: auto;
       }
 
+      // Using `position: absolute` due to flex having repaint issues with the Time Conductor, #5247
       .l-shell__main-container {
         top: $shellMainBrowseBarH + $interiorMarginLg;
         bottom: $shellTimeConductorH + $interiorMargin;
+
+        &.--has-toolbar {
+          .is-editing & {
+            top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
+          }
+        }
+
+        > .c-object-view {
+          border: 1px dashed transparent;
+          .is-editing & {
+            border-color: rgba($editUIAreaBaseColor, 0.6);
+          }
+
+          &[s-selected] {
+            .is-editing & {
+              border-color: $editUIAreaBaseColor
+            }
+          }
+        }
       }
 
       @include phonePortrait() {
@@ -171,14 +193,13 @@
     }
   }
 
-  &__head,
+  //&__head,
   &__pane-inspector {
     body.mobile & {
       display: none;
     }
   }
 
-  &__head,
   &__status {
     flex: 0 0 auto;
     display: flex;
@@ -188,6 +209,18 @@
   &__main-view-browse-bar {
     flex: 0 0 auto;
     margin-bottom: $interiorMargin; // Needs some additional visual separation
+  }
+
+  &__head {
+    body.mobile & {
+      .c-create-button,
+      .c-create-menu,
+      .c-indicator,
+      .c-icon-button {
+        // Making status area visible, but hiding some widgets for mobile.
+        display: none;
+      }
+    }
   }
 
   body.mobile & .l-shell__main-view-browse-bar {
@@ -200,12 +233,11 @@
   &__head {
     align-items: center;
     background: $colorHeadBg;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: min-content 1fr 3fr repeat(3, min-content);
+    grid-column-gap: $interiorMargin;
+    min-height: 34px;
     padding: $interiorMargin $interiorMargin + 2;
-
-    > [class*='__'] + [class*='__'] {
-      margin-left: $interiorMargin;
-    }
 
     .l-shell__head__collapse-button {
       color: $colorBtnMajorBg;
@@ -228,8 +260,6 @@
     &-section {
       // Subdivides elements across the head
       display: flex;
-      flex: 0 1 auto;
-      padding: 0 $interiorMargin;
     }
 
     &--expanded {
@@ -244,6 +274,9 @@
     border-right: $brdr;
     border-left: $brdr;
     align-items: start;
+    $p: $interiorMarginSm;
+    padding-left: $p;
+    padding-right: $p;
   }
 
   &__create-button,
@@ -252,16 +285,21 @@
   }
 
   &__create-button {
-    margin-right: $interiorMarginLg;
+    body.mobile & {
+      // Fixes weird gap in mobile status area
+      margin-right: 0px;
+    }
   }
 
   &__indicators {
-    flex: 1 1 auto;
     flex-wrap: wrap;
+    font-size: 11px;
     justify-content: flex-end;
 
-    .c-indicator .label {
-      font-size: 0.9em;
+    .l-shell__head--expanded & {
+      // Force elements to wrap down when width constrained
+      height: 24px;
+      overflow: hidden;
     }
   }
 
@@ -304,6 +342,15 @@
       > .l-pane {
         padding-top: 0;
         padding-bottom: 0;
+      }
+
+      .l-pane__expand-button__label {
+        // Add a plus icon before the label
+        &:before {
+          font-family: symbolsfont;
+          content: $glyph-icon-plus;
+          display: inline-block;
+        }
       }
     }
 
@@ -351,31 +398,11 @@
   }
 }
 
-.is-editing {
-  .l-shell__main-container {
-    $m: 3px;
-    box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
-    margin-left: $m;
-    margin-right: $m;
-    top: $shellToolBarH + $shellMainBrowseBarH + $interiorMarginLg !important;
-
-    &[s-selected] {
-      // Provide a clearer selection context articulation for the main edit area
-      box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdwSelected;
-    }
-  }
-}
-
 /************************** BROWSE BAR */
 .l-browse-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  //[class*="__"] {
-  //    // Removes extraneous horizontal white space
-  //    display: inline-flex;
-  //}
 
   > * + * {
     margin-left: $interiorMarginSm;

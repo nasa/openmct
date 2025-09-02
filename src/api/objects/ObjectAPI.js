@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,52 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
-import utils from 'objectUtils';
+import { EventEmitter } from 'eventemitter3';
+import { identifierEquals, makeKeyString, parseKeyString, refresh } from 'objectUtils';
 
-import ConflictError from './ConflictError';
-import InMemorySearchProvider from './InMemorySearchProvider';
-import InterceptorRegistry from './InterceptorRegistry';
-import MutableDomainObject from './MutableDomainObject';
-import RootObjectProvider from './RootObjectProvider';
-import RootRegistry from './RootRegistry';
-import Transaction from './Transaction';
+import ConflictError from './ConflictError.js';
+import InMemorySearchProvider from './InMemorySearchProvider.js';
+import InterceptorRegistry from './InterceptorRegistry.js';
+import MutableDomainObject from './MutableDomainObject.js';
+import { isIdentifier, isKeyString } from './object-utils.js';
+import RootObjectProvider from './RootObjectProvider.js';
+import RootRegistry from './RootRegistry.js';
+import Transaction from './Transaction.js';
 
 /**
  * Uniquely identifies a domain object.
- *
- * @typedef {object} Identifier
- * @property {string} namespace the namespace to/from which this domain
- *           object should be loaded/stored.
- * @property {string} key a unique identifier for the domain object
- *           within that namespace
- * @memberof module:openmct.ObjectAPI~
+ * @typedef {Object} Identifier
+ * @property {string} namespace the namespace to/from which this domain object should be loaded/stored.
+ * @property {string} key a unique identifier for the domain object within that namespace
  */
 
 /**
- * A domain object is an entity of relevance to a user's workflow, that
- * should appear as a distinct and meaningful object within the user
- * interface. Examples of domain objects are folders, telemetry sensors,
- * and so forth.
- *
- * A few common properties are defined for domain objects. Beyond these,
- * individual types of domain objects may add more as they see fit.
- *
- * @typedef {object} DomainObject
- * @property {Identifier} identifier a key/namespace pair which
- *           uniquely identifies this domain object
+ * A domain object is an entity of relevance to a user's workflow, that should appear as a distinct and meaningful object within the user interface.
+ * @typedef {Object} DomainObject
+ * @property {Identifier} identifier a key/namespace pair which uniquely identifies this domain object
  * @property {string} type the type of domain object
  * @property {string} name the human-readable name for this domain object
- * @property {string} [creator] the user name of the creator of this domain
- *           object
- * @property {number} [modified] the time, in milliseconds since the UNIX
- *           epoch, at which this domain object was last modified
- * @property {Identifier[]} [composition] if
- *           present, this will be used by the default composition provider
- *           to load domain objects
- * @property {Object.<string, any>} [configuration] A key-value map containing configuration
- *           settings for this domain object.
- * @memberof module:openmct.ObjectAPI~
+ * @property {string} [creator] the user name of the creator of this domain object
+ * @property {number} [modified] the time, in milliseconds since the UNIX epoch, at which this domain object was last modified
+ * @property {Identifier[]} [composition] if present, this will be used by the default composition provider to load domain objects
+ * @property {Record<string, any>} [configuration] A key-value map containing configuration settings for this domain object.
  */
 
 /**
@@ -78,12 +61,25 @@ import Transaction from './Transaction';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
- * @interface ObjectAPI
- * @memberof module:openmct
  */
 export default class ObjectAPI {
+  #makeKeyString;
+  #parseKeyString;
+  #identifierEquals;
+  #refresh;
+  #openmct;
+
+  /**
+   * @param {any} typeRegistry
+   * @param {any} openmct
+   */
   constructor(typeRegistry, openmct) {
-    this.openmct = openmct;
+    this.#makeKeyString = makeKeyString;
+    this.#parseKeyString = parseKeyString;
+    this.#identifierEquals = identifierEquals;
+    this.#refresh = refresh;
+    this.#openmct = openmct;
+
     this.typeRegistry = typeRegistry;
     this.SEARCH_TYPES = Object.freeze({
       OBJECTS: 'OBJECTS',
@@ -99,7 +95,13 @@ export default class ObjectAPI {
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
-    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'restricted-notebook', 'plan', 'annotation'];
+    this.SYNCHRONIZED_OBJECT_TYPES = [
+      'notebook',
+      'restricted-notebook',
+      'plan',
+      'annotation',
+      'activity-states'
+    ];
 
     this.errors = {
       Conflict: ConflictError
@@ -108,6 +110,8 @@ export default class ObjectAPI {
 
   /**
    * Retrieve the provider for a given identifier.
+   * @param {Identifier} identifier
+   * @returns {ObjectProvider | RootObjectProvider}
    */
   getProvider(identifier) {
     if (identifier.key === 'ROOT') {
@@ -127,7 +131,7 @@ export default class ObjectAPI {
 
   /**
    * Get the root-level object.
-   * @returns {Promise.<DomainObject>} a promise for the root object
+   * @returns {Promise<DomainObject>} a promise for the root object
    */
   getRoot() {
     return this.rootProvider.get();
@@ -137,77 +141,31 @@ export default class ObjectAPI {
    * Register a new object provider for a particular namespace.
    *
    * @param {string} namespace the namespace for which to provide objects
-   * @param {module:openmct.ObjectProvider} provider the provider which
-   *        will handle loading domain objects from this namespace
-   * @memberof {module:openmct.ObjectAPI#}
-   * @name addProvider
+   * @param {ObjectProvider} provider the provider which will handle loading domain objects from this namespace
    */
   addProvider(namespace, provider) {
     this.providers[namespace] = provider;
   }
 
   /**
-   * Provides the ability to read, write, and delete domain objects.
-   *
-   * When registering a new object provider, all methods on this interface
-   * are optional.
-   *
-   * @interface ObjectProvider
-   * @memberof module:openmct
-   */
-
-  /**
-   * Create the given domain object in the corresponding persistence store
-   *
-   * @method create
-   * @memberof module:openmct.ObjectProvider#
-   * @param {module:openmct.DomainObject} domainObject the domain object to
-   *        create
-   * @returns {Promise} a promise which will resolve when the domain object
-   *          has been created, or be rejected if it cannot be saved
-   */
-
-  /**
-   * Update this domain object in its persistence store
-   *
-   * @method update
-   * @memberof module:openmct.ObjectProvider#
-   * @param {module:openmct.DomainObject} domainObject the domain object to
-   *        update
-   * @returns {Promise} a promise which will resolve when the domain object
-   *          has been updated, or be rejected if it cannot be saved
-   */
-
-  /**
-   * Delete this domain object.
-   *
-   * @method delete
-   * @memberof module:openmct.ObjectProvider#
-   * @param {module:openmct.DomainObject} domainObject the domain object to
-   *        delete
-   * @returns {Promise} a promise which will resolve when the domain object
-   *          has been deleted, or be rejected if it cannot be deleted
-   */
-
-  /**
    * Get a domain object.
    *
-   * @param {string} key the key for the domain object to load
-   * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
+   * @param {Identifier | string} identifier the identifier for the domain object to load
+   * @param {AbortSignal} [abortSignal] (optional) signal to abort fetch requests
    * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
    *          dirty/in-transaction objects use and the provider.get method
    * @returns {Promise<DomainObject>} a promise which will resolve when the domain object
    *          has been saved, or be rejected if it cannot be saved
    */
   get(identifier, abortSignal, forceRemote = false) {
-    let keystring = this.makeKeyString(identifier);
+    let keystring = this.#makeKeyString(identifier);
 
     if (!forceRemote) {
       if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
       }
 
-      identifier = utils.parseKeyString(identifier);
+      identifier = parseKeyString(identifier);
 
       if (this.isTransactionActive()) {
         let dirtyObject = this.transaction.getDirtyObject(identifier);
@@ -221,7 +179,7 @@ export default class ObjectAPI {
     const provider = this.getProvider(identifier);
 
     if (!provider) {
-      throw new Error(`No Provider Matched for keyString "${this.makeKeyString(identifier)}"`);
+      throw new Error(`No Provider Matched for keyString "${this.#makeKeyString(identifier)}"`);
     }
 
     if (!provider.get) {
@@ -232,6 +190,10 @@ export default class ObjectAPI {
       .get(identifier, abortSignal)
       .then((domainObject) => {
         delete this.cache[keystring];
+        if (!domainObject && abortSignal?.aborted) {
+          // we've aborted the request
+          return;
+        }
         domainObject = this.applyGetInterceptors(identifier, domainObject);
 
         if (this.supportsMutation(identifier)) {
@@ -268,14 +230,10 @@ export default class ObjectAPI {
    * and will be searched using the fallback in-memory search.
    * Search results are asynchronous and resolve in parallel.
    *
-   * @method search
-   * @memberof module:openmct.ObjectAPI#
    * @param {string} query the term to search for
-   * @param {AbortController.signal} abortSignal (optional) signal to cancel downstream fetch requests
-   * @param {string} searchType the type of search as defined by SEARCH_TYPES
-   * @returns {Array.<Promise.<module:openmct.DomainObject>>}
-   *          an array of promises returned from each object provider's search function
-   *          each resolving to domain objects matching provided search query and options.
+   * @param {AbortController.signal} [abortSignal] (optional) signal to cancel downstream fetch requests
+   * @param {string} [searchType=this.SEARCH_TYPES.OBJECTS] the type of search as defined by SEARCH_TYPES
+   * @returns {Promise<DomainObject>[]} an array of promises returned from each object provider's search function, each resolving to domain objects matching the provided search query and options
    */
   search(query, abortSignal, searchType = this.SEARCH_TYPES.OBJECTS) {
     if (!Object.keys(this.SEARCH_TYPES).includes(searchType.toUpperCase())) {
@@ -309,13 +267,12 @@ export default class ObjectAPI {
    * platform will manage the lifecycle of any mutable objects that it provides. If you use `getMutable` you are
    * committing to managing that lifecycle yourself. `.destroy` should be called when the object is no longer needed.
    *
-   * @memberof {module:openmct.ObjectAPI#}
-   * @returns {Promise.<MutableDomainObject>} a promise that will resolve with a MutableDomainObject if
-   * the object can be mutated.
+   * @param {Identifier} identifier the identifier of the object to fetch
+   * @returns {Promise<MutableDomainObject>} a promise that will resolve with a MutableDomainObject if the object can be mutated
    */
   getMutable(identifier) {
     if (!this.supportsMutation(identifier)) {
-      throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
+      throw new Error(`Object "${this.#makeKeyString(identifier)}" does not support mutation.`);
     }
 
     return this.get(identifier).then((object) => {
@@ -327,7 +284,7 @@ export default class ObjectAPI {
    * This function is for cleaning up a mutable domain object when you're done with it.
    * You only need to use this if you retrieved the object using `getMutable()`. If the object was provided by the
    * platform (eg. passed into a `view()` function) then the platform is responsible for its lifecycle.
-   * @param {MutableDomainObject} domainObject
+   * @param {MutableDomainObject} domainObject the mutable domain object to destroy
    */
   destroyMutable(domainObject) {
     if (domainObject.isMutable) {
@@ -342,14 +299,17 @@ export default class ObjectAPI {
   }
 
   isPersistable(idOrKeyString) {
-    let identifier = utils.parseKeyString(idOrKeyString);
+    let identifier = parseKeyString(idOrKeyString);
     let provider = this.getProvider(identifier);
+    if (provider?.isReadOnly) {
+      return !provider.isReadOnly();
+    }
 
     return provider !== undefined && provider.create !== undefined && provider.update !== undefined;
   }
 
   isMissing(domainObject) {
-    let identifier = utils.makeKeyString(domainObject.identifier);
+    let identifier = makeKeyString(domainObject.identifier);
     let missingName = 'Missing: ' + identifier;
 
     return domainObject.name === missingName;
@@ -358,11 +318,8 @@ export default class ObjectAPI {
   /**
    * Save this domain object in its current state.
    *
-   * @memberof module:openmct.ObjectAPI#
-   * @param {module:openmct.DomainObject} domainObject the domain object to
-   *        save
-   * @returns {Promise} a promise which will resolve when the domain object
-   *          has been saved, or be rejected if it cannot be saved
+   * @param {DomainObject} domainObject the domain object to save
+   * @returns {Promise} a promise which will resolve when the domain object has been saved, or be rejected if it cannot be saved
    */
   async save(domainObject) {
     const provider = this.getProvider(domainObject.identifier);
@@ -429,21 +386,21 @@ export default class ObjectAPI {
       if (error instanceof this.errors.Conflict) {
         // Synchronized objects will resolve their own conflicts
         if (this.SYNCHRONIZED_OBJECT_TYPES.includes(domainObject.type)) {
-          this.openmct.notifications.info(
-            `Conflict detected while saving "${this.makeKeyString(
+          this.#openmct.notifications.info(
+            `Conflict detected while saving "${this.#makeKeyString(
               domainObject.name
             )}", attempting to resolve`
           );
         } else {
-          this.openmct.notifications.error(
-            `Conflict detected while saving ${this.makeKeyString(domainObject.identifier)}`
+          this.#openmct.notifications.error(
+            `Conflict detected while saving ${this.#makeKeyString(domainObject.identifier)}`
           );
 
           if (this.isTransactionActive()) {
             this.endTransaction();
           }
 
-          await this.refresh(domainObject);
+          await this.#refresh(domainObject);
         }
       }
 
@@ -452,7 +409,7 @@ export default class ObjectAPI {
   }
 
   async #getCurrentUsername() {
-    const user = await this.openmct.user.getCurrentUser();
+    const user = await this.#openmct.user.getCurrentUser();
     let username;
 
     if (user !== undefined) {
@@ -493,7 +450,6 @@ export default class ObjectAPI {
    *        this item(s) position in the root object's composition (example: order in object tree).
    *        For arrays, they are treated as blocks.
    * @method addRoot
-   * @memberof module:openmct.ObjectAPI#
    */
   addRoot(identifier, priority) {
     this.rootRegistry.addRoot(identifier, priority);
@@ -506,7 +462,6 @@ export default class ObjectAPI {
    *
    * @param {module:openmct.InterceptorDef} interceptorDef the interceptor definition to add
    * @method addGetInterceptor
-   * @memberof module:openmct.InterceptorRegistry#
    */
   addGetInterceptor(interceptorDef) {
     this.interceptorRegistry.addInterceptor(interceptorDef);
@@ -514,7 +469,6 @@ export default class ObjectAPI {
 
   /**
    * Retrieve the interceptors for a given domain object.
-   * @private
    */
   #listGetInterceptors(identifier, object) {
     return this.interceptorRegistry.getInterceptors(identifier, object);
@@ -536,20 +490,20 @@ export default class ObjectAPI {
   /**
    * Return relative url path from a given object path
    * eg: #/browse/mine/cb56f6bf-c900-43b7-b923-2e3b64b412db/6e89e858-77ce-46e4-a1ad-749240286497/....
-   * @param {Array} objectPath
+   * @param {Array<DomainObject>} objectPath
    * @returns {string} relative url for object
    */
   getRelativePath(objectPath) {
     return objectPath
-      .map((p) => this.makeKeyString(p.identifier))
+      .map((p) => this.#makeKeyString(p.identifier))
       .reverse()
       .join('/');
   }
 
   /**
    * Return path of telemetry objects in the object composition
-   * @param {object} identifier the identifier for the domain object to query for
-   * @param {object} [telemetryIdentifier] the specific identifier for the telemetry
+   * @param {Object} identifier the identifier for the domain object to query for
+   * @param {Object} [telemetryIdentifier] the specific identifier for the telemetry
    *  to look for in the composition, uses first object in composition otherwise
    * @returns {Array} path of telemetry object in object composition
    */
@@ -561,13 +515,13 @@ export default class ObjectAPI {
     }
 
     let sourceTelemetry = null;
-    if (telemetryIdentifier && utils.identifierEquals(identifier, telemetryIdentifier)) {
+    if (telemetryIdentifier && this.#identifierEquals(identifier, telemetryIdentifier)) {
       sourceTelemetry = identifier;
     } else if (objectDetails.composition) {
       sourceTelemetry = objectDetails.composition[0];
       if (telemetryIdentifier) {
         sourceTelemetry = objectDetails.composition.find((telemetrySource) =>
-          utils.identifierEquals(telemetrySource, telemetryIdentifier)
+          this.#identifierEquals(telemetrySource, telemetryIdentifier)
         );
       }
     }
@@ -588,13 +542,10 @@ export default class ObjectAPI {
 
   /**
    * Modify a domain object. Internal to ObjectAPI, won't call save after.
-   * @private
    *
-   * @param {module:openmct.DomainObject} object the object to mutate
+   * @param {DomainObject} domainObject the object to mutate
    * @param {string} path the property to modify
    * @param {*} value the new value for this property
-   * @method mutate
-   * @memberof module:openmct.ObjectAPI#
    */
   #mutate(domainObject, path, value) {
     if (!this.supportsMutation(domainObject.identifier)) {
@@ -604,28 +555,26 @@ export default class ObjectAPI {
     if (domainObject.isMutable) {
       domainObject.$set(path, value);
     } else {
-      //Creating a temporary mutable domain object allows other mutable instances of the
-      //object to be kept in sync.
+      // Creating a temporary mutable domain object allows other mutable instances of the
+      // object to be kept in sync.
       let mutableDomainObject = this.toMutable(domainObject);
 
-      //Mutate original object
+      // Mutate original object
       MutableDomainObject.mutateObject(domainObject, path, value);
 
-      //Mutate temporary mutable object, in the process informing any other mutable instances
+      // Mutate temporary mutable object, in the process informing any other mutable instances
       mutableDomainObject.$set(path, value);
 
-      //Destroy temporary mutable object
+      // Destroy temporary mutable object
       this.destroyMutable(mutableDomainObject);
     }
   }
 
   /**
    * Modify a domain object and save.
-   * @param {module:openmct.DomainObject} object the object to mutate
+   * @param {DomainObject} domainObject the object to mutate
    * @param {string} path the property to modify
    * @param {*} value the new value for this property
-   * @method mutate
-   * @memberof module:openmct.ObjectAPI#
    */
   mutate(domainObject, path, value) {
     this.#mutate(domainObject, path, value);
@@ -638,11 +587,9 @@ export default class ObjectAPI {
   }
 
   /**
-   * Create a mutable domain object from an existing domain object
-   * @param {module:openmct.DomainObject} domainObject the object to make mutable
+   * Create a mutable domain object from an existing domain object.
+   * @param {DomainObject} domainObject the object to make mutable
    * @returns {MutableDomainObject} a mutable domain object that will automatically sync
-   * @method toMutable
-   * @memberof module:openmct.ObjectAPI#
    */
   toMutable(domainObject) {
     let mutableObject;
@@ -653,7 +600,7 @@ export default class ObjectAPI {
       mutableObject = MutableDomainObject.createMutable(domainObject, this.eventEmitter);
 
       // Check if provider supports realtime updates
-      let identifier = utils.parseKeyString(mutableObject.identifier);
+      let identifier = parseKeyString(mutableObject.identifier);
       let provider = this.getProvider(identifier);
 
       if (
@@ -665,8 +612,8 @@ export default class ObjectAPI {
           // modified can sometimes be undefined, so make it 0 in this case
           const mutableObjectModification = mutableObject.modified ?? Number.MIN_SAFE_INTEGER;
           if (updatedModel.persisted > mutableObjectModification) {
-            //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
-            //in rapid succession and intermediate persistence states are returned by the observe function.
+            // Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
+            // in rapid succession and intermediate persistence states are returned by the observe function.
             updatedModel = this.applyGetInterceptors(identifier, updatedModel);
             mutableObject.$refresh(updatedModel);
           }
@@ -682,23 +629,26 @@ export default class ObjectAPI {
 
   /**
    * Updates a domain object based on its latest persisted state. Note that this will mutate the provided object.
-   * @param {module:openmct.DomainObject} domainObject an object to refresh from its persistence store
-   * @returns {Promise} the provided object, updated to reflect the latest persisted state of the object.
+   * @param {DomainObject} domainObject an object to refresh from its persistence store
+   * @param {boolean} [forceRemote=false] defaults to false. If true, will skip cached and
+   *          dirty/in-transaction objects use and the provider.get method
+   * @returns {Promise<DomainObject>} the provided object, updated to reflect the latest persisted state of the object.
    */
-  async refresh(domainObject) {
-    const refreshedObject = await this.get(domainObject.identifier);
+  async refresh(domainObject, forceRemote = false) {
+    const refreshedObject = await this.get(domainObject.identifier, null, forceRemote);
 
     if (domainObject.isMutable) {
       domainObject.$refresh(refreshedObject);
     } else {
-      utils.refresh(domainObject, refreshedObject);
+      refresh(domainObject, refreshedObject);
     }
 
     return domainObject;
   }
 
   /**
-   * @param module:openmct.ObjectAPI~Identifier identifier An object identifier
+   * Determine if the object can be mutated.
+   * @param {Identifier} identifier An object identifier
    * @returns {boolean} true if the object can be mutated, otherwise returns false
    */
   supportsMutation(identifier) {
@@ -707,12 +657,10 @@ export default class ObjectAPI {
 
   /**
    * Observe changes to a domain object.
-   * @param {module:openmct.DomainObject} object the object to observe
+   * @param {DomainObject} domainObject the object to observe
    * @param {string} path the property to observe
-   * @param {Function} callback a callback to invoke when new values for
-   *        this property are observed.
-   * @method observe
-   * @memberof module:openmct.ObjectAPI#
+   * @param {Function} callback a callback to invoke when new values for this property are observed.
+   * @returns {() => void} a function to unsubscribe from the updates
    */
   observe(domainObject, path, callback) {
     if (domainObject.isMutable) {
@@ -730,7 +678,7 @@ export default class ObjectAPI {
    * @returns {string} A string representation of the given identifier, including namespace and key
    */
   makeKeyString(identifier) {
-    return utils.makeKeyString(identifier);
+    return makeKeyString(identifier);
   }
 
   /**
@@ -738,7 +686,7 @@ export default class ObjectAPI {
    * @returns {module:openmct.ObjectAPI~Identifier} An identifier object
    */
   parseKeyString(keyString) {
-    return utils.parseKeyString(keyString);
+    return parseKeyString(keyString);
   }
 
   /**
@@ -746,9 +694,9 @@ export default class ObjectAPI {
    * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
    */
   areIdsEqual(...identifiers) {
-    const firstIdentifier = utils.parseKeyString(identifiers[0]);
+    const firstIdentifier = this.#parseKeyString(identifiers[0]);
 
-    return identifiers.map(utils.parseKeyString).every((identifier) => {
+    return identifiers.map(this.#parseKeyString).every((identifier) => {
       return (
         identifier === firstIdentifier ||
         (identifier.namespace === firstIdentifier.namespace &&
@@ -759,7 +707,7 @@ export default class ObjectAPI {
 
   /**
    * Given an original path check if the path is reachable via root
-   * @param {Array<Object>} originalPath an array of path objects to check
+   * @param {Array<DomainObject>} originalPath an array of path objects to check
    * @returns {boolean} whether the domain object is reachable
    */
   isReachable(originalPath) {
@@ -770,13 +718,19 @@ export default class ObjectAPI {
     return false;
   }
 
+  /**
+   * Check if a path contains a domain object with a given key string
+   * @param {string} keyStringToCheck the keystring to check for
+   * @param {Array<DomainObject>} path the path to check
+   * @returns {boolean} true if the path contains a DomainObject with the given keystring, otherwise false
+   */
   #pathContainsDomainObject(keyStringToCheck, path) {
     if (!keyStringToCheck) {
       return false;
     }
 
     return path.some((pathElement) => {
-      const identifierToCheck = utils.parseKeyString(keyStringToCheck);
+      const identifierToCheck = this.#parseKeyString(keyStringToCheck);
 
       return this.areIdsEqual(identifierToCheck, pathElement.identifier);
     });
@@ -784,18 +738,30 @@ export default class ObjectAPI {
 
   /**
    * Given an identifier, constructs the original path by walking up its parents
-   * @param {module:openmct.ObjectAPI~Identifier} identifier
-   * @param {Array<module:openmct.DomainObject>} path an array of path objects
-   * @returns {Promise<Array<module:openmct.DomainObject>>} a promise containing an array of domain objects
+   * @param {Identifier} identifier
+   * @param {Array<DomainObject>} path an array of path objects
+   * @param {AbortSignal} abortSignal (optional) signal to abort fetch requests
+   * @returns {Promise<Array<DomainObject>>} a promise containing an array of domain objects
    */
-  async getOriginalPath(identifier, path = []) {
-    const domainObject = await this.get(identifier);
+  async getOriginalPath(identifierOrObject, path = [], abortSignal = null) {
+    let domainObject;
+
+    if (isKeyString(identifierOrObject) || isIdentifier(identifierOrObject)) {
+      domainObject = await this.get(identifierOrObject, abortSignal);
+    } else {
+      domainObject = identifierOrObject;
+    }
+
+    if (!domainObject) {
+      return [];
+    }
+
     path.push(domainObject);
     const { location } = domainObject;
     if (location && !this.#pathContainsDomainObject(location, path)) {
       // if we have a location, and we don't already have this in our constructed path,
       // then keep walking up the path
-      return this.getOriginalPath(utils.parseKeyString(location), path);
+      return this.getOriginalPath(this.#parseKeyString(location), path, abortSignal);
     } else {
       return path;
     }
@@ -834,8 +800,8 @@ export default class ObjectAPI {
       await Promise.all(
         keyStrings.map((keyString) =>
           this.supportsMutation(keyString)
-            ? this.getMutable(utils.parseKeyString(keyString))
-            : this.get(utils.parseKeyString(keyString))
+            ? this.getMutable(this.#parseKeyString(keyString))
+            : this.get(this.#parseKeyString(keyString))
         )
       )
     ).reverse();
@@ -843,18 +809,33 @@ export default class ObjectAPI {
     return objectPath;
   }
 
+  /**
+   * Check if the object is a link based on its path
+   * @param {DomainObject} domainObject the DomainObject to check
+   * @param {Array<DomainObject>} objectPath the object path to check
+   * @returns {boolean} true if the object path is a link, otherwise false
+   */
   isObjectPathToALink(domainObject, objectPath) {
     return (
       objectPath !== undefined &&
       objectPath.length > 1 &&
-      domainObject.location !== this.makeKeyString(objectPath[1].identifier)
+      domainObject.location !== this.#makeKeyString(objectPath[1].identifier)
     );
   }
 
+  /**
+   * Check if a transaction is active
+   * @returns {boolean} true if a transaction is active, otherwise false
+   */
   isTransactionActive() {
     return this.transaction !== undefined && this.transaction !== null;
   }
 
+  /**
+   * Check if a domain object has already been persisted
+   * @param {DomainObject} domainObject the domain object to check
+   * @returns {boolean} true if the domain object has already been persisted, otherwise false
+   */
   #hasAlreadyBeenPersisted(domainObject) {
     // modified can sometimes be undefined, so make it 0 in this case
     const modified = domainObject.modified ?? Number.MIN_SAFE_INTEGER;

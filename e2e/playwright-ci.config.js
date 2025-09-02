@@ -1,9 +1,9 @@
-/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-const { devices } = require('@playwright/test');
+import { devices } from '@playwright/test';
+import { fileURLToPath } from 'url';
 const MAX_FAILURES = 5;
 const NUM_WORKERS = 2;
 
@@ -11,13 +11,15 @@ const NUM_WORKERS = 2;
 const config = {
   retries: 2, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
   testDir: 'tests',
-  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
+  grepInvert: /@mobile/, //Ignore mobile tests
+  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-performance.config.js
   timeout: 60 * 1000,
   webServer: {
     command: 'npm run start:coverage',
+    cwd: fileURLToPath(new URL('../', import.meta.url)), // Provide cwd for the root of the project
     url: 'http://localhost:8080/#',
     timeout: 200 * 1000,
-    reuseExistingServer: false
+    reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
   maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
   workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
@@ -27,7 +29,9 @@ const config = {
     ignoreHTTPSErrors: true,
     screenshot: 'only-on-failure',
     trace: 'on-first-retry',
-    video: 'off'
+    video: 'off',
+    // @ts-ignore - custom configuration option for nyc codecoverage output path
+    coveragePath: fileURLToPath(new URL('../.nyc_output', import.meta.url))
   },
   projects: [
     {
@@ -76,9 +80,8 @@ const config = {
         outputFolder: '../html-test-results' //Must be in different location due to https://github.com/microsoft/playwright/issues/12840
       }
     ],
-    ['junit', { outputFile: '../test-results/results.xml' }],
-    ['@deploysentinel/playwright']
+    ['junit', { outputFile: '../test-results/results.xml' }]
   ]
 };
 
-module.exports = config;
+export default config;

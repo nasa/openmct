@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,33 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./flexibleLayoutViewProvider', './utils/container', './toolbarProvider'], function (
-  FlexibleLayoutViewProvider,
-  Container,
-  ToolBarProvider
-) {
-  return function plugin() {
-    return function install(openmct) {
-      openmct.objectViews.addProvider(new FlexibleLayoutViewProvider.default(openmct));
+import Container from '@/ui/layout/Container.js';
 
-      openmct.types.addType('flexible-layout', {
-        name: 'Flexible Layout',
-        creatable: true,
-        description:
-          'A fluid, flexible layout canvas that can display multiple objects in rows or columns.',
-        cssClass: 'icon-flexible-layout',
-        initialize: function (domainObject) {
-          domainObject.configuration = {
-            containers: [new Container.default(50), new Container.default(50)],
-            rowsLayout: false
-          };
-          domainObject.composition = [];
-        }
-      });
+import flexibleLayoutStylesInterceptor from './flexibleLayoutStylesInterceptor.js';
+import FlexibleLayoutViewProvider from './flexibleLayoutViewProvider.js';
+import ToolBarProvider from './toolbarProvider.js';
 
-      let toolbar = ToolBarProvider.default(openmct);
+export default function plugin() {
+  return function install(openmct) {
+    openmct.objectViews.addProvider(new FlexibleLayoutViewProvider(openmct));
 
-      openmct.toolbars.addProvider(toolbar);
-    };
+    openmct.types.addType('flexible-layout', {
+      name: 'Flexible Layout',
+      creatable: true,
+      description:
+        'A fluid, flexible layout canvas that can display multiple objects in rows or columns.',
+      cssClass: 'icon-flexible-layout',
+      initialize: function (domainObject) {
+        domainObject.configuration = {
+          containers: [new Container(50), new Container(50)],
+          rowsLayout: false,
+          objectStyles: {}
+        };
+        domainObject.composition = [];
+      }
+    });
+    openmct.objects.addGetInterceptor(flexibleLayoutStylesInterceptor(openmct));
+
+    let toolbar = ToolBarProvider(openmct);
+
+    openmct.toolbars.addProvider(toolbar);
   };
-});
+}

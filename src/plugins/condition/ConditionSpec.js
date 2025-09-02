@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Condition from './Condition';
-import TelemetryCriterion from './criterion/TelemetryCriterion';
-import { TRIGGER } from './utils/constants';
+import Condition from './Condition.js';
+import TelemetryCriterion from './criterion/TelemetryCriterion.js';
+import { TRIGGER } from './utils/constants.js';
 
 let openmct = {};
 let testConditionDefinition;
@@ -53,6 +53,7 @@ describe('The condition', function () {
         valueMetadatas: [
           {
             key: 'some-key',
+            source: 'some-key',
             name: 'Some attribute',
             hints: {
               range: 2
@@ -60,6 +61,7 @@ describe('The condition', function () {
           },
           {
             key: 'utc',
+            source: 'utc',
             name: 'Time',
             format: 'utc',
             hints: {
@@ -67,7 +69,7 @@ describe('The condition', function () {
             }
           },
           {
-            key: 'testSource',
+            key: 'value',
             source: 'value',
             name: 'Test',
             format: 'string'
@@ -88,17 +90,32 @@ describe('The condition', function () {
     openmct.telemetry = jasmine.createSpyObj('telemetry', [
       'isTelemetryObject',
       'subscribe',
-      'getMetadata'
+      'getMetadata',
+      'getValueFormatter'
     ]);
     openmct.telemetry.isTelemetryObject.and.returnValue(true);
     openmct.telemetry.subscribe.and.returnValue(function () {});
     openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
+    openmct.telemetry.getValueFormatter.and.callFake((metadatum) => {
+      return {
+        parse(input) {
+          return input;
+        }
+      };
+    });
 
     mockTimeSystems = {
       key: 'utc'
     };
-    openmct.time = jasmine.createSpyObj('time', ['getAllTimeSystems', 'on', 'off']);
+    openmct.time = jasmine.createSpyObj('time', [
+      'getTimeSystem',
+      'getAllTimeSystems',
+      'on',
+      'off'
+    ]);
+    openmct.time.getTimeSystem.and.returnValue({ key: 'utc' });
     openmct.time.getAllTimeSystems.and.returnValue([mockTimeSystems]);
+    //openmct.time.getTimeSystem.and.returnValue();
     openmct.time.on.and.returnValue(() => {});
     openmct.time.off.and.returnValue(() => {});
 
@@ -156,37 +173,24 @@ describe('The condition', function () {
     expect(conditionObj.criteria.length).toEqual(0);
   });
 
-  it('gets the result of a condition when new telemetry data is received', function () {
-    conditionObj.updateResult({
-      value: '0',
-      utc: 'Hi',
-      id: testTelemetryObject.identifier.key
-    });
-    expect(conditionObj.result).toBeTrue();
-  });
-
-  it('gets the result of a condition when new telemetry data is received', function () {
-    conditionObj.updateResult({
-      value: '1',
-      utc: 'Hi',
-      id: testTelemetryObject.identifier.key
-    });
-    expect(conditionObj.result).toBeFalse();
-  });
-
   it('keeps the old result new telemetry data is not used by it', function () {
-    conditionObj.updateResult({
+    const latestDataTable = new Map();
+    latestDataTable.set(testTelemetryObject.identifier.key, {
       value: '0',
       utc: 'Hi',
       id: testTelemetryObject.identifier.key
     });
+    conditionObj.updateResult(latestDataTable, testTelemetryObject.identifier.key);
+
     expect(conditionObj.result).toBeTrue();
 
-    conditionObj.updateResult({
+    latestDataTable.set('1234', {
       value: '1',
       utc: 'Hi',
       id: '1234'
     });
+
+    conditionObj.updateResult(latestDataTable, '1234');
     expect(conditionObj.result).toBeTrue();
   });
 });

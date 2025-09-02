@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@ import StyleRuleManager from '@/plugins/condition/StyleRuleManager';
 import { STYLE_CONSTANTS } from '@/plugins/condition/utils/constants';
 
 export default {
-  inject: ['openmct', 'domainObject', 'path'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   data() {
     return {
       objectStyle: undefined
@@ -37,6 +37,10 @@ export default {
   beforeUnmount() {
     if (this.stopListeningStyles) {
       this.stopListeningStyles();
+    }
+
+    if (this.stopListeningFontStyles) {
+      this.stopListeningFontStyles();
     }
 
     if (this.styleRuleManager) {
@@ -124,35 +128,22 @@ export default {
       }
     },
     updateStyle(styleObj) {
-      let elemToStyle = this.getStyleReceiver();
+      const elemToStyle = this.getStyleReceiver();
 
-      if (!styleObj || elemToStyle === undefined) {
+      if (!styleObj || !elemToStyle) {
         return;
       }
+      // handle visibility separately
+      if (styleObj.isStyleInvisible !== undefined) {
+        elemToStyle.classList.toggle(STYLE_CONSTANTS.isStyleInvisible, styleObj.isStyleInvisible);
+        styleObj.isStyleInvisible = null;
+      }
 
-      let keys = Object.keys(styleObj);
-
-      keys.forEach((key) => {
-        if (elemToStyle) {
-          if (typeof styleObj[key] === 'string' && styleObj[key].indexOf('__no_value') > -1) {
-            if (elemToStyle.style[key]) {
-              elemToStyle.style[key] = '';
-            }
-          } else {
-            if (
-              !styleObj.isStyleInvisible &&
-              elemToStyle.classList.contains(STYLE_CONSTANTS.isStyleInvisible)
-            ) {
-              elemToStyle.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
-            } else if (
-              styleObj.isStyleInvisible &&
-              !elemToStyle.classList.contains(styleObj.isStyleInvisible)
-            ) {
-              elemToStyle.classList.add(styleObj.isStyleInvisible);
-            }
-
-            elemToStyle.style[key] = styleObj[key];
-          }
+      Object.entries(styleObj).forEach(([key, value]) => {
+        if (typeof value !== 'string' || !value.includes('__no_value')) {
+          elemToStyle.style[key] = value;
+        } else {
+          elemToStyle.style[key] = ''; // remove the property
         }
       });
     }

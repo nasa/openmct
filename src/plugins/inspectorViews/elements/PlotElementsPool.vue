@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -30,14 +30,14 @@
     />
     <div class="c-elements-pool__elements">
       <ul
-        v-if="hasElements"
+        v-show="hasElements"
         id="inspector-elements-tree"
         class="c-tree c-elements-pool__tree js-elements-pool__tree"
       >
         <div class="c-elements-pool__instructions">
           Select and drag an element to move it into a different axis.
         </div>
-        <element-item-group
+        <ElementItemGroup
           v-for="(yAxis, index) in yAxes"
           :key="`element-group-yaxis-${yAxis.id}`"
           :parent-object="parentObject"
@@ -46,7 +46,7 @@
           @drop-group="moveTo($event, 0, yAxis.id)"
         >
           <li class="js-first-place" @drop="moveTo($event, 0, yAxis.id)"></li>
-          <element-item
+          <ElementItem
             v-for="(element, elemIndex) in yAxis.elements"
             :key="element.identifier.key"
             :index="elemIndex"
@@ -61,9 +61,9 @@
             class="js-last-place"
             @drop="moveTo($event, yAxis.elements.length, yAxis.id)"
           ></li>
-        </element-item-group>
+        </ElementItemGroup>
       </ul>
-      <div v-if="!hasElements">No contained elements</div>
+      <div v-show="!hasElements">No contained elements</div>
     </div>
   </div>
 </template>
@@ -72,7 +72,7 @@
 import _ from 'lodash';
 
 import Search from '../../../ui/components/SearchComponent.vue';
-import configStore from '../../plot/configuration/ConfigStore';
+import configStore from '../../plot/configuration/ConfigStore.js';
 import ElementItem from './ElementItem.vue';
 import ElementItemGroup from './ElementItemGroup.vue';
 
@@ -169,7 +169,8 @@ export default {
     setYAxisIds() {
       const configId = this.openmct.objects.makeKeyString(this.parentObject.identifier);
       this.config = configStore.get(configId);
-      this.yAxes = [];
+      // Clear the yAxes array and repopulate it with the current YAxis elements
+      this.yAxes.splice(0);
       this.yAxes.push({
         id: this.config.yAxis.id,
         elements: this.parentObject.configuration.series.filter(
@@ -207,7 +208,7 @@ export default {
       }
 
       // Store the element in the cache and set its yAxisId
-      this.elementsCache[keyString] = JSON.parse(JSON.stringify(element));
+      this.elementsCache[keyString] = element;
       if (this.elementsCache[keyString].yAxisId !== yAxisId) {
         // Mutate the YAxisId on the domainObject itself
         this.updateCacheAndMutate(element, yAxisId);
@@ -276,7 +277,7 @@ export default {
           yAxisId
         });
         this.composition.add(domainObject);
-        this.elementsCache[keyString] = JSON.parse(JSON.stringify(domainObject));
+        this.elementsCache[keyString] = domainObject;
       }
 
       this.elementsCache[keyString].yAxisId = yAxisId;

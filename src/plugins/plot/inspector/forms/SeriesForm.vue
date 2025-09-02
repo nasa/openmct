@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,15 +21,19 @@
 -->
 <template>
   <ul>
-    <li class="c-tree__item menus-to-left" :class="isAliasCss">
+    <li class="c-tree__item menus-to-left" :class="isAliasCss" role="treeitem">
       <span
         class="c-disclosure-triangle is-enabled flex-elem"
         :class="expandedCssClass"
+        role="button"
+        :aria-label="ariaLabelValue"
+        tabindex="0"
         @click="toggleExpanded"
+        @keydown.enter="toggleExpanded"
       >
       </span>
       <div :class="objectLabelCss">
-        <div class="c-object-label__type-icon" :class="[seriesCss]">
+        <div class="c-object-label__type-icon" :class="seriesCss">
           <span class="is-status__indicator" title="This item is missing or suspect"></span>
         </div>
         <div class="c-object-label__name">{{ series.domainObject.name }}</div>
@@ -43,12 +47,7 @@
         </div>
         <div class="grid-cell value">
           <select v-model="yKey" @change="updateForm('yKey')">
-            <option
-              v-for="option in yKeyOptions"
-              :key="option.value"
-              :value="option.value"
-              :selected="option.value == yKey"
-            >
+            <option v-for="option in yKeyOptions" :key="option.value" :value="option.value">
               {{ option.name }}
             </option>
           </select>
@@ -84,16 +83,28 @@
       </li>
       <li class="grid-row">
         <div class="grid-cell label" title="Display markers visually denoting points in alarm.">
-          Alarm Markers
+          <label for="alarm-markers-checkbox">Alarm Markers</label>
         </div>
         <div class="grid-cell value">
-          <input v-model="alarmMarkers" type="checkbox" @change="updateForm('alarmMarkers')" />
+          <input
+            id="alarm-markers-checkbox"
+            v-model="alarmMarkers"
+            type="checkbox"
+            @change="updateForm('alarmMarkers')"
+          />
         </div>
       </li>
       <li class="grid-row">
-        <div class="grid-cell label" title="Display limit lines">Limit lines</div>
+        <div id="limit-lines-checkbox" class="grid-cell label" title="Display limit lines">
+          Limit lines
+        </div>
         <div class="grid-cell value">
-          <input v-model="limitLines" type="checkbox" @change="updateForm('limitLines')" />
+          <input
+            v-model="limitLines"
+            aria-labelledby="limit-lines-checkbox"
+            type="checkbox"
+            @change="updateForm('limitLines')"
+          />
         </div>
       </li>
       <li v-show="markers || alarmMarkers" class="grid-row">
@@ -127,8 +138,8 @@ import _ from 'lodash';
 
 import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 
-import { MARKER_SHAPES } from '../../draw/MarkerShapes';
-import { coerce, objectPath, validate } from './formUtil';
+import { MARKER_SHAPES } from '../../draw/MarkerShapes.js';
+import { coerce, objectPath, validate } from './formUtil.js';
 
 export default {
   components: {
@@ -157,22 +168,28 @@ export default {
       limitLines: this.series.get('limitLines'),
       markerSize: this.series.get('markerSize'),
       validation: {},
-      swatchActive: false
+      swatchActive: false,
+      status: null
     };
   },
   computed: {
+    ariaLabelValue() {
+      const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
+
+      return `${this.expanded ? 'Collapse' : 'Expand'}${name} Plot Series Options`;
+    },
     colorPalette() {
       return this.series.collection.palette.groups();
     },
     objectLabelCss() {
-      return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
+      return this.status ? `c-object-label is-status--${this.status}` : 'c-object-label';
     },
     seriesCss() {
-      let type = this.openmct.types.get(this.series.domainObject.type);
+      const type = this.openmct.types.get(this.series.domainObject.type);
+      const baseClass = 'c-object-label__type-icon';
+      const typeClass = type.definition.cssClass || '';
 
-      return type.definition.cssClass
-        ? `c-object-label__type-icon ${type.definition.cssClass}`
-        : `c-object-label__type-icon`;
+      return `${baseClass} ${typeClass}`.trim();
     },
     isAliasCss() {
       let cssClass = '';
@@ -190,7 +207,7 @@ export default {
       return this.series.get('color').asHexString();
     }
   },
-  mounted() {
+  created() {
     this.initialize();
 
     this.status = this.openmct.status.get(this.series.domainObject.identifier);
@@ -205,7 +222,7 @@ export default {
     }
   },
   methods: {
-    initialize: function () {
+    initialize() {
       this.fields = [
         {
           modelProp: 'yKey',

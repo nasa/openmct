@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -38,11 +38,11 @@
         aria-label="Ellipse"
       ></div>
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 export default {

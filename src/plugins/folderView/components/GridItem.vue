@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -42,23 +42,31 @@
     <div class="c-grid-item__details">
       <!-- Name and metadata -->
       <div class="c-grid-item__name" :title="item.model.name">{{ item.model.name }}</div>
-      <div class="c-grid-item__metadata" :title="item.type.name">
+      <div class="c-grid-item__metadata" :aria-label="item.type.name" :title="item.type.name">
         <span class="c-grid-item__metadata__type">{{ item.type.name }}</span>
       </div>
     </div>
     <div class="c-grid-item__controls">
-      <div class="is-status__indicator" :title="`This item is ${status}`"></div>
+      <div
+        class="is-status__indicator"
+        :aria-label="`This item is ${status}`"
+        :title="`This item is ${status}`"
+      ></div>
       <div class="icon-people" title="Shared"></div>
-      <button class="c-icon-button icon-info c-info-button" title="More Info"></button>
+      <button
+        class="c-icon-button icon-info c-info-button"
+        aria-label="More Info"
+        title="More Info"
+      ></button>
       <div class="icon-pointer-right c-pointer-icon"></div>
     </div>
   </a>
 </template>
 
 <script>
-import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
-import objectLink from '../../../ui/mixins/object-link';
-import statusListener from './status-listener';
+import contextMenuGesture from '../../../ui/mixins/context-menu-gesture.js';
+import objectLink from '../../../ui/mixins/object-link.js';
+import statusListener from './status-listener.js';
 
 export default {
   mixins: [contextMenuGesture, objectLink, statusListener],

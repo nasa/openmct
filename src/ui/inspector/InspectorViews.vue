@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -40,13 +40,15 @@ export default {
   },
   mounted() {
     this.updateSelectionViews();
+    this.openmct.editor.on('isEditing', this.updateSelectionViews);
     this.openmct.selection.on('change', this.updateSelectionViews);
   },
   unmounted() {
+    this.openmct.editor.off('isEditing', this.updateSelectionViews);
     this.openmct.selection.off('change', this.updateSelectionViews);
   },
   methods: {
-    updateSelectionViews(selection) {
+    updateSelectionViews() {
       this.clearViews();
       this.selectedViews = this.openmct.inspectorViews.get(this.openmct.selection.get());
       this.showViewsForTab();

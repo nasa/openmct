@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*jscs:disable disallowDanglingUnderscores */
 
+/**
+ * @type {EventHelpers}
+ */
 const helperFunctions = {
   listenTo: function (object, event, callback, context) {
     if (!this._listeningTo) {
@@ -37,7 +39,7 @@ const helperFunctions = {
     if (object.addEventListener) {
       object.addEventListener(event, listener._cb);
     } else {
-      object.on(event, listener._cb);
+      object.on(event, listener._cb, listener.context);
     }
 
     this._listeningTo.push(listener);
@@ -74,7 +76,7 @@ const helperFunctions = {
         } else if (listener.object.removeEventListener) {
           listener.object.removeEventListener(listener.event, listener._cb);
         } else {
-          listener.object.off(listener.event, listener._cb);
+          listener.object.off(listener.event, listener._cb, listener.context);
         }
 
         return listener;
@@ -94,7 +96,7 @@ export default helperFunctions;
 
 /**
 @typedef {{
-    listenTo: (object: any, event: any, callback: any, context: any) => void
+    listenTo: (object: any, event: any, callback: any, context: any) => void,
     stopListening: (object: any, event: any, callback: any, context: any) => void
 }} EventHelpers
 */

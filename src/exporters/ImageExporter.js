@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,14 +25,18 @@
  * Originally created by hudsonfoo on 09/02/16
  */
 
-function replaceDotsWithUnderscores(filename) {
-  const regex = /\./gi;
+function sanitizeFilename(filename) {
+  const replacedPeriods = filename.replace(/\./g, '_');
+  const safeFilename = replacedPeriods.replace(/[^a-zA-Z0-9_\-.\s]/g, '');
 
-  return filename.replace(regex, '_');
+  // Handle leading/trailing spaces and periods
+  const trimmedFilename = safeFilename.trim().replace(/^\.+|\.+$/g, '');
+
+  return trimmedFilename;
 }
 
+import { saveAs } from 'file-saver';
 import html2canvas from 'html2canvas';
-import { saveAs } from 'saveAs';
 import { v4 as uuid } from 'uuid';
 
 class ImageExporter {
@@ -43,7 +47,7 @@ class ImageExporter {
    * Converts an HTML element into a PNG or JPG Blob.
    * @private
    * @param {node} element that will be converted to an image
-   * @param {object} options Image options.
+   * @param {Object} options Image options.
    * @returns {promise}
    */
   renderElement(element, { imageType, className, thumbnailSize }) {
@@ -120,7 +124,7 @@ class ImageExporter {
           message: 'Image was not captured successfully!',
           buttons: [
             {
-              label: 'OK',
+              label: 'Ok',
               emphasis: true,
               callback: function () {
                 errorDialog.dismiss();
@@ -150,7 +154,7 @@ class ImageExporter {
    * @returns {promise}
    */
   async exportJPG(element, filename, className) {
-    const processedFilename = replaceDotsWithUnderscores(filename);
+    const processedFilename = sanitizeFilename(filename);
 
     const img = await this.renderElement(element, {
       imageType: 'jpg',
@@ -167,7 +171,7 @@ class ImageExporter {
    * @returns {promise}
    */
   async exportPNG(element, filename, className) {
-    const processedFilename = replaceDotsWithUnderscores(filename);
+    const processedFilename = sanitizeFilename(filename);
 
     const img = await this.renderElement(element, {
       imageType: 'png',

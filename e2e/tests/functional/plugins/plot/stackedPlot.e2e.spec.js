@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,8 +25,8 @@ Tests to verify log plot functionality. Note this test suite if very much under 
 necessarily be used for reference when writing new tests in this area.
 */
 
-const { test, expect } = require('../../../../pluginFixtures');
-const { createDomainObjectWithDefaults, waitForPlotsToRender } = require('../../../../appActions');
+import { createDomainObjectWithDefaults, waitForPlotsToRender } from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Stacked Plot', () => {
   let stackedPlot;
@@ -39,19 +39,23 @@ test.describe('Stacked Plot', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     stackedPlot = await createDomainObjectWithDefaults(page, {
-      type: 'Stacked Plot'
+      type: 'Stacked Plot',
+      name: 'Stacked Plot'
     });
 
     swgA = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator A',
       parent: stackedPlot.uuid
     });
     swgB = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator B',
       parent: stackedPlot.uuid
     });
     swgC = await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
+      name: 'Sine Wave Generator C',
       parent: stackedPlot.uuid
     });
   });
@@ -69,7 +73,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -78,7 +82,7 @@ test.describe('Stacked Plot', () => {
       .getByRole('menuitem')
       .filter({ hasText: /Remove/ })
       .click();
-    await page.getByRole('button').filter({ hasText: 'OK' }).click();
+    await page.getByRole('button').filter({ hasText: 'Ok' }).click();
 
     await expect(page.locator('#inspector-elements-tree .js-elements-pool__item')).toHaveCount(2);
 
@@ -101,7 +105,7 @@ test.describe('Stacked Plot', () => {
 
     await page.goto(stackedPlot.url);
 
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Elements' }).click();
 
@@ -148,95 +152,139 @@ test.describe('Stacked Plot', () => {
   }) => {
     await page.goto(stackedPlot.url);
 
+    // Click on the 1st plot
+    await page
+      .getByLabel('Stacked Plot Item Sine Wave Generator A')
+      .getByLabel('Plot Canvas')
+      .click();
+
     await page.getByRole('tab', { name: 'Config' }).click();
 
-    // Click on the 1st plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"] canvas`).nth(1).click();
-
     // Assert that the inspector shows the Y Axis properties for swgA
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgA.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator A', { exact: true })
+    ).toBeVisible();
 
     // Click on the 2nd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgB.name}"] canvas`).nth(1).click();
-
-    // Assert that the inspector shows the Y Axis properties for swgB
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
-    await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
-    await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgB.name);
-
-    // Click on the 3rd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgC.name}"] canvas`).nth(1).click();
-
-    // Assert that the inspector shows the Y Axis properties for swgC
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
-    await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
-    await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgC.name);
-
-    // Go into edit mode
-    await page.click('button[title="Edit"]');
+    await page
+      .getByLabel('Stacked Plot Item Sine Wave Generator B')
+      .getByLabel('Plot Canvas')
+      .click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
-    // Click on canvas for the 1st plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgA.name}"]`).click();
-
-    // Assert that the inspector shows the Y Axis properties for swgA
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    // Assert that the inspector shows the Y Axis properties for swgB
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgA.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator B', { exact: true })
+    ).toBeVisible();
 
-    //Click on canvas for the 2nd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgB.name}"]`).click();
+    // Click on the 3rd plot
+    await page
+      .getByLabel('Stacked Plot Item Sine Wave Generator C')
+      .getByLabel('Plot Canvas')
+      .click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     // Assert that the inspector shows the Y Axis properties for swgB
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgB.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator C', { exact: true })
+    ).toBeVisible();
 
-    //Click on canvas for the 3rd plot
-    await page.locator(`[aria-label="Stacked Plot Item ${swgC.name}"]`).click();
+    // Go into edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Click on the 1st plot
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator A').click();
+
+    // Assert that the inspector shows the Y Axis properties for swgA
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
+    await expect(
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator A', { exact: true })
+    ).toBeVisible();
+
+    // Click on the 2nd plot
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator B').click();
+
+    // Assert that the inspector shows the Y Axis properties for swgB
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
+    await expect(
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator B', { exact: true })
+    ).toBeVisible();
+
+    // Click on the 3rd plot
+    await page.getByLabel('Stacked Plot Item Sine Wave Generator C').click();
 
     // Assert that the inspector shows the Y Axis properties for swgC
-    await expect(page.locator('[aria-label="Plot Series Properties"] >> h2')).toContainText(
-      'Plot Series'
-    );
+    await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
     await expect(
-      page.locator('[aria-label="Plot Series Properties"] .c-object-label')
-    ).toContainText(swgC.name);
+      page.getByLabel('Inspector Views').getByText('Sine Wave Generator C', { exact: true })
+    ).toBeVisible();
+  });
+
+  test('Changing properties of an immutable child plot are applied correctly', async ({ page }) => {
+    await page.goto(stackedPlot.url);
+
+    // Go into edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // Click on canvas for the 1st plot
+    await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Expand config for the series
+    await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
+
+    // turn off alarm markers
+    await page.getByLabel('Alarm Markers').uncheck();
+
+    // save
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // reload page and waitForPlotsToRender
+    await page.reload();
+    await waitForPlotsToRender(page);
+
+    // Click on canvas for the 1st plot
+    await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Expand config for the series
+    await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
+
+    // Assert that alarm markers are still turned off
+    await expect(
+      page
+        .getByTitle('Display markers visually denoting points in alarm.')
+        .getByRole('cell', { name: 'Disabled' })
+    ).toBeVisible();
   });
 
   test('the legend toggles between aggregate and per child', async ({ page }) => {
     await page.goto(stackedPlot.url);
 
+    await waitForPlotsToRender(page);
+
     // Go into edit mode
-    await page.click('button[title="Edit"]');
+    await page.getByLabel('Edit Object').click();
 
     await page.getByRole('tab', { name: 'Config' }).click();
 
-    let legendProperties = await page.locator('[aria-label="Legend Properties"]');
+    const legendProperties = page.getByLabel('Legend Properties');
     await legendProperties.locator('[title="Display legends per sub plot."]~div input').uncheck();
 
     await assertAggregateLegendIsVisible(page);
@@ -245,11 +293,65 @@ test.describe('Stacked Plot', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
+    await waitForPlotsToRender(page);
+
     await assertAggregateLegendIsVisible(page);
 
     await page.reload();
 
+    await waitForPlotsToRender(page);
+
     await assertAggregateLegendIsVisible(page);
+  });
+
+  test('can toggle between aggregate and per child legends', async ({ page }) => {
+    // make some an overlay plot
+    const overlayPlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      parent: stackedPlot.uuid
+    });
+
+    // make some SWGs for the overlay plot
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      parent: overlayPlot.uuid
+    });
+
+    await page.goto(stackedPlot.url);
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Inspector Views').getByRole('checkbox').uncheck();
+    await page.getByLabel('Expand By Default').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Expanded')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // reload and ensure the legend is still expanded
+    await page.reload();
+    await expect(page.getByLabel('Plot Legend Expanded')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // change to collapsed by default
+    await page.getByLabel('Edit Object').click();
+    await page.getByLabel('Expand By Default').uncheck();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Collapsed')).toHaveCount(1);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
+
+    // change it to individual legends
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByLabel('Show Legends For Children').check();
+    await page.getByLabel('Save').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    await expect(page.getByLabel('Plot Legend Collapsed')).toHaveCount(4);
+    await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
   });
 });
 
@@ -261,11 +363,9 @@ async function assertAggregateLegendIsVisible(page) {
   // Wait for plot series data to load
   await waitForPlotsToRender(page);
   // Wait for plot legend to be shown
-  await page.waitForSelector('.js-stacked-plot-legend', { state: 'attached' });
+  await expect(page.locator('.js-stacked-plot-legend')).toBeVisible();
   // There should be 3 legend items
-  expect(
-    await page
-      .locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
-      .count()
-  ).toBe(3);
+  await expect(
+    page.locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
+  ).toHaveCount(3);
 }

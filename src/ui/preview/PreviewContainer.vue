@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,11 +20,10 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-preview-window js-preview-window">
+  <div role="dialog" aria-label="Preview Container" class="l-preview-window js-preview-window">
     <PreviewHeader
       ref="previewHeader"
-      :current-view="currentViewProvider"
-      :action-collection="actionCollection"
+      :current-view="view"
       :domain-object="domainObject"
       :views="viewProviders"
     />
@@ -64,10 +63,10 @@ export default {
 
     return {
       domainObject: domainObject,
-      viewKey: undefined,
+      viewKey: null,
+      view: null,
       viewProviders: [],
       currentViewProvider: {},
-      actionCollection: undefined,
       existingViewIndex: 0
     };
   },
@@ -93,10 +92,6 @@ export default {
     if (this.styleRuleManager) {
       this.styleRuleManager.destroy();
       delete this.styleRuleManager;
-    }
-
-    if (this.actionCollection) {
-      this.actionCollection.destroy();
     }
   },
   unmounted() {
@@ -143,8 +138,6 @@ export default {
         this.view = this.currentViewProvider.view(this.domainObject, this.objectPath);
       }
 
-      this.getActionsCollection(this.view);
-
       if (isExistingView) {
         this.viewContainer.appendChild(this.existingViewElement);
       } else {
@@ -164,13 +157,6 @@ export default {
     },
     initializeViewContainer() {
       this.viewContainer = this.$refs.objectView;
-    },
-    getActionsCollection(view) {
-      if (this.actionCollection) {
-        this.actionCollection.destroy();
-      }
-
-      this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, view);
     },
     initObjectStyles() {
       if (!this.styleRuleManager) {

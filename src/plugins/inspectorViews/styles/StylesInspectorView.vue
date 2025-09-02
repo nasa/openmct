@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,16 +21,16 @@
 -->
 
 <template>
-  <multipane type="vertical">
-    <pane class="c-inspector__styles">
+  <Multipane type="vertical">
+    <Pane class="c-inspector__styles">
       <div class="u-contents">
         <StylesView />
       </div>
-    </pane>
-    <pane v-if="isEditing" class="c-inspector__saved-styles" handle="before" label="Saved Styles">
+    </Pane>
+    <Pane v-if="isEditing" class="c-inspector__saved-styles" handle="before" label="Saved Styles">
       <SavedStylesInspectorView />
-    </pane>
-  </multipane>
+    </Pane>
+  </Multipane>
 </template>
 
 <script>

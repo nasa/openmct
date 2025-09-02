@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -24,6 +24,8 @@
     <div
       ref="button"
       class="c-icon-button"
+      role="menuitem"
+      :aria-label="options.title"
       :title="options.title"
       :class="{
         [options.icon]: true,
@@ -32,9 +34,9 @@
       }"
       @click="onClick"
     >
-      <div v-if="options.label" class="c-icon-button__label">
+      <span v-if="options.label" class="c-icon-button__label">
         {{ options.label }}
-      </div>
+      </span>
     </div>
   </div>
 </template>

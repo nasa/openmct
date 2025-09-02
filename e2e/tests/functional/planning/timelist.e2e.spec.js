@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,57 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import fs from 'fs';
 
-const { test, expect } = require('../../../pluginFixtures');
-const { createDomainObjectWithDefaults, createPlanFromJSON } = require('../../../appActions');
+import {
+  createDomainObjectWithDefaults,
+  createPlanFromJSON,
+  navigateToObjectWithFixedTimeBounds
+} from '../../../appActions.js';
+import { expect, test } from '../../../pluginFixtures.js';
 
-const testPlan = {
-  TEST_GROUP: [
-    {
-      name: 'Past event 1',
-      start: 1660320408000,
-      end: 1660343797000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 2',
-      start: 1660406808000,
-      end: 1660429160000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 3',
-      start: 1660493208000,
-      end: 1660503981000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 4',
-      start: 1660579608000,
-      end: 1660624108000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    },
-    {
-      name: 'Past event 5',
-      start: 1660666008000,
-      end: 1660681529000,
-      type: 'TEST-GROUP',
-      color: 'orange',
-      textColor: 'white'
-    }
-  ]
-};
-
+const examplePlanSmall1 = JSON.parse(
+  fs.readFileSync(
+    new URL('../../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url)
+  )
+);
 test.describe('Time List', () => {
-  test('Create a Time List, add a single Plan to it and verify all the activities are displayed with no milliseconds', async ({
+  test("Create a Time List, add a single Plan to it, verify all the activities are displayed with no milliseconds and selecting an activity shows it's properties", async ({
     page
   }) => {
     // Goto baseURL
@@ -84,35 +49,31 @@ test.describe('Time List', () => {
     });
 
     await test.step('Create a Plan and add it to the timelist', async () => {
-      const createdPlan = await createPlanFromJSON(page, {
+      await createPlanFromJSON(page, {
         name: 'Test Plan',
-        json: testPlan
+        json: examplePlanSmall1,
+        parent: timelist.uuid
       });
-
-      await page.goto(timelist.url);
-      // Expand the tree to show the plan
-      await page.click("button[title='Show selected item in tree']");
-      await page.dragAndDrop(`role=treeitem[name=/${createdPlan.name}/]`, '.c-object-view');
-      await page.click("button[title='Save']");
-      await page.click("li[title='Save and Finish Editing']");
-      const startBound = testPlan.TEST_GROUP[0].start;
-      const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
-
-      await page.goto(timelist.url);
+      const groups = Object.keys(examplePlanSmall1);
+      const firstGroupKey = groups[0];
+      const firstGroupItems = examplePlanSmall1[firstGroupKey];
+      const firstActivity = firstGroupItems[0];
+      const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+      const startBound = firstActivity.start;
+      const endBound = lastActivity.end;
 
       // Switch to fixed time mode with all plan events within the bounds
-      await page.goto(
-        `${timelist.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=timelist.view`
-      );
+      await navigateToObjectWithFixedTimeBounds(page, timelist.url, startBound, endBound);
 
       // Verify all events are displayed
-      const eventCount = await page.locator('.js-list-item').count();
-      expect(eventCount).toEqual(testPlan.TEST_GROUP.length);
+      const eventCount = await page.getByRole('row').count();
+      // subtracting one for the header
+      expect(eventCount - 1).toEqual(firstGroupItems.length);
     });
 
     await test.step('Does not show milliseconds in times', async () => {
-      // Get the first activity
-      const row = page.locator('.js-list-item').first();
+      // Get an activity
+      const row = page.getByRole('row').nth(2);
       // Verify that none fo the times have milliseconds displayed.
       // Example: 2024-11-17T16:00:00Z is correct and 2024-11-17T16:00:00.000Z is wrong
 
@@ -120,5 +81,84 @@ test.describe('Time List', () => {
       await expect(row.locator('.--end')).not.toContainText('.');
       await expect(row.locator('.--duration')).not.toContainText('.');
     });
+
+    await test.step('Shows activity properties when a row is selected', async () => {
+      await page.getByRole('row').nth(2).click();
+
+      // Find the activity state section in the inspector
+      await page.getByRole('tab', { name: 'Activity' }).click();
+      // Check that activity state label is displayed in the inspector.
+      await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+        'Not started'
+      );
+    });
+  });
+});
+
+test("View a timelist in expanded view, verify all the activities are displayed and selecting an activity shows it's properties", async ({
+  page
+}) => {
+  // Goto baseURL
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+  const timelist = await test.step('Create a Time List', async () => {
+    const createdTimeList = await createDomainObjectWithDefaults(page, { type: 'Time List' });
+    const objectName = await page.locator('.l-browse-bar__object-name').innerText();
+    expect(objectName).toBe(createdTimeList.name);
+
+    return createdTimeList;
+  });
+
+  await test.step('Create a Plan and add it to the timelist', async () => {
+    await createPlanFromJSON(page, {
+      name: 'Test Plan',
+      json: examplePlanSmall1,
+      parent: timelist.uuid
+    });
+
+    // Ensure that all activities are shown in the expanded view
+    const groups = Object.keys(examplePlanSmall1);
+    const firstGroupKey = groups[0];
+    const firstGroupItems = examplePlanSmall1[firstGroupKey];
+    const firstActivity = firstGroupItems[0];
+    const lastActivity = firstGroupItems[firstGroupItems.length - 1];
+    const startBound = firstActivity.start;
+    const endBound = lastActivity.end;
+
+    // Switch to fixed time mode with all plan events within the bounds
+    await navigateToObjectWithFixedTimeBounds(page, timelist.url, startBound, endBound);
+
+    // Change the object to edit mode
+    await page.getByRole('button', { name: 'Edit Object' }).click();
+
+    // Find the display properties section in the inspector
+    await page.getByRole('tab', { name: 'Config' }).click();
+    // Switch to expanded view and save the setting
+    await page.getByLabel('Display Style').selectOption({ label: 'Expanded' });
+
+    // Click on the "Save" button
+    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    // Verify all events are displayed
+    const eventCount = await page.getByRole('row').count();
+    expect(eventCount).toEqual(firstGroupItems.length);
+  });
+
+  await test.step('Shows activity properties when a row is selected in the expanded view', async () => {
+    await page.getByRole('row').nth(2).click();
+
+    // Find the activity state section in the inspector
+    await page.getByRole('tab', { name: 'Activity' }).click();
+    // Check that activity state label is displayed in the inspector.
+    await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+      'Not started'
+    );
+  });
+
+  await test.step("Verify absence of progress indication for an activity that's not in progress", async () => {
+    // When an activity is not in progress, the progress pie is not visible
+    const hidden = page.getByRole('row').locator('path').nth(1);
+    await expect(hidden).toBeHidden();
   });
 });

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -32,13 +32,13 @@
   >
     <ConductorModeIcon class="c-conductor__mode-icon" />
     <div class="c-compact-tc__setting-value u-fade-truncate">
-      <conductor-mode :mode="mode" :read-only="true" />
-      <conductor-clock :read-only="true" />
-      <conductor-time-system :read-only="true" />
+      <ConductorMode :mode="mode" :read-only="true" />
+      <ConductorClock :read-only="true" />
+      <ConductorTimeSystem :read-only="true" />
     </div>
-    <conductor-inputs-fixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
-    <conductor-inputs-realtime v-else :input-bounds="viewBounds" :read-only="true" />
-    <conductor-axis
+    <ConductorInputsFixed v-if="isFixed" :input-bounds="viewBounds" :read-only="true" />
+    <ConductorInputsRealtime v-else :input-bounds="viewBounds" :read-only="true" />
+    <ConductorAxis
       v-if="isFixed"
       class="c-conductor__ticks"
       :view-bounds="viewBounds"
@@ -55,7 +55,7 @@
       aria-label="Time Conductor Settings"
     ></div>
 
-    <conductor-pop-up
+    <ConductorPopUp
       v-if="showConductorPopup"
       ref="conductorPopup"
       :bottom="false"
@@ -80,7 +80,7 @@ import {
   MODES,
   REALTIME_MODE_KEY,
   TIME_CONTEXT_EVENTS
-} from '../../api/time/constants';
+} from '../../api/time/constants.js';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorClock from './ConductorClock.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
@@ -88,7 +88,7 @@ import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
 import ConductorMode from './ConductorMode.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorPopUp from './ConductorPopUp.vue';
-import conductorPopUpManager from './conductorPopUpManager';
+import conductorPopUpManager from './conductorPopUpManager.js';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';

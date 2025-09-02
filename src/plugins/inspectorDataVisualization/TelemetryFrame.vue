@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,7 +29,8 @@
       </span>
       <button
         ref="menu-button"
-        title="More options"
+        title="More actions"
+        aria-label="More actions"
         class="l-browse-bar__actions c-icon-button icon-3-dots"
         @click="toggleMenu"
       ></button>
@@ -65,11 +66,16 @@
 </template>
 
 <script>
+import { NEW_TAB_ACTION_KEY } from '@/plugins/openInNewTabAction/openInNewTabAction.js';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
 export default {
   inject: ['openmct'],
   provide() {
     return {
-      domainObject: this.telemetryObject
+      domainObject: this.telemetryObject,
+      objectPath: this.path,
+      renderWhenVisible: this.renderWhenVisible
     };
   },
   props: {
@@ -80,6 +86,14 @@ export default {
     telemetryObject: {
       type: Object,
       default: () => {}
+    },
+    path: {
+      type: Array,
+      default: () => []
+    },
+    renderWhenVisible: {
+      type: Function,
+      required: true
     }
   },
   data() {
@@ -92,13 +106,11 @@ export default {
       this.showMenu = !this.showMenu;
     },
     async getTelemetryPath() {
-      let sourceTelem;
-      if (this.telemetryObject.type === 'yamcs.telemetry') {
-        sourceTelem = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
-      } else if (this.telemetryObject.type === 'yamcs.image') {
-        sourceTelem = this.openmct.objects.makeKeyString(this.telemetryObject.identifier);
-      }
-      const telemetryPath = await this.openmct.objects.getOriginalPath(sourceTelem);
+      const telemetryObjectKeyString = this.openmct.objects.makeKeyString(
+        this.telemetryObject.identifier
+      );
+
+      const telemetryPath = await this.openmct.objects.getOriginalPath(telemetryObjectKeyString);
       return telemetryPath;
     },
     async openInNewTab() {
@@ -110,12 +122,15 @@ export default {
         'tc.endBound': timeBounds?.end,
         'tc.mode': 'fixed'
       };
-      const newTabAction = this.openmct.actions.getAction('newTab');
-      newTabAction.invoke([sourceTelemObject], urlParams);
+      const newTabAction = this.openmct.actions.getAction(NEW_TAB_ACTION_KEY);
+      // No view context needed, so pass undefined.
+      // The urlParams arg will override the global time bounds with the data visualization
+      // plot bounds.
+      newTabAction.invoke([sourceTelemObject], undefined, urlParams);
       this.showMenu = false;
     },
     previewTelemetry() {
-      const previewAction = this.openmct.actions.getAction('preview');
+      const previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
       previewAction.invoke([this.telemetryObject]);
       this.showMenu = false;
     }

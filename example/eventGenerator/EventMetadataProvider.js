@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,11 +41,34 @@ class EventMetadataProvider {
           {
             key: 'message',
             name: 'Message',
-            format: 'string'
+            format: 'string',
+            hints: {
+              // this is used in the EventTimelineView to provide a title for the event
+              // label can be changed to other properties for the title (e.g., the `name` property)
+              label: 0
+            }
           }
         ]
       }
     };
+
+    const inPlaceUpdateMetadataValue = {
+      key: 'messageId',
+      name: 'row identifier',
+      format: 'string',
+      useToUpdateInPlace: true
+    };
+    const eventAcknowledgeMetadataValue = {
+      key: 'acknowledge',
+      name: 'Acknowledge',
+      format: 'string'
+    };
+
+    const eventGeneratorWithAcknowledge = structuredClone(this.METADATA_BY_TYPE.eventGenerator);
+    eventGeneratorWithAcknowledge.values.push(inPlaceUpdateMetadataValue);
+    eventGeneratorWithAcknowledge.values.push(eventAcknowledgeMetadataValue);
+
+    this.METADATA_BY_TYPE.eventGeneratorWithAcknowledge = eventGeneratorWithAcknowledge;
   }
 
   supportsMetadata(domainObject) {

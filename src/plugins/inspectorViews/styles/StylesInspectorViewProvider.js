@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,9 +23,26 @@
 import mount from 'utils/mount';
 
 import StylesInspectorView from './StylesInspectorView.vue';
-import stylesManager from './StylesManager';
+import stylesManager from './StylesManager.js';
 
-const NON_STYLABLE_TYPES = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
+const NON_STYLABLE_TYPES = [
+  'clock',
+  'conditionSet',
+  'eventGenerator',
+  'eventGeneratorWithAcknowledge',
+  'example.imagery',
+  'folder',
+  'gantt-chart',
+  'generator',
+  'hyperlink',
+  'notebook',
+  'restricted-notebook',
+  'summary-widget',
+  'time-strip',
+  'timelist',
+  'timer',
+  'webPage'
+];
 
 function isLayoutObject(selection, objectType) {
   //we allow conditionSets to be styled if they're part of a layout
@@ -35,8 +52,8 @@ function isLayoutObject(selection, objectType) {
   );
 }
 
-function isCreatableObject(object, type) {
-  return NON_STYLABLE_TYPES.indexOf(object.type) < 0 && type.definition.creatable;
+function isCreatableObject(object, typeObject) {
+  return NON_STYLABLE_TYPES.indexOf(object.type) < 0 && typeObject.definition.creatable;
 }
 
 export default function StylesInspectorViewProvider(openmct) {
@@ -46,21 +63,26 @@ export default function StylesInspectorViewProvider(openmct) {
     glyph: 'icon-paint-bucket',
     canView: function (selection) {
       const objectSelection = selection?.[0];
-      const layoutItem = objectSelection?.[0]?.context?.layoutItem;
-      const domainObject = objectSelection?.[0]?.context?.item;
+      const objectContext = objectSelection?.[0]?.context;
+      const domainObject = objectContext?.item;
+      const hasStyles = domainObject?.configuration?.objectStyles;
+      const isFlexibleLayoutContainer =
+        domainObject?.type === 'flexible-layout' && objectContext.type === 'container';
+      const isLayoutItem = objectContext?.layoutItem;
 
-      if (layoutItem) {
+      if ((isLayoutItem || hasStyles) && !isFlexibleLayoutContainer) {
         return true;
       }
 
-      if (!domainObject) {
+      if (!domainObject || isFlexibleLayoutContainer) {
         return false;
       }
 
-      const type = openmct.types.get(domainObject.type);
+      const typeObject = openmct.types.get(domainObject.type);
 
       return (
-        isLayoutObject(objectSelection, domainObject.type) || isCreatableObject(domainObject, type)
+        isLayoutObject(objectSelection, domainObject.type) ||
+        isCreatableObject(domainObject, typeObject)
       );
     },
     view: function (selection) {
@@ -88,8 +110,11 @@ export default function StylesInspectorViewProvider(openmct) {
           );
           _destroy = destroy;
         },
+        showTab: function (isEditing) {
+          return true;
+        },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
         },
         destroy: function () {
           if (_destroy) {

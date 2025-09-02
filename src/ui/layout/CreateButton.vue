@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,21 +23,23 @@
   <div ref="createButton" class="c-create-button--w">
     <button
       class="c-create-button c-button--menu c-button--major icon-plus"
+      :aria-disabled="isEditing"
+      aria-labelledby="create-button-label"
       @click.prevent.stop="showCreateMenu"
     >
-      <span class="c-button__label">Create</span>
+      <span id="create-button-label" class="c-button__label">Create</span>
     </button>
   </div>
 </template>
-
 <script>
-import CreateAction from '@/plugins/formActions/CreateAction';
+import { CREATE_ACTION_KEY } from '@/plugins/formActions/CreateAction';
 
 export default {
   inject: ['openmct'],
   data: function () {
     return {
       menuItems: {},
+      isEditing: this.openmct.editor.isEditing(),
       selectedMenuItem: {},
       opened: false
     };
@@ -56,6 +58,12 @@ export default {
         }
       });
     }
+  },
+  mounted() {
+    this.openmct.editor.on('isEditing', this.toggleEdit);
+  },
+  unmounted() {
+    this.openmct.editor.off('isEditing', this.toggleEdit);
   },
   methods: {
     getItems() {
@@ -89,10 +97,12 @@ export default {
 
       this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);
     },
+    toggleEdit(isEditing) {
+      this.isEditing = isEditing;
+    },
     create(key) {
-      const createAction = new CreateAction(this.openmct, key, this.openmct.router.path[0]);
-
-      createAction.invoke();
+      const createAction = this.openmct.actions.getAction(CREATE_ACTION_KEY);
+      createAction.invoke(key, this.openmct.router.path[0]);
     }
   }
 };

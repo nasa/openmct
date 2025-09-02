@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,15 +21,15 @@
  *****************************************************************************/
 import { toRaw } from 'vue';
 
-import objectUtils from '../objects/object-utils';
-import CompositionProvider from './CompositionProvider';
+import { makeKeyString, parseKeyString } from '../objects/object-utils.js';
+import CompositionProvider from './CompositionProvider.js';
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').Identifier} Identifier
+ * @typedef {import('openmct').Identifier} Identifier
  */
 
 /**
@@ -75,7 +75,11 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    *          the Identifiers in this composition
    */
   load(domainObject) {
-    return Promise.all(domainObject.composition);
+    const identifiers = domainObject.composition
+      .filter((idOrKeystring) => idOrKeystring !== null && idOrKeystring !== undefined)
+      .map((idOrKeystring) => parseKeyString(idOrKeystring));
+
+    return Promise.all(identifiers);
   }
   /**
    * Attach listeners for changes to the composition of a given domain object.
@@ -91,7 +95,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
     this.establishTopicListener();
 
     /** @type {string} */
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let objectListeners = this.listeningTo[keyString];
 
     if (!objectListeners) {
@@ -120,7 +124,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    */
   off(domainObject, event, callback, context) {
     /** @type {string} */
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     const objectListeners = this.listeningTo[keyString];
 
     const index = objectListeners[event].findIndex((l) => {
@@ -228,7 +232,7 @@ export default class DefaultCompositionProvider extends CompositionProvider {
     this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
     /** @type {string} */
-    let id = objectUtils.makeKeyString(domainObject.identifier);
+    let id = makeKeyString(domainObject.identifier);
     const listeners = this.listeningTo[id];
 
     if (!listeners) {

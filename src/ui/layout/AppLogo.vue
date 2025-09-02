@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,12 +20,19 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="aboutLogo" class="l-shell__app-logo" @click="launchAbout"></div>
+  <div
+    ref="aboutLogo"
+    class="l-shell__app-logo"
+    role="button"
+    aria-label="About Modal"
+    @click="launchAbout"
+  ></div>
 </template>
 
 <script>
 import mount from 'utils/mount';
 
+import { encode_url } from '../../utils/encoding';
 import AboutDialog from './AboutDialog.vue';
 
 export default {
@@ -33,7 +40,7 @@ export default {
   mounted() {
     const branding = this.openmct.branding();
     if (branding.smallLogoImage) {
-      this.$refs.aboutLogo.style.backgroundImage = `url('${branding.smallLogoImage}')`;
+      this.$refs.aboutLogo.style.backgroundImage = `url('${encode_url(branding.smallLogoImage)}')`;
     }
   },
   methods: {

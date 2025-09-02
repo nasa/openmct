@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -28,11 +28,7 @@
           { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
           { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
         ]"
-        :style="[
-          styleItem.style.imageUrl
-            ? { backgroundImage: 'url(' + styleItem.style.imageUrl + ')' }
-            : itemStyle
-        ]"
+        :style="[encodedImageUrl ? { backgroundImage: 'url(' + encodedImageUrl + ')' } : itemStyle]"
         class="c-style-thumb"
       >
         <span
@@ -43,31 +39,31 @@
         </span>
       </div>
 
-      <toolbar-color-picker
+      <ToolbarColorPicker
         v-if="hasProperty(styleItem.style.border)"
         class="c-style__toolbar-button--border-color u-menu-to--center"
         :options="borderColorOption"
         @change="updateStyleValue"
       />
-      <toolbar-color-picker
+      <ToolbarColorPicker
         v-if="hasProperty(styleItem.style.backgroundColor)"
         class="c-style__toolbar-button--background-color u-menu-to--center"
         :options="backgroundColorOption"
         @change="updateStyleValue"
       />
-      <toolbar-color-picker
+      <ToolbarColorPicker
         v-if="hasProperty(styleItem.style.color)"
         class="c-style__toolbar-button--color u-menu-to--center"
         :options="colorOption"
         @change="updateStyleValue"
       />
-      <toolbar-button
-        v-if="hasProperty(styleItem.style.imageUrl)"
+      <ToolbarButton
+        v-if="hasProperty(encodedImageUrl)"
         class="c-style__toolbar-button--image-url"
         :options="imageUrlOption"
         @change="updateStyleValue"
       />
-      <toolbar-toggle-button
+      <ToolbarToggleButton
         v-if="hasProperty(styleItem.style.isStyleInvisible)"
         class="c-style__toolbar-button--toggle-visible"
         :options="isStyleInvisibleOption"
@@ -76,7 +72,7 @@
     </div>
 
     <!-- Save Styles -->
-    <toolbar-button
+    <ToolbarButton
       v-if="canSaveStyle"
       ref="saveStyleButton"
       class="c-style__toolbar-button--save c-local-controls--show-on-hover c-icon-button c-icon-button--major"
@@ -92,6 +88,8 @@ import { getStylesWithoutNoneValue } from '@/plugins/condition/utils/styleUtils'
 import ToolbarButton from '@/ui/toolbar/components/ToolbarButton.vue';
 import ToolbarColorPicker from '@/ui/toolbar/components/ToolbarColorPicker.vue';
 import ToolbarToggleButton from '@/ui/toolbar/components/ToolbarToggleButton.vue';
+
+import { encode_url } from '../../../../utils/encoding';
 
 export default {
   name: 'StyleEditor',
@@ -183,10 +181,13 @@ export default {
         },
         property: 'imageUrl',
         formKeys: ['url'],
-        value: { url: this.styleItem.style.imageUrl },
+        value: { url: this.encodedImageUrl },
         isEditing: this.isEditing,
         nonSpecific: this.mixedStyles.indexOf('imageUrl') > -1
       };
+    },
+    encodedImageUrl() {
+      return encode_url(this.styleItem.style.imageUrl);
     },
     isStyleInvisibleOption() {
       return {

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -42,7 +42,7 @@ const DEFAULT_RECORDS_LENGTH = 10;
 
 import { millisecondsToDHMS } from 'utils/duration';
 
-import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import UTCTimeFormat from '../utcTimeSystem/UTCTimeFormat.js';
 
 export default {

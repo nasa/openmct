@@ -1,6 +1,6 @@
 import mount from 'utils/mount';
 
-import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants';
+import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants.js';
 import BarGraphOptions from './BarGraphOptions.vue';
 
 export default function BarGraphInspectorViewProvider(openmct) {
@@ -41,7 +41,7 @@ export default function BarGraphInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {

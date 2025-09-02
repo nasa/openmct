@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -50,14 +50,14 @@
         </div>
 
         <div v-if="isEditing" class="c-inspect-properties__label span-all">
-          <toggle-switch
+          <ToggleSwitch
             :id="keyString"
             :checked="persistedFilters.useGlobal"
             @change="useGlobalFilter"
           />
           Use global filter
         </div>
-        <filter-field
+        <FilterField
           v-for="metadatum in activeFilters"
           :key="metadatum.key"
           :filter-field="metadatum"

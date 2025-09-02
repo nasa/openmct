@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,13 +21,14 @@
  *****************************************************************************/
 
 const SPECIAL_MESSAGE_TYPES = ['layout', 'flexible-layout'];
+const REMOVE_ACTION_KEY = 'remove';
 
-export default class RemoveAction {
+class RemoveAction {
   #transaction;
 
   constructor(openmct) {
     this.name = 'Remove';
-    this.key = 'remove';
+    this.key = REMOVE_ACTION_KEY;
     this.description = 'Remove this object from its containing object.';
     this.cssClass = 'icon-trash';
     this.group = 'action';
@@ -74,7 +75,7 @@ export default class RemoveAction {
         message,
         buttons: [
           {
-            label: 'OK',
+            label: 'Ok',
             callback: () => {
               dialog.dismiss();
               resolve();
@@ -162,3 +163,7 @@ export default class RemoveAction {
     this.#transaction = null;
   }
 }
+
+export { REMOVE_ACTION_KEY };
+
+export default RemoveAction;

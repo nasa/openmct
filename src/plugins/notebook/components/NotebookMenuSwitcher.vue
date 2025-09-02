@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,19 +23,20 @@
   <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
     <button
       class="c-icon-button c-button--menu icon-camera"
-      title="Take a Notebook Snapshot"
+      :aria-label="snapshotMenuLabel"
+      :title="snapshotMenuLabel"
       @click.stop.prevent="showMenu"
     >
-      <span title="Take Notebook Snapshot" class="c-icon-button__label"> Snapshot </span>
+      <span class="c-icon-button__label">Snapshot</span>
     </button>
   </div>
 </template>
 
 <script>
-import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
-import Snapshot from '../snapshot';
-import { getMenuItems } from '../utils/notebook-snapshot-menu';
-import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
+import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants.js';
+import Snapshot from '../snapshot.js';
+import { getMenuItems } from '../utils/notebook-snapshot-menu.js';
+import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage.js';
 
 export default {
   inject: ['openmct'],
@@ -70,6 +71,11 @@ export default {
       notebookSnapshot: undefined,
       notebookTypes: []
     };
+  },
+  computed: {
+    snapshotMenuLabel() {
+      return 'Open the Notebook Snapshot Menu';
+    }
   },
   mounted() {
     validateNotebookStorageObject();
@@ -117,7 +123,7 @@ export default {
         const objectPath = this.objectPath || this.openmct.router.path;
         const link = this.isPreview ? this.getPreviewObjectLink() : window.location.hash;
         const snapshotMeta = {
-          bounds: this.openmct.time.bounds(),
+          bounds: this.openmct.time.getBounds(),
           link,
           objectPath,
           openmct: this.openmct

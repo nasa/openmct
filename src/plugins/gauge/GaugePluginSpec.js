@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -164,7 +164,7 @@ describe('Gauge plugin', () => {
       });
       spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });
@@ -306,7 +306,7 @@ describe('Gauge plugin', () => {
       });
       spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });
@@ -448,7 +448,7 @@ describe('Gauge plugin', () => {
       });
       spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });
@@ -763,7 +763,7 @@ describe('Gauge plugin', () => {
           })
       });
       spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'bounds').and.returnValue({
+      spyOn(openmct.time, 'getBounds').and.returnValue({
         start: 1000,
         end: 5000
       });

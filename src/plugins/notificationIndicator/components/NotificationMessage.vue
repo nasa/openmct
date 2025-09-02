@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -31,7 +31,7 @@
             <div class="c-message__title">{{ notification.model.message }}</div>
           </div>
           <div class="message-body">
-            <progress-bar v-if="isProgressNotification" :model="progressObject" />
+            <ProgressBar v-if="isProgressNotification" :model="progressObject" />
           </div>
         </div>
       </div>

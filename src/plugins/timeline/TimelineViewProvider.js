@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@ import mount from 'utils/mount';
 
 import TimelineViewLayout from './TimelineViewLayout.vue';
 
-export default function TimelineViewProvider(openmct) {
+export default function TimelineViewProvider(openmct, extendedLinesBus) {
   return {
     key: 'time-strip.view',
     name: 'TimeStrip',
@@ -38,11 +38,12 @@ export default function TimelineViewProvider(openmct) {
     },
 
     view: function (domainObject, objectPath) {
+      let component = null;
       let _destroy = null;
 
       return {
-        show: function (element) {
-          const { destroy } = mount(
+        show: function (element, isEditing) {
+          const { vNode, destroy } = mount(
             {
               el: element,
               components: {
@@ -51,17 +52,33 @@ export default function TimelineViewProvider(openmct) {
               provide: {
                 openmct,
                 domainObject,
+                path: objectPath,
                 composition: openmct.composition.get(domainObject),
-                objectPath
+                extendedLinesBus
               },
-              template: '<timeline-view-layout></timeline-view-layout>'
+              data() {
+                return {
+                  isEditing
+                };
+              },
+              template:
+                '<timeline-view-layout ref="timeline" :is-editing="isEditing"></timeline-view-layout>'
             },
             {
               app: openmct.app,
               element
             }
           );
+          component = vNode.componentInstance;
           _destroy = destroy;
+        },
+        contextAction(action, ...args) {
+          if (component?.$refs?.timeline?.[action]) {
+            component.$refs.timeline[action](...args);
+          }
+        },
+        onEditModeChange(isEditing) {
+          component.isEditing = isEditing;
         },
         destroy: function () {
           if (_destroy) {

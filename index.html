@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -19,14 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no"
-    />
+    <!-- Modified viewport meta tag to improve accessibility -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Open MCT</title>
     <script src="dist/openmct.js"></script>
@@ -115,7 +113,8 @@
           creatable: true
         })
       );
-      openmct.install(openmct.plugins.Timeline());
+      const timeLinePlugin = openmct.plugins.Timeline();
+      openmct.install(timeLinePlugin);
       openmct.install(openmct.plugins.Hyperlink());
       openmct.install(openmct.plugins.UTCTimeSystem());
       openmct.install(
@@ -236,6 +235,7 @@
       openmct.install(openmct.plugins.Timelist());
       openmct.install(openmct.plugins.BarChart());
       openmct.install(openmct.plugins.ScatterPlot());
+      openmct.install(openmct.plugins.EventTimestripPlugin(timeLinePlugin.extendedLinesBus));
       document.addEventListener('DOMContentLoaded', function () {
         openmct.start();
       });

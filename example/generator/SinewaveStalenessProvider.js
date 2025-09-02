@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,13 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 
 export default class SinewaveLimitProvider extends EventEmitter {
   #openmct;
   #observingStaleness;
   #watchingTheClock;
-  #isRealTime;
 
   constructor(openmct) {
     super();
@@ -34,7 +33,6 @@ export default class SinewaveLimitProvider extends EventEmitter {
     this.#openmct = openmct;
     this.#observingStaleness = {};
     this.#watchingTheClock = false;
-    this.#isRealTime = undefined;
   }
 
   supportsStaleness(domainObject) {
@@ -61,10 +59,7 @@ export default class SinewaveLimitProvider extends EventEmitter {
   subscribeToStaleness(domainObject, callback) {
     const id = this.#getObjectKeyString(domainObject);
 
-    if (this.#isRealTime === undefined) {
-      this.#updateRealTime(this.#openmct.time.getMode());
-    }
-
+    this.#realTimeCheck();
     this.#handleClockUpdate();
 
     if (this.#observerExists(id)) {
@@ -92,17 +87,15 @@ export default class SinewaveLimitProvider extends EventEmitter {
 
     if (observers && !this.#watchingTheClock) {
       this.#watchingTheClock = true;
-      this.#openmct.time.on('modeChanged', this.#updateRealTime, this);
+      this.#openmct.time.on('modeChanged', this.#realTimeCheck, this);
     } else if (!observers && this.#watchingTheClock) {
       this.#watchingTheClock = false;
-      this.#openmct.time.off('modeChanged', this.#updateRealTime, this);
+      this.#openmct.time.off('modeChanged', this.#realTimeCheck, this);
     }
   }
 
-  #updateRealTime(mode) {
-    this.#isRealTime = mode !== 'fixed';
-
-    if (!this.#isRealTime) {
+  #realTimeCheck() {
+    if (!this.#openmct.time.isRealTime()) {
       Object.keys(this.#observingStaleness).forEach((id) => {
         this.#updateStaleness(id, false);
       });
@@ -140,7 +133,7 @@ export default class SinewaveLimitProvider extends EventEmitter {
   }
 
   #providingStaleness(domainObject) {
-    return domainObject.telemetry?.staleness === true && this.#isRealTime;
+    return domainObject.telemetry?.staleness === true && this.#openmct.time.isRealTime();
   }
 
   #getObjectKeyString(object) {

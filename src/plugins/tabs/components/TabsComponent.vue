@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -38,11 +38,11 @@
         v-for="(tab, index) in tabsList"
         :ref="tab.keyString"
         :key="tab.keyString"
-        :aria-label="`${tab.domainObject.name} tab`"
+        :aria-label="`${tab.domainObject.name} tab${tab.keyString === currentTab.keyString ? ' - selected' : ''}`"
         class="c-tab c-tabs-view__tab js-tab"
         role="tab"
         :class="{
-          'is-current': isCurrent(tab)
+          'is-current': tab.keyString === currentTab.keyString
         }"
         @click="showTab(tab, index)"
         @mouseover.ctrl="showToolTip(tab)"
@@ -54,7 +54,11 @@
           :class="[tab.status ? `is-status--${tab.status}` : '']"
         >
           <div class="c-object-label__type-icon" :class="tab.type.definition.cssClass">
-            <span class="is-status__indicator" :title="`This item is ${tab.status}`"></span>
+            <span
+              class="is-status__indicator"
+              :aria-label="`This item is ${tab.status}`"
+              :title="`This item is ${tab.status}`"
+            ></span>
           </div>
           <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
         </div>
@@ -70,9 +74,9 @@
       :key="tab.keyString"
       :style="getTabStyles(tab)"
       class="c-tabs-view__object-holder"
-      :class="{ 'c-tabs-view__object-holder--hidden': !isCurrent(tab) }"
+      :class="{ 'c-tabs-view__object-holder--hidden': tab.keyString !== currentTab.keyString }"
     >
-      <object-view
+      <ObjectView
         v-if="shouldLoadTab(tab)"
         class="c-tabs-view__object"
         :default-object="tab.domainObject"
@@ -85,9 +89,8 @@
 <script>
 import _ from 'lodash';
 
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import ObjectView from '../../../ui/components/ObjectView.vue';
-import RemoveAction from '../../remove/RemoveAction.js';
 
 const unknownObjectType = {
   definition: {
@@ -167,7 +170,6 @@ export default {
     this.updateCurrentTab = this.updateCurrentTab.bind(this);
     this.openmct.router.on('change:params', this.updateCurrentTab);
 
-    this.RemoveAction = new RemoveAction(this.openmct);
     document.addEventListener('dragstart', this.dragstart);
     document.addEventListener('dragend', this.dragend);
   },
@@ -251,7 +253,7 @@ export default {
         message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
         buttons: [
           {
-            label: 'OK',
+            label: 'Ok',
             emphasis: 'true',
             callback: () => {
               this.composition.remove(childDomainObject);
@@ -351,7 +353,10 @@ export default {
       this.internalDomainObject = domainObject;
     },
     persistCurrentTabIndex(index) {
-      this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
+      //only persist if the domain object is not locked. The object mutate API will deal with whether the object is persistable or not.
+      if (!this.internalDomainObject.locked) {
+        this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
+      }
     },
     storeCurrentTabIndexInURL(index) {
       let currentTabIndexInURL = this.openmct.router.getSearchParam(this.searchTabKey);

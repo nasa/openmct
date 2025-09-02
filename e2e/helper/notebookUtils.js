@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,22 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { createDomainObjectWithDefaults } = require('../appActions');
+import { createDomainObjectWithDefaults } from '../appActions.js';
 
 const NOTEBOOK_DROP_AREA = '.c-notebook__drag-area';
 const CUSTOM_NAME = 'CUSTOM_NAME';
-const path = require('path');
+import { fileURLToPath } from 'url';
+
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} text
+ */
+async function enterTextEntry(page, text) {
+  await addNotebookEntry(page);
+  await enterTextInLastEntry(page, text);
+  await commitEntry(page);
+}
 
 /**
  * @param {import('@playwright/test').Page} page
  */
-async function enterTextEntry(page, text) {
-  // Click the 'Add Notebook Entry' area
+async function addNotebookEntry(page) {
   await page.locator(NOTEBOOK_DROP_AREA).click();
+}
 
-  // enter text
+/**
+ * @param {import('@playwright/test').Page} page
+ */
+async function enterTextInLastEntry(page, text) {
   await page.getByLabel('Notebook Entry Input').last().fill(text);
-  await commitEntry(page);
 }
 
 /**
@@ -49,9 +61,9 @@ async function dragAndDropEmbed(page, notebookObject) {
   // Navigate to notebook
   await page.goto(notebookObject.url);
   // Expand the tree to reveal the notebook
-  await page.click('button[title="Show selected item in tree"]');
+  await page.getByLabel('Show selected item in tree').click();
   // Drag and drop the SWG into the notebook
-  await page.dragAndDrop(`text=${swg.name}`, NOTEBOOK_DROP_AREA);
+  await page.getByLabel(`Navigate to ${swg.name}`).dragTo(page.locator(NOTEBOOK_DROP_AREA));
   await commitEntry(page);
 }
 
@@ -68,9 +80,11 @@ async function commitEntry(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function startAndAddRestrictedNotebookObject(page) {
-  // eslint-disable-next-line no-undef
-  await page.addInitScript({ path: path.join(__dirname, 'addInitRestrictedNotebook.js') });
+  await page.addInitScript({
+    path: fileURLToPath(new URL('./addInitRestrictedNotebook.js', import.meta.url))
+  });
   await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.waitForURL('**/browse/mine?**');
 
   return createDomainObjectWithDefaults(page, {
     type: CUSTOM_NAME,
@@ -82,10 +96,9 @@ async function startAndAddRestrictedNotebookObject(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function lockPage(page) {
-  const commitButton = page.locator('button:has-text("Commit Entries")');
-  await commitButton.click();
-
-  //Wait until Lock Banner is visible
+  // Click the Commit Entries button
+  await page.getByLabel('Commit Entries').click();
+  // Wait until Lock Banner is visible
   await page.locator('text=Lock Page').click();
 }
 
@@ -138,12 +151,14 @@ async function createNotebookEntryAndTags(page, iterations = 1) {
   return notebook;
 }
 
-// eslint-disable-next-line no-undef
-module.exports = {
-  enterTextEntry,
-  dragAndDropEmbed,
-  startAndAddRestrictedNotebookObject,
-  lockPage,
+export {
+  addNotebookEntry,
+  commitEntry,
+  createNotebookAndEntry,
   createNotebookEntryAndTags,
-  createNotebookAndEntry
+  dragAndDropEmbed,
+  enterTextEntry,
+  enterTextInLastEntry,
+  lockPage,
+  startAndAddRestrictedNotebookObject
 };

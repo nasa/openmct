@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import MCTChartSeriesElement from './MCTChartSeriesElement';
+import MCTChartSeriesElement from './MCTChartSeriesElement.js';
 
 // TODO: Is this needed? This is identical to MCTChartLineLinear. Why is it a different class?
 export default class MCTChartPointSet extends MCTChartSeriesElement {

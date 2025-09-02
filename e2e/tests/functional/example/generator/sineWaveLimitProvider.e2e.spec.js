@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
 */
 
-const { test, expect } = require('../../../../baseFixtures');
+import { expect, test } from '../../../../baseFixtures.js';
 
 test.describe('Sine Wave Generator', () => {
   test('Create new Sine Wave Generator Object and validate create Form Logic', async ({
@@ -38,10 +38,10 @@ test.describe('Sine Wave Generator', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     //Click the Create button
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
     // Click Sine Wave Generator
-    await page.click('text=Sine Wave Generator');
+    await page.getByRole('menuitem', { name: 'Sine Wave Generator' }).click();
 
     // Verify that the each required field has required indicator
     // Title
@@ -107,11 +107,11 @@ test.describe('Sine Wave Generator', () => {
     await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
     await page.locator('.field.control.l-input-sm input').first().press('ArrowUp');
 
-    const value = await page.locator('.field.control.l-input-sm input').first().inputValue();
-    await expect(value).toBe('6');
+    const value = page.locator('.field.control.l-input-sm input').first();
+    await expect(value).toHaveValue('6');
 
-    //Click text=OK
-    await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
+    //Click save button
+    await page.getByLabel('Save').click();
 
     // Verify that the Sine Wave Generator is displayed and correct
     // Verify object properties

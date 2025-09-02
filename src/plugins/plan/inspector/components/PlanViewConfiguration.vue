@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -70,14 +70,14 @@
 <script>
 import { markRaw } from 'vue';
 
-import PlanViewConfiguration from '../../PlanViewConfiguration';
+import PlanViewConfiguration from '../../PlanViewConfiguration.js';
 
 export default {
   components: {},
   inject: ['openmct'],
   data() {
     const selection = this.openmct.selection.get();
-    /** @type {import('../../../api/objects/ObjectAPI').DomainObject}  */
+    /** @type {import('openmct').DomainObject}  */
     const domainObject = selection[0][0].context.item;
     const planViewConfiguration = markRaw(new PlanViewConfiguration(domainObject, this.openmct));
 

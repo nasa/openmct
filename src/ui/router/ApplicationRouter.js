@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,28 +19,29 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module*/
 
-const LocationBar = require('location-bar');
-const EventEmitter = require('EventEmitter');
-const _ = require('lodash');
+import { EventEmitter } from 'eventemitter3';
+import LocationBar from 'location-bar';
+import _ from 'lodash';
 
 class ApplicationRouter extends EventEmitter {
   /**
-     * events
-     * change:params -> notify listeners w/ new, old, and changed.
-     * change:path -> notify listeners w/ new, old paths.
-     *
-     * methods:
-     * update(path, params) -> updates path and params at the same time.  Only
-     *   updates specified params, other params are not modified.
-     * updateParams(newParams) -> update only specified params, leaving rest
-     *      intact.  Does not modify path.
-     * updatePath(path);
+   * events
+   * change:params -> notify listeners w/ new, old, and changed.
+   * change:path -> notify listeners w/ new, old paths.
+   *
+   * methods:
+   * update(path, params) -> updates path and params at the same time.  Only
+   *   updates specified params, other params are not modified.
+   * updateParams(newParams) -> update only specified params, leaving rest
+   *      intact.  Does not modify path.
+   * updatePath(path);
+   *
+   * route(path, handler);
+   * start(); Start routing.
+   * @param {import('../../../openmct').OpenMCT} openmct
+   */
 
-     * route(path, handler);
-     * start(); Start routing.
-     */
   constructor(openmct) {
     super();
 
@@ -48,6 +49,7 @@ class ApplicationRouter extends EventEmitter {
     this.openmct = openmct;
     this.routes = [];
     this.started = false;
+    this.path = null;
 
     this.setHash = _.debounce(this.setHash.bind(this), 300);
 
@@ -90,7 +92,7 @@ class ApplicationRouter extends EventEmitter {
    * @property {URL} url current url location
    * @property {string} path current url location pathname
    * @property {string} getQueryString a function which returns url search query
-   * @property {object} params object representing url searchParams
+   * @property {Object} params object representing url searchParams
    */
 
   /**
@@ -114,7 +116,7 @@ class ApplicationRouter extends EventEmitter {
   /**
    * Get current location URL Object searchParams
    *
-   * @returns {object} object representing current url searchParams
+   * @returns {Object} object representing current url searchParams
    */
   getParams() {
     return this.currentLocation.params;
@@ -144,7 +146,7 @@ class ApplicationRouter extends EventEmitter {
    *
    * @param {Array<Object>} objectPath Object path of a given Domain Object
    *
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   isNavigatedObject(objectPath) {
     let targetObject = objectPath[0];
@@ -160,8 +162,8 @@ class ApplicationRouter extends EventEmitter {
   /**
    * Add routes listeners
    *
-   * @param {string} matcher Regex to match value in url
-   * @param {@function} callback function called when found match in url
+   * @param {RegExp} matcher Regex to match value in url
+   * @param {Function} callback function called when found match in url
    */
   route(matcher, callback) {
     this.routes.push({
@@ -307,10 +309,11 @@ class ApplicationRouter extends EventEmitter {
    *
    * @param {string} newPath new path of url
    * @param {string} oldPath old path of url
+   * @returns {boolean} true if path changed, false otherwise
    */
   doPathChange(newPath, oldPath) {
     if (newPath === oldPath) {
-      return;
+      return false;
     }
 
     let route = this.routes.filter((r) => r.matcher.test(newPath))[0];
@@ -321,18 +324,21 @@ class ApplicationRouter extends EventEmitter {
     this.openmct.telemetry.abortAllRequests();
 
     this.emit('change:path', newPath, oldPath);
+
+    return true;
   }
 
   /**
    * @private
    * Compare new and old params and on change emit event 'change:params'
    *
-   * @param {object} newParams new params of url
-   * @param {object} oldParams old params of url
+   * @param {Object} newParams new params of url
+   * @param {Object} oldParams old params of url
+   * @returns {boolean} true if params changed, false otherwise
    */
   doParamsChange(newParams, oldParams) {
     if (_.isEqual(newParams, oldParams)) {
-      return;
+      return false;
     }
 
     let changedParams = {};
@@ -348,6 +354,7 @@ class ApplicationRouter extends EventEmitter {
     });
 
     this.emit('change:params', newParams, oldParams, changedParams);
+    return true;
   }
 
   /**
@@ -369,9 +376,13 @@ class ApplicationRouter extends EventEmitter {
       return;
     }
 
-    this.doPathChange(newLocation.path, oldLocation.path);
+    const pathChanged = this.doPathChange(newLocation.path, oldLocation.path);
 
-    this.doParamsChange(newLocation.params, oldLocation.params);
+    const paramsChanged = this.doParamsChange(newLocation.params, oldLocation.params, pathChanged);
+    if (pathChanged || paramsChanged) {
+      // If either path or parameters have changed, we update the URL in the address bar.
+      this.set(newLocation.path, newLocation.getQueryString());
+    }
   }
 
   /**
@@ -430,4 +441,4 @@ function paramsToObject(searchParams) {
   return params;
 }
 
-module.exports = ApplicationRouter;
+export default ApplicationRouter;

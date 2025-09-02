@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
-import { nextTick } from 'vue';
 
 import ClearDataPlugin from './plugin.js';
 
@@ -208,12 +207,11 @@ describe('The Clear Data Plugin:', () => {
     it('installs', () => {
       const globalClearIndicator = openmct.indicators.indicatorObjects.find(
         (indicator) => indicator.key === 'global-clear-indicator'
-      ).element;
+      ).vueComponent;
       expect(globalClearIndicator).toBeDefined();
     });
 
-    it('renders its major elements', async () => {
-      await nextTick();
+    it('renders its major elements', () => {
       const indicatorClass = appHolder.querySelector('.c-indicator');
       const iconClass = appHolder.querySelector('.icon-clear-data');
       const indicatorLabel = appHolder.querySelector('.c-indicator__label');
@@ -228,10 +226,7 @@ describe('The Clear Data Plugin:', () => {
       const indicatorLabel = appHolder.querySelector('.c-indicator__label');
       const buttonElement = indicatorLabel.querySelector('button');
       const clickEvent = createMouseEvent('click');
-      openmct.objectViews.on('clearData', () => {
-        // when we click the button, this event should fire
-        done();
-      });
+      openmct.objectViews.on('clearData', done);
       buttonElement.dispatchEvent(clickEvent);
     });
   });

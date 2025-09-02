@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <time-popup-realtime
+  <TimePopupRealtime
     v-if="readOnly === false"
     :offsets="offsets"
     @focus="$event.target.select()"
@@ -31,6 +31,7 @@
     <div
       v-if="!compact"
       class="c-compact-tc__setting-value icon-minus u-fade-truncate--lg --no-sep"
+      :aria-label="`Start offset: ${offsets.start}`"
       :title="`Start offset: ${offsets.start}`"
     >
       {{ offsets.start }}
@@ -40,12 +41,14 @@
       v-if="!compact"
       class="c-compact-tc__setting-value icon-plus u-fade-truncate--lg"
       :class="{ '--no-sep': compact }"
+      :aria-label="`End offset: ${offsets.end}`"
       :title="`End offset: ${offsets.end}`"
     >
       {{ offsets.end }}
     </div>
     <div
       class="c-compact-tc__setting-value icon-clock c-compact-tc__current-update u-fade-truncate--lg --no-sep"
+      aria-label="Last update"
       title="Last update"
     >
       {{ formattedCurrentValue }}
@@ -57,7 +60,7 @@
 <script>
 import _ from 'lodash';
 
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import TimePopupRealtime from './TimePopupRealtime.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
@@ -145,7 +148,10 @@ export default {
     }
   },
   mounted() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+    this.handleNewBounds = _.throttle(this.handleNewBounds, 300, {
+      leading: true,
+      trailing: true
+    });
     this.setTimeSystem(this.copy(this.openmct.time.getTimeSystem()));
     this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.setTimeSystem);
     this.setTimeContext();
@@ -175,6 +181,8 @@ export default {
       }
     },
     stopFollowingTime() {
+      this.handleNewBounds.cancel();
+
       if (this.timeContext) {
         this.timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleNewBounds);
         this.timeContext.off(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.setViewFromOffsets);

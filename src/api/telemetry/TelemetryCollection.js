@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
-import { TIME_CONTEXT_EVENTS } from '../time/constants';
-import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants';
+import { TIME_CONTEXT_EVENTS } from '../time/constants.js';
+import { LOADED_ERROR, TIMESYSTEM_KEY_NOTIFICATION, TIMESYSTEM_KEY_WARNING } from './constants.js';
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
@@ -62,9 +62,6 @@ export default class TelemetryCollection extends EventEmitter {
     this.futureBuffer = [];
     this.parseTime = undefined;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-    if (!Object.hasOwn(options, 'timeContext')) {
-      options.timeContext = this.openmct.time;
-    }
     this.options = options;
     this.unsubscribe = undefined;
     this.pageState = undefined;
@@ -84,6 +81,9 @@ export default class TelemetryCollection extends EventEmitter {
       this._error(LOADED_ERROR);
     }
 
+    if (!Object.hasOwn(this.options, 'timeContext')) {
+      this.options.timeContext = this.openmct.time;
+    }
     this._setTimeSystem(this.options.timeContext.getTimeSystem());
     this.lastBounds = this.options.timeContext.getBounds();
     this._watchBounds();
@@ -116,8 +116,7 @@ export default class TelemetryCollection extends EventEmitter {
   }
 
   /**
-   * This will start the requests for historical and realtime data,
-   * as well as setting up initial values and watchers
+   * @returns {Array} All bounded telemetry
    */
   getAll() {
     return this.boundedTelemetry;
@@ -128,7 +127,7 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   async _requestHistoricalTelemetry() {
-    let options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
+    const options = this.openmct.telemetry.standardizeRequestOptions({ ...this.options });
     const historicalProvider = this.openmct.telemetry.findRequestProvider(
       this.domainObject,
       options
@@ -180,11 +179,14 @@ export default class TelemetryCollection extends EventEmitter {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
+    const options = { ...this.options };
+    //We always want to receive all available values in telemetry tables.
+    options.strategy = this.openmct.telemetry.SUBSCRIBE_STRATEGY.BATCH;
 
     this.unsubscribe = this.openmct.telemetry.subscribe(
       this.domainObject,
       (datum) => this._processNewTelemetry(datum),
-      this.options
+      options
     );
   }
 
@@ -209,6 +211,8 @@ export default class TelemetryCollection extends EventEmitter {
     let added = [];
     let addedIndices = [];
     let hasDataBeforeStartBound = false;
+    let size = this.options.size;
+    let enforceSize = size !== undefined && this.options.enforceSize;
 
     // loop through, sort and dedupe
     for (let datum of data) {
@@ -271,6 +275,13 @@ export default class TelemetryCollection extends EventEmitter {
         }
       } else {
         this.emit('add', added, addedIndices);
+
+        if (enforceSize && this.boundedTelemetry.length > size) {
+          const removeCount = this.boundedTelemetry.length - size;
+          const removed = this.boundedTelemetry.splice(0, removeCount);
+
+          this.emit('remove', removed);
+        }
       }
     }
   }
@@ -430,8 +441,12 @@ export default class TelemetryCollection extends EventEmitter {
     } else {
       this.timeKey = undefined;
 
-      this._warn(TIMESYSTEM_KEY_WARNING);
-      this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
+      // missing objects will never have a domain, if one happens to get through
+      // to this point this warning/notification does not apply
+      if (!this.openmct.objects.isMissing(this.domainObject)) {
+        this._warn(TIMESYSTEM_KEY_WARNING);
+        this.openmct.notifications.alert(TIMESYSTEM_KEY_NOTIFICATION);
+      }
     }
 
     let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);

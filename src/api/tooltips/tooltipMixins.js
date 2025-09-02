@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,7 +48,7 @@ const tooltipHelpers = {
         .reverse()
         .join(' / ');
     },
-    buildToolTip(tooltipText, tooltipLocation, elementRef) {
+    buildToolTip(tooltipText, tooltipLocation, elementRef, cssClasses) {
       if (!tooltipText || tooltipText.length < 1) {
         return;
       }
@@ -59,7 +59,8 @@ const tooltipHelpers = {
       this.tooltip = this.openmct.tooltips.tooltip({
         toolTipText: tooltipText,
         toolTipLocation: tooltipLocation,
-        parentElement: parentElement
+        parentElement: parentElement,
+        cssClasses
       });
     },
     hideToolTip() {

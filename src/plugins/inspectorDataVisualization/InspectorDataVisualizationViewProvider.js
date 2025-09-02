@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,7 +49,8 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
       const context = selection[0][0].context;
       const domainObject = context.item;
       const dataVisualizationContext = context?.dataVisualization ?? {};
-      const timeFormatter = openmct.telemetry.getFormatter('iso');
+      const timeFormatter =
+        openmct.telemetry.getFormatter('iso') || openmct.telemetry.getFormatter('utc');
 
       return {
         show(element) {
@@ -80,13 +81,13 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
           );
           _destroy = destroy;
         },
+        priority() {
+          return openmct.priority.HIGH;
+        },
         destroy() {
           if (_destroy) {
             _destroy();
           }
-        },
-        priority() {
-          return openmct.priority.HIGH;
         }
       };
     }

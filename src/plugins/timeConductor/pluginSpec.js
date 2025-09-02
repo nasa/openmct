@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,9 +23,9 @@
 import { createMouseEvent, createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import { FIXED_MODE_KEY } from '../../api/time/constants';
-import { getPreciseDuration, millisecondsToDHMS } from '../../utils/duration';
-import ConductorPlugin from './plugin';
+import { FIXED_MODE_KEY } from '../../api/time/constants.js';
+import { getPreciseDuration, millisecondsToDHMS } from '../../utils/duration.js';
+import ConductorPlugin from './plugin.js';
 
 const THIRTY_SECONDS = 30 * 1000;
 const ONE_MINUTE = THIRTY_SECONDS * 2;

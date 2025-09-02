@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -25,11 +25,13 @@
       class="c-icon-button c-icon-button--menu"
       :class="options.icon"
       :title="options.title"
+      :aria-label="options.label"
+      role="button"
       @click="toggle"
     >
-      <div v-if="options.label" class="c-icon-button__label">
+      <span v-if="options.label" class="c-icon-button__label">
         {{ options.label }}
-      </div>
+      </span>
     </div>
     <div v-if="open" class="c-menu" role="menu">
       <ul>
@@ -51,7 +53,7 @@
 </template>
 
 <script>
-import toggle from '../../mixins/toggle-mixin';
+import toggle from '../../mixins/toggle-mixin.js';
 export default {
   mixins: [toggle],
   props: {

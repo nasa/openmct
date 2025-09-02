@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,35 +23,65 @@
 /**
  * Optimizes `requestAnimationFrame` calls to only execute when the element is visible in the viewport.
  */
-export default class VisibilityObserver {
+class VisibilityObserver {
+  /**
+   * @type {HTMLElement | null}
+   */
   #element;
+  /**
+   * @type {IntersectionObserver | null}
+   */
   #observer;
+  /**
+   * @type {(() => void) | null}
+   */
   lastUnfiredFunc;
+  /**
+   * @type {boolean | null}
+   */
+  isIntersecting;
+  /**
+   * @type {boolean}
+   */
+  calledOnce;
 
   /**
    * Constructs a VisibilityObserver instance to manage visibility-based requestAnimationFrame calls.
    *
    * @param {HTMLElement} element - The DOM element to observe for visibility changes.
+   * @param {HTMLElement} rootContainer - The DOM element that is the root of the viewport.
    * @throws {Error} If element is not provided.
    */
-  constructor(element) {
-    if (!element) {
-      throw new Error(`VisibilityObserver must be created with an element`);
+  constructor(element, rootContainer) {
+    if (!element || !rootContainer) {
+      throw new Error(`VisibilityObserver must be created with an element and a rootContainer.`);
     }
-    // set the id to some random 4 letters
-    this.id = Math.random().toString(36).substring(2, 6);
     this.#element = element;
     this.isIntersecting = true;
-
-    this.#observer = new IntersectionObserver(this.#observerCallback);
-    this.#observer.observe(this.#element);
+    this.calledOnce = false;
+    const options = {
+      root: rootContainer
+    };
+    this.#observer = new IntersectionObserver(this.#observerCallback, options);
     this.lastUnfiredFunc = null;
     this.renderWhenVisible = this.renderWhenVisible.bind(this);
   }
 
-  #observerCallback = ([entry]) => {
-    if (entry.target === this.#element) {
-      this.isIntersecting = entry.isIntersecting;
+  /**
+   * @returns {boolean}
+   */
+  #inOverlay() {
+    return this.#element?.closest('.js-overlay');
+  }
+
+  #observerCallback = (entries) => {
+    const entry = entries[0];
+    if (entry && entry.target === this.#element) {
+      if (this.#inOverlay() && !entry.isIntersecting) {
+        this.isIntersecting = true;
+      } else {
+        this.isIntersecting = entry.isIntersecting;
+      }
       if (this.isIntersecting && this.lastUnfiredFunc) {
         window.requestAnimationFrame(this.lastUnfiredFunc);
         this.lastUnfiredFunc = null;
@@ -64,27 +94,38 @@ export default class VisibilityObserver {
    * If the element is not visible, the function is stored and called when the element becomes visible.
    * Note that if called multiple times while not visible, only the last execution is stored and executed.
    *
-   * @param {Function} func - The function to execute.
+   * @param {() => void} func - The function to execute.
    * @returns {boolean} True if the function was executed immediately, false otherwise.
    */
   renderWhenVisible(func) {
-    if (this.isIntersecting) {
-      window.requestAnimationFrame(func);
-      return true;
-    } else {
+    if (!this.calledOnce) {
+      this.calledOnce = true;
+      if (!this.#observer || !this.#element) {
+        this.lastUnfiredFunc = func;
+        return false;
+      }
+      this.#observer.observe(this.#element);
+    } else if (!this.isIntersecting) {
       this.lastUnfiredFunc = func;
       return false;
     }
+    window.requestAnimationFrame(func);
+    return true;
   }
 
   /**
    * Stops observing the element for visibility changes and cleans up resources to prevent memory leaks.
    */
   destroy() {
-    this.#observer.unobserve(this.#element);
+    if (this.#observer && this.#element) {
+      this.#observer.unobserve(this.#element);
+    }
+
     this.#element = null;
     this.isIntersecting = null;
     this.#observer = null;
     this.lastUnfiredFunc = null;
   }
 }
+
+export default VisibilityObserver;

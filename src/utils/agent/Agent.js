@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,6 @@
  * device names
  * @constructor
  * @param window the browser object model
- * @memberof /utils/agent
  */
 export default class Agent {
   constructor(window) {
@@ -63,7 +62,7 @@ export default class Agent {
   }
   /**
    * Check if the user is on a tablet sized android device
-   * @returns {boolean} true on an android tablet
+   * @returns {boolean | undefined} true on an android tablet
    */
   isAndroidTablet() {
     if (this.mobileName === 'Android') {
@@ -78,7 +77,7 @@ export default class Agent {
   }
   /**
    * Check if the user is on a tablet-sized mobile device.
-   * @returns {boolean} true on a tablet
+   * @returns {boolean | undefined} true on a tablet
    */
   isTablet() {
     return (

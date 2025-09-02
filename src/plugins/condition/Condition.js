@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { v4 as uuid } from 'uuid';
 
-import AllTelemetryCriterion from './criterion/AllTelemetryCriterion';
-import TelemetryCriterion from './criterion/TelemetryCriterion';
-import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from './utils/constants';
-import { evaluateResults } from './utils/evaluator';
-import { getLatestTimestamp } from './utils/time';
+import AllTelemetryCriterion from './criterion/AllTelemetryCriterion.js';
+import TelemetryCriterion from './criterion/TelemetryCriterion.js';
+import { TRIGGER_CONJUNCTION, TRIGGER_LABEL } from './utils/constants.js';
+import { evaluateResults } from './utils/evaluator.js';
+import { getLatestTimestamp } from './utils/time.js';
 
 /*
  * conditionConfiguration = {
@@ -44,48 +44,57 @@ import { getLatestTimestamp } from './utils/time';
  * }
  */
 export default class Condition extends EventEmitter {
+  #definition;
   /**
    * Manages criteria and emits the result of - true or false - based on criteria evaluated.
    * @constructor
-   * @param conditionConfiguration: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
+   * @param definition: {id: uuid,trigger: enum, criteria: Array of {id: uuid, operation: enum, input: Array, metaDataKey: string, key: {domainObject.identifier} }
    * @param openmct
    * @param conditionManager
    */
-  constructor(conditionConfiguration, openmct, conditionManager) {
+  constructor(definition, openmct, conditionManager) {
     super();
 
     this.openmct = openmct;
     this.conditionManager = conditionManager;
-    this.id = conditionConfiguration.id;
     this.criteria = [];
     this.result = undefined;
     this.timeSystems = this.openmct.time.getAllTimeSystems();
-    if (conditionConfiguration.configuration.criteria) {
-      this.createCriteria(conditionConfiguration.configuration.criteria);
+    this.#definition = definition;
+
+    if (definition.configuration.criteria) {
+      this.createCriteria(definition.configuration.criteria);
     }
 
-    this.trigger = conditionConfiguration.configuration.trigger;
+    this.trigger = definition.configuration.trigger;
     this.summary = '';
     this.handleCriterionUpdated = this.handleCriterionUpdated.bind(this);
     this.handleOldTelemetryCriterion = this.handleOldTelemetryCriterion.bind(this);
     this.handleTelemetryStaleness = this.handleTelemetryStaleness.bind(this);
   }
+  get id() {
+    return this.#definition.id;
+  }
+  get configuration() {
+    return this.#definition.configuration;
+  }
 
-  updateResult(datum) {
-    if (!datum || !datum.id) {
+  updateResult(latestDataTable, telemetryIdThatChanged) {
+    if (!latestDataTable) {
       console.log('no data received');
-
       return;
     }
 
     // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
-    if (this.hasNoTelemetry() || this.isTelemetryUsed(datum.id)) {
+    if (this.hasNoTelemetry() || this.isTelemetryUsed(telemetryIdThatChanged)) {
+      const currentTimeSystemKey = this.openmct.time.getTimeSystem().key;
       this.criteria.forEach((criterion) => {
         if (this.isAnyOrAllTelemetry(criterion)) {
-          criterion.updateResult(datum, this.conditionManager.telemetryObjects);
+          criterion.updateResult(latestDataTable, this.conditionManager.telemetryObjects);
         } else {
-          if (criterion.usesTelemetry(datum.id)) {
-            criterion.updateResult(datum);
+          const relevantDatum = latestDataTable.get(criterion.telemetryObjectIdAsString);
+          if (criterion.shouldUpdateResult(relevantDatum, currentTimeSystemKey)) {
+            criterion.updateResult(relevantDatum, currentTimeSystemKey);
           }
         }
       });
@@ -102,9 +111,11 @@ export default class Condition extends EventEmitter {
   }
 
   hasNoTelemetry() {
-    return this.criteria.every((criterion) => {
-      return !this.isAnyOrAllTelemetry(criterion) && criterion.telemetry === '';
+    const usesSomeTelemetry = this.criteria.some((criterion) => {
+      return this.isAnyOrAllTelemetry(criterion) || criterion.telemetry !== '';
     });
+
+    return !usesSomeTelemetry;
   }
 
   isTelemetryUsed(id) {
@@ -182,7 +193,7 @@ export default class Condition extends EventEmitter {
   findCriterion(id) {
     let criterion;
 
-    for (let i = 0, ii = this.criteria.length; i < ii; i++) {
+    for (let i = 0; i < this.criteria.length; i++) {
       if (this.criteria[i].id === id) {
         criterion = {
           item: this.criteria[i],
@@ -245,9 +256,9 @@ export default class Condition extends EventEmitter {
       latestTimestamp,
       updatedCriterion.data,
       this.timeSystems,
-      this.openmct.time.timeSystem()
+      this.openmct.time.getTimeSystem()
     );
-    this.conditionManager.updateCurrentCondition(latestTimestamp);
+    this.conditionManager.updateCurrentCondition(latestTimestamp, this);
   }
 
   handleTelemetryStaleness() {
@@ -309,7 +320,7 @@ export default class Condition extends EventEmitter {
           latestTimestamp,
           data,
           this.timeSystems,
-          this.openmct.time.timeSystem()
+          this.openmct.time.getTimeSystem()
         );
       });
 

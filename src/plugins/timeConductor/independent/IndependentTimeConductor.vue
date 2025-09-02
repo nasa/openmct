@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -27,6 +27,7 @@
       isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
       { 'is-expanded': independentTCEnabled }
     ]"
+    aria-label="Independent Time Conductor Panel"
   >
     <ToggleSwitch
       id="independentTCToggle"
@@ -83,12 +84,12 @@
 <script>
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
 
-import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants';
+import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
 import ConductorPopUp from '../ConductorPopUp.vue';
-import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager';
+import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager.js';
 
 export default {
   components: {
@@ -242,12 +243,20 @@ export default {
       this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setTimeOptionsMode);
     },
     setTimeOptionsClock(clock) {
+      // If the user has persisted any time options, then don't override them with global settings.
+      if (this.independentTCEnabled) {
+        return;
+      }
       this.setTimeOptionsOffsets();
       this.timeOptions.clock = clock.key;
     },
     setTimeOptionsMode(mode) {
-      this.setTimeOptionsOffsets();
-      this.timeOptions.mode = mode;
+      // If the user has persisted any time options, then don't override them with global settings.
+      if (this.independentTCEnabled) {
+        this.setTimeOptionsOffsets();
+        this.timeOptions.mode = mode;
+        this.isFixed = this.timeOptions.mode === FIXED_MODE_KEY;
+      }
     },
     setTimeOptionsOffsets() {
       this.timeOptions.clockOffsets =

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,8 +23,9 @@
 import mount from 'utils/mount';
 
 import GaugeFormController from './components/GaugeFormController.vue';
-import GaugeCompositionPolicy from './GaugeCompositionPolicy';
-import GaugeViewProvider from './GaugeViewProvider';
+import GaugeCompositionPolicy from './GaugeCompositionPolicy.js';
+import gaugeStylesInterceptor from './gaugeStylesInterceptor.js';
+import GaugeViewProvider from './GaugeViewProvider.js';
 
 export const GAUGE_TYPES = [
   ['Filled Dial', 'dial-filled'],
@@ -37,7 +38,7 @@ export const GAUGE_TYPES = [
 export default function () {
   return function install(openmct) {
     openmct.objectViews.addProvider(new GaugeViewProvider(openmct));
-
+    openmct.objects.addGetInterceptor(gaugeStylesInterceptor(openmct));
     openmct.forms.addNewFormControl('gauge-controller', getGaugeFormController(openmct));
     openmct.types.addType('gauge', {
       name: 'Gauge',
@@ -59,7 +60,8 @@ export default function () {
             max: 100,
             min: 0,
             precision: 2
-          }
+          },
+          objectStyles: {}
         };
       },
       form: [

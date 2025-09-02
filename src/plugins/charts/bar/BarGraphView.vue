@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -115,11 +115,11 @@ export default {
       this.followTimeContext();
     },
     followTimeContext() {
-      this.timeContext.on('bounds', this.refreshData);
+      this.timeContext.on('boundsChanged', this.refreshData);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
-        this.timeContext.off('bounds', this.refreshData);
+        this.timeContext.off('boundsChanged', this.refreshData);
       }
     },
     addToComposition(telemetryObject) {
@@ -253,11 +253,13 @@ export default {
       };
     },
     getOptions() {
-      const { start, end } = this.timeContext.bounds();
+      const { start, end } = this.timeContext.getBounds();
 
       return {
         end,
-        start
+        start,
+        size: 1,
+        strategy: 'latest'
       };
     },
     loadComposition() {
@@ -330,7 +332,11 @@ export default {
         this.domainObject.configuration.axes.xKey === undefined ||
         this.domainObject.configuration.axes.yKey === undefined
       ) {
-        return;
+        const { xKey, yKey } = this.identifyAxesKeys(axisMetadata);
+        this.openmct.objects.mutate(this.domainObject, 'configuration.axes', {
+          xKey,
+          yKey
+        });
       }
 
       let xValues = [];
@@ -372,13 +378,13 @@ export default {
       this.setTrace(key, telemetryObject.name, axisMetadata, xValues, yValues);
     },
     isDataInTimeRange(datum, key, telemetryObject) {
-      const timeSystemKey = this.timeContext.timeSystem().key;
+      const timeSystemKey = this.timeContext.getTimeSystem().key;
       const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
       let metadataValue = metadata.value(timeSystemKey) || { key: timeSystemKey };
 
       let currentTimestamp = this.parse(key, metadataValue.key, datum);
 
-      return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
+      return currentTimestamp && this.timeContext.getBounds().end >= currentTimestamp;
     },
     format(telemetryObjectKey, metadataKey, data) {
       const formats = this.telemetryObjectFormats[telemetryObjectKey];
@@ -429,6 +435,30 @@ export default {
     subscribeToAll() {
       const telemetryObjects = Object.values(this.telemetryObjects);
       telemetryObjects.forEach(this.subscribeToObject);
+    },
+    identifyAxesKeys(metadata) {
+      const { xAxisMetadata, yAxisMetadata } = metadata;
+
+      let xKey;
+      let yKey;
+
+      // If xAxisMetadata contains array values, use the first one for xKey
+      const arrayValues = xAxisMetadata.filter((metaDatum) => metaDatum.isArrayValue);
+      const nonArrayValues = xAxisMetadata.filter((metaDatum) => !metaDatum.isArrayValue);
+
+      if (arrayValues.length > 0) {
+        xKey = arrayValues[0].key;
+        yKey = arrayValues.length > 1 ? arrayValues[1].key : yAxisMetadata.key;
+      } else if (nonArrayValues.length > 0) {
+        xKey = nonArrayValues[0].key;
+        yKey = 'none';
+      } else {
+        // Fallback if no valid xKey or yKey is found
+        xKey = 'none';
+        yKey = 'none';
+      }
+
+      return { xKey, yKey };
     }
   }
 };

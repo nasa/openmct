@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,109 +19,111 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { VIEW_DATUM_ACTION_KEY } from '@/plugins/viewDatumAction/ViewDatumAction.js';
+import { VIEW_HISTORICAL_DATA_ACTION_KEY } from '@/ui/preview/ViewHistoricalDataAction.js';
 
-define([], function () {
-  class TelemetryTableRow {
-    constructor(datum, columns, objectKeyString, limitEvaluator, inPlaceUpdateKey) {
-      this.columns = columns;
+export default class TelemetryTableRow {
+  constructor(datum, columns, objectKeyString, limitEvaluator, inPlaceUpdateKey) {
+    this.columns = columns;
 
-      this.datum = createNormalizedDatum(datum, columns);
-      this.fullDatum = datum;
-      this.limitEvaluator = limitEvaluator;
-      this.objectKeyString = objectKeyString;
-      this.inPlaceUpdateKey = inPlaceUpdateKey;
+    this.datum = createNormalizedDatum(datum, columns);
+    this.fullDatum = datum;
+    this.limitEvaluator = limitEvaluator;
+    this.objectKeyString = objectKeyString;
+    this.inPlaceUpdateKey = inPlaceUpdateKey;
+  }
+
+  getFormattedDatum(headers) {
+    return Object.keys(headers).reduce((formattedDatum, columnKey) => {
+      formattedDatum[columnKey] = this.getFormattedValue(columnKey);
+
+      return formattedDatum;
+    }, {});
+  }
+
+  getFormattedValue(key) {
+    let column = this.columns[key];
+
+    return column && column.getFormattedValue(this.datum[key]);
+  }
+
+  getParsedValue(key) {
+    let column = this.columns[key];
+
+    return column && column.getParsedValue(this.datum[key]);
+  }
+
+  getCellComponentName(key) {
+    let column = this.columns[key];
+
+    return column && column.getCellComponentName && column.getCellComponentName();
+  }
+
+  getRowClass() {
+    if (!this.rowClass) {
+      let limitEvaluation = this.limitEvaluator.evaluate(this.datum);
+      this.rowClass = limitEvaluation && limitEvaluation.cssClass;
     }
 
-    getFormattedDatum(headers) {
-      return Object.keys(headers).reduce((formattedDatum, columnKey) => {
-        formattedDatum[columnKey] = this.getFormattedValue(columnKey);
+    return this.rowClass;
+  }
 
-        return formattedDatum;
+  getCellLimitClasses() {
+    if (!this.cellLimitClasses) {
+      this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
+        if (!column.isUnit) {
+          let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
+          alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
+        }
+
+        return alarmStateMap;
       }, {});
     }
 
-    getFormattedValue(key) {
-      let column = this.columns[key];
+    return this.cellLimitClasses;
+  }
 
-      return column && column.getFormattedValue(this.datum[key]);
-    }
+  getContextualDomainObject(openmct, objectKeyString) {
+    return openmct.objects.get(objectKeyString);
+  }
 
-    getParsedValue(key) {
-      let column = this.columns[key];
-
-      return column && column.getParsedValue(this.datum[key]);
-    }
-
-    getCellComponentName(key) {
-      let column = this.columns[key];
-
-      return column && column.getCellComponentName && column.getCellComponentName();
-    }
-
-    getRowClass() {
-      if (!this.rowClass) {
-        let limitEvaluation = this.limitEvaluator.evaluate(this.datum);
-        this.rowClass = limitEvaluation && limitEvaluation.cssClass;
-      }
-
-      return this.rowClass;
-    }
-
-    getCellLimitClasses() {
-      if (!this.cellLimitClasses) {
-        this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
-          if (!column.isUnit) {
-            let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
-            alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
-          }
-
-          return alarmStateMap;
-        }, {});
-      }
-
-      return this.cellLimitClasses;
-    }
-
-    getContextualDomainObject(openmct, objectKeyString) {
-      return openmct.objects.get(objectKeyString);
-    }
-
-    getContextMenuActions() {
-      return ['viewDatumAction', 'viewHistoricalData'];
-    }
-
-    updateWithDatum(updatesToDatum) {
-      const normalizedUpdatesToDatum = createNormalizedDatum(updatesToDatum, this.columns);
-      this.datum = {
-        ...this.datum,
-        ...normalizedUpdatesToDatum
-      };
-      this.fullDatum = {
-        ...this.fullDatum,
-        ...updatesToDatum
-      };
-    }
+  getContextMenuActions() {
+    return [VIEW_DATUM_ACTION_KEY, VIEW_HISTORICAL_DATA_ACTION_KEY];
   }
 
   /**
-   * Normalize the structure of datums to assist sorting and merging of columns.
-   * Maps all sources to keys.
-   * @private
-   * @param {*} telemetryDatum
-   * @param {*} metadataValues
+   * Merges the row parameter's datum with the current row datum
+   * @param {TelemetryTableRow} row
    */
-  function createNormalizedDatum(datum, columns) {
-    const normalizedDatum = JSON.parse(JSON.stringify(datum));
+  updateWithDatum(row) {
+    this.datum = {
+      ...this.datum,
+      ...row.datum
+    };
 
-    Object.values(columns).forEach((column) => {
-      const rawValue = column.getRawValue(datum);
-      if (rawValue !== undefined) {
-        normalizedDatum[column.getKey()] = rawValue;
-      }
-    });
-
-    return normalizedDatum;
+    this.fullDatum = {
+      ...this.fullDatum,
+      ...row.fullDatum
+    };
   }
+}
 
-  return TelemetryTableRow;
-});
+/**
+ * Normalize the structure of datums to assist sorting and merging of columns.
+ * Maps all sources to keys.
+ * @private
+ * @param {*} telemetryDatum
+ * @param {*} metadataValues
+ */
+function createNormalizedDatum(datum, columns) {
+  const normalizedDatum = JSON.parse(JSON.stringify(datum));
+
+  Object.values(columns).forEach((column) => {
+    const rawValue = column.getRawValue(datum);
+    if (rawValue !== undefined) {
+      normalizedDatum[column.getKey()] = rawValue;
+    }
+  });
+
+  return normalizedDatum;
+}

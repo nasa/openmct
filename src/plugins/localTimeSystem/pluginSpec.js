@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -61,7 +61,7 @@ describe('The local time', () => {
     });
 
     it('can be set to be the main time system', () => {
-      expect(openmct.time.timeSystem().key).toBe(LOCAL_SYSTEM_KEY);
+      expect(openmct.time.getTimeSystem().key).toBe(LOCAL_SYSTEM_KEY);
     });
 
     it('uses the local-format time format', () => {

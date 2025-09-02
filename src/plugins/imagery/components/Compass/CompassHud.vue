@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { inRange, percentOfRange, rotate } from './utils';
+import { inRange, percentOfRange, rotate } from './utils.js';
 
 const COMPASS_POINTS = [
   {

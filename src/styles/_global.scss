@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -68,6 +68,18 @@ div {
   flex: 1 1 auto;
 }
 
+.visually-hidden {
+  // Provides a way to add accessible text to elements
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 /******************************************************** BROWSER ELEMENTS */
 body.desktop {
   ::-webkit-scrollbar {
@@ -98,6 +110,7 @@ body.desktop {
   }
 
   div,
+  ul,
   span {
     // Firefox
     scrollbar-color: $scrollbarThumbColor $scrollbarTrackColorBg;
@@ -148,7 +161,7 @@ a {
 
 body,
 html {
-  height: 100%;
+  height: $bodySize;
   width: 100%;
 }
 
@@ -160,7 +173,9 @@ body {
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: grayscale;
   @include bodyFont($fontBaseSize);
-  background-color: $colorBodyBg;
+  // background-color: $colorBodyBg;
+  background: $bodyBg;
+  background-size: $bodyBgSize;
   color: $colorBodyFg;
 }
 
@@ -360,11 +375,12 @@ body.desktop .has-local-controls {
   }
 }
 
+[aria-disabled='true'],
 *[disabled],
 .disabled {
   opacity: $controlDisabledOpacity;
+  cursor: not-allowed !important;
   pointer-events: none !important;
-  cursor: default !important;
 }
 
 /******************************************************** RESPONSIVE CONTAINERS */
@@ -395,7 +411,7 @@ body.desktop .has-local-controls {
     position: absolute;
     top: 0;
     bottom: 0;
-    content: "";
+    content: '';
     right: 0;
     width: $fadeTruncateW * 1.5;
     z-index: 2;

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -38,7 +38,7 @@
       </div>
     </div>
     <ul v-if="expanded" class="c-inspect-properties">
-      <filter-field
+      <FilterField
         v-for="metadatum in globalMetadata"
         :key="metadatum.key"
         :filter-field="metadatum"

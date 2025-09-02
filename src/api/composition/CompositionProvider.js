@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,14 +21,14 @@
  *****************************************************************************/
 import _ from 'lodash';
 
-import objectUtils from '../objects/object-utils';
+import { makeKeyString, parseKeyString } from '../objects/object-utils.js';
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').Identifier} Identifier
+ * @typedef {import('openmct').Identifier} Identifier
  */
 
 /**
@@ -36,7 +36,7 @@ import objectUtils from '../objects/object-utils';
  */
 
 /**
- * @typedef {import('../../../openmct').OpenMCT} OpenMCT
+ * @typedef {import('openmct').OpenMCT} OpenMCT
  */
 
 /**
@@ -84,7 +84,7 @@ export default class CompositionProvider {
    * Check if this provider should be used to load composition for a
    * particular domain object.
    * @method appliesTo
-   * @param {import('../objects/ObjectAPI').DomainObject} domainObject the domain object
+   * @param {DomainObject} domainObject the domain object
    *        to check
    * @returns {boolean} true if this provider can provide composition for a given domain object
    */
@@ -96,9 +96,9 @@ export default class CompositionProvider {
    * object.
    * @param {DomainObject} domainObject the domain object
    *        for which to load composition
-   * @returns {Promise<Identifier[]>} a promise for
-   *          the Identifiers in this composition
-   * @method load
+   * @returns {Promise<Identifier[] | DomainObject[]>} a promise for
+   *          the Identifiers or Domain Objects in this composition. If Identifiers are returned,
+   *          they will be automatically resolved to domain objects by the API.
    */
   load(domainObject) {
     throw new Error('This method must be implemented by a subclass.');
@@ -137,7 +137,6 @@ export default class CompositionProvider {
    * @param {DomainObject} domainObject the domain object
    *        which should have its composition modified
    * @param {Identifier} childId the domain object to remove
-   * @method remove
    */
   remove(domainObject, childId) {
     throw new Error('This method must be implemented by a subclass.');
@@ -151,7 +150,6 @@ export default class CompositionProvider {
    * @param {DomainObject} parent the domain object
    *        which should have its composition modified
    * @param {Identifier} childId the domain object to add
-   * @method add
    */
   add(parent, childId) {
     throw new Error('This method must be implemented by a subclass.');
@@ -179,7 +177,6 @@ export default class CompositionProvider {
   /**
    * Listens on general mutation topic, using injector to fetch to avoid
    * circular dependencies.
-   * @private
    */
   #establishTopicListener() {
     if (this.topicListener) {
@@ -194,7 +191,6 @@ export default class CompositionProvider {
   }
 
   /**
-   * @private
    * @param {DomainObject} parent
    * @param {DomainObject} child
    * @returns {boolean}
@@ -207,7 +203,6 @@ export default class CompositionProvider {
   }
 
   /**
-   * @private
    * @param {DomainObject} parent
    * @returns {boolean}
    */
@@ -219,22 +214,25 @@ export default class CompositionProvider {
    * Handles mutation events.  If there are active listeners for the mutated
    * object, detects changes to composition and triggers necessary events.
    *
-   * @private
    * @param {DomainObject} oldDomainObject
    */
   #onMutation(newDomainObject, oldDomainObject) {
-    const id = objectUtils.makeKeyString(oldDomainObject.identifier);
+    const id = makeKeyString(oldDomainObject.identifier);
     const listeners = this.#listeningTo[id];
 
     if (!listeners) {
       return;
     }
 
-    const oldComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
-    const newComposition = newDomainObject.composition.map(objectUtils.makeKeyString);
+    if (oldDomainObject.composition === undefined || newDomainObject.composition === undefined) {
+      return;
+    }
 
-    const added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
-    const removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
+    const oldComposition = oldDomainObject.composition.map(makeKeyString);
+    const newComposition = newDomainObject.composition.map(makeKeyString);
+
+    const added = _.difference(newComposition, oldComposition).map(parseKeyString);
+    const removed = _.difference(oldComposition, newComposition).map(parseKeyString);
 
     function notify(value) {
       return function (listener) {

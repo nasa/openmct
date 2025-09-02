@@ -63,11 +63,11 @@ Once the file is generated, it can be published to codecov with
 ### e2e
 The e2e line coverage is a bit more complex than the karma implementation. This is the general sequence of events:
 
-1. Each e2e suite will start webpack with the ```npm run start:coverage``` command with config `webpack.coverage.js` and the `babel-plugin-istanbul` plugin to generate code coverage during e2e test execution using our custom [baseFixture](./baseFixtures.js). 
+1. Each e2e suite will start webpack with the ```npm run start:coverage``` command with config `webpack.coverage.mjs` and the `babel-plugin-istanbul` plugin to generate code coverage during e2e test execution using our custom [baseFixture](./baseFixtures.js). 
 1. During testcase execution, each e2e shard will generate its piece of the larger coverage suite. **This coverage file is not merged**. The raw coverage file is stored in a `.nyc_report` directory.
 1. [nyc](https://github.com/istanbuljs/nyc) converts this directory into a `lcov` file with the following command `npm run cov:e2e:report`
-1. Most of the tests are run in the '@stable' configuration and focus on chrome/ubuntu at a single resolution. This coverage is published to codecov with `npm run cov:e2e:stable:publish`.
-1. The rest of our coverage only appears when run against `@unstable` tests, persistent datastore (couchdb), non-ubuntu machines, and non-chrome browsers with the `npm run cov:e2e:full:publish` flag. Since this happens about once a day, we have leveraged codecov.io's carryforward flag to report on lines covered outside of each commit on an individual PR.
+1. Most of the tests focus on chrome/ubuntu at a single resolution. This coverage is published to codecov with `npm run cov:e2e:ci:publish`.
+1. The rest of our coverage only appears when run against persistent datastore (couchdb), non-ubuntu machines, and non-chrome browsers with the `npm run cov:e2e:full:publish` flag. Since this happens about once a day, we have leveraged codecov.io's carryforward flag to report on lines covered outside of each commit on an individual PR.
 
 
 ### Limitations in our code coverage reporting
@@ -85,19 +85,20 @@ There are a few reasons that your GitHub PR could be failing beyond simple faile
 * Not all required checks are run per commit. You may need to manually trigger addition GitHub checks with a `pr:<label>` label added to your PR.
 
 ### Flaky tests
-There are two ways to know if a test on your branch is historically flaky: 
-1. `deploysentinel`'s PR comment bot to give an accurate and historical view of e2e flakiness. Check your PR for a view of the test failures and flakes (with link to the failing test). Note: only a 7 day window of flake is available.
-2. (CircleCI's test insights feature)[https://circleci.com/blog/introducing-test-insights-with-flaky-test-detection/] collects historical data about the individual test results for both unit and e2e tests. Note: only a 14 day window of flake is available.
+
+(CircleCI's test insights feature)[https://circleci.com/blog/introducing-test-insights-with-flaky-test-detection/] collects historical data about the individual test results for both unit and e2e tests. Note: only a 14 day window of flake is available.
 
 ### Local=Pass and CI=Fail
 Although rare, it is possible that your test can pass locally but fail in CI.
 
-#### Busting Cache
-In certain circumstances, the CircleCI cache can become stale. In order to bust the cache, we've implemented a runtime boolean parameter in Circle CI creatively name BUST_CACHE. To execute:
-1. Navigate to the branch in Circle CI believed to have stale cache.
-1. Click on the 'Trigger Pipeline' button.
-1. Add Parameter -> Parameter Type = boolean , Name = BUST_CACHE ,Value = true
-1. Click 'Trigger Pipeline'
+### Reset your workspace
+It's possible that you're running with dependencies or a local environment which is out of sync with the branch you're working on. Make sure to execute the following:
+
+```sh
+nvm use
+npm run clean
+npm install
+```
 
 #### Run tests in the same container as CI
 

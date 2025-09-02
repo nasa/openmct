@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,8 +23,8 @@
 <template>
   <div
     ref="swimLane"
-    class="u-contents"
-    :class="[{ 'c-swimlane': !isNested }, statusClass]"
+    :class="[{ 'c-swimlane': !isNested, 'u-contents': isNested }, statusClass]"
+    :style="gridTemplateColumnStyle"
     @mouseover.ctrl="showToolTip"
     @mouseleave="hideToolTip"
   >
@@ -35,13 +35,34 @@
       :style="gridRowSpan"
     >
       <div v-if="iconClass" class="c-object-label__type-icon" :class="iconClass">
-        <span v-if="status" class="is-status__indicator" :title="`This item is ${status}`"></span>
+        <span
+          v-if="status"
+          class="is-status__indicator"
+          :aria-label="`This item is ${status}`"
+          :title="`This item is ${status}`"
+        ></span>
       </div>
-
       <div class="c-object-label__name">
         <slot name="label"></slot>
       </div>
+      <div class="c-swimlane__lane-label-button-h">
+        <button
+          v-if="!hideButton"
+          class="c-button"
+          :class="[buttonIcon, buttonPressed ? 'is-active' : '']"
+          :title="buttonTitle"
+          :aria-label="buttonTitle"
+          @click="pressOnButton"
+        />
+      </div>
+      <div
+        v-if="canShowResizeHandle"
+        class="c-swimlane__handle horizontal"
+        :style="{ height: `${resizeHandleHeight}px` }"
+        @mousedown="mousedown"
+      ></div>
     </div>
+
     <div
       class="c-swimlane__lane-object"
       :style="{ 'min-height': minHeight }"
@@ -53,11 +74,11 @@
 </template>
 
 <script>
-import tooltipHelpers from '../../../api/tooltips/tooltipMixins';
+import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 
 export default {
   mixins: [tooltipHelpers],
-  inject: ['openmct'],
+  inject: ['openmct', 'mousedown', 'swimLaneLabelWidth'],
   props: {
     iconClass: {
       type: String,
@@ -101,6 +122,19 @@ export default {
         return false;
       }
     },
+    canShowResizeHandle: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    resizeHandleHeight: {
+      type: Number,
+      required: false,
+      default() {
+        return 32;
+      }
+    },
     spanRowsCount: {
       type: Number,
       default() {
@@ -110,7 +144,43 @@ export default {
     domainObject: {
       type: Object,
       default: undefined
+    },
+    hideButton: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
+    buttonTitle: {
+      type: String,
+      default() {
+        return null;
+      }
+    },
+    buttonIcon: {
+      type: String,
+      default() {
+        return null;
+      }
+    },
+    buttonClickOn: {
+      type: Function,
+      default() {
+        return () => {};
+      }
+    },
+    buttonClickOff: {
+      type: Function,
+      default() {
+        return () => {};
+      }
     }
+  },
+  data() {
+    return {
+      buttonPressed: false,
+      labelWidth: 200
+    };
   },
   computed: {
     gridRowSpan() {
@@ -120,23 +190,39 @@ export default {
         return '';
       }
     },
-
     swimlaneClass() {
       if (!this.spanRowsCount && !this.isNested) {
-        return 'c-swimlane__lane-label--span-cols';
+        return 'c-swimlane__lane-label --span-cols';
       }
-
       return '';
     },
-
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
+    },
+    gridTemplateColumnStyle() {
+      if (this.isNested) {
+        return {};
+      }
+
+      const columnWidth = this.swimLaneLabelWidth / 2;
+
+      return {
+        'grid-template-columns': `${columnWidth}px ${columnWidth}px 1fr`
+      };
     }
   },
   methods: {
     async showToolTip() {
       const { BELOW } = this.openmct.tooltips.TOOLTIP_LOCATIONS;
       this.buildToolTip(await this.getObjectPath(), BELOW, 'swimLane');
+    },
+    pressOnButton() {
+      this.buttonPressed = !this.buttonPressed;
+      if (this.buttonPressed) {
+        this.buttonClickOn();
+      } else {
+        this.buttonClickOff();
+      }
     }
   }
 };

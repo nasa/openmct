@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -23,11 +23,11 @@
 <template>
   <div
     class="c-gsearch-result c-gsearch-result--annotation"
-    aria-label="Search Result"
-    role="presentation"
+    aria-label="Annotation Search Result"
+    role="listitem"
   >
     <div class="c-gsearch-result__type-icon" :class="resultTypeIcon"></div>
-    <div class="c-gsearch-result__body" aria-label="Annotation Search Result">
+    <div class="c-gsearch-result__body">
       <div class="c-gsearch-result__title" @click="clickedResult">
         {{ getResultName }}
       </div>
@@ -56,9 +56,10 @@
 import { Marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 
-import { identifierToString } from '../../../../src/tools/url';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
+import { identifierToString } from '../../../../src/tools/url.js';
 import ObjectPath from '../../components/ObjectPath.vue';
-import PreviewAction from '../../preview/PreviewAction';
 
 export default {
   name: 'AnnotationSearchResult',
@@ -109,12 +110,10 @@ export default {
     this.marked = new Marked();
   },
   mounted() {
-    this.previewAction = new PreviewAction(this.openmct);
-    this.previewAction.on('isVisible', this.togglePreviewState);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
     this.fireAnnotationSelection = this.fireAnnotationSelection.bind(this);
   },
   unmounted() {
-    this.previewAction.off('isVisible', this.togglePreviewState);
     this.openmct.selection.off('change', this.fireAnnotationSelection);
   },
   methods: {

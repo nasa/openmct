@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,19 +19,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global __dirname */
+
 /*
 This test suite is dedicated to tests which verify form functionality in isolation
 */
 
-const { test, expect } = require('../../pluginFixtures');
-const { createDomainObjectWithDefaults } = require('../../appActions');
-const genUuid = require('uuid').v4;
-const path = require('path');
+import { fileURLToPath } from 'url';
+import { v4 as genUuid } from 'uuid';
+
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { expect, test } from '../../pluginFixtures.js';
 
 const TEST_FOLDER = 'test folder';
-const jsonFilePath = 'e2e/test-data/ExampleLayouts.json';
-const imageFilePath = 'e2e/test-data/rick.jpg';
+const jsonFilePath = 'test-data/ExampleLayouts.json';
+const imageFilePath = 'test-data/rick.jpg';
 
 test.describe('Form Validation Behavior', () => {
   test('Required Field indicators appear if title is empty and can be corrected', async ({
@@ -40,29 +41,27 @@ test.describe('Form Validation Behavior', () => {
     //Go to baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.click('button:has-text("Create")');
-    await page.getByRole('menuitem', { name: ' Folder' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
+    await page.getByRole('menuitem', { name: 'Folder' }).click();
 
     // Fill in empty string into title and trigger validation with 'Tab'
-    await page.click('text=Properties Title Notes >> input[type="text"]');
-    await page.fill('text=Properties Title Notes >> input[type="text"]', '');
-    await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
+    await page.getByLabel('Title', { exact: true }).fill('');
+    await page.getByLabel('Title', { exact: true }).press('Tab');
 
     //Required Field Form Validation
-    await expect(page.locator('button:has-text("OK")')).toBeDisabled();
+    await expect(page.getByLabel('Save')).toBeDisabled();
     await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/invalid/);
 
     //Correct Form Validation for missing title and trigger validation with 'Tab'
-    await page.click('text=Properties Title Notes >> input[type="text"]');
-    await page.fill('text=Properties Title Notes >> input[type="text"]', TEST_FOLDER);
-    await page.press('text=Properties Title Notes >> input[type="text"]', 'Tab');
+    await page.getByLabel('Title', { exact: true }).fill(TEST_FOLDER);
+    await page.getByLabel('Title', { exact: true }).press('Tab');
 
     //Required Field Form Validation is corrected
-    await expect(page.locator('button:has-text("OK")')).toBeEnabled();
+    await expect(page.getByLabel('Save')).toBeEnabled();
     await expect(page.locator('.c-form-row__state-indicator').first()).not.toHaveClass(/invalid/);
 
     //Finish Creating Domain Object
-    await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
+    await page.getByLabel('Save').click();
 
     //Verify that the Domain Object has been created with the corrected title property
     await expect(page.locator('.l-browse-bar__object-name')).toContainText(TEST_FOLDER);
@@ -72,36 +71,36 @@ test.describe('Form Validation Behavior', () => {
 test.describe('Form File Input Behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addInitFileInputObject.js')
+      path: fileURLToPath(new URL('../../helper/addInitFileInputObject.js', import.meta.url))
     });
   });
 
   test('Can select a JSON file type', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: 'JSON File Input Object' }).click();
 
     await page.setInputFiles('#fileElem', jsonFilePath);
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    const type = await page.locator('#file-input-type').textContent();
-    await expect(type).toBe(`"string"`);
+    const type = page.locator('#file-input-type');
+    await expect(type).toHaveText(`"string"`);
   });
 
   test('Can select an image file type', async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('button', { name: ' Create ' }).click();
+    await page.getByRole('button', { name: 'Create' }).click();
     await page.getByRole('menuitem', { name: 'Image File Input Object' }).click();
 
     await page.setInputFiles('#fileElem', imageFilePath);
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    const type = await page.locator('#file-input-type').textContent();
-    await expect(type).toBe(`"object"`);
+    const type = page.locator('#file-input-type');
+    await expect(type).toHaveText(`"object"`);
   });
 });
 
@@ -109,7 +108,7 @@ test.describe('Persistence operations @addInit', () => {
   // add non persistable root item
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: path.join(__dirname, '../../helper', 'addNoneditableObject.js')
+      path: fileURLToPath(new URL('../../helper/addNoneditableObject.js', import.meta.url))
     });
   });
 
@@ -120,18 +119,18 @@ test.describe('Persistence operations @addInit', () => {
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    await page.click('button:has-text("Create")');
+    await page.getByRole('button', { name: 'Create' }).click();
 
-    await page.click('text=Condition Set');
+    await page.getByRole('menuitem', { name: 'Condition Set' }).click();
 
     await page.locator('form[name="mctForm"] >> text=Persistence Testing').click();
 
-    const okButton = page.locator('button:has-text("OK")');
+    const okButton = page.getByLabel('Save');
     await expect(okButton).toBeDisabled();
   });
 });
 
-test.describe('Persistence operations @couchdb', () => {
+test.describe('Persistence operations @couchdb @network', () => {
   test.use({ failOnConsoleError: false });
   test('Editing object properties should generate a single persistence operation', async ({
     page
@@ -157,14 +156,12 @@ test.describe('Persistence operations @couchdb', () => {
     });
 
     // Open the edit form for the clock object
-    await page.click('button[title="More options"]');
-    await page.click('li[title="Edit properties of this object."]');
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
 
     // Modify the display format from default 12hr -> 24hr and click 'Save'
-    await page
-      .locator('select[aria-label="12 or 24 hour clock"]')
-      .selectOption({ value: 'clock24' });
-    await page.click('button[aria-label="Save"]');
+    await page.getByLabel('12 or 24 hour clock').selectOption({ value: 'clock24' });
+    await page.getByLabel('Save').click();
 
     await expect
       .poll(() => putRequestCount, {
@@ -173,7 +170,7 @@ test.describe('Persistence operations @couchdb', () => {
       })
       .toEqual(1);
   });
-  test('Can create an object after a conflict error @couchdb @2p', async ({
+  test('Can create an object after a conflict error @couchdb @network @2p', async ({
     page,
     openmctConfig
   }) => {
@@ -187,8 +184,8 @@ test.describe('Persistence operations @couchdb', () => {
 
     // Both pages: Go to baseURL
     await Promise.all([
-      page.goto('./', { waitUntil: 'networkidle' }),
-      page2.goto('./', { waitUntil: 'networkidle' })
+      page.goto('./', { waitUntil: 'domcontentloaded' }),
+      page2.goto('./', { waitUntil: 'domcontentloaded' })
     ]);
 
     //Slow down the test a bit
@@ -201,14 +198,14 @@ test.describe('Persistence operations @couchdb', () => {
 
     // Both pages: Click the Create button
     await Promise.all([
-      page.click('button:has-text("Create")'),
-      page2.click('button:has-text("Create")')
+      page.getByRole('button', { name: 'Create' }).click(),
+      page2.getByRole('button', { name: 'Create' }).click()
     ]);
 
     // Both pages: Click "Clock" in the Create menu
     await Promise.all([
-      page.click(`li[role='menuitem']:text("Clock")`),
-      page2.click(`li[role='menuitem']:text("Clock")`)
+      page.getByRole('menuitem', { name: 'Clock' }).click(),
+      page2.getByRole('menuitem', { name: 'Clock' }).click()
     ]);
 
     // Generate unique names for both objects
@@ -235,9 +232,9 @@ test.describe('Persistence operations @couchdb', () => {
     // conditions for a conflict error from the first page.
     await Promise.all([
       page2.waitForLoadState(),
-      page2.click('[aria-label="Save"]'),
+      page2.getByLabel('Save').click(),
       // Wait for Save Banner to appear
-      page2.waitForSelector('.c-message-banner__message')
+      page2.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // Close Page 2, we're done with it.
@@ -248,9 +245,9 @@ test.describe('Persistence operations @couchdb', () => {
     // the composition of the parent folder.
     await Promise.all([
       page.waitForLoadState(),
-      page.click('[aria-label="Save"]'),
+      page.getByLabel('Save').click(),
       // Wait for Save Banner to appear
-      page.waitForSelector('.c-message-banner__message')
+      page.locator('.c-message-banner__message').hover({ trial: true })
     ]);
 
     // Page 1: Verify that the conflict has occurred and an error notification is displayed.

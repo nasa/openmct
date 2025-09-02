@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -29,13 +29,14 @@
     @end-move="endMove"
   >
     <template #content>
-      <div class="c-image-view" :style="style"></div>
+      <div v-show="showImage" aria-label="Image View" class="c-image-view" :style="style"></div>
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>
-import conditionalStylesMixin from '../mixins/objectStyles-mixin';
+import { encode_url } from '../../../utils/encoding';
+import conditionalStylesMixin from '../mixins/objectStyles-mixin.js';
 import LayoutFrame from './LayoutFrame.vue';
 
 export default {
@@ -76,13 +77,16 @@ export default {
   },
   emits: ['move', 'end-move'],
   computed: {
+    showImage() {
+      return this.isEditing || !this.itemStyle?.isStyleInvisible;
+    },
     style() {
-      let backgroundImage = 'url(' + this.item.url + ')';
+      let backgroundImage = `url('${encode_url(this.item.url)}')`;
       let border = '1px solid ' + this.item.stroke;
 
       if (this.itemStyle) {
         if (this.itemStyle.imageUrl !== undefined) {
-          backgroundImage = 'url(' + this.itemStyle.imageUrl + ')';
+          backgroundImage = `url('${encode_url(this.itemStyle.imageUrl)}')`;
         }
 
         border = this.itemStyle.border;

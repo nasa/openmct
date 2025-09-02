@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,14 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
+import { makeKeyString } from 'objectUtils';
 
-import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter';
-import DefaultMetadataProvider from './DefaultMetadataProvider';
-import TelemetryCollection from './TelemetryCollection';
-import TelemetryMetadataManager from './TelemetryMetadataManager';
-import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor';
-import TelemetryValueFormatter from './TelemetryValueFormatter';
+import CustomStringFormatter from '../../plugins/displayLayout/CustomStringFormatter.js';
+import BatchingWebSocket from './BatchingWebSocket.js';
+import DefaultMetadataProvider from './DefaultMetadataProvider.js';
+import TelemetryCollection from './TelemetryCollection.js';
+import TelemetryMetadataManager from './TelemetryMetadataManager.js';
+import TelemetryRequestInterceptorRegistry from './TelemetryRequestInterceptor.js';
+import TelemetryValueFormatter from './TelemetryValueFormatter.js';
 
 /**
  * @typedef {import('../time/TimeContext').TimeContext} TimeContext
@@ -37,30 +38,55 @@ import TelemetryValueFormatter from './TelemetryValueFormatter';
  * Describes and bounds requests for telemetry data.
  *
  * @typedef TelemetryRequestOptions
- * @property {String} [sort] the key of the property to sort by. This may
+ * @property {string} [sort] the key of the property to sort by. This may
  *           be prefixed with a "+" or a "-" sign to sort in ascending
  *           or descending order respectively. If no prefix is present,
  *           ascending order will be used.
- * @property {Number} [start] the lower bound for values of the sorting property
- * @property {Number} [end] the upper bound for values of the sorting property
- * @property {String} [strategy] symbolic identifier for strategies
+ * @property {number} [start] the lower bound for values of the sorting property
+ * @property {number} [end] the upper bound for values of the sorting property
+ * @property {string} [strategy] symbolic identifier for strategies
  *           (such as `latest` or `minmax`) which may be recognized by providers;
  *           these will be tried in order until an appropriate provider
  *           is found
  * @property {AbortController} [signal] an AbortController which can be used
  *           to cancel a telemetry request
- * @property {String} [domain] the domain key of the request
+ * @property {string} [domain] the domain key of the request
  * @property {TimeContext} [timeContext] the time context to use for this request
- * @memberof module:openmct.TelemetryAPI~
  */
+
+/**
+ * Describes and bounds requests for telemetry data.
+ *
+ * @typedef TelemetrySubscriptionOptions
+ * @property {string} [strategy] symbolic identifier directing providers on how
+ * to handle telemetry subscriptions. The default behavior is 'latest' which will
+ * always return a single telemetry value with each callback, and in the event
+ * of throttling will always prioritize the latest data, meaning intermediate
+ * data will be skipped. Alternatively, the `batch` strategy can be used, which
+ * will return all telemetry values since the last callback. This strategy is
+ * useful for cases where intermediate data is important, such as when
+ * rendering a telemetry plot or table. If `batch` is specified, the subscription
+ * callback will be invoked with an Array.
+ *
+ */
+
+const SUBSCRIBE_STRATEGY = {
+  LATEST: 'latest',
+  BATCH: 'batch'
+};
 
 /**
  * Utilities for telemetry
  * @interface TelemetryAPI
- * @memberof module:openmct
  */
 export default class TelemetryAPI {
   #isGreedyLAD;
+  #subscribeCache;
+  #hasReturnedFirstData;
+
+  get SUBSCRIBE_STRATEGY() {
+    return SUBSCRIBE_STRATEGY;
+  }
 
   constructor(openmct) {
     this.openmct = openmct;
@@ -78,6 +104,9 @@ export default class TelemetryAPI {
     this.valueFormatterCache = new WeakMap();
     this.requestInterceptorRegistry = new TelemetryRequestInterceptorRegistry();
     this.#isGreedyLAD = true;
+    this.BatchingWebSocket = BatchingWebSocket;
+    this.#subscribeCache = {};
+    this.#hasReturnedFirstData = false;
   }
 
   abortAllRequests() {
@@ -101,7 +130,7 @@ export default class TelemetryAPI {
    * object is any object which has telemetry metadata-- regardless of whether
    * the telemetry object has an available telemetry provider.
    *
-   * @param {module:openmct.DomainObject} domainObject
+   * @param {import('openmct').DomainObject} domainObject
    * @returns {boolean} true if the object is a telemetry object.
    */
   isTelemetryObject(domainObject) {
@@ -113,10 +142,9 @@ export default class TelemetryAPI {
    * this domain object.
    *
    * @method canProvideTelemetry
-   * @param {module:openmct.DomainObject} domainObject the object for
+   * @param {import('openmct').DomainObject} domainObject the object for
    *        which telemetry would be provided
    * @returns {boolean} true if telemetry can be provided
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   canProvideTelemetry(domainObject) {
     return (
@@ -129,7 +157,6 @@ export default class TelemetryAPI {
    * Register a telemetry provider with the telemetry service. This
    * allows you to connect alternative telemetry sources.
    * @method addProvider
-   * @memberof module:openmct.TelemetryAPI#
    * @param {module:openmct.TelemetryAPI~TelemetryProvider} provider the new
    *        telemetry provider
    */
@@ -204,29 +231,141 @@ export default class TelemetryAPI {
    * @returns {TelemetryRequestOptions} the options, with defaults filled in
    */
   standardizeRequestOptions(options = {}) {
-    if (!Object.hasOwn(options, 'start')) {
-      const bounds = options.timeContext?.getBounds();
-      if (bounds?.start) {
-        options.start = options.timeContext.getBounds().start;
-      } else {
-        options.start = this.openmct.time.getBounds().start;
-      }
-    }
-
-    if (!Object.hasOwn(options, 'end')) {
-      const bounds = options.timeContext?.getBounds();
-      if (bounds?.end) {
-        options.end = options.timeContext.getBounds().end;
-      } else {
-        options.end = this.openmct.time.getBounds().end;
-      }
+    if (!Object.hasOwn(options, 'timeContext')) {
+      options.timeContext = this.openmct.time;
     }
 
     if (!Object.hasOwn(options, 'domain')) {
-      options.domain = this.openmct.time.getTimeSystem().key;
+      options.domain = options.timeContext.getTimeSystem().key;
+    }
+
+    if (!Object.hasOwn(options, 'start')) {
+      options.start = options.timeContext.getBounds().start;
+    }
+
+    if (!Object.hasOwn(options, 'end')) {
+      options.end = options.timeContext.getBounds().end;
     }
 
     return options;
+  }
+
+  /**
+   * Sanitizes objects for consistent serialization by:
+   * 1. Removing non-plain objects (class instances) and functions
+   * 2. Sorting object keys alphabetically to ensure consistent ordering
+   */
+  sanitizeForSerialization(key, value) {
+    // Handle null and primitives directly
+    if (value === null || typeof value !== 'object') {
+      return value;
+    }
+
+    // Remove functions and non-plain objects (except arrays)
+    if (
+      typeof value === 'function' ||
+      (Object.getPrototypeOf(value) !== Object.prototype && !Array.isArray(value))
+    ) {
+      return undefined;
+    }
+
+    // For plain objects, just sort the keys
+    if (!Array.isArray(value)) {
+      const sortedObject = {};
+      const sortedKeys = Object.keys(value).sort();
+
+      sortedKeys.forEach((objectKey) => {
+        sortedObject[objectKey] = value[objectKey];
+      });
+
+      return sortedObject;
+    }
+
+    return value;
+  }
+
+  /**
+   * Determines whether a domain object has numeric telemetry data.
+   * A domain object has numeric telemetry if it:
+   * 1. Has a telemetry property
+   * 2. Has telemetry metadata with domain values (like timestamps)
+   * 3. Has range values (measurements) where at least one is numeric
+   *
+   * @method hasNumericTelemetry
+   * @param {import('openmct').DomainObject} domainObject The domain object to check
+   * @returns {boolean} True if the object has numeric telemetry, false otherwise
+   */
+  hasNumericTelemetry(domainObject) {
+    const hasTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
+
+    if (!hasTelemetry) {
+      return false;
+    }
+
+    const metadata = this.openmct.telemetry.getMetadata(domainObject);
+
+    if (!metadata) {
+      return false;
+    }
+
+    const rangeValues = metadata.valuesForHints(['range']);
+    const domains = metadata.valuesForHints(['domain']);
+
+    return (
+      domains.length > 0 &&
+      rangeValues.length > 0 &&
+      !rangeValues.every((value) => value.format === 'string')
+    );
+  }
+
+  /**
+   * Generates a numeric hash value for an options object. The hash is consistent
+   * for equivalent option objects regardless of property order.
+   *
+   * This is used to create compact, unique cache keys for telemetry subscriptions with
+   * different options configurations. The hash function ensures that identical options
+   * objects will always generate the same hash value, while different options objects
+   * (even with small differences) will generate different hash values.
+   *
+   * @private
+   * @param {Object} options The options object to hash
+   * @returns {number} A positive integer hash of the options object
+   */
+  #hashOptions(options) {
+    const sanitizedOptionsString = JSON.stringify(
+      options,
+      this.sanitizeForSerialization.bind(this)
+    );
+
+    let hash = 0;
+    const prime = 31;
+    const modulus = 1e9 + 9; // Large prime number
+
+    for (let i = 0; i < sanitizedOptionsString.length; i++) {
+      const char = sanitizedOptionsString.charCodeAt(i);
+      // Calculate new hash value while keeping numbers manageable
+      hash = Math.floor((hash * prime + char) % modulus);
+    }
+
+    return Math.abs(hash);
+  }
+
+  /**
+   * Generates a unique cache key for a telemetry subscription based on the
+   * domain object identifier and options (which includes strategy).
+   *
+   * Uses a hash of the options object to create compact cache keys while still
+   * ensuring unique keys for different subscription configurations.
+   *
+   * @private
+   * @param {import('openmct').DomainObject} domainObject The domain object being subscribed to
+   * @param {Object} options The subscription options object (including strategy)
+   * @returns {string} A unique key string for caching the subscription
+   */
+  #getSubscriptionCacheKey(domainObject, options) {
+    const keyString = makeKeyString(domainObject.identifier);
+
+    return `${keyString}:${this.#hashOptions(options)}`;
   }
 
   /**
@@ -236,7 +375,6 @@ export default class TelemetryAPI {
    *
    * @param {module:openmct.RequestInterceptorDef} requestInterceptorDef the request interceptor definition to add
    * @method addRequestInterceptor
-   * @memberof module:openmct.TelemetryRequestInterceptorRegistry#
    */
   addRequestInterceptor(requestInterceptorDef) {
     this.requestInterceptorRegistry.addInterceptor(requestInterceptorDef);
@@ -280,7 +418,6 @@ export default class TelemetryAPI {
    *
    * @method greedyLAD
    * @returns {boolean} if greedyLAD is active or not
-   * @memberof module:openmct.TelemetryAPI#
    */
   greedyLAD(isGreedy) {
     if (arguments.length > 0) {
@@ -301,8 +438,7 @@ export default class TelemetryAPI {
    * telemetry (aggregation, latest available, etc.).
    *
    * @method requestCollection
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry
    * @param {TelemetryRequestOptions} options
    *        options for this telemetry collection request
@@ -319,8 +455,7 @@ export default class TelemetryAPI {
    * telemetry (aggregation, latest available, etc.).
    *
    * @method request
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry
    * @param {TelemetryRequestOptions} options
    *        options for this historical request
@@ -353,7 +488,10 @@ export default class TelemetryAPI {
     arguments[1] = await this.applyRequestInterceptors(domainObject, arguments[1]);
     try {
       const telemetry = await provider.request(...arguments);
-
+      if (!this.#hasReturnedFirstData) {
+        this.#hasReturnedFirstData = true;
+        performance.mark('firstHistoricalDataReturned');
+      }
       return telemetry;
     } catch (error) {
       if (error.name !== 'AbortError') {
@@ -375,57 +513,111 @@ export default class TelemetryAPI {
    * realtime provider.
    *
    * @method subscribe
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry
-   * @param {TelemetryRequestOptions} options configuration items for subscription
+   * @param {TelemetrySubscriptionOptions} options configuration items for subscription
    * @param {Function} callback the callback to invoke with new data, as
    *        it becomes available
    * @returns {Function} a function which may be called to terminate
    *          the subscription
    */
-  subscribe(domainObject, callback, options) {
+  subscribe(domainObject, callback, options = { strategy: SUBSCRIBE_STRATEGY.LATEST }) {
+    const requestedStrategy = options.strategy || SUBSCRIBE_STRATEGY.LATEST;
+
     if (domainObject.type === 'unknown') {
       return () => {};
     }
 
-    const provider = this.findSubscriptionProvider(domainObject);
+    const provider = this.findSubscriptionProvider(domainObject, options);
+    const supportsBatching =
+      Boolean(provider?.supportsBatching) && provider?.supportsBatching(domainObject, options);
 
-    if (!this.subscribeCache) {
-      this.subscribeCache = {};
+    if (!this.#subscribeCache) {
+      this.#subscribeCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
-    let subscriber = this.subscribeCache[keyString];
+    const supportedStrategy = supportsBatching ? requestedStrategy : SUBSCRIBE_STRATEGY.LATEST;
+    // Override the requested strategy with the strategy supported by the provider
+    const optionsWithSupportedStrategy = {
+      ...options,
+      strategy: supportedStrategy
+    };
+
+    const cacheKey = this.#getSubscriptionCacheKey(domainObject, optionsWithSupportedStrategy);
+    let subscriber = this.#subscribeCache[cacheKey];
 
     if (!subscriber) {
-      subscriber = this.subscribeCache[keyString] = {
-        callbacks: [callback]
+      subscriber = this.#subscribeCache[cacheKey] = {
+        latestCallbacks: [],
+        batchCallbacks: []
       };
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
-          function (value) {
-            subscriber.callbacks.forEach(function (cb) {
-              cb(value);
-            });
-          },
-          options
+          invokeCallbackWithRequestedStrategy,
+          optionsWithSupportedStrategy
         );
       } else {
         subscriber.unsubscribe = function () {};
       }
+    }
+
+    if (requestedStrategy === SUBSCRIBE_STRATEGY.BATCH) {
+      subscriber.batchCallbacks.push(callback);
     } else {
-      subscriber.callbacks.push(callback);
+      subscriber.latestCallbacks.push(callback);
+    }
+
+    // Guarantees that view receive telemetry in the expected form
+    function invokeCallbackWithRequestedStrategy(data) {
+      invokeCallbacksWithArray(data, subscriber.batchCallbacks);
+      invokeCallbacksWithSingleValue(data, subscriber.latestCallbacks);
+    }
+
+    function invokeCallbacksWithArray(data, batchCallbacks) {
+      //
+      if (data === undefined || data === null || data.length === 0) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
+      if (!Array.isArray(data)) {
+        data = [data];
+      }
+
+      batchCallbacks.forEach((cb) => {
+        cb(data);
+      });
+    }
+
+    function invokeCallbacksWithSingleValue(data, latestCallbacks) {
+      if (Array.isArray(data)) {
+        data = data[data.length - 1];
+      }
+
+      if (data === undefined || data === null) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
+      latestCallbacks.forEach((cb) => {
+        cb(data);
+      });
     }
 
     return function unsubscribe() {
-      subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
+      subscriber.latestCallbacks = subscriber.latestCallbacks.filter(function (cb) {
         return cb !== callback;
       });
-      if (subscriber.callbacks.length === 0) {
+      subscriber.batchCallbacks = subscriber.batchCallbacks.filter(function (cb) {
+        return cb !== callback;
+      });
+
+      if (subscriber.latestCallbacks.length === 0 && subscriber.batchCallbacks.length === 0) {
         subscriber.unsubscribe();
-        delete this.subscribeCache[keyString];
+        delete this.#subscribeCache[cacheKey];
       }
     }.bind(this);
   }
@@ -435,8 +627,7 @@ export default class TelemetryAPI {
    * The callback will be called whenever staleness changes.
    *
    * @method subscribeToStaleness
-   * @memberof module:openmct.TelemetryAPI~StalenessProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *          to watch for staleness updates
    * @param {Function} callback the callback to invoke with staleness data,
    *  as it is received: ex.
@@ -454,7 +645,7 @@ export default class TelemetryAPI {
       this.stalenessSubscriberCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let stalenessSubscriber = this.stalenessSubscriberCache[keyString];
 
     if (!stalenessSubscriber) {
@@ -494,8 +685,7 @@ export default class TelemetryAPI {
    * limit provider.
    *
    * @method subscribeToLimits
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated limits
    * @param {Function} callback the callback to invoke with new data, as
    *        it becomes available
@@ -513,7 +703,7 @@ export default class TelemetryAPI {
       this.limitsSubscribeCache = {};
     }
 
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
+    const keyString = makeKeyString(domainObject.identifier);
     let subscriber = this.limitsSubscribeCache[keyString];
 
     if (!subscriber) {
@@ -548,8 +738,7 @@ export default class TelemetryAPI {
    * Request telemetry staleness for a domain object.
    *
    * @method isStale
-   * @memberof module:openmct.TelemetryAPI~StalenessProvider#
-   * @param {module:openmct.DomainObject} domainObject the object
+   * @param {import('openmct').DomainObject} domainObject the object
    *        which has associated telemetry staleness
    * @returns {Promise.<StalenessResponseObject>} a promise for a StalenessResponseObject
    *        or undefined if no provider exists
@@ -635,7 +824,7 @@ export default class TelemetryAPI {
    * Get a format map of all value formatters for a given piece of telemetry
    * metadata.
    *
-   * @returns {Object<String, {TelemetryValueFormatter}>}
+   * @returns {Record<string, TelemetryValueFormatter>}
    */
   getFormatMap(metadata) {
     if (!metadata) {
@@ -709,11 +898,10 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to evaluate limits
    * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
    * @method limitEvaluator
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   limitEvaluator(domainObject) {
     return this.getLimitEvaluator(domainObject);
@@ -729,11 +917,10 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to get limits
    * @returns {LimitsResponseObject}
    * @method limits
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   limitDefinition(domainObject) {
     return this.getLimits(domainObject);
@@ -749,11 +936,10 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to evaluate limits
    * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
    * @method limitEvaluator
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   getLimitEvaluator(domainObject) {
     const provider = this.#findLimitEvaluator(domainObject);
@@ -776,12 +962,11 @@ export default class TelemetryAPI {
    * If a provider does not implement this method, it is presumed
    * that no limits are defined for this domain object's telemetry.
    *
-   * @param {module:openmct.DomainObject} domainObject the domain
+   * @param {import('openmct').DomainObject} domainObject the domain
    *        object for which to display limits
    * @returns {LimitsResponseObject}
    * @method limits returns a limits object of type {LimitsResponseObject}
    *  supported colors are purple, red, orange, yellow and cyan
-   * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
    */
   getLimits(domainObject) {
     const provider = this.#findLimitEvaluator(domainObject);
@@ -819,7 +1004,6 @@ export default class TelemetryAPI {
  * have exceeded nominal conditions.
  *
  * @interface LimitEvaluator
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
@@ -827,7 +1011,6 @@ export default class TelemetryAPI {
  * @method evaluate
  * @param {*} datum the telemetry datum to evaluate
  * @param {TelemetryProperty} the property to check for limit violations
- * @memberof module:openmct.TelemetryAPI~LimitEvaluator
  * @returns {LimitViolation} metadata about
  *          the limit violation, or undefined if a value is within limits
  */
@@ -835,7 +1018,6 @@ export default class TelemetryAPI {
 /**
  * A violation of limits defined for a telemetry property.
  * @typedef LimitViolation
- * @memberof {module:openmct.TelemetryAPI~}
  * @property {string} cssClass the class (or space-separated classes) to
  *           apply to display elements for values which violate this limit
  * @property {string} name the human-readable name for the limit violation
@@ -844,8 +1026,7 @@ export default class TelemetryAPI {
  */
 
 /**
- * @typedef {object} LimitsResponseObject
- * @memberof {module:openmct.TelemetryAPI~}
+ * @typedef {Object} LimitsResponseObject
  * @property {LimitDefinition} limitLevel the level name and it's limit definition
  * @example {
  *  [limitLevel]: {
@@ -864,7 +1045,6 @@ export default class TelemetryAPI {
 /**
  * Limit defined for a telemetry property.
  * @typedef LimitDefinition
- * @memberof {module:openmct.TelemetryAPI~}
  * @property {LimitDefinitionValue} low a lower limit
  * @property {LimitDefinitionValue} high a higher limit
  */
@@ -872,9 +1052,8 @@ export default class TelemetryAPI {
 /**
  * Limit definition for a Limit of a telemetry property.
  * @typedef LimitDefinitionValue
- * @memberof {module:openmct.TelemetryAPI~}
  * @property {string} color color to represent this limit
- * @property {Number} value the limit value
+ * @property {number} value the limit value
  */
 
 /**
@@ -882,7 +1061,6 @@ export default class TelemetryAPI {
  * display as text.
  *
  * @interface TelemetryFormatter
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
@@ -890,7 +1068,6 @@ export default class TelemetryAPI {
  * telemetry metadata in domain object.
  *
  * @method format
- * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
  */
 
 /**
@@ -898,7 +1075,6 @@ export default class TelemetryAPI {
  * associated with a particular domain object.
  *
  * @typedef TelemetryProperty
- * @memberof module:openmct.TelemetryAPI~
  * @property {string} key the name of the property in the datum which
  *           contains this telemetry value
  * @property {string} name the human-readable name for this property
@@ -918,7 +1094,6 @@ export default class TelemetryAPI {
  * Describes and bounds requests for telemetry data.
  *
  * @typedef TelemetryRequest
- * @memberof module:openmct.TelemetryAPI~
  * @property {string} sort the key of the property to sort by. This may
  *           be prefixed with a "+" or a "-" sign to sort in ascending
  *           or descending order respectively. If no prefix is present,
@@ -937,30 +1112,28 @@ export default class TelemetryAPI {
  * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
  *
  * @interface TelemetryProvider
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
- * Provides telemetry staleness data. To subscribe to telemetry stalenes,
+ * Provides telemetry staleness data. To subscribe to telemetry staleness,
  * new StalenessProvider implementations should be
  * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
  *
  * @interface StalenessProvider
- * @property {function} supportsStaleness receieves a domainObject and
+ * @property {function} supportsStaleness receives a domainObject and
  *           returns a boolean to indicate it will provide staleness
- * @property {function} subscribeToStaleness receieves a domainObject to
+ * @property {function} subscribeToStaleness receives a domainObject to
  *           be subscribed to and a callback to invoke with a StalenessResponseObject
  * @property {function} isStale an asynchronous method called with a domainObject
  *           and an options object which currently has an abort signal, ex.
  *           { signal: <AbortController.signal> }
  *           this method should return a current StalenessResponseObject
- * @memberof module:openmct.TelemetryAPI~
  */
 
 /**
- * @typedef {object} StalenessResponseObject
- * @property {Boolean} isStale boolean representing the staleness state
- * @property {Number} timestamp Unix timestamp in milliseconds
+ * @typedef {Object} StalenessResponseObject
+ * @property {boolean} isStale boolean representing the staleness state
+ * @property {number} timestamp Unix timestamp in milliseconds
  */
 
 /**
@@ -969,5 +1142,4 @@ export default class TelemetryAPI {
  *
  * @interface TelemetryAPI
  * @augments module:openmct.TelemetryAPI~TelemetryProvider
- * @memberof module:openmct
  */

@@ -4,10 +4,6 @@
 }
 
 .c-create-button {
-  .is-editing & {
-    @include disabled();
-  }
-
   .c-button__label {
     text-transform: $createBtnTextTransform;
   }

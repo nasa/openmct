@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,8 +27,8 @@ const exportPNG = {
   description: "Export This View's Data as PNG",
   cssClass: 'icon-download',
   group: 'view',
-  invoke(objectPath, view) {
-    view.getViewContext().exportPNG();
+  invoke(objectPath, view, filename) {
+    view.getViewContext().exportPNG(filename);
   }
 };
 
@@ -38,8 +38,8 @@ const exportJPG = {
   description: "Export This View's Data as JPG",
   cssClass: 'icon-download',
   group: 'view',
-  invoke(objectPath, view) {
-    view.getViewContext().exportJPG();
+  invoke(objectPath, view, filename) {
+    view.getViewContext().exportJPG(filename);
   }
 };
 

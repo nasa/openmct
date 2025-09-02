@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2023, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DurationFormat from './DurationFormat';
-import LocalClock from './LocalClock';
-import UTCTimeFormat from './UTCTimeFormat';
-import UTCTimeSystem from './UTCTimeSystem';
+import DurationFormat from './DurationFormat.js';
+import LocalClock from './LocalClock.js';
+import UTCTimeFormat from './UTCTimeFormat.js';
+import UTCTimeSystem from './UTCTimeSystem.js';
 
 /**
  * Install a time system that supports UTC times. It also installs a local

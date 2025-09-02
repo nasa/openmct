@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 import { debounce } from 'lodash';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-import CreateAction from './CreateAction';
+import { CREATE_ACTION_KEY } from './CreateAction.js';
 
 let parentObject;
 let parentObjectPath;
@@ -115,8 +115,8 @@ describe('The create action plugin', () => {
         const deBouncedCallback = debounce(callback, 300);
         unObserve = openmct.objects.observe(parentObject, '*', deBouncedCallback);
 
-        const createAction = new CreateAction(openmct, type, parentObject);
-        createAction.invoke();
+        const createAction = openmct.actions.getAction(CREATE_ACTION_KEY);
+        createAction.invoke(type, parentObject);
       });
     });
   });

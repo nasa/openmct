@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,14 +24,16 @@ import mount from 'utils/mount';
 
 import PreviewContainer from '@/ui/preview/PreviewContainer.vue';
 
-export default class ViewLargeAction {
+const VIEW_LARGE_ACTION_KEY = 'large.view';
+
+class ViewLargeAction {
   constructor(openmct) {
     this.openmct = openmct;
 
     this.cssClass = 'icon-items-expand';
     this.description = 'View Large';
     this.group = 'windowing';
-    this.key = 'large.view';
+    this.key = VIEW_LARGE_ACTION_KEY;
     this.name = 'Large View';
     this.priority = 1;
     this.showInStatusBar = true;
@@ -99,8 +101,15 @@ export default class ViewLargeAction {
       }
     );
     this.preview = vNode.componentInstance;
-    this.destroy = destroy;
+    this.destroy = () => {
+      destroy();
+      this.preview = null;
+    };
 
     return this.preview.$el;
   }
 }
+
+export { VIEW_LARGE_ACTION_KEY };
+
+export default ViewLargeAction;

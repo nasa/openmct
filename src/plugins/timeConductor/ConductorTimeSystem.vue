@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -37,6 +37,7 @@
   <div
     v-else
     class="c-compact-tc__setting-value__elem"
+    :aria-label="`Time system: ${selectedTimeSystem.name}`"
     :title="`Time system: ${selectedTimeSystem.name}`"
   >
     {{ selectedTimeSystem.name }}
@@ -44,7 +45,7 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS } from '../../api/time/constants';
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 
 export default {
   inject: ['openmct', 'configuration'],

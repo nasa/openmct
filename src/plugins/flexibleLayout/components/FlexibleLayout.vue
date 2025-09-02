@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -29,13 +29,12 @@
     </div>
 
     <div
-      class="c-fl__container-holder"
-      :class="{
-        'c-fl--rows': rowsLayout === true
-      }"
+      class="c-fl__container-holder u-style-receiver js-style-receiver"
+      :class="flexLayoutCssClass"
+      :aria-label="`Flexible Layout ${rowsLayout ? 'Rows' : 'Columns'}`"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
-        <drop-hint
+        <DropHint
           v-if="index === 0 && containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="-1"
@@ -43,8 +42,7 @@
           @object-drop-to="moveContainer"
         />
 
-        <container-component
-          class="c-fl__container"
+        <ContainerComponent
           :index="index"
           :container="container"
           :rows-layout="rowsLayout"
@@ -56,7 +54,7 @@
           @persist="persist"
         />
 
-        <resize-handle
+        <ResizeHandle
           v-if="index !== containers.length - 1"
           :index="index"
           :drag-orientation="rowsLayout ? 'vertical' : 'horizontal'"
@@ -66,7 +64,7 @@
           @end-move="endContainerResizing"
         />
 
-        <drop-hint
+        <DropHint
           v-if="containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="index"
@@ -79,11 +77,12 @@
 </template>
 
 <script>
-import Container from '../utils/container';
-import Frame from '../utils/frame';
+import Container from '@/ui/layout/Container.js';
+import Frame from '@/ui/layout/Frame.js';
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
+
 import ContainerComponent from './ContainerComponent.vue';
 import DropHint from './DropHint.vue';
-import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -147,15 +146,11 @@ export default {
     };
   },
   computed: {
-    layoutDirectionStr() {
-      if (this.rowsLayout) {
-        return 'Rows';
-      } else {
-        return 'Columns';
-      }
-    },
     allContainersAreEmpty() {
       return this.containers.every((container) => container.frames.length === 0);
+    },
+    flexLayoutCssClass() {
+      return this.rowsLayout ? 'c-fl--rows' : 'c-fl--cols';
     }
   },
   created() {
@@ -164,6 +159,7 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
+
     this.unObserveContainers = this.openmct.objects.observe(
       this.domainObject,
       'configuration.containers',

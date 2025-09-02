@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import { nextTick } from 'vue';
 
 import { createOpenMct, resetApplicationState } from '@/utils/testing';
 
-import TimelinePlugin from './plugin';
+import TimelinePlugin from './plugin.js';
 
 describe('the plugin', function () {
   let objectDef;

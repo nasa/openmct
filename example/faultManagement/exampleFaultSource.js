@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,13 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import utils from './utils';
+import { DEFAULT_SHELVE_DURATIONS } from '../../src/api/faultmanagement/FaultManagementAPI.js';
+import { acknowledgeFault, randomFaults, shelveFault } from './utils.js';
 
 export default function (staticFaults = false) {
   return function install(openmct) {
     openmct.install(openmct.plugins.FaultManagement());
 
-    const faultsData = utils.randomFaults(staticFaults);
+    const faultsData = randomFaults(staticFaults);
 
     openmct.faults.addProvider({
       request(domainObject, options) {
@@ -44,18 +45,21 @@ export default function (staticFaults = false) {
         return domainObject.type === 'faultManagement';
       },
       acknowledgeFault(fault, { comment = '' }) {
-        utils.acknowledgeFault(fault);
+        acknowledgeFault(fault);
 
         return Promise.resolve({
           success: true
         });
       },
       shelveFault(fault, duration) {
-        utils.shelveFault(fault, duration);
+        shelveFault(fault, duration);
 
         return Promise.resolve({
           success: true
         });
+      },
+      getShelveDurations() {
+        return DEFAULT_SHELVE_DURATIONS;
       }
     });
   };

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,21 +22,33 @@
 
 <template>
   <div ref="chart" class="gl-plot-chart-area">
-    <canvas :style="canvasStyle"></canvas>
-    <canvas :style="canvasStyle"></canvas>
-    <div ref="limitArea" class="js-limit-area">
-      <limit-label
+    <canvas
+      id="2dContext"
+      :style="canvasStyle"
+      class="js-overlay-canvas"
+      role="img"
+      aria-label="Overlay Canvas"
+    ></canvas>
+    <canvas
+      id="webglContext"
+      :style="canvasStyle"
+      class="js-main-canvas"
+      role="img"
+      aria-label="Plot Canvas"
+    ></canvas>
+    <div ref="limitArea" class="js-limit-area" aria-hidden="true">
+      <LimitLabel
         v-for="(limitLabel, index) in visibleLimitLabels"
-        :key="index"
+        :key="`limitLabel-${limitLabel.limit.seriesKey}-${index}`"
         :point="limitLabel.point"
         :limit="limitLabel.limit"
-      ></limit-label>
-      <limit-line
+      ></LimitLabel>
+      <LimitLine
         v-for="(limitLine, index) in visibleLimitLines"
-        :key="index"
+        :key="`limitLine-${limitLine.limit.seriesKey}${index}`"
         :point="limitLine.point"
         :limit="limitLine.limit"
-      ></limit-line>
+      ></LimitLine>
     </div>
   </div>
 </template>
@@ -45,17 +57,17 @@
 import mount from 'utils/mount';
 import { toRaw } from 'vue';
 
-import configStore from '../configuration/ConfigStore';
-import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
-import { DrawLoader } from '../draw/DrawLoader';
-import eventHelpers from '../lib/eventHelpers';
+import configStore from '../configuration/ConfigStore.js';
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel.js';
+import { DrawLoader } from '../draw/DrawLoader.js';
+import eventHelpers from '../lib/eventHelpers.js';
 import LimitLabel from './LimitLabel.vue';
 import LimitLine from './LimitLine.vue';
-import MCTChartAlarmLineSet from './MCTChartAlarmLineSet';
-import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
-import MCTChartLineLinear from './MCTChartLineLinear';
-import MCTChartLineStepAfter from './MCTChartLineStepAfter';
-import MCTChartPointSet from './MCTChartPointSet';
+import MCTChartAlarmLineSet from './MCTChartAlarmLineSet.js';
+import MCTChartAlarmPointSet from './MCTChartAlarmPointSet.js';
+import MCTChartLineLinear from './MCTChartLineLinear.js';
+import MCTChartLineStepAfter from './MCTChartLineStepAfter.js';
+import MCTChartPointSet from './MCTChartPointSet.js';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -99,7 +111,7 @@ const HANDLED_ATTRIBUTES = {
 
 export default {
   components: { LimitLine, LimitLabel },
-  inject: ['openmct', 'domainObject', 'path', 'renderWhenVisible'],
+  inject: ['openmct', 'domainObject', 'objectPath', 'renderWhenVisible'],
   props: {
     rectangles: {
       type: Array,
@@ -189,14 +201,21 @@ export default {
       handler() {
         this.hiddenYAxisIds.forEach((id) => {
           this.resetYOffsetAndSeriesDataForYAxis(id);
-          this.updateLimitLines();
         });
-        this.scheduleDraw();
+        this.scheduleDraw(true);
       },
       deep: true
     }
   },
   mounted() {
+    this.chartVisible = true;
+    this.chartContainer = this.$refs.chart;
+    this.drawnOnce = false;
+    const rootContainer = this.openmct.element;
+    const options = {
+      root: rootContainer
+    };
+    this.visibilityObserver = new IntersectionObserver(this.visibilityChanged, options);
     eventHelpers.extend(this);
     this.seriesModels = [];
     this.config = this.getConfig();
@@ -239,10 +258,8 @@ export default {
     this.seriesElements = new WeakMap();
     this.seriesLimits = new WeakMap();
 
-    let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll('canvas');
-    const mainCanvas = canvasEls[1];
-    const overlayCanvas = canvasEls[0];
-    if (this.initializeCanvas(mainCanvas, overlayCanvas)) {
+    const canvasReadyForDrawing = this.readyCanvasForDrawing();
+    if (canvasReadyForDrawing) {
       this.draw();
     }
 
@@ -253,11 +270,19 @@ export default {
     this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
     this.config.series.forEach(this.onSeriesAdd, this);
     this.$emit('chart-loaded');
+
+    this.handleWindowResize = _.debounce(this.handleWindowResize, 250);
+    this.chartResizeObserver = new ResizeObserver(this.handleWindowResize);
+    this.chartResizeObserver.observe(this.$parent.$refs.chartContainer);
   },
   beforeUnmount() {
     this.destroy();
+    this.visibilityObserver.unobserve(this.chartContainer);
   },
   methods: {
+    handleWindowResize() {
+      this.scheduleDraw(true);
+    },
     getConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
       let config = configStore.get(configId);
@@ -271,6 +296,33 @@ export default {
       }
 
       return config;
+    },
+    visibilityChanged([entry]) {
+      // Per https://github.com/nasa/openmct/issues/7405, we only want to draw when the chart is visible.
+      // and we need to use the Open MCT root element as the root of the intersection observer.
+      if (entry.target === this.chartContainer) {
+        const wasVisible = this.chartVisible;
+        const isNowVisible = entry.isIntersecting;
+        const chartInOverlayWindow = this.chartContainer?.closest('.js-overlay') !== null;
+
+        if (!isNowVisible && !chartInOverlayWindow) {
+          this.chartVisible = false;
+          this.destroyCanvas();
+        } else if (!isNowVisible && chartInOverlayWindow) {
+          this.chartVisible = true;
+        } else if (!wasVisible && isNowVisible) {
+          this.chartVisible = true;
+          // rebuild the chart
+          this.buildCanvasElements();
+          const canvasInitialized = this.readyCanvasForDrawing();
+          if (canvasInitialized) {
+            this.draw();
+          }
+          this.$emit('plot-reinitialize-canvas');
+        } else {
+          this.chartVisible = isNowVisible;
+        }
+      }
     },
     reDraw(newXKey, oldXKey, series) {
       this.changeInterpolate(newXKey, oldXKey, series);
@@ -399,7 +451,6 @@ export default {
 
       this.makeLimitLines(series);
       this.updateLimitLines();
-      this.scheduleDraw();
     },
     resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
       if (!oldYAxisId) {
@@ -413,17 +464,19 @@ export default {
       //Make the chart elements again for the new y-axis and offset
       this.makeChartElement(series);
       this.makeLimitLines(series);
-      this.updateLimitLines();
-      this.scheduleDraw();
+      this.scheduleDraw(true);
     },
     destroy() {
+      this.destroyCanvas();
       this.isDestroyed = true;
-      this.stopListening();
       this.lines.forEach((line) => line.destroy());
       this.limitLines.forEach((line) => line.destroy());
       this.pointSets.forEach((pointSet) => pointSet.destroy());
       this.alarmSets.forEach((alarmSet) => alarmSet.destroy());
       DrawLoader.releaseDrawAPI(this.drawAPI);
+      if (this.chartResizeObserver) {
+        this.chartResizeObserver.disconnect();
+      }
     },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
       delete this.offset[yAxisId].y;
@@ -477,33 +530,49 @@ export default {
         return this.offset[yAxisId].y(pSeries.getYVal(point));
       }.bind(this);
     },
-
-    initializeCanvas(canvas, overlay) {
-      this.canvas = canvas;
-      this.overlay = overlay;
-      this.drawAPI = DrawLoader.getDrawAPI(canvas, overlay);
-      if (this.drawAPI) {
+    destroyCanvas() {
+      if (this.isDestroyed) {
+        return;
+      }
+      this.stopListening(this.drawAPI);
+      DrawLoader.releaseDrawAPI(this.drawAPI);
+      if (this.chartContainer) {
+        const canvasElements = this.chartContainer.querySelectorAll('canvas');
+        canvasElements.forEach((canvas) => {
+          canvas.parentNode.removeChild(canvas);
+        });
+      }
+    },
+    readyCanvasForDrawing() {
+      const canvasEls = this.chartContainer.querySelectorAll('canvas');
+      const mainCanvas = canvasEls[1];
+      const overlayCanvas = canvasEls[0];
+      this.canvas = mainCanvas;
+      this.overlay = overlayCanvas;
+      this.drawAPI = DrawLoader.getDrawAPI(mainCanvas, overlayCanvas);
+      if (this.drawAPI?.on) {
         this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
       }
 
       return Boolean(this.drawAPI);
     },
-    fallbackToCanvas() {
-      this.stopListening(this.drawAPI);
-      DrawLoader.releaseDrawAPI(this.drawAPI);
-      // Have to throw away the old canvas elements and replace with new
-      // canvas elements in order to get new drawing contexts.
+    buildCanvasElements() {
       const div = document.createElement('div');
       div.innerHTML = `
-      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
-      <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-overlay-canvas"></canvas>
+      <canvas style="position: absolute; background: none; width: 100%; height: 100%;" class="js-main-canvas"></canvas>
       `;
       const mainCanvas = div.querySelectorAll('canvas')[1];
       const overlayCanvas = div.querySelectorAll('canvas')[0];
-      this.canvas.parentNode.replaceChild(mainCanvas, this.canvas);
+      this.chartContainer.appendChild(mainCanvas, this.canvas);
       this.canvas = mainCanvas;
-      this.overlay.parentNode.replaceChild(overlayCanvas, this.overlay);
+      this.chartContainer.appendChild(overlayCanvas, this.overlay);
       this.overlay = overlayCanvas;
+    },
+    fallbackToCanvas() {
+      console.warn(`📈 fallback to 2D canvas`);
+      this.destroyCanvas();
+      this.buildCanvasElements();
       this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
       this.$emit('plot-reinitialize-canvas');
     },
@@ -545,7 +614,7 @@ export default {
       const yAxisId = series.get('yAxisId') || mainYAxisId;
       let offset = this.offset[yAxisId];
 
-      return new MCTChartAlarmLineSet(series, this, offset, this.openmct.time.bounds());
+      return new MCTChartAlarmLineSet(series, this, offset, this.openmct.time.getBounds());
     },
     pointSetForSeries(series) {
       const mainYAxisId = this.config.yAxis.get('id');
@@ -642,18 +711,21 @@ export default {
         return;
       }
 
-      this.updateLimitLines();
-      this.scheduleDraw();
+      this.scheduleDraw(true);
     },
-    scheduleDraw() {
+    scheduleDraw(updateLimitLines) {
       if (!this.drawScheduled) {
-        const called = this.renderWhenVisible(this.draw);
+        const called = this.renderWhenVisible(this.draw.bind(this, updateLimitLines));
         this.drawScheduled = called;
+        if (!this.drawnOnce && called) {
+          this.drawnOnce = true;
+          this.visibilityObserver.observe(this.chartContainer);
+        }
       }
     },
-    draw() {
+    draw(updateLimitLines) {
       this.drawScheduled = false;
-      if (this.isDestroyed) {
+      if (this.isDestroyed || !this.chartVisible) {
         return;
       }
 
@@ -679,8 +751,16 @@ export default {
           this.prepareToDrawAnnotationSelections(id);
         }
       });
+      // We must do the limit line drawing after the drawAPI has been cleared (which sets the height and width of the draw API)
+      // and the viewport is updated so that we have the right height/width for limit line x and y calculations
+      if (updateLimitLines) {
+        this.updateLimitLines();
+      }
     },
     updateViewport(yAxisId) {
+      if (!this.chartVisible) {
+        return;
+      }
       const mainYAxisId = this.config.yAxis.get('id');
       const xRange = this.config.xAxis.get('displayRange');
       let yRange;
@@ -731,9 +811,12 @@ export default {
       pointSets.forEach(this.drawPoints, this);
       const alarmSets = this.alarmSets.filter(this.matchByYAxisId.bind(this, id));
       alarmSets.forEach(this.drawAlarmPoints, this);
-      //console.timeEnd('📈 drawSeries');
     },
     updateLimitLines() {
+      //reset
+      this.visibleLimitLabels = [];
+      this.visibleLimitLines = [];
+
       this.config.series.models.forEach((series) => {
         const yAxisId = series.get('yAxisId');
 
@@ -752,11 +835,7 @@ export default {
       if (!this.drawAPI.origin) {
         return;
       }
-
       let limitPointOverlap = [];
-      //reset
-      this.visibleLimitLabels = [];
-      this.visibleLimitLines = [];
 
       this.limitLines.forEach((limitLine) => {
         limitLine.limits.forEach((limit) => {

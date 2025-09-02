@@ -1,7 +1,7 @@
 import mount from 'utils/mount';
 
 import DialogComponent from './components/DialogComponent.vue';
-import Overlay from './Overlay';
+import Overlay from './Overlay.js';
 
 class Dialog extends Overlay {
   constructor({ iconClass, message, title, hint, timestamp, ...options }) {
@@ -22,7 +22,7 @@ class Dialog extends Overlay {
     super({
       element: vNode.el,
       size: 'fit',
-      dismissable: false,
+      dismissible: false,
       ...options
     });
 

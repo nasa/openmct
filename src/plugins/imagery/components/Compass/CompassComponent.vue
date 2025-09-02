@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -22,7 +22,7 @@
 
 <template>
   <div class="c-compass" :style="`width: 100%; height: 100%`">
-    <compass-hud
+    <CompassHud
       v-if="showCompassHUD"
       :camera-angle-of-view="cameraAngleOfView"
       :heading="heading"
@@ -48,7 +48,7 @@
 <script>
 import CompassHud from './CompassHud.vue';
 import CompassRose from './CompassRose.vue';
-import { rotate } from './utils';
+import { rotate } from './utils.js';
 
 export default {
   components: {

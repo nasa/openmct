@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2023, United States Government
+ Open MCT, Copyright (c) 2014-2024, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -30,6 +30,7 @@
         :style="{
           left: (100 * (tick.value - min)) / interval + '%'
         }"
+        :aria-label="tick.fullText || tick.text"
         :title="tick.fullText || tick.text"
       >
         {{ tick.text }}
@@ -41,6 +42,7 @@
         :key="'tick-top' + i"
         class="gl-plot-tick gl-plot-y-tick-label"
         :style="{ top: (100 * (max - tick.value)) / interval + '%' }"
+        :aria-label="tick.fullText || tick.text"
         :title="tick.fullText || tick.text"
         style="margin-top: -0.5em; direction: ltr"
       >
@@ -71,14 +73,17 @@
 </template>
 
 <script>
-import configStore from './configuration/ConfigStore';
-import eventHelpers from './lib/eventHelpers';
-import { getFormattedTicks, getLogTicks, ticks } from './tickUtils';
+import { inject } from 'vue';
+
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
+import configStore from './configuration/ConfigStore.js';
+import eventHelpers from './lib/eventHelpers.js';
+import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
 
 export default {
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     axisType: {
       type: String,
@@ -109,6 +114,18 @@ export default {
     }
   },
   emits: ['plot-tick-width'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { update: updateAlignment, remove: removeAlignment } = useAlignment(
+      domainObject,
+      objectPath,
+      openmct
+    );
+
+    return { updateAlignment, removeAlignment };
+  },
   data() {
     return {
       ticks: []
@@ -130,6 +147,10 @@ export default {
     this.updateTicks();
   },
   beforeUnmount() {
+    this.removeAlignment({
+      yAxisId: this.axisId,
+      updateObjectPath: this.objectPath
+    });
     this.stopListening();
   },
   methods: {
@@ -271,12 +292,22 @@ export default {
             )
           );
 
-          this.tickWidth = tickWidth;
-          this.$emit('plot-tick-width', {
-            width: tickWidth,
-            yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
-          });
-          this.shouldCheckWidth = false;
+          if (this.tickWidth !== tickWidth) {
+            this.tickWidth = tickWidth;
+            this.$emit('plot-tick-width', {
+              width: tickWidth,
+              yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
+            });
+            if (this.axisType === 'yAxis') {
+              this.updateAlignment({
+                width: tickWidth,
+                yAxisId: this.axisId,
+                updateObjectPath: this.objectPath
+              });
+            }
+
+            this.shouldCheckWidth = false;
+          }
         }
       }
 

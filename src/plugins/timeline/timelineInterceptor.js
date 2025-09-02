@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,17 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import getDefaultConfiguration from './configuration.js';
+
 export default function timelineInterceptor(openmct) {
   openmct.objects.addGetInterceptor({
     appliesTo: (identifier, domainObject) => {
       return domainObject && domainObject.type === 'time-strip';
     },
     invoke: (identifier, object) => {
+      const configuration = getDefaultConfiguration();
       if (object && object.configuration === undefined) {
-        object.configuration = {
-          useIndependentTime: true
-        };
+        object.configuration = configuration;
       }
+
+      Object.keys(configuration).forEach((key) => {
+        if (object.configuration[key] === undefined) {
+          object.configuration[key] = configuration[key];
+        }
+      });
 
       return object;
     }

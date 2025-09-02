@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,28 +21,10 @@
  *****************************************************************************/
 
 export default function GaugeCompositionPolicy(openmct) {
-  function hasNumericTelemetry(domainObject) {
-    const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
-    if (!hasTelemetry) {
-      return false;
-    }
-
-    const metadata = openmct.telemetry.getMetadata(domainObject);
-
-    return metadata.values().length > 0 && hasDomainAndRange(metadata);
-  }
-
-  function hasDomainAndRange(metadata) {
-    return (
-      metadata.valuesForHints(['range']).length > 0 &&
-      metadata.valuesForHints(['domain']).length > 0
-    );
-  }
-
   return {
     allow: function (parent, child) {
       if (parent.type === 'gauge') {
-        return hasNumericTelemetry(child);
+        return openmct.telemetry.hasNumericTelemetry(child);
       }
 
       return true;

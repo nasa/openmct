@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,9 +23,9 @@
 import _ from 'lodash';
 
 import { isNotebookOrAnnotationType } from '../../notebook/notebook-constants.js';
-import CouchDocument from './CouchDocument';
-import CouchObjectQueue from './CouchObjectQueue';
-import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator';
+import CouchDocument from './CouchDocument.js';
+import CouchObjectQueue from './CouchObjectQueue.js';
+import { CONNECTED, DISCONNECTED, PENDING, UNKNOWN } from './CouchStatusIndicator.js';
 
 const REV = '_rev';
 const ID = '_id';
@@ -33,13 +33,13 @@ const HEARTBEAT = 50000;
 const ALL_DOCS = '_all_docs?include_docs=true';
 
 class CouchObjectProvider {
-  constructor(openmct, options, namespace, indicator) {
-    options = this.#normalize(options);
+  constructor({ openmct, databaseConfiguration, couchStatusIndicator }) {
     this.openmct = openmct;
-    this.indicator = indicator;
-    this.url = options.url;
-    this.useDesignDocuments = options.useDesignDocuments;
-    this.namespace = namespace;
+    this.indicator = couchStatusIndicator;
+    this.url = databaseConfiguration.url;
+    this.readOnly = databaseConfiguration.readOnly;
+    this.useDesignDocuments = databaseConfiguration.useDesignDocuments;
+    this.namespace = databaseConfiguration.namespace;
     this.objectQueue = {};
     this.observers = {};
     this.batchIds = [];
@@ -47,6 +47,7 @@ class CouchObjectProvider {
     this.onEventError = this.onEventError.bind(this);
     this.flushPersistenceQueue = _.debounce(this.flushPersistenceQueue.bind(this));
     this.persistenceQueue = [];
+    this.rootObject = null;
   }
 
   /**
@@ -59,7 +60,10 @@ class CouchObjectProvider {
     // eslint-disable-next-line no-undef
     const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
 
-    sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
+    sharedWorker = new SharedWorker(
+      sharedWorkerURL,
+      `CouchDB SSE Shared Worker for ${this.namespace}`
+    );
     sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
     sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
     sharedWorker.port.start();
@@ -93,7 +97,7 @@ class CouchObjectProvider {
       this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
     } else if (event.data.type === 'state') {
       const state = this.#messageToIndicatorState(event.data.state);
-      this.indicator.setIndicatorToState(state);
+      this.indicator?.setIndicatorToState(state);
     } else {
       let objectChanges = event.data.objectChanges;
       const objectIdentifier = {
@@ -184,16 +188,8 @@ class CouchObjectProvider {
     return state;
   }
 
-  //backwards compatibility, options used to be a url. Now it's an object
-  #normalize(options) {
-    if (typeof options === 'string') {
-      return {
-        url: options,
-        useDesignDocuments: false
-      };
-    }
-
-    return options;
+  isReadOnly() {
+    return this.readOnly;
   }
 
   async request(subPath, method, body, signal) {
@@ -233,7 +229,7 @@ class CouchObjectProvider {
 
       // Network error, CouchDB unreachable.
       if (response === null) {
-        this.indicator.setIndicatorToState(DISCONNECTED);
+        this.indicator?.setIndicatorToState(DISCONNECTED);
         console.error(error.message);
 
         throw new Error(`CouchDB Error - No response"`);
@@ -256,7 +252,7 @@ class CouchObjectProvider {
    * @private
    */
   #handleResponseCode(status, json, fetchOptions) {
-    this.indicator.setIndicatorToState(this.#statusCodeToIndicatorState(status));
+    this.indicator?.setIndicatorToState(this.#statusCodeToIndicatorState(status));
     if (status === CouchObjectProvider.HTTP_CONFLICT) {
       const objectName = JSON.parse(fetchOptions.body)?.model?.name;
       throw new this.openmct.objects.errors.Conflict(`Conflict persisting "${objectName}"`);
@@ -438,16 +434,69 @@ class CouchObjectProvider {
     return Promise.resolve([]);
   }
 
-  async getObjectsByView({ designDoc, viewName, keysToSearch }, abortSignal) {
-    const stringifiedKeys = JSON.stringify(keysToSearch);
-    const url = `${this.url}/_design/${designDoc}/_view/${viewName}?keys=${stringifiedKeys}&include_docs=true`;
+  async isViewDefined(designDoc, viewName) {
+    const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
+    const response = await fetch(url, {
+      method: 'HEAD'
+    });
+
+    return response.ok;
+  }
+
+  /**
+   * @typedef GetObjectByViewOptions
+   * @property {String} designDoc the name of the design document that the view belongs to
+   * @property {String} viewName
+   * @property {Array.<String>} [keysToSearch] a list of discrete view keys to search for. View keys are not object identifiers.
+   * @property {String} [startKey] limit the search to a range of keys starting with the provided `startKey`. One of `keysToSearch` OR `startKey` AND `endKey` must be provided
+   * @property {String} [endKey] limit the search to a range of keys ending with the provided `endKey`. One of `keysToSearch` OR `startKey` AND `endKey` must be provided
+   * @property {Number} [limit] limit the number of results returned
+   * @property {String} [objectIdField] The field (either key or value) to treat as an object key. If provided, include_docs will be set to false in the request, and the field will be used as an object identifier. A bulk request will be used to resolve objects from identifiers
+   */
+  /**
+   * Return objects based on a call to a view. See https://docs.couchdb.org/en/stable/api/ddoc/views.html.
+   * @param {GetObjectByViewOptions} options
+   * @param {AbortSignal} abortSignal
+   * @returns {Promise<Array.<import('openmct.js').DomainObject>>}
+   */
+  async getObjectsByView(
+    { designDoc, viewName, keysToSearch, startKey, endKey, limit, objectIdField },
+    abortSignal
+  ) {
+    let stringifiedKeys = JSON.stringify(keysToSearch);
+    const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
+    const requestBody = {};
+    let requestBodyString;
+
+    if (objectIdField === undefined) {
+      requestBody.include_docs = true;
+    }
+
+    if (limit !== undefined) {
+      requestBody.limit = limit;
+    }
+
+    if (startKey !== undefined && endKey !== undefined) {
+      /* spell-checker: disable */
+      requestBody.startkey = startKey;
+      requestBody.endkey = endKey;
+      requestBodyString = JSON.stringify(requestBody);
+      requestBodyString = requestBodyString.replace('$START_KEY', startKey);
+      requestBodyString = requestBodyString.replace('$END_KEY', endKey);
+      /* spell-checker: enable */
+    } else {
+      requestBody.keys = stringifiedKeys;
+      requestBodyString = JSON.stringify(requestBody);
+    }
+
     let objectModels = [];
 
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: abortSignal
+        signal: abortSignal,
+        body: requestBodyString
       });
 
       if (!response.ok) {
@@ -458,13 +507,21 @@ class CouchObjectProvider {
 
       const result = await response.json();
       const couchRows = result.rows;
-      couchRows.forEach((couchRow) => {
-        const couchDoc = couchRow.doc;
-        const objectModel = this.#getModel(couchDoc);
-        if (objectModel) {
-          objectModels.push(objectModel);
-        }
-      });
+      if (objectIdField !== undefined) {
+        const objectIdsToResolve = [];
+        couchRows.forEach((couchRow) => {
+          objectIdsToResolve.push(couchRow[objectIdField]);
+        });
+        objectModels = Object.values(await this.#bulkGet(objectIdsToResolve), abortSignal);
+      } else {
+        couchRows.forEach((couchRow) => {
+          const couchDoc = couchRow.doc;
+          const objectModel = this.#getModel(couchDoc);
+          if (objectModel) {
+            objectModels.push(objectModel);
+          }
+        });
+      }
     } catch (error) {
       // do nothing
     }
@@ -684,7 +741,7 @@ class CouchObjectProvider {
     }
 
     const indicatorState = this.#messageToIndicatorState(message);
-    this.indicator.setIndicatorToState(indicatorState);
+    this.indicator?.setIndicatorToState(indicatorState);
   }
 
   /**
@@ -714,7 +771,7 @@ class CouchObjectProvider {
       this.objectQueue[key].pending = true;
       const queued = this.objectQueue[key].dequeue();
       let couchDocument = new CouchDocument(key, queued.model);
-      couchDocument.metadata.created = Date.now();
+
       this.#enqueueForPersistence({
         key,
         document: couchDocument

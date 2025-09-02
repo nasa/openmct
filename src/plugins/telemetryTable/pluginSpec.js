@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,7 @@ import {
 } from 'utils/testing';
 import { nextTick } from 'vue';
 
+import { MODE } from './constants.js';
 import TablePlugin from './plugin.js';
 
 class MockDataTransfer {
@@ -195,7 +196,10 @@ describe('the plugin', () => {
             utc: false,
             'some-key': false,
             'some-other-key': false
-          }
+          },
+          persistModeChange: true,
+          rowLimit: 50,
+          telemetryMode: MODE.PERFORMANCE
         }
       };
       const testTelemetry = [

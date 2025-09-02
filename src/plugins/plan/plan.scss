@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,6 +27,14 @@
     text {
       stroke: none;
     }
+
+    .c-swimlane {
+      flex: 1 0 auto;
+    }
+
+    .c-swimlane__lane-object {
+      display: flex;
+    }
   }
 
   &__activity {
@@ -51,5 +59,24 @@
 
   canvas {
     display: none;
+  }
+}
+
+.c-plan-av {
+  // Activities view
+  background-color: $colorPlotBg;
+  flex: 1 1 auto;
+  height: 100%;
+
+  &__svg {
+    width: 100%;
+  }
+}
+
+// When in a Time Strip view
+.c-timeline__objects {
+  .is-object-type-plan {
+    overflow-x: hidden;
+    overflow-y: scroll !important; // `scroll` ensures that right edges align in time
   }
 }
