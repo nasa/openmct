@@ -23,20 +23,18 @@
 <template>
   <div ref="timelineHolder" class="c-timeline-holder" aria-label="Time Strip">
     <SwimLane
-      v-for="timeSystemItem in timeSystems"
-      :key="timeSystemItem.timeSystem.key"
       :can-show-resize-handle="true"
       :resize-handle-height="height"
       class="c-swimlane__time-axis"
       aria-label="Time Axis"
     >
       <template #label>
-        {{ timeSystemItem.timeSystem.name }}
+        {{ timeSystem.name }}
       </template>
       <template #object>
         <TimelineAxis
-          :bounds="timeSystemItem.bounds"
-          :time-system="timeSystemItem.timeSystem"
+          :bounds="bounds"
+          :time-system="timeSystem"
           :content-height="height"
           :rendering-engine="'svg'"
         />
@@ -80,6 +78,7 @@ import { useDragResizer } from 'utils/vue/useDragResizer.js';
 import { useFlexContainers } from 'utils/vue/useFlexContainers.js';
 import { inject, onBeforeUnmount, onMounted, provide, ref, toRaw, watch } from 'vue';
 
+import { TIME_CONTEXT_EVENTS } from '@/api/time/constants.js';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
 
@@ -114,12 +113,14 @@ export default {
     const items = ref([]);
 
     // COMPOSABLE - Time Contexts
-    const timeSystems = ref([]);
+    const timeSystem = ref([]);
+    const bounds = ref([]);
     let timeContext;
 
     // returned from composition api setup()
     const setupTimeContexts = {
-      timeSystems
+      timeSystem,
+      bounds
     };
 
     onMounted(() => {
@@ -130,52 +131,32 @@ export default {
       stopFollowingTimeContext();
     });
 
-    function getTimeSystems() {
-      openmct.time.getAllTimeSystems().forEach((timeSystem) => {
-        timeSystems.value.push({
-          timeSystem,
-          bounds: getBoundsForTimeSystem(timeSystem)
-        });
-      });
-    }
-
-    function getBoundsForTimeSystem(timeSystem) {
-      const currentBounds = timeContext.getBounds();
-
-      //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
-      return currentBounds;
-    }
-
     function updateViewBounds() {
-      const bounds = timeContext.getBounds();
+      bounds.value = timeContext.getBounds();
       updateContentHeight();
+    }
 
-      let currentTimeSystemIndex = timeSystems.value.findIndex(
-        (item) => item.timeSystem.key === openmct.time.getTimeSystem().key
-      );
-      if (currentTimeSystemIndex > -1) {
-        let currentTimeSystem = {
-          ...timeSystems.value[currentTimeSystemIndex]
-        };
-        currentTimeSystem.bounds = bounds;
-        timeSystems.value.splice(currentTimeSystemIndex, 1, currentTimeSystem);
-      }
+    function setTimeSystemAndUpdateViewBounds(_timeSystem) {
+      timeSystem.value = _timeSystem;
+      updateViewBounds();
     }
 
     function setTimeContext() {
       stopFollowingTimeContext();
 
       timeContext = openmct.time.getContextForView(path);
-      getTimeSystems();
-      updateViewBounds();
-      timeContext.on('boundsChanged', updateViewBounds);
-      timeContext.on('clockChanged', updateViewBounds);
+      const currentTimeSystem = timeContext.getTimeSystem();
+      setTimeSystemAndUpdateViewBounds(currentTimeSystem);
+      timeContext.on(TIME_CONTEXT_EVENTS.boundsChanged, updateViewBounds);
+      timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, updateViewBounds);
+      timeContext.on(TIME_CONTEXT_EVENTS.timeSystemChanged, setTimeSystemAndUpdateViewBounds);
     }
 
     function stopFollowingTimeContext() {
       if (timeContext) {
-        timeContext.off('boundsChanged', updateViewBounds);
-        timeContext.off('clockChanged', updateViewBounds);
+        timeContext.off(TIME_CONTEXT_EVENTS.boundsChanged, updateViewBounds);
+        timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, updateViewBounds);
+        timeContext.off(TIME_CONTEXT_EVENTS.timeSystemChanged, setTimeSystemAndUpdateViewBounds);
       }
     }
 
