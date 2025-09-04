@@ -132,12 +132,6 @@ export default {
     'timeSystemDurationFormatter',
     'bounds'
   ],
-  props: {
-    delimiter: {
-      type: String,
-      required: true
-    }
-  },
   emits: ['update', 'dismiss'],
   data() {
     return {
@@ -183,25 +177,23 @@ export default {
   methods: {
     setViewFromBounds() {
       this.formattedBounds = {
-        startDate: this.timeSystemFormatter.format(this.bounds.start).split(this.delimiter)[0],
+        startDate: this.timeSystemFormatter.formatDate(this.bounds.start),
         startTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.start)),
-        endDate: this.timeSystemFormatter.format(this.bounds.end).split(this.delimiter)[0],
+        endDate: this.timeSystemFormatter.formatDate(this.bounds.end),
         endTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.end))
       };
     },
     setBoundsFromView(shouldDismiss) {
       if (this.$refs.fixedDeltaInput.checkValidity()) {
-        const start = this.timeSystemFormatter.parse(
-          `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
-        );
-        const end = this.timeSystemFormatter.parse(
-          `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
-        );
+        const start =
+          this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+          this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+        const end =
+          this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+          this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
 
-        this.timeContext.setBounds({
-          start,
-          end
-        });
+        const bounds = { start, end };
+        this.timeContext.setBounds(bounds);
       }
 
       if (shouldDismiss) {
@@ -241,14 +233,14 @@ export default {
       this.inputValidityMap[refName] = validationResult;
     },
     validateBounds() {
-      const bounds = {
-        start: this.timeSystemFormatter.parse(
-          `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
-        ),
-        end: this.timeSystemFormatter.parse(
-          `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
-        )
-      };
+      const start =
+        this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+      const end =
+        this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
+
+      const bounds = { start, end };
 
       this.logicalValidityMap.bounds = this.openmct.time.validateBounds(bounds);
     },
@@ -289,14 +281,12 @@ export default {
       return this.$refs.startDate;
     },
     startDateSelected(date) {
-      this.formattedBounds.startDate = this.timeSystemFormatter
-        .format(date)
-        .split(this.delimiter)[0];
+      this.formattedBounds.startDate = this.timeSystemFormatter.formatDate(date);
       this.validateInput('startDate');
       this.reportValidity('startDate');
     },
     endDateSelected(date) {
-      this.formattedBounds.endDate = this.timeSystemFormatter.format(date).split(this.delimiter)[0];
+      this.formattedBounds.endDate = this.timeSystemFormatter.formatDate(date);
       this.validateInput('endDate');
       this.reportValidity('endDate');
     },
