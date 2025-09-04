@@ -100,7 +100,8 @@ export default class ObjectAPI {
       'restricted-notebook',
       'plan',
       'annotation',
-      'activity-states'
+      'activity-states',
+      'plan-execution-monitoring'
     ];
 
     this.errors = {

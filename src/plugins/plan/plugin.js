@@ -22,12 +22,15 @@
 
 import activityStatesInterceptor from '../activityStates/activityStatesInterceptor.js';
 import { createActivityStatesIdentifier } from '../activityStates/createActivityStatesIdentifier.js';
+import { createPlanExecutionMonitoringIdentifier } from '../planExecutionMonitoring/planExecutionMonitoringIdentifier.js';
+import planExecutionMonitoringInterceptor from '../planExecutionMonitoring/planExecutionMonitoringInterceptor';
 import ganttChartCompositionPolicy from './GanttChartCompositionPolicy.js';
 import ActivityInspectorViewProvider from './inspector/ActivityInspectorViewProvider.js';
 import GanttChartInspectorViewProvider from './inspector/GanttChartInspectorViewProvider.js';
 import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration.js';
 import PlanViewProvider from './PlanViewProvider.js';
 
+const PLAN_EXECUTION_MONITORING_DEFAULT_NAME = 'Plan Execution Monitoring';
 const ACTIVITY_STATES_DEFAULT_NAME = 'Activity States';
 /**
  * @typedef {Object} PlanOptions
@@ -97,6 +100,24 @@ export default function (options = {}) {
 
     openmct.objects.addGetInterceptor(
       activityStatesInterceptor(openmct, { identifier, name, priority })
+    );
+
+    //add plan execution monitoring get interceptor
+    const {
+      plan_exec_monitoring_obj_name = PLAN_EXECUTION_MONITORING_DEFAULT_NAME,
+      plan_exec_monitoring_obj_namespace = '',
+      plan_exec_monitoring_obj_priority
+    } = options;
+    const plan_exec_monitoring_obj_identifier = createPlanExecutionMonitoringIdentifier(
+      plan_exec_monitoring_obj_namespace
+    );
+
+    openmct.objects.addGetInterceptor(
+      planExecutionMonitoringInterceptor(openmct, {
+        identifier: plan_exec_monitoring_obj_identifier,
+        name: plan_exec_monitoring_obj_name,
+        priority: plan_exec_monitoring_obj_priority
+      })
     );
   };
 }
