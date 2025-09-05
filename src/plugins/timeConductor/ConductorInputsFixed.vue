@@ -72,7 +72,7 @@ export default {
   emits: ['dismiss-inputs-fixed'],
   computed: {
     shouldUseSplitDateTimeInputs() {
-      return Boolean(this.timeSystemFormatter.getDateFormat);
+      return Boolean(this.timeSystemFormatter.formatDate);
     },
     formattedBounds() {
       return {
