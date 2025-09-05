@@ -46,6 +46,8 @@
           aria-label="Start date"
           @input="validateInput('startDate')"
           @change="reportValidity('startDate')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
         />
       </div>
 
@@ -60,6 +62,8 @@
           aria-label="Start time"
           @input="validateInput('startTime')"
           @change="reportValidity('startTime')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
         />
       </div>
 
@@ -83,6 +87,8 @@
           aria-label="End date"
           @input="validateInput('endDate')"
           @change="reportValidity('endDate')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
         />
       </div>
 
@@ -97,6 +103,8 @@
           aria-label="End time"
           @input="validateInput('endTime')"
           @change="reportValidity('endTime')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
         />
       </div>
 
@@ -175,6 +183,45 @@ export default {
     this.clearAllValidation();
   },
   methods: {
+    async copyToClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      const bound =
+        this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+      const timeStampString = this.timeSystemFormatter.format(bound);
+
+      try {
+        await navigator.clipboard.writeText(timeStampString);
+      } catch (err) {
+        this.openmct.notifications.error('Failed to copy timestamp to clipboard');
+        console.error(err);
+      }
+    },
+    async pasteFromClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      let timeStampString;
+      try {
+        timeStampString = await navigator.clipboard.readText();
+      } catch (err) {
+        this.openmct.notifications.error('Failed to get timestamp from clipboard');
+        console.error(err);
+        return;
+      }
+
+      const bound = this.timeSystemFormatter.parse(timeStampString);
+      this.formattedBounds[`${startOrEnd}Date`] = this.timeSystemFormatter.formatDate(bound);
+      this.formattedBounds[`${startOrEnd}Time`] = this.timeSystemDurationFormatter.format(
+        Math.abs(bound)
+      );
+    },
     setViewFromBounds() {
       this.formattedBounds = {
         startDate: this.timeSystemFormatter.formatDate(this.bounds.start),
