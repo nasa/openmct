@@ -190,8 +190,8 @@ export default {
       }
 
       const bound =
-        this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
-        this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+        this.timeSystemFormatter.parse(this.formattedBounds[`${startOrEnd}Date`]) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds[`${startOrEnd}Time`]);
       const timeStampString = this.timeSystemFormatter.format(bound);
 
       try {
@@ -216,11 +216,19 @@ export default {
         return;
       }
 
+      if (!this.timeSystemFormatter.validate(timeStampString)) {
+        this.openmct.notifications.warn(`"${timeStampString}" is not a valid timestamp format`);
+        return;
+      }
+
       const bound = this.timeSystemFormatter.parse(timeStampString);
       this.formattedBounds[`${startOrEnd}Date`] = this.timeSystemFormatter.formatDate(bound);
       this.formattedBounds[`${startOrEnd}Time`] = this.timeSystemDurationFormatter.format(
         Math.abs(bound)
       );
+
+      this.validateInput([`${startOrEnd}Date`, `${startOrEnd}Time`]);
+      this.reportValidity([`${startOrEnd}Date`, `${startOrEnd}Time`]);
     },
     setViewFromBounds() {
       this.formattedBounds = {
@@ -268,16 +276,23 @@ export default {
         this.setBoundsFromView(shouldDismiss);
       }
     },
-    validateInput(refName) {
-      this.clearAllValidation();
-      const inputType = refName.includes('Date') ? 'Date' : 'Time';
-      const formatter =
-        inputType === 'Date' ? this.timeSystemFormatter : this.timeSystemDurationFormatter;
-      const validationResult = formatter.validate(this.formattedBounds[refName])
-        ? { valid: true }
-        : { valid: false, message: `Invalid ${inputType}` };
+    validateInput(refNames) {
+      if (!Array.isArray(refNames)) {
+        refNames = [refNames];
+      }
 
-      this.inputValidityMap[refName] = validationResult;
+      this.clearAllValidation();
+
+      refNames.forEach((refName) => {
+        const inputType = refName.includes('Date') ? 'Date' : 'Time';
+        const formatter =
+          inputType === 'Date' ? this.timeSystemFormatter : this.timeSystemDurationFormatter;
+        const validationResult = formatter.validate(this.formattedBounds[refName])
+          ? { valid: true }
+          : { valid: false, message: `Invalid ${inputType}` };
+
+        this.inputValidityMap[refName] = validationResult;
+      });
     },
     validateBounds() {
       const start =
@@ -305,18 +320,24 @@ export default {
         this.logicalValidityMap.limit = { valid: true };
       }
     },
-    reportValidity(refName) {
-      const input = this.getInput(refName);
-      const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
-
-      if (validationResult.valid !== true) {
-        input.setCustomValidity(validationResult.message);
-        input.title = validationResult.message;
-        this.hasLogicalValidationErrors = true;
-      } else {
-        input.setCustomValidity('');
-        input.title = '';
+    reportValidity(refNames) {
+      if (!Array.isArray(refNames)) {
+        refNames = [refNames];
       }
+
+      refNames.forEach((refName) => {
+        const input = this.getInput(refName);
+        const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
+
+        if (validationResult.valid !== true) {
+          input.setCustomValidity(validationResult.message);
+          input.title = validationResult.message;
+          this.hasLogicalValidationErrors = true;
+        } else {
+          input.setCustomValidity('');
+          input.title = '';
+        }
+      });
 
       this.$refs.fixedDeltaInput.reportValidity();
     },
