@@ -56,11 +56,10 @@
     $c: $colorTimeRealtimeBtnBgMajor;
     $w: 15px;
     $wHalf: math.floor(math.div($w, 2));
-    //$h: 5px;
-    //$hHalf: math.floor(math.div($h, 2));
     $transform: translateX(($wHalf - 1) * -1);
 
     border-right: 2px dashed $c;
+    opacity: 0.5;
     pointer-events: none;
     width: 1px;
     z-index: 10;

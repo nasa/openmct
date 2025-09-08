@@ -23,7 +23,7 @@
 <template>
   <div ref="plan" class="c-plan c-timeline-holder" @click="selectPlan($event)">
     <template v-if="viewBounds && !options.compact">
-      <SwimLane>
+      <SwimLane class="c-swimlane__time-axis">
         <template #label>{{ timeSystem.name }}</template>
         <template #object>
           <TimelineAxis
