@@ -27,6 +27,7 @@ import planExecutionMonitoringInterceptor from '../planExecutionMonitoring/planE
 import ganttChartCompositionPolicy from './GanttChartCompositionPolicy.js';
 import ActivityInspectorViewProvider from './inspector/ActivityInspectorViewProvider.js';
 import GanttChartInspectorViewProvider from './inspector/GanttChartInspectorViewProvider.js';
+import PlanInspectorViewProvider from './inspector/PlanInspectorViewProvider';
 import { DEFAULT_CONFIGURATION } from './PlanViewConfiguration.js';
 import PlanViewProvider from './PlanViewProvider.js';
 
@@ -90,8 +91,11 @@ export default function (options = {}) {
       }
     });
     openmct.objectViews.addProvider(new PlanViewProvider(openmct));
+
     openmct.inspectorViews.addProvider(new ActivityInspectorViewProvider(openmct));
     openmct.inspectorViews.addProvider(new GanttChartInspectorViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
+
     openmct.composition.addPolicy(ganttChartCompositionPolicy(openmct));
 
     //add activity states get interceptor
