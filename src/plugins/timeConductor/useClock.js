@@ -29,10 +29,10 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
  * as well as a function to observe and update the component's clock,
  * which automatically stops observing when the component is unmounted.
  *
- * @param {OpenMCT} [openmct] the Open MCT API
- * @param {Array} objectPath The view's objectPath
+ * @param {import('openmct').OpenMCT} openmct - The Open MCT API
+ * @param {import('src/api/time/TimeContext.js').default} timeContext - the time context
  * @returns {{
- *   clock: import('vue').Ref<string>,
+ *   clock: import('vue').Ref<import('src/api/time/TimeContext.js').Clock>,
  *   getAllClockMetadata: () => Object,
  *   getClockMetadata: () => Object
  * }}

@@ -27,6 +27,39 @@ import { useTimeContext } from './useTimeContext.js';
 import { useTimeMode } from './useTimeMode.js';
 import { useTimeSystem } from './useTimeSystem.js';
 
+/**
+ * @typedef {import('src/api/time/TimeContext.js').default} TimeContext
+ * @typedef {import('src/api/time/GlobalTimeContext.js').default} GlobalTimeContext
+ * @typedef {import('src/api/telemetry/TelemetryValueFormatter.js').default} TelemetryValueFormatter
+ * @typedef {import('src/api/time/TimeContext.js').Mode} Mode
+ * @typedef {import('src/api/time/TimeContext.js').Clock} Clock
+ * @typedef {import('src/api/time/TimeContext.js').ClockOffsets} ClockOffsets
+ * @typedef {import('src/api/time/TimeContext.js').Bounds} Bounds
+ */
+
+/**
+ * Provides a reactive interface to the time context based on the current object path
+ *
+ * @param {import('openmct').OpenMCT} openmct - The Open MCT API
+ * @param {import('openmct').ObjectPath} objectPath - The path of the object
+ * @returns {{
+ *   timeContext: TimeContext | GlobalTimeContext,
+ *   timeSystemFormatter: import('vue').Ref<TelemetryValueFormatter>,
+ *   timeSystemDurationFormatter: import('vue').Ref<TelemetryValueFormatter>,
+ *   isTimeSystemUTCBased: import('vue').Ref<boolean>,
+ *   timeMode: import('vue').Ref<Mode>,
+ *   isFixedTimeMode: import('vue').Ref<boolean>,
+ *   isRealTimeMode: import('vue').Ref<boolean>,
+ *   getAllModeMetadata: import('vue').Ref<() => void>,
+ *   getModeMetadata: import('vue').Ref<() => void>,
+ *   bounds: import('vue').Ref<Bounds>,
+ *   isTick: import('vue').Ref<boolean>,
+ *   offsets: import('vue').Ref<ClockOffsets>,
+ *   clock: import('vue').Ref<Clock>,
+ *   getAllClockMetadata: import('vue').Ref<() => void>,
+ *   getClockMetadata: import('vue').Ref<() => void>
+ * }}
+ */
 export function useTime(openmct, objectPath) {
   const { timeContext } = useTimeContext(openmct, objectPath);
   const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } = useTimeSystem(

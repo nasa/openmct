@@ -27,18 +27,20 @@ import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 /**
- * TODO: could probably use a shallowRef for the timeSystem... and all the other components as well.
- *
+ * @typedef {import('src/api/telemetry/TelemetryValueFormatter.js').default} TelemetryValueFormatter
+ */
+
+/**
  * Provides a reactive destructuring of the component's current time system,
  * as well as a function to observe and update the component's time system,
  * which automatically stops observing when the component is unmounted.
  *
- * @param {OpenMCT} openmct the Open MCT API
- * @param {Array} objectPath The view's objectPath
+ * @param {import('openmct').OpenMCT} openmct - The Open MCT API
+ * @param {import('src/api/time/TimeContext.js').default} timeContext - The time context
  * @returns {{
  *   timeSystemKey: import('vue').Ref<string>,
- *   timeSystemFormatter: import('vue').Ref<() => void>,
- *   timeSystemDurationFormatter: import('vue').Ref<() => void>,
+ *   timeSystemFormatter: import('vue').Ref<TelemetryValueFormatter>,
+ *   timeSystemDurationFormatter: import('vue').Ref<TelemetryValueFormatter>,
  *   isTimeSystemUTCBased: import('vue').Ref<boolean>
  * }}
  */
