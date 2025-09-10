@@ -23,7 +23,7 @@
 <template>
   <div class="c-inspector__properties c-inspect-properties">
     <div class="u-contents">
-      <div class="c-inspect-properties__header">Execution Monitoring</div>
+      <div class="c-inspect-properties__header">Plan Execution Status</div>
       <div class="c-inspect-properties__row">
         <div
           class="c-inspect-properties__label"
