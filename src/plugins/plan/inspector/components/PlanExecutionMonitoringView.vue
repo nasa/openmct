@@ -26,7 +26,7 @@
       <div class="c-inspect-properties__header">Execution Monitoring</div>
       <div class="c-inspect-properties__row">
         <div
-          class="c-inspect-properties__value"
+          class="c-inspect-properties__label"
           aria-label="Plan Execution Monitoring Status Label"
         >
           <select
@@ -44,14 +44,17 @@
               {{ status.label }}
             </option>
           </select>
+        </div>
+        <div class="c-inspect-properties__value">
           <input
             id="duration"
             v-model="duration"
             aria-label="Plan Execution Monitoring Duration"
-            class="c-input--flex"
+            class="c-input--sm"
             type="number"
             @change="toggleDuration"
           />
+          <span class="hint">minutes</span>
         </div>
       </div>
     </div>

@@ -55,7 +55,7 @@
   &__mb-line {
     $c: $colorTimeRealtimeBtnBgMajor;
     $w: 15px;
-    $wHalf: math.floor(math.div($w, 2));
+    $wHalf: math.round(math.div($w, 2));
     $transform: translateX(($wHalf - 1) * -1);
 
     border-right: 2px dashed $c;
