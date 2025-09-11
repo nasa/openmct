@@ -66,25 +66,30 @@
       </li>
     </ul>
   </div>
+  <PlanExecutionMonitoringView
+    v-if="planObject !== null"
+    :plan-object="planObject"
+  ></PlanExecutionMonitoringView>
 </template>
 <script>
 import { markRaw } from 'vue';
 
 import PlanViewConfiguration from '../../PlanViewConfiguration.js';
+import PlanExecutionMonitoringView from './PlanExecutionMonitoringView.vue';
 
 export default {
-  components: {},
-  inject: ['openmct'],
+  components: { PlanExecutionMonitoringView },
+  inject: ['openmct', 'domainObject'],
   data() {
-    const selection = this.openmct.selection.get();
-    /** @type {import('openmct').DomainObject}  */
-    const domainObject = selection[0][0].context.item;
-    const planViewConfiguration = markRaw(new PlanViewConfiguration(domainObject, this.openmct));
+    const planViewConfiguration = markRaw(
+      new PlanViewConfiguration(this.domainObject, this.openmct)
+    );
 
     return {
       planViewConfiguration,
       isEditing: this.openmct.editor.isEditing(),
-      configuration: planViewConfiguration.getConfiguration()
+      configuration: planViewConfiguration.getConfiguration(),
+      planObject: null
     };
   },
   computed: {
@@ -95,12 +100,32 @@ export default {
   mounted() {
     this.openmct.editor.on('isEditing', this.setIsEditing);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
+    this.composition = this.openmct.composition.get(this.domainObject);
+    this.loadComposition();
   },
   beforeUnmount() {
     this.openmct.editor.off('isEditing', this.setIsEditing);
     this.planViewConfiguration.off('change', this.handleConfigurationChange);
   },
   methods: {
+    loadComposition() {
+      if (this.composition) {
+        this.composition.on('add', this.handleCompositionAdd);
+        this.composition.on('remove', this.handleCompositionRemove);
+        this.composition.load();
+      }
+    },
+    handleCompositionAdd(domainObject) {
+      this.planObject = domainObject;
+    },
+    handleCompositionRemove(identifier) {
+      if (
+        this.planObject &&
+        this.openmct.objects.areIdsEqual(identifier, this.planObject?.identifier)
+      ) {
+        this.planObject = null;
+      }
+    },
     /**
      * @param {Object.<string, any>} newConfiguration
      */

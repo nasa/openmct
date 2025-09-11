@@ -30,6 +30,7 @@
             :bounds="viewBounds"
             :time-system="timeSystem"
             :content-height="height"
+            :ahead-behind="aheadBehind"
             :rendering-engine="renderingEngine"
           />
         </template>
@@ -73,6 +74,10 @@ const ROW_HEIGHT = 22;
 const MAX_TEXT_WIDTH = 300;
 const MIN_ACTIVITY_WIDTH = 2;
 const DEFAULT_COLOR = '#999';
+const DEFAULT_AHEAD_BEHIND_STATUS = {
+  duration: 0,
+  status: ''
+};
 
 export default {
   components: {
@@ -107,7 +112,8 @@ export default {
       swimlaneVisibility: {},
       clipActivityNames: false,
       height: 0,
-      rowHeight: ROW_HEIGHT
+      rowHeight: ROW_HEIGHT,
+      aheadBehind: DEFAULT_AHEAD_BEHIND_STATUS
     };
   },
   computed: {
@@ -133,6 +139,7 @@ export default {
     this.isNested = this.options.isChildObject;
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
+
     // This view is used for both gantt-chart and plan domain objects
     if (this.domainObject.type === 'plan') {
       this.setupPlan(this.domainObject);
@@ -170,10 +177,15 @@ export default {
       this.stopObservingPlanChanges();
     }
     this.planViewConfiguration.destroy();
+
+    if (this.stopObservingPlanExecutionMonitoringStatusObject) {
+      this.stopObservingPlanExecutionMonitoringStatusObject();
+    }
   },
   methods: {
     setupPlan(domainObject) {
       this.planObject = domainObject;
+      // Plan object configuration
       this.applyChangesForPlanObject(domainObject);
       this.stopObservingPlanChanges = this.openmct.objects.observe(
         domainObject,
@@ -184,6 +196,31 @@ export default {
         domainObject.identifier,
         this.setPlanStatus
       );
+      // plan execution monitoring
+      this.getPlanExecutionMonitoringStatus();
+    },
+    async getPlanExecutionMonitoringStatus() {
+      this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
+        'plan-execution-monitoring'
+      );
+      this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
+      this.stopObservingPlanExecutionMonitoringStatusObject = this.openmct.objects.observe(
+        this.planExecutionMonitoringStatusObject,
+        '*',
+        this.setPlanExecutionMonitoringStatus
+      );
+    },
+    setPlanExecutionMonitoringStatus(newStatusObject) {
+      const planIdentifier = this.openmct.objects.makeKeyString(this.planObject.identifier);
+      if (
+        newStatusObject &&
+        newStatusObject.execution_monitoring &&
+        newStatusObject.execution_monitoring[planIdentifier]
+      ) {
+        this.aheadBehind = newStatusObject.execution_monitoring[planIdentifier];
+      } else {
+        this.aheadBehind = DEFAULT_AHEAD_BEHIND_STATUS;
+      }
     },
     setPlanData(domainObject) {
       this.planData = getValidatedData(domainObject);

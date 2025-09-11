@@ -20,63 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/********************************************* TIME STRIP */
-.c-timeline-holder {
-  overflow: auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  height: 100%;
+export const PLAN_EXECUTION_MONITORING_KEY = 'plan-execution-monitoring';
 
-  // Plot view overrides
-  .gl-plot-display-area,
-  .gl-plot-axis-area.gl-plot-y {
-    bottom: $interiorMargin !important;
-  }
-}
-
-.c-timeline {
-  &__objects {
-    display: contents;
-
-    .c-swimlane {
-      overflow-x: hidden;
-      overflow-y: hidden;
-    }
-
-    .c-object-view {
-      overflow-x: hidden;
-      overflow-y: scroll !important; // `scroll` ensures that right edges align in time
-    }
-  }
-
-  &__content {
-    &.--scales {
-      flex-grow: 1;
-      flex-shrink: 1;
-    }
-
-    &.--fixed {
-      flex-grow: 0;
-      flex-shrink: 0;
-    }
-  }
-
-  &__overlay-lines {
-    @include abs();
-    opacity: 0.5;
-    top: 20px; // Offset down to line up with time axis ticks line
-    pointer-events: none; // Allows clicks to pass through
-    z-index: 10; // Ensure it sits atop swimlanes
-  }
-
-  &__no-items {
-    font-style: italic;
-    position: absolute;
-    left: $interiorMargin;
-    top: 50%;
-    transform: translateY(-50%);
-    white-space: nowrap;
-  }
+export function createPlanExecutionMonitoringIdentifier(namespace = '') {
+  return {
+    key: PLAN_EXECUTION_MONITORING_KEY,
+    namespace
+  };
 }
