@@ -45,9 +45,11 @@
             </option>
           </select>
         </div>
-        <div class="c-inspect-properties__value">
+        <div
+          v-if="planExecutionMonitoringStatus !== executionMonitorStates[0].key"
+          class="c-inspect-properties__value"
+        >
           <input
-            v-if="planExecutionMonitoringStatus !== executionMonitorStates[0].key"
             id="plan_execution_monitoring_duration"
             v-model="duration"
             aria-label="Plan Execution Monitoring Duration"
