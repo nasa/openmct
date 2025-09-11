@@ -26,7 +26,7 @@ import PlanExecutionMonitoringView from './components/PlanExecutionMonitoringVie
 
 export default function PlanInspectorViewProvider(openmct) {
   return {
-    key: 'plan-inspector',
+    key: 'plan-status-inspector',
     name: 'Config',
     canView: function (selection) {
       if (selection.length === 0 || selection[0].length === 0) {
@@ -49,10 +49,15 @@ export default function PlanInspectorViewProvider(openmct) {
                 PlanExecutionMonitoringView
               },
               provide: {
-                openmct,
-                planObject: selection[0][0].context.item
+                openmct
               },
-              template: '<plan-execution-monitoring-view></plan-execution-monitoring-view>'
+              data() {
+                return {
+                  planObject: selection[0][0].context.item
+                };
+              },
+              template:
+                '<plan-execution-monitoring-view :plan-object="planObject"></plan-execution-monitoring-view>'
             },
             {
               app: openmct.app,

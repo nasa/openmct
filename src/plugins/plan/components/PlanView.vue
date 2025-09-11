@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <div ref="plan" class="c-plan c-timeline-holder" @click="selectPlan($event)">
+  <div ref="plan" class="c-plan c-timeline-holder">
     <template v-if="viewBounds && !options.compact">
       <SwimLane class="c-swimlane__time-axis">
         <template #label>{{ timeSystem.name }}</template>
@@ -642,23 +642,6 @@ export default {
             context: {
               item: this.domainObject,
               supportsMultiSelect: true
-            }
-          }
-        ],
-        multiSelect
-      );
-    },
-    selectPlan(event) {
-      event.stopPropagation();
-      const element = event.currentTarget;
-      const multiSelect = event.metaKey;
-      this.openmct.selection.select(
-        [
-          {
-            element: element,
-            context: {
-              item: this.planObject,
-              supportsMultiSelect: false
             }
           }
         ],

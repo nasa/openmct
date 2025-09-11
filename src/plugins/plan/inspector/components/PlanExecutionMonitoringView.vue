@@ -81,7 +81,13 @@ const executionMonitorStates = [
 ];
 
 export default {
-  inject: ['openmct', 'planObject'],
+  inject: ['openmct'],
+  props: {
+    planObject: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       executionMonitorStates: executionMonitorStates,
@@ -89,9 +95,13 @@ export default {
       duration: 0
     };
   },
+  watch: {
+    planObject() {
+      this.getStatus();
+    }
+  },
   mounted() {
-    this.planIdentifier = this.openmct.objects.makeKeyString(this.planObject.identifier);
-    this.getPlanExecutionMonitoringStatus();
+    this.getStatus();
   },
   beforeUnmount() {
     if (this.stopObservingPlanExecutionMonitoringStatusObject) {
@@ -99,6 +109,10 @@ export default {
     }
   },
   methods: {
+    getStatus() {
+      this.planIdentifier = this.openmct.objects.makeKeyString(this.planObject.identifier);
+      this.getPlanExecutionMonitoringStatus();
+    },
     toggleDuration() {
       if (this.duration === undefined || this.duration < 0) {
         return;
