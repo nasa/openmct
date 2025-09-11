@@ -82,6 +82,20 @@ const PADDING = 1;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 const TIME_AXIS_LINE_Y = 20;
+const executionMonitorStates = [
+  {
+    key: 'nominal',
+    label: 'Nominal'
+  },
+  {
+    key: 'behind',
+    label: 'Behind by'
+  },
+  {
+    key: 'ahead',
+    label: 'Ahead by'
+  }
+];
 
 export default {
   inject: ['openmct', 'domainObject', 'path'],
@@ -115,7 +129,7 @@ export default {
       default() {
         return {
           duration: 0,
-          isBehind: false
+          status: false
         };
       }
     }
@@ -206,15 +220,7 @@ export default {
       this.updateTimeAxisMarkers();
     },
     aheadBehind() {
-      this.showAheadBehind = this.aheadBehind.duration > 0;
-      this.aheadOrBehindCSSClass = this.aheadBehind.isBehind ? '--behind' : '--ahead';
-      this.formattedAheadBehindDuration = getPreciseDuration(
-        this.aheadBehind.duration * 60 * 1000,
-        {
-          excludeMilliSeconds: true,
-          useDayFormat: true
-        }
-      );
+      this.updateAheadBehindSettings();
       this.updateTimeAxisMarkers();
     },
     containerSize: {
@@ -247,18 +253,50 @@ export default {
     refresh() {
       this.setDimensions();
       this.drawAxis(this.bounds, this.timeSystem);
-      this.showAheadBehind = this.aheadBehind.duration > 0;
-      this.aheadOrBehindCSSClass = this.aheadBehind.isBehind ? '--behind' : '--ahead';
-      this.formattedAheadBehindDuration = getPreciseDuration(
-        this.aheadBehind.duration * 60 * 1000,
-        {
-          excludeMilliSeconds: true,
-          useDayFormat: true
-        }
-      );
+      this.updateAheadBehindSettings();
       this.updateLineWrapper();
       this.updateNowMarker();
       this.updateAheadBehindMarker();
+    },
+    updateAheadBehindSettings() {
+      this.showAheadBehind = !this.isNominal() && this.aheadBehind.duration > 0;
+      this.aheadOrBehindCSSClass = this.getAheadOrBehindCSSClass();
+      this.aheadBehindDuration = this.aheadBehind.duration * 60 * 1000;
+      this.formattedAheadBehindDuration = getPreciseDuration(this.aheadBehindDuration, {
+        excludeMilliSeconds: true,
+        useDayFormat: true
+      });
+    },
+    getAheadOrBehindCSSClass() {
+      let cssClass = '';
+      if (this.isBehind()) {
+        cssClass = '--behind';
+      } else if (this.isAhead()) {
+        cssClass = '--ahead';
+      }
+
+      return cssClass;
+    },
+    isBehind() {
+      return (
+        this.aheadBehind.status &&
+        this.aheadBehind.duration &&
+        this.aheadBehind.status === executionMonitorStates[1].key
+      );
+    },
+    isAhead() {
+      return (
+        this.aheadBehind.status &&
+        this.aheadBehind.duration &&
+        this.aheadBehind.status === executionMonitorStates[2].key
+      );
+    },
+    isNominal() {
+      return (
+        !this.aheadBehind.duration ||
+        !this.aheadBehind.status ||
+        this.aheadBehind.status === executionMonitorStates[0].key
+      );
     },
     updateTimeAxisMarkers() {
       this.updateNowMarker();
@@ -290,13 +328,15 @@ export default {
 
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
-        //We need the delta - we don't care if it's ahead or behind here.
-        const aheadBehindDuration = this.aheadBehind.duration * 60 * 1000 + nowTimeStamp;
-        const delta = this.xScale(aheadBehindDuration) - now;
-        this.aheadBehindMarkerStyle.width = delta + 'px';
 
-        if (now < 0 || now > this.width) {
+        if (now < 0 || now > this.width || this.isNominal()) {
           aheadBehindMarker.classList.add('hidden');
+          this.aheadBehindMarkerStyle.width = '0px';
+        } else {
+          //We need the delta - we don't care if it's ahead or behind here.
+          const relativeAheadBehindDuration = this.aheadBehindDuration + nowTimeStamp;
+          const delta = this.xScale(relativeAheadBehindDuration) - now;
+          this.aheadBehindMarkerStyle.width = delta + 'px';
         }
       }
     },

@@ -31,7 +31,7 @@
         >
           <select
             v-model="planExecutionMonitoringStatus"
-            name="setPlanExecutionMonitoring"
+            name="executionMonitoringStatus"
             aria-label="Plan Execution Monitoring Status"
             @change="changePlanExecutionMonitoring"
           >
@@ -45,7 +45,8 @@
             </option>
           </select>
           <input
-            id="duration"
+            v-if="planExecutionMonitoringStatus !== executionMonitorStates[0].key"
+            id="plan_execution_monitoring_duration"
             v-model="duration"
             aria-label="Plan Execution Monitoring Duration"
             class="c-input--flex"
@@ -93,17 +94,12 @@ export default {
     }
   },
   methods: {
-    setPlanExecutionMonitoring(status, duration) {
-      let statusKeyIndex = executionMonitorStates.findIndex((state) => state.key === status);
-      if (statusKeyIndex < 0) {
-        statusKeyIndex = 0;
-      }
-      this.planExecutionMonitoringStatus = this.executionMonitorStates[statusKeyIndex].key;
-      this.duration = duration ?? 0;
-    },
     toggleDuration() {
       if (this.duration === undefined || this.duration < 0) {
         return;
+      }
+      if (this.duration === 0) {
+        this.planExecutionMonitoringStatus = executionMonitorStates[0].key;
       }
       this.persistExecutionMonitoringStatus();
     },
@@ -112,6 +108,14 @@ export default {
         return;
       }
       this.persistExecutionMonitoringStatus();
+    },
+    setPlanExecutionMonitoring(status, duration) {
+      let statusKeyIndex = executionMonitorStates.findIndex((state) => state.key === status);
+      if (statusKeyIndex < 0) {
+        statusKeyIndex = 0;
+      }
+      this.planExecutionMonitoringStatus = this.executionMonitorStates[statusKeyIndex].key;
+      this.duration = duration ?? 0;
     },
     async getPlanExecutionMonitoringStatus() {
       this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
@@ -148,12 +152,6 @@ export default {
         status: this.planExecutionMonitoringStatus
       };
       const executionMonitoringPath = `execution_monitoring.${this.planIdentifier}`;
-      console.log(
-        'Saving',
-        this.planExecutionMonitoringStatusObject,
-        executionMonitoringPath,
-        executionMonitoringStatus
-      );
       this.openmct.objects.mutate(
         this.planExecutionMonitoringStatusObject,
         executionMonitoringPath,
