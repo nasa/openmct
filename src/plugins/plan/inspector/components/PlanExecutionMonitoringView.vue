@@ -23,10 +23,10 @@
 <template>
   <div class="c-inspector__properties c-inspect-properties">
     <div class="u-contents">
-      <div class="c-inspect-properties__header">Execution Monitoring</div>
+      <div class="c-inspect-properties__header">Plan Execution Status</div>
       <div class="c-inspect-properties__row">
         <div
-          class="c-inspect-properties__value"
+          class="c-inspect-properties__label"
           aria-label="Plan Execution Monitoring Status Label"
         >
           <select
@@ -44,15 +44,18 @@
               {{ status.label }}
             </option>
           </select>
+        </div>
+        <div class="c-inspect-properties__value">
           <input
             v-if="planExecutionMonitoringStatus !== executionMonitorStates[0].key"
             id="plan_execution_monitoring_duration"
             v-model="duration"
             aria-label="Plan Execution Monitoring Duration"
-            class="c-input--flex"
+            class="c-input--sm"
             type="number"
             @change="toggleDuration"
           />
+          <span class="hint">minutes</span>
         </div>
       </div>
     </div>
