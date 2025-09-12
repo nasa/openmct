@@ -22,41 +22,60 @@
 
 /********************************************* TIME STRIP */
 .c-timeline-holder {
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
+  overflow: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  height: 100%;
 
-    // Plot view overrides
-    .gl-plot-display-area,
-    .gl-plot-axis-area.gl-plot-y {
-        bottom: $interiorMargin !important;
-    }
+  // Plot view overrides
+  .gl-plot-display-area,
+  .gl-plot-axis-area.gl-plot-y {
+    bottom: $interiorMargin !important;
+  }
 }
 
 .c-timeline {
-    &__objects {
-        display: contents;
+  &__objects {
+    display: contents;
 
-        .c-swimlane {
-            min-height: 100px; // TEMP!! Will be replaced when heights are set by user
-        }
+    .c-swimlane {
+      overflow-x: hidden;
+      overflow-y: hidden;
     }
 
-    &__overlay-lines {
-        //background: rgba(deeppink, 0.2);
-        @include abs();
-        top: 20px; // Offset down to line up with time axis ticks line
-        pointer-events: none; // Allows clicks to pass through
-        z-index: 10; // Ensure it sits atop swimlanes
+    .c-object-view {
+      overflow-x: hidden;
+      overflow-y: scroll !important; // `scroll` ensures that right edges align in time
+    }
+  }
+
+  &__content {
+    &.--scales {
+      flex-grow: 1;
+      flex-shrink: 1;
     }
 
-    &__no-items {
-        font-style: italic;
-        position: absolute;
-        left: $interiorMargin;
-        top: 50%;
-        transform: translateY(-50%);
+    &.--fixed {
+      flex-grow: 0;
+      flex-shrink: 0;
     }
+  }
+
+  &__overlay-lines {
+    @include abs();
+    opacity: 0.5;
+    top: 20px; // Offset down to line up with time axis ticks line
+    pointer-events: none; // Allows clicks to pass through
+    z-index: 10; // Ensure it sits atop swimlanes
+  }
+
+  &__no-items {
+    font-style: italic;
+    position: absolute;
+    left: $interiorMargin;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
