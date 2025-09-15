@@ -435,8 +435,7 @@ The Open MCT telemetry API provides two main sets of interfaces
 1. For integrating telemetry data into Open MCT, and 
 2. For developing Open MCT visualization plugins utilizing the telemetry API.  
 
-The APIs for integrating telemetry metadata into Open MCT are stable and documentation is included below. However, the APIs for visualization plugins are still a work in progress and docs may
-change at any time.
+The APIs for integrating telemetry metadata into Open MCT are stable and documentation is included below. However, the APIs for visualization plugins are still a work in progress and docs may change at any time.
 
 ### Integrating Telemetry Sources
 

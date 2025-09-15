@@ -4,8 +4,8 @@ const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
 const e2 = Math.sqrt(2);
 
-// A complete list of time units and their duration in milliseconds
-const TIME_UNITS = [
+// A complete list of time units and their duration in milliseconds - UTC
+const TIME_UNITS_UTC = [
   { unit: 'millisecond', duration: 1 },
   { unit: 'second', duration: 1000 },
   { unit: 'minute', duration: 1000 * 60 },
@@ -43,11 +43,11 @@ function tickStep(start, stop, count) {
  */
 export function getTimeTicks(start, stop, count) {
   const duration = stop - start;
-  let bestUnit = TIME_UNITS[0];
+  let bestUnit = TIME_UNITS_UTC[0];
   let bestStepSize = 1;
 
   // Find the most appropriate time unit
-  for (const unit of TIME_UNITS) {
+  for (const unit of TIME_UNITS_UTC) {
     const numTicks = duration / unit.duration;
     if (numTicks >= count / 2) {
       // Find the unit that gives at least half the desired ticks
