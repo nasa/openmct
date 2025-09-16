@@ -141,6 +141,7 @@
         <ObjectView
           ref="browseObject"
           class="l-shell__main-container js-main-container js-notebook-snapshot-item"
+          :class="{ '--has-toolbar': toolbar }"
           data-selectable
           :show-edit-view="true"
           @change-action-collection="setActionCollection"
