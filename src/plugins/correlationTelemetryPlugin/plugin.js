@@ -42,6 +42,7 @@ export default function CorrelationTelemetryPlugin(openmct) {
         return domainObject.type === CORRELATOR_TYPE;
       },
       getMetadata: function (domainObject) {
+        console.log('getMetadata', domainObject);
         let metadata = {};
         metadata.values = openmct.time.getAllTimeSystems().map(function (timeSystem, i) {
           return {
