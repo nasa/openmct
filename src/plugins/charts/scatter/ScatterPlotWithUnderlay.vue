@@ -89,7 +89,6 @@ export default {
     data: {
       immediate: false,
       handler() {
-        console.log('data changed', this.data);
         this.updateData();
       },
       deep: true
