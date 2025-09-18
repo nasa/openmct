@@ -54,13 +54,13 @@ export default function CorrelationTelemetryPlugin(openmct) {
           };
         });
         metadata.values.push({
-          name: 'X',
+          name: domainObject.xSource?.[0]?.name || 'X',
           key: 'x',
           source: 'x',
           hints: { xSource: 1, range: 1 }
         });
         metadata.values.push({
-          name: 'Y',
+          name: domainObject.ySource?.[0]?.name || 'Y',
           key: 'y',
           source: 'y',
           hints: { ySource: 1, range: 2 }
