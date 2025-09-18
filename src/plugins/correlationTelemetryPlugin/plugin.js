@@ -1,4 +1,6 @@
 const CORRELATOR_TYPE = 'telemetry.correlator';
+let defaultXSourceName = 'X';
+let defaultYSourceName = 'Y';
 
 export default function CorrelationTelemetryPlugin(openmct) {
   // eslint-disable-next-line no-shadow
@@ -43,6 +45,12 @@ export default function CorrelationTelemetryPlugin(openmct) {
       },
       getMetadata: function (domainObject) {
         console.log('getMetadata', domainObject);
+        if (domainObject.xSource?.[0]?.name !== defaultXSourceName) {
+          defaultXSourceName = domainObject.xSource?.[0]?.name;
+        }
+        if (domainObject.ySource?.[0]?.name !== defaultYSourceName) {
+          defaultYSourceName = domainObject.ySource?.[0]?.name;
+        }
         let metadata = {};
         metadata.values = openmct.time.getAllTimeSystems().map(function (timeSystem, i) {
           return {
@@ -54,13 +62,13 @@ export default function CorrelationTelemetryPlugin(openmct) {
           };
         });
         metadata.values.push({
-          name: domainObject.xSource?.[0]?.name || 'X',
+          name: defaultXSourceName,
           key: 'x',
           source: 'x',
           hints: { xSource: 1, range: 1 }
         });
         metadata.values.push({
-          name: domainObject.ySource?.[0]?.name || 'Y',
+          name: defaultYSourceName,
           key: 'y',
           source: 'y',
           hints: { ySource: 1, range: 2 }
