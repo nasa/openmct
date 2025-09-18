@@ -57,8 +57,8 @@ export default {
       const yAxisUnit = yAxisMetadata.units ? `(${yAxisMetadata.units})` : '';
 
       return {
-        xAxisTitle: `${xAxisMetadata.name || ''} ${xAxisUnit}`,
-        yAxisTitle: `${yAxisMetadata.name || ''} ${yAxisUnit}`
+        xAxisTitle: `${xAxis || ''} ${xAxisUnit}`,
+        yAxisTitle: `${yAxis || ''} ${yAxisUnit}`
       };
     }
   },
