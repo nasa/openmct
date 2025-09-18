@@ -23,7 +23,7 @@
 <template>
   <MctTree
     :is-selector-tree="true"
-    :initial-selection="model.parent"
+    :initial-selection="initialSelection"
     @tree-item-selection="handleItemSelection"
   />
 </template>
@@ -43,6 +43,11 @@ export default {
     }
   },
   emits: ['on-change'],
+  computed: {
+    initialSelection() {
+      return this.model.parent || this.model.value?.[1];
+    }
+  },
   methods: {
     handleItemSelection(item) {
       const data = {
