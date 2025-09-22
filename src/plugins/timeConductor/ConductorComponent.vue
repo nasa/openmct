@@ -36,8 +36,8 @@
       <ConductorClock :read-only="true" />
       <ConductorTimeSystem :read-only="true" />
     </div>
-    <ConductorInputsFixed v-if="isFixedTimeMode" :input-bounds="viewBounds" :read-only="true" />
-    <ConductorInputsRealtime v-else :input-bounds="viewBounds" :read-only="true" />
+    <ConductorInputsFixed v-if="isFixedTimeMode" :read-only="true" />
+    <ConductorInputsRealtime v-else :read-only="true" />
     <ConductorAxis
       v-if="isFixedTimeMode"
       class="c-conductor__ticks"
@@ -92,7 +92,6 @@ export default {
     ConductorPopUp
   },
   mixins: [conductorPopUpManager],
-  inject: ['openmct', 'configuration'],
   setup(props) {
     const openmct = inject('openmct');
     const {
@@ -130,6 +129,7 @@ export default {
     provide('getClockMetadata', getClockMetadata);
 
     return {
+      openmct,
       timeSystemFormatter,
       isFixedTimeMode,
       bounds

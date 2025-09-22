@@ -53,22 +53,20 @@ export function useTimeBounds(openmct, timeContext) {
   watch(
     timeContext,
     (newContext, oldContext) => {
-      oldContext?.off(TIME_CONTEXT_EVENTS.boundsChanged, throttle(updateTimeBounds, THROTTLE_RATE));
+      oldContext?.off(TIME_CONTEXT_EVENTS.boundsChanged, throttledUpdateTimeBounds);
       observeTimeBounds();
     },
     { immediate: true }
   );
 
   function observeTimeBounds() {
-    timeContext.value.on(
-      TIME_CONTEXT_EVENTS.boundsChanged,
-      throttle(updateTimeBounds, THROTTLE_RATE)
-    );
+    timeContext.value.on(TIME_CONTEXT_EVENTS.boundsChanged, throttledUpdateTimeBounds);
     stopObservingTimeBounds = () =>
-      timeContext.value.off(
-        TIME_CONTEXT_EVENTS.boundsChanged,
-        throttle(updateTimeBounds, THROTTLE_RATE)
-      );
+      timeContext.value.off(TIME_CONTEXT_EVENTS.boundsChanged, throttledUpdateTimeBounds);
+  }
+
+  function throttledUpdateTimeBounds(_timeBounds, _isTick) {
+    throttle(updateTimeBounds, THROTTLE_RATE)(_timeBounds, _isTick);
   }
 
   function updateTimeBounds(_timeBounds, _isTick) {
