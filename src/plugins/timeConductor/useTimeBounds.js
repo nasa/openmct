@@ -27,7 +27,7 @@ import throttle from '../../utils/throttle.js';
 
 const THROTTLE_RATE = 300;
 /**
- * @typedef {import('@/api/time/TimeContext.js').default} TimeContext
+ * @typedef {import('src/api/time/TimeContext.js').Bounds} Bounds
  */
 
 /**
@@ -35,10 +35,10 @@ const THROTTLE_RATE = 300;
  * as well as a function to observe and update bounds changes,
  * which automatically stops observing when the component is unmounted.
  *
- * @param {OpenMCT} [openmct] the Open MCT API
- * @param {TimeContext} timeContext The view's timeContext
+ * @param {import('openmct').OpenMCT} openmct - The Open MCT API
+ * @param {import('src/api/time/TimeContext.js').default} timeContext - the time context
  * @returns {{
- *   bounds: import('vue').Ref<object>,
+ *   bounds: import('vue').Ref<Bounds>,
  *   isTick: import('vue').Ref<boolean>
  * }}
  */

@@ -21,8 +21,7 @@
 -->
 <template>
   <DateTimePopupFixed
-    v-if="delimiter && !readOnly"
-    :delimiter="delimiter"
+    v-if="shouldUseSplitDateTimeInputs && !readOnly"
     @focus="$event.target.select()"
     @dismiss="dismiss"
   />
@@ -47,8 +46,8 @@
 </template>
 
 <script>
-import TimePopupFixed from './TimePopupFixed.vue';
 import DateTimePopupFixed from './DateTimePopupFixed.vue';
+import TimePopupFixed from './TimePopupFixed.vue';
 
 export default {
   components: {
@@ -72,8 +71,8 @@ export default {
   },
   emits: ['dismiss-inputs-fixed'],
   computed: {
-    delimiter() {
-      return this.timeSystemFormatter.getDelimiter?.();
+    shouldUseSplitDateTimeInputs() {
+      return Boolean(this.timeSystemFormatter.formatDate);
     },
     formattedBounds() {
       return {

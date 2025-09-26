@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import EventLimitProvider from './EventLimitProvider.js';
 import EventMetadataProvider from './EventMetadataProvider.js';
 import EventTelemetryProvider from './EventTelemetryProvider.js';
 import EventWithAcknowledgeTelemetryProvider from './EventWithAcknowledgeTelemetryProvider.js';
@@ -54,5 +55,7 @@ export default function EventGeneratorPlugin(options) {
     });
 
     openmct.telemetry.addProvider(new EventWithAcknowledgeTelemetryProvider());
+
+    openmct.telemetry.addProvider(new EventLimitProvider(openmct));
   };
 }

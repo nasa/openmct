@@ -46,6 +46,8 @@
           aria-label="Start date"
           @input="validateInput('startDate')"
           @change="reportValidity('startDate')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
         />
       </div>
 
@@ -60,6 +62,8 @@
           aria-label="Start time"
           @input="validateInput('startTime')"
           @change="reportValidity('startTime')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
         />
       </div>
 
@@ -83,6 +87,8 @@
           aria-label="End date"
           @input="validateInput('endDate')"
           @change="reportValidity('endDate')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
         />
       </div>
 
@@ -97,6 +103,8 @@
           aria-label="End time"
           @input="validateInput('endTime')"
           @change="reportValidity('endTime')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
         />
       </div>
 
@@ -132,12 +140,6 @@ export default {
     'timeSystemDurationFormatter',
     'bounds'
   ],
-  props: {
-    delimiter: {
-      type: String,
-      required: true
-    }
-  },
   emits: ['update', 'dismiss'],
   data() {
     return {
@@ -181,27 +183,72 @@ export default {
     this.clearAllValidation();
   },
   methods: {
+    async copyToClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      const bound =
+        this.timeSystemFormatter.parse(this.formattedBounds[`${startOrEnd}Date`]) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds[`${startOrEnd}Time`]);
+      const timeStampString = this.timeSystemFormatter.format(bound);
+
+      try {
+        await navigator.clipboard.writeText(timeStampString);
+      } catch (err) {
+        this.openmct.notifications.error('Failed to copy timestamp to clipboard');
+        console.error(err);
+      }
+    },
+    async pasteFromClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      let timeStampString;
+      try {
+        timeStampString = await navigator.clipboard.readText();
+      } catch (err) {
+        this.openmct.notifications.error('Failed to get timestamp from clipboard');
+        console.error(err);
+        return;
+      }
+
+      if (!this.timeSystemFormatter.validate(timeStampString)) {
+        this.openmct.notifications.warn(`"${timeStampString}" is not a valid timestamp format`);
+        return;
+      }
+
+      const bound = this.timeSystemFormatter.parse(timeStampString);
+      this.formattedBounds[`${startOrEnd}Date`] = this.timeSystemFormatter.formatDate(bound);
+      this.formattedBounds[`${startOrEnd}Time`] = this.timeSystemDurationFormatter.format(
+        Math.abs(bound)
+      );
+
+      this.validateInput([`${startOrEnd}Date`, `${startOrEnd}Time`]);
+      this.reportValidity([`${startOrEnd}Date`, `${startOrEnd}Time`]);
+    },
     setViewFromBounds() {
       this.formattedBounds = {
-        startDate: this.timeSystemFormatter.format(this.bounds.start).split(this.delimiter)[0],
+        startDate: this.timeSystemFormatter.formatDate(this.bounds.start),
         startTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.start)),
-        endDate: this.timeSystemFormatter.format(this.bounds.end).split(this.delimiter)[0],
+        endDate: this.timeSystemFormatter.formatDate(this.bounds.end),
         endTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.end))
       };
     },
     setBoundsFromView(shouldDismiss) {
       if (this.$refs.fixedDeltaInput.checkValidity()) {
-        const start = this.timeSystemFormatter.parse(
-          `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
-        );
-        const end = this.timeSystemFormatter.parse(
-          `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
-        );
+        const start =
+          this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+          this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+        const end =
+          this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+          this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
 
-        this.timeContext.setBounds({
-          start,
-          end
-        });
+        const bounds = { start, end };
+        this.timeContext.setBounds(bounds);
       }
 
       if (shouldDismiss) {
@@ -229,26 +276,33 @@ export default {
         this.setBoundsFromView(shouldDismiss);
       }
     },
-    validateInput(refName) {
-      this.clearAllValidation();
-      const inputType = refName.includes('Date') ? 'Date' : 'Time';
-      const formatter =
-        inputType === 'Date' ? this.timeSystemFormatter : this.timeSystemDurationFormatter;
-      const validationResult = formatter.validate(this.formattedBounds[refName])
-        ? { valid: true }
-        : { valid: false, message: `Invalid ${inputType}` };
+    validateInput(refNames) {
+      if (!Array.isArray(refNames)) {
+        refNames = [refNames];
+      }
 
-      this.inputValidityMap[refName] = validationResult;
+      this.clearAllValidation();
+
+      refNames.forEach((refName) => {
+        const inputType = refName.includes('Date') ? 'Date' : 'Time';
+        const formatter =
+          inputType === 'Date' ? this.timeSystemFormatter : this.timeSystemDurationFormatter;
+        const validationResult = formatter.validate(this.formattedBounds[refName])
+          ? { valid: true }
+          : { valid: false, message: `Invalid ${inputType}` };
+
+        this.inputValidityMap[refName] = validationResult;
+      });
     },
     validateBounds() {
-      const bounds = {
-        start: this.timeSystemFormatter.parse(
-          `${this.formattedBounds.startDate}${this.delimiter}${this.formattedBounds.startTime}`
-        ),
-        end: this.timeSystemFormatter.parse(
-          `${this.formattedBounds.endDate}${this.delimiter}${this.formattedBounds.endTime}`
-        )
-      };
+      const start =
+        this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+      const end =
+        this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
+
+      const bounds = { start, end };
 
       this.logicalValidityMap.bounds = this.openmct.time.validateBounds(bounds);
     },
@@ -266,18 +320,24 @@ export default {
         this.logicalValidityMap.limit = { valid: true };
       }
     },
-    reportValidity(refName) {
-      const input = this.getInput(refName);
-      const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
-
-      if (validationResult.valid !== true) {
-        input.setCustomValidity(validationResult.message);
-        input.title = validationResult.message;
-        this.hasLogicalValidationErrors = true;
-      } else {
-        input.setCustomValidity('');
-        input.title = '';
+    reportValidity(refNames) {
+      if (!Array.isArray(refNames)) {
+        refNames = [refNames];
       }
+
+      refNames.forEach((refName) => {
+        const input = this.getInput(refName);
+        const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
+
+        if (validationResult.valid !== true) {
+          input.setCustomValidity(validationResult.message);
+          input.title = validationResult.message;
+          this.hasLogicalValidationErrors = true;
+        } else {
+          input.setCustomValidity('');
+          input.title = '';
+        }
+      });
 
       this.$refs.fixedDeltaInput.reportValidity();
     },
@@ -289,14 +349,12 @@ export default {
       return this.$refs.startDate;
     },
     startDateSelected(date) {
-      this.formattedBounds.startDate = this.timeSystemFormatter
-        .format(date)
-        .split(this.delimiter)[0];
+      this.formattedBounds.startDate = this.timeSystemFormatter.formatDate(date);
       this.validateInput('startDate');
       this.reportValidity('startDate');
     },
     endDateSelected(date) {
-      this.formattedBounds.endDate = this.timeSystemFormatter.format(date).split(this.delimiter)[0];
+      this.formattedBounds.endDate = this.timeSystemFormatter.formatDate(date);
       this.validateInput('endDate');
       this.reportValidity('endDate');
     },

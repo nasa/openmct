@@ -23,8 +23,8 @@
 import { shallowRef, toValue, watchEffect } from 'vue';
 
 /**
- * @typedef {import('@/api/time/TimeContext.js').default} TimeContext
- * @typedef {import('@/api/time/GlobalTimeContext.js').default} GlobalTimeContext
+ * @typedef {import('src/api/time/TimeContext.js').default} TimeContext
+ * @typedef {import('src/api/time/GlobalTimeContext.js').default} GlobalTimeContext
  */
 
 /**
@@ -32,8 +32,8 @@ import { shallowRef, toValue, watchEffect } from 'vue';
  * for the view's objectPath,
  * or the GlobalTimeContext if objectPath is undefined.
  *
- * @param {OpenMCT} openmct the Open MCT API
- * @param {Array} objectPath The view's objectPath
+ * @param {import('openmct').OpenMCT} openmct - The Open MCT API
+ * @param {import('openmct').ObjectPath} objectPath - The path of the object
  * @returns {{
  *   timeContext: TimeContext | GlobalTimeContext
  * }}

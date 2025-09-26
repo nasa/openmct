@@ -49,7 +49,6 @@
       @zoom-axis="zoom"
     />
     <ConductorHistory
-      v-if="!isIndependent"
       class="c-conductor__history-select"
       title="Select and apply previously entered time intervals."
     />

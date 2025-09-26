@@ -29,14 +29,20 @@ import {
 } from '../../api/time/constants.js';
 
 /**
+ * @typedef {import('src/api/time/TimeContext.js').Mode} Mode
+ */
+
+/**
  * Provides reactive `timeMode` which is reactive to a time context,
  * as well as a function to observe and update the component's time mode,
  * which automatically stops observing when the component is unmounted.
  *
- * @param {OpenMCT} openmct the Open MCT API
- * @param {Array} objectPath The view's objectPath
+ * @param {import('openmct').OpenMCT} openmct - The Open MCT API
+ * @param {import('src/api/time/TimeContext.js').default} timeContext - The time context
  * @returns {{
- *   timeMode: import('vue').Ref<string>,
+ *   timeMode: import('vue').Ref<Mode>,
+ *   getAllModeMetadata: import('vue').Ref<() => void>,
+ *   getModeMetadata: import('vue').Ref<() => void>,
  *   isFixedTimeMode: import('vue').Ref<boolean>,
  *   isRealTimeMode: import('vue').Ref<boolean>
  * }}
@@ -61,7 +67,8 @@ export function useTimeMode(openmct, timeContext) {
 
   function observeTimeMode() {
     timeContext.value.on(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
-    stopObservingTimeMode = () => timeContext.value.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
+    stopObservingTimeMode = () =>
+      timeContext.value.off(TIME_CONTEXT_EVENTS.modeChanged, updateTimeMode);
   }
 
   function getAllModeMetadata() {
