@@ -52,6 +52,7 @@
   }
 
   &__content {
+    overflow: auto;
     &.--scales {
       flex-grow: 1;
       flex-shrink: 1;
