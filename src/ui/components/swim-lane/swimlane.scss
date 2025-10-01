@@ -31,8 +31,13 @@
   grid-template-columns: 100px 100px 1fr;
   grid-column-gap: 1px;
   grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
-  min-height: max-content; // Must use max-content to prevent swimlane from collapsing
+  min-height: max-content; // Plan and Gantt views: must use max-content to prevent swimlane from collapsing
   width: 100%;
+
+  .is-object-type-time-strip & {
+    min-height: $btnStdH;
+
+  }
 
   &__time-axis {
     flex: 0 0 auto;
