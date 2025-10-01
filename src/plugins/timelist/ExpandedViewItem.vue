@@ -162,7 +162,9 @@ export default {
         let value = this[itemProperty.key];
         let formattedValue;
         if (itemProperty.format) {
-          formattedValue = itemProperty.format(value, undefined, itemProperty.key, this.openmct);
+          formattedValue = itemProperty.format(value, undefined, itemProperty.key, this.openmct, {
+            skipPrefix: true
+          });
         }
         itemValue[itemProperty.key] = formattedValue;
       });
