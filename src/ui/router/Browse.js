@@ -154,8 +154,9 @@ class Browse {
   }
 
   #getPreferredViewForObjectType(obj) {
-    const storedViewPrefs = JSON.parse(window.localStorage.getItem('openmct-stored-view-prefs')) || {};
-    return storedViewPrefs[obj.type]? storedViewPrefs[obj.type] : undefined;
+    const storedViewPrefs =
+      JSON.parse(window.localStorage.getItem('openmct-stored-view-prefs')) || {};
+    return storedViewPrefs[obj.type] ? storedViewPrefs[obj.type] : undefined;
   }
 
   async #navigateToFirstChildOfRoot() {

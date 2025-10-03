@@ -266,7 +266,6 @@ export default {
       }
 
       return objectType.definition?.key ?? '';
-
     },
     isPersistable() {
       const persistable =
