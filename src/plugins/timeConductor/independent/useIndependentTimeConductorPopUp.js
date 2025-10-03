@@ -44,7 +44,7 @@ export function useIndependentTimeConductorPopUp(component, parentElement, enabl
   const debouncedPositionBox = debounce(raf(positionBox), 250);
 
   function positionBox() {
-    if (!component.value.conductorPopupElement) {
+    if (!component.value?.conductorPopupElement) {
       return;
     }
 
@@ -101,7 +101,7 @@ export function useIndependentTimeConductorPopUp(component, parentElement, enabl
   }
 
   function clearPopup() {
-    if (!component.value.conductorPopupElement) {
+    if (!component.value?.conductorPopupElement) {
       return;
     }
     showConductorPopup.value = false;
