@@ -4,20 +4,23 @@
       <TimelineElementsContent :index="index" :container="containers[index]" />
     </template>
     <template #custom>
-      <div class="c-inspector__properties c-inspect-properties" aria-label="Swim Lane Label Width">
-        <div class="c-inspect-properties__header">Swim Lane Label Width</div>
+      <div class="c-inspector__properties c-inspect-properties" aria-label="Swimlane Column">
+        <div class="c-inspect-properties__header">Swimlane Column</div>
         <div v-if="isEditing" class="c-inspect-properties__row">
-          <input
-            :value="swimLaneLabelWidth"
-            aria-labelledby="Width in pixels"
-            class="field control"
-            :pattern="/\d+/"
-            type="number"
-            name="value"
-            min="0"
-            @change="changeSwimLaneLabelWidth"
-          />
-          <span>px</span>
+          <span class="c-inspect-properties__label">Width</span>
+          <div class="c-inspect-properties__label align-right">
+            <input
+              :value="swimLaneLabelWidth"
+              aria-labelledby="Width in pixels"
+              class="field control c-input--sm"
+              :pattern="/\d+/"
+              type="number"
+              name="value"
+              min="0"
+              @change="changeSwimLaneLabelWidth"
+            />
+            <span>px</span>
+          </div>
         </div>
         <div v-else class="c-inspect-properties__row">{{ swimLaneLabelWidth }}px</div>
       </div>
