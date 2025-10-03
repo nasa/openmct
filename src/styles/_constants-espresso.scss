@@ -226,16 +226,11 @@ $borderMissing: 1px dashed $colorAlert !important;
 $editUIColor: $uiColor; // Base color
 $editUIColorBg: $editUIColor;
 $editUIColorFg: #fff;
-$editUIColorHov: pullForward(
-  saturate($uiColor, 10%),
-  10%
-); // Hover color when $editUIColor is applied as a base color
+$editUIColorHov: #ffffff; // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #344b8d; // Base color, toolbar bg
 $editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
 $editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
-$editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
-$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
-$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
+$editUIAreaBaseColor: $editUIColor; //pullForward(saturate($editUIBaseColor, 30%), 20%);
 $editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
 $editUIGridColorFg: rgba(#000, 0.1); // Grid lines in layout editing area
 $editDimensionsColor: #6a5ea6;
@@ -412,6 +407,10 @@ $colorEventPurpleBg: #31204a;
 $colorEventRedBg: #3c1616;
 $colorEventOrangeBg: #3e2a13;
 $colorEventYellowBg: #3e3316;
+$colorEventPurpleLine: #9e36ff;
+$colorEventRedLine: #ff2525;
+$colorEventOrangeLine: #ff8800;
+$colorEventYellowLine: #fdce22;
 
 // Bubble colors
 $colorInfoBubbleBg: #dddddd;
@@ -469,21 +468,29 @@ $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, 0);
 
 // Time Strip and Lists
-$colorPastBg: #444;
-$colorPastFg: pushBack($colorBodyFg, 10%);
-$colorPastFgEm: $colorBodyFg;
-$colorCurrentBg: #666;
-$colorCurrentFg: pullForward($colorBodyFg, 10%);
-$colorCurrentFgEm: $colorBodyFgEm;
+$colorPastBg: #343434;
+$colorPastFg: #ffffff;
+$colorPastFgEm: $colorPastFg;
+$colorCurrentBg: #666666;
+$colorCurrentFg: #ffffff;
+$colorCurrentFgEm: $colorCurrentFg;
 $colorCurrentBorder: $colorBodyBg;
-$colorFutureBg: $colorPastBg;
+$colorFutureBg: #494949;
 $colorFutureFg: $colorCurrentFg;
-$colorFutureFgEm: $colorCurrentFgEm;
+$colorFutureFgEm: $colorFutureFg;
 $colorFutureBorder: $colorCurrentBorder;
 $colorInProgressBg: $colorTimeRealtimeBg;
-$colorInProgressFg: $colorTimeRealtimeFgSubtle;
+$colorInProgressFg: #ffffff;
 $colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
+$colorTimeStripDraftBg: rgba(#a57748, 0.2);
+$colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$eventLineW: 1px;
+$colorActivityStatusGreen: #4bad4b;
+$colorActivityStatusOrange: #b67e41;
+$opacitySubtle: 0.4;
 
 // Tree
 $colorTreeBg: transparent;

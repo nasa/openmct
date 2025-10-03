@@ -63,8 +63,4 @@ export default class FolderGridView {
       }
     };
   }
-
-  priority() {
-    return 1;
-  }
 }

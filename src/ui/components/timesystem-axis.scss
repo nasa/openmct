@@ -1,9 +1,11 @@
+@use 'sass:math';
+
 .c-timesystem-axis {
   $h: 30px;
   height: $h;
 
   svg {
-    $lineC: rgba($colorBodyFg, 0.3) !important;
+    $lineC: $colorInteriorBorder; //rgba($colorBodyFg, 0.3) !important;
     text-rendering: geometricPrecision;
     width: 100%;
     height: 100%;
@@ -26,21 +28,41 @@
     }
   }
 
-  .nowMarker {
-    width: 2px;
+  &__mb-line {
+    $c: $colorTimeRealtimeBtnBgMajor;
+    $w: 13px;
+    $wHalf: math.floor(math.div($w, 2));
+    $transform: translateX(($wHalf - 1) * -1);
+
+    border-right: 2px dashed $c;
+    opacity: 0.5;
+    pointer-events: none;
+    width: 1px;
     position: absolute;
     z-index: 10;
-    background: gray;
+
+    &:before,
+    &:after {
+      //background: $c;
+      content: '';
+      display: block;
+      position: absolute;
+      width: 0;
+      height: 0;
+      transform: $transform;
+      border-left: $wHalf solid transparent;
+      border-right: $wHalf solid transparent;
+      border-top: $wHalf solid $c;
+    }
+
+    &:after {
+      bottom: 0;
+      transform: $transform rotate(180deg);
+    }
 
     &.hidden {
       display: none;
     }
 
-    & .icon-arrow-down {
-      font-size: large;
-      position: absolute;
-      top: -8px;
-      left: -8px;
-    }
   }
 }

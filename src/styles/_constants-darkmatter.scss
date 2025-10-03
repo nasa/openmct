@@ -265,8 +265,6 @@ $editUIBaseColor: #344b8d; // Base color, toolbar bg
 $editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
 $editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
 $editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
-$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
-$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
 $editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
 $editUIGridColorFg: rgba(#000, 0.1); // Grid lines in layout editing area
 $editDimensionsColor: #6a5ea6;
@@ -443,6 +441,10 @@ $colorEventPurpleBg: #31204a;
 $colorEventRedBg: #3c1616;
 $colorEventOrangeBg: #3e2a13;
 $colorEventYellowBg: #3e3316;
+$colorEventPurpleLine: #9e36ff;
+$colorEventRedLine: #ff2525;
+$colorEventOrangeLine: #ff8800;
+$colorEventYellowLine: #fdce22;
 
 // Bubble colors
 $colorInfoBubbleBg: #dddddd;
@@ -499,26 +501,31 @@ $colorGaugeNeedle: $colorGaugeBase; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, 0.5);
-// TODO: This is some code regarding how we can make Gauges include a border or glow. We may need to revisit this.
-// padding: 5%;
-// background: radial-gradient(circle, transparent 0%, transparent 65%, rgba(255, 255, 255,0.4) 64%, rgba(255,255,255,0) 70%)
 
 // Time Strip and Lists
-$colorPastBg: #444;
-$colorPastFg: pushBack($colorBodyFg, 10%);
-$colorPastFgEm: $colorBodyFg;
-$colorCurrentBg: #666;
-$colorCurrentFg: $colorBodyFg;
-$colorCurrentFgEm: $colorBodyFgEm;
+$colorPastBg: #343434;
+$colorPastFg: white;
+$colorPastFgEm: $colorPastFg;
+$colorCurrentBg: #666666;
+$colorCurrentFg: white;
+$colorCurrentFgEm: $colorCurrentFg;
 $colorCurrentBorder: $colorBodyBg;
-$colorFutureBg: $colorPastBg;
+$colorFutureBg: #494949;
 $colorFutureFg: $colorCurrentFg;
-$colorFutureFgEm: $colorCurrentFgEm;
+$colorFutureFgEm: $colorFutureFg;
 $colorFutureBorder: $colorCurrentBorder;
 $colorInProgressBg: $colorTimeRealtimeBg;
 $colorInProgressFg: $colorTimeRealtimeFgSubtle;
 $colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
+$colorActivityStatusGreen: #4bad4b;
+$colorActivityStatusOrange: #b67e41;
+$opacitySubtle: 0.4;
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
+$colorTimeStripDraftBg: rgba(#a57748, 0.2);
+$colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$eventLineW: 1px;
 
 // Tree
 $colorTreeBg: transparent;
