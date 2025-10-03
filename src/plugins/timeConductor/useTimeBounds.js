@@ -48,6 +48,7 @@ export function useTimeBounds(openmct, timeContext) {
   const bounds = shallowRef(timeContext.value.getBounds());
   const isTick = ref(false);
 
+  const throttledUpdateTimeBounds = throttle(updateTimeBounds, THROTTLE_RATE);
   onBeforeUnmount(() => stopObservingTimeBounds?.());
 
   watch(
@@ -63,10 +64,6 @@ export function useTimeBounds(openmct, timeContext) {
     timeContext.value.on(TIME_CONTEXT_EVENTS.boundsChanged, throttledUpdateTimeBounds);
     stopObservingTimeBounds = () =>
       timeContext.value.off(TIME_CONTEXT_EVENTS.boundsChanged, throttledUpdateTimeBounds);
-  }
-
-  function throttledUpdateTimeBounds(_timeBounds, _isTick) {
-    throttle(updateTimeBounds, THROTTLE_RATE)(_timeBounds, _isTick);
   }
 
   function updateTimeBounds(_timeBounds, _isTick) {
