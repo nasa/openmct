@@ -60,6 +60,7 @@ import { scaleLinear, scaleUtc } from 'd3-scale';
 import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 
 import TimelineAxis from '../../../ui/components/TimeSystemAxis.vue';
+import { PLAN_EXECUTION_MONITORING_KEY } from '../constants.js';
 import PlanViewConfiguration from '../PlanViewConfiguration.js';
 import { getContrastingColor, getValidatedData, getValidatedGroups } from '../util.js';
 import ActivityTimeline from './ActivityTimeline.vue';
@@ -201,7 +202,7 @@ export default {
     },
     async getPlanExecutionMonitoringStatus() {
       this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
-        'plan-execution-monitoring'
+        PLAN_EXECUTION_MONITORING_KEY
       );
       this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
       this.stopObservingPlanExecutionMonitoringStatusObject = this.openmct.objects.observe(

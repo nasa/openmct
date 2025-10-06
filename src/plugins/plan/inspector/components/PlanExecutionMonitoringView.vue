@@ -65,6 +65,8 @@
 </template>
 
 <script>
+import { PLAN_EXECUTION_MONITORING_KEY } from '../../../constants.js';
+
 const executionMonitorStates = [
   {
     key: 'nominal',
@@ -138,7 +140,7 @@ export default {
     },
     async getPlanExecutionMonitoringStatus() {
       this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
-        'plan-execution-monitoring'
+        PLAN_EXECUTION_MONITORING_KEY
       );
       this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
       this.stopObservingPlanExecutionMonitoringStatusObject = this.openmct.objects.observe(
@@ -148,22 +150,13 @@ export default {
       );
     },
     setPlanExecutionMonitoringStatus(newStatusObject) {
-      if (
-        !newStatusObject ||
-        !newStatusObject.execution_monitoring ||
-        !newStatusObject.execution_monitoring[this.planIdentifier]
-      ) {
+      const statusObj = newStatusObject?.execution_monitoring?.[this.planIdentifier];
+      if (!statusObj) {
         this.setPlanExecutionMonitoring();
-      } else {
-        const executionMonitoringStatus = newStatusObject
-          ? newStatusObject.execution_monitoring[this.planIdentifier]
-          : {};
-
-        this.setPlanExecutionMonitoring(
-          executionMonitoringStatus.status,
-          executionMonitoringStatus.duration
-        );
+        return;
       }
+      const { status, duration } = statusObj;
+      this.setPlanExecutionMonitoring(status, duration);
     },
     persistExecutionMonitoringStatus() {
       const executionMonitoringStatus = {

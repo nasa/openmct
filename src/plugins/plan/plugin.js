@@ -110,7 +110,7 @@ export default function (options = {}) {
     const {
       plan_exec_monitoring_obj_name = PLAN_EXECUTION_MONITORING_DEFAULT_NAME,
       plan_exec_monitoring_obj_namespace = '',
-      plan_exec_monitoring_obj_priority
+      plan_exec_monitoring_obj_priority = openmct.priority.LOW
     } = options;
     const plan_exec_monitoring_obj_identifier = createPlanExecutionMonitoringIdentifier(
       plan_exec_monitoring_obj_namespace

@@ -36,14 +36,13 @@ import { PLAN_EXECUTION_MONITORING_KEY } from './planExecutionMonitoringIdentifi
  * @param {PlanExecutionMonitoringOptions} options
  * @returns {Object}
  */
-const PLAN_EXECUTION_MONITORING_TYPE = 'plan-execution-monitoring';
 
 function planExecutionMonitoringInterceptor(openmct, options) {
-  const { identifier, name, priority = openmct.priority.LOW } = options;
+  const { identifier, name, priority } = options;
   const planExecutionMonitoringModel = {
     identifier,
     name,
-    type: PLAN_EXECUTION_MONITORING_TYPE,
+    type: PLAN_EXECUTION_MONITORING_KEY,
     execution_monitoring: {},
     location: null
   };

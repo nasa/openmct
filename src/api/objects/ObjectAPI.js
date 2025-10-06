@@ -22,6 +22,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 import { identifierEquals, makeKeyString, parseKeyString, refresh } from 'objectUtils';
+import { PLAN_EXECUTION_MONITORING_KEY } from 'src/plugins/planExecutionMonitoring/planExecutionMonitoringIdentifier.js';
 
 import ConflictError from './ConflictError.js';
 import InMemorySearchProvider from './InMemorySearchProvider.js';
@@ -101,7 +102,7 @@ export default class ObjectAPI {
       'plan',
       'annotation',
       'activity-states',
-      'plan-execution-monitoring'
+      PLAN_EXECUTION_MONITORING_KEY
     ];
 
     this.errors = {
