@@ -438,10 +438,12 @@ $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
 // Items
+$colorSelectableItemBg: transparent;
+$colorSelectableItemBgHov: rgba(#fff, 0.1);
 $colorItemBg: buttonBg($colorBtnBg);
 $colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
-$colorListItemBgHov: rgba($colorKey, 0.1);
+$colorListItemBgHov: $colorSelectableItemBgHov;
 $colorItemFg: $colorBtnFg;
 $colorItemFgDetails: pushBack($colorItemFg, 20%);
 $shdwItemText: none;
@@ -485,21 +487,24 @@ $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, 0);
 
 // Time Strip and Lists
-$colorPastBg: #444;
-$colorPastFg: pushBack($colorBodyFg, 10%);
-$colorPastFgEm: $colorBodyFg;
-$colorCurrentBg: #666;
-$colorCurrentFg: $colorBodyFgEm;
-$colorCurrentFgEm: $colorBodyFgEm;
+$colorPastBg: #343434;
+$colorPastFg: #ffffff;
+$colorPastFgEm: $colorPastFg;
+$colorCurrentBg: #666666;
+$colorCurrentFg: #ffffff;
+$colorCurrentFgEm: $colorCurrentFg;
 $colorCurrentBorder: $colorBodyBg;
-$colorFutureBg: $colorPastBg;
+$colorFutureBg: #494949;
 $colorFutureFg: $colorCurrentFg;
-$colorFutureFgEm: $colorCurrentFgEm;
+$colorFutureFgEm: $colorFutureFg;
 $colorFutureBorder: $colorCurrentBorder;
 $colorInProgressBg: $colorTimeRealtimeBg;
 $colorInProgressFg: $colorTimeRealtimeFgSubtle;
 $colorInProgressFgEm: $colorTimeRealtimeFg;
 $colorGanttSelectedBorder: rgba(#fff, 0.3);
+$colorActivityStatusGreen: #4bad4b;
+$colorActivityStatusOrange: #b67e41;
+$opacitySubtle: 0.4;
 $colorEventLine: $colorBodyFg;
 $colorEventLineExtended: rgba($colorEventLine, 0.3);
 $colorTimeStripDraftBg: rgba(#a57748, 0.2);
@@ -510,7 +515,7 @@ $eventLineW: 1px;
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: rgba(#fff, 0.03);
+$colorItemTreeHoverBg: $colorSelectableItemBgHov;
 $colorItemTreeHoverFg: #fff;
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon;
