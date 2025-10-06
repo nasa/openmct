@@ -23,6 +23,7 @@
 import { EventEmitter } from 'eventemitter3';
 import { identifierEquals, makeKeyString, parseKeyString, refresh } from 'objectUtils';
 
+import { PLAN_EXECUTION_MONITORING_KEY } from '../../plugins/planExecutionMonitoring/planExecutionMonitoringIdentifier.js';
 import ConflictError from './ConflictError.js';
 import InMemorySearchProvider from './InMemorySearchProvider.js';
 import InterceptorRegistry from './InterceptorRegistry.js';
@@ -100,7 +101,8 @@ export default class ObjectAPI {
       'restricted-notebook',
       'plan',
       'annotation',
-      'activity-states'
+      'activity-states',
+      PLAN_EXECUTION_MONITORING_KEY
     ];
 
     this.errors = {
