@@ -31,7 +31,7 @@ const MISSING_NAME = `Missing: ${PLAN_EXECUTION_MONITORING_KEY}`;
 const DEFAULT_NAME = 'Plan Execution Monitoring';
 const planExecutionMonitoringIdentifier = createPlanExecutionMonitoringIdentifier();
 
-fdescribe('the plugin', () => {
+describe('the plugin', () => {
   let openmct;
   let missingObj = {
     identifier: planExecutionMonitoringIdentifier,
