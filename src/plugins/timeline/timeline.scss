@@ -2,6 +2,47 @@
   overflow: hidden;
 }
 
-.c-timeline__objects {
-  display: contents;
+.c-timeline {
+  &__objects {
+    display: contents;
+
+    .c-swimlane {
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    .c-object-view {
+      overflow-x: hidden;
+      overflow-y: scroll !important; // `scroll` ensures that right edges align in time
+    }
+  }
+
+  &__content {
+    &.--scales {
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+
+    &.--fixed {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+  }
+
+  &__overlay-lines {
+    @include abs();
+    opacity: 0.5;
+    top: 20px; // Offset down to line up with time axis ticks line
+    pointer-events: none; // Allows clicks to pass through
+    z-index: 10; // Ensure it sits atop swimlanes
+  }
+
+  &__no-items {
+    font-style: italic;
+    position: absolute;
+    left: $interiorMargin;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+  }
 }
