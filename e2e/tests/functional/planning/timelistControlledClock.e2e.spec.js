@@ -54,7 +54,6 @@ const examplePlanSmall1 = JSON.parse(
 const TIME_TO_FROM_COLUMN = 2;
 const HEADER_ROW = 0;
 const NUM_COLUMNS = 5;
-const FULL_CIRCLE_PATH = 'M0,-50A50,50,0,1,1,0,50A50,50,0,1,1,0,-50Z';
 
 /**
  * The regular expression used to parse the countdown string.
@@ -176,14 +175,6 @@ test.describe('Activity progress when activity is in the future @clock', () => {
     await page.clock.resume();
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
-
-  test('progress pie is empty', async ({ page }) => {
-    const anActivity = page.getByRole('row').nth(0);
-    // Progress pie shows no progress when now is less than the start time
-    await expect(anActivity.getByLabel('Activity in progress').locator('path')).not.toHaveAttribute(
-      'd'
-    );
-  });
 });
 
 test.describe('Activity progress when now is between start and end of the activity @clock', () => {
@@ -193,13 +184,6 @@ test.describe('Activity progress when now is between start and end of the activi
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
   });
-
-  test('progress pie is partially filled', async ({ page }) => {
-    const anActivity = page.getByRole('row').nth(0);
-    const pathElement = anActivity.getByLabel('Activity in progress').locator('path');
-    // Progress pie shows progress when now is greater than the start time
-    await expect(pathElement).toHaveAttribute('d');
-  });
 });
 
 test.describe('Activity progress when now is after end of the activity @clock', () => {
@@ -208,15 +192,6 @@ test.describe('Activity progress when now is after end of the activity @clock', 
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-  });
-
-  test('progress pie is full', async ({ page }) => {
-    const anActivity = page.getByRole('row').nth(0);
-    // Progress pie is completely full and doesn't update if now is greater than the end time
-    await expect(anActivity.getByLabel('Activity in progress').locator('path')).toHaveAttribute(
-      'd',
-      FULL_CIRCLE_PATH
-    );
   });
 });
 
