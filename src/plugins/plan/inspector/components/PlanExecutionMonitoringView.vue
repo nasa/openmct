@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { PLAN_EXECUTION_MONITORING_KEY } from '../../../constants.js';
+import { PLAN_EXECUTION_MONITORING_KEY } from '../../../planExecutionMonitoring/planExecutionMonitoringIdentifier.js';
 
 const executionMonitorStates = [
   {
