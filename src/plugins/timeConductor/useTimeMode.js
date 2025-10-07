@@ -99,7 +99,7 @@ export function useTimeMode(openmct, timeContext, independentTimeOptions, useInd
   }
 
   function setTimeMode(_timeMode) {
-    if (useIndependentTime.value) {
+    if (useIndependentTime?.value === true) {
       const boundsOrOffsets =
         _timeMode === FIXED_MODE_KEY
           ? independentTimeOptions.value.fixedOffsets
