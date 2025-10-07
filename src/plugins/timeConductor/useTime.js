@@ -60,14 +60,14 @@ import { useTimeSystem } from './useTimeSystem.js';
  *   getClockMetadata: import('vue').Ref<() => void>
  * }}
  */
-export function useTime(openmct, objectPath) {
+export function useTime(openmct, objectPath, independentTimeOptions, useIndependentTime) {
   const { timeContext } = useTimeContext(openmct, objectPath);
   const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } = useTimeSystem(
     openmct,
     timeContext
   );
   const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
-    useTimeMode(openmct, timeContext);
+    useTimeMode(openmct, timeContext, independentTimeOptions, useIndependentTime);
   const { bounds, isTick } = useTimeBounds(openmct, timeContext);
   const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
   const { offsets } = useClockOffsets(openmct, timeContext);

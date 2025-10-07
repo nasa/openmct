@@ -326,6 +326,9 @@ class IndependentTimeContext extends TimeContext {
       // TODO: not just in time every time setMode is called
       if (this.activeClock === undefined) {
         this.activeClock = this.globalTimeContext.getClock();
+        this.emit('clock', this.activeClock);
+        this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
+        this.activeClock.on('tick', this.tick);
       }
 
       if (this.activeClock === undefined) {
