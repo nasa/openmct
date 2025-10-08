@@ -310,7 +310,7 @@ export default {
     });
 
     watch(bounds, () => {
-      if (independentTCEnabled.value && isTick.value === false) {
+      if (independentTCEnabled.value && isTick.value === false && isFixedTimeMode.value === true) {
         saveFixedBounds();
       }
     });
