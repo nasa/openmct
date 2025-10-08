@@ -21,62 +21,51 @@
  *****************************************************************************/
 
 import { throttle } from 'lodash';
-import { onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
 
 import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 
 /**
- * @typedef {import('src/api/time/TimeContext.js').Bounds} Bounds
+ * @typedef {Number} currentValue current timestamp of time context clock
  */
 
 /**
- * Provides reactive `bounds`,
- * as well as a function to observe and update bounds changes,
+ * Provides reactive `currentValue` based on observed `tick` event,
  * which automatically stops observing when the component is unmounted.
  *
  * @param {import('openmct').OpenMCT} openmct - The Open MCT API
  * @param {import('src/api/time/TimeContext.js').default} timeContext - the time context
  * @returns {{
- *   bounds: import('vue').Ref<Bounds>,
- *   isTick: import('vue').Ref<boolean>
+ *   currentValue: import('vue').Ref<currentValue>
  * }}
  */
-export function useTimeBounds(openmct, timeContext, throttleRate) {
-  let stopObservingTimeBounds;
+export function useTick(openmct, timeContext, throttleRate) {
+  let stopObservingTick;
 
-  const bounds = shallowRef(timeContext.value.getBounds());
-  const isTick = ref(false);
+  const currentValue = ref(timeContext.value.now());
 
-  const updateTimeBounds = throttleRate
-    ? throttle(_updateTimeBounds, throttleRate, {
-        leading: true,
-        trailing: true
-      })
-    : _updateTimeBounds;
-  onBeforeUnmount(() => stopObservingTimeBounds?.());
+  const updateTick = throttleRate ? throttle(_updateTick, throttleRate) : _updateTick;
+  onBeforeUnmount(() => stopObservingTick?.());
 
   watch(
     timeContext,
     (newContext, oldContext) => {
-      oldContext?.off(TIME_CONTEXT_EVENTS.boundsChanged, updateTimeBounds);
-      observeTimeBounds();
+      oldContext?.off(TIME_CONTEXT_EVENTS.tick, updateTick);
+      observeTick();
     },
     { immediate: true }
   );
 
-  function observeTimeBounds() {
-    timeContext.value.on(TIME_CONTEXT_EVENTS.boundsChanged, updateTimeBounds);
-    stopObservingTimeBounds = () =>
-      timeContext.value.off(TIME_CONTEXT_EVENTS.boundsChanged, updateTimeBounds);
+  function observeTick() {
+    timeContext.value.on(TIME_CONTEXT_EVENTS.tick, updateTick);
+    stopObservingTick = () => timeContext.value.off(TIME_CONTEXT_EVENTS.tick, updateTick);
   }
 
-  function _updateTimeBounds(_timeBounds, _isTick) {
-    bounds.value = _timeBounds;
-    isTick.value = _isTick;
+  function _updateTick(timestamp) {
+    currentValue.value = timestamp;
   }
 
   return {
-    isTick,
-    bounds
+    currentValue
   };
 }

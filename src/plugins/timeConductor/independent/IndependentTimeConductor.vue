@@ -115,6 +115,7 @@ export default {
     const timeConductorOptionsHolder = ref(null);
     const conductorPopupComponent = ref(null);
     const openmct = inject('openmct');
+    const configuration = inject('configuration');
 
     const keyString = ref(openmct.objects.makeKeyString(props.domainObject.identifier));
     const independentTCEnabled = ref(props.domainObject.configuration?.useIndependentTime === true);
@@ -130,13 +131,14 @@ export default {
       isRealTimeMode,
       getAllModeMetadata,
       getModeMetadata,
+      currentValue,
       bounds,
       isTick,
       offsets,
       clock,
       getAllClockMetadata,
       getClockMetadata
-    } = useTime(openmct, () => props.objectPath, timeOptions, independentTCEnabled);
+    } = useTime(openmct, () => props.objectPath, configuration, timeOptions, independentTCEnabled);
 
     const { positionX, positionY, showConductorPopup, initializePopup, clearPopup } =
       useIndependentTimeConductorPopUp(
@@ -331,6 +333,7 @@ export default {
     provide('isRealTimeMode', isRealTimeMode);
     provide('getAllModeMetadata', getAllModeMetadata);
     provide('getModeMetadata', getModeMetadata);
+    provide('currentValue', currentValue);
     provide('bounds', bounds);
     provide('isTick', isTick);
     provide('offsets', offsets);

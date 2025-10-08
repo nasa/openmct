@@ -22,6 +22,7 @@
 
 import { useClock } from './useClock.js';
 import { useClockOffsets } from './useClockOffsets.js';
+import { useTick } from './useTick.js';
 import { useTimeBounds } from './useTimeBounds.js';
 import { useTimeContext } from './useTimeContext.js';
 import { useTimeMode } from './useTimeMode.js';
@@ -52,6 +53,7 @@ import { useTimeSystem } from './useTimeSystem.js';
  *   isRealTimeMode: import('vue').Ref<boolean>,
  *   getAllModeMetadata: import('vue').Ref<() => void>,
  *   getModeMetadata: import('vue').Ref<() => void>,
+ *   currentValue: import('vue').Ref<number>,
  *   bounds: import('vue').Ref<Bounds>,
  *   isTick: import('vue').Ref<boolean>,
  *   offsets: import('vue').Ref<ClockOffsets>,
@@ -60,7 +62,14 @@ import { useTimeSystem } from './useTimeSystem.js';
  *   getClockMetadata: import('vue').Ref<() => void>
  * }}
  */
-export function useTime(openmct, objectPath, independentTimeOptions, useIndependentTime) {
+export function useTime(
+  openmct,
+  objectPath,
+  configuration,
+  independentTimeOptions,
+  useIndependentTime
+) {
+  const throttleRate = configuration?.throttleRate ?? 300;
   const { timeContext } = useTimeContext(openmct, objectPath);
   const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } = useTimeSystem(
     openmct,
@@ -68,9 +77,10 @@ export function useTime(openmct, objectPath, independentTimeOptions, useIndepend
   );
   const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
     useTimeMode(openmct, timeContext, independentTimeOptions, useIndependentTime);
-  const { bounds, isTick } = useTimeBounds(openmct, timeContext);
+  const { bounds, isTick } = useTimeBounds(openmct, timeContext, throttleRate);
   const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
   const { offsets } = useClockOffsets(openmct, timeContext);
+  const { currentValue } = useTick(openmct, timeContext, throttleRate);
 
   return {
     timeContext,
@@ -82,6 +92,7 @@ export function useTime(openmct, objectPath, independentTimeOptions, useIndepend
     isRealTimeMode,
     getAllModeMetadata,
     getModeMetadata,
+    currentValue,
     bounds,
     isTick,
     offsets,

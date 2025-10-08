@@ -94,6 +94,8 @@ export default {
   mixins: [conductorPopUpManager],
   setup(props) {
     const openmct = inject('openmct');
+    const configuration = inject('configuration');
+
     const {
       timeContext,
       timeSystemFormatter,
@@ -104,14 +106,16 @@ export default {
       isRealTimeMode,
       getAllModeMetadata,
       getModeMetadata,
+      currentValue,
       bounds,
       isTick,
       offsets,
       clock,
       getAllClockMetadata,
       getClockMetadata
-    } = useTime(openmct);
+    } = useTime(openmct, undefined, configuration);
 
+    provide('configuration', configuration);
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
     provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
@@ -121,6 +125,7 @@ export default {
     provide('isRealTimeMode', isRealTimeMode);
     provide('getAllModeMetadata', getAllModeMetadata);
     provide('getModeMetadata', getModeMetadata);
+    provide('currentValue', currentValue);
     provide('bounds', bounds);
     provide('isTick', isTick);
     provide('offsets', offsets);
