@@ -71,17 +71,7 @@
 </template>
 
 <script>
-import {
-  computed,
-  inject,
-  onBeforeMount,
-  onBeforeUnmount,
-  onMounted,
-  provide,
-  ref,
-  toRaw,
-  watch
-} from 'vue';
+import { computed, inject, onBeforeMount, onBeforeUnmount, provide, ref, watch } from 'vue';
 
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
 
@@ -158,6 +148,7 @@ export default {
     });
 
     function initialize() {
+      timeOptions.value = props.domainObject.configuration?.timeOptions;
       if (independentTCEnabled.value) {
         registerIndependentTimeContext();
       }
