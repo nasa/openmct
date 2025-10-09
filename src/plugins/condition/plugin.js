@@ -21,6 +21,7 @@
  *****************************************************************************/
 import { v4 as uuid } from 'uuid';
 
+import ConditionInspectorViewProvider from './ConditionInspectorViewProvider.js';
 import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy.js';
 import ConditionSetMetadataProvider from './ConditionSetMetadataProvider.js';
 import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider.js';
@@ -37,6 +38,7 @@ export default function ConditionPlugin() {
       cssClass: 'icon-conditional',
       initialize: function (domainObject) {
         domainObject.configuration = {
+          shouldFetchHistorical: false,
           conditionTestData: [],
           conditionCollection: [
             {
@@ -61,5 +63,6 @@ export default function ConditionPlugin() {
     openmct.telemetry.addProvider(new ConditionSetMetadataProvider(openmct));
     openmct.telemetry.addProvider(new ConditionSetTelemetryProvider(openmct));
     openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new ConditionInspectorViewProvider(openmct));
   };
 }

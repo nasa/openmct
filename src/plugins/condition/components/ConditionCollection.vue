@@ -235,10 +235,11 @@ export default {
 
       return arr;
     },
-    addTelemetryObject(domainObject) {
+    async addTelemetryObject(domainObject) {
       const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      const telemetryPath = await this.getFullTelemetryPath(domainObject);
 
-      this.telemetryObjs.push(domainObject);
+      this.telemetryObjs.push({ ...domainObject, path: telemetryPath });
       this.$emit('telemetry-updated', this.telemetryObjs);
 
       this.subscribeToStaleness(domainObject, (stalenessResponse) => {
@@ -247,6 +248,19 @@ export default {
           stalenessResponse: stalenessResponse
         });
       });
+    },
+    async getFullTelemetryPath(telemetry) {
+      const keyString = this.openmct.objects.makeKeyString(telemetry.identifier);
+      const originalPathObjects = await this.openmct.objects.getOriginalPath(keyString, []);
+
+      const telemetryPath = originalPathObjects.reverse().map((pathObject) => {
+        if (pathObject.type !== 'root') {
+          return pathObject.name;
+        }
+        return undefined;
+      });
+
+      return telemetryPath.join('/');
     },
     removeTelemetryObject(identifier) {
       const keyString = this.openmct.objects.makeKeyString(identifier);
