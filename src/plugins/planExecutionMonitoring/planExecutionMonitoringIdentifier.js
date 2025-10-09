@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2025, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,44 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******************************* LIST VIEW */
-.c-list-view {
-  tbody tr {
-    background: $colorListItemBg;
-  }
 
-  td {
-    $p: $interiorMargin;
-    @include ellipsize();
-    line-height: 120%; // Needed for icon alignment
-    max-width: 0;
-    padding-top: $p;
-    padding-bottom: $p;
-    width: 25%;
-  }
+export const PLAN_EXECUTION_MONITORING_KEY = 'plan-execution-monitoring';
 
-  &--selectable {
-    body.desktop & {
-      tbody tr {
-        cursor: pointer;
-
-        &:hover {
-          background: $colorListItemBgHov;
-        }
-      }
-    }
-  }
-
-  &--sticky-header {
-    thead tr {
-      position: -webkit-sticky;
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-  }
-
-  .is-object-type-folder & {
-    tbody { font-size: 1.1em; }
-  }
+export function createPlanExecutionMonitoringIdentifier(namespace = '') {
+  return {
+    key: PLAN_EXECUTION_MONITORING_KEY,
+    namespace
+  };
 }
