@@ -151,7 +151,7 @@ test.describe('Time conductor operations', () => {
 
     await expect(page.getByLabel('Start date')).toHaveAttribute(
       'title',
-      'Specified start date exceeds end bound'
+      'Start bound must be less than end bound'
     );
     await expect(page.getByLabel('Start bounds')).not.toHaveText(`${DAY} ${TWO_O_CLOCK}.000Z`);
     await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
@@ -182,7 +182,7 @@ test.describe('Time conductor operations', () => {
 
     await expect(page.getByLabel('Start date')).toHaveAttribute(
       'title',
-      'Specified start date exceeds end bound'
+      'Start bound must be less than end bound'
     );
     await expect(page.getByLabel('Start bounds')).not.toHaveText(
       `${DAY_AFTER} ${ONE_O_CLOCK}.000Z`
