@@ -50,3 +50,4 @@ codecov
 
 # Don't commit MacOS screenshots
 *-darwin.png
+/.run/All Tests.run.xml

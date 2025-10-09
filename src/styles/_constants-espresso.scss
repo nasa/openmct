@@ -419,10 +419,12 @@ $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
 // Items
+$colorSelectableItemBg: transparent;
+$colorSelectableItemBgHov: rgba(#fff, 0.1);
 $colorItemBg: buttonBg($colorBtnBg);
 $colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
 $colorListItemBg: transparent;
-$colorListItemBgHov: rgba($colorKey, 0.1);
+$colorListItemBgHov: $colorSelectableItemBgHov; //$colorItemTreeHoverBg;
 $colorItemFg: $colorBtnFg;
 $colorItemFgDetails: $colorBodyFgSubtle;
 $shdwItemText: none;
@@ -490,9 +492,12 @@ $colorActivityStatusGreen: #4bad4b;
 $colorActivityStatusOrange: #b67e41;
 $opacitySubtle: 0.4;
 
+$colorABAhead: #33c56e;
+$colorABBehind: #ffa500;
+
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: rgba(#fff, 0.1);
+$colorItemTreeHoverBg: $colorSelectableItemBgHov;
 $colorItemTreeHoverFg: #fff;
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon;
