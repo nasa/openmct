@@ -953,3 +953,22 @@
 .bg-icon-derived-telemetry {
     @include glyphBg($bg-icon-derived-telemetry);
 }
+
+/************************** COLOR-ABLE BG SVG GLYPHS */
+@mixin bgDashedCircle($r: 14, $sw: 5, $sda: "6.2 6.2", $color: "#000000") {
+  // Renders a 6 segmented dashed circle as a background-image using SVG
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg fill='none' width='32' height='32' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='16' cy='16' r='#{$r}' stroke='%23#{str-slice(#{$color}, 2)}' stroke-width='#{$sw}' stroke-dasharray='#{$sda}'/%3e%3c/svg%3e");
+}
+
+@mixin bgCheckMark($color: "#000000") {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='21' height='20' viewBox='0 0 21 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M21 6.04102L7.04102 20H6.95898L0 13.041V6.95898L7 13.959L20.959 0H21V6.04102Z' fill='%23#{str-slice(#{$color}, 2)}'/%3e%3c/svg%3e ");
+}
+
+@mixin bgCircleSlash($color: "#000000") {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill-rule='evenodd' clip-rule='evenodd' d='M10 0C15.5228 0 20 4.47715 20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0ZM6.7627 16.0654C7.72753 16.5815 8.82935 16.875 10 16.875C13.797 16.875 16.875 13.797 16.875 10C16.875 8.82935 16.5815 7.72753 16.0654 6.7627L6.7627 16.0654ZM10 3.125C6.20304 3.125 3.125 6.20304 3.125 10C3.125 11.1702 3.41794 12.2718 3.93359 13.2363L13.2363 3.93359C12.2718 3.41794 11.1702 3.125 10 3.125Z' fill='%23#{str-slice(#{$color}, 2)}'/%3e%3c/svg%3e");
+}
+
+@mixin bgSkip($color: "#000000") {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12 3C14.7614 3 17 5.23858 17 8V12H20L15 17L10 12H13V8C13 7.44772 12.5523 7 12 7H8C7.44772 7 7 7.44772 7 8V11C7 13.7616 4.76097 15.9998 2 16H0V12H2C2.55243 11.9998 3 11.5519 3 11V8C3 5.23858 5.23858 3 8 3H12Z' fill='%23#{str-slice(#{$color}, 2)}'/%3e%3c/svg%3e ");
+}
+
