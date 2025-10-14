@@ -21,8 +21,44 @@
 -->
 <template>
   <div ref="axisHolder" class="c-timesystem-axis">
-    <div class="c-timesystem-axis__mb-line" :style="nowMarkerStyle" aria-label="Now Marker"></div>
-    <svg :width="svgWidth" :height="svgHeight">
+    <div v-if="showAheadBehind" class="c-ta-abi" :class="aheadOrBehindCSSClass">
+      <div class="c-ta-abi__icon icon-clock"></div>
+      <div class="c-ta-abi__connector"></div>
+      <div class="c-ta-abi__text">{{ formattedAheadBehindDuration }}</div>
+    </div>
+    <div ref="lineWrapper" class="c-timesystem-axis__line-wrapper" :style="lineWrapperStyle">
+      <div
+        ref="nowMarker"
+        class="c-timesystem-axis__mb-line"
+        :style="nowMarkerStyle"
+        aria-label="Now Marker"
+      >
+        <div
+          v-if="showAheadBehind"
+          ref="aheadBehindMarker"
+          class="c-timesystem-axis__ahead-behind-line"
+          :class="aheadOrBehindCSSClass"
+          :style="aheadBehindMarkerStyle"
+          aria-label="Ahead Behind Marker"
+        >
+          <svg
+            class="c-timesystem-axis__ahead-behind-connector"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <polygon
+              class="c-timesystem-axis__ahead-behind-connector--ahead"
+              points="0 0 100 0 100 100"
+            ></polygon>
+            <polygon
+              class="c-timesystem-axis__ahead-behind-connector--behind"
+              points="0 0 100 0 0 100"
+            ></polygon>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <svg class="c-timesystem-axis__ticks" :width="svgWidth" :height="svgHeight">
       <g class="axis" :transform="axisTransform"></g>
     </svg>
   </div>
@@ -38,6 +74,7 @@ import { inject, onMounted, reactive, ref } from 'vue';
 
 import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
+import { getPreciseDuration } from '../../utils/duration';
 import { useAlignment } from '../composables/alignmentContext';
 import { useResizeObserver } from '../composables/resize';
 
@@ -45,6 +82,20 @@ const PADDING = 1;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 const TIME_AXIS_LINE_Y = 20;
+const executionMonitorStates = [
+  {
+    key: 'nominal',
+    label: 'Nominal'
+  },
+  {
+    key: 'behind',
+    label: 'Behind by'
+  },
+  {
+    key: 'ahead',
+    label: 'Ahead by'
+  }
+];
 
 export default {
   inject: ['openmct', 'domainObject', 'path'],
@@ -72,6 +123,15 @@ export default {
       default() {
         return 'svg';
       }
+    },
+    aheadBehind: {
+      type: Object,
+      default() {
+        return {
+          duration: 0,
+          status: false
+        };
+      }
     }
   },
   setup() {
@@ -87,6 +147,16 @@ export default {
       height: '0px',
       left: '0px'
     });
+    const aheadBehindMarkerStyle = reactive({
+      width: '0px'
+    });
+    const lineWrapperStyle = reactive({
+      height: '0px'
+    });
+    const showAheadBehind = ref(false);
+    // The aheadOrBehindCSSClass has a default value of --ahead, but it will be hidden if there is not value for ahead/behind time
+    const aheadOrBehindCSSClass = ref('--ahead');
+    const formattedAheadBehindDuration = ref('');
 
     onMounted(() => {
       startObserving(axisHolder.value);
@@ -108,7 +178,12 @@ export default {
       leftAlignmentOffset,
       alignmentStyle,
       nowMarkerStyle,
-      openmct
+      openmct,
+      aheadBehindMarkerStyle,
+      lineWrapperStyle,
+      showAheadBehind,
+      aheadOrBehindCSSClass,
+      formattedAheadBehindDuration
     };
   },
   watch: {
@@ -133,15 +208,20 @@ export default {
     bounds(newBounds) {
       this.setDimensions();
       this.drawAxis(newBounds, this.timeSystem);
-      this.updateNowMarker();
+      this.updateTimeAxisMarkers();
     },
     timeSystem(newTimeSystem) {
       this.setDimensions();
       this.drawAxis(this.bounds, newTimeSystem);
-      this.updateNowMarker();
+      this.updateTimeAxisMarkers();
     },
     contentHeight() {
-      this.updateNowMarker();
+      this.updateLineWrapper();
+      this.updateTimeAxisMarkers();
+    },
+    aheadBehind() {
+      this.updateAheadBehindSettings();
+      this.updateTimeAxisMarkers();
     },
     containerSize: {
       handler() {
@@ -156,8 +236,7 @@ export default {
     }
 
     this.container = select(this.axisHolder);
-    this.svgElement = this.container.select('svg');
-    this.axisElement = this.svgElement.select('g.axis');
+    this.axisElement = this.container.select('.c-timesystem-axis__ticks').select('g.axis');
 
     this.refresh();
     this.resize();
@@ -174,19 +253,90 @@ export default {
     refresh() {
       this.setDimensions();
       this.drawAxis(this.bounds, this.timeSystem);
+      this.updateAheadBehindSettings();
+      this.updateLineWrapper();
       this.updateNowMarker();
+      this.updateAheadBehindMarker();
+    },
+    updateAheadBehindSettings() {
+      this.showAheadBehind = !this.isNominal() && this.aheadBehind.duration > 0;
+      this.aheadOrBehindCSSClass = this.getAheadOrBehindCSSClass();
+      this.aheadBehindDuration = this.aheadBehind.duration * 60 * 1000;
+      this.formattedAheadBehindDuration = getPreciseDuration(this.aheadBehindDuration, {
+        excludeMilliSeconds: true,
+        useDayFormat: true
+      });
+    },
+    getAheadOrBehindCSSClass() {
+      let cssClass = '';
+      if (this.isBehind()) {
+        cssClass = '--behind';
+      } else if (this.isAhead()) {
+        cssClass = '--ahead';
+      }
+
+      return cssClass;
+    },
+    isBehind() {
+      return (
+        this.aheadBehind.status &&
+        this.aheadBehind.duration &&
+        this.aheadBehind.status === executionMonitorStates[1].key
+      );
+    },
+    isAhead() {
+      return (
+        this.aheadBehind.status &&
+        this.aheadBehind.duration &&
+        this.aheadBehind.status === executionMonitorStates[2].key
+      );
+    },
+    isNominal() {
+      return (
+        !this.aheadBehind.duration ||
+        !this.aheadBehind.status ||
+        this.aheadBehind.status === executionMonitorStates[0].key
+      );
+    },
+    updateTimeAxisMarkers() {
+      this.updateNowMarker();
+      this.updateAheadBehindMarker();
+    },
+    updateLineWrapper() {
+      const lineWrapper = this.$refs.lineWrapper;
+      if (lineWrapper) {
+        this.lineWrapperStyle.height = this.contentHeight - TIME_AXIS_LINE_Y + 'px';
+      }
     },
     updateNowMarker() {
-      const nowMarker = this.$el.querySelector('.c-timesystem-axis__mb-line');
+      const nowMarker = this.$refs.nowMarker;
       if (nowMarker) {
         nowMarker.classList.remove('hidden');
         this.nowMarkerStyle.height = this.contentHeight - TIME_AXIS_LINE_Y + 'px';
-        this.nowMarkerStyle.top = TIME_AXIS_LINE_Y + 'px';
         const nowTimeStamp = this.openmct.time.now();
         const now = this.xScale(nowTimeStamp);
         this.nowMarkerStyle.left = `${now + this.leftAlignmentOffset}px`;
         if (now < 0 || now > this.width) {
           nowMarker.classList.add('hidden');
+        }
+      }
+    },
+    updateAheadBehindMarker() {
+      const aheadBehindMarker = this.$refs.aheadBehindMarker;
+      if (aheadBehindMarker) {
+        aheadBehindMarker.classList.remove('hidden');
+
+        const nowTimeStamp = this.openmct.time.now();
+        const now = this.xScale(nowTimeStamp);
+
+        if (now < 0 || now > this.width || this.isNominal()) {
+          aheadBehindMarker.classList.add('hidden');
+          this.aheadBehindMarkerStyle.width = '0px';
+        } else {
+          //We need the delta - we don't care if it's ahead or behind here.
+          const relativeAheadBehindDuration = this.aheadBehindDuration + nowTimeStamp;
+          const delta = this.xScale(relativeAheadBehindDuration) - now;
+          this.aheadBehindMarkerStyle.width = delta + 'px';
         }
       }
     },
@@ -208,6 +358,7 @@ export default {
       this.setAxis(viewBounds);
       this.axisElement.call(this.xAxis);
       this.updateNowMarker();
+      this.updateAheadBehindMarker();
     },
     setScale(bounds, timeSystem) {
       if (!this.width) {

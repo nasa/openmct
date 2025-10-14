@@ -453,8 +453,10 @@ $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
 // Items
+$colorSelectableItemBg: transparent;
+$colorSelectableItemBgHov: rgba(#fff, 0.1);
 $colorItemBg: buttonBg($colorBtnBg);
-$colorItemBgHov: buttonBg(pullForward($colorBtnBg, 5%));
+$colorItemBgHov: $colorSelectableItemBgHov;
 $colorListItemBg: transparent;
 $colorListItemBgHov: rgba($colorKey, 0.1);
 $colorItemFg: $colorBtnFg;
@@ -523,11 +525,13 @@ $colorEventLine: $colorBodyFg;
 $colorEventLineExtended: rgba($colorEventLine, 0.3);
 $colorTimeStripDraftBg: rgba(#a57748, 0.2);
 $colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$colorABAhead: #33c56e;
+$colorABBehind: #ffa500;
 $eventLineW: 1px;
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: rgba(#fff, 0.1);
+$colorItemTreeHoverBg: $colorSelectableItemBgHov;
 $colorItemTreeHoverFg: #fff;
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon;
