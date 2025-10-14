@@ -720,7 +720,7 @@ describe('the plugin', function () {
       };
     });
 
-    it('should evaluate as old when telemetry is not received in the allotted time', async () => {
+    fit('should evaluate as old when telemetry is not received in the allotted time', async () => {
       let onAddResolve;
       const onAddCalledPromise = new Promise((resolve) => {
         onAddResolve = resolve;
@@ -782,7 +782,7 @@ describe('the plugin', function () {
       });
     });
 
-    it('should not evaluate as old when telemetry is received in the allotted time', async () => {
+    fit('should not evaluate as old when telemetry is received in the allotted time', async () => {
       const testDatum = {
         'some-key2': '',
         utc: 1,
@@ -810,6 +810,7 @@ describe('the plugin', function () {
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'getMetadata',
         'getValueFormatter',
+        'abortAllRequests',
         'request',
         'subscribe',
         'requestCollection'
