@@ -258,7 +258,7 @@ export default class Condition extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.conditionManager.updateCurrentCondition(latestTimestamp, this);
+    this.conditionManager.updateCurrentCondition(latestTimestamp);
   }
 
   handleTelemetryStaleness() {

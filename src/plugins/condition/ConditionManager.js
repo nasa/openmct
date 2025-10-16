@@ -330,6 +330,10 @@ export default class ConditionManager extends EventEmitter {
     return currentCondition;
   }
 
+  getLatestDataTable() {
+    return this.#latestDataTable;
+  }
+
   getHistoricalData(options) {
     if (!this.conditionSetDomainObject.configuration.shouldFetchHistorical) {
       return [];
@@ -514,38 +518,44 @@ export default class ConditionManager extends EventEmitter {
 
   async processCondition(timestamp, telemetryObject, telemetryData) {
     const currentCondition = this.getCurrentCondition();
+    console.log('processCondition currentCondition', currentCondition);
     const conditionDetails = this.conditions.filter(
       (condition) => condition.id === currentCondition.id
     )?.[0];
     const conditionResult = currentCondition?.isDefault ? false : conditionDetails?.result;
     let telemetryValue = currentCondition.configuration.output;
+    console.log('processCondition currentCondition', conditionResult, telemetryValue, currentCondition?.configuration?.outputTelemetry, telemetryObject);
 
-    if (telemetryValue !== undefined && currentCondition?.configuration?.outputTelemetry) {
-      const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
-      const outputMetadata = currentCondition?.configuration?.outputMetadata;
-      const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+    if (telemetryValue !== undefined) {
+      if (currentCondition?.configuration?.outputTelemetry) {
+        const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
+        const outputMetadata = currentCondition?.configuration?.outputMetadata;
+        const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
-      if (selectedOutputIdentifier === telemetryKeystring) {
-        telemetryValue = telemetryData[outputMetadata];
-      } else {
-        const outputTelemetryObject = await this.openmct.objects.get(selectedOutputIdentifier);
-        const telemetryOptions = {
-          size: 1,
-          strategy: 'latest',
-          start: timestamp?.utc - 1000,
-          end: timestamp?.utc + 1000
-        };
-        const outputTelemetryData = await this.openmct.telemetry.request(
-          outputTelemetryObject,
-          telemetryOptions
-        );
-        const outputTelemetryValue =
-          outputTelemetryData?.length > 0 ? outputTelemetryData.slice(-1)[0] : null;
-        if (outputTelemetryData.length && outputTelemetryValue?.[outputMetadata]) {
-          telemetryValue = outputTelemetryValue?.[outputMetadata];
+        if (selectedOutputIdentifier === telemetryKeystring) {
+          telemetryValue = telemetryData[outputMetadata];
         } else {
-          telemetryValue = undefined;
+          const outputTelemetryObject = await this.openmct.objects.get(selectedOutputIdentifier);
+          const telemetryOptions = {
+            size: 1,
+            strategy: 'latest',
+            start: timestamp?.utc - 1000,
+            end: timestamp?.utc + 1000
+          };
+          const outputTelemetryData = await this.openmct.telemetry.request(
+            outputTelemetryObject,
+            telemetryOptions
+          );
+          const outputTelemetryValue =
+            outputTelemetryData?.length > 0 ? outputTelemetryData.slice(-1)[0] : null;
+          if (outputTelemetryData.length && outputTelemetryValue?.[outputMetadata]) {
+            telemetryValue = outputTelemetryValue?.[outputMetadata];
+          } else {
+            telemetryValue = undefined;
+          }
         }
+      } else if (currentCondition?.configuration?.output) {
+        telemetryValue = currentCondition?.configuration?.output;
       }
 
       this.emitConditionSetResult(
