@@ -22,11 +22,11 @@
 
 import mount from 'utils/mount';
 
-import PlanViewConfiguration from './components/PlanViewConfiguration.vue';
+import PlanExecutionMonitoringView from './components/PlanExecutionMonitoringView.vue';
 
-export default function GanttChartInspectorViewProvider(openmct) {
+export default function PlanInspectorViewProvider(openmct) {
   return {
-    key: 'plan-inspector',
+    key: 'plan-status-inspector',
     name: 'Config',
     canView: function (selection) {
       if (selection.length === 0 || selection[0].length === 0) {
@@ -35,7 +35,7 @@ export default function GanttChartInspectorViewProvider(openmct) {
 
       const domainObject = selection[0][0].context.item;
 
-      return domainObject?.type === 'gantt-chart';
+      return domainObject?.type === 'plan';
     },
     view: function (selection) {
       let _destroy = null;
@@ -46,13 +46,18 @@ export default function GanttChartInspectorViewProvider(openmct) {
             {
               el: element,
               components: {
-                PlanViewConfiguration
+                PlanExecutionMonitoringView
               },
               provide: {
-                openmct,
-                domainObject: selection[0][0].context.item
+                openmct
               },
-              template: '<plan-view-configuration></plan-view-configuration>'
+              data() {
+                return {
+                  planObject: selection[0][0].context.item
+                };
+              },
+              template:
+                '<plan-execution-monitoring-view :plan-object="planObject"></plan-execution-monitoring-view>'
             },
             {
               app: openmct.app,
@@ -62,7 +67,7 @@ export default function GanttChartInspectorViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.HIGH + 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
         },
         destroy: function () {
           if (_destroy) {
