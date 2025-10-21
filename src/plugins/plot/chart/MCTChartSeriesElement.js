@@ -22,13 +22,15 @@
 
 import eventHelpers from '../lib/eventHelpers.js';
 
+const bufferSize = 2000;
+
 /** @abstract */
 export default class MCTChartSeriesElement {
   constructor(series, chart, offset) {
     this.series = series;
     this.chart = chart;
     this.offset = offset;
-    this.buffer = new Float32Array(20000);
+    this.buffer = new Float32Array(bufferSize);
     this.count = 0;
 
     eventHelpers.extend(this);
@@ -128,7 +130,7 @@ export default class MCTChartSeriesElement {
   }
 
   reset() {
-    this.buffer = new Float32Array(20000);
+    this.buffer = new Float32Array(bufferSize);
     this.count = 0;
     if (this.offset.x) {
       this.series.getSeriesData().forEach(function (point, index) {
@@ -142,7 +144,7 @@ export default class MCTChartSeriesElement {
     let temp;
 
     if (remainingPoints <= pointsRequired) {
-      temp = new Float32Array(this.buffer.length + 20000);
+      temp = new Float32Array(this.buffer.length + bufferSize);
       temp.set(this.buffer);
       this.buffer = temp;
     }
