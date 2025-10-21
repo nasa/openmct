@@ -151,7 +151,7 @@ test.describe('Time conductor operations', () => {
 
     await expect(page.getByLabel('Start date')).toHaveAttribute(
       'title',
-      'Specified start date exceeds end bound'
+      'Start bound must be less than end bound'
     );
     await expect(page.getByLabel('Start bounds')).not.toHaveText(`${DAY} ${TWO_O_CLOCK}.000Z`);
     await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
@@ -170,10 +170,6 @@ test.describe('Time conductor operations', () => {
     // Open the time conductor popup
     await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
 
-    // FIXME: https://github.com/nasa/openmct/pull/7818
-    // eslint-disable-next-line playwright/no-wait-for-timeout
-    await page.waitForTimeout(500);
-
     await page.getByLabel('Start date').fill(DAY_AFTER);
     await page.getByLabel('Start time').fill(ONE_O_CLOCK);
     await page.getByLabel('End date').fill(DAY);
@@ -182,7 +178,7 @@ test.describe('Time conductor operations', () => {
 
     await expect(page.getByLabel('Start date')).toHaveAttribute(
       'title',
-      'Specified start date exceeds end bound'
+      'Start bound must be less than end bound'
     );
     await expect(page.getByLabel('Start bounds')).not.toHaveText(
       `${DAY_AFTER} ${ONE_O_CLOCK}.000Z`

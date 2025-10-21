@@ -36,8 +36,8 @@
       <ConductorClock :read-only="true" />
       <ConductorTimeSystem :read-only="true" />
     </div>
-    <ConductorInputsFixed v-if="isFixedTimeMode" :input-bounds="viewBounds" :read-only="true" />
-    <ConductorInputsRealtime v-else :input-bounds="viewBounds" :read-only="true" />
+    <ConductorInputsFixed v-if="isFixedTimeMode" :read-only="true" />
+    <ConductorInputsRealtime v-else :read-only="true" />
     <ConductorAxis
       v-if="isFixedTimeMode"
       class="c-conductor__ticks"
@@ -92,9 +92,10 @@ export default {
     ConductorPopUp
   },
   mixins: [conductorPopUpManager],
-  inject: ['openmct', 'configuration'],
   setup(props) {
     const openmct = inject('openmct');
+    const configuration = inject('configuration');
+
     const {
       timeContext,
       timeSystemFormatter,
@@ -105,14 +106,16 @@ export default {
       isRealTimeMode,
       getAllModeMetadata,
       getModeMetadata,
+      currentValue,
       bounds,
       isTick,
       offsets,
       clock,
       getAllClockMetadata,
       getClockMetadata
-    } = useTime(openmct);
+    } = useTime(openmct, undefined, configuration);
 
+    provide('configuration', configuration);
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
     provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
@@ -122,6 +125,7 @@ export default {
     provide('isRealTimeMode', isRealTimeMode);
     provide('getAllModeMetadata', getAllModeMetadata);
     provide('getModeMetadata', getModeMetadata);
+    provide('currentValue', currentValue);
     provide('bounds', bounds);
     provide('isTick', isTick);
     provide('offsets', offsets);
@@ -130,6 +134,7 @@ export default {
     provide('getClockMetadata', getClockMetadata);
 
     return {
+      openmct,
       timeSystemFormatter,
       isFixedTimeMode,
       bounds

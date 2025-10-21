@@ -66,6 +66,7 @@ export default {
   inject: [
     'openmct',
     'bounds',
+    'currentValue',
     'clock',
     'offsets',
     'timeSystemFormatter',
@@ -86,11 +87,6 @@ export default {
     }
   },
   emits: ['dismiss-inputs-realtime'],
-  data() {
-    return {
-      currentValue: this.clock.currentValue()
-    };
-  },
   computed: {
     formattedOffsets() {
       return {
@@ -102,15 +98,7 @@ export default {
       return this.timeSystemFormatter.format(this.currentValue);
     }
   },
-  watch: {
-    bounds() {
-      this.updateCurrentValue();
-    }
-  },
   methods: {
-    updateCurrentValue() {
-      this.currentValue = this.clock.currentValue();
-    },
     dismiss() {
       this.$emit('dismiss-inputs-realtime');
     }

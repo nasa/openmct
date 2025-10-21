@@ -1,5 +1,5 @@
 <template>
-  <div class="c-tc-input-popup" :class="popupClasses" :style="position">
+  <div ref="conductorPopupElement" class="c-tc-input-popup" :class="popupClasses" :style="position">
     <div class="c-tc-input-popup__options" aria-label="Time Conductor Options">
       <IndependentMode
         v-if="isIndependent"
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import ConductorClock from './ConductorClock.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
@@ -76,6 +78,12 @@ export default {
     }
   },
   emits: ['popup-loaded', 'dismiss'],
+  setup(props) {
+    const conductorPopupElement = ref(null);
+    return {
+      conductorPopupElement
+    };
+  },
   computed: {
     position() {
       const position = {

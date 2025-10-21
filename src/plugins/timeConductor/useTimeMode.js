@@ -39,6 +39,8 @@ import {
  *
  * @param {import('openmct').OpenMCT} openmct - The Open MCT API
  * @param {import('src/api/time/TimeContext.js').default} timeContext - The time context
+ * @param {import('vue').Ref<Object>} independentTimeOptions - time options for independent time conductor
+ * @param {import('vue').Ref<boolean>} useIndependentTime - Whether to follow independent time conductor
  * @returns {{
  *   timeMode: import('vue').Ref<Mode>,
  *   getAllModeMetadata: import('vue').Ref<() => void>,
@@ -47,7 +49,7 @@ import {
  *   isRealTimeMode: import('vue').Ref<boolean>
  * }}
  */
-export function useTimeMode(openmct, timeContext) {
+export function useTimeMode(openmct, timeContext, independentTimeOptions, useIndependentTime) {
   let stopObservingTimeMode;
 
   const timeMode = ref(timeContext.value.getMode());
@@ -97,7 +99,15 @@ export function useTimeMode(openmct, timeContext) {
   }
 
   function setTimeMode(_timeMode) {
-    timeContext.value.setMode(_timeMode);
+    if (useIndependentTime?.value === true) {
+      const boundsOrOffsets =
+        _timeMode === FIXED_MODE_KEY
+          ? independentTimeOptions.value.fixedOffsets
+          : independentTimeOptions.value.clockOffsets;
+      timeContext.value.setMode(_timeMode, boundsOrOffsets);
+    } else {
+      timeContext.value.setMode(_timeMode);
+    }
   }
 
   function updateTimeMode(_timeMode) {
