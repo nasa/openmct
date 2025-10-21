@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { evaluateResults } from './utils/evaluator.js';
+
 export default class HistoricalTelemetryProvider {
   constructor(openmct, telemetryObjects, conditions, conditionSetDomainObject, options) {
     this.openmct = openmct;
@@ -180,55 +182,103 @@ export default class HistoricalTelemetryProvider {
     });
   }
 
+  evaluateConditionsForTimestamp(historicalTelemetryMap, timestamp) {
+    const conditionResults = new Map();
+
+    for (const condition of this.conditions) {
+      const criteriaResults = condition.criteria.map((criterion) => {
+        if (criterion?.telemetry) {
+          const conditionInputTelemetryId = this.openmct.objects.makeKeyString(criterion.telemetry);
+          const inputTelemetry = historicalTelemetryMap.get(conditionInputTelemetryId);
+          return criterion.computeResult(inputTelemetry);
+        }
+        return false;
+      });
+
+      const result = evaluateResults(criteriaResults, condition.trigger);
+      conditionResults.set(condition.id, result);
+
+      if (result === true) {
+        // First condition to be true wins - stop processing
+        break;
+      }
+    }
+
+    return conditionResults;
+  }
+
+  getCurrentConditionForTimestamp(conditionResults, conditionCollectionMap) {
+    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
+    let currentCondition = conditionCollection[conditionCollection.length - 1];
+
+    for (let i = 0; i < conditionCollection.length - 1; i++) {
+      const conditionId = conditionCollection[i].id;
+      if (conditionResults.get(conditionId)) {
+        // First condition to be true wins
+        currentCondition = conditionCollection[i];
+        break;
+      }
+    }
+
+    return currentCondition;
+  }
+
+  processConditionOutput(historicalTelemetryMap, timestamp, currentCondition, conditionResults) {
+    const conditionResult = currentCondition?.isDefault
+      ? false
+      : conditionResults.get(currentCondition.id);
+    const conditionConfiguration = currentCondition?.configuration;
+    let output = conditionConfiguration?.output;
+
+    if (output !== undefined) {
+      if (conditionConfiguration?.outputTelemetry) {
+        const outputTelemetryID = this.openmct.objects.makeKeyString(
+          conditionConfiguration.outputTelemetry
+        );
+        const outputTelemetryData = historicalTelemetryMap.get(outputTelemetryID);
+        output = outputTelemetryData?.[conditionConfiguration.outputMetadata];
+      }
+
+      return {
+        condition: currentCondition,
+        id: this.conditionSetDomainObject.identifier,
+        output: output,
+        utc: timestamp,
+        result: conditionResult,
+        isDefault: currentCondition?.isDefault
+      };
+    }
+
+    return null;
+  }
+
   evaluateConditionsByDate(historicalTelemetryDateMap, conditionCollectionMap) {
     const outputTelemetryDateMap = new Map();
 
     historicalTelemetryDateMap.forEach((historicalTelemetryMap, timestamp) => {
-      let isConditionValid = false;
+      // Step 1: Evaluate all conditions for this timestamp
+      const conditionResults = this.evaluateConditionsForTimestamp(
+        historicalTelemetryMap,
+        timestamp
+      );
 
-      this.conditions.forEach((condition) => {
-        if (isConditionValid) {
-          return;
-        }
+      // Step 2: Determine which condition should be active
+      const currentCondition = this.getCurrentConditionForTimestamp(
+        conditionResults,
+        conditionCollectionMap
+      );
 
-        const conditionCriteria = condition.criteria[0];
-        let result;
+      // Step 3: Process the output for the current condition
+      const conditionOutput = this.processConditionOutput(
+        historicalTelemetryMap,
+        timestamp,
+        currentCondition,
+        conditionResults
+      );
 
-        if (conditionCriteria?.telemetry) {
-          const conditionInputTelemetryId = this.openmct.objects.makeKeyString(
-            conditionCriteria.telemetry
-          );
-          const inputTelemetry = historicalTelemetryMap.get(conditionInputTelemetryId);
-          result = conditionCriteria.computeResult(inputTelemetry);
-        } else if (!conditionCriteria) {
-          const conditionDetails = conditionCollectionMap.get(condition.id);
-          const { isDefault, outputTelemetry } = conditionDetails;
-
-          if (isDefault && (outputTelemetry || condition.configuration.output)) {
-            const conditionOutput = this.evaluateCondition(
-              historicalTelemetryDateMap,
-              timestamp,
-              condition,
-              conditionCollectionMap
-            );
-            conditionOutput.result = false;
-            conditionOutput.isDefault = true;
-            outputTelemetryDateMap.set(timestamp, conditionOutput);
-          }
-        }
-
-        if (result === true) {
-          isConditionValid = true;
-          const conditionOutput = this.evaluateCondition(
-            historicalTelemetryDateMap,
-            timestamp,
-            condition,
-            conditionCollectionMap
-          );
-          conditionOutput.result = true;
-          outputTelemetryDateMap.set(timestamp, conditionOutput);
-        }
-      });
+      if (conditionOutput) {
+        outputTelemetryDateMap.set(timestamp, conditionOutput);
+      }
     });
 
     return outputTelemetryDateMap;

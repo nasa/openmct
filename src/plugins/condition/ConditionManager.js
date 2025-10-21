@@ -330,10 +330,6 @@ export default class ConditionManager extends EventEmitter {
     return currentCondition;
   }
 
-  getLatestDataTable() {
-    return this.#latestDataTable;
-  }
-
   getHistoricalData(options) {
     if (!this.conditionSetDomainObject.configuration.shouldFetchHistorical) {
       return [];
@@ -524,14 +520,13 @@ export default class ConditionManager extends EventEmitter {
     )?.[0];
     const conditionResult = currentCondition?.isDefault ? false : conditionDetails?.result;
     let telemetryValue = currentCondition.configuration.output;
-    console.log('processCondition currentCondition', conditionResult, telemetryValue, currentCondition?.configuration?.outputTelemetry, telemetryObject);
 
     if (telemetryValue !== undefined) {
       if (currentCondition?.configuration?.outputTelemetry) {
         const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
         const outputMetadata = currentCondition?.configuration?.outputMetadata;
         const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-
+        console.log('telemetryData', telemetryData);
         if (selectedOutputIdentifier === telemetryKeystring) {
           telemetryValue = telemetryData[outputMetadata];
         } else {
