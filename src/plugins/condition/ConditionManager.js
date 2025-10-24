@@ -334,6 +334,7 @@ export default class ConditionManager extends EventEmitter {
     if (!this.conditionSetDomainObject.configuration.shouldFetchHistorical) {
       return [];
     }
+
     let historicalTelemetry = new HistoricalTelemetryProvider(
       this.openmct,
       this.telemetryObjects,
@@ -514,7 +515,6 @@ export default class ConditionManager extends EventEmitter {
 
   async processCondition(timestamp, telemetryObject, telemetryData) {
     const currentCondition = this.getCurrentCondition();
-    console.log('processCondition currentCondition', currentCondition);
     const conditionDetails = this.conditions.filter(
       (condition) => condition.id === currentCondition.id
     )?.[0];
@@ -526,7 +526,8 @@ export default class ConditionManager extends EventEmitter {
         const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
         const outputMetadata = currentCondition?.configuration?.outputMetadata;
         const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-        console.log('telemetryData', telemetryData);
+        const timeSystemKey = this.openmct.time.getTimeSystem().key;
+
         if (selectedOutputIdentifier === telemetryKeystring) {
           telemetryValue = telemetryData[outputMetadata];
         } else {
@@ -534,8 +535,8 @@ export default class ConditionManager extends EventEmitter {
           const telemetryOptions = {
             size: 1,
             strategy: 'latest',
-            start: timestamp?.utc - 1000,
-            end: timestamp?.utc + 1000
+            start: timestamp?.[timeSystemKey] - 1000,
+            end: timestamp?.[timeSystemKey] + 1000
           };
           const outputTelemetryData = await this.openmct.telemetry.request(
             outputTelemetryObject,

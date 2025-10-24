@@ -32,12 +32,17 @@ export default class HistoricalTelemetryProvider {
     this.conditionSetDomainObject = conditionSetDomainObject;
     this.historicalTelemetryPoolMap = new Map();
     this.historicalTelemetryDateMap = new Map();
+    this.timeSystem = this.openmct.time.getTimeSystem();
     this.index = 0;
     this.options = options;
   }
 
   setTimeBounds(bounds) {
     this.bounds = bounds;
+  }
+
+  setTimeSystem(timeSystem) {
+    this.timeSystemKey = timeSystem.key;
   }
 
   async refreshHistoricalTelemetry(domainObject, identifier) {
@@ -81,66 +86,67 @@ export default class HistoricalTelemetryProvider {
     const outputTelemetries = [];
     const historicalTelemetryPoolPromises = [];
 
-    conditionCollection.forEach((condition, index) => {
-      const { criteria, outputTelemetry } = condition.configuration;
-      const inputTelemetry = criteria?.[0]?.telemetry;
-      conditionCollectionMap.set(condition?.id, condition);
-      if (inputTelemetry) {
-        const inputTelemetryId = this.openmct.objects.makeKeyString(inputTelemetry);
-        if (![...inputTelemetries, ...outputTelemetries].includes(inputTelemetryId)) {
+    const hasAnyAllTelemetry = conditionCollection.some(condition => 
+      condition.configuration.criteria.some(criterion => 
+        criterion.telemetry === 'any' || criterion.telemetry === 'all'
+      )
+    );
+
+    if (hasAnyAllTelemetry) {
+      // Short-circuit and fetch ALL telemetry objects from composition
+      this.conditionSetDomainObject.composition.forEach(telemetryRef => {
+        const telemetryId = this.openmct.objects.makeKeyString(telemetryRef);
+        if (![...inputTelemetries, ...outputTelemetries].includes(telemetryId)) {
           historicalTelemetryPoolPromises.push(
-            this.refreshHistoricalTelemetry(null, inputTelemetry)
+            this.refreshHistoricalTelemetry(null, telemetryRef)
           );
+          inputTelemetries.push(telemetryId);
         }
-        inputTelemetries.push(inputTelemetryId);
-      } else {
-        inputTelemetries.push(null);
-      }
-      if (outputTelemetry) {
-        if (![...inputTelemetries, ...outputTelemetries].includes(outputTelemetry)) {
-          historicalTelemetryPoolPromises.push(
-            this.refreshHistoricalTelemetry(null, outputTelemetry)
-          );
+      });
+    } else {
+      // Normal processing: only fetch specific telemetry objects
+      conditionCollection.forEach((condition, index) => {
+        const { criteria, outputTelemetry } = condition.configuration;
+        conditionCollectionMap.set(condition?.id, condition);
+
+        criteria.forEach((criterion) => {
+          const inputTelemetry = criterion?.telemetry;
+          
+          if (inputTelemetry) {
+            const inputTelemetryId = this.openmct.objects.makeKeyString(inputTelemetry);
+            if (![...inputTelemetries, ...outputTelemetries].includes(inputTelemetryId)) {
+              historicalTelemetryPoolPromises.push(
+                this.refreshHistoricalTelemetry(null, inputTelemetry)
+              );
+            }
+            inputTelemetries.push(inputTelemetryId);
+          }
+        });
+
+        // Handle output telemetry outside of criteria loop, only need to fetch once at condition level
+        if (outputTelemetry) {
+          if (![...inputTelemetries, ...outputTelemetries].includes(outputTelemetry)) {
+            historicalTelemetryPoolPromises.push(
+              this.refreshHistoricalTelemetry(null, outputTelemetry)
+            );
+          }
+          outputTelemetries.push(outputTelemetry);
         }
-        outputTelemetries.push(outputTelemetry);
-      } else {
-        outputTelemetries.push(null);
-      }
-    });
+      });
+    }
 
     const historicalTelemetriesPool = await Promise.all(historicalTelemetryPoolPromises);
+    
     return {
       historicalTelemetriesPool,
-      inputTelemetries,
-      outputTelemetries,
       conditionCollectionMap
     };
   }
 
-  sortTelemetriesByDate(historicalTelemetriesPool) {
-    const historicalTelemetryDateMap = new Map();
-    historicalTelemetriesPool.forEach((historicalTelemetryList) => {
-      const { historicalTelemetry, domainObject } = historicalTelemetryList;
-      const { identifier } = domainObject;
-      const telemetryIdentifier = this.openmct.objects.makeKeyString(identifier);
-      historicalTelemetry.forEach((historicalTelemetryItem) => {
-        if (!historicalTelemetryDateMap.get(historicalTelemetryItem.utc)) {
-          const telemetryMap = new Map();
-          telemetryMap.set(telemetryIdentifier, historicalTelemetryItem);
-          historicalTelemetryDateMap.set(historicalTelemetryItem.utc, telemetryMap);
-        } else {
-          const telemetryMap = historicalTelemetryDateMap.get(historicalTelemetryItem.utc);
-          telemetryMap.set(telemetryIdentifier, historicalTelemetryItem);
-          historicalTelemetryDateMap.set(historicalTelemetryItem.utc, telemetryMap);
-        }
-      });
-    });
-    return historicalTelemetryDateMap;
-  }
-
   async sortTelemetriesInWorker(historicalTelemetriesPool) {
     const sortedTelemetries = await this.startWorker('sortTelemetries', {
-      historicalTelemetriesPool
+      historicalTelemetriesPool,
+      timeSystemKey: this.timeSystem.key
     });
     return sortedTelemetries;
   }
@@ -243,7 +249,7 @@ export default class HistoricalTelemetryProvider {
         condition: currentCondition,
         id: this.conditionSetDomainObject.identifier,
         output: output,
-        utc: timestamp,
+        [this.timeSystem.key]: timestamp,
         result: conditionResult,
         isDefault: currentCondition?.isDefault
       };
@@ -306,6 +312,7 @@ export default class HistoricalTelemetryProvider {
 
   async getHistoricalData() {
     this.setTimeBounds(this.openmct.time.getBounds());
+    this.setTimeSystem(this.openmct.time.getTimeSystem());
     const outputTelemetryMap = await this.getHistoricalInputsByDate();
     const formattedOutputTelemetry = this.formatOutputData(outputTelemetryMap);
 
@@ -315,17 +322,19 @@ export default class HistoricalTelemetryProvider {
   formatOutputData(outputTelemetryMap) {
     const outputTelemetryList = [];
     const domainObject = this.conditionSetDomainObject;
+
     outputTelemetryMap.forEach((outputMetadata, timestamp) => {
       const { condition, value, result, isDefault } = outputMetadata;
       outputTelemetryList.push({
         conditionId: condition.id,
         id: domainObject.identifier,
         output: value,
-        utc: timestamp,
+        [this.timeSystem.key]: timestamp,
         result,
         isDefault
       });
     });
+
     return outputTelemetryList;
   }
 }
