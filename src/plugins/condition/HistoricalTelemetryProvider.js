@@ -205,11 +205,11 @@ export default class HistoricalTelemetryProvider {
       conditionResults.set(condition.id, result);
 
       if (result === true) {
-        // First condition to be true wins - stop processing
         break;
       }
     }
 
+    // If no condition was true, return all results (including the default)
     return conditionResults;
   }
 
@@ -267,13 +267,14 @@ export default class HistoricalTelemetryProvider {
         historicalTelemetryMap,
         timestamp
       );
+      console.log('evaluateConditionsByDate', conditionResults);
 
       // Step 2: Determine which condition should be active
       const currentCondition = this.getCurrentConditionForTimestamp(
         conditionResults,
         conditionCollectionMap
       );
-
+      console.log('getCurrentConditionForTimestamp', currentCondition);
       // Step 3: Process the output for the current condition
       const conditionOutput = this.processConditionOutput(
         historicalTelemetryMap,
@@ -281,7 +282,7 @@ export default class HistoricalTelemetryProvider {
         currentCondition,
         conditionResults
       );
-
+      console.log('processConditionOutput', conditionOutput);
       if (conditionOutput) {
         outputTelemetryDateMap.set(timestamp, conditionOutput);
       }
@@ -325,6 +326,7 @@ export default class HistoricalTelemetryProvider {
 
     outputTelemetryMap.forEach((outputMetadata, timestamp) => {
       const { condition, value, result, isDefault } = outputMetadata;
+
       outputTelemetryList.push({
         conditionId: condition.id,
         id: domainObject.identifier,
