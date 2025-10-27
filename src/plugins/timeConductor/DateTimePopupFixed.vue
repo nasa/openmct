@@ -332,7 +332,6 @@ export default {
         if (validationResult.valid !== true) {
           input.setCustomValidity(validationResult.message);
           input.title = validationResult.message;
-          this.hasLogicalValidationErrors = true;
         } else {
           input.setCustomValidity('');
           input.title = '';
