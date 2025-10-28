@@ -22,7 +22,7 @@
 
 import eventHelpers from '../lib/eventHelpers.js';
 
-const bufferSize = 2000;
+const bufferSize = 500;
 
 /** @abstract */
 export default class MCTChartSeriesElement {
