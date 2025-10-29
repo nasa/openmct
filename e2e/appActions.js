@@ -560,7 +560,7 @@ async function setFixedIndependentTimeConductorBounds(page, { start, end }) {
   await page.getByLabel('Enable Independent Time Conductor').click();
 
   // Bring up the time conductor popup
-  await page.getByLabel('Independent Time Conductor Settings').click();
+  await page.getByLabel('Independent Time Conductor Panel').click();
   await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
   await _setTimeBounds(page, start, end);
 
