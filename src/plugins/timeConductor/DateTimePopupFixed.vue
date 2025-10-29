@@ -224,7 +224,8 @@ export default {
       const bound = this.timeSystemFormatter.parse(timeStampString);
       this.formattedBounds[`${startOrEnd}Date`] = this.timeSystemFormatter.formatDate(bound);
       this.formattedBounds[`${startOrEnd}Time`] = this.timeSystemDurationFormatter.format(
-        Math.abs(bound)
+        Math.abs(bound),
+        'HH:mm:ss.SSS'
       );
 
       this.validateInput([`${startOrEnd}Date`, `${startOrEnd}Time`]);
@@ -332,7 +333,6 @@ export default {
         if (validationResult.valid !== true) {
           input.setCustomValidity(validationResult.message);
           input.title = validationResult.message;
-          this.hasLogicalValidationErrors = true;
         } else {
           input.setCustomValidity('');
           input.title = '';

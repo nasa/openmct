@@ -37,6 +37,8 @@
           aria-label="Start time"
           @input="validateInput('start')"
           @change="reportValidity('start')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
         />
         <DatePicker
           v-if="isTimeSystemUTCBased"
@@ -59,6 +61,8 @@
           aria-label="End time"
           @input="validateInput('end')"
           @change="reportValidity('end')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
         />
         <DatePicker
           v-if="isTimeSystemUTCBased"
@@ -139,6 +143,36 @@ export default {
     this.clearAllValidation();
   },
   methods: {
+    async copyToClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(this.formattedBounds[startOrEnd]);
+      } catch (err) {
+        this.openmct.notifications.error('Failed to copy timestamp to clipboard');
+        console.error(err);
+      }
+    },
+    async pasteFromClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      try {
+        this.formattedBounds[startOrEnd] = await navigator.clipboard.readText();
+      } catch (err) {
+        this.openmct.notifications.error('Failed to get timestamp from clipboard');
+        console.error(err);
+        return;
+      }
+
+      this.validateInput(startOrEnd);
+      this.reportValidity(startOrEnd);
+    },
     setViewFromBounds() {
       const start = this.timeSystemFormatter.format(this.bounds.start);
       const end = this.timeSystemFormatter.format(this.bounds.end);
@@ -220,7 +254,6 @@ export default {
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
-        this.hasLogicalValidationErrors = true;
       } else {
         input.setCustomValidity('');
         input.title = '';
