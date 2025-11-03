@@ -140,7 +140,6 @@ export default {
     }
   },
   emits: ['move', 'end-move', 'format-changed', 'title-changed', 'context-click'],
-  emits: ['move', 'end-move', 'format-changed', 'context-click'],
   data() {
     return {
       currentObjectPath: undefined,
