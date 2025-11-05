@@ -230,7 +230,7 @@ export default class PlotSeries extends Model {
       const newPoints = _(data)
         .concat(points)
         .sortBy(this.getXVal)
-        .uniq(true, (point) => [this.getXVal(point), this.getYVal(point)].join())
+        .uniqBy(true, (point) => [this.getXVal(point), this.getYVal(point)].join())
         .value();
       this.reset(newPoints);
     } catch (error) {
