@@ -366,6 +366,12 @@ export default {
       this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     onAddPoint(point, insertIndex, series) {
+      // if user is not looking at data within the current bounds, don't draw the point
+      if (this.pointIsInRange(point, series)) {
+        this.scheduleDraw();
+      }
+    },
+    pointIsInRange(point, series) {
       const mainYAxisId = this.config.yAxis.get('id');
       const seriesYAxisId = series.get('yAxisId');
       const xRange = this.config.xAxis.get('displayRange');
@@ -378,19 +384,12 @@ export default {
           .find((yAxis) => yAxis.get('id') === seriesYAxisId)
           .get('displayRange');
       }
-
       const xValue = series.getXVal(point);
       const yValue = series.getYVal(point);
-
       // if user is not looking at data within the current bounds, don't draw the point
-      if (
-        xValue > xRange.min &&
-        xValue < xRange.max &&
-        yValue > yRange.min &&
-        yValue < yRange.max
-      ) {
-        this.scheduleDraw();
-      }
+      return (
+        xValue > xRange.min && xValue < xRange.max && yValue > yRange.min && yValue < yRange.max
+      );
     },
     changeInterpolate(mode, o, series) {
       if (mode === o) {
@@ -478,6 +477,12 @@ export default {
         this.chartResizeObserver.disconnect();
       }
     },
+    resetOffsets(offset) {
+      delete offset.x;
+      delete offset.y;
+      delete offset.xVal;
+      delete offset.yVal;
+    },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
       delete this.offset[yAxisId].y;
       delete this.offset[yAxisId].xVal;
@@ -505,17 +510,16 @@ export default {
         pointSet.reset();
       });
     },
-    setOffset(offsetPoint, index, series) {
+    setOffset(offsetPoint, series) {
       const mainYAxisId = this.config.yAxis.get('id');
       const yAxisId = series.get('yAxisId') || mainYAxisId;
       if (this.offset[yAxisId].x && this.offset[yAxisId].y) {
         return;
       }
 
-      const offsets = {
-        x: series.getXVal(offsetPoint),
-        y: series.getYVal(offsetPoint)
-      };
+      let offsets = {};
+      offsets.x = series.getXVal(offsetPoint);
+      offsets.y = series.getYVal(offsetPoint);
 
       this.offset[yAxisId].x = function (x) {
         return x - offsets.x;
