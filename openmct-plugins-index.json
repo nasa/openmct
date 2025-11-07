@@ -1,0 +1,8 @@
+{
+    "$schema": "./openmct-plugins-index-schema.json",
+    "plugins": [{
+        "npmPackageName": "akhenry/openmct-yamcs"
+    }, {
+        "npmPackageName": "NASA-AMMOS/openmct-mcws#v5.4.0-rc3"
+    }]
+}
