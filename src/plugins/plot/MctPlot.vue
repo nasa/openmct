@@ -1465,15 +1465,15 @@ export default {
       // Don't zoom if mouse moved less than 7.5 pixels.
       if (marqueeDistance > 7.5) {
         this.config.xAxis.set('displayRange', {
-          min: Math.min(this.marquee.start.x, this.marquee.end.x),
-          max: Math.max(this.marquee.start.x, this.marquee.end.x)
+          min: Math.round(Math.min(this.marquee.start.x, this.marquee.end.x)),
+          max: Math.round(Math.max(this.marquee.start.x, this.marquee.end.x))
         });
         this.yAxisListWithRange.forEach((yAxis) => {
           const yStartPosition = this.getYPositionForYAxis(this.marquee.start, yAxis);
           const yEndPosition = this.getYPositionForYAxis(this.marquee.end, yAxis);
           yAxis.set('displayRange', {
-            min: Math.min(yStartPosition, yEndPosition),
-            max: Math.max(yStartPosition, yEndPosition)
+            min: Math.round(Math.min(yStartPosition, yEndPosition)),
+            max: Math.round(Math.max(yStartPosition, yEndPosition))
           });
         });
         this.userViewportChangeEnd();
