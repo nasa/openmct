@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { antisymlog, symlog } from './mathUtils.js';
 
 const e10 = Math.sqrt(50);
@@ -8,6 +9,10 @@ const e2 = Math.sqrt(2);
  * Nicely formatted tick steps from d3-array.
  */
 function tickStep(start, stop, count) {
+  // fix-1
+  if (count <= 0 || !Number.isFinite(count)) {
+    throw new Error('Count must be a positive finite number');
+  }
   const step0 = Math.abs(stop - start) / Math.max(0, count);
   let step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10));
   const error = step0 / step1;
@@ -63,10 +68,12 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
     const nextTick = mainTicks[i + 1];
     const rangeBetweenMainTicks = nextTick - tick;
 
+    // fix-2
+    const adjustedTickCount = Math.max(1, secondaryTickCount - 2);
     const secondaryLogTicks = ticks(
       tick + rangeBetweenMainTicks / (secondaryTickCount + 1),
       nextTick - rangeBetweenMainTicks / (secondaryTickCount + 1),
-      secondaryTickCount - 2
+      adjustedTickCount
     ).map((n) => symlog(n, 10));
 
     result.push(...secondaryLogTicks);
@@ -76,7 +83,7 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
 
   return result;
 }
-
+// getLogTicks(0, 100, 4, 2);
 /**
  * Linear tick generation from d3-array.
  */
@@ -154,3 +161,4 @@ export function getFormattedTicks(newTicks, format) {
 
   return newTicks;
 }
+
