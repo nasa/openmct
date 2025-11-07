@@ -510,6 +510,12 @@ export default {
         pointSet.reset();
       });
     },
+    // This function is designed to establish a relative coordinate system for a data series.
+    // It defines a specific data point as the new origin (0, 0).
+    // In the context of plotting large time-series data using relative time,
+    // this function is a key step in implementing the "Relative Time".
+    // It shifts the entire series so that one chosen point (offsets) now corresponds to zero on both the X and Y axes.
+    // Any subsequent data points are then plotted relative to this new origin (x - offsets.x and y - offsets.y)
     setOffset(offsetPoint, series) {
       const mainYAxisId = this.config.yAxis.get('id');
       const yAxisId = series.get('yAxisId') || mainYAxisId;
@@ -517,6 +523,7 @@ export default {
         return;
       }
 
+      // Set the origin point.
       let offsets = {};
       offsets.x = series.getXVal(offsetPoint);
       offsets.y = series.getYVal(offsetPoint);
