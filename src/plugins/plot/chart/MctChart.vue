@@ -411,6 +411,12 @@ export default {
         this.lines.push(newLine);
       }
     },
+    resetOffsets(offset) {
+      delete offset.x;
+      delete offset.y;
+      delete offset.xVal;
+      delete offset.yVal;
+    },
     changeAlarmMarkers(mode, o, series) {
       if (mode === o) {
         return;
