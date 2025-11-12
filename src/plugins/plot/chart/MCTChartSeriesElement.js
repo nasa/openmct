@@ -22,14 +22,17 @@
 
 import eventHelpers from '../lib/eventHelpers.js';
 
+const bufferSize = 20000;
+
 /** @abstract */
 export default class MCTChartSeriesElement {
   constructor(series, chart, offset) {
     this.series = series;
     this.chart = chart;
     this.offset = offset;
-    this.buffer = new Float32Array(20000);
+    this.buffer = new Float32Array(bufferSize);
     this.count = 0;
+    this.indexCount = 0;
 
     eventHelpers.extend(this);
 
@@ -94,7 +97,7 @@ export default class MCTChartSeriesElement {
 
   makePoint(point, series) {
     if (!this.offset.xVal) {
-      this.chart.setOffset(point, undefined, series);
+      this.chart.setOffset(point, series);
     }
 
     return {
@@ -104,12 +107,15 @@ export default class MCTChartSeriesElement {
   }
 
   append(point, index, series) {
-    const pointsRequired = this.vertexCountForPointAtIndex(index);
-    const insertionPoint = this.startIndexForPointAtIndex(index);
-    this.growIfNeeded(pointsRequired);
-    this.makeInsertionPoint(insertionPoint, pointsRequired);
-    this.addPoint(this.makePoint(point, series), insertionPoint);
-    this.count += pointsRequired / 2;
+    if (this.chart.pointIsInRange(point, series)) {
+      const pointsRequired = this.vertexCountForPointAtIndex(this.indexCount);
+      const insertionPoint = this.startIndexForPointAtIndex(this.indexCount);
+      this.growIfNeeded(pointsRequired);
+      this.makeInsertionPoint(insertionPoint, pointsRequired);
+      this.addPoint(this.makePoint(point, series), insertionPoint);
+      this.count += pointsRequired / 2;
+      this.indexCount++;
+    }
   }
 
   makeInsertionPoint(insertionPoint, pointsRequired) {
@@ -128,9 +134,13 @@ export default class MCTChartSeriesElement {
   }
 
   reset() {
-    this.buffer = new Float32Array(20000);
+    this.buffer = new Float32Array(bufferSize);
     this.count = 0;
+    this.indexCount = 0;
     if (this.offset.x) {
+      // reset the offset since we're starting over
+      // TODO: handle what happens when we zoom out - do we request the data again?
+      this.chart.resetOffsets(this.offset);
       this.series.getSeriesData().forEach(function (point, index) {
         this.append(point, index, this.series);
       }, this);
@@ -142,7 +152,7 @@ export default class MCTChartSeriesElement {
     let temp;
 
     if (remainingPoints <= pointsRequired) {
-      temp = new Float32Array(this.buffer.length + 20000);
+      temp = new Float32Array(this.buffer.length + bufferSize);
       temp.set(this.buffer);
       this.buffer = temp;
     }
