@@ -14,14 +14,17 @@
     "test:visual": "percy exec"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.8.5",
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
-    "@playwright/test": "1.48.1",
-    "@axe-core/playwright": "4.8.5"
+    "@playwright/test": "^1.56.1"
   },
   "author": {
     "name": "National Aeronautics and Space Administration",
     "url": "https://www.nasa.gov"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "webpack-dev-server": "5.2.2"
+  }
 }

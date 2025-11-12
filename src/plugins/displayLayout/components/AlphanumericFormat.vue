@@ -26,6 +26,27 @@
       <li class="c-inspect-properties__row">
         <div
           class="c-inspect-properties__label"
+          title="Override the label shown for this telemetry value"
+        >
+          <label for="telemetryCustomTitle">Title</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            id="telemetryCustomTitle"
+            type="text"
+            :value="telemetryTitle"
+            :placeholder="nonMixedTitle ? '' : 'Mixed'"
+            @change="titleChanged"
+          />
+          <template v-if="!isEditing && telemetryTitle?.length">
+            {{ telemetryTitle }}
+          </template>
+        </div>
+      </li>
+      <li class="c-inspect-properties__row">
+        <div
+          class="c-inspect-properties__label"
           title="Printf formatting for the selected telemetry"
         >
           <label for="telemetryPrintfFormat">Format</label>
@@ -56,7 +77,9 @@ export default {
     return {
       isEditing: this.openmct.editor.isEditing(),
       telemetryFormat: undefined,
-      nonMixedFormat: false
+      nonMixedFormat: false,
+      telemetryTitle: undefined,
+      nonMixedTitle: false
     };
   },
   mounted() {
@@ -79,6 +102,15 @@ export default {
       });
       this.telemetryFormat = newFormat;
     },
+    titleChanged(event) {
+      const newTitle = event.currentTarget.value;
+      this.openmct.selection.get().forEach((selectionPath) => {
+        if (selectionPath[0].context.updateTelemetryTitle) {
+          selectionPath[0].context.updateTelemetryTitle(newTitle);
+        }
+      });
+      this.telemetryTitle = newTitle;
+    },
     handleSelection(selection) {
       if (selection.length === 0 || selection[0].length < 2) {
         return;
@@ -96,6 +128,12 @@ export default {
       });
 
       this.telemetryFormat = this.nonMixedFormat ? format : '';
+
+      let title = layoutItem.title;
+      this.nonMixedTitle = selection.every((selectionPath) => {
+        return selectionPath[0].context.layoutItem.title === title;
+      });
+      this.telemetryTitle = this.nonMixedTitle ? title : '';
     }
   }
 };

@@ -47,9 +47,9 @@
         <div v-if="showLabel" class="c-telemetry-view__label">
           <div
             class="c-telemetry-view__label-text"
-            :aria-label="`Alpha-numeric telemetry name for ${domainObject.name}`"
+            :aria-label="`Alpha-numeric telemetry label for ${labelText}`"
           >
-            {{ domainObject.name }}
+            {{ labelText }}
           </div>
         </div>
 
@@ -139,7 +139,7 @@ export default {
       required: true
     }
   },
-  emits: ['move', 'end-move', 'format-changed', 'context-click'],
+  emits: ['move', 'end-move', 'format-changed', 'title-changed', 'context-click'],
   data() {
     return {
       currentObjectPath: undefined,
@@ -201,6 +201,15 @@ export default {
     },
     fieldName() {
       return this.valueMetadata && this.valueMetadata.name;
+    },
+    // Prefer an explicitly-set layout item title, falling back to the
+    // underlying domain object name when not provided. This allows users to
+    // override the label shown by the telemetry view in Display Layouts.
+    labelText() {
+      if (this.item && typeof this.item.title === 'string' && this.item.title.trim().length) {
+        return this.item.title.trim();
+      }
+      return this.domainObject ? this.domainObject.name : '';
     },
     valueMetadata() {
       return this.datum && this.metadata.value(this.item.value);
@@ -350,6 +359,7 @@ export default {
         layoutItem: this.item,
         index: this.index,
         updateTelemetryFormat: this.updateTelemetryFormat,
+        updateTelemetryTitle: this.updateTelemetryTitle,
         toggleUnits: this.toggleUnits,
         showUnits: this.showUnits
       };
@@ -365,6 +375,11 @@ export default {
       this.customStringformatter.setFormat(format);
 
       this.$emit('format-changed', this.item, format);
+    },
+    updateTelemetryTitle(title) {
+      // Persist in layout item and notify parent DisplayLayout for mutation
+      this.item.title = title;
+      this.$emit('title-changed', this.item, title);
     },
     updateViewContext() {
       this.$emit('context-click', {

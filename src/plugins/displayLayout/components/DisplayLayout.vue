@@ -66,6 +66,7 @@
       @end-move="endMove"
       @end-line-resize="endLineResize"
       @format-changed="updateTelemetryFormat"
+      @title-changed="updateTelemetryTitle"
     />
     <edit-marquee
       v-if="showMarquee"
@@ -722,6 +723,15 @@ export default {
       });
 
       item.format = format;
+      this.mutate(`configuration.items[${index}]`, item);
+    },
+    updateTelemetryTitle(item, title) {
+      let index = this.layoutItems.findIndex((layoutItem) => {
+        return layoutItem.id === item.id;
+      });
+
+      // Normalize empty to undefined to avoid persisting empty strings
+      item.title = title && title.length ? title : undefined;
       this.mutate(`configuration.items[${index}]`, item);
     },
     createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
