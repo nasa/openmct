@@ -225,7 +225,13 @@ export default class PlotSeries extends Model {
 
     try {
       const points = await this.openmct.telemetry.request(this.domainObject, options);
-      const data = this.getSeriesData();
+      // if derived, we can't use the old data
+      let data = this.getSeriesData();
+
+      if (this.metadata.value(this.get('yKey')).derived) {
+        data = [];
+      }
+
       // eslint-disable-next-line you-dont-need-lodash-underscore/concat
       const newPoints = _(data)
         .concat(points)
