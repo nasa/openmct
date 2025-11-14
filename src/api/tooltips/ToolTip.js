@@ -67,6 +67,13 @@ class Tooltip extends EventEmitter {
    * @private
    **/
   show() {
+    const parentExists = this.tooltip && this.tooltip.parentElement &&
+      document.contains(this.tooltip.parentElement);
+
+    if (!parentExists) {
+      console.warn('Tooltip parent does not exist anymore!');
+      return;
+    }
     document.body.appendChild(this.component.$el);
     this.isActive = true;
   }
