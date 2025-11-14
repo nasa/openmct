@@ -40,7 +40,7 @@ export default {
   inject: ['toolTipText', 'toolTipLocation', 'parentElement', 'cssClasses'],
   computed: {
     toolTipCoordinates() {
-      if (!this.parentElement || !document.contains(this.parentElement)) {
+      if (!this.parentElement || !document.body.contains(this.parentElement)) {
         return { top: 0, left: 0, height: 0, width: 0 };
       }
       return this.parentElement.getBoundingClientRect();

@@ -53,7 +53,7 @@ const tooltipHelpers = {
         return;
       }
       let parentElement = this.$refs[elementRef];
-      if (!parentElement || !document.contains(parentElement)) {
+      if (!parentElement || !document.body.contains(parentElement)) {
         console.warn('Cannot create tooltip: parent element does not exist');
         return;
       }

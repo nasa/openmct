@@ -35,7 +35,7 @@ class Tooltip extends EventEmitter {
     }
   ) {
     super();
-
+    this.parentElement = parentElement;
     const { vNode, destroy } = mount({
       components: {
         TooltipComponent: TooltipComponent
@@ -67,8 +67,7 @@ class Tooltip extends EventEmitter {
    * @private
    **/
   show() {
-    const parentExists = this.tooltip && this.tooltip.parentElement &&
-      document.contains(this.tooltip.parentElement);
+    const parentExists = this.parentElement && document.body.contains(this.parentElement);
 
     if (!parentExists) {
       console.warn('Tooltip parent does not exist anymore!');
