@@ -704,6 +704,20 @@ interface EnumFormatter extends Formatter {
     validate: (value: any) => boolean;
 }
 ```
+##### Time Formats
+
+Time formatters are used to format and parse datetime values. See as an example the UTC time formatter provided in src/plugins/utcTimeSystem/UTCTimeFormat.js.
+
+If a formatDate method is provided, it will be used in conjunction with a duration formatter to provide split date and time inputs for the time conductor.
+
+```ts
+interface TimeFormatter extends Formatter {
+    parse: (value: string) => number;
+    format: (value: number) => string;
+    formatDate?: (value: number) => string;
+    validate: (value: any) => boolean;
+}
+```
 
 ##### Registering Formats
 
