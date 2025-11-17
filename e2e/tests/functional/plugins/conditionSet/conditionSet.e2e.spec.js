@@ -29,7 +29,8 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject
+  createExampleTelemetryObject,
+  getDomainObject
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -467,6 +468,34 @@ test.describe('Basic Condition Set Use', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7484'
     });
+  });
+
+  test('should toggle shouldFetchHistorical property in inspector', async ({ page }) => {
+    await page.goto(conditionSet.url);
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    let toggleSwitch = page.getByLabel('condition-historical-toggle');
+    const initialState = await toggleSwitch.isChecked();
+    expect(initialState).toBe(false);
+
+    await toggleSwitch.click();
+    let toggledState = await toggleSwitch.isChecked();
+    expect(toggledState).toBe(true);
+    await page.click('button[title="Save"]');
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    let conditionSetObject = await getDomainObject(page, conditionSet.uuid);
+    expect(conditionSetObject.configuration.shouldFetchHistorical).toBe(true);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    toggleSwitch = page.getByLabel('condition-historical-toggle');
+    await toggleSwitch.click();
+    toggledState = await toggleSwitch.isChecked();
+    expect(toggledState).toBe(false);
+    await page.click('button[title="Save"]');
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    conditionSetObject = await getDomainObject(page, conditionSet.uuid);
+    expect(conditionSetObject.configuration.shouldFetchHistorical).toBe(false);
   });
 });
 
