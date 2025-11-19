@@ -61,12 +61,14 @@ export default class UTCTimeFormat {
   format(value, formatString) {
     if (value !== undefined) {
       const utc = moment.utc(value);
+      console.log('moment utc', utc);
 
       if (formatString !== undefined && !this.isValidFormatString(formatString)) {
         throw 'Invalid format requested from UTC Time Formatter ';
       }
 
       let format = formatString || this.DATE_FORMATS.PRECISION_DEFAULT;
+      console.log('moment format', utc.format(format));
 
       return utc.format(format) + (formatString ? '' : 'Z');
     } else {
