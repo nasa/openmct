@@ -69,7 +69,7 @@ describe('The condition', function () {
             }
           },
           {
-            key: 'testSource',
+            key: 'value',
             source: 'value',
             name: 'Test',
             format: 'string'
@@ -130,7 +130,7 @@ describe('The condition', function () {
             id: '1234-5678-9999-0000',
             operation: 'equalTo',
             input: ['0'],
-            metadata: 'testSource',
+            metadata: 'value',
             telemetry: testTelemetryObject.identifier
           }
         ]

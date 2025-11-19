@@ -50,7 +50,7 @@ export default function GanttChartInspectorViewProvider(openmct) {
               },
               provide: {
                 openmct,
-                selection: selection
+                domainObject: selection[0][0].context.item
               },
               template: '<plan-view-configuration></plan-view-configuration>'
             },

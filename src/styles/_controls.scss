@@ -89,6 +89,52 @@
   }
 }
 
+@mixin resizeHandleStyle($size: 1px, $margin: 3px) {
+  // Used by Flexible Layouts and Time Strip views
+  &:before {
+    // The visible resize line
+    background-color: $editUIColor;
+    content: '';
+    display: block;
+    @include abs();
+    min-height: $size;
+    min-width: $size;
+  }
+
+  &:hover {
+    &:before {
+      // The visible resize line
+      background-color: $editUIColorHov;
+    }
+  }
+
+  &.vertical {
+    // Resizes in Y dimension
+    padding: $margin $size;
+    &:before {
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+    &:hover {
+      cursor: row-resize;
+    }
+  }
+
+  &.horizontal {
+    // Resizes in X dimension
+    padding: $size $margin;
+    &:before {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
+    &:hover {
+      cursor: col-resize;
+    }
+  }
+}
+
 /******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
 button {

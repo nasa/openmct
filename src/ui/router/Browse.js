@@ -96,7 +96,7 @@ class Browse {
       this.#unobserve();
       this.#unobserve = undefined;
     }
-
+    path = decodeURIComponent(path);
     if (!Array.isArray(path)) {
       path = path.split('/');
     }
@@ -121,6 +121,11 @@ class Browse {
       '*',
       this.#handleBrowseObjectUpdate.bind(this)
     );
+
+    if (!currentViewKey) {
+      currentViewKey = this.#getPreferredViewForObjectType(this.#browseObject);
+    }
+
     const currentProvider = this.#openmct.objectViews.getByProviderKey(currentViewKey);
     if (currentProvider && currentProvider.canView(this.#browseObject, this.#openmct.router.path)) {
       this.#viewObject(this.#browseObject, currentProvider);
@@ -146,6 +151,12 @@ class Browse {
           : this.#openmct.objects.get(identifier);
       })
     );
+  }
+
+  #getPreferredViewForObjectType(obj) {
+    const storedViewPrefs =
+      JSON.parse(window.localStorage.getItem('openmct-stored-view-prefs')) || {};
+    return storedViewPrefs[obj.type] ? storedViewPrefs[obj.type] : undefined;
   }
 
   async #navigateToFirstChildOfRoot() {
