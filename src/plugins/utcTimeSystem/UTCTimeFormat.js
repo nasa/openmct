@@ -59,7 +59,6 @@ export default class UTCTimeFormat {
    * in the array.
    */
   format(value, formatString) {
-    console.log('UTC format', formatString);
     if (value !== undefined) {
       const utc = moment.utc(value);
 
