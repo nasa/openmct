@@ -87,6 +87,10 @@ function generateMonthYearTicks(start, stop, unit, stepSize) {
     currentDate.setMonth(0, 1);
   }
 
+  console.log('stepSize', stepSize);
+
+  console.log('startDate', currentDate.getTime());
+
   while (currentDate.getTime() <= stop) {
     resultingTicks.push(currentDate.getTime());
     if (unit === 'month') {
@@ -96,7 +100,7 @@ function generateMonthYearTicks(start, stop, unit, stepSize) {
       currentDate.setFullYear(currentDate.getFullYear() + stepSize);
     }
   }
-
+  console.log(resultingTicks.join(', '));
   return resultingTicks;
 }
 
