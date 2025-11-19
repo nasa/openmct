@@ -49,6 +49,7 @@ export default function LocalTimeFormat() {
  * @returns {string} the formatted date
  */
 LocalTimeFormat.prototype.format = function (value, scale) {
+  console.log('Localtime format', moment(value).format(DATE_FORMAT));
   return moment(value).format(DATE_FORMAT);
 };
 
