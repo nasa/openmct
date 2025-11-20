@@ -229,7 +229,6 @@ export default {
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
       } else if (this.isUtc) {
-        console.log('range', range.min, range.max);
         return getTimeTicks(range.min, range.max, TIME_AXIS_TICK_COUNT);
       } else {
         return ticks(range.min, range.max, number);

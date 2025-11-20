@@ -80,27 +80,29 @@ function generateMonthYearTicks(start, stop, unit, stepSize) {
   const resultingTicks = [];
   let currentDate = new Date(start);
 
+  // Use UTC to avoid DST issues.
   // Set to the beginning of the interval (e.g., beginning of the month/year)
   if (unit === 'month') {
-    currentDate.setDate(1);
+    // currentDate.setDate(1);
+    currentDate.setUTCDate(1);
+    currentDate.setUTCHours(0, 0, 0, 0);
   } else if (unit === 'year') {
-    currentDate.setMonth(0, 1);
+    // currentDate.setMonth(0, 1);
+    currentDate.setUTCMonth(0, 1);
+    currentDate.setUTCHours(0, 0, 0, 0);
   }
-
-  console.log('stepSize', stepSize);
-
-  console.log('startDate', currentDate.getTime());
 
   while (currentDate.getTime() <= stop) {
     resultingTicks.push(currentDate.getTime());
     if (unit === 'month') {
-      currentDate.setMonth(currentDate.getMonth() + stepSize);
+      // currentDate.setMonth(currentDate.getMonth() + stepSize);
+      currentDate.setUTCMonth(currentDate.getUTCMonth() + stepSize);
     } else {
       // unit is 'year'
-      currentDate.setFullYear(currentDate.getFullYear() + stepSize);
+      // currentDate.setFullYear(currentDate.getFullYear() + stepSize);
+      currentDate.setUTCFullYear(currentDate.getUTCFullYear() + stepSize);
     }
   }
-  console.log(resultingTicks.join(', '));
   return resultingTicks;
 }
 

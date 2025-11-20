@@ -84,13 +84,14 @@ test.describe('Time Tick Generation', () => {
  */
 async function testYearTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(6);
-  await expect(xTicks.nth(0)).toHaveText('2022-09-01 22:00:00');
-  await expect(xTicks.nth(1)).toHaveText('2022-10-01 22:00:00');
-  await expect(xTicks.nth(2)).toHaveText('2022-11-01 22:00:00');
-  await expect(xTicks.nth(3)).toHaveText('2022-12-01 23:00:00');
-  await expect(xTicks.nth(4)).toHaveText('2023-01-01 23:00:00');
-  await expect(xTicks.nth(5)).toHaveText('2023-02-01 23:00:00');
+  await expect(xTicks).toHaveCount(7);
+  await expect(xTicks.nth(0)).toHaveText('2022-09-01');
+  await expect(xTicks.nth(1)).toHaveText('2022-10-01');
+  await expect(xTicks.nth(2)).toHaveText('2022-11-01');
+  await expect(xTicks.nth(3)).toHaveText('2022-12-01');
+  await expect(xTicks.nth(4)).toHaveText('2023-01-01');
+  await expect(xTicks.nth(5)).toHaveText('2023-02-01');
+  await expect(xTicks.nth(6)).toHaveText('2023-03-01');
 }
 
 async function testDaysTimeSeriesTicks(page) {
