@@ -58,9 +58,11 @@
 @mixin menuInner() {
   li {
     @include cControl();
+    align-items: baseline;
     justify-content: start;
     cursor: pointer;
     display: flex;
+    line-height: 1.2em;
     padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
     white-space: nowrap;
 
@@ -697,22 +699,21 @@ select {
   padding: $interiorMarginLg;
   flex-direction: row;
 
-  > [class*='__'] {
-    //flex: 1 1 50%;
-    //&:first-child {
-    //  margin-right: $m;
-    //}
+  &__left-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 50%;
+    gap: $interiorMargin;
+    margin-right: $m;
+  }
 
-    &:last-child {
-      //border-left: 1px solid $colorInteriorBorder;
-      //padding-left: $m;
-    }
+  &__filter {
+    flex: 0 0 auto;
   }
 
   &__menu {
     @include menuInner();
-    flex: 1 1 50%;
-    margin-right: $m;
+    flex: 1 1 auto;
     overflow: auto;
 
     ul {
@@ -721,6 +722,7 @@ select {
 
     li {
       border-radius: $controlCr;
+      white-space: normal; // Let long names wrap
     }
   }
 

@@ -24,7 +24,8 @@ import {
   setEndOffset,
   setFixedTimeMode,
   setRealTimeMode,
-  setStartOffset
+  setStartOffset,
+  submitTimeConductorOffsetWithEnterKey
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -229,6 +230,37 @@ test.describe('Time conductor operations', () => {
     await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
     await expect(page.getByLabel('End bounds')).toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
   });
+
+  test('cancelling form with escape key does not set bounds', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7791'
+    });
+
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.keyboard.press('Escape');
+
+    await expect(page.getByLabel('Start bounds')).not.toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).not.toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
+
+    // Open the time conductor popup
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+
+    await page.getByLabel('Start date').fill(DAY);
+    await page.getByLabel('Start time').fill(ONE_O_CLOCK);
+    await page.getByLabel('End date').fill(DAY_AFTER);
+    await page.getByLabel('End time').fill(ONE_O_CLOCK);
+    await page.getByLabel('Submit time bounds').click();
+
+    await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
+    await expect(page.getByLabel('End bounds')).toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
+  });
 });
 
 test.describe('Global Time Conductor', () => {
@@ -274,6 +306,22 @@ test.describe('Global Time Conductor', () => {
 
     await expect(page.getByLabel('Start offset: 01:29:23')).toBeVisible();
     await expect(page.getByLabel('End offset: 01:30:31')).toBeVisible();
+  });
+
+  test('Enter key will submit changes', async ({ page }) => {
+    const startOffset = {
+      startHours: '01',
+      startMins: '29',
+      startSecs: '23'
+    };
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    // Set start time offset
+    await submitTimeConductorOffsetWithEnterKey(page, startOffset);
+
+    // Verify time was updated on time offset button
+    await expect(page.getByLabel('Start offset: 01:29:23')).toBeVisible();
   });
 
   /**

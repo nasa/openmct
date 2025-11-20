@@ -26,53 +26,66 @@
     :class="[options.menuClass, 'c-super-menu']"
     :style="styleObject"
   >
-    <ul
-      v-if="options.actions.length && options.actions[0].length"
-      role="menu"
-      class="c-super-menu__menu"
-    >
-      <template v-for="(actionGroups, index) in options.actions" :key="index">
-        <div role="group">
-          <li
-            v-for="action in actionGroups"
-            :key="action.name"
-            role="menuitem"
-            :aria-disabled="action.isDisabled"
-            aria-describedby="item-description"
-            :class="action.cssClass"
-            @click="action.onItemClicked"
-            @mouseover="toggleItemDescription(action)"
-            @mouseleave="toggleItemDescription()"
-          >
-            {{ action.name }}
-          </li>
-          <div
-            v-if="index !== options.actions.length - 1"
-            :key="index"
-            role="separator"
-            class="c-menu__section-separator"
-          ></div>
-          <li v-if="actionGroups.length === 0" :key="index">No actions defined.</li>
-        </div></template
+    <div class="c-super-menu__left-col">
+      <div v-if="options.filterable" class="c-super-menu__filter l-input-lg">
+        <input
+          ref="filterInput"
+          v-model="searchTerm"
+          type="text"
+          placeholder="Filter..."
+          @input="filterItems"
+          @keydown.stop="handleKeyDown"
+          @click.stop
+        />
+      </div>
+      <ul
+        v-if="filteredActions.length && filteredActions[0].length"
+        role="menu"
+        class="c-super-menu__menu"
       >
-    </ul>
+        <template v-for="(actionGroups, index) in filteredActions" :key="index">
+          <div role="group">
+            <li
+              v-for="action in actionGroups"
+              :key="action.name"
+              role="menuitem"
+              :aria-disabled="action.isDisabled"
+              aria-describedby="item-description"
+              :class="action.cssClass"
+              @click="action.onItemClicked"
+              @mouseover="toggleItemDescription(action)"
+              @mouseleave="toggleItemDescription()"
+            >
+              {{ action.name }}
+            </li>
+            <div
+              v-if="index !== filteredActions.length - 1"
+              :key="index"
+              role="separator"
+              class="c-menu__section-separator"
+            ></div>
+            <li v-if="actionGroups.length === 0" :key="index">No actions defined.</li>
+          </div></template
+        >
+      </ul>
 
-    <ul v-else class="c-super-menu__menu" role="menu">
-      <li
-        v-for="action in options.actions"
-        :key="action.name"
-        role="menuitem"
-        :class="action.cssClass"
-        :aria-label="action.name"
-        aria-describedby="item-description"
-        @click="action.onItemClicked"
-        @mouseover="toggleItemDescription(action)"
-        @mouseleave="toggleItemDescription()"
-      >
-        {{ action.name }}
-      </li>
-      <li v-if="options.actions.length === 0">No actions defined.</li>
-    </ul>
+      <ul v-else class="c-super-menu__menu" role="menu">
+        <li
+          v-for="action in filteredActions"
+          :key="action.name"
+          role="menuitem"
+          :class="action.cssClass"
+          :aria-label="action.name"
+          aria-describedby="item-description"
+          @click="action.onItemClicked"
+          @mouseover="toggleItemDescription(action)"
+          @mouseleave="toggleItemDescription()"
+        >
+          {{ action.name }}
+        </li>
+        <li v-if="filteredActions.length === 0">No actions defined.</li>
+      </ul>
+    </div>
 
     <div aria-live="polite" class="c-super-menu__item-description">
       <div :class="itemDescriptionIconClass"></div>
@@ -89,10 +102,12 @@
 import popupMenuMixin from '../mixins/popupMenuMixin.js';
 export default {
   mixins: [popupMenuMixin],
-  inject: ['options'],
+  inject: ['options', 'dismiss'],
   data() {
     return {
-      hoveredItem: null
+      hoveredItem: null,
+      filteredActions: [],
+      searchTerm: ''
     };
   },
   computed: {
@@ -114,6 +129,15 @@ export default {
       return this.hoveredItem?.description ?? '';
     }
   },
+  mounted() {
+    this.filteredActions = this.options.actions;
+    console.log('mounted', this.filteredActions);
+    if (this.options.filterable) {
+      this.$nextTick(() => {
+        this.$refs.filterInput.focus();
+      });
+    }
+  },
   methods: {
     toggleItemDescription(action = null) {
       const hoveredItem = {
@@ -123,6 +147,42 @@ export default {
       };
 
       this.hoveredItem = hoveredItem;
+    },
+    filterItems() {
+      const term = this.searchTerm.toLowerCase();
+
+      if (!term) {
+        this.filteredActions = this.options.actions;
+
+        return;
+      }
+
+      if (Array.isArray(this.options.actions[0])) {
+        // Handle grouped actions
+        this.filteredActions = this.options.actions
+          .map((group) => group.filter((action) => action.name.toLowerCase().includes(term)))
+          .filter((group) => group.length > 0);
+      } else {
+        // Handle flat actions list
+        this.filteredActions = this.options.actions.filter((action) =>
+          action.name.toLowerCase().includes(term)
+        );
+      }
+    },
+    handleKeyDown({ key }) {
+      if (key === 'Enter') {
+        // if there is only one action, select it immediately on enter
+        const flattenedActions = Array.isArray(this.filteredActions[0])
+          ? this.filteredActions.flat()
+          : this.filteredActions;
+
+        if (flattenedActions.length === 1) {
+          flattenedActions[0].onItemClicked();
+          this.dismiss();
+        }
+      } else if (key === 'Escape') {
+        this.dismiss();
+      }
     }
   }
 };

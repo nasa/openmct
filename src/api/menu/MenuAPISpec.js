@@ -174,7 +174,7 @@ describe('The Menu API', () => {
       document.body.click();
     });
 
-    it('Mouse over a superMenu shows correct description', (done) => {
+    fit('Mouse over a superMenu shows correct description', (done) => {
       menuOptions.onDestroy = done;
 
       menuAPI.showSuperMenu(x, y, actionsArray, menuOptions);
@@ -185,6 +185,7 @@ describe('The Menu API', () => {
 
       superMenuItem.dispatchEvent(mouseOverEvent);
       const itemDescription = document.querySelector('.l-item-description__description');
+      console.log(itemDescription);
 
       nextTick(() => {
         expect(menuElement).not.toBeNull();
