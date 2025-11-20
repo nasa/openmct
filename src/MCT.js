@@ -332,7 +332,7 @@ export class MCT extends EventEmitter {
   }
   #bootstrap(domElement, isHeadlessMode) {
     // Create element to mount Layout if it doesn't exist
-    if (domElement === null) {
+    if (domElement === undefined) {
       domElement = document.createElement('div');
       document.body.appendChild(domElement);
     }
