@@ -128,17 +128,24 @@ script loaders are also supported.
 <head>
     <title>Open MCT</title>
     <script src="dist/openmct.js"></script>
-</head>
-<body>
     <script>
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.UTCTimeSystem());
         openmct.start();
     </script>
+</head>
+<body>
 </body>
 </html>
 ```
+
+Calling `openmct.start()` will start Open MCT and mount it into the 
+specified element once the DOM is ready. An element or a selector 
+string may be provided for this purposes. A selector string is 
+supported to obviate the need for boilerplate code to wait for the 
+body to load. If no argument is provided, Open MCT will create a 
+div element and bootstrap into it.
 
 The Open MCT library included above requires certain assets such as html
 templates, images, and css. If you installed Open MCT from GitHub as described
