@@ -49,7 +49,9 @@ test.describe('Bootstrapping Open MCT', () => {
     await expect(page.locator('#openmct-app')).toBeVisible();
   });
 
-  test('Open MCT can be bootstrapped into a specified div container using a dom element', async ({ page }) => {
+  test('Open MCT can be bootstrapped into a specified div container using a dom element', async ({
+    page
+  }) => {
     const openmctLocation = '/openmct.js';
     await page.goto('./test-data/blank.html');
     await page.setContent(`
@@ -76,7 +78,9 @@ test.describe('Bootstrapping Open MCT', () => {
     await expect(page.locator('#openmct-app')).toBeVisible();
   });
 
-  test('If no container is specified, Open MCT will bootstrap into the first child of the body element', async ({ page }) => {
+  test('If no container is specified, Open MCT will bootstrap into the first child of the body element', async ({
+    page
+  }) => {
     const openmctLocation = '/openmct.js';
     await page.goto('./test-data/blank.html');
     await page.setContent(`
@@ -103,7 +107,9 @@ test.describe('Bootstrapping Open MCT', () => {
     await expect(page.locator('#openmct-app')).toBeVisible();
   });
 
-  test('If no container is specified and the body has no child element, Open MCT will create a div and bootstrap into it', async ({ page }) => {
+  test('If no container is specified and the body has no child element, Open MCT will create a div and bootstrap into it', async ({
+    page
+  }) => {
     const openmctLocation = '/openmct.js';
     await page.goto('./test-data/blank.html');
     await page.setContent(`
