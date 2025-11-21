@@ -189,7 +189,6 @@ export default {
   watch: {
     offsets: {
       handler() {
-        console.log('REMOVE THIS');
         this.setOffsets();
       },
       deep: true
