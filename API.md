@@ -126,18 +126,22 @@ script loaders are also supported.
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Open MCT</title>
-    <script src="dist/openmct.js"></script>
-    <script>
-        openmct.install(openmct.plugins.LocalStorage());
-        openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.start();
-    </script>
+  <title>Open MCT</title>
+  <script src="dist/openmct.js"></script>
+  <script>
+    openmct.install(openmct.plugins.LocalStorage());
+    openmct.install(openmct.plugins.MyItems());
+    openmct.install(openmct.plugins.UTCTimeSystem());
+    openmct.time.setTimeSystem('utc');
+    openmct.install(openmct.plugins.Espresso());
+
+    openmct.start();
+  </script>
 </head>
 <body>
 </body>
 </html>
+
 ```
 
 Calling `openmct.start()` will start Open MCT and mount it into the 
@@ -156,7 +160,7 @@ There are some plugins bundled with the application that provide UI,
 persistence, and other default configuration which are necessary to be able to
 do anything with the application initially. Any of these plugins can, in
 principle, be replaced with a custom plugin. The included plugins are
-documented in the [Included Plugins](#included-plugins) section.  
+documented in the [Included Plugins](#plugins) section.  
 
 ## Types
 
@@ -431,24 +435,24 @@ var domainObject = {
 
 ## Telemetry API
 
-The Open MCT telemetry API provides two main sets of interfaces-- one for
-integrating telemetry data into Open MCT, and another for developing Open MCT
-visualization plugins utilizing the telemetry API.  
+The Open MCT telemetry API provides two main sets of interfaces 
+1. For integrating telemetry data into Open MCT, and 
+2. For developing Open MCT visualization plugins utilizing the telemetry API.  
 
-The APIs for visualization plugins are still a work in progress and docs may
-change at any time.  However, the APIs for integrating telemetry metadata into
-Open MCT are stable and documentation is included below.
+The APIs for integrating telemetry metadata into Open MCT are stable and documentation is included below. However, the APIs for visualization plugins are still a work in progress and docs may change at any time.
 
 ### Integrating Telemetry Sources
 
-There are two main tasks for integrating telemetry sources-- describing telemetry objects with relevant metadata, and then providing telemetry data for those objects.  You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata), and then register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.  Alternatively, you can register a telemetry metadata provider to provide the necessary telemetry metadata.
+There are two main tasks for integrating telemetry sources 
+* Describing telemetry objects with relevant metadata. You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata). Alternatively, you can register a telemetry metadata provider to provide the necessary telemetry metadata.
+* Providing telemetry data for those objects.  You'll register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.
 
 For a step-by-step guide to building a telemetry adapter, please see the
 [Open MCT Tutorials](https://github.com/nasa/openmct-tutorial).
 
 #### Telemetry Metadata
 
-A telemetry object is a domain object with a telemetry property.  To take an example from the tutorial, here is the telemetry object for the "fuel" measurement of the spacecraft:
+A telemetry object is a domain object with a `telemetry` property.  To take an example from the tutorial, here is the telemetry object for the "fuel" measurement of the spacecraft:
 
 ```json
 {
@@ -485,23 +489,24 @@ A telemetry object is a domain object with a telemetry property.  To take an exa
 }
 ```
 
-The most important part of the telemetry metadata is the `values` property-- this describes the attributes of telemetry datums (objects) that a telemetry provider returns.  These descriptions must be provided for telemetry views to work properly.
+The most important part of the telemetry metadata is the `values` property. This describes the attributes of telemetry datums (objects) that a telemetry provider returns.  These descriptions must be provided for telemetry views to work properly.
 
 ##### Values
 
 `telemetry.values` is an array of value description objects, which have the following fields:
 
-attribute      | type   | flags    | notes
----            |  ---   |  ---     | ---
-`key`          | string | required | unique identifier for this field.  
-`hints`        | object | required | Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on "Value Hints" below.
-`name`         | string | optional | a human readable label for this field.  If omitted, defaults to `key`.
-`source`       | string | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
-`format`       | string | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format.  
-`unit`        | string | optional | the unit of this value, e.g. `km`, `seconds`, `parsecs`
-`min`          | number | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
-`max`          | number | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
-`enumerations` | array  | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.
+attribute      | type    | flags    | notes
+---            |---------|----------| ---
+`key`          | string  | required | unique identifier for this field.  
+`hints`        | object  | required | Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on "Value Hints" below.
+`name`         | string  | optional | a human readable label for this field.  If omitted, defaults to `key`.
+`source`       | string  | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
+`format`       | string  | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format. For arrays use `number[]` or `string[]` See arrays below in the this table.  
+`unit`        | string  | optional | the unit of this value, e.g. `km`, `seconds`, `parsecs`
+`min`          | number  | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
+`max`          | number  | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
+`enumerations` | array   | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.
+`arrays` | string  | optional | for objects where `format` is `"number[]" or "string[]"`. Will be used by plots, gauges, etc to automatically interpret values as arrays.
 
 ###### Value Hints
 
