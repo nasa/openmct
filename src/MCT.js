@@ -330,17 +330,16 @@ export class MCT extends EventEmitter {
 
     return this._assetPath;
   }
-  /**
-   * Start running Open MCT. This should be called only after any plugins
-   * have been installed.
-   * @fires module:openmct.MCT~start
-   * @method start
-   * @param {Element?} domElement the DOM element in which to run
-   *        MCT; if undefined, MCT will be run in the body of the document
-   */
-  start(domElement = document.body.firstElementChild, isHeadlessMode = false) {
+  #bootstrap(domElementOrSelector, isHeadlessMode) {
+    let domElement;
+
+    if (typeof domElementOrSelector === 'string') {
+      domElement = document.querySelector(domElementOrSelector);
+    } else {
+      domElement = domElementOrSelector;
+    }
     // Create element to mount Layout if it doesn't exist
-    if (domElement === null) {
+    if (domElement === undefined) {
       domElement = document.createElement('div');
       document.body.appendChild(domElement);
     }
@@ -386,6 +385,23 @@ export class MCT extends EventEmitter {
 
       this.router.start();
       this.emit('start');
+    }
+  }
+  /**
+   * Start running Open MCT. This should be called only after any plugins
+   * have been installed.
+   * @fires module:openmct.MCT~start
+   * @method start
+   * @param {Element?} domElementOrSelector the DOM element in which to run
+   *        MCT; if undefined, MCT will be run in the body of the document
+   */
+  start(domElementOrSelector, isHeadlessMode = false) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        this.#bootstrap(domElementOrSelector, isHeadlessMode);
+      });
+    } else {
+      this.#bootstrap(domElementOrSelector, isHeadlessMode);
     }
   }
   startHeadless() {
