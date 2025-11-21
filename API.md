@@ -145,7 +145,7 @@ specified element once the DOM is ready. An element or a selector
 string may be provided for this purposes. A selector string is 
 supported to obviate the need for boilerplate code to wait for the 
 body to load. If no argument is provided, Open MCT will create a 
-div element and bootstrap into it.
+div element as a child of the body, and bootstrap into it.
 
 The Open MCT library included above requires certain assets such as html
 templates, images, and css. If you installed Open MCT from GitHub as described
