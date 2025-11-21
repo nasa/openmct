@@ -330,7 +330,14 @@ export class MCT extends EventEmitter {
 
     return this._assetPath;
   }
-  #bootstrap(domElement, isHeadlessMode) {
+  #bootstrap(domElementOrSelector, isHeadlessMode) {
+    let domElement;
+
+    if (typeof domElementOrSelector === 'string') {
+      domElement = document.querySelector(domElementOrSelector);
+    } else {
+      domElement = domElementOrSelector;
+    }
     // Create element to mount Layout if it doesn't exist
     if (domElement === undefined) {
       domElement = document.createElement('div');
@@ -385,17 +392,17 @@ export class MCT extends EventEmitter {
    * have been installed.
    * @fires module:openmct.MCT~start
    * @method start
-   * @param {Element?} domElement the DOM element in which to run
+   * @param {Element?} domElementOrSelector the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  start(domElement, isHeadlessMode = false) {
+  start(domElementOrSelector, isHeadlessMode = false) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        this.#bootstrap(domElement, isHeadlessMode);
+        this.#bootstrap(domElementOrSelector, isHeadlessMode);
       });
     } else {
-      this.#bootstrap(domElement, isHeadlessMode);
-}
+      this.#bootstrap(domElementOrSelector, isHeadlessMode);
+    }
   }
   startHeadless() {
     let unreachableNode = document.createElement('div');
