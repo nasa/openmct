@@ -105,7 +105,7 @@ export default {
     const timeConductorOptionsHolder = ref(null);
     const conductorPopupComponent = ref(null);
     const openmct = inject('openmct');
-    const configuration = inject('configuration');
+    const configuration = openmct.layout?.conductorComponent?.provide?.configuration;
 
     const keyString = ref(openmct.objects.makeKeyString(props.domainObject.identifier));
     const independentTCEnabled = ref(props.domainObject.configuration?.useIndependentTime === true);
