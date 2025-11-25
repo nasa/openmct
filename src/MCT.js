@@ -332,17 +332,23 @@ export class MCT extends EventEmitter {
   }
   #bootstrap(domElementOrSelector, isHeadlessMode) {
     let domElement;
-
-    if (typeof domElementOrSelector === 'string') {
-      domElement = document.querySelector(domElementOrSelector);
-    } else {
-      domElement = domElementOrSelector;
-    }
     // Create element to mount Layout if it doesn't exist
-    if (domElement === undefined) {
+    if (domElementOrSelector === undefined) {
       domElement = document.createElement('div');
       document.body.appendChild(domElement);
+    } else if (typeof domElementOrSelector === 'string' && domElementOrSelector.trim().length > 0) {
+      domElement = document.querySelector(domElementOrSelector);
+      if (domElement === null) {
+        throw new Error(
+          `No element found with selector ${domElementOrSelector}. Unable to bootstrap Open MCT.`
+        );
+      }
+    } else if (domElementOrSelector instanceof HTMLElement) {
+      domElement = domElementOrSelector;
+    } else {
+      throw new Error(`Invalid HTML element or selector provided to Open MCT start function.`);
     }
+
     domElement.id = 'openmct-app';
 
     if (this.types.get('layout') === undefined) {
@@ -397,9 +403,13 @@ export class MCT extends EventEmitter {
    */
   start(domElementOrSelector, isHeadlessMode = false) {
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        this.#bootstrap(domElementOrSelector, isHeadlessMode);
-      });
+      document.addEventListener(
+        'DOMContentLoaded',
+        () => {
+          this.#bootstrap(domElementOrSelector, isHeadlessMode);
+        },
+        { once: true }
+      );
     } else {
       this.#bootstrap(domElementOrSelector, isHeadlessMode);
     }

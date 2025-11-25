@@ -78,35 +78,6 @@ test.describe('Bootstrapping Open MCT', () => {
     await expect(page.locator('#openmct-app')).toBeVisible();
   });
 
-  test('If no container is specified, Open MCT will bootstrap into the first child of the body element', async ({
-    page
-  }) => {
-    const openmctLocation = '/openmct.js';
-    await page.goto('./test-data/blank.html');
-    await page.setContent(`
-      <!doctype html>
-      <html>
-      <head>
-        <script src="${openmctLocation}"></script>
-        <script>
-          openmct.install(openmct.plugins.LocalStorage());
-          openmct.install(openmct.plugins.Espresso());
-          openmct.install(openmct.plugins.UTCTimeSystem());
-          openmct.install(openmct.plugins.MyItems());
-          document.addEventListener('DOMContentLoaded', () => {
-            const testContainer = document.getElementById('test-container');
-            openmct.start(testContainer);
-          });
-        </script>
-      </head>
-      <body>
-        <div id="test-container"></div>
-      </body>
-    </html>`);
-    await page.waitForLoadState('domcontentloaded');
-    await expect(page.locator('#openmct-app')).toBeVisible();
-  });
-
   test('If no container is specified and the body has no child element, Open MCT will create a div and bootstrap into it', async ({
     page
   }) => {
@@ -130,5 +101,69 @@ test.describe('Bootstrapping Open MCT', () => {
     </html>`);
     await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('#openmct-app')).toBeVisible();
+  });
+
+  test('If empty selector is provided, throws an error', async ({ page }) => {
+    const openmctLocation = '/openmct.js';
+    await page.goto('./test-data/blank.html');
+    await page.setContent(`
+      <!doctype html>
+      <html>
+      <head>
+        <script src="${openmctLocation}"></script>
+        <script>
+          openmct.install(openmct.plugins.LocalStorage());
+          openmct.install(openmct.plugins.Espresso());
+          openmct.install(openmct.plugins.UTCTimeSystem());
+          openmct.install(openmct.plugins.MyItems());
+        </script>
+      </head>
+      <body>
+      </body>
+    </html>`);
+    await page.waitForLoadState('domcontentloaded');
+    const errorMessage = await page.evaluate(() => {
+      try {
+        // eslint-disable-next-line no-undef
+        openmct.start(' ');
+      } catch (error) {
+        return error.message;
+      }
+    });
+    expect(errorMessage).toContain('Invalid HTML element or selector');
+    await expect(page.locator('#openmct-app')).toBeHidden();
+  });
+
+  test('If invalid selector is provided, throws an error', async ({ page }) => {
+    const openmctLocation = '/openmct.js';
+    await page.goto('./test-data/blank.html');
+    await page.setContent(`
+      <!doctype html>
+      <html>
+      <head>
+        <script src="${openmctLocation}"></script>
+        <script>
+          openmct.install(openmct.plugins.LocalStorage());
+          openmct.install(openmct.plugins.Espresso());
+          openmct.install(openmct.plugins.UTCTimeSystem());
+          openmct.install(openmct.plugins.MyItems());
+        </script>
+      </head>
+      <body>
+      </body>
+    </html>`);
+    await page.waitForLoadState('domcontentloaded');
+    const errorMessage = await page.evaluate(() => {
+      try {
+        // eslint-disable-next-line no-undef
+        openmct.start('someInvalidSelector1a2s3d4f5g6h7j8l');
+      } catch (error) {
+        return error.message;
+      }
+    });
+    expect(errorMessage).toContain(
+      'No element found with selector someInvalidSelector1a2s3d4f5g6h7j8l'
+    );
+    await expect(page.locator('#openmct-app')).toBeHidden();
   });
 });
