@@ -108,7 +108,7 @@ export default class MCTChartSeriesElement {
   }
 
   append(point, index, series) {
-    if (this.chart.pointIsInRange(point, series)) {
+    if (this.chart.pointIsInRange(point, series, index)) {
       const pointsRequired = this.vertexCountForPointAtIndex(this.indexCount);
       const insertionPoint = this.startIndexForPointAtIndex(this.indexCount);
       this.growIfNeeded(pointsRequired);
