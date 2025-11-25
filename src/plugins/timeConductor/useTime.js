@@ -71,10 +71,8 @@ export function useTime(
 ) {
   const throttleRate = configuration?.throttleRate ?? 300;
   const { timeContext } = useTimeContext(openmct, objectPath);
-  const { timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } = useTimeSystem(
-    openmct,
-    timeContext
-  );
+  const { timeSystemKey, timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
+    useTimeSystem(openmct, timeContext);
   const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
     useTimeMode(openmct, timeContext, independentTimeOptions, useIndependentTime);
   const { bounds, isTick } = useTimeBounds(openmct, timeContext, throttleRate);
@@ -84,6 +82,7 @@ export function useTime(
 
   return {
     timeContext,
+    timeSystemKey,
     timeSystemFormatter,
     timeSystemDurationFormatter,
     isTimeSystemUTCBased,

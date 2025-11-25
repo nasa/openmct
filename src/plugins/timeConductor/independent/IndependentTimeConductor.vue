@@ -113,6 +113,7 @@ export default {
 
     const {
       timeContext,
+      timeSystemKey,
       timeSystemFormatter,
       timeSystemDurationFormatter,
       isTimeSystemUTCBased,
@@ -316,6 +317,7 @@ export default {
     });
 
     provide('timeContext', timeContext);
+    provide('timeSystemKey', timeSystemKey);
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
     provide('isTimeSystemUTCBased', isTimeSystemUTCBased);

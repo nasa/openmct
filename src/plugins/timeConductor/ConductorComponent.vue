@@ -98,6 +98,7 @@ export default {
 
     const {
       timeContext,
+      timeSystemKey,
       timeSystemFormatter,
       timeSystemDurationFormatter,
       isTimeSystemUTCBased,
@@ -116,6 +117,7 @@ export default {
     } = useTime(openmct, undefined, configuration);
 
     provide('configuration', configuration);
+    provide('timeSystemKey', timeSystemKey);
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
     provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
