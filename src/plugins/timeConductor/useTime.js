@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { watch } from 'vue';
+
 import { useClock } from './useClock.js';
 import { useClockOffsets } from './useClockOffsets.js';
 import { useTick } from './useTick.js';
@@ -79,6 +81,49 @@ export function useTime(
   const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
   const { offsets } = useClockOffsets(openmct, timeContext);
   const { currentValue } = useTick(openmct, timeContext, throttleRate);
+
+  watch(clock, () => {
+    const optionsMatchingClock = configuration.menuOptions.filter(
+      (option) => option.clock === clock.value.key
+    );
+
+    const clockMatchesTimeSystem = optionsMatchingClock.find(
+      (option) => option.timeSystem === timeSystemKey.value
+    );
+
+    if (!clockMatchesTimeSystem) {
+      const firstMatchingTimeSystem = optionsMatchingClock[0].timeSystem;
+      const optionMatchingTimeSystemWithBounds = configuration.menuOptions.find(
+        (option) => option.timeSystem === firstMatchingTimeSystem && option.bounds && !option.clock
+      );
+
+      timeContext.value.setTimeSystem(
+        firstMatchingTimeSystem,
+        optionMatchingTimeSystemWithBounds.bounds
+      );
+
+      timeContext.value.setClockOffsets(
+        optionsMatchingClock[0].clockOffsets ?? optionsMatchingClock[0].bounds
+      );
+    }
+  });
+
+  watch(timeSystemKey, () => {
+    const optionsMatchingTimeSystem = configuration.menuOptions.filter(
+      (option) => option.timeSystem === timeSystemKey.value
+    );
+
+    const timeSystemMatchesClock = optionsMatchingTimeSystem.find(
+      (option) => option.clock === clock.value.key
+    );
+
+    if (!timeSystemMatchesClock) {
+      const optionsWithClock = optionsMatchingTimeSystem.find((option) => option.clock);
+
+      timeContext.value.setClock(optionsWithClock.clock);
+      timeContext.value.setClockOffsets(optionsWithClock.clockOffsets);
+    }
+  });
 
   return {
     timeContext,
