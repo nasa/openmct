@@ -105,7 +105,7 @@ export default {
     const timeConductorOptionsHolder = ref(null);
     const conductorPopupComponent = ref(null);
     const openmct = inject('openmct');
-    const configuration = inject('configuration');
+    const configuration = openmct.layout?.conductorComponent?.provide?.configuration;
 
     const keyString = ref(openmct.objects.makeKeyString(props.domainObject.identifier));
     const independentTCEnabled = ref(props.domainObject.configuration?.useIndependentTime === true);
@@ -113,6 +113,7 @@ export default {
 
     const {
       timeContext,
+      timeSystemKey,
       timeSystemFormatter,
       timeSystemDurationFormatter,
       isTimeSystemUTCBased,
@@ -316,6 +317,7 @@ export default {
     });
 
     provide('timeContext', timeContext);
+    provide('timeSystemKey', timeSystemKey);
     provide('timeSystemFormatter', timeSystemFormatter);
     provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
     provide('isTimeSystemUTCBased', isTimeSystemUTCBased);

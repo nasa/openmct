@@ -134,8 +134,10 @@ export default {
   },
   inject: [
     'openmct',
+    'configuration',
     'isTimeSystemUTCBased',
     'timeContext',
+    'timeSystemKey',
     'timeSystemFormatter',
     'timeSystemDurationFormatter',
     'bounds'
@@ -180,7 +182,8 @@ export default {
     this.setViewFromBounds();
   },
   beforeUnmount() {
-    this.clearAllValidation();
+    this.clearInputValidation();
+    this.clearLogicalValidation();
   },
   methods: {
     async copyToClipboard(startOrEnd) {
@@ -258,31 +261,51 @@ export default {
         return false;
       }
     },
-    clearAllValidation() {
-      Object.keys(this.inputValidityMap).forEach(this.clearValidation);
-    },
-    clearValidation(refName) {
-      const input = this.getInput(refName);
+    clearInputValidation() {
+      Object.keys(this.inputValidityMap).forEach((refName) => {
+        const input = this.getInput(refName);
 
-      input.setCustomValidity('');
-      input.title = '';
+        input.setCustomValidity('');
+        input.title = '';
+      });
+    },
+    clearLogicalValidation() {
+      Object.keys(this.logicalValidityMap).forEach((refName) => {
+        const input = this.getInput(refName);
+
+        input.setCustomValidity('');
+        input.title = '';
+
+        if (this.logicalValidityMap[refName] !== undefined) {
+          this.logicalValidityMap[refName] = { valid: true };
+        }
+      });
     },
     submitForm(shouldDismiss) {
-      this.validateLimit();
-      this.reportValidity('limit');
+      this.clearLogicalValidation();
+
       this.validateBounds();
       this.reportValidity('bounds');
 
-      if (this.isValid) {
-        this.setBoundsFromView(shouldDismiss);
+      if (!this.isValid) {
+        return;
       }
+
+      this.validateLimit();
+      this.reportValidity('limit');
+
+      if (!this.isValid) {
+        return;
+      }
+
+      this.setBoundsFromView(shouldDismiss);
     },
     validateInput(refNames) {
       if (!Array.isArray(refNames)) {
         refNames = [refNames];
       }
 
-      this.clearAllValidation();
+      this.clearInputValidation();
 
       refNames.forEach((refName) => {
         const inputType = refName.includes('Date') ? 'Date' : 'Time';
@@ -307,12 +330,21 @@ export default {
 
       this.logicalValidityMap.bounds = this.openmct.time.validateBounds(bounds);
     },
-    validateLimit(bounds) {
+    validateLimit() {
+      const start =
+        this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+      const end =
+        this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
+
+      const bounds = { start, end };
+
       const limit = this.configuration?.menuOptions
         ?.filter((option) => option.timeSystem === this.timeSystemKey)
         ?.find((option) => option.limit)?.limit;
 
-      if (this.isUTCBased && limit && bounds.end - bounds.start > limit) {
+      if (limit && bounds.end - bounds.start > limit) {
         this.logicalValidityMap.limit = {
           valid: false,
           message: 'Start and end difference exceeds allowable limit'

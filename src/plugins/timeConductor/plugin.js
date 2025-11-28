@@ -116,8 +116,12 @@ function mountComponent(openmct, configuration) {
   openmct.layout.conductorComponent = markRaw(conductorApp);
 }
 
+/**
+ * @param {TimeConductorConfig} config
+ * @returns {Function} install the function to install the time conductor plugin
+ */
 export default function (config) {
-  return function (openmct) {
+  return function install(openmct) {
     let configResult = hasRequiredOptions(config) || validateConfiguration(config, openmct);
     throwIfError(configResult);
 
@@ -157,3 +161,53 @@ export default function (config) {
     });
   };
 }
+
+/**
+ * @typedef {Object} TimeConductorConfig
+ * @property {MenuOptions} menuOptions
+ * @property {number?} throttleRate the rate in milliseconds in which to throttle time conductor visual updates
+ * @property {number?} records the maximum number of records to keep in the history
+ */
+
+/**
+ * @typedef {Array<FixedMenuOption | RealtimeMenuOption>} MenuOptions
+ */
+
+/**
+ * @typedef {Object} FixedMenuOption
+ * @property {string?} name the name of this option
+ * @property {string} timeSystem the key of the time system to use for this option
+ * @property {TimeConductorBounds} bounds the starting bounds for this option
+ * @deprecated {number?} records use {@link TimeConductorConfig.records} instead
+ * @property {number?} limit
+ * @property {Array<FixedPreset>} presets
+ */
+
+/**
+ * @typedef {Object} RealtimeMenuOption
+ * @property {string?} name the name of this option
+ * @property {string} timeSystem the key of the time system for this option
+ * @property {string} clock the key of the clock for this option
+ * @property {ClockOffsets} clockOffsets the starting bounds for this option
+ * @property {Array<RealtimePreset>} presets
+ */
+
+/**
+ * Commonly used fixed bounds can be preloaded for convenient re-use (ie. Yesterday, Mission Time, etc.)
+ * @typedef {Object} FixedPreset
+ * @property {string} label the display label for this preset
+ * @property {TimeConductorBounds} bounds the bounds for this preset
+ */
+
+/**
+ * Commonly used realtime offsets can be preloaded for convenient re-use (ie. 1 hour, 15 minutes, etc.)
+ * @typedef {Object} RealtimePreset
+ * @property {string} label the display label for this preset
+ * @property {ClockOffsets} clockOffsets the clock offsets for this preset
+ * @deprecated {TimeConductorBounds} bounds use {@link RealtimePreset.clockOffsets} instead
+ */
+
+/**
+ * @typedef {import('../../api/time/TimeContext').TimeConductorBounds} TimeConductorBounds
+ * @typedef {import('../../api/time/TimeContext').ClockOffsets} ClockOffsets
+ */

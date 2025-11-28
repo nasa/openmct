@@ -95,54 +95,6 @@ export function useClock(openmct, timeContext) {
     clock.value = _clock;
   }
 
-  /**
-   * TODO: bring this back. we lost this in the last refactor.
-   * changing clock requires a timesystem check.
-   * 
-  function setClockWithOptions() {
-    const option = {
-      clockKey
-    };
-    let configuration = this.getMatchingConfig({
-      clock: clockKey,
-      timeSystem: this.openmct.time.getTimeSystem().key
-    });
-
-    if (configuration === undefined) {
-      configuration = this.getMatchingConfig({
-        clock: clockKey
-      });
-
-      option.timeSystem = configuration.timeSystem;
-      option.bounds = configuration.bounds;
-
-      // this.openmct.time.setTimeSystem(configuration.timeSystem, configuration.bounds);
-    }
-
-    const offsets = this.openmct.time.getClockOffsets() ?? configuration.clockOffsets;
-    option.offsets = offsets;
-  }
-
-  function getMatchingConfig(options) {
-    const matchers = {
-      clock(config) {
-        return options.clock === config.clock;
-      },
-      timeSystem(config) {
-        return options.timeSystem === config.timeSystem;
-      }
-    };
-
-    function configMatches(config) {
-      return Object.keys(options).reduce((match, option) => {
-        return match && matchers[option](config);
-      }, true);
-    }
-
-    return this.configuration.menuOptions.filter(configMatches)[0];
-  }
-  */
-
   return {
     clock,
     getAllClockMetadata,
