@@ -97,13 +97,19 @@ export function useTime(
         (option) => option.timeSystem === firstMatchingTimeSystem && option.bounds && !option.clock
       );
 
-      timeContext.value.setTimeSystem(
-        firstMatchingTimeSystem,
-        optionMatchingTimeSystemWithBounds.bounds
-      );
-
       timeContext.value.setClockOffsets(
         optionsMatchingClock[0].clockOffsets ?? optionsMatchingClock[0].bounds
+      );
+
+      if (!optionMatchingTimeSystemWithBounds?.bounds) {
+        console.warn(
+          `No default bounds configured for time system: ${optionMatchingTimeSystemWithBounds?.timeSystem}`
+        );
+      }
+
+      timeContext.value.setTimeSystem(
+        firstMatchingTimeSystem,
+        optionMatchingTimeSystemWithBounds?.bounds
       );
     }
   });
