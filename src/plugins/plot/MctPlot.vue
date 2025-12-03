@@ -1492,8 +1492,8 @@ export default {
           const yStartPosition = this.getYPositionForYAxis(this.marquee.start, yAxis);
           const yEndPosition = this.getYPositionForYAxis(this.marquee.end, yAxis);
           yAxis.set('displayRange', {
-            min: Math.round(Math.min(yStartPosition, yEndPosition)),
-            max: Math.round(Math.max(yStartPosition, yEndPosition))
+            min: Math.min(yStartPosition, yEndPosition),
+            max: Math.max(yStartPosition, yEndPosition)
           });
         });
         this.userViewportChangeEnd();
