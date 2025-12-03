@@ -109,6 +109,18 @@ export default class MCTChartSeriesElement {
 
   append(point, index, series) {
     if (this.chart.pointIsInRange(point, series, index)) {
+      // if this is the first point in the range, also add the previous point for line continuation
+      if (this.indexCount === 0 && index > 0) {
+        const previousPoint = series.getSeriesData()[index - 1];
+        const pointsRequired = this.vertexCountForPointAtIndex(this.indexCount);
+        const insertionPoint = this.startIndexForPointAtIndex(this.indexCount);
+        this.growIfNeeded(pointsRequired);
+        this.makeInsertionPoint(insertionPoint, pointsRequired);
+        this.addPoint(this.makePoint(previousPoint, series), insertionPoint);
+        this.count += pointsRequired / 2;
+        this.indexCount++;
+      }
+
       const pointsRequired = this.vertexCountForPointAtIndex(this.indexCount);
       const insertionPoint = this.startIndexForPointAtIndex(this.indexCount);
       this.growIfNeeded(pointsRequired);

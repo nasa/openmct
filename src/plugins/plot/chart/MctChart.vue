@@ -388,10 +388,13 @@ export default {
       const yValue = series.getYVal(point);
       // if user is not looking at data within the current bounds, don't draw the point
 
-      const inRange =
-        xValue > xRange.min && xValue < xRange.max && yValue > yRange.min && yValue < yRange.max;
+      const isInRange =
+        xValue >= xRange.min &&
+        xValue <= xRange.max &&
+        yValue >= yRange.min &&
+        yValue <= yRange.max;
 
-      if (inRange) {
+      if (isInRange) {
         return true;
       }
 
@@ -401,6 +404,8 @@ export default {
         const seriesData = series.getSeriesData();
 
         // Check before range, then after range
+        // Technically the `if` condition below won't be triggered since index < seriesData.length-1 will be false, but it's there for completeness.
+        // this condition is handled upstream
         if (xValue < xRange.min && index < seriesData.length - 1) {
           if (series.getXVal(seriesData[index + 1]) >= xRange.min) {
             return true;
