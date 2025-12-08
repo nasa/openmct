@@ -14,6 +14,5 @@ export default merge(common, {
     new webpack.DefinePlugin({
       __OPENMCT_ROOT_RELATIVE__: '""'
     })
-  ],
-  devtool: 'eval-source-map'
+  ]
 });
