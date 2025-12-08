@@ -34,10 +34,10 @@ class StalenessUtils {
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
-    const { start } = this.openmct.time.getBounds();
-    const isStalenessInCurrentClock = stalenessResponseTime > start;
 
-    if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {
+    // Accept staleness updates based only on whether the timestamp is newer,
+    // NOT based on whether it falls within time conductor bounds.
+    if (stalenessResponseTime > this.lastStalenessResponseTime) {
       this.lastStalenessResponseTime = stalenessResponseTime;
 
       return true;
