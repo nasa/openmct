@@ -32,6 +32,7 @@ import { isIdentifier, isKeyString } from './object-utils.js';
 import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
+import RootObjectCompositionProvider from './RootObjectCompositionProvider.js';
 
 /**
  * Uniquely identifies a domain object.
@@ -93,6 +94,8 @@ export default class ObjectAPI {
     this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
+    openmct.composition.addProvider(new RootObjectCompositionProvider(openmct, this.rootRegistry));
+
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
@@ -455,6 +458,10 @@ export default class ObjectAPI {
    */
   addRoot(identifier, priority) {
     this.rootRegistry.addRoot(identifier, priority);
+  }
+
+  removeRoot(identifier) {
+    this.rootRegistry.removeRoot(identifier);
   }
 
   /**
