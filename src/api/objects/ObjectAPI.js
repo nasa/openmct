@@ -28,11 +28,12 @@ import ConflictError from './ConflictError.js';
 import InMemorySearchProvider from './InMemorySearchProvider.js';
 import InterceptorRegistry from './InterceptorRegistry.js';
 import MutableDomainObject from './MutableDomainObject.js';
+import NamespaceProvider from './NamespaceProvider.js';
 import { isIdentifier, isKeyString } from './object-utils.js';
+import RootObjectCompositionProvider from './RootObjectCompositionProvider.js';
 import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
-import RootObjectCompositionProvider from './RootObjectCompositionProvider.js';
 
 /**
  * Uniquely identifies a domain object.
@@ -89,7 +90,7 @@ export default class ObjectAPI {
       TAGS: 'TAGS'
     });
     this.eventEmitter = new EventEmitter();
-    this.providers = {};
+    this.providers = [];
     this.rootRegistry = new RootRegistry(openmct);
     this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
 
@@ -122,8 +123,18 @@ export default class ObjectAPI {
     if (identifier.key === 'ROOT') {
       return this.rootProvider;
     }
+    const provider = this.providers.find((candidateProvider) => {
+      return candidateProvider.appliesTo(identifier);
+    });
+    return provider || this.fallbackProvider;
+  }
 
-    return this.providers[identifier.namespace] || this.fallbackProvider;
+  /**
+   * Get the root registry
+   * @returns {RootRegistry} the root registry
+   */
+  getRootRegistry() {
+    return this.rootRegistry;
   }
 
   /**
@@ -145,11 +156,28 @@ export default class ObjectAPI {
   /**
    * Register a new object provider for a particular namespace.
    *
-   * @param {string} namespace the namespace for which to provide objects
-   * @param {ObjectProvider} provider the provider which will handle loading domain objects from this namespace
+   * @param {string|ObjectProvider} namespaceOrProvider Either a namespace or a provider. In the case of a namespace, a provider must be provided as the second argument
+   * @param {ObjectProvider} [providerOrNothing] the provider which will handle loading domain objects from the provided namespace (required when first argument is a namespace)
    */
-  addProvider(namespace, provider) {
-    this.providers[namespace] = provider;
+  addProvider(namespaceOrProvider, providerOrNothing) {
+    let namespace;
+    let provider;
+
+    if (arguments.length === 1) {
+      if (
+        namespaceOrProvider !== undefined &&
+        typeof namespaceOrProvider.appliesTo === 'function'
+      ) {
+        provider = namespaceOrProvider;
+      } else {
+        throw new Error('If no namespace is defined, provider must have an appliesTo function');
+      }
+    }
+    if (arguments.length === 2) {
+      namespace = namespaceOrProvider;
+      provider = new NamespaceProvider(namespace, providerOrNothing);
+    }
+    this.providers.push(provider);
   }
 
   /**
@@ -245,7 +273,7 @@ export default class ObjectAPI {
       throw new Error(`Unknown search type: ${searchType}`);
     }
 
-    const searchPromises = Object.values(this.providers)
+    const searchPromises = this.providers
       .filter((provider) => {
         return provider.supportsSearchType !== undefined && provider.supportsSearchType(searchType);
       })
