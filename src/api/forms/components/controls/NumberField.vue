@@ -24,6 +24,7 @@
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
       <input
+        :id="`form-${model.key}`"
         v-model="field"
         :aria-label="model.name"
         type="number"
