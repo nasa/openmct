@@ -123,9 +123,11 @@ export default class ObjectAPI {
     if (identifier.key === 'ROOT') {
       return this.rootProvider;
     }
+
     const provider = this.providers.find((candidateProvider) => {
       return candidateProvider.appliesTo(identifier);
     });
+
     return provider || this.fallbackProvider;
   }
 
@@ -163,6 +165,7 @@ export default class ObjectAPI {
     let namespace;
     let provider;
 
+    // if no namespace is provided, we expect a provider to be provided
     if (arguments.length === 1) {
       if (
         namespaceOrProvider !== undefined &&
@@ -173,10 +176,13 @@ export default class ObjectAPI {
         throw new Error('If no namespace is defined, provider must have an appliesTo function');
       }
     }
+
+    // if a namespace is provided, we expect a provider to be provided
     if (arguments.length === 2) {
       namespace = namespaceOrProvider;
       provider = new NamespaceProvider(namespace, providerOrNothing);
     }
+
     this.providers.push(provider);
   }
 

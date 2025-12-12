@@ -26,6 +26,7 @@
 export default class NamespaceProvider {
   #wrappedProvider;
   #namespace;
+
   constructor(namespace, provider) {
     this.#namespace = namespace;
     this.#wrappedProvider = provider;
