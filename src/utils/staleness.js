@@ -34,16 +34,23 @@ class StalenessUtils {
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
-    const { start } = this.openmct.time.getBounds();
-    const isStalenessInCurrentClock = stalenessResponseTime > start;
+    const { start, end } = this.openmct.time.getBounds();
 
-    if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {
-      this.lastStalenessResponseTime = stalenessResponseTime;
-
-      return true;
-    } else {
+    if (stalenessResponseTime > end) {
       return false;
     }
+
+    if (this.lastStalenessResponseTime === 0) {
+      this.lastStalenessResponseTime = stalenessResponseTime;
+      return true;
+    }
+
+    if (stalenessResponseTime >= start && stalenessResponseTime > this.lastStalenessResponseTime) {
+      this.lastStalenessResponseTime = stalenessResponseTime;
+      return true;
+    }
+
+    return false;
   }
 
   watchTimeSystem() {
