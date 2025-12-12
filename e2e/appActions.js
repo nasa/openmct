@@ -109,7 +109,7 @@ async function createDomainObjectWithDefaults(
     // Fill the "Notes" section with information about the
     // currently running test and its project.
     // eslint-disable-next-line playwright/no-raw-locators
-    await page.locator('#notes-textarea').fill(page.testNotes);
+    await page.locator('#form-notes').fill(page.testNotes);
   }
 
   await page.getByRole('button', { name: 'Save' }).click();
