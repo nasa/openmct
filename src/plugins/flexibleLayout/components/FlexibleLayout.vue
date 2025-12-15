@@ -77,11 +77,12 @@
 </template>
 
 <script>
-import Container from '../utils/container.js';
-import Frame from '../utils/frame.js';
+import Container from '@/ui/layout/Container.js';
+import Frame from '@/ui/layout/Frame.js';
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
+
 import ContainerComponent from './ContainerComponent.vue';
 import DropHint from './DropHint.vue';
-import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -158,6 +159,7 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
+
     this.unObserveContainers = this.openmct.objects.observe(
       this.domainObject,
       'configuration.containers',

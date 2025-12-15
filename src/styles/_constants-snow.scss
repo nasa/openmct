@@ -233,8 +233,6 @@ $editUIBaseColor: #cae1ff; // Base color, toolbar bg
 $editUIBaseColorHov: pushBack($editUIBaseColor, 20%);
 $editUIBaseColorFg: #4c4c4c; // Toolbar button icon colors, etc.
 $editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
-$editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
-$editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
 $editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
 $editUIGridColorFg: rgba($editUIBaseColor, 0.3); // Grid lines in layout editing area
 $editDimensionsColor: #d7aeff;
@@ -403,14 +401,18 @@ $colorLimitCyanFg: #d3faff;
 $colorLimitCyanIc: #1795c0;
 
 // Events
-$colorEventPurpleFg: #6433ff;
+$colorEventPurpleFg: #6f07ed;
 $colorEventRedFg: #aa0000;
 $colorEventOrangeFg: #b84900;
-$colorEventYellowFg: #867109;
+$colorEventYellowFg: #a98c04;
 $colorEventPurpleBg: #ebe7fb;
 $colorEventRedBg: #fcefef;
 $colorEventOrangeBg: #ffece3;
 $colorEventYellowBg: #fdf8eb;
+$colorEventPurpleLine: $colorEventPurpleFg;
+$colorEventRedLine: $colorEventRedFg;
+$colorEventOrangeLine: $colorEventOrangeFg;
+$colorEventYellowLine: $colorEventYellowFg;
 
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
@@ -419,10 +421,12 @@ $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
 // Items
+$colorSelectableItemBg: transparent;
+$colorSelectableItemBgHov: rgba(#000, 0.07);
 $colorItemBg: pushBack($colorBtnBg, 20%);
 $colorItemBgHov: pushBack($colorItemBg, 5%);
 $colorListItemBg: transparent;
-$colorListItemBgHov: rgba($colorKey, 0.1);
+$colorListItemBgHov: $colorSelectableItemBgHov;
 $colorItemFg: $colorBodyFg;
 $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $shdwItemText: none;
@@ -460,31 +464,41 @@ $colorGaugeMeterTextValue: $colorGaugeTextValue; // Meter text value, overlaid o
 $colorGaugeRange: $colorBodyFg; // Range text color
 $colorGaugeLimitHigh: rgba($colorLimitRedBg, 0.2);
 $colorGaugeLimitLow: $colorGaugeLimitHigh;
-$colorGaugeNeedle: rgba(#fff, 0);
+$colorGaugeNeedle: $colorGaugeValue; // Color of needle in a needle gauge.
 $transitionTimeGauge: 150ms; // CSS transition time used to smooth needle gauge and meter value transitions
 $marginGaugeMeterValue: 10%; // Margin between meter value bar and bounds edges
 $gaugeMeterValueShadow: rgba(255, 255, 255, 0);
 
 // Time Strip and Lists
-$colorPastBg: #f0f0f0;
-$colorPastFg: #999;
-$colorPastFgEm: #666;
-$colorCurrentBg: #ddd;
-$colorCurrentFg: #666;
-$colorCurrentFgEm: #000;
+$colorPastBg: #d8d8d8;
+$colorPastFg: #333333;
+$colorPastFgEm: $colorPastFg;
+$colorCurrentBg: #cfcfcf;
+$colorCurrentFg: #333333;
+$colorCurrentFgEm: $colorCurrentFg;
 $colorCurrentBorder: $colorBodyBg;
 $colorFutureBg: #eaeaea;
-$colorFutureFg: $colorCurrentFg;
+$colorFutureFg: #666666;
 $colorFutureFgEm: $colorCurrentFgEm;
 $colorFutureBorder: $colorCurrentBorder;
-$colorInProgressBg: #b1e8ff;
+$colorInProgressBg: #9cd1e3;
 $colorInProgressFg: $colorCurrentFg;
 $colorInProgressFgEm: $colorCurrentFgEm;
 $colorGanttSelectedBorder: #fff;
+$colorActivityStatusGreen: #4bad4b;
+$colorActivityStatusOrange: #b67e41;
+$opacitySubtle: 0.6;
+$colorEventLine: $colorBodyFg;
+$colorEventLineExtended: rgba($colorEventLine, 0.3);
+$colorTimeStripDraftBg: rgba(#a57748, 0.2);
+$colorTimeStripLabelBg: rgba($colorBodyFg, 0.15);
+$colorABAhead: #029d46;
+$colorABBehind: #d58a00;
+$eventLineW: 1px;
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: rgba(black, 0.07);
+$colorItemTreeHoverBg: $colorSelectableItemBgHov;
 $colorItemTreeHoverFg: pullForward($colorBodyFg, 10%);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon;

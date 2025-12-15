@@ -469,6 +469,7 @@ By adhering to this principle, we can create tests that are both robust and refl
     //Select from object
     await percySnapshot(page, `object selected (theme: ${theme})`)
     ```
+8. **Use `networkidle` to wait for network requests to complete**: This is necessary to ensure that all network requests have completed before taking a snapshot. This ensures that icons are loaded and other assets are available. https://github.com/nasa/openmct/issues/7549
 
 #### How to write a great network test
 

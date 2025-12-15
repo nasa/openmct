@@ -20,10 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-browse-bar">
+  <div class="l-browse-bar" aria-label="Browse bar">
     <div class="l-browse-bar__start">
       <button
         v-if="hasParent"
+        aria-label="Navigate up to parent"
         class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
         title="Navigate up to parent"
         @click="goToParent"
@@ -34,9 +35,10 @@
         </div>
         <span
           ref="objectName"
+          aria-label="Browse bar object name"
           class="l-browse-bar__object-name c-object-label__name"
           :class="{ 'c-input-inline': isPersistable }"
-          :contenteditable="isPersistable"
+          :contenteditable="isNameEditable"
           @blur="updateName"
           @keydown.enter.prevent
           @keyup.enter.prevent="updateNameOnEnterKeyPress"
@@ -78,7 +80,7 @@
         ></button>
 
         <button
-          v-if="isViewEditable & !isEditing"
+          v-if="shouldShowLock"
           :aria-label="lockedOrUnlockedTitle"
           :title="lockedOrUnlockedTitle"
           :class="{
@@ -87,6 +89,13 @@
           }"
           @click="toggleLock(!domainObject.locked)"
         ></button>
+
+        <span
+          v-else-if="domainObject?.locked"
+          class="icon-lock"
+          aria-label="Locked for editing, cannot be unlocked."
+          title="Locked for editing, cannot be unlocked."
+        ></span>
 
         <button
           v-if="isViewEditable && !isEditing && !domainObject.locked"
@@ -150,6 +159,8 @@ import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import { SupportedViewTypes } from '../../utils/constants.js';
 import ViewSwitcher from './ViewSwitcher.vue';
 
+const LOCALSTORAGE_VIEW_PREFS = 'openmct-stored-view-prefs';
+
 export default {
   components: {
     IndependentTimeConductor,
@@ -180,6 +191,18 @@ export default {
     };
   },
   computed: {
+    isNameEditable() {
+      return this.isPersistable && !this.domainObject.locked;
+    },
+    shouldShowLock() {
+      if (this.domainObject === undefined) {
+        return false;
+      }
+      if (this.domainObject.disallowUnlock) {
+        return false;
+      }
+      return this.domainObject.locked || (this.isViewEditable && !this.isEditing);
+    },
     statusClass() {
       return this.status ? `is-status--${this.status}` : '';
     },
@@ -232,6 +255,18 @@ export default {
 
       return objectType?.definition?.cssClass ?? '';
     },
+    objectTypeKey() {
+      if (!this.domainObject) {
+        return '';
+      }
+
+      const objectType = this.openmct.types.get(this.domainObject.type);
+      if (!objectType) {
+        return '';
+      }
+
+      return objectType.definition?.key ?? '';
+    },
     isPersistable() {
       const persistable =
         this.domainObject?.identifier &&
@@ -253,11 +288,19 @@ export default {
       return false;
     },
     lockedOrUnlockedTitle() {
+      let title;
       if (this.domainObject.locked) {
-        return 'Locked for editing - click to unlock.';
+        if (this.domainObject.lockedBy !== undefined) {
+          title = `Locked for editing by ${this.domainObject.lockedBy}. `;
+        } else {
+          title = 'Locked for editing. ';
+        }
+        title += 'Click to unlock.';
       } else {
-        return 'Unlocked for editing - click to lock.';
+        title = 'Unlocked for editing, click to lock.';
       }
+
+      return title;
     },
     domainObjectName() {
       return this.domainObject?.name ?? '';
@@ -288,7 +331,6 @@ export default {
     document.addEventListener('click', this.closeViewAndSaveMenu);
     this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
     window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
-
     this.openmct.editor.on('isEditing', (isEditing) => {
       this.isEditing = isEditing;
     });
@@ -327,9 +369,18 @@ export default {
     },
     setView(view) {
       this.viewKey = view.key;
+      this.storeViewPrefs(view.key);
       this.openmct.router.updateParams({
         view: this.viewKey
       });
+    },
+    retrieveViewPrefs() {
+      return JSON.parse(window.localStorage.getItem(LOCALSTORAGE_VIEW_PREFS)) || {};
+    },
+    storeViewPrefs(view) {
+      let storedViews = this.retrieveViewPrefs();
+      storedViews[this.domainObject.type] = view;
+      window.localStorage.setItem(LOCALSTORAGE_VIEW_PREFS, JSON.stringify(storedViews));
     },
     edit() {
       this.openmct.editor.edit();
@@ -421,8 +472,27 @@ export default {
       this.actionCollection.off('update', this.updateActionItems);
       delete this.actionCollection;
     },
-    toggleLock(flag) {
-      this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+    async toggleLock(flag) {
+      if (!this.domainObject.disallowUnlock) {
+        const wasTransactionActive = this.openmct.objects.isTransactionActive();
+        let transaction;
+
+        if (!wasTransactionActive) {
+          transaction = this.openmct.objects.startTransaction();
+        }
+
+        this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+        const user = await this.openmct.user.getCurrentUser();
+
+        if (user !== undefined) {
+          this.openmct.objects.mutate(this.domainObject, 'lockedBy', user.id);
+        }
+
+        if (!wasTransactionActive) {
+          await transaction.commit();
+          this.openmct.objects.endTransaction();
+        }
+      }
     },
     setStatus(status) {
       this.status = status;

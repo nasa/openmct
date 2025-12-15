@@ -20,35 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import percySnapshot from '@percy/playwright';
-import fs from 'fs';
+export default function overlayPlotStylesInterceptor(openmct) {
+  return {
+    appliesTo: (identifier, domainObject) => {
+      return (
+        domainObject?.type === 'telemetry.plot.overlay' &&
+        !domainObject?.configuration?.objectStyles
+      );
+    },
+    invoke: (identifier, domainObject) => {
+      if (!domainObject.configuration) {
+        domainObject.configuration = {};
+      }
 
-import { scanForA11yViolations, test } from '../../avpFixtures.js';
-import {
-  createTimelistWithPlanAndSetActivityInProgress,
-  getFirstActivity
-} from '../../helper/planningUtils.js';
+      domainObject.configuration.objectStyles = {};
 
-const examplePlanSmall1 = JSON.parse(
-  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url))
-);
-
-const FIRST_ACTIVITY_SMALL_1 = getFirstActivity(examplePlanSmall1);
-
-test.describe('Visual - Timelist progress bar @clock @a11y', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.end + 10000 });
-    await page.clock.resume();
-    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-    await page.getByLabel('Click to collapse items').click();
-  });
-
-  test('progress pie is full', async ({ page, theme }) => {
-    // Progress pie is completely full and doesn't update if now is greater than the end time
-    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
-  });
-});
-
-test.afterEach(async ({ page }, testInfo) => {
-  await scanForA11yViolations(page, testInfo.title);
-});
+      return domainObject;
+    }
+  };
+}

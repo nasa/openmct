@@ -61,8 +61,9 @@ test.describe('Visual - Notebook Snapshot @a11y', () => {
     await percySnapshot(page, `Notebook Snapshot with text entry open (theme: '${theme}')`);
 
     // When working with Painterro, we need to check that the Apply button is hidden after clicking
-    await page.getByTitle('Apply').click();
-    await expect(page.getByTitle('Apply')).toBeHidden();
+    const painterroApplyButton = page.locator('.ptro-text-tool-buttons').getByTitle('Apply');
+    await painterroApplyButton.click();
+    await expect(painterroApplyButton).toBeHidden();
 
     // Save and exit annotation window
     await page.getByRole('button', { name: 'Save' }).click();
@@ -98,7 +99,7 @@ test.describe('Visual - Notebook @a11y', () => {
 
     await page.getByLabel('Expand My Items folder').click();
 
-    await page.goto(notebook.url);
+    await page.goto(notebook.url, { waitUntil: 'networkidle' });
 
     await page
       .getByLabel('Navigate to Dropped Overlay Plot')

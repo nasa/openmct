@@ -434,16 +434,68 @@ class CouchObjectProvider {
     return Promise.resolve([]);
   }
 
-  async getObjectsByView({ designDoc, viewName, keysToSearch }, abortSignal) {
-    const stringifiedKeys = JSON.stringify(keysToSearch);
-    const url = `${this.url}/_design/${designDoc}/_view/${viewName}?keys=${stringifiedKeys}&include_docs=true`;
+  async isViewDefined(designDoc, viewName) {
+    const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
+    const response = await fetch(url, {
+      method: 'HEAD'
+    });
+
+    return response.ok;
+  }
+
+  /**
+   * @typedef GetObjectByViewOptions
+   * @property {String} designDoc the name of the design document that the view belongs to
+   * @property {String} viewName
+   * @property {Array.<String>} [keysToSearch] a list of discrete view keys to search for. View keys are not object identifiers.
+   * @property {String} [startKey] limit the search to a range of keys starting with the provided `startKey`. One of `keysToSearch` OR `startKey` AND `endKey` must be provided
+   * @property {String} [endKey] limit the search to a range of keys ending with the provided `endKey`. One of `keysToSearch` OR `startKey` AND `endKey` must be provided
+   * @property {Number} [limit] limit the number of results returned
+   * @property {String} [objectIdField] The field (either key or value) to treat as an object key. If provided, include_docs will be set to false in the request, and the field will be used as an object identifier. A bulk request will be used to resolve objects from identifiers
+   */
+  /**
+   * Return objects based on a call to a view. See https://docs.couchdb.org/en/stable/api/ddoc/views.html.
+   * @param {GetObjectByViewOptions} options
+   * @param {AbortSignal} abortSignal
+   * @returns {Promise<Array.<import('openmct.js').DomainObject>>}
+   */
+  async getObjectsByView(
+    { designDoc, viewName, keysToSearch, startKey, endKey, limit, objectIdField },
+    abortSignal
+  ) {
+    const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
+    const requestBody = {};
+    let requestBodyString;
+
+    if (objectIdField === undefined) {
+      requestBody.include_docs = true;
+    }
+
+    if (limit !== undefined) {
+      requestBody.limit = limit;
+    }
+
+    if (startKey !== undefined && endKey !== undefined) {
+      /* spell-checker: disable */
+      requestBody.startkey = startKey;
+      requestBody.endkey = endKey;
+      requestBodyString = JSON.stringify(requestBody);
+      requestBodyString = requestBodyString.replace('$START_KEY', startKey);
+      requestBodyString = requestBodyString.replace('$END_KEY', endKey);
+      /* spell-checker: enable */
+    } else {
+      requestBody.keys = keysToSearch;
+      requestBodyString = JSON.stringify(requestBody);
+    }
+
     let objectModels = [];
 
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: abortSignal
+        signal: abortSignal,
+        body: requestBodyString
       });
 
       if (!response.ok) {
@@ -454,13 +506,21 @@ class CouchObjectProvider {
 
       const result = await response.json();
       const couchRows = result.rows;
-      couchRows.forEach((couchRow) => {
-        const couchDoc = couchRow.doc;
-        const objectModel = this.#getModel(couchDoc);
-        if (objectModel) {
-          objectModels.push(objectModel);
-        }
-      });
+      if (objectIdField !== undefined) {
+        const objectIdsToResolve = [];
+        couchRows.forEach((couchRow) => {
+          objectIdsToResolve.push(couchRow[objectIdField]);
+        });
+        objectModels = Object.values(await this.#bulkGet(objectIdsToResolve), abortSignal);
+      } else {
+        couchRows.forEach((couchRow) => {
+          const couchDoc = couchRow.doc;
+          const objectModel = this.#getModel(couchDoc);
+          if (objectModel) {
+            objectModels.push(objectModel);
+          }
+        });
+      }
     } catch (error) {
       // do nothing
     }

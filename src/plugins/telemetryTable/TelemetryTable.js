@@ -25,7 +25,7 @@ import _ from 'lodash';
 
 import StalenessUtils from '../../utils/staleness.js';
 import TableRowCollection from './collections/TableRowCollection.js';
-import { MODE, ORDER } from './constants.js';
+import { MODE } from './constants.js';
 import TelemetryTableColumn from './TelemetryTableColumn.js';
 import TelemetryTableConfiguration from './TelemetryTableConfiguration.js';
 import TelemetryTableNameColumn from './TelemetryTableNameColumn.js';
@@ -130,14 +130,7 @@ export default class TelemetryTable extends EventEmitter {
   createTableRowCollections() {
     this.tableRows = new TableRowCollection();
 
-    //Fetch any persisted default sort
-    let sortOptions = this.configuration.getConfiguration().sortOptions;
-
-    //If no persisted sort order, default to sorting by time system, descending.
-    sortOptions = sortOptions || {
-      key: this.openmct.time.getTimeSystem().key,
-      direction: ORDER.DESCENDING
-    };
+    const sortOptions = this.configuration.getSortOptions();
 
     this.updateRowLimit();
 
@@ -172,8 +165,8 @@ export default class TelemetryTable extends EventEmitter {
 
     this.removeTelemetryCollection(keyString);
 
-    let sortOptions = this.configuration.getConfiguration().sortOptions;
-    requestOptions.order = sortOptions?.direction ?? ORDER.DESCENDING; // default to descending
+    let sortOptions = this.configuration.getSortOptions();
+    requestOptions.order = sortOptions.direction;
 
     if (this.telemetryMode === MODE.PERFORMANCE) {
       requestOptions.size = this.rowLimit;
@@ -442,12 +435,13 @@ export default class TelemetryTable extends EventEmitter {
   }
 
   sortBy(sortOptions) {
-    this.tableRows.sortBy(sortOptions);
+    this.configuration.setSortOptions(sortOptions);
 
-    if (this.openmct.editor.isEditing()) {
-      let configuration = this.configuration.getConfiguration();
-      configuration.sortOptions = sortOptions;
-      this.configuration.updateConfiguration(configuration);
+    if (this.telemetryMode === MODE.PERFORMANCE) {
+      this.tableRows.setSortOptions(sortOptions);
+      this.clearAndResubscribe();
+    } else {
+      this.tableRows.sortBy(sortOptions);
     }
   }
 

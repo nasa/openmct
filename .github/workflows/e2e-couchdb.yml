@@ -37,7 +37,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - run: npx playwright@1.45.2 install
+      - run: npx playwright@1.48.1 install
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
@@ -52,22 +52,33 @@ jobs:
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
         run: npm run test:e2e:couchdb
 
+      - name: Generate Code Coverage Report
+        run: npm run cov:e2e:report
+
       - name: Publish Results to Codecov.io
-        env:
-          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
-        run: npm run cov:e2e:full:publish
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/e2e/lcov.info
+          flags: e2e-full
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-test-results
           path: test-results
+          overwrite: true
 
       - name: Archive html test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-html-test-results
           path: html-test-results
+          overwrite: true
 
       - name: Remove pr:e2e:couchdb label (if present)
         if: always()

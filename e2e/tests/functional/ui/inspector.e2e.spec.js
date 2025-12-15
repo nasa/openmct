@@ -1,3 +1,5 @@
+/* eslint-disable playwright/no-conditional-in-test */
+/* eslint-disable playwright/no-conditional-expect */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -30,6 +32,104 @@ Odio ut sem nulla pharetra. Neque vitae tempus quam pellentesque nec. A arcu cur
 Enim nec dui nunc mattis. Cursus turpis massa tincidunt dui ut. Donec adipiscing tristique risus nec feugiat in. Eleifend mi in nulla posuere sollicitudin. Donec enim diam vulputate ut pharetra sit. Ultricies mi eget mauris pharetra et ultrices neque. Eros in cursus turpis massa tincidunt dui. Cursus risus at ultrices mi tempus imperdiet nulla malesuada. Morbi enim nunc faucibus a pellentesque sit. Porttitor rhoncus dolor purus non. Ac tortor vitae purus faucibus.
 Proin libero nunc consequat interdum varius sit amet mattis vulputate. Metus dictum at tempor commodo ullamcorper a lacus vestibulum sed. Quisque non tellus orci ac auctor augue mauris. Id ornare arcu odio ut. Rhoncus est pellentesque elit ullamcorper dignissim. Senectus et netus et malesuada fames ac turpis egestas. Volutpat ac tincidunt vitae semper quis lectus nulla. Adipiscing elit duis tristique sollicitudin. Ipsum faucibus vitae aliquet nec ullamcorper sit. Gravida neque convallis a cras semper auctor neque vitae tempus. Porttitor leo a diam sollicitudin tempor id. Dictum non consectetur a erat nam at lectus. At volutpat diam ut venenatis tellus in. Morbi enim nunc faucibus a pellentesque sit amet. Cursus in hac habitasse platea. Sed augue lacus viverra vitae.
 `;
+
+const viewsTabsMatrix = {
+  Clock: {
+    Browse: ['Properties']
+  },
+  'Condition Set': {
+    Browse: ['Properties', 'Elements', 'Annotations'],
+    Edit: ['Elements', 'Properties']
+  },
+  'Condition Widget': {
+    Browse: ['Properties', 'Styles'],
+    Edit: ['Styles', 'Properties']
+  },
+  'Display Layout': {
+    Browse: ['Properties', 'Elements', 'Styles'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  'Event Message Generator': {
+    Browse: ['Properties']
+  },
+  'Event Message Generator with Acknowledge': {
+    Browse: ['Properties']
+  },
+  'Example Imagery': {
+    Browse: ['Properties', 'Annotations']
+  },
+  'Flexible Layout': {
+    Browse: ['Properties', 'Elements', 'Styles'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  Folder: {
+    Browse: ['Properties']
+  },
+  'Gantt Chart': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Properties']
+  },
+  Gauge: {
+    Browse: ['Properties', 'Elements', 'Styles'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  Graph: {
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  Hyperlink: {
+    Browse: ['Properties'],
+    required: {
+      url: 'https://www.google.com',
+      displayText: 'Google'
+    }
+  },
+  'LAD Table': {
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'LAD Table Set': {
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  Notebook: {
+    Browse: ['Properties']
+  },
+  'Overlay Plot': {
+    Browse: ['Properties', 'Config', 'Annotations', 'Styles'],
+    Edit: ['Config', 'Elements', 'Styles', 'Filters', 'Properties']
+  },
+  'Scatter Plot': {
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'Sine Wave Generator': {
+    Browse: ['Properties', 'Annotations']
+  },
+  'Stacked Plot': {
+    Browse: ['Properties', 'Config', 'Annotations', 'Elements', 'Styles'],
+    Edit: ['Config', 'Elements', 'Styles', 'Properties']
+  },
+  'Tabs View': {
+    Browse: ['Properties', 'Elements', 'Styles'],
+    Edit: ['Elements', 'Styles', 'Properties']
+  },
+  'Telemetry Table': {
+    Browse: ['Properties', 'Config', 'Elements', 'Styles'],
+    Edit: ['Config', 'Elements', 'Styles', 'Filters', 'Properties']
+  },
+  'Time List': {
+    Browse: ['Properties', 'Config', 'Elements'],
+    Edit: ['Config', 'Elements', 'Properties']
+  },
+  'Time Strip': {
+    Browse: ['Properties', 'Elements'],
+    Edit: ['Elements', 'Properties']
+  },
+  Timer: {
+    Browse: ['Properties']
+  }
+};
 
 test.describe('Inspector tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -71,5 +171,50 @@ test.describe('Inspector tests', () => {
     await page.mouse.wheel(0, offset);
 
     await expect(lastInspectorPropertyValue).toBeInViewport();
+  });
+
+  test(`Inspector tabs show the correct tabs per view and mode`, async ({ page }) => {
+    // loop through each view type
+    for (const view of Object.keys(viewsTabsMatrix)) {
+      const viewConfig = viewsTabsMatrix[view];
+      const createOptions = {
+        type: view,
+        name: view
+      };
+
+      // create and navigate to view;
+      const objectInfo = await createDomainObjectWithDefaults(
+        page,
+        createOptions,
+        viewConfig.required ?? {}
+      );
+      await page.goto(objectInfo.url);
+
+      // verify correct number of tabs for browse mode
+      expect(await page.getByRole('tab').count()).toBe(Object.keys(viewConfig.Browse).length);
+
+      // verify correct order of tabs for browse mode
+      for (const [index, value] of Object.entries(viewConfig.Browse)) {
+        const tab = page.getByRole('tab').nth(index);
+        await expect(tab).toHaveText(value);
+      }
+
+      // enter Edit if necessary
+      if (viewConfig.Edit) {
+        await page.getByLabel('Edit Object').click();
+
+        // verify correct number of tabs for edit mode
+        expect(await page.getByRole('tab').count()).toBe(Object.keys(viewConfig.Edit).length);
+
+        // verify correct order of tabs for edit mode
+        for (const [index, value] of Object.entries(viewConfig.Edit)) {
+          const tab = page.getByRole('tab').nth(index);
+          await expect(tab).toHaveText(value);
+        }
+
+        await page.getByLabel('Save').first().click();
+        await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+      }
+    }
   });
 });

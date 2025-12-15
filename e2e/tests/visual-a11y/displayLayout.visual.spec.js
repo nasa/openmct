@@ -22,7 +22,11 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createStableStateTelemetry,
+  linkParameterToObject
+} from '../../appActions.js';
 import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { test } from '../../pluginFixtures.js';
 
@@ -47,16 +51,13 @@ test.describe('Visual - Display Layout @clock', () => {
       name: 'Child Right Layout',
       parent: parentLayout.uuid
     });
-    await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      name: 'SWG 1',
-      parent: child1Layout.uuid
-    });
-    await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      name: 'SWG 2',
-      parent: child2Layout.uuid
-    });
+
+    const stableStateTelemetry = await createStableStateTelemetry(page);
+    await linkParameterToObject(page, stableStateTelemetry.name, child1Layout.name);
+    await linkParameterToObject(page, stableStateTelemetry.name, child2Layout.name);
+
+    // Pause the clock at a time where the telemetry is stable 20 minutes in the future
+    await page.clock.pauseAt(new Date(MISSION_TIME + 1200000));
 
     await page.goto(parentLayout.url, { waitUntil: 'domcontentloaded' });
     await page.getByRole('button', { name: 'Edit Object' }).click();

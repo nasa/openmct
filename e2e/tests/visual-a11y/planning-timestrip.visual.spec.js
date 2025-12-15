@@ -27,14 +27,21 @@ import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appAct
 import { scanForA11yViolations, test } from '../../avpFixtures.js';
 import { waitForAnimations } from '../../baseFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
-import { setBoundsToSpanAllActivities } from '../../helper/planningUtils.js';
+import { getFirstActivity, setBoundsToSpanAllActivities } from '../../helper/planningUtils.js';
 
 const examplePlanSmall2 = JSON.parse(
   fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
 );
 
+const FIRST_ACTIVITY_SMALL_2 = getFirstActivity(examplePlanSmall2);
+
 test.describe('Visual - Time Strip @a11y', () => {
   test.beforeEach(async ({ page }) => {
+    // Set the clock to the end of the first activity in the plan
+    // This is so we can see the "now" line in the plan view
+    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_2.end + 10000 });
+    await page.clock.resume();
+
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test('Time Strip View', async ({ page, theme }) => {
@@ -61,6 +68,10 @@ test.describe('Visual - Time Strip @a11y', () => {
 
     //This will stabilize the state of the test and allow the SWG to render as empty
     await waitForAnimations(page.getByLabel('Plot Canvas'));
+
+    // FIXME: https://github.com/nasa/openmct/issues/8005
+    // eslint-disable-next-line playwright/no-wait-for-timeout
+    await page.waitForTimeout(500);
 
     await percySnapshot(page, `Time Strip View (theme: ${theme}) - With SWG and Plan`);
   });
