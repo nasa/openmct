@@ -129,7 +129,8 @@ test.describe('Plot Controls', () => {
     await page.getByLabel('Enable Independent Time Conductor').click();
 
     // Bring up the independent time conductor popup and switch to fixed time mode
-    await page.getByLabel('Independent Time Conductor Settings').click();
+    await page.getByLabel('Independent Time Conductor Panel').click();
+    await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
     await page.getByLabel('Independent Time Conductor Mode Menu').click();
     await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
 
