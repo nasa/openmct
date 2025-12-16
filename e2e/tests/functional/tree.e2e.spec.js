@@ -224,15 +224,15 @@ test.describe('Main Tree', () => {
 
   test.describe('Root objects', () => {
     const testRootObjects = {
-      roota: {
+      rootA: {
         name: 'Root Object A',
         type: 'Folder'
       },
-      rootb: {
+      rootB: {
         name: 'Root Object B',
         type: 'Folder'
       },
-      rootc: {
+      rootC: {
         name: 'Root Object C',
         type: 'Folder'
       }
@@ -278,8 +278,8 @@ test.describe('Main Tree', () => {
         };
 
         openmct.objects.addProvider('test-namespace', testObjectProvider);
-        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'roota' });
-        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootb' });
+        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootA' });
+        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootB' });
       }, testRootObjects);
     });
     test('Load composition correctly on load', async ({ page }) => {
@@ -303,7 +303,7 @@ test.describe('Main Tree', () => {
 
       await page.evaluate(() => {
         const openmct = window.openmct;
-        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootc' });
+        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootC' });
       });
       await expect(page.getByRole('treeitem', { name: 'Root Object C' })).toBeVisible();
     });
@@ -319,7 +319,7 @@ test.describe('Main Tree', () => {
 
       await page.evaluate(() => {
         const openmct = window.openmct;
-        openmct.objects.removeRoot({ namespace: 'test-namespace', key: 'rootb' });
+        openmct.objects.removeRoot({ namespace: 'test-namespace', key: 'rootB' });
       });
       await expect(page.getByRole('treeitem', { name: 'Root Object A' })).toBeVisible();
       await expect(page.getByRole('treeitem', { name: 'Root Object B' })).toBeHidden();
