@@ -17,7 +17,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div ref="indicatorsContainer" class="l-shell__head-section l-shell__indicators">
+  <div
+    ref="indicatorsContainer"
+    aria-label="Status Indicators"
+    class="l-shell__head-section l-shell__indicators"
+  >
     <component
       :is="indicator.value.vueComponent"
       v-for="indicator in sortedIndicators"
