@@ -36,7 +36,7 @@ export default class NamespaceProvider {
         const method = this.#wrappedProvider[methodName];
         if (method !== undefined) {
           this[methodName] = () => {
-            return this.#delegateIfImplemented(method);
+            return this.#delegateIfImplemented(method, arguments);
           };
         }
       }
@@ -51,15 +51,11 @@ export default class NamespaceProvider {
     return this.#wrappedProvider.get(identifier);
   }
 
-  #delegateIfImplemented(func, returnValueIfUndefined) {
-    if (func !== undefined && typeof func === 'function') {
-      return func.apply(this.#wrappedProvider, arguments);
+  #delegateIfImplemented(delegateFunction, delegateArguments) {
+    if (delegateFunction !== undefined && typeof delegateFunction === 'function') {
+      return delegateFunction.apply(this.#wrappedProvider, delegateArguments);
     } else {
-      if (arguments.length() === 2) {
-        return returnValueIfUndefined;
-      } else {
-        throw new Error(`Function is not implemented`);
-      }
+      throw new Error(`Function is not implemented`);
     }
   }
 }
