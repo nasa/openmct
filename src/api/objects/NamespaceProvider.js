@@ -35,8 +35,8 @@ export default class NamespaceProvider {
       (methodName) => {
         const method = this.#wrappedProvider[methodName];
         if (method !== undefined) {
-          this[methodName] = () => {
-            return this.#delegateIfImplemented(method, arguments);
+          this[methodName] = (...methodArguments) => {
+            return this.#delegateIfImplemented(method, methodArguments);
           };
         }
       }
