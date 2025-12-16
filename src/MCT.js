@@ -306,6 +306,7 @@ export class MCT extends EventEmitter {
     this.install(this.plugins.UserIndicator());
     this.install(this.plugins.Gauge());
     this.install(this.plugins.InspectorViews());
+    this.install(this.plugins.Comps());
   }
   /**
    * Set path to where assets are hosted.  This should be the path to main.js.
