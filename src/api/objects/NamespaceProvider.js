@@ -30,6 +30,17 @@ export default class NamespaceProvider {
   constructor(namespace, provider) {
     this.#namespace = namespace;
     this.#wrappedProvider = provider;
+
+    ['create', 'update', 'delete', 'observe', 'supportsSearchType', 'search', 'isReadOnly'].forEach(
+      (methodName) => {
+        const method = this.#wrappedProvider[methodName];
+        if (method !== undefined) {
+          this[methodName] = () => {
+            return this.#delegateIfImplemented(method);
+          };
+        }
+      }
+    );
   }
 
   appliesTo(identifier) {
@@ -38,5 +49,17 @@ export default class NamespaceProvider {
 
   get(identifier) {
     return this.#wrappedProvider.get(identifier);
+  }
+
+  #delegateIfImplemented(func, returnValueIfUndefined) {
+    if (func !== undefined && typeof func === 'function') {
+      return func.apply(this.#wrappedProvider, arguments);
+    } else {
+      if (arguments.length() === 2) {
+        return returnValueIfUndefined;
+      } else {
+        throw new Error(`Function is not implemented`);
+      }
+    }
   }
 }
