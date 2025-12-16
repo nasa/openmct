@@ -66,6 +66,10 @@ module.exports = async (config) => {
       {
         pattern: 'dist/generatorWorker.js*',
         included: false
+      },
+      {
+        pattern: 'dist/historicalTelemetryWorker.js*',
+        included: false
       }
     ],
     port: 9876,
