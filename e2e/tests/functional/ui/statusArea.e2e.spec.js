@@ -40,57 +40,119 @@ test.describe('Status Area', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('allows for condensed or expanded indicators mode', async ({ page }) => {
-    await expect(collapseButton).toBeVisible();
-    await expect(expandButton).toBeHidden();
-
+  test('allows for collapsed or expanded indicators mode', async ({ page }) => {
     const initialExpandedPosition = (await firstIndicator.boundingBox()).x;
 
-    await collapseButton.click();
+    await test.step('verify button indicates action to collapse', async () => {
+      await expect(collapseButton).toBeVisible();
+      await expect(expandButton).toBeHidden();
+    });
+
+    await test.step('toggle indicators to collapsed mode', async () => {
+      await collapseButton.click();
+    });
+
     const collapsedPosition = (await firstIndicator.boundingBox()).x;
 
-    // expect first indicator to move right as status indicators are collapsed
-    await expect(initialExpandedPosition).toBeLessThan(collapsedPosition);
-    await expect(collapseButton).toBeHidden();
-    await expect(expandButton).toBeVisible();
+    await test.step('verify indicators in collapsed mode', async () => {
+      await expect(initialExpandedPosition).toBeLessThan(collapsedPosition);
+      await expect(collapseButton).toBeHidden();
+      await expect(expandButton).toBeVisible();
+    });
 
-    await expandButton.click();
+    await test.step('verify button indicates action to expand', async () => {
+      await expect(expandButton).toBeVisible();
+      await expect(collapseButton).toBeHidden();
+    });
+
+    await test.step('toggle indicators to expanded mode', async () => {
+      await expandButton.click();
+    });
+
     const finalExpandedPosition = (await firstIndicator.boundingBox()).x;
 
-    await expect(finalExpandedPosition).toBeLessThan(collapsedPosition);
-    // this assertion may not always be true for dynamic indicators
-    await expect(finalExpandedPosition).toBe(initialExpandedPosition);
-    await expect(collapseButton).toBeVisible();
-    await expect(expandButton).toBeHidden();
+    await test.step('verify indicators in expanded mode', async () => {
+      await expect(finalExpandedPosition).toBeLessThan(collapsedPosition);
+    });
+
+    await test.step('verify indicators size return to initial conditions', async () => {
+      // this assertion may not always be true for indicators with dynamic width (text)
+      await expect(finalExpandedPosition).toBe(initialExpandedPosition);
+    });
+
+    await test.step('verify button indicates action to collapse', async () => {
+      await expect(collapseButton).toBeVisible();
+      await expect(expandButton).toBeHidden();
+    });
   });
 
   test.describe('in single line mode', () => {
+    let indicatorsContainerLeftPosition;
+    let indicatorsContainerWidth;
+    let indicatorsContainerHeight;
+    let indicatorsContainerRightPosition;
+    let firstIndicatorPosition;
+    let indicatorsWidth;
+    let viewportHeight;
+    let viewportWidth;
+
+    test.beforeEach(async ({ page }) => {
+      const indicatorsContainerBoundingBox = await indicatorsContainer.boundingBox();
+      const viewportSize = page.viewportSize();
+
+      indicatorsContainerLeftPosition = indicatorsContainerBoundingBox.x;
+      indicatorsContainerWidth = indicatorsContainerBoundingBox.width;
+      indicatorsContainerHeight = indicatorsContainerBoundingBox.height;
+      indicatorsContainerRightPosition = indicatorsContainerLeftPosition + indicatorsContainerWidth;
+      firstIndicatorPosition = (await firstIndicator.boundingBox()).x;
+      indicatorsWidth = indicatorsContainerRightPosition - firstIndicatorPosition;
+      viewportHeight = viewportSize.height;
+      viewportWidth = viewportSize.width;
+    });
+
     test('restricts to one line', async ({ page }) => {
-      const {
-        x: indicatorsContainerLeftPosition,
-        width: indicatorsContainerwidth,
-        height: indicatorsContainerHeight
-      } = await indicatorsContainer.boundingBox();
-      const indicatorsContainerRightPosition =
-        indicatorsContainerLeftPosition + indicatorsContainerwidth;
-      const firstIndicatorPosition = (await firstIndicator.boundingBox()).x;
-      const indicatorsWidth = indicatorsContainerRightPosition - firstIndicatorPosition;
-      const { height, width } = page.viewportSize();
-
-      await singleLineButton.click();
-
-      // resize viewport so that half of the indicators would overflow
-      await page.setViewportSize({
-        width: Math.round(width - indicatorsContainerwidth + indicatorsWidth / 2),
-        height
+      await test.step('toggle from allow wrap multi line indicators to restrict to single line', async () => {
+        await singleLineButton.click();
       });
 
-      const indicatorsContainerHeightAfterResize = (await indicatorsContainer.boundingBox()).height;
-      expect(indicatorsContainerHeightAfterResize).toBe(indicatorsContainerHeight);
+      await test.step('resize viewport so that half of the indicators would overflow', async () => {
+        await page.setViewportSize({
+          width: Math.round(viewportWidth - indicatorsContainerWidth + indicatorsWidth / 2),
+          height: viewportHeight
+        });
+      });
+
+      await test.step('verify indicators restricted to one line even with overflow', async () => {
+        const indicatorsContainerHeightAfterResize = (await indicatorsContainer.boundingBox())
+          .height;
+        expect(indicatorsContainerHeightAfterResize).toBe(indicatorsContainerHeight);
+      });
     });
+
     test('provides overflow indication by highlighting single/multi line toggle', async ({
       page
-    }) => {});
+    }) => {
+      await test.step('toggle from allow wrap multi line indicators to restrict to single line', async () => {
+        await singleLineButton.click();
+      });
+
+      await test.step('verify toggle button does not indicate overflow', async () => {
+        await expect(multiLineButton).toBeVisible();
+        await expect(multiLineButton).not.toHaveClass(/c-button--major/);
+      });
+
+      await test.step('resize viewport so that half of the indicators would overflow', async () => {
+        await page.setViewportSize({
+          width: Math.round(viewportWidth - indicatorsContainerWidth + indicatorsWidth / 2),
+          height: viewportHeight
+        });
+      });
+
+      await test.step('verify toggle button does indicate overflow', async () => {
+        await expect(multiLineButton).toHaveClass(/c-button--major/);
+      });
+    });
+
     test('reacts properly to expanded or condensed indicators mode', async ({ page }) => {});
   });
 
