@@ -64,7 +64,30 @@ test.describe('Status Area', () => {
   });
 
   test.describe('in single line mode', () => {
-    test('restricts to one line', async ({ page }) => {});
+    test('restricts to one line', async ({ page }) => {
+      const {
+        x: indicatorsContainerLeftPosition,
+        width: indicatorsContainerwidth,
+        height: indicatorsContainerHeight
+      } = await indicatorsContainer.boundingBox();
+      const indicatorsContainerRightPosition =
+        indicatorsContainerLeftPosition + indicatorsContainerwidth;
+      const firstIndicator = indicatorsContainer.getByRole('status').first();
+      const firstIndicatorPosition = (await firstIndicator.boundingBox()).x;
+      const indicatorsWidth = indicatorsContainerRightPosition - firstIndicatorPosition;
+      const { height, width } = page.viewportSize();
+
+      await singleLineButton.click();
+
+      // resize viewport so that half of the indicators would overflow
+      await page.setViewportSize({
+        width: Math.round(width - indicatorsContainerwidth + indicatorsWidth / 2),
+        height
+      });
+
+      const indicatorsContainerHeightAfterResize = (await indicatorsContainer.boundingBox()).height;
+      expect(indicatorsContainerHeightAfterResize).toBe(indicatorsContainerHeight);
+    });
     test('provides overflow indication by highlighting single/multi line toggle', async ({
       page
     }) => {});
