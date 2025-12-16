@@ -128,7 +128,11 @@ export default class ObjectAPI {
       return candidateProvider.appliesTo(identifier);
     });
 
-    return provider || this.fallbackProvider;
+    if (provider.getWrappedProvider && typeof provider.getWrappedProvider === 'function') {
+      return provider.getWrappedProvider();
+    } else {
+      return provider || this.fallbackProvider;
+    }
   }
 
   /**
@@ -183,7 +187,8 @@ export default class ObjectAPI {
       provider = new NamespaceProvider(namespace, providerOrNothing);
     }
 
-    this.providers.push(provider);
+    //Unshift rather than push because we want to last added provider to match first. This is to replicate legacy map behavior
+    this.providers.unshift(provider);
   }
 
   /**

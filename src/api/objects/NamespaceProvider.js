@@ -47,6 +47,10 @@ export default class NamespaceProvider {
     return identifier.namespace === this.#namespace;
   }
 
+  getWrappedProvider() {
+    return this.#wrappedProvider;
+  }
+
   get(identifier) {
     return this.#wrappedProvider.get(identifier);
   }
