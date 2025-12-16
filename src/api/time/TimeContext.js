@@ -193,10 +193,10 @@ class TimeContext extends EventEmitter {
         valid: false,
         message: 'Start and end must be specified as integer values'
       };
-    } else if (bounds.start > bounds.end) {
+    } else if (bounds.start >= bounds.end) {
       return {
         valid: false,
-        message: 'Specified start date exceeds end bound'
+        message: 'Start bound must be less than end bound'
       };
     }
 
@@ -261,7 +261,7 @@ class TimeContext extends EventEmitter {
     } else if (offsets.start >= offsets.end) {
       return {
         valid: false,
-        message: 'Specified start offset must be < end offset'
+        message: 'Start offset must be less than end offset'
       };
     }
 

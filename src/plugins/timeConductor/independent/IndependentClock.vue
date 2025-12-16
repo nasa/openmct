@@ -25,7 +25,7 @@
       <button
         v-if="selectedClock"
         class="c-icon-button c-button--menu js-clock-button"
-        :class="[buttonCssClass, selectedClock.cssClass]"
+        :class="selectedClock.cssClass"
         aria-label="Independent Time Conductor Clock Menu"
         @click.prevent.stop="showClocksMenu"
       >
@@ -36,20 +36,9 @@
 </template>
 
 <script>
-import { TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
-import toggleMixin from '../../../ui/mixins/toggle-mixin.js';
-import clockMixin from '../clock-mixin.js';
-
 export default {
-  mixins: [toggleMixin, clockMixin],
-  inject: ['openmct'],
+  inject: ['openmct', 'clock', 'getAllClockMetadata', 'getClockMetadata'],
   props: {
-    clock: {
-      type: String,
-      default() {
-        return undefined;
-      }
-    },
     enabled: {
       type: Boolean,
       default() {
@@ -57,33 +46,20 @@ export default {
       }
     }
   },
-  emits: ['independent-clock-updated'],
-  data() {
-    const activeClock = this.getActiveClock();
-
-    return {
-      selectedClock: activeClock ? this.getClockMetadata(activeClock) : undefined,
-      clocks: []
-    };
+  computed: {
+    selectedClock() {
+      return this.getClockMetadata(this.clock);
+    }
   },
   watch: {
-    clock(newClock, oldClock) {
-      this.setViewFromClock(newClock);
-    },
     enabled(newValue, oldValue) {
       if (newValue !== undefined && newValue !== oldValue && newValue === true) {
         this.setViewFromClock(this.clock);
       }
     }
   },
-  beforeUnmount() {
-    this.openmct.time.off(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
-  },
-  mounted: function () {
-    this.loadClocks();
-    this.setViewFromClock(this.clock);
-
-    this.openmct.time.on(TIME_CONTEXT_EVENTS.clockChanged, this.setViewFromClock);
+  mounted() {
+    this.clocks = this.getAllClockMetadata();
   },
   methods: {
     showClocksMenu() {
@@ -95,27 +71,11 @@ export default {
         menuClass: 'c-conductor__clock-menu c-super-menu--sm',
         placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
       };
+
       this.openmct.menus.showSuperMenu(x, y, this.clocks, menuOptions);
-    },
-    getMenuOptions() {
-      let currentGlobalClock = this.getActiveClock();
-
-      //Create copy of active clock so the time API does not get reactified.
-      currentGlobalClock = Object.assign(
-        {},
-        {
-          name: currentGlobalClock.name,
-          clock: currentGlobalClock.key,
-          timeSystem: this.openmct.time.getTimeSystem().key
-        }
-      );
-
-      return [currentGlobalClock];
     },
     setClock(clockKey) {
       this.setViewFromClock(clockKey);
-
-      this.$emit('independent-clock-updated', clockKey);
     },
     setViewFromClock(clockOrKey) {
       let clock = clockOrKey;

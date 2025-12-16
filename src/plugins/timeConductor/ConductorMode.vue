@@ -23,8 +23,8 @@
   <div v-if="readOnly === false" ref="modeButton" class="c-tc-input-popup__options">
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
-        class="c-button--menu js-mode-button"
-        :class="[buttonCssClass, selectedMode.cssClass]"
+        class="c-button--menu js-mode-button c-icon-button"
+        :class="selectedMode.cssClass"
         aria-label="Time Conductor Mode Menu"
         @click.prevent.stop="showModesMenu"
       >
@@ -43,20 +43,9 @@
 </template>
 
 <script>
-import modeMixin from './mode-mixin.js';
-
-const TEST_IDS = true;
-
 export default {
-  mixins: [modeMixin],
-  inject: ['openmct', 'configuration'],
+  inject: ['openmct', 'timeMode', 'getAllModeMetadata', 'getModeMetadata'],
   props: {
-    mode: {
-      type: String,
-      default() {
-        return undefined;
-      }
-    },
     readOnly: {
       type: Boolean,
       default() {
@@ -64,24 +53,20 @@ export default {
       }
     }
   },
-  emits: ['mode-updated'],
   data() {
-    const mode = this.openmct.time.getMode();
-
     return {
-      selectedMode: this.getModeMetadata(mode, TEST_IDS),
-      modes: []
+      selectedMode: this.getModeMetadata(this.timeMode)
     };
   },
   watch: {
-    mode: {
-      handler(newMode) {
-        this.setViewFromMode(newMode);
+    timeMode: {
+      handler() {
+        this.setView();
       }
     }
   },
   mounted() {
-    this.loadModes();
+    this.modes = this.getAllModeMetadata();
   },
   methods: {
     showModesMenu() {
@@ -96,13 +81,8 @@ export default {
 
       this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
     },
-    setViewFromMode(mode) {
-      this.selectedMode = this.getModeMetadata(mode, TEST_IDS);
-    },
-    setMode(mode) {
-      this.setViewFromMode(mode);
-
-      this.$emit('mode-updated', mode);
+    setView() {
+      this.selectedMode = this.getModeMetadata(this.timeMode);
     }
   }
 };
