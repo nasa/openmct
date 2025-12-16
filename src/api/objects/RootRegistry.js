@@ -72,12 +72,16 @@ export default class RootRegistry extends EventTarget {
   }
 
   removeRoot(identifier) {
-    this._rootItems = this._rootItems.filter((rootObjectContainer) => {
+    const rootItems = this._rootItems.filter((rootObjectContainer) => {
       const rootObject = rootObjectContainer.provider();
 
       return !this._openmct.objects.areIdsEqual(identifier, rootObject);
     });
-    this.dispatchEvent(new CustomEvent('remove', { detail: identifier }));
+
+    if (rootItems.length !== this._rootItems.length) {
+      this.dispatchEvent(new CustomEvent('remove', { detail: identifier }));
+      this._rootItems = rootItems;
+    }
   }
 
   /**
