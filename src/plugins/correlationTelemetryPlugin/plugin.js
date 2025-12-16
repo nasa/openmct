@@ -1,6 +1,6 @@
 const CORRELATOR_TYPE = 'telemetry.correlator';
 
-export default function CorrelationTelemetryPlugin(openmct) {
+export default function CorrelationTelemetryPlugin() {
   // eslint-disable-next-line no-shadow
   return function install(openmct) {
     function getTelemetryObject(idString) {

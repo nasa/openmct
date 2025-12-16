@@ -43,12 +43,12 @@ export default {
     }
   },
   emits: ['on-change'],
+  computed: {
+    initialSelection() {
+      return this.model.parent || this.model.value?.[0];
+    }
+  },
   methods: {
-    computed: {
-      initialSelection() {
-        return this.model.parent || this.model.value?.[0];
-      }
-    },
     handleItemSelection(item) {
       const data = {
         model: this.model,
