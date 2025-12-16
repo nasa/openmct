@@ -12,7 +12,7 @@ export default class RootObjectCompositionProvider extends CompositionProvider {
   }
 
   appliesTo(domainObject) {
-    return domainObject.identifier.key === 'ROOT';
+    return Boolean(domainObject?.identifier?.key === 'ROOT');
   }
 
   load(domainObject) {

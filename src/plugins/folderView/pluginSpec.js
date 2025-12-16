@@ -129,6 +129,7 @@ describe('The folder plugin', () => {
         expect(gridViewProvider).toBeDefined();
       });
       it("renders each item contained in the folder's composition", async () => {
+        debugger;
         let folderView = gridViewProvider.view(folderObject, [folderObject]);
         folderView.show(childDiv, true);
 

@@ -31,20 +31,27 @@ export default class NamespaceProvider {
     this.#namespace = namespace;
     this.#wrappedProvider = provider;
 
-    ['create', 'update', 'delete', 'observe', 'supportsSearchType', 'search', 'isReadOnly'].forEach(
-      (methodName) => {
-        const method = this.#wrappedProvider[methodName];
-        if (method !== undefined) {
-          this[methodName] = (...methodArguments) => {
-            return this.#delegateIfImplemented(method, methodArguments);
-          };
-        }
+    [
+      'create',
+      'update',
+      'delete',
+      'observe',
+      'supportsSearchType',
+      'search',
+      'isReadOnly',
+      'getAllObjects'
+    ].forEach((methodName) => {
+      const method = this.#wrappedProvider[methodName];
+      if (method !== undefined) {
+        this[methodName] = (...methodArguments) => {
+          return this.#delegateIfImplemented(method, methodArguments);
+        };
       }
-    );
+    });
   }
 
   appliesTo(identifier) {
-    return identifier.namespace === this.#namespace;
+    return Boolean(identifier?.namespace === this.#namespace);
   }
 
   getWrappedProvider() {

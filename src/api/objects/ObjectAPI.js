@@ -128,7 +128,7 @@ export default class ObjectAPI {
       return candidateProvider.appliesTo(identifier);
     });
 
-    if (provider.getWrappedProvider && typeof provider.getWrappedProvider === 'function') {
+    if (provider?.getWrappedProvider && typeof provider.getWrappedProvider === 'function') {
       return provider.getWrappedProvider();
     } else {
       return provider || this.fallbackProvider;
