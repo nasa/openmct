@@ -429,4 +429,128 @@ describe('the plugin', function () {
       expect(displayLayoutToolbar.length).toBe(8);
     });
   });
+
+  describe('telemetry label/title behavior', () => {
+    let element;
+    let child;
+    let openmct;
+
+    beforeEach((done) => {
+      element = document.createElement('div');
+      child = document.createElement('div');
+      element.appendChild(child);
+
+      openmct = createOpenMct();
+      openmct.install(
+        new DisplayLayoutPlugin({
+          showAsView: []
+        })
+      );
+
+      openmct.on('start', done);
+      openmct.start(child);
+    });
+
+    afterEach(() => {
+      return resetApplicationState(openmct);
+    });
+
+    async function showLayoutWithItem(item) {
+      const layout = {
+        identifier: { namespace: '', key: `layout-${Date.now()}` },
+        type: 'layout',
+        name: 'Test Layout',
+        configuration: {
+          items: [item],
+          layoutGrid: [10, 10]
+        },
+        composition: []
+      };
+      const views = openmct.objectViews.get(layout, [layout]);
+      const provider = views.find((v) => v && v.key === 'layout.view');
+      const view = provider.view(layout, [layout]);
+      view.show(child, false, { renderWhenVisible });
+      // allow Vue to render
+      await nextTick();
+      await nextTick();
+      return view;
+    }
+
+    it('falls back to object name when no title is set', async () => {
+      const telemetry = {
+        identifier: { namespace: '', key: 'telemetry-object' },
+        type: 'test-telemetry-object',
+        name: 'Test Telemetry Object',
+        telemetry: {
+          values: [
+            { key: 'name', name: 'Name', format: 'string' },
+            { key: 'utc', name: 'Time', format: 'utc', hints: { domain: 1 } },
+            { key: 'some-key-1', name: 'Some attribute 1', hints: { range: 1 } }
+          ]
+        }
+      };
+      await openmct.objects.save(telemetry);
+
+      const layoutItem = {
+        identifier: telemetry.identifier,
+        x: 1,
+        y: 1,
+        width: 10,
+        height: 5,
+        displayMode: 'all',
+        value: 'some-key-1',
+        stroke: '',
+        fill: '',
+        color: '',
+        fontSize: 'default',
+        font: 'default',
+        type: 'telemetry-view',
+        id: 'item-a'
+      };
+
+      await showLayoutWithItem(layoutItem);
+      const labelEl = child.querySelector('.c-telemetry-view__label-text');
+      expect(labelEl).toBeDefined();
+      expect(labelEl.textContent).toBe('Test Telemetry Object');
+    });
+
+    it('uses item.title when provided', async () => {
+      const telemetry = {
+        identifier: { namespace: '', key: 'telemetry-object-2' },
+        type: 'test-telemetry-object',
+        name: 'Original Name',
+        telemetry: {
+          values: [
+            { key: 'name', name: 'Name', format: 'string' },
+            { key: 'utc', name: 'Time', format: 'utc', hints: { domain: 1 } },
+            { key: 'some-key-1', name: 'Some attribute 1', hints: { range: 1 } }
+          ]
+        }
+      };
+      await openmct.objects.save(telemetry);
+
+      const layoutItem = {
+        identifier: telemetry.identifier,
+        x: 1,
+        y: 1,
+        width: 10,
+        height: 5,
+        displayMode: 'all',
+        value: 'some-key-1',
+        stroke: '',
+        fill: '',
+        color: '',
+        fontSize: 'default',
+        font: 'default',
+        type: 'telemetry-view',
+        id: 'item-b',
+        title: 'Custom Title'
+      };
+
+      await showLayoutWithItem(layoutItem);
+      const labelEl = child.querySelector('.c-telemetry-view__label-text');
+      expect(labelEl).toBeDefined();
+      expect(labelEl.textContent).toBe('Custom Title');
+    });
+  });
 });
