@@ -86,8 +86,8 @@ export default function CorrelationTelemetryPlugin() {
             };
             let metadata = openmct.telemetry.getMetadata(telemObject);
             let valueMeta = metadata.valuesForHints(['range'])[0];
-            telemResults[source].coorelatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
-            telemResults[source].coorelatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
+            telemResults[source].correlatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
+            telemResults[source].correlatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
             telemResults[source].timestampFormat = openmct.telemetry.getValueFormatter(
               metadata.value(options.domain)
             );
@@ -107,8 +107,8 @@ export default function CorrelationTelemetryPlugin() {
             };
             let metadata = openmct.telemetry.getMetadata(telemObject);
             let valueMeta = metadata.valuesForHints(['range'])[0];
-            telemResults[source].coorelatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
-            telemResults[source].coorelatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
+            telemResults[source].correlatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
+            telemResults[source].correlatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
             telemResults[source].timestampFormat = openmct.telemetry.getValueFormatter(
               metadata.value(options.domain)
             );
@@ -119,7 +119,7 @@ export default function CorrelationTelemetryPlugin() {
           let results = [];
           let xByTime = telemResults.x.data.reduce(function (m, datum) {
             m[telemResults.x.timestampFormat.parse(datum)] =
-              telemResults.x.coorelatorFormat.parse(datum);
+              telemResults.x.correlatorFormat.parse(datum);
             return m;
           }, {});
           telemResults.y.data.forEach(function (datum) {
@@ -127,7 +127,7 @@ export default function CorrelationTelemetryPlugin() {
             if (xByTime[timestamp] !== undefined) {
               let resultDatum = {
                 x: xByTime[timestamp],
-                y: telemResults.y.coorelatorFormat.parse(datum)
+                y: telemResults.y.correlatorFormat.parse(datum)
               };
               resultDatum[options.domain] = timestamp;
               results.push(resultDatum);
@@ -155,8 +155,8 @@ export default function CorrelationTelemetryPlugin() {
             return;
           }
           let datum = {
-            x: telem.x.coorelatorFormat.parse(telem.x.latest),
-            y: telem.y.coorelatorFormat.parse(telem.y.latest)
+            x: telem.x.correlatorFormat.parse(telem.x.latest),
+            y: telem.y.correlatorFormat.parse(telem.y.latest)
           };
           datum[openmct.time.timeSystem().key] = Math.max(
             telem.x.latestTimestamp,
@@ -179,7 +179,7 @@ export default function CorrelationTelemetryPlugin() {
           };
           let metadata = openmct.telemetry.getMetadata(xObject);
           let valueMeta = metadata.valuesForHints(['range'])[0];
-          telem.x.coorelatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
+          telem.x.correlatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
           telem.x.timestampFormat = openmct.telemetry.getValueFormatter(
             metadata.value(openmct.time.timeSystem().key)
           );
@@ -202,7 +202,7 @@ export default function CorrelationTelemetryPlugin() {
           };
           let metadata = openmct.telemetry.getMetadata(yObject);
           let valueMeta = metadata.valuesForHints(['range'])[0];
-          telem.y.coorelatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
+          telem.y.correlatorFormat = openmct.telemetry.getValueFormatter(valueMeta);
           telem.y.timestampFormat = openmct.telemetry.getValueFormatter(
             metadata.value(openmct.time.timeSystem().key)
           );
