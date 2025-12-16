@@ -61,7 +61,7 @@ test.describe('Visual - Header @a11y', () => {
       scope: header
     });
 
-    await page.getByLabel('Click to collapse items').click();
+    await page.getByLabel('Show icon only').click();
 
     await percySnapshot(page, `Header Collapsed (theme: '${theme}')`, {
       scope: header
