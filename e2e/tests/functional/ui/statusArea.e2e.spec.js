@@ -209,4 +209,38 @@ test.describe('Status Area', () => {
       await expect(multiLineButton).toHaveClass(/c-button--major/);
     });
   });
+
+  test('collapse/expand toggle and single/multi line toggle state saved in local storage', async ({
+    page
+  }) => {
+    await test.step('verify initial state', async () => {
+      await expect(collapseButton).toBeVisible();
+      await expect(singleLineButton).toBeVisible();
+      await expect(expandButton).toBeHidden();
+      await expect(multiLineButton).toBeHidden();
+    });
+
+    await test.step('change state for both toggle buttons', async () => {
+      await collapseButton.click();
+      await singleLineButton.click();
+    });
+
+    await test.step('verify alternate state after toggling', async () => {
+      await expect(expandButton).toBeVisible();
+      await expect(multiLineButton).toBeVisible();
+      await expect(collapseButton).toBeHidden();
+      await expect(singleLineButton).toBeHidden();
+    });
+
+    await test.step('reload the page', async () => {
+      await page.reload({ waitUntil: 'domcontentloaded' });
+    });
+
+    await test.step('verify alternate state after reloading', async () => {
+      await expect(expandButton).toBeVisible();
+      await expect(multiLineButton).toBeVisible();
+      await expect(collapseButton).toBeHidden();
+      await expect(singleLineButton).toBeHidden();
+    });
+  });
 });
