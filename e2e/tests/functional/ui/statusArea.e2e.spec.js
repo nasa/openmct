@@ -19,14 +19,49 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { test } from '../../../baseFixtures.js';
+import { expect, test } from '../../../baseFixtures.js';
 
 test.describe('Status Area', () => {
+  let expandButton;
+  let collapseButton;
+  let singleLineButton;
+  let multiLineButton;
+  let indicatorsContainer;
+
   test.beforeEach(async ({ page }) => {
+    expandButton = page.getByLabel('Show icon and name');
+    collapseButton = page.getByLabel('Show icon only');
+    singleLineButton = page.getByLabel('Display as single line');
+    multiLineButton = page.getByLabel('Display as multiple lines');
+    indicatorsContainer = page.getByLabel('Status Indicators');
+
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
 
-  test('allows for condensed or expanded indicators mode', async ({ page }) => {});
+  test('allows for condensed or expanded indicators mode', async ({ page }) => {
+    await expect(collapseButton).toBeVisible();
+    await expect(expandButton).toBeHidden();
+
+    const leftMostIndicator = indicatorsContainer.getByRole('status').first();
+    const initialExpandedPosition = (await leftMostIndicator.boundingBox()).x;
+
+    await collapseButton.click();
+    const collapsedPosition = (await leftMostIndicator.boundingBox()).x;
+
+    // expect first indicator to move right as status indicators are collapsed
+    await expect(initialExpandedPosition).toBeLessThan(collapsedPosition);
+    await expect(collapseButton).toBeHidden();
+    await expect(expandButton).toBeVisible();
+
+    await expandButton.click();
+    const finalExpandedPosition = (await leftMostIndicator.boundingBox()).x;
+
+    await expect(finalExpandedPosition).toBeLessThan(collapsedPosition);
+    // this assertion may not always be true for dynamic indicators
+    await expect(finalExpandedPosition).toBe(initialExpandedPosition);
+    await expect(collapseButton).toBeVisible();
+    await expect(expandButton).toBeHidden();
+  });
 
   test.describe('in single line mode', () => {
     test('restricts to one line', async ({ page }) => {});
