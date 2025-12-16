@@ -67,7 +67,7 @@ export default class RootObjectCompositionProvider extends CompositionProvider {
   }
 
   #removeListener(event, callback, context) {
-    const boundCallbackObject = this.#boundCallbacks.find((o) => {
+    const boundCallbackObject = this.#boundCallbacks.entries().find((o) => {
       return o.event === event && o.callback === callback && o.context === context;
     });
 
