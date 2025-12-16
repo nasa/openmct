@@ -27,6 +27,7 @@ test.describe('Status Area', () => {
   let singleLineButton;
   let multiLineButton;
   let indicatorsContainer;
+  let firstIndicator;
 
   test.beforeEach(async ({ page }) => {
     expandButton = page.getByLabel('Show icon and name');
@@ -34,6 +35,7 @@ test.describe('Status Area', () => {
     singleLineButton = page.getByLabel('Display as single line');
     multiLineButton = page.getByLabel('Display as multiple lines');
     indicatorsContainer = page.getByLabel('Status Indicators');
+    firstIndicator = indicatorsContainer.getByRole('status').first();
 
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
@@ -42,11 +44,10 @@ test.describe('Status Area', () => {
     await expect(collapseButton).toBeVisible();
     await expect(expandButton).toBeHidden();
 
-    const leftMostIndicator = indicatorsContainer.getByRole('status').first();
-    const initialExpandedPosition = (await leftMostIndicator.boundingBox()).x;
+    const initialExpandedPosition = (await firstIndicator.boundingBox()).x;
 
     await collapseButton.click();
-    const collapsedPosition = (await leftMostIndicator.boundingBox()).x;
+    const collapsedPosition = (await firstIndicator.boundingBox()).x;
 
     // expect first indicator to move right as status indicators are collapsed
     await expect(initialExpandedPosition).toBeLessThan(collapsedPosition);
@@ -54,7 +55,7 @@ test.describe('Status Area', () => {
     await expect(expandButton).toBeVisible();
 
     await expandButton.click();
-    const finalExpandedPosition = (await leftMostIndicator.boundingBox()).x;
+    const finalExpandedPosition = (await firstIndicator.boundingBox()).x;
 
     await expect(finalExpandedPosition).toBeLessThan(collapsedPosition);
     // this assertion may not always be true for dynamic indicators
@@ -72,7 +73,6 @@ test.describe('Status Area', () => {
       } = await indicatorsContainer.boundingBox();
       const indicatorsContainerRightPosition =
         indicatorsContainerLeftPosition + indicatorsContainerwidth;
-      const firstIndicator = indicatorsContainer.getByRole('status').first();
       const firstIndicatorPosition = (await firstIndicator.boundingBox()).x;
       const indicatorsWidth = indicatorsContainerRightPosition - firstIndicatorPosition;
       const { height, width } = page.viewportSize();
