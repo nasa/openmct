@@ -209,7 +209,7 @@ export default {
     RecentObjectsList
   },
   inject: ['openmct'],
-  setup() {
+  setup(props) {
     let resizeObserver;
     let element;
 
@@ -223,8 +223,8 @@ export default {
 
     const width = ref(null);
     const scrollWidth = ref(null);
-    const headExpanded = ref(storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED);
-    const indicatorsMultiline = ref(storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE);
+    const headExpanded = ref(storedHeadExpanded ?? props.headExpanded);
+    const indicatorsMultiline = ref(storedIndicatorsMultiline ?? props.headMultiline);
 
     const isOverflowing = computed(() => scrollWidth.value > width.value);
     const indicatorsMultilineCssClass = computed(() => {

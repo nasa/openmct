@@ -237,7 +237,10 @@
       openmct.install(openmct.plugins.ScatterPlot());
       openmct.install(openmct.plugins.EventTimestripPlugin(timeLinePlugin.extendedLinesBus));
       document.addEventListener('DOMContentLoaded', function () {
-        openmct.start();
+        openmct.start({
+          headExpanded: true,
+          headMultiline: false
+        });
       });
     </script>
   </head>

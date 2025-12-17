@@ -330,7 +330,7 @@ export class MCT extends EventEmitter {
 
     return this._assetPath;
   }
-  #bootstrap(domElementOrSelector, isHeadlessMode) {
+  #bootstrap(config, domElementOrSelector, isHeadlessMode) {
     let domElement;
     // Create element to mount Layout if it doesn't exist
     if (domElementOrSelector === undefined) {
@@ -375,7 +375,7 @@ export class MCT extends EventEmitter {
      * @event start
      */
     if (!isHeadlessMode) {
-      const appLayout = createApp(Layout);
+      const appLayout = createApp(Layout, config);
       appLayout.provide('openmct', markRaw(this));
       const component = appLayout.mount(domElement);
       component.$nextTick(() => {
@@ -401,17 +401,17 @@ export class MCT extends EventEmitter {
    * @param {Element?} domElementOrSelector the DOM element in which to run
    *        MCT; if undefined, MCT will be run in the body of the document
    */
-  start(domElementOrSelector, isHeadlessMode = false) {
+  start(config, domElementOrSelector, isHeadlessMode = false) {
     if (document.readyState === 'loading') {
       document.addEventListener(
         'DOMContentLoaded',
         () => {
-          this.#bootstrap(domElementOrSelector, isHeadlessMode);
+          this.#bootstrap(config, domElementOrSelector, isHeadlessMode);
         },
         { once: true }
       );
     } else {
-      this.#bootstrap(domElementOrSelector, isHeadlessMode);
+      this.#bootstrap(config, domElementOrSelector, isHeadlessMode);
     }
   }
   startHeadless() {
