@@ -5,7 +5,7 @@ snapshot:
   percyCSS: |
     /* Clock indicator... your days are numbered  */
     .t-indicator-clock {
-      display: none;
+      display: none !important;
     }
     .c-input--datetime {
       opacity: 0 !important;
