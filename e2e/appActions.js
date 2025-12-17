@@ -717,7 +717,7 @@ async function renameCurrentObjectFromBrowseBar(page, newName) {
  * @param {string} objectIdentifier identifier for object
  * @returns {Promise<string>} the formatted sin telemetry value
  */
-async function subscribeToTelemetry(page, objectIdentifier, returnOnlyValue = true) {
+async function getNextSineValueFromSWG(page, objectIdentifier, returnOnlyValue = true) {
   // Generate a unique function name for this subscription
   const uniqueFunctionName = `getTelemValue_${genUuid().replace(/-/g, '_')}`;
 
@@ -755,6 +755,7 @@ export {
   createStableStateTelemetry,
   expandEntireTree,
   getCanvasPixels,
+  getNextSineValueFromSWG,
   linkParameterToObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
@@ -765,6 +766,5 @@ export {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
-  subscribeToTelemetry,
   waitForPlotsToRender
 };

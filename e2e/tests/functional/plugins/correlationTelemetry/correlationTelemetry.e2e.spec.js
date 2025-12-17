@@ -22,8 +22,8 @@
 
 import {
   createDomainObjectWithDefaults,
-  setRealTimeMode,
-  subscribeToTelemetry
+  getNextSineValueFromSWG,
+  setRealTimeMode
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -76,8 +76,8 @@ test.describe('Correlation Telemetry', () => {
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Telemetry Table').click();
 
-    const getSWG1ValuePromise = subscribeToTelemetry(page, sineWaveGenerator1.uuid, false);
-    const getSWG2ValuePromise = subscribeToTelemetry(page, sineWaveGenerator2.uuid, false);
+    const getSWG1ValuePromise = getNextSineValueFromSWG(page, sineWaveGenerator1.uuid, false);
+    const getSWG2ValuePromise = getNextSineValueFromSWG(page, sineWaveGenerator2.uuid, false);
 
     const swg1Value = await getSWG1ValuePromise;
     const swg2Value = await getSWG2ValuePromise;
