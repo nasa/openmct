@@ -25,7 +25,8 @@ import {
   navigateToObjectWithRealTime,
   setFixedTimeMode,
   setRealTimeMode,
-  setStartOffset
+  setStartOffset,
+  subscribeToTelemetry
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -306,34 +307,6 @@ test.describe('Testing LAD table', () => {
     await expect(page.getByLabel('lad value')).toHaveText(subscribeTelemValue);
   });
 });
-
-/**
- * Util for subscribing to a telemetry object by object identifier
- * Limitations: Currently only works to return telemetry once to the node scope
- * To Do: See if there's a way to await this multiple times to allow for multiple
- * values to be returned over time
- * @param {import('@playwright/test').Page} page
- * @param {string} objectIdentifier identifier for object
- * @returns {Promise<string>} the formatted sin telemetry value
- */
-async function subscribeToTelemetry(page, objectIdentifier) {
-  const getTelemValuePromise = new Promise((resolve) =>
-    page.exposeFunction('getTelemValue', resolve)
-  );
-
-  await page.evaluate(async (telemetryIdentifier) => {
-    const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
-    const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
-    const formats = await window.openmct.telemetry.getFormatMap(metadata);
-    window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
-      const sinVal = obj.sin;
-      const formattedSinVal = formats.sin.format(sinVal);
-      window.getTelemValue(formattedSinVal);
-    });
-  }, objectIdentifier);
-
-  return getTelemValuePromise;
-}
 
 /**
  * Open the given `domainObject`'s context menu from the object tree.
