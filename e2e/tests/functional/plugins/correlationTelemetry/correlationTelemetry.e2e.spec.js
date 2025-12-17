@@ -90,6 +90,7 @@ test.describe('Correlation Telemetry', () => {
 
     // wait for correlated telemetry object formatted timestamp to be visible in the telemetry table
     await expect(page.getByText(correlatedTelemetryObject.formattedTimestamp)).toBeVisible();
+    await expect(correlatedTelemetryObject.timestampsMatch).toBe(true);
 
     // check that the x and y values are correlated in the same row, based on column names: x and y, respectively
     const telemetryTableRows = page.getByRole('row');
