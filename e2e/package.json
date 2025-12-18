@@ -24,7 +24,4 @@
     "url": "https://www.nasa.gov"
   },
   "license": "Apache-2.0",
-  "dependencies": {
-    "webpack-dev-server": "5.2.2"
-  }
 }
