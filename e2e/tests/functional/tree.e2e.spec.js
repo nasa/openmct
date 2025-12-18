@@ -221,6 +221,111 @@ test.describe('Main Tree', () => {
 
     expect(requestWasAborted).toBe(true);
   });
+
+  test.describe('Root objects', () => {
+    const testRootObjects = {
+      rootA: {
+        name: 'Root Object A',
+        type: 'Folder'
+      },
+      rootB: {
+        name: 'Root Object B',
+        type: 'Folder'
+      },
+      rootC: {
+        name: 'Root Object C',
+        type: 'Folder'
+      }
+    };
+
+    test.beforeEach(async ({ page }) => {
+      const openmctLocation = '/openmct.js';
+      await page.goto('./test-data/blank.html');
+      await page.setContent(`
+        <!doctype html>
+        <html>
+        <head>
+          <script src="${openmctLocation}"></script>
+          <script>
+            openmct.install(openmct.plugins.LocalStorage());
+            openmct.install(openmct.plugins.Espresso());
+            openmct.install(openmct.plugins.UTCTimeSystem());
+          </script>
+          <link
+            rel="icon" type="image/png" href="/dist/favicons/favicon-96x96.png" sizes="96x96" 
+            type="image/x-icon"
+          />
+        </head>
+        <body>
+          <div id="test-container"></div>
+        </body>
+      </html>`);
+      //First, confirm initial test assumptions
+      await page.waitForLoadState('domcontentloaded');
+      await page.evaluate((testObjects) => {
+        const openmct = window.openmct;
+
+        const testObjectProvider = {
+          get({ key }) {
+            return Promise.resolve({
+              identifier: {
+                namespace: 'test-namespace',
+                key
+              },
+              ...testObjects[key]
+            });
+          }
+        };
+
+        openmct.objects.addProvider('test-namespace', testObjectProvider);
+        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootA' });
+        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootB' });
+      }, testRootObjects);
+    });
+    test('Load composition correctly on load', async ({ page }) => {
+      await page.evaluate(() => {
+        const openmct = window.openmct;
+        openmct.start('#test-container');
+      });
+      await expect(page.locator('#openmct-app')).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object A' })).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object B' })).toBeVisible();
+    });
+    test('Show a new root object when added asynchronously', async ({ page }) => {
+      await page.evaluate(() => {
+        const openmct = window.openmct;
+        openmct.start('#test-container');
+      });
+      await expect(page.locator('#openmct-app')).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object A' })).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object B' })).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object C' })).toBeHidden();
+
+      await page.evaluate(() => {
+        const openmct = window.openmct;
+        openmct.objects.addRoot({ namespace: 'test-namespace', key: 'rootC' });
+      });
+      await expect(page.getByRole('treeitem', { name: 'Root Object C' })).toBeVisible();
+    });
+    test('Update correctly when a root object is removed asynchronously', async ({ page }) => {
+      await page.evaluate(() => {
+        const openmct = window.openmct;
+        openmct.start('#test-container');
+      });
+      await expect(page.locator('#openmct-app')).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object A' })).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object B' })).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object C' })).toBeHidden();
+
+      await page.evaluate(() => {
+        const openmct = window.openmct;
+        openmct.objects.removeRoot({ namespace: 'test-namespace', key: 'rootB' });
+      });
+      await expect(page.getByRole('treeitem', { name: 'Root Object A' })).toBeVisible();
+      await expect(page.getByRole('treeitem', { name: 'Root Object B' })).toBeHidden();
+      await expect(page.getByRole('treeitem', { name: 'Root Object C' })).toBeHidden();
+    });
+  });
 });
 
 /**

@@ -36,7 +36,7 @@ test.describe('Fault Management Visual Tests - without example', () => {
   test.beforeEach(async ({ page }) => {
     await navigateToFaultManagementWithoutExample(page);
     await page.getByLabel('Collapse Inspect Pane').click();
-    await page.getByLabel('Click to collapse items').click();
+    await page.getByLabel('Show icon only').click();
   });
 
   test('fault management icon appears in tree', async ({ page, theme }) => {
@@ -65,7 +65,7 @@ test.describe('Fault Management Visual Tests', () => {
   test.beforeEach(async ({ page }) => {
     await navigateToFaultManagementWithStaticExample(page);
     await page.getByLabel('Collapse Inspect Pane').click();
-    await page.getByLabel('Click to collapse items').click();
+    await page.getByLabel('Show icon only').click();
   });
 
   test('fault list and acknowledged faults', async ({ page, theme }) => {
