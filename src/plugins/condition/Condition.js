@@ -127,6 +127,7 @@ export default class Condition extends EventEmitter {
   update(conditionConfiguration) {
     this.updateTrigger(conditionConfiguration.configuration.trigger);
     this.updateCriteria(conditionConfiguration.configuration.criteria);
+    this.configuration.output = conditionConfiguration.configuration.output;
   }
 
   updateTrigger(trigger) {

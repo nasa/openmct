@@ -410,6 +410,7 @@ export default {
       this.persist();
     },
     persist() {
+      console.log('The condition is now being logged ', this.condition.configuration);
       this.$emit('update-condition', {
         condition: this.condition
       });
