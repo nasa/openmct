@@ -1,8 +1,5 @@
 .c-text-view {
-  display: flex;
-  align-items: center; // Vertically center text
-  overflow: hidden;
-  padding: $interiorMargin;
+@include textViews();
 
   .c-frame & {
     @include abs();
