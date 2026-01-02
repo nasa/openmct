@@ -34,11 +34,11 @@ export default class StateGeneratorProvider {
   }
 
   subscribe(domainObject, callback, options) {
-    var duration = domainObject.telemetry.duration * 1000;
+    const duration = domainObject.telemetry.duration * 1000;
 
-    var interval = setInterval(() => {
-      var now = Date.now();
-      var datum = this.#pointForTimestamp(now, duration, domainObject.name);
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const datum = this.#pointForTimestamp(now, duration, domainObject.name);
 
       if (!this.#shouldBeFiltered(datum, options)) {
         datum.value = String(datum.value);
@@ -46,20 +46,20 @@ export default class StateGeneratorProvider {
       }
     }, duration);
 
-    return function () {
+    return () => {
       clearInterval(interval);
     };
   }
 
   request(domainObject, options) {
-    var start = options.start;
-    var end = Math.min(Date.now(), options.end); // no future values
-    var duration = domainObject.telemetry.duration * 1000;
+    let start = options.start;
+    const end = Math.min(Date.now(), options.end); // no future values
+    const duration = domainObject.telemetry.duration * 1000;
     if (options.strategy === 'latest' || options.size === 1) {
       start = end;
     }
 
-    var data = [];
+    const data = [];
     while (start <= end && data.length < 5000) {
       const point = this.#pointForTimestamp(start, duration, domainObject.name);
 
