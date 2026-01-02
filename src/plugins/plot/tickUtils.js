@@ -4,6 +4,18 @@ const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
 const e2 = Math.sqrt(2);
 
+// A complete list of time units and their duration in milliseconds - UTC
+const TIME_UNITS_UTC = [
+  { unit: 'millisecond', duration: 1 },
+  { unit: 'second', duration: 1000 },
+  { unit: 'minute', duration: 1000 * 60 },
+  { unit: 'hour', duration: 1000 * 60 * 60 },
+  { unit: 'day', duration: 1000 * 60 * 60 * 24 },
+  { unit: 'week', duration: 1000 * 60 * 60 * 24 * 7 },
+  { unit: 'month', duration: 1000 * 60 * 60 * 24 * 30.4375 }, // Average month
+  { unit: 'year', duration: 1000 * 60 * 60 * 24 * 365.25 } // Average year
+];
+
 /**
  * Nicely formatted tick steps from d3-array.
  */
@@ -20,6 +32,97 @@ function tickStep(start, stop, count) {
   }
 
   return stop < start ? -step1 : step1;
+}
+
+/**
+ * Generate time ticks based on a start and stop time, and a desired count of ticks.
+ * @param start beginning timestamp in Ms
+ * @param stop  ending timestamp in Ms
+ * @param count desired number of ticks
+ * @returns {*[]} Array of timestamps in Ms
+ */
+export function getTimeTicks(start, stop, count) {
+  const duration = stop - start;
+  let bestUnit = TIME_UNITS_UTC[0];
+  let bestStepSize = 1;
+
+  // Find the most appropriate time unit
+  for (const unit of TIME_UNITS_UTC) {
+    const numTicks = duration / unit.duration;
+    if (numTicks >= count / 2) {
+      // Find the unit that gives at least half the desired ticks
+      bestUnit = unit;
+      bestStepSize = Math.ceil(numTicks / count) || 1;
+    } else {
+      break; // Stop when the unit is too large
+    }
+  }
+
+  // Handle month/year to avoid incorrect step sizes due to varying durations
+  if (bestUnit.unit === 'month' || bestUnit.unit === 'year') {
+    return generateMonthYearTicks(start, stop, bestUnit.unit, bestStepSize);
+  } else {
+    // For smaller, fixed-duration units
+    return generateFixedIntervalTicks(start, stop, bestUnit.duration * bestStepSize);
+  }
+}
+
+// Helper for variable-duration units (months, years)
+/**
+ * Generate ticks for month/year intervals - these are variable due to leap years etc.
+ * @param start beginning timestamp in Ms
+ * @param stop ending timestamp in Ms
+ * @param unit 'month' or 'year'
+ * @param stepSize number of months/years to step
+ * @returns {*[]} Array of timestamps in Ms
+ */
+function generateMonthYearTicks(start, stop, unit, stepSize) {
+  const resultingTicks = [];
+  let currentDate = new Date(start);
+
+  // Use UTC to avoid DST issues.
+  // Set to the beginning of the interval (e.g., beginning of the month/year)
+  if (unit === 'month') {
+    // currentDate.setDate(1);
+    currentDate.setUTCDate(1);
+    currentDate.setUTCHours(0, 0, 0, 0);
+  } else if (unit === 'year') {
+    // currentDate.setMonth(0, 1);
+    currentDate.setUTCMonth(0, 1);
+    currentDate.setUTCHours(0, 0, 0, 0);
+  }
+
+  while (currentDate.getTime() <= stop) {
+    resultingTicks.push(currentDate.getTime());
+    if (unit === 'month') {
+      // currentDate.setMonth(currentDate.getMonth() + stepSize);
+      currentDate.setUTCMonth(currentDate.getUTCMonth() + stepSize);
+    } else {
+      // unit is 'year'
+      // currentDate.setFullYear(currentDate.getFullYear() + stepSize);
+      currentDate.setUTCFullYear(currentDate.getUTCFullYear() + stepSize);
+    }
+  }
+  return resultingTicks;
+}
+
+// Helper for fixed-duration units (seconds, days)
+/**
+ * Generate ticks for fixed-duration intervals (seconds, minutes, hours, etc.)
+ * @param start beginning timestamp in Ms
+ * @param stop ending timestamp in Ms
+ * @param interval duration of each tick in Ms
+ * @returns {*[]} Array of timestamps in Ms
+ */
+function generateFixedIntervalTicks(start, stop, interval) {
+  const fixedIntervalTicks = [];
+  const firstTick = Math.ceil(start / interval) * interval;
+
+  for (let i = firstTick; i <= stop; i += interval) {
+    fixedIntervalTicks.push(i);
+  }
+
+  return fixedIntervalTicks;
 }
 
 /**

@@ -1,84 +1,74 @@
+<!--
+ Open MCT, Copyright (c) 2014-2024, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+
 <template>
   <form ref="fixedDeltaInput">
     <div class="c-tc-input-popup__input-grid">
-      <div class="pr-time-label pr-time-label-start-date"><em>Start</em> Date</div>
-      <div class="pr-time-label pr-time-label-start-time">Time</div>
-      <div class="pr-time-label pr-time-label-end-date"><em>End</em> Date</div>
-      <div class="pr-time-label pr-time-label-end-time">Time</div>
+      <div class="pr-time-label pr-time-label-start-time">Start</div>
+      <div class="pr-time-label pr-time-label-end-time">End</div>
 
-      <div
-        class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-start-date"
-      >
+      <div class="pr-time-input pr-time-input-start">
         <input
-          ref="startDate"
-          v-model="formattedBounds.startDate"
-          class="c-input--datetime"
-          type="text"
-          autocorrect="off"
-          spellcheck="false"
-          aria-label="Start date"
-          @input="validateInput('startDate')"
-          @change="reportValidity('startDate')"
-        />
-        <DatePicker
-          v-if="isUTCBased"
-          class="c-ctrl-wrapper--menus-right"
-          :default-date-time="formattedBounds.startDate"
-          :formatter="timeFormatter"
-          @date-selected="startDateSelected"
-        />
-      </div>
-
-      <div class="pr-time-input pr-time-input--time pr-time-input-start-time">
-        <input
-          ref="startTime"
-          v-model="formattedBounds.startTime"
+          ref="start"
+          v-model="formattedBounds.start"
           class="c-input--datetime"
           type="text"
           autocorrect="off"
           spellcheck="false"
           aria-label="Start time"
-          @input="validateInput('startTime')"
-          @change="reportValidity('startTime')"
+          @input="validateInput('start')"
+          @change="reportValidity('start')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
+        />
+        <DatePicker
+          v-if="isTimeSystemUTCBased"
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.start"
+          @date-selected="dateSelected($event, 'start')"
         />
       </div>
 
       <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
 
-      <div
-        class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-end-date"
-      >
+      <div class="pr-time-input pr-time-input-end">
         <input
-          ref="endDate"
-          v-model="formattedBounds.endDate"
-          class="c-input--datetime"
-          type="text"
-          autocorrect="off"
-          spellcheck="false"
-          aria-label="End date"
-          @input="validateInput('endDate')"
-          @change="reportValidity('endDate')"
-        />
-        <DatePicker
-          v-if="isUTCBased"
-          class="c-ctrl-wrapper--menus-left"
-          :default-date-time="formattedBounds.endDate"
-          :formatter="timeFormatter"
-          @date-selected="endDateSelected"
-        />
-      </div>
-
-      <div class="pr-time-input pr-time-input--time pr-time-input-end-time">
-        <input
-          ref="endTime"
-          v-model="formattedBounds.endTime"
+          ref="end"
+          v-model="formattedBounds.end"
           class="c-input--datetime"
           type="text"
           autocorrect="off"
           spellcheck="false"
           aria-label="End time"
-          @input="validateInput('endTime')"
-          @change="reportValidity('endTime')"
+          @input="validateInput('end')"
+          @change="reportValidity('end')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
+        />
+        <DatePicker
+          v-if="isTimeSystemUTCBased"
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.end"
+          @date-selected="dateSelected($event, 'end')"
         />
       </div>
 
@@ -87,7 +77,7 @@
           class="c-button c-button--major icon-check"
           :disabled="hasInputValidityError"
           aria-label="Submit time bounds"
-          @click.prevent="handleFormSubmission(true)"
+          @click.prevent="submitForm(true)"
         ></button>
         <button
           class="c-button icon-x"
@@ -100,52 +90,27 @@
 </template>
 
 <script>
-import _ from 'lodash';
-
 import DatePicker from './DatePicker.vue';
-
-const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
   components: {
     DatePicker
   },
-  inject: ['openmct'],
-  props: {
-    inputBounds: {
-      type: Object,
-      required: true
-    },
-    inputTimeSystem: {
-      type: Object,
-      required: true
-    }
-  },
+  inject: [
+    'openmct',
+    'isTimeSystemUTCBased',
+    'timeContext',
+    'timeSystemFormatter',
+    'timeSystemDurationFormatter',
+    'bounds'
+  ],
   emits: ['update', 'dismiss'],
   data() {
-    const timeSystem = this.openmct.time.getTimeSystem();
-    const bounds = this.openmct.time.getBounds();
-
     return {
-      timeFormatter: this.getFormatter(timeSystem.timeFormat),
-      durationFormatter: this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER),
-      timeSystemKey: timeSystem.key,
-      bounds: {
-        start: bounds.start,
-        end: bounds.end
-      },
-      formattedBounds: {
-        start: '',
-        end: '',
-        startTime: '',
-        endTime: ''
-      },
-      isUTCBased: timeSystem.isUTCBased,
+      formattedBounds: {},
       inputValidityMap: {
-        startDate: { valid: true },
-        startTime: { valid: true },
-        endDate: { valid: true },
-        endTime: { valid: true }
+        start: { valid: true },
+        end: { valid: true }
       },
       logicalValidityMap: {
         limit: { valid: true },
@@ -155,79 +120,80 @@ export default {
   },
   computed: {
     hasInputValidityError() {
-      return Object.values(this.inputValidityMap).some((isValid) => !isValid.valid);
+      return Object.values(this.inputValidityMap).some((validity) => !validity.valid);
     },
     hasLogicalValidationErrors() {
-      return Object.values(this.logicalValidityMap).some((isValid) => !isValid.valid);
+      return Object.values(this.logicalValidityMap).some((validity) => !validity.valid);
     },
     isValid() {
       return !this.hasInputValidityError && !this.hasLogicalValidationErrors;
     }
   },
   watch: {
-    inputBounds: {
-      handler(newBounds) {
-        this.handleNewBounds(newBounds);
-      },
-      deep: true
-    },
-    inputTimeSystem: {
-      handler(newTimeSystem) {
-        this.setTimeSystem(newTimeSystem);
-      },
-      deep: true
+    bounds: {
+      handler() {
+        this.setViewFromBounds();
+      }
     }
   },
-  created() {
-    this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
-  },
   mounted() {
-    this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
-    this.setViewFromBounds(this.bounds);
+    this.setViewFromBounds();
   },
   beforeUnmount() {
     this.clearAllValidation();
   },
   methods: {
-    handleNewBounds(bounds) {
-      this.setBounds(bounds);
-      this.setViewFromBounds(bounds);
-    },
-    setBounds(bounds) {
-      this.bounds = bounds;
-    },
-    setViewFromBounds(bounds) {
-      this.formattedBounds.startDate = this.timeFormatter.format(bounds.start).split(' ')[0];
-      this.formattedBounds.endDate = this.timeFormatter.format(bounds.end).split(' ')[0];
-      this.formattedBounds.startTime = this.durationFormatter.format(Math.abs(bounds.start));
-      this.formattedBounds.endTime = this.durationFormatter.format(Math.abs(bounds.end));
-    },
-    setTimeSystem(timeSystem) {
-      this.timeSystemKey = timeSystem.key;
-      this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
-      this.durationFormatter = this.getFormatter(
-        timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
-      );
-      this.isUTCBased = timeSystem.isUTCBased;
-    },
-    getFormatter(key) {
-      return this.openmct.telemetry.getValueFormatter({
-        format: key
-      }).formatter;
-    },
-    setBoundsFromView(dismiss) {
-      if (this.$refs.fixedDeltaInput.checkValidity()) {
-        let start = this.timeFormatter.parse(
-          `${this.formattedBounds.startDate} ${this.formattedBounds.startTime}`
-        );
-        let end = this.timeFormatter.parse(
-          `${this.formattedBounds.endDate} ${this.formattedBounds.endTime}`
-        );
-
-        this.$emit('update', { start, end });
+    async copyToClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
       }
 
-      if (dismiss) {
+      try {
+        await navigator.clipboard.writeText(this.formattedBounds[startOrEnd]);
+      } catch (err) {
+        this.openmct.notifications.error('Failed to copy timestamp to clipboard');
+        console.error(err);
+      }
+    },
+    async pasteFromClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      try {
+        this.formattedBounds[startOrEnd] = await navigator.clipboard.readText();
+      } catch (err) {
+        this.openmct.notifications.error('Failed to get timestamp from clipboard');
+        console.error(err);
+        return;
+      }
+
+      this.validateInput(startOrEnd);
+      this.reportValidity(startOrEnd);
+    },
+    setViewFromBounds() {
+      const start = this.timeSystemFormatter.format(this.bounds.start);
+      const end = this.timeSystemFormatter.format(this.bounds.end);
+
+      this.formattedBounds = {
+        start,
+        end
+      };
+    },
+    setBoundsFromView(shouldDismiss) {
+      if (this.$refs.fixedDeltaInput.checkValidity()) {
+        const start = this.timeSystemFormatter.parse(this.formattedBounds.start);
+        const end = this.timeSystemFormatter.parse(this.formattedBounds.end);
+
+        this.timeContext.setBounds({
+          start,
+          end
+        });
+      }
+
+      if (shouldDismiss) {
         this.$emit('dismiss');
         return false;
       }
@@ -241,7 +207,7 @@ export default {
       input.setCustomValidity('');
       input.title = '';
     },
-    handleFormSubmission(shouldDismiss) {
+    submitForm(shouldDismiss) {
       this.validateLimit();
       this.reportValidity('limit');
       this.validateBounds();
@@ -253,23 +219,16 @@ export default {
     },
     validateInput(refName) {
       this.clearAllValidation();
-
-      const inputType = refName.includes('Date') ? 'Date' : 'Time';
-      const formatter = inputType === 'Date' ? this.timeFormatter : this.durationFormatter;
-      const validationResult = formatter.validate(this.formattedBounds[refName])
+      const validationResult = this.timeSystemFormatter.validate(this.formattedBounds[refName])
         ? { valid: true }
-        : { valid: false, message: `Invalid ${inputType}` };
+        : { valid: false, message: 'Invalid Date' };
 
       this.inputValidityMap[refName] = validationResult;
     },
     validateBounds() {
       const bounds = {
-        start: this.timeFormatter.parse(
-          `${this.formattedBounds.startDate} ${this.formattedBounds.startTime}`
-        ),
-        end: this.timeFormatter.parse(
-          `${this.formattedBounds.endDate} ${this.formattedBounds.endTime}`
-        )
+        start: this.timeSystemFormatter.parse(this.formattedBounds.start),
+        end: this.timeSystemFormatter.parse(this.formattedBounds.end)
       };
 
       this.logicalValidityMap.bounds = this.openmct.time.validateBounds(bounds);
@@ -295,7 +254,6 @@ export default {
       if (validationResult.valid !== true) {
         input.setCustomValidity(validationResult.message);
         input.title = validationResult.message;
-        this.hasLogicalValidationErrors = true;
       } else {
         input.setCustomValidity('');
         input.title = '';
@@ -308,17 +266,12 @@ export default {
         return this.$refs[refName];
       }
 
-      return this.$refs.startDate;
+      return this.$refs.start;
     },
-    startDateSelected(date) {
-      this.formattedBounds.startDate = this.timeFormatter.format(date).split(' ')[0];
-      this.validateInput('startDate');
-      this.reportValidity('startDate');
-    },
-    endDateSelected(date) {
-      this.formattedBounds.endDate = this.timeFormatter.format(date).split(' ')[0];
-      this.validateInput('endDate');
-      this.reportValidity('endDate');
+    dateSelected(date, refName) {
+      this.formattedBounds[refName] = this.timeSystemFormatter.format(date);
+      this.validateInput(refName);
+      this.reportValidity(refName);
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {

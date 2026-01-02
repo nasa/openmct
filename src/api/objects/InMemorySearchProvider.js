@@ -112,7 +112,7 @@ class InMemorySearchProvider {
 
   indexAnnotations() {
     const theInMemorySearchProvider = this;
-    Object.values(this.openmct.objects.providers).forEach((objectProvider) => {
+    this.openmct.objects.providers.forEach((objectProvider) => {
       if (objectProvider.getAllObjects) {
         const allObjects = objectProvider.getAllObjects();
         if (allObjects) {
