@@ -37,7 +37,7 @@ export default class StateGeneratorProvider {
     const duration = domainObject.telemetry.duration * 1000;
 
     const interval = setInterval(() => {
-      const now = Date.now();
+      const now = this.openmct.time.now() || Date.now();
       const datum = this.#pointForTimestamp(now, duration, domainObject.name);
 
       if (!this.#shouldBeFiltered(datum, options)) {
@@ -53,7 +53,8 @@ export default class StateGeneratorProvider {
 
   request(domainObject, options) {
     let start = options.start;
-    const end = Math.min(Date.now(), options.end); // no future values
+    const now = this.openmct.time.now() || Date.now();
+    const end = Math.min(now, options.end); // no future values
     const duration = domainObject.telemetry.duration * 1000;
     if (options.strategy === 'latest' || options.size === 1) {
       start = end;
@@ -73,11 +74,13 @@ export default class StateGeneratorProvider {
   }
 
   #pointForTimestamp(timestamp, duration, name) {
-    return {
+    const key = this.openmct.time.getTimeSystem()?.key || 'utc';
+    const point = {
       name: name,
-      utc: Math.floor(timestamp / duration) * duration,
       value: Math.floor(timestamp / duration) % 2
     };
+    point[key] = Math.floor(timestamp / duration) * duration;
+    return point;
   }
 
   #shouldBeFiltered(point, options) {
