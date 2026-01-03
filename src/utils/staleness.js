@@ -29,14 +29,13 @@ class StalenessUtils {
 
     this.setTimeSystem(this.openmct.time.getTimeSystem());
     this.watchTimeSystem();
-    this.timeSystemKey = null;
   }
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
 
-    // Accept staleness updates based only on whether the timestamp is newer,
-    // NOT based on whether it falls within time conductor bounds.
+    // Accept latest staleness updates from staleness provider,
+    // regardless of whether the update occurred within time conductor bounds.
     if (stalenessResponseTime > this.lastStalenessResponseTime) {
       this.lastStalenessResponseTime = stalenessResponseTime;
 
