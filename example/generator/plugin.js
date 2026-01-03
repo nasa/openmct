@@ -50,7 +50,7 @@ export default function (openmct) {
     }
   });
 
-  openmct.telemetry.addProvider(new StateGeneratorProvider());
+  openmct.telemetry.addProvider(new StateGeneratorProvider(openmct));
 
   openmct.types.addType('generator', {
     name: 'Sine Wave Generator',
