@@ -52,6 +52,7 @@
             v-show="gridLines && !options.compact"
             :axis-type="'xAxis'"
             :position="'right'"
+            :is-utc="isUtc"
           />
 
           <MctTicks
@@ -293,7 +294,8 @@ export default {
       yAxes: [],
       hiddenYAxisIds: [],
       yAxisListWithRange: [],
-      config: {}
+      config: {},
+      isUtc: this.openmct.time.getTimeSystem().isUTCBased
     };
   },
   computed: {
@@ -540,12 +542,14 @@ export default {
       this.updateMode();
       this.updateDisplayBounds(this.timeContext.getBounds());
       this.timeContext.on('modeChanged', this.updateMode);
+      this.timeContext.on('timeSystemChanged', this.setUtc);
       this.timeContext.on('boundsChanged', this.updateDisplayBounds);
       this.synchronized(true);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
         this.timeContext.off('modeChanged', this.updateMode);
+        this.timeContext.off('timeSystemChanged', this.setUtc);
         this.timeContext.off('boundsChanged', this.updateDisplayBounds);
       }
     },
@@ -764,6 +768,10 @@ export default {
     },
     updateMode() {
       this.isRealTime = this.timeContext.isRealTime();
+    },
+
+    setUtc(timeSystem) {
+      this.isUtc = timeSystem.isUTCBased;
     },
 
     /**
