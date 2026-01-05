@@ -20,8 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults, navigateToObjectWithRealTime } from '../../appActions.js';
-import { expect, test } from '../../pluginFixtures.js';
+import {
+  createDomainObjectWithDefaults,
+  navigateToObjectWithRealTime
+} from '../../../../appActions.js';
+import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Staleness', () => {
   test.beforeEach(async ({ page }) => {
