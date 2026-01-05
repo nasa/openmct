@@ -731,6 +731,9 @@ export default class TelemetryAPI {
 
   /**
    * @private
+   * @param {import('openmct').DomainObject} domainObject the object
+   *        which has associated telemetry staleness
+   * @returns {StalenessProvider | undefined}
    */
   #findStalenessProvider(domainObject) {
     return this.stalenessProviders.find((provider) => {
