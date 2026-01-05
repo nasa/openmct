@@ -81,7 +81,6 @@ import eventHelpers from './lib/eventHelpers.js';
 import { getFormattedTicks, getLogTicks, getTimeTicks, ticks } from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
-const TIME_AXIS_TICK_COUNT = 10;
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],
@@ -229,7 +228,7 @@ export default {
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
       } else if (this.isUtc) {
-        return getTimeTicks(range.min, range.max, TIME_AXIS_TICK_COUNT);
+        return getTimeTicks(range.min, range.max, number);
       } else {
         return ticks(range.min, range.max, number);
       }
