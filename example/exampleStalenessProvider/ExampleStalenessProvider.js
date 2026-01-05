@@ -29,18 +29,16 @@ export default class ExampleStalenessProvider {
     this.openmct = openmct;
     this.stalenessInterval = config.stalenessInterval;
     this.reportStalenessInterval = config.reportStalenessInterval;
-
     this.observingStaleness = {};
     this.latestReceivedTelemetry = {};
 
-    this.timeSystem = this.openmct.time.getTimeSystem();
     this.#observeTimeSystem();
     this.#observeStaleness();
   }
 
   #observeTimeSystem() {
     this.openmct.time.on('timeSystemChanged', () => {
-      this.timeSystemKey = this.openmct.time.getTimeSystem().key;
+      this.timeSystem = this.openmct.time.getTimeSystem();
     });
   }
 
@@ -51,24 +49,7 @@ export default class ExampleStalenessProvider {
   subscribeToStaleness(domainObject, callback) {
     const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-    const stalenessResponseObject = {};
-    const timestamp = this.latestReceivedTelemetry[keyString];
-    const now = this.openmct.time.now();
-
-    if (timestamp) {
-      const isStale = now - timestamp > this.stalenessInterval;
-      stalenessResponseObject.isStale = isStale;
-      stalenessResponseObject[this.timeSystemKey] = timestamp;
-    } else {
-      stalenessResponseObject.isStale = false;
-      stalenessResponseObject[this.timeSystemKey] = now;
-    }
-
-    this.observingStaleness[keyString] = {
-      response: stalenessResponseObject,
-      callback
-    };
-
+    this.observingStaleness[keyString] = { callback };
     const unsubscribe = this.openmct.telemetry.subscribe(domainObject, (datum) => {
       this.#updateLatestReceivedTelemetry(domainObject, datum);
     });
@@ -84,17 +65,27 @@ export default class ExampleStalenessProvider {
 
   #observeStaleness() {
     this.#intervalId = setInterval(() => {
-      Object.entries(this.observingStaleness).forEach(([keyString, observer]) => {
-        const now = this.openmct.time.now();
-        const isStale = now - this.latestReceivedTelemetry[keyString] > this.stalenessInterval;
-        if (isStale !== observer.response.isStale) {
-          const stalenessResponseObject = {
-            isStale
-          };
-          stalenessResponseObject[this.timeSystemKey] = now;
+      if (!this.timeSystem) {
+        return;
+      }
 
-          this.observingStaleness[keyString].response = stalenessResponseObject;
-          this.observingStaleness[keyString].callback(stalenessResponseObject);
+      Object.entries(this.observingStaleness).forEach(([keyString, observer]) => {
+        if (!this.latestReceivedTelemetry[keyString]) {
+          return;
+        }
+
+        const now = this.openmct.time.now();
+        const isStale = now - this.latestReceivedTelemetry[keyString] >= this.stalenessInterval;
+
+        // Overly reports when not stale because of generated telemetry flake
+        if (!isStale || !observer.response || isStale !== observer.response.isStale) {
+          const stalenessResponseObject = {
+            isStale,
+            [this.timeSystem.key]: now
+          };
+
+          observer.response = stalenessResponseObject;
+          observer.callback(stalenessResponseObject);
         }
       });
     }, this.reportStalenessInterval);
@@ -105,19 +96,25 @@ export default class ExampleStalenessProvider {
    * @returns {import('src/api/telemetry/TelemetryAPI').StalenessResponseObject}
    */
   async isStale(domainObject) {
+    if (!this.timeSystem) {
+      this.timeSystem = this.openmct.time.getTimeSystem();
+    }
+
     const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-    // Naively assumes sorted request response so uses last datum in array
-    const response = await this.openmct.telemetry.request(domainObject, { strategy: 'latest' });
-    const lastDatum = response?.length ? response[response.length - 1] : undefined;
-    this.#updateLatestReceivedTelemetry(domainObject, lastDatum);
+    if (!this.latestReceivedTelemetry[keyString]) {
+      // Naively assumes sorted request response so uses last datum in array
+      const response = await this.openmct.telemetry.request(domainObject, { strategy: 'latest' });
+      const lastDatum = response?.length ? response[response.length - 1] : undefined;
+      this.#updateLatestReceivedTelemetry(domainObject, lastDatum);
+    }
 
     const timestamp = this.latestReceivedTelemetry[keyString];
     if (timestamp) {
-      const isStale = this.openmct.time.now() - timestamp > this.stalenessInterval;
+      const isStale = this.openmct.time.now() - timestamp >= this.stalenessInterval;
 
       const stalenessResponseObject = { isStale };
-      stalenessResponseObject[this.timeSystemKey] = timestamp;
+      stalenessResponseObject[this.timeSystem.key] = timestamp;
 
       return stalenessResponseObject;
     }
@@ -126,15 +123,14 @@ export default class ExampleStalenessProvider {
   #updateLatestReceivedTelemetry(domainObject, datum) {
     const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
     const metadata = this.openmct.telemetry.getMetadata(domainObject);
-    const metadataValue = metadata.value(this.timeSystemKey) || { format: this.timeSystemKey };
+    const metadataValue = metadata.value(this.timeSystem.key) || { format: this.timeSystem.key };
     const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
-
     const timestamp = valueFormatter.parse(datum);
-    if (
-      this.latestReceivedTelemetry[keyString] === undefined ||
-      timestamp > this.latestReceivedTelemetry[keyString]
-    ) {
+
+    if (timestamp) {
       this.latestReceivedTelemetry[keyString] = timestamp;
+    } else {
+      console.warn('Could not parse timestamp for staleness check');
     }
   }
 }
