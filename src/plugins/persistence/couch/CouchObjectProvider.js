@@ -463,7 +463,6 @@ class CouchObjectProvider {
     { designDoc, viewName, keysToSearch, startKey, endKey, limit, objectIdField },
     abortSignal
   ) {
-    let stringifiedKeys = JSON.stringify(keysToSearch);
     const url = `${this.url}/_design/${designDoc}/_view/${viewName}`;
     const requestBody = {};
     let requestBodyString;
@@ -485,7 +484,7 @@ class CouchObjectProvider {
       requestBodyString = requestBodyString.replace('$END_KEY', endKey);
       /* spell-checker: enable */
     } else {
-      requestBody.keys = stringifiedKeys;
+      requestBody.keys = keysToSearch;
       requestBodyString = JSON.stringify(requestBody);
     }
 
