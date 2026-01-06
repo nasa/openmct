@@ -22,7 +22,7 @@
 
 <template>
   <div v-if="loaded" class="gl-plot-axis-area gl-plot-x has-local-controls">
-    <MctTicks :axis-type="'xAxis'" :position="'left'" :is-utc="isUtc" />
+    <MctTicks :axis-type="'xAxis'" :position="'left'" />
 
     <div class="gl-plot-label gl-plot-x-label" :class="{ 'icon-gear': isEnabledXKeyToggle() }">
       {{ xAxisLabel }}
@@ -65,8 +65,7 @@ export default {
       xKeyOptions: [],
       xAxis: {},
       loaded: false,
-      xAxisLabel: '',
-      isUtc: this.openmct.time.getTimeSystem().isUTCBased
+      xAxisLabel: ''
     };
   },
   mounted() {
@@ -120,7 +119,6 @@ export default {
         this.xAxis.resetSeries();
         this.setUpXAxisOptions();
       }
-      this.isUtc = timeSystem.isUTCBased;
     },
     setUpXAxisOptions() {
       const xAxisKey = this.xAxis.get('key');

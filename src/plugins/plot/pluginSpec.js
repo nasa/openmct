@@ -422,7 +422,7 @@ describe('the plugin', function () {
         expect(xAxisElement.length).toBe(1);
 
         let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
-        expect(ticks.length).toBe(5);
+        expect(ticks.length).toBe(9);
 
         done();
       });

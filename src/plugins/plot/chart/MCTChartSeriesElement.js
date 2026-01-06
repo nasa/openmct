@@ -97,7 +97,6 @@ export default class MCTChartSeriesElement {
       this.chart.setOffset(point, undefined, series);
     }
 
-    // Here x,y are the offsets of the current point from the first data point.
     return {
       x: this.offset.xVal(point, series),
       y: this.offset.yVal(point, series)
@@ -131,7 +130,6 @@ export default class MCTChartSeriesElement {
   reset() {
     this.buffer = new Float32Array(20000);
     this.count = 0;
-    //TODO: Should we call resetYOffsetAndSeriesDataForYAxis here?
     if (this.offset.x) {
       this.series.getSeriesData().forEach(function (point, index) {
         this.append(point, index, this.series);

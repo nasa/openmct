@@ -26,7 +26,6 @@ import eventHelpers from '../lib/eventHelpers.js';
 import { MARKER_SHAPES } from './MarkerShapes.js';
 
 // WebGL shader sources (for drawing plain colors)
-// discard; stops the pixel from being drawn
 const FRAGMENT_SHADER = `
         precision mediump float;
         uniform vec4 uColor;
@@ -65,12 +64,6 @@ const FRAGMENT_SHADER = `
         }
     `;
 
-/* This code is taking a 2D vertex position (aVertexPosition) and transforming it into a clip-space coordinate system (where x and y range from -1 to 1)
-   1. (aVertexPosition - uOrigin): effectively translates the aVertexPosition so that the uOrigin becomes the new (0,0). It shifts the coordinate system.
-   2. (aVertexPosition - uOrigin) / uDimensions: performs a normalization step. If uDimensions represents the full width and height, this scales the coordinates so that they fall within the range [0, 1] for both x and y, relative to the uOrigin and uDimensions bounding box
-   3. 2.0 * ((aVertexPosition - uOrigin) / uDimensions): scales the coordinates to be in the range [0, 2]
-   4. 2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1): shifts the range from [0, 2] to [-1, 1]
-*/
 const VERTEX_SHADER = `
         attribute vec2 aVertexPosition;
         uniform vec2 uDimensions;
@@ -139,27 +132,20 @@ class DrawWebGL extends EventEmitter {
 
     // Get locations for attribs/uniforms from the
     // shader programs (to pass values into shaders at draw-time)
-
-    // only available to the vertex shader - this returns an INDEX into the list of attributes maintained by the GPU
     this.aVertexPosition = this.gl.getAttribLocation(this.program, 'aVertexPosition');
-
-    // available to both vertex and fragment shaders
     this.uColor = this.gl.getUniformLocation(this.program, 'uColor');
     this.uMarkerShape = this.gl.getUniformLocation(this.program, 'uMarkerShape');
     this.uDimensions = this.gl.getUniformLocation(this.program, 'uDimensions');
     this.uOrigin = this.gl.getUniformLocation(this.program, 'uOrigin');
     this.uPointSize = this.gl.getUniformLocation(this.program, 'uPointSize');
 
-    // enable the attribute to that it can be used / accessed
     this.gl.enableVertexAttribArray(this.aVertexPosition);
 
-    // Create a buffer to hold points which will be drawn
+    // Create a buffer to holds points which will be drawn
     this.buffer = this.gl.createBuffer();
 
     // Enable blending, for smoothness
     this.gl.enable(this.gl.BLEND);
-    // sfactor is the source alpha value, dfactor is one minus source alpha value
-    // conceptually, color(RGBA) = (sourceColor * sfactor) + (destinationColor * dfactor)
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
   }
   destroy() {
