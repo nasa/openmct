@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2025, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,70 +20,78 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function StateGeneratorProvider() {}
+export default class StateGeneratorProvider {
+  constructor(openmct) {
+    this.openmct = openmct;
+  }
 
-function pointForTimestamp(timestamp, duration, name) {
-  return {
-    name: name,
-    utc: Math.floor(timestamp / duration) * duration,
-    value: Math.floor(timestamp / duration) % 2
-  };
+  supportsRequest(domainObject, options) {
+    return domainObject.type === 'example.state-generator';
+  }
+
+  supportsSubscribe(domainObject) {
+    return domainObject.type === 'example.state-generator';
+  }
+
+  subscribe(domainObject, callback, options) {
+    const duration = domainObject.telemetry.duration * 1000;
+
+    const interval = setInterval(() => {
+      const now = this.openmct.time.now() || Date.now();
+      const datum = this.#pointForTimestamp(now, duration, domainObject.name);
+
+      if (!this.#shouldBeFiltered(datum, options)) {
+        datum.value = String(datum.value);
+        callback(datum);
+      }
+    }, duration);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }
+
+  request(domainObject, options) {
+    let start = options.start;
+    const now = this.openmct.time.now() || Date.now();
+    const end = Math.min(now, options.end); // no future values
+    const duration = domainObject.telemetry.duration * 1000;
+    if (options.strategy === 'latest' || options.size === 1) {
+      start = end;
+    }
+
+    const data = [];
+    while (start <= end && data.length < 5000) {
+      const point = this.#pointForTimestamp(start, duration, domainObject.name);
+
+      if (!this.#shouldBeFiltered(point, options)) {
+        data.push(point);
+      }
+      start += duration;
+    }
+
+    return Promise.resolve(data);
+  }
+
+  #pointForTimestamp(timestamp, duration, name) {
+    const key = this.openmct.time.getTimeSystem()?.key || 'utc';
+    const point = {
+      name: name,
+      value: Math.floor(timestamp / duration) % 2
+    };
+    point[key] = Math.floor(timestamp / duration) * duration;
+    return point;
+  }
+
+  #shouldBeFiltered(point, options) {
+    const valueToFilter = options?.filters?.state?.equals?.[0];
+
+    if (!valueToFilter) {
+      return false;
+    }
+
+    const { value } = point;
+
+    return value !== Number(valueToFilter);
+  }
 }
-
-StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
-  return domainObject.type === 'example.state-generator';
-};
-
-StateGeneratorProvider.prototype.subscribe = function (domainObject, callback, options) {
-  var duration = domainObject.telemetry.duration * 1000;
-
-  var interval = setInterval(() => {
-    var now = Date.now();
-    var datum = pointForTimestamp(now, duration, domainObject.name);
-    if (!this.shouldBeFiltered(datum, options)) {
-      datum.value = String(datum.value);
-      callback(datum);
-    }
-  }, duration);
-
-  return function () {
-    clearInterval(interval);
-  };
-};
-
-StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
-  return domainObject.type === 'example.state-generator';
-};
-
-StateGeneratorProvider.prototype.request = function (domainObject, options) {
-  var start = options.start;
-  var end = Math.min(Date.now(), options.end); // no future values
-  var duration = domainObject.telemetry.duration * 1000;
-  if (options.strategy === 'latest' || options.size === 1) {
-    start = end;
-  }
-
-  var data = [];
-  while (start <= end && data.length < 5000) {
-    const point = pointForTimestamp(start, duration, domainObject.name);
-
-    if (!this.shouldBeFiltered(point, options)) {
-      data.push(point);
-    }
-    start += duration;
-  }
-
-  return Promise.resolve(data);
-};
-
-StateGeneratorProvider.prototype.shouldBeFiltered = function (point, options) {
-  const valueToFilter = options?.filters?.state?.equals?.[0];
-
-  if (!valueToFilter) {
-    return false;
-  }
-
-  const { value } = point;
-
-  return value !== Number(valueToFilter);
-};

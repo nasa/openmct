@@ -106,8 +106,7 @@ export default {
           return;
         }
         if (this.staleObjects.length !== 0) {
-          const SKIP_CHECK = true;
-          this.handleStalenessResponse(id, { isStale: false }, SKIP_CHECK);
+          this.clearStaleness(id);
         }
         this.teardownStalenessSubscription(domainObject);
         this.teardownStalenessUtils(domainObject);
@@ -142,8 +141,7 @@ export default {
       this.stalenessSubscription[id].unsubscribe = this.openmct.telemetry.subscribeToStaleness(
         domainObject,
         (stalenessResponse) => {
-          const SKIP_CHECK = false;
-          this.handleStalenessResponse(id, stalenessResponse, SKIP_CHECK, callback);
+          this.handleStalenessResponse(id, stalenessResponse, callback);
         }
       );
     },
@@ -167,23 +165,30 @@ export default {
       const id = this.getSubscriptionId(domainObject);
       const stalenessResponse = await this.openmct.telemetry.isStale(domainObject);
       if (stalenessResponse !== undefined) {
-        const SKIP_CHECK = false;
-        this.handleStalenessResponse(id, stalenessResponse, SKIP_CHECK, callback);
+        this.handleStalenessResponse(id, stalenessResponse, callback);
       }
     },
-    handleStalenessResponse(id, stalenessResponse, skipCheck, callback) {
+    handleStalenessResponse(id, stalenessResponse, callback) {
       if (!id) {
         id = Object.keys(this.stalenessSubscription)[0];
       }
-      const shouldUpdateStaleness =
-        this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse);
-      if (skipCheck || shouldUpdateStaleness) {
+
+      if (this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
         if (callback && typeof callback === 'function') {
           callback(stalenessResponse);
         } else {
           this.addOrRemoveStaleObject(id, stalenessResponse);
         }
       }
+    },
+    clearStaleness(id) {
+      const stalenessResponse = { isStale: false };
+
+      if (!id) {
+        id = Object.keys(this.stalenessSubscription)[0];
+      }
+
+      this.addOrRemoveStaleObject(id, stalenessResponse);
     },
     addOrRemoveStaleObject(id, stalenessResponse) {
       const index = this.staleObjects.indexOf(id);
