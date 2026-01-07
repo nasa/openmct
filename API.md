@@ -432,6 +432,130 @@ var domainObject = {
     ]
 };
 ```
+## 📌 Plans & Activities Data Format
+
+Open MCT supports representing mission plans composed of activities.\
+These plans are consumed by timeline views, activity inspectors, and
+mission playback tools.
+
+Plan and activity data is not currently part of an external default
+service, but can be provided through a custom object provider, REST
+endpoint, or in-memory loader.\
+This section documents the recommended data format for plans and
+activity objects.
+
+------------------------------------------------------------------------
+
+### 🔹 Plan Object Format
+
+A plan represents a collection of time-based activities.
+
+``` json
+{
+  "id": "mission-plan-2024",
+  "name": "Lunar Survey Mission",
+  "activities": []
+}
+```
+
+  --------------------------------------------------------------------------------
+  Field             Type                       Required          Description
+  ----------------- -------------------------- ----------------- -----------------
+  id                string                     yes               Unique plan
+                                                                 identifier
+
+  name              string                     yes               Plan display name
+
+  activities        array`<Activity>`{=html}   yes               List of
+                                                                 activities
+                                                                 belonging to this
+                                                                 plan
+  --------------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+### 🔹 Activity Object Format
+
+``` json
+{
+  "id": "activity-01",
+  "name": "Thermal Calibration",
+  "start": 1732314900000,
+  "end": 1732315200000,
+  "type": "calibration",
+  "metadata": {
+    "instrument": "IR Sensor"
+  }
+}
+```
+
+  -----------------------------------------------------------------------
+  Field             Type              Required          Description
+  ----------------- ----------------- ----------------- -----------------
+  id                string            yes               Unique activity
+                                                        identifier
+
+  name              string            yes               Display name of
+                                                        activity
+
+  start             number (unix ms)  yes               Start timestamp
+                                                        in milliseconds
+
+  end               number (unix ms)  yes               End timestamp in
+                                                        milliseconds
+
+  type              string            no                Optional activity
+                                                        type used for
+                                                        grouping and
+                                                        styling
+
+  metadata          object            no                Extra contextual
+                                                        information
+  -----------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+### 📌 Example Usage in a Custom Provider
+
+Below is an example of exposing plan data through a domain object
+provider:
+
+``` js
+openmct.objects.addProvider('mission', {
+  get: async (identifier) => {
+    if (identifier.key !== 'mission-plan-2024') return null;
+
+    return {
+      identifier,
+      name: 'Lunar Survey Mission',
+      type: 'plan',
+      activities: [
+        {
+          id: 'activity-01',
+          name: 'Thermal Calibration',
+          start: 1732314900000,
+          end: 1732315200000
+        }
+      ]
+    };
+  }
+});
+```
+
+✔ Works in Timeline\
+✔ Activities appear aligned by start-end time\
+✔ Activity metadata may be shown by custom views
+
+------------------------------------------------------------------------
+
+### 🧩 UI Integration Notes
+
+-   `start` and `end` timestamps **must be in milliseconds**
+-   Activities must exist **inside plan.activities array**
+-   Plans can be injected on startup or loaded asynchronously
+-   If multiple plans reference overlapping periods, Open MCT will
+    render them correctly
+
 
 ## Telemetry API
 
