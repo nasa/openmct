@@ -43,6 +43,7 @@
       :notifications="notifications"
       @close="toggleNotificationsList"
       @clear-all="dismissAllNotifications"
+      @notification-dismissed="updateNotifications"
     />
   </div>
 </template>
