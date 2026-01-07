@@ -21,14 +21,14 @@
 -->
 
 <template>
-  <li class="c-inspect-properties__row" :aria-label="`${detail.name} inspector properties`">
+  <div class="c-inspect-properties__row" :aria-label="`${detail.name} inspector properties`">
     <div class="c-inspect-properties__label" aria-label="inspector property name">
       {{ detail.name }}
     </div>
     <div class="c-inspect-properties__value" aria-label="inspector property value">
       {{ detail.value }}
     </div>
-  </li>
+  </div>
 </template>
 
 <script>
