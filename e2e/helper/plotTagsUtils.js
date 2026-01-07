@@ -40,14 +40,16 @@ export async function createTags({ page, canvas, xEnd = 700, yEnd = 520 }) {
 
   await canvas.dragTo(canvas, {
     sourcePosition: {
-      x: 1,
-      y: 1
+      x: 10,
+      y: 10
     },
     targetPosition: {
       x: xEnd,
       y: yEnd
     }
   });
+await page.waitForSelector('canvas-selector', { state: 'visible' });
+await page.waitForTimeout(1000); // give extra time if needed
 
   //Alt Drag End
   await page.keyboard.up('Alt');
