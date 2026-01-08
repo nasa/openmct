@@ -25,11 +25,12 @@ import { isIdentifier } from './object-utils.js';
 /**
  * Registry for managing root items in Open MCT.
  */
-export default class RootRegistry {
+export default class RootRegistry extends EventTarget {
   /**
    * @param {OpenMCT} openmct - The Open MCT instance.
    */
   constructor(openmct) {
+    super();
     /** @type {Array<RootItemEntry>} */
     this._rootItems = [];
     /** @type {OpenMCT} */
@@ -47,6 +48,12 @@ export default class RootRegistry {
     return Promise.all(promises).then((rootItems) => rootItems.flat());
   }
 
+  isRootObject(identifier) {
+    return this._rootItems.some((rootItem) =>
+      this._openmct.objects.areIdsEqual(rootItem, identifier)
+    );
+  }
+
   /**
    * Add a root item to the registry.
    * @param {RootItemInput} rootItem - The root item to add.
@@ -61,6 +68,20 @@ export default class RootRegistry {
       priority: priority || this._openmct.priority.DEFAULT,
       provider: typeof rootItem === 'function' ? rootItem : () => rootItem
     });
+    this.dispatchEvent(new CustomEvent('add', { detail: rootItem }));
+  }
+
+  removeRoot(identifier) {
+    const rootItems = this._rootItems.filter((rootObjectContainer) => {
+      const rootObject = rootObjectContainer.provider();
+
+      return !this._openmct.objects.areIdsEqual(identifier, rootObject);
+    });
+
+    if (rootItems.length !== this._rootItems.length) {
+      this.dispatchEvent(new CustomEvent('remove', { detail: identifier }));
+      this._rootItems = rootItems;
+    }
   }
 
   /**

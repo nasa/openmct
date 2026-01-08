@@ -22,6 +22,7 @@
 
 import ExampleDataVisualizationSourcePlugin from '../../example/dataVisualization/plugin.js';
 import EventGeneratorPlugin from '../../example/eventGenerator/plugin.js';
+import ExampleStaleness from '../../example/exampleStalenessProvider/plugin.js';
 import ExampleTags from '../../example/exampleTags/plugin.js';
 import ExampleUser from '../../example/exampleUser/plugin.js';
 import ExampleFaultSource from '../../example/faultManagement/exampleFaultSource.js';
@@ -34,6 +35,7 @@ import ClearData from './clearData/plugin.js';
 import Clock from './clock/plugin.js';
 import ConditionPlugin from './condition/plugin.js';
 import ConditionWidgetPlugin from './conditionWidget/plugin.js';
+import CorrelationTelemetryPlugin from './correlationTelemetryPlugin/plugin.js';
 import CouchDBSearchFolder from './CouchDBSearchFolder/plugin.js';
 import DefaultRootName from './defaultRootName/plugin.js';
 import DeviceClassifier from './DeviceClassifier/plugin.js';
@@ -101,6 +103,7 @@ plugins.example.EventGeneratorPlugin = EventGeneratorPlugin;
 plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationSourcePlugin;
 plugins.example.ExampleTags = ExampleTags;
 plugins.example.Generator = () => GeneratorPlugin;
+plugins.example.ExampleStaleness = ExampleStaleness;
 
 plugins.UTCTimeSystem = UTCTimeSystem;
 plugins.LocalTimeSystem = LocalTimeSystem;
@@ -177,6 +180,7 @@ plugins.Gauge = GaugePlugin;
 plugins.Timelist = TimeList;
 plugins.InspectorViews = InspectorViews;
 plugins.InspectorDataVisualization = InspectorDataVisualization;
+plugins.CorrelationTelemetry = CorrelationTelemetryPlugin;
 plugins.EventTimestripPlugin = EventTimestripPlugin;
 
 export default plugins;
