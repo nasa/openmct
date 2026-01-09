@@ -17,14 +17,11 @@
     "@axe-core/playwright": "4.8.5",
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
-    "@playwright/test": "^1.57.0"
+    "@playwright/test": "1.57.0"
   },
   "author": {
     "name": "National Aeronautics and Space Administration",
     "url": "https://www.nasa.gov"
   },
-  "license": "Apache-2.0",
-  "dependencies": {
-    "webpack-dev-server": "5.2.2"
-  }
+  "license": "Apache-2.0"
 }
