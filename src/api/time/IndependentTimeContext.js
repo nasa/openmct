@@ -538,6 +538,37 @@ class IndependentTimeContext extends TimeContext {
     }
   }
 
+  /**
+   * Clean up this time context by removing all event listeners and clearing references.
+   * This method is idempotent and safe to call multiple times.
+   */
+  destroy() {
+    if (this.destroyed) {
+      return;
+    }
+
+    this.destroyed = true;
+
+    // Stop following any upstream time context
+    this.stopFollowingTimeContext();
+
+    // Remove global time context listeners registered in constructor
+    if (this.globalTimeContext) {
+      this.globalTimeContext.off('refreshContext', this.refreshContext);
+      this.globalTimeContext.off('removeOwnContext', this.removeIndependentContext);
+    }
+
+    // Clean up active clock listener if present
+    if (this.activeClock) {
+      this.activeClock.off('tick', this.tick);
+    }
+
+    // Clear internal references
+    this.globalTimeContext = undefined;
+    this.upstreamTimeContext = undefined;
+    this.activeClock = undefined;
+  }
+
   #copy(object) {
     return JSON.parse(JSON.stringify(object));
   }
