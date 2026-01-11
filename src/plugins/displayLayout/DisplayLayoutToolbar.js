@@ -528,7 +528,12 @@ export default class DisplayLayoutToolbar {
     let property = Object.assign({}, object);
 
     while (splitPath.length && property) {
-      property = property[splitPath.shift()];
+      const key = splitPath.shift();
+      // Prevent prototype pollution by blocking access to sensitive properties
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return undefined;
+      }
+      property = property[key];
     }
 
     return property;
