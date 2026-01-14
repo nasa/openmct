@@ -343,7 +343,11 @@ export default {
       event.dataTransfer.setData('dragging', event.target); // required for FF to initiate drag
       event.dataTransfer.effectAllowed = 'copyMove';
       event.dataTransfer.setDragImage(event.target.closest('.c-condition-h'), 0, 0);
-      this.$emit('set-move-index', this.conditionIndex);
+
+      //https://groups.google.com/a/chromium.org/g/chromium-bugs/c/YHs3orFC8Dc/m/ryT25b7J-NwJ
+      setTimeout(() => {
+        this.$emit('set-move-index', this.conditionIndex);
+      }, 0);
     },
     dragEnd() {
       this.dragStarted = false;
