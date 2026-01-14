@@ -23,6 +23,7 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
+  getNextSineValueFromSWG,
   navigateToObjectWithFixedTimeBounds,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
@@ -242,7 +243,7 @@ test.describe('Display Layout', () => {
     // Subscribe to the Sine Wave Generator data
     // On getting data, check if the value found in the  Display Layout is the most recent value
     // from the Sine Wave Generator
-    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = getNextSineValueFromSWG(page, sineWaveObject.uuid);
     const formattedTelemetryValue = await getTelemValuePromise;
     await expect(page.getByText(formattedTelemetryValue)).toBeVisible();
     const displayLayoutValue = await page.getByText(formattedTelemetryValue).textContent();
@@ -282,7 +283,7 @@ test.describe('Display Layout', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // Subscribe to the Sine Wave Generator data
-    const getTelemValuePromise = subscribeToTelemetry(page, sineWaveObject.uuid);
+    const getTelemValuePromise = getNextSineValueFromSWG(page, sineWaveObject.uuid);
     // Set an offset of 1 minute and then change the time mode to fixed to set a 1 minute historical window
     await setStartOffset(page, { startMins: '1' });
     await setFixedTimeMode(page);
@@ -692,32 +693,4 @@ async function addLayoutObject(page, layoutName, layoutObject) {
     await page.getByLabel('Image URL').fill(TINY_IMAGE_BASE64);
     await page.getByText('Ok').click();
   }
-}
-
-/**
- * Util for subscribing to a telemetry object by object identifier
- * Limitations: Currently only works to return telemetry once to the node scope
- * To Do: See if there's a way to await this multiple times to allow for multiple
- * values to be returned over time
- * @param {import('@playwright/test').Page} page
- * @param {string} objectIdentifier identifier for object
- * @returns {Promise<string>} the formatted sin telemetry value
- */
-async function subscribeToTelemetry(page, objectIdentifier) {
-  const getTelemValuePromise = new Promise((resolve) =>
-    page.exposeFunction('getTelemValue', resolve)
-  );
-
-  await page.evaluate(async (telemetryIdentifier) => {
-    const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
-    const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
-    const formats = await window.openmct.telemetry.getFormatMap(metadata);
-    window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
-      const sinVal = obj.sin;
-      const formattedSinVal = formats.sin.format(sinVal);
-      window.getTelemValue(formattedSinVal);
-    });
-  }, objectIdentifier);
-
-  return getTelemValuePromise;
 }

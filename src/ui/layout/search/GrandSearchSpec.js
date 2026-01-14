@@ -145,7 +145,13 @@ describe('GrandSearch', () => {
     };
 
     openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
-    mockObjectProvider = jasmine.createSpyObj('mock object provider', ['create', 'update', 'get']);
+    mockObjectProvider = jasmine.createSpyObj('mock object provider', [
+      'create',
+      'update',
+      'get',
+      'supportsSearchType',
+      'search'
+    ]);
     // eslint-disable-next-line require-await
     mockObjectProvider.get = async (identifier) => {
       if (identifier.key === mockDomainObject.identifier.key) {
@@ -230,6 +236,8 @@ describe('GrandSearch', () => {
   });
 
   it('should render an object search result if new object added', async () => {
+    delete mockObjectProvider.supportsSearchType;
+    delete mockObjectProvider.search;
     const composition = openmct.composition.get(mockFolderObject);
     composition.add(mockNewObject);
     // after adding, need to wait a beat for the folder to be indexed
@@ -245,17 +253,17 @@ describe('GrandSearch', () => {
 
   it('should not use InMemorySearch provider if object provider provides search', async () => {
     // eslint-disable-next-line require-await
-    mockObjectProvider.search = async (query, abortSignal, searchType) => {
+    mockObjectProvider.search.and.callFake((query, abortSignal, searchType) => {
       if (searchType === openmct.objects.SEARCH_TYPES.OBJECTS) {
         return [mockNewObject];
       } else {
         return [];
       }
-    };
+    });
 
-    mockObjectProvider.supportsSearchType = (someType) => {
+    mockObjectProvider.supportsSearchType.and.callFake((someType) => {
       return true;
-    };
+    });
 
     const composition = openmct.composition.get(mockFolderObject);
     composition.add(mockNewObject);

@@ -1,13 +1,4 @@
 export default {
-  props: {
-    buttonCssClass: {
-      type: String,
-      required: false,
-      default() {
-        return '';
-      }
-    }
-  },
   methods: {
     loadClocks(menuOptions) {
       let clocks;
