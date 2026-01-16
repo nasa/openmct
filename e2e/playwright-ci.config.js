@@ -5,7 +5,7 @@
 import { devices } from '@playwright/test';
 import { fileURLToPath } from 'url';
 const MAX_FAILURES = 5;
-const NUM_WORKERS = 2;
+const NUM_WORKERS = 4;
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
