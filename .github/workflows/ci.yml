@@ -3,12 +3,16 @@ name: CI
 on:
   push:
   pull_request:
+    types:
+      - labeled
+      - opened
 
 env:
   NODE_ENV: development
   PERCY_POSTINSTALL_BROWSER: "true"
   PERCY_LOGLEVEL: "debug"
   PERCY_PARALLEL_TOTAL: 2
+  PERCY_TOKEN: "${{ secrets.PERCY_TOKEN }}"
 
 jobs:
   lint:
