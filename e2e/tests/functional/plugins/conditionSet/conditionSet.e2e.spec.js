@@ -462,6 +462,57 @@ test.describe('Basic Condition Set Use', () => {
     await page.goto(exampleTelemetry.url);
   });
 
+  test('ConditionSet drag handle reliably reorders conditions', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/8076'
+    });
+
+    await page.goto(conditionSet.url);
+    await page.getByLabel('Edit Object').click();
+
+    await page.locator('#addCondition').click();
+    await page.locator('#addCondition').click();
+    await page.locator('#addCondition').click();
+
+    const nameInputs = page.getByLabel('Condition Name Input');
+    await nameInputs.nth(0).fill('Alpha');
+    await nameInputs.nth(1).fill('Beta');
+    await nameInputs.nth(2).fill('Gamma');
+
+    const betaHandle = page
+      .locator('.c-condition-h', { hasText: 'Beta' })
+      .locator('.c-condition__drag-grippy');
+    const alphaTarget = page.locator('.c-condition-h', { hasText: 'Alpha' });
+    await dragTo(page, betaHandle, alphaTarget);
+    await expect.poll(conditionNames).toEqual(['Beta', 'Alpha', 'Gamma']);
+
+    const gammaHandle = page
+      .locator('.c-condition-h', { hasText: 'Gamma' })
+      .locator('.c-condition__drag-grippy');
+    const betaTarget = page.locator('.c-condition-h', { hasText: 'Beta' });
+    await dragTo(page, gammaHandle, betaTarget);
+    await expect.poll(conditionNames).toEqual(['Gamma', 'Beta', 'Alpha']);
+
+    const alphaHandle = page
+      .locator('.c-condition-h', { hasText: 'Alpha' })
+      .locator('.c-condition__drag-grippy');
+    const gammaTarget = page.locator('.c-condition-h', { hasText: 'Gamma' });
+    await dragTo(page, alphaHandle, gammaTarget);
+    await expect.poll(conditionNames).toEqual(['Alpha', 'Gamma', 'Beta']);
+
+    await dragTo(page, betaHandle, gammaTarget);
+    await expect.poll(conditionNames).toEqual(['Alpha', 'Beta', 'Gamma']);
+
+    await dragTo(page, alphaHandle, gammaTarget);
+    await expect.poll(conditionNames).toEqual(['Beta', 'Alpha', 'Gamma']);
+
+    async function conditionNames() {
+      const names = await page.locator('.c-condition__name').allTextContents();
+      return names.filter((name) => ['Alpha', 'Beta', 'Gamma'].includes(name));
+    }
+  });
+
   test.fixme('Ensure condition sets work with telemetry like operator status', ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
@@ -547,3 +598,15 @@ test.describe('Condition Set Composition', () => {
     ).toEqual(0);
   });
 });
+
+// Borrowed from https://github.com/microsoft/playwright/issues/20254#issuecomment-1771669110 to fix bug in Playwright dragTo
+async function dragTo(page, draggable, droppable) {
+  const box = await droppable.boundingBox();
+  await draggable.hover();
+
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, {
+    steps: 5
+  });
+  await page.mouse.up();
+}
