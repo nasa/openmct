@@ -29,20 +29,6 @@ const config = {
       use: {
         browserName: 'chromium'
       }
-    },
-    {
-      name: 'chrome-snow-theme', //Runs the same visual tests but with snow-theme enabled
-      use: {
-        browserName: 'chromium',
-        theme: 'snow'
-      }
-    },
-    {
-      name: 'darkmatter-theme', //Runs the same visual tests but with darkmatter-theme
-      use: {
-        browserName: 'chromium',
-        theme: 'darkmatter'
-      }
     }
   ],
   reporter: [
