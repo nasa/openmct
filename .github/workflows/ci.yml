@@ -91,8 +91,13 @@ jobs:
           if-no-files-found: warn
 
   e2e-test:
-    name: e2e-ci
+    name: e2e-ci (shard ${{ matrix.shard }}/2)
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.48.1-jammy
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -100,10 +105,13 @@ jobs:
           node-version: "18"
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps
       - run: |
           mkdir -p test-results
-          npm run test:e2e:ci
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            npm run test:e2e:ci -- --project=chrome --project=MMOC --shard=${{ matrix.shard }}/2
+          else
+            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/2
+          fi
       - run: npm run cov:e2e:report || true
         if: always()
       - uses: codecov/codecov-action@v4
@@ -112,24 +120,24 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/e2e/lcov.info
           flags: e2e-ci
-          name: e2e-ci-${{ github.run_id }}
+          name: e2e-ci-${{ github.run_id }}-shard-${{ matrix.shard }}
           fail_ci_if_error: false
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: e2e-ci-test-results
+          name: e2e-ci-test-results-shard-${{ matrix.shard }}
           path: test-results
           if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: e2e-ci-coverage
+          name: e2e-ci-coverage-shard-${{ matrix.shard }}
           path: coverage
           if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: e2e-ci-html-results
+          name: e2e-ci-html-results-shard-${{ matrix.shard }}
           path: html-test-results
           if-no-files-found: warn
       - name: Collect version artifacts
@@ -143,12 +151,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: e2e-ci-artifacts
+          name: e2e-ci-artifacts-shard-${{ matrix.shard }}
           path: /tmp/artifacts
           if-no-files-found: warn
 
   e2e-mobile:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.48.1-jammy
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -156,7 +165,6 @@ jobs:
           node-version: "18"
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps
       - run: npm run test:e2e:mobile
       - run: npm run cov:e2e:report || true
         if: always()
@@ -204,6 +212,7 @@ jobs:
   visual-a11y:
     name: visual-a11y-ci
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.48.1-jammy
     strategy:
       fail-fast: false
       matrix:
@@ -215,7 +224,6 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps
       - run: npm run test:e2e:visual:ci -- --shard=${{ matrix.shard }}/2
       - uses: actions/upload-artifact@v4
         if: always()
@@ -246,6 +254,7 @@ jobs:
 
   perf-test:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.48.1-jammy
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -253,7 +262,6 @@ jobs:
           node-version: "18"
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
       - uses: actions/upload-artifact@v4
@@ -285,6 +293,7 @@ jobs:
 
   mem-test:
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.48.1-jammy
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -292,7 +301,6 @@ jobs:
           node-version: "18"
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps
       - run: npm run test:perf:memory
       - uses: actions/upload-artifact@v4
         if: always()
