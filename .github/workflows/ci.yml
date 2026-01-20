@@ -4,7 +4,6 @@ on:
   push:
   pull_request:
     types:
-      - labeled
       - opened
 
 env:
