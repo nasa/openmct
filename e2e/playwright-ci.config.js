@@ -22,7 +22,7 @@ const config = {
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
   maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
-  workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
+  workers: NUM_WORKERS,
   use: {
     baseURL: 'http://localhost:8080/',
     headless: true,
