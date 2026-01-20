@@ -97,7 +97,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -108,9 +108,9 @@ jobs:
       - run: |
           mkdir -p test-results
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            npm run test:e2e:ci -- --project=chrome --project=MMOC --shard=${{ matrix.shard }}/2
+            npm run test:e2e:ci -- --project=chrome --project=MMOC --shard=${{ matrix.shard }}/4
           else
-            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/2
+            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
           fi
       - run: npm run cov:e2e:report || true
         if: always()
