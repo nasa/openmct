@@ -24,12 +24,11 @@ jobs:
           node-version: "18"
           cache: npm
       - run: npm ci
+      - run: tar -czf node18-deps.tgz node_modules e2e/node_modules
       - uses: actions/upload-artifact@v4
         with:
           name: node18-deps
-          path: |
-            node_modules
-            e2e/node_modules
+          path: node18-deps.tgz
           if-no-files-found: warn
 
   lint:
@@ -71,6 +70,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: node18-deps
+      - run: tar -xzf node18-deps.tgz
       - uses: browser-actions/setup-chrome@v1
       - run: |
           mkdir -p dist/reports/tests/
@@ -128,6 +128,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: node18-deps
+      - run: tar -xzf node18-deps.tgz
       - run: |
           mkdir -p test-results
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -191,6 +192,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: node18-deps
+      - run: tar -xzf node18-deps.tgz
       - run: npm run test:e2e:mobile
       - run: npm run cov:e2e:report || true
         if: always()
@@ -291,6 +293,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: node18-deps
+      - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
       - uses: actions/upload-artifact@v4
@@ -333,6 +336,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: node18-deps
+      - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:memory
       - uses: actions/upload-artifact@v4
         if: always()
