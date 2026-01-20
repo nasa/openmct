@@ -182,13 +182,16 @@ jobs:
   e2e-mobile:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.48.1-jammy
+    needs: deps-node18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: npm
-      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: node18-deps
       - run: npm run test:e2e:mobile
       - run: npm run cov:e2e:report || true
         if: always()
@@ -279,13 +282,16 @@ jobs:
   perf-test:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.48.1-jammy
+    needs: deps-node18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: npm
-      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: node18-deps
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
       - uses: actions/upload-artifact@v4
@@ -318,13 +324,16 @@ jobs:
   mem-test:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.48.1-jammy
+    needs: deps-node18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: npm
-      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: node18-deps
       - run: npm run test:perf:memory
       - uses: actions/upload-artifact@v4
         if: always()
