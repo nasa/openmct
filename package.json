@@ -63,7 +63,7 @@
     "karma-spec-reporter": "0.0.36",
     "karma-webpack": "5.0.1",
     "location-bar": "3.0.1",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "marked": "15.0.7",
     "mini-css-extract-plugin": "2.9.2",
     "moment": "2.30.1",
