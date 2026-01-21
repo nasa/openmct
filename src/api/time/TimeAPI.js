@@ -206,7 +206,11 @@ class TimeAPI extends GlobalTimeContext {
       const newPath = this.openmct.objects.getRelativePath(objectPath);
 
       if (currentPath !== newPath) {
-        // If the path has changed, update the context.
+        // If the path has changed, destroy the old context before replacing it
+        // to prevent memory leaks from retained event listeners
+        if (viewTimeContext && typeof viewTimeContext.destroy === 'function') {
+          viewTimeContext.destroy();
+        }
         this.independentContexts.delete(viewKey);
         viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
         this.independentContexts.set(viewKey, viewTimeContext);
