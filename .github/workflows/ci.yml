@@ -12,6 +12,8 @@ env:
   PERCY_LOGLEVEL: "debug"
   PERCY_PARALLEL_TOTAL: 2
   PERCY_TOKEN: "${{ secrets.PERCY_TOKEN }}"
+  NODE18_DEPS_CACHE_KEY: >-
+    ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
 
 jobs:
   deps-node18:
@@ -19,17 +21,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            deps_changed:
+              - 'package.json'
+              - 'package-lock.json'
+      - uses: actions/cache@v4
+        id: node18_deps_cache
+        with:
+          path: node18-deps.tgz
+          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+      - id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.action }}" = "opened" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.filter.outputs.deps_changed }}" = "true" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.node18_deps_cache.outputs.cache-hit }}" != "true" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-node@v4
+        if: steps.gate.outputs.should_build == 'true'
         with:
           node-version: "18"
           cache: npm
       - run: npm ci
+        if: steps.gate.outputs.should_build == 'true'
       - run: tar -czf node18-deps.tgz node_modules e2e/node_modules
-      - uses: actions/upload-artifact@v4
-        with:
-          name: node18-deps
-          path: node18-deps.tgz
-          if-no-files-found: warn
+        if: steps.gate.outputs.should_build == 'true'
 
   lint:
     name: node22-lint
@@ -121,9 +144,15 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/download-artifact@v4
+      - uses: actions/cache@v4
+        id: node18_deps_cache
         with:
-          name: node18-deps
+          path: node18-deps.tgz
+          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+      - run: |
+          echo "node18-deps cache miss; deps-node18 should have populated it."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: |
           mkdir -p test-results
@@ -185,9 +214,15 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/download-artifact@v4
+      - uses: actions/cache@v4
+        id: node18_deps_cache
         with:
-          name: node18-deps
+          path: node18-deps.tgz
+          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+      - run: |
+          echo "node18-deps cache miss; deps-node18 should have populated it."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:e2e:mobile
       - run: npm run cov:e2e:report || true
@@ -286,9 +321,15 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/download-artifact@v4
+      - uses: actions/cache@v4
+        id: node18_deps_cache
         with:
-          name: node18-deps
+          path: node18-deps.tgz
+          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+      - run: |
+          echo "node18-deps cache miss; deps-node18 should have populated it."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
@@ -329,9 +370,15 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/download-artifact@v4
+      - uses: actions/cache@v4
+        id: node18_deps_cache
         with:
-          name: node18-deps
+          path: node18-deps.tgz
+          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+      - run: |
+          echo "node18-deps cache miss; deps-node18 should have populated it."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:memory
       - uses: actions/upload-artifact@v4
