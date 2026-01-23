@@ -37,6 +37,23 @@ jobs:
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
             if: steps.node22_deps_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
+          - name: Remove pr:e2e:couchdb label (if present)
+            if: contains(github.event.pull_request.labels.*.name, 'build:clean')
+            uses: actions/github-script@v6
+            with:
+              script: |
+                const { owner, repo, number } = context.issue;
+                const labelToRemove = 'build:clean';
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner,
+                    repo,
+                    issue_number: number,
+                    name: labelToRemove
+                  });
+                } catch (error) {
+                  core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
+                }
         outputs:
             cache_key: ${{ needs.generate_cache_key.outputs.cache_key }}
     lint:
