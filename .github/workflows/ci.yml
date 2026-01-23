@@ -107,13 +107,13 @@ jobs:
           if-no-files-found: warn
 
   e2e-test:
-    name: e2e-ci (shard ${{ matrix.shard }}/4)
+    name: e2e-ci (shard ${{ matrix.shard }}/6)
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.48.1-jammy
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6]
     needs: deps-node18
     steps:
       - uses: actions/checkout@v4
@@ -128,9 +128,9 @@ jobs:
       - run: |
           mkdir -p test-results
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            npm run test:e2e:ci -- --project=chrome --project=MMOC --shard=${{ matrix.shard }}/4
+            npm run test:e2e:ci -- --project=chrome --project=MMOC --shard=${{ matrix.shard }}/6
           else
-            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
+            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/6
           fi
       - run: npm run cov:e2e:report || true
         if: always()
