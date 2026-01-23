@@ -5,6 +5,7 @@ on:
   pull_request:
     types:
       - opened
+      - labeled
 
 env:
   NODE_ENV: development
@@ -64,6 +65,8 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.action }}" = "opened" ]; then
             echo "should_build=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ contains(github.event.pull_request.labels.*.name, 'build:clean') }}" = "true" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
           elif [ "${{ steps.filter.outputs.deps_changed }}" = "true" ]; then
             echo "should_build=true" >> "$GITHUB_OUTPUT"
           elif [ "${{ steps.node18_deps_cache.outputs.cache-hit }}" != "true" ]; then
@@ -76,6 +79,8 @@ jobs:
         with:
           node-version: "18"
           cache: npm
+      - run: npm run clean
+        if: steps.gate.outputs.should_build == 'true' && github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'build:clean')
       - run: npm ci
         if: steps.gate.outputs.should_build == 'true'
       - run: tar -czf node18-deps.tgz node_modules e2e/node_modules
