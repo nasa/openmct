@@ -5,6 +5,7 @@ on:
   pull_request:
     types:
       - opened
+      - labeled
 
 env:
   NODE_ENV: development
@@ -29,7 +30,7 @@ jobs:
             with:
               path: node_modules
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
-          - run: echo "should_build=${{ steps.node18_deps_cache.outputs.cache-hit != 'true' && github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'build:clean') }}" >> "$GITHUB_OUTPUT"
+          - run: echo "should_build=${{ steps.node18_deps_cache.outputs.cache-hit != 'true' || (contains(github.event.pull_request.labels.*.name, 'build:clean')) }}" >> "$GITHUB_OUTPUT"
             id: should_build
         outputs:
             should_build: ${{ steps.should_build.outputs.should_build }}
