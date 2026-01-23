@@ -21,23 +21,8 @@ jobs:
                 echo "cache_key=node18-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
         outputs:
             cache_key: ${{ steps.generate_cache_key.outputs.cache_key }}
-    should_build:
-        runs-on: ubuntu-latest
+    build_and_cache_dependencies_if_needed:
         needs: generate_cache_key
-        steps:
-          - uses: actions/cache@v4
-            id: node18_deps_cache
-            with:
-              path: node_modules
-              key: ${{ needs.generate_cache_key.outputs.cache_key }}
-          - run: echo "should_build=${{ steps.node18_deps_cache.outputs.cache-hit != 'true' || (contains(github.event.pull_request.labels.*.name, 'build:clean')) }}" >> "$GITHUB_OUTPUT"
-            id: should_build
-        outputs:
-            should_build: ${{ steps.should_build.outputs.should_build }}
-    lint:
-        needs: 
-            - should_build
-            - generate_cache_key
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
@@ -46,11 +31,27 @@ jobs:
                 node-version: "22"
                 cache: npm
           - uses: actions/cache@v4
-            id: node18_deps_cache
+            id: node22_deps_cache
             with:
               path: node_modules
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
-            if: needs.should_build.outputs.should_build == 'true'
+            if: steps.node22_deps_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
+        outputs:
+            cache_key: ${{ needs.generate_cache_key.outputs.cache_key }}
+    lint:
+        needs: 
+            - build_and_cache_dependencies_if_needed
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v4
+            with:
+                node-version: "22"
+                cache: npm
+          - uses: actions/cache@v4
+            with:
+              path: node_modules
+              key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: ls -la
           - run: npm run lint
