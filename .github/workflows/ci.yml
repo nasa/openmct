@@ -17,20 +17,38 @@ jobs:
   deps-node18:
     name: node18-deps
     runs-on: ubuntu-latest
+    outputs:
+      cache_key: ${{ steps.cache_key.outputs.cache_key }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            deps_changed:
-              - 'package.json'
-              - 'package-lock.json'
+      - id: cache_key
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ref_name="${{ github.head_ref }}"
+          else
+            ref_name="${{ github.ref_name }}"
+          fi
+          lock_hash="$(sha256sum package-lock.json | awk '{print $1}')"
+          echo "cache_key=node18-deps-branch-${ref_name}-${lock_hash}" >> "$GITHUB_OUTPUT"
+      - id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base_sha="${{ github.event.pull_request.base.sha }}"
+            head_sha="${{ github.event.pull_request.head.sha }}"
+          else
+            base_sha="${{ github.event.before }}"
+            head_sha="${{ github.sha }}"
+          fi
+          if git diff --name-only "$base_sha" "$head_sha" | grep -qE '^(package.json|package-lock.json)$'; then
+            echo "deps_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deps_changed=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/cache@v4
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
+          key: ${{ steps.cache_key.outputs.cache_key }}
       - id: gate
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.action }}" = "opened" ]; then
@@ -147,7 +165,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
@@ -218,7 +236,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
@@ -326,7 +344,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
@@ -376,7 +394,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
