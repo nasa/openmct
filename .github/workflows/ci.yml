@@ -138,6 +138,7 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4, 5, 6]
     needs: deps-node18
+    if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -208,6 +209,7 @@ jobs:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.48.1-jammy
     needs: deps-node18
+    if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -315,6 +317,7 @@ jobs:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.48.1-jammy
     needs: deps-node18
+    if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -364,6 +367,7 @@ jobs:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.48.1-jammy
     needs: deps-node18
+    if: ${{ always() }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
