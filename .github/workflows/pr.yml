@@ -10,7 +10,7 @@ env:
   NODE_ENV: development
 
 jobs:
-    lint:
+    generate_cache_key:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
@@ -18,6 +18,12 @@ jobs:
             run: |
                 lock_hash="$(sha256sum package-lock.json | awk '{print $1}')"
                 echo "cache_key=node18-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
+        outputs:
+            cache_key: ${{ steps.generate_cache_key.outputs.cache_key }}
+    lint:
+        needs: generate_cache_key
+        runs-on: ubuntu-latest
+        steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
             with:
@@ -27,7 +33,7 @@ jobs:
             id: node18_deps_cache
             with:
               path: node_modules
-              key: ${{ steps.generate_cache_key.outputs.cache_key }}
+              key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
             if: steps.node18_deps_cache.outputs.cache-hit != 'true'
           - run: ls -la
