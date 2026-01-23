@@ -13,6 +13,7 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
+          - uses: actions/checkout@v4
           - id: generate_cache_key
             run: |
                 lock_hash="$(sha256sum package-lock.json | awk '{print $1}')"
