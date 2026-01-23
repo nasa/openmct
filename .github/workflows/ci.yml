@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       cache_key: ${{ steps.cache_key.outputs.cache_key }}
+      should_build: ${{ steps.gate.outputs.should_build }}
     steps:
       - uses: actions/checkout@v4
       - id: cache_key
@@ -183,9 +184,19 @@ jobs:
         with:
           node-version: "18"
           cache: npm
+      - uses: actions/cache@v4
+        id: node18_deps_cache
+        with:
+          path: node18-deps.tgz
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
+      - run: |
+          echo "node18-deps cache miss and no artifact to download."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: |
           mkdir -p test-results
@@ -248,9 +259,19 @@ jobs:
         with:
           node-version: "18"
           cache: npm
+      - uses: actions/cache@v4
+        id: node18_deps_cache
+        with:
+          path: node18-deps.tgz
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
+      - run: |
+          echo "node18-deps cache miss and no artifact to download."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:e2e:mobile
       - run: npm run cov:e2e:report || true
@@ -350,9 +371,19 @@ jobs:
         with:
           node-version: "18"
           cache: npm
+      - uses: actions/cache@v4
+        id: node18_deps_cache
+        with:
+          path: node18-deps.tgz
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
+      - run: |
+          echo "node18-deps cache miss and no artifact to download."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
@@ -394,9 +425,19 @@ jobs:
         with:
           node-version: "18"
           cache: npm
+      - uses: actions/cache@v4
+        id: node18_deps_cache
+        with:
+          path: node18-deps.tgz
+          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
+      - run: |
+          echo "node18-deps cache miss and no artifact to download."
+          exit 1
+        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:memory
       - uses: actions/upload-artifact@v4
