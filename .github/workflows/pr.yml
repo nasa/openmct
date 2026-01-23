@@ -20,8 +20,23 @@ jobs:
                 echo "cache_key=node18-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
         outputs:
             cache_key: ${{ steps.generate_cache_key.outputs.cache_key }}
-    lint:
+    should_build:
+        runs-on: ubuntu-latest
         needs: generate_cache_key
+        steps:
+          - uses: actions/cache@v4
+            id: node18_deps_cache
+            with:
+              path: node_modules
+              key: ${{ needs.generate_cache_key.outputs.cache_key }}
+          - run: echo "should_build=${{ steps.node18_deps_cache.outputs.cache-hit != 'true' && github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'build:clean') }}" >> "$GITHUB_OUTPUT"
+            id: should_build
+        outputs:
+            should_build: ${{ steps.should_build.outputs.should_build }}
+    lint:
+        needs: 
+            - should_build
+            - generate_cache_key
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
@@ -35,6 +50,6 @@ jobs:
               path: node_modules
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
-            if: steps.node18_deps_cache.outputs.cache-hit != 'true'
+            if: needs.should_build.outputs.should_build == 'true'
           - run: ls -la
           - run: npm run lint
