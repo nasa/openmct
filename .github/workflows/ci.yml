@@ -87,7 +87,7 @@ jobs:
       - run: tar -czf node18-deps.tgz node_modules e2e/node_modules
         if: steps.gate.outputs.should_build == 'true'
       - uses: actions/upload-artifact@v4
-        if: steps.gate.outputs.should_build == 'true'
+        if: steps.node18_deps_cache.outputs.cache-hit == 'true' || steps.gate.outputs.should_build == 'true'
         with:
           name: node18-deps
           path: node18-deps.tgz
@@ -184,27 +184,13 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/cache@v4
-        id: node18_deps_cache
-        with:
-          path: node18-deps.tgz
-          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
-      - run: |
-          echo "node18-deps cache miss and no artifact to download."
-          exit 1
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: |
           mkdir -p test-results
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            npm run test:e2e:ci -- --project=chrome --project=MMOC --shard=${{ matrix.shard }}/6
-          else
-            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/6
-          fi
+          npm run test:e2e:ci -- --shard=${{ matrix.shard }}/6
       - run: npm run cov:e2e:report || true
         if: always()
       - uses: codecov/codecov-action@v4
@@ -259,19 +245,9 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/cache@v4
-        id: node18_deps_cache
-        with:
-          path: node18-deps.tgz
-          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
-      - run: |
-          echo "node18-deps cache miss and no artifact to download."
-          exit 1
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:e2e:mobile
       - run: npm run cov:e2e:report || true
@@ -371,19 +347,9 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/cache@v4
-        id: node18_deps_cache
-        with:
-          path: node18-deps.tgz
-          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
-      - run: |
-          echo "node18-deps cache miss and no artifact to download."
-          exit 1
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:localhost
       - run: npm run test:perf:contract
@@ -425,19 +391,9 @@ jobs:
         with:
           node-version: "18"
           cache: npm
-      - uses: actions/cache@v4
-        id: node18_deps_cache
-        with:
-          path: node18-deps.tgz
-          key: ${{ needs.deps-node18.outputs.cache_key }}
       - uses: actions/download-artifact@v4
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build == 'true'
         with:
           name: node18-deps
-      - run: |
-          echo "node18-deps cache miss and no artifact to download."
-          exit 1
-        if: steps.node18_deps_cache.outputs.cache-hit != 'true' && needs.deps-node18.outputs.should_build != 'true'
       - run: tar -xzf node18-deps.tgz
       - run: npm run test:perf:memory
       - uses: actions/upload-artifact@v4
