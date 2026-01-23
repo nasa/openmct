@@ -28,8 +28,6 @@ jobs:
             with:
                 node-version: "22"
                 cache: npm
-          - run: |
-                if [ "${{ steps.node18_deps_cache.outputs.cache-hit }}" != "true" ]; then
-                npm ci
-                fi
+          - run: npm ci
+            if: steps.node18_deps_cache.outputs.cache-hit != 'true'
           - run: npm run lint
