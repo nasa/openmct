@@ -18,16 +18,16 @@ jobs:
             run: |
                 lock_hash="$(sha256sum package-lock.json | awk '{print $1}')"
                 echo "cache_key=node18-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
-          - uses: actions/cache@v4
-            id: node18_deps_cache
-            with:
-              path: node_modules
-              key: ${{ steps.generate_cache_key.outputs.cache_key }}
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
             with:
                 node-version: "22"
                 cache: npm
+          - uses: actions/cache@v4
+            id: node18_deps_cache
+            with:
+              path: node_modules
+              key: ${{ steps.generate_cache_key.outputs.cache_key }}
           - run: npm ci
             if: steps.node18_deps_cache.outputs.cache-hit != 'true'
           - run: ls -la
