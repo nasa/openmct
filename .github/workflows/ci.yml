@@ -12,8 +12,6 @@ env:
   PERCY_LOGLEVEL: "debug"
   PERCY_PARALLEL_TOTAL: 2
   PERCY_TOKEN: "${{ secrets.PERCY_TOKEN }}"
-  NODE18_DEPS_CACHE_KEY: >-
-    ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
 
 jobs:
   deps-node18:
@@ -32,7 +30,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
       - id: gate
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.action }}" = "opened" ]; then
@@ -149,7 +147,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
@@ -220,7 +218,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
@@ -328,7 +326,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
@@ -378,7 +376,7 @@ jobs:
         id: node18_deps_cache
         with:
           path: node18-deps.tgz
-          key: ${{ env.NODE18_DEPS_CACHE_KEY }}
+          key: ${{ github.event_name == 'pull_request' && format('node18-deps-branch-{0}-{1}', github.head_ref, hashFiles('package-lock.json')) || format('node18-deps-branch-{0}-{1}', github.ref_name, hashFiles('package-lock.json')) }}
       - run: |
           echo "node18-deps cache miss; deps-node18 should have populated it."
           exit 1
