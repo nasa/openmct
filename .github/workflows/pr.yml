@@ -30,4 +30,5 @@ jobs:
                 cache: npm
           - run: npm ci
             if: steps.node18_deps_cache.outputs.cache-hit != 'true'
+          - run: ls -la
           - run: npm run lint
