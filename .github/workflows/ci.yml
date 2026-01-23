@@ -39,6 +39,17 @@ jobs:
             base_sha="${{ github.event.before }}"
             head_sha="${{ github.sha }}"
           fi
+          if [ -z "$base_sha" ] || [ "$base_sha" = "0000000000000000000000000000000000000000" ]; then
+            echo "deps_changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! git cat-file -e "$base_sha^{commit}" 2>/dev/null; then
+            git fetch --no-tags --depth=1 origin "$base_sha" || true
+          fi
+          if ! git cat-file -e "$base_sha^{commit}" 2>/dev/null; then
+            echo "deps_changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           if git diff --name-only "$base_sha" "$head_sha" | grep -qE '^(package.json|package-lock.json)$'; then
             echo "deps_changed=true" >> "$GITHUB_OUTPUT"
           else
