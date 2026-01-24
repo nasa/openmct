@@ -37,7 +37,7 @@ jobs:
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
             if: steps.node22_deps_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
-          - name: Remove pr:e2e:couchdb label (if present)
+          - name: Remove build:clean label (if present)
             if: contains(github.event.pull_request.labels.*.name, 'build:clean')
             uses: actions/github-script@v6
             with:
@@ -70,5 +70,56 @@ jobs:
             with:
               path: node_modules
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
-          - run: ls -la
           - run: npm run lint
+    unit-test:
+        needs: 
+            - build_and_cache_dependencies_if_needed
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v4
+            with:
+                node-version: "22"
+                cache: npm
+          - uses: actions/cache@v4
+            with:
+              path: node_modules
+              key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
+          - uses: browser-actions/setup-chrome@v1
+          - run: |
+              mkdir -p dist/reports/tests/
+              npm run test
+          - uses: codecov/codecov-action@v4
+            if: always()
+            with:
+              token: ${{ secrets.CODECOV_TOKEN }}
+              files: ./coverage/unit/lcov.info
+              flags: unit
+              name: unit-test-${{ github.run_id }}
+              fail_ci_if_error: false
+          - uses: actions/upload-artifact@v4
+            if: always()
+            with:
+              name: unit-test-results
+              path: dist/reports/tests/
+              if-no-files-found: warn
+          - uses: actions/upload-artifact@v4
+            if: always()
+            with:
+              name: unit-test-coverage
+              path: coverage
+              if-no-files-found: warn
+          - name: Collect version artifacts
+            if: always()
+            run: |
+              mkdir -p /tmp/artifacts
+              printenv NODE_ENV > /tmp/artifacts/NODE_ENV.txt || true
+              npm -v > /tmp/artifacts/npm-version.txt
+              node -v > /tmp/artifacts/node-version.txt
+              ls -latR > /tmp/artifacts/dir.txt
+          - uses: actions/upload-artifact@v4
+            if: always()
+            with:
+              name: unit-test-artifacts
+              path: /tmp/artifacts
+              if-no-files-found: warn
