@@ -31,15 +31,15 @@ jobs:
             with:
                 node-version: ${{ env.NODE_VERSION }}
                 cache: npm
-          - uses: actions/cache@v4
-            id: node_deps_cache
+          - uses: actions/cache/restore@v4
+            id: node_deps_restore_cache
             with:
               path: |
                 node_modules
                 dist
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
-            if: steps.node_deps_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
+            if: steps.node_deps_restore_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
           - name: Remove build:clean label (if present)
             if: contains(github.event.pull_request.labels.*.name, 'build:clean')
             uses: actions/github-script@v6
@@ -57,6 +57,14 @@ jobs:
                 } catch (error) {
                   core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
                 }
+          - uses: actions/cache/save@v4
+            id: node_deps_save_cache
+            if: steps.node_deps_restore_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
+            with:
+              path: |
+                node_modules
+                dist
+              key: ${{ needs.generate_cache_key.outputs.cache_key }}
         outputs:
             cache_key: ${{ needs.generate_cache_key.outputs.cache_key }}
     lint:
@@ -69,7 +77,7 @@ jobs:
             with:
                 node-version: ${{ env.NODE_VERSION }}
                 cache: npm
-          - uses: actions/cache@v4
+          - uses: actions/cache/restore@v4
             with:
               path: |
                 node_modules
@@ -86,7 +94,7 @@ jobs:
             with:
                 node-version: ${{ env.NODE_VERSION }}
                 cache: npm
-          - uses: actions/cache@v4
+          - uses: actions/cache/restore@v4
             with:
               path: |
                 node_modules
