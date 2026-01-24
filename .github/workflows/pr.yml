@@ -33,7 +33,9 @@ jobs:
           - uses: actions/cache@v4
             id: node22_deps_cache
             with:
-              path: node_modules
+              path: |
+                node_modules
+                dist
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
             if: steps.node22_deps_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
