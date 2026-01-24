@@ -71,7 +71,9 @@ jobs:
                 cache: npm
           - uses: actions/cache@v4
             with:
-              path: node_modules
+              path: |
+                node_modules
+                dist
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: npm run lint
     unit-test:
@@ -86,7 +88,9 @@ jobs:
                 cache: npm
           - uses: actions/cache@v4
             with:
-              path: node_modules
+              path: |
+                node_modules
+                dist
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - uses: browser-actions/setup-chrome@v1
           - run: |
