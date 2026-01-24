@@ -162,7 +162,8 @@ jobs:
             key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
         - run: |
             mkdir -p test-results
-            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/6
+            TESTFILES=$(circleci tests glob "e2e/**/*.spec.js")
+            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
         - run: npm run cov:e2e:report || true
         - uses: codecov/codecov-action@v4
           with:
