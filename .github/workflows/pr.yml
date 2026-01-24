@@ -14,6 +14,7 @@ env:
 jobs:
     generate_cache_key:
         runs-on: ubuntu-latest
+        container: mcr.microsoft.com/playwright:v1.48.1-jammy
         steps:
           - uses: actions/checkout@v4
           - id: generate_cache_key
@@ -25,6 +26,7 @@ jobs:
     build_and_cache_dependencies_if_needed:
         needs: generate_cache_key
         runs-on: ubuntu-latest
+        container: mcr.microsoft.com/playwright:v1.48.1-jammy
         steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
@@ -73,6 +75,7 @@ jobs:
         needs: 
             - build_and_cache_dependencies_if_needed
         runs-on: ubuntu-latest
+        container: mcr.microsoft.com/playwright:v1.48.1-jammy
         steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
@@ -90,6 +93,7 @@ jobs:
         needs: 
             - build_and_cache_dependencies_if_needed
         runs-on: ubuntu-latest
+        container: mcr.microsoft.com/playwright:v1.48.1-jammy
         steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
@@ -143,6 +147,7 @@ jobs:
     e2e-test:
       name: e2e-ci (shard ${{ matrix.shard }}/4)
       runs-on: ubuntu-latest
+      container: mcr.microsoft.com/playwright:v1.48.1-jammy
       strategy:
         fail-fast: false
         matrix:
