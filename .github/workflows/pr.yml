@@ -42,8 +42,6 @@ jobs:
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
             if: steps.node_deps_restore_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
-          - run: npx playwright install
-            if: steps.node_deps_restore_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
           - name: Remove build:clean label (if present)
             if: contains(github.event.pull_request.labels.*.name, 'build:clean')
             uses: actions/github-script@v6
@@ -106,7 +104,6 @@ jobs:
                 node_modules
                 dist
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
-          - uses: browser-actions/setup-chrome@v1
           - run: |
               mkdir -p dist/reports/tests/
               npm run test
