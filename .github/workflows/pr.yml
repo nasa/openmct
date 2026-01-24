@@ -139,9 +139,8 @@ jobs:
               path: /tmp/artifacts
               if-no-files-found: warn
     e2e-test:
-      name: e2e-ci (shard ${{ matrix.shard }}/6)
+      name: e2e-ci (shard ${{ matrix.shard }}/4)
       runs-on: ubuntu-latest
-      container: mcr.microsoft.com/playwright:v1.48.1-jammy
       strategy:
         fail-fast: false
         matrix:
