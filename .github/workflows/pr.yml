@@ -138,3 +138,63 @@ jobs:
               name: unit-test-artifacts
               path: /tmp/artifacts
               if-no-files-found: warn
+    e2e-test:
+      name: e2e-ci (shard ${{ matrix.shard }}/6)
+      runs-on: ubuntu-latest
+      container: mcr.microsoft.com/playwright:v1.48.1-jammy
+      strategy:
+        fail-fast: false
+        matrix:
+          shard: [1, 2, 3, 4]
+      needs: 
+        - build_and_cache_dependencies_if_needed
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+            cache: npm
+        - uses: actions/cache/restore@v4
+          with:
+            path: |
+              node_modules
+              dist
+            key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
+        - run: |
+            mkdir -p test-results
+            npm run test:e2e:ci -- --shard=${{ matrix.shard }}/6
+        - run: npm run cov:e2e:report || true
+        - uses: codecov/codecov-action@v4
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            files: ./coverage/e2e/lcov.info
+            flags: e2e-ci
+            name: e2e-ci-${{ github.run_id }}-shard-${{ matrix.shard }}
+            fail_ci_if_error: false
+        - uses: actions/upload-artifact@v4
+          with:
+            name: e2e-ci-test-results-shard-${{ matrix.shard }}
+            path: test-results
+            if-no-files-found: warn
+        - uses: actions/upload-artifact@v4
+          with:
+            name: e2e-ci-coverage-shard-${{ matrix.shard }}
+            path: coverage
+            if-no-files-found: warn
+        - uses: actions/upload-artifact@v4
+          with:
+            name: e2e-ci-html-results-shard-${{ matrix.shard }}
+            path: html-test-results
+            if-no-files-found: warn
+        - name: Collect version artifacts
+          run: |
+            mkdir -p /tmp/artifacts
+            printenv NODE_ENV > /tmp/artifacts/NODE_ENV.txt || true
+            npm -v > /tmp/artifacts/npm-version.txt
+            node -v > /tmp/artifacts/node-version.txt
+            ls -latR > /tmp/artifacts/dir.txt
+        - uses: actions/upload-artifact@v4
+          with:
+            name: e2e-ci-artifacts-shard-${{ matrix.shard }}
+            path: /tmp/artifacts
+            if-no-files-found: warn
