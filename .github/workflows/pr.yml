@@ -9,6 +9,7 @@ on:
 
 env:
   NODE_ENV: development
+  NODE_VERSION: 22
 
 jobs:
     generate_cache_key:
@@ -18,7 +19,7 @@ jobs:
           - id: generate_cache_key
             run: |
                 lock_hash="$(sha256sum package-lock.json | awk '{print $1}')"
-                echo "cache_key=node22-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
+                echo "cache_key=node${NODE_VERSION}-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
         outputs:
             cache_key: ${{ steps.generate_cache_key.outputs.cache_key }}
     build_and_cache_dependencies_if_needed:
@@ -28,17 +29,17 @@ jobs:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
             with:
-                node-version: "22"
+                node-version: ${{ env.NODE_VERSION }}
                 cache: npm
           - uses: actions/cache@v4
-            id: node22_deps_cache
+            id: node_deps_cache
             with:
               path: |
                 node_modules
                 dist
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
-            if: steps.node22_deps_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
+            if: steps.node_deps_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
           - name: Remove build:clean label (if present)
             if: contains(github.event.pull_request.labels.*.name, 'build:clean')
             uses: actions/github-script@v6
@@ -66,7 +67,7 @@ jobs:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
             with:
-                node-version: "22"
+                node-version: ${{ env.NODE_VERSION }}
                 cache: npm
           - uses: actions/cache@v4
             with:
@@ -81,7 +82,7 @@ jobs:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
             with:
-                node-version: "22"
+                node-version: ${{ env.NODE_VERSION }}
                 cache: npm
           - uses: actions/cache@v4
             with:
