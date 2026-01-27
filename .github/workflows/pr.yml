@@ -10,6 +10,10 @@ on:
 env:
   NODE_ENV: development
   NODE_VERSION: 22
+  PERCY_POSTINSTALL_BROWSER: "true"
+  PERCY_LOGLEVEL: "debug"
+  PERCY_PARALLEL_TOTAL: 2
+  PERCY_TOKEN: "${{ secrets.PERCY_TOKEN }}"
 
 jobs:
     generate_cache_key:
