@@ -65,6 +65,7 @@ jobs:
             with:
               path: |
                 node_modules
+                e2e/node_modules
                 dist
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
         outputs:
@@ -221,6 +222,7 @@ jobs:
           with:
             path: |
               node_modules
+              e2e/node_modules
               dist
             key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
         - run: npm run test:e2e:visual:ci -- --shard=${{ matrix.shard }}/2
