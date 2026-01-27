@@ -38,6 +38,7 @@ jobs:
             with:
               path: |
                 node_modules
+                e2e/node_modules
                 dist
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
           - run: npm ci
@@ -85,6 +86,7 @@ jobs:
             with:
               path: |
                 node_modules
+                e2e/node_modules
                 dist
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: npm run lint
@@ -102,6 +104,7 @@ jobs:
             with:
               path: |
                 node_modules
+                e2e/node_modules
                 dist
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: |
@@ -162,6 +165,7 @@ jobs:
           with:
             path: |
               node_modules
+              e2e/node_modules
               dist
             key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
         - run: |
@@ -268,6 +272,7 @@ jobs:
           with:
             path: |
               node_modules
+              e2e/node_modules
               dist
             key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
         - run: npm run test:perf:localhost
@@ -314,6 +319,7 @@ jobs:
           with:
             path: |
               node_modules
+              e2e/node_modules
               dist
             key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
         - run: npm run test:perf:memory
