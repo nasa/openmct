@@ -184,21 +184,25 @@ jobs:
             name: e2e-ci-${{ github.run_id }}-shard-${{ matrix.shard }}
             fail_ci_if_error: false
         - uses: actions/upload-artifact@v4
+          if: always()
           with:
             name: e2e-ci-test-results-shard-${{ matrix.shard }}
             path: test-results
             if-no-files-found: warn
         - uses: actions/upload-artifact@v4
+          if: always()
           with:
             name: e2e-ci-coverage-shard-${{ matrix.shard }}
             path: coverage
             if-no-files-found: warn
         - uses: actions/upload-artifact@v4
+          if: always()
           with:
             name: e2e-ci-html-results-shard-${{ matrix.shard }}
             path: html-test-results
             if-no-files-found: warn
         - name: Collect version artifacts
+          if: always()
           run: |
             mkdir -p /tmp/artifacts
             printenv NODE_ENV > /tmp/artifacts/NODE_ENV.txt || true
@@ -206,6 +210,7 @@ jobs:
             node -v > /tmp/artifacts/node-version.txt
             ls -latR > /tmp/artifacts/dir.txt
         - uses: actions/upload-artifact@v4
+          if: always()
           with:
             name: e2e-ci-artifacts-shard-${{ matrix.shard }}
             path: /tmp/artifacts
