@@ -201,3 +201,143 @@ jobs:
             name: e2e-ci-artifacts-shard-${{ matrix.shard }}
             path: /tmp/artifacts
             if-no-files-found: warn
+    visual-a11y:
+      name: visual-a11y-ci
+      runs-on: ubuntu-latest
+      container: mcr.microsoft.com/playwright:v1.48.1-jammy
+      needs: 
+          - build_and_cache_dependencies_if_needed
+      strategy:
+        fail-fast: false
+        matrix:
+          shard: [1, 2]
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+            cache: npm
+        - uses: actions/cache/restore@v4
+          with:
+            path: |
+              node_modules
+              dist
+            key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
+        - run: npm run test:e2e:visual:ci -- --shard=${{ matrix.shard }}/2
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: visual-a11y-ci-test-results-shard-${{ matrix.shard }}
+            path: test-results
+            if-no-files-found: warn
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: visual-a11y-ci-html-results-shard-${{ matrix.shard }}
+            path: html-test-results
+            if-no-files-found: warn
+        - name: Collect version artifacts
+          if: always()
+          run: |
+            mkdir -p /tmp/artifacts
+            printenv NODE_ENV > /tmp/artifacts/NODE_ENV.txt || true
+            npm -v > /tmp/artifacts/npm-version.txt
+            node -v > /tmp/artifacts/node-version.txt
+            ls -latR > /tmp/artifacts/dir.txt
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: visual-a11y-ci-artifacts-shard-${{ matrix.shard }}
+            path: /tmp/artifacts
+            if-no-files-found: warn
+    perf-test:
+      runs-on: ubuntu-latest
+      container: mcr.microsoft.com/playwright:v1.48.1-jammy
+      needs: 
+          - build_and_cache_dependencies_if_needed
+      if: ${{ always() }}
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+            cache: npm
+        - uses: actions/cache/restore@v4
+          with:
+            path: |
+              node_modules
+              dist
+            key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
+        - run: npm run test:perf:localhost
+        - run: npm run test:perf:contract
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: perf-test-results
+            path: test-results
+            if-no-files-found: warn
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: perf-html-results
+            path: html-test-results
+            if-no-files-found: warn
+        - name: Collect version artifacts
+          if: always()
+          run: |
+            mkdir -p /tmp/artifacts
+            printenv NODE_ENV > /tmp/artifacts/NODE_ENV.txt || true
+            npm -v > /tmp/artifacts/npm-version.txt
+            node -v > /tmp/artifacts/node-version.txt
+            ls -latR > /tmp/artifacts/dir.txt
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: perf-test-artifacts
+            path: /tmp/artifacts
+            if-no-files-found: warn
+    mem-test:
+      runs-on: ubuntu-latest
+      container: mcr.microsoft.com/playwright:v1.48.1-jammy
+      needs: 
+          - build_and_cache_dependencies_if_needed
+      if: ${{ always() }}
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+            cache: npm
+        - uses: actions/cache/restore@v4
+          with:
+            path: |
+              node_modules
+              dist
+            key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
+        - run: npm run test:perf:memory
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: mem-test-results
+            path: test-results
+            if-no-files-found: warn
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: mem-html-results
+            path: html-test-results
+            if-no-files-found: warn
+        - name: Collect version artifacts
+          if: always()
+          run: |
+            mkdir -p /tmp/artifacts
+            printenv NODE_ENV > /tmp/artifacts/NODE_ENV.txt || true
+            npm -v > /tmp/artifacts/npm-version.txt
+            node -v > /tmp/artifacts/node-version.txt
+            ls -latR > /tmp/artifacts/dir.txt
+        - uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: mem-test-artifacts
+            path: /tmp/artifacts
+            if-no-files-found: warn
