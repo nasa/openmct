@@ -1,4 +1,4 @@
-name: 'e2e-pr'
+name: 'e2e-full'
 on:
   push:
     branches: master
