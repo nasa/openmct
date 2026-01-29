@@ -52,8 +52,6 @@ const examplePlanSmall1 = JSON.parse(
 );
 
 const TIME_TO_FROM_COLUMN = 2;
-const HEADER_ROW = 0;
-const NUM_COLUMNS = 5;
 
 /**
  * The regular expression used to parse the countdown string.
@@ -125,12 +123,12 @@ test.describe('Time List with controlled clock @clock', () => {
     page
   }) => {
     const countUpCells = [
-      getTimeListCellByIndex(page, 1, TIME_TO_FROM_COLUMN),
-      getTimeListCellByIndex(page, 2, TIME_TO_FROM_COLUMN)
+      getTimeListCellByIndex(page, 2, TIME_TO_FROM_COLUMN),
+      getTimeListCellByIndex(page, 3, TIME_TO_FROM_COLUMN)
     ];
     const countdownCells = [
-      getTimeListCellByIndex(page, 3, TIME_TO_FROM_COLUMN),
-      getTimeListCellByIndex(page, 4, TIME_TO_FROM_COLUMN)
+      getTimeListCellByIndex(page, 4, TIME_TO_FROM_COLUMN),
+      getTimeListCellByIndex(page, 5, TIME_TO_FROM_COLUMN)
     ];
 
     // Verify that the countdown cells are counting down
@@ -138,13 +136,13 @@ test.describe('Time List with controlled clock @clock', () => {
       await test.step(`Countdown cell ${i + 1} counts down`, async () => {
         const countdownCell = countdownCells[i];
         // Get the initial countdown timestamp object
-        const beforeCountdown = await getAndAssertCountdownOrUpObject(page, i + 3);
-        // should not have a '-' sign
-        await expect(countdownCell).not.toHaveText('-');
+        const beforeCountdown = await getAndAssertCountdownOrUpObject(page, i + 4);
+        // should have a '-' sign BECAUSE IT'S A COUNTDOWN
+        await expect(countdownCell).toContainText('-');
         // Wait until it changes
-        await expect(countdownCell).not.toHaveText(beforeCountdown.toString());
+        await expect(countdownCell).not.toContainText(beforeCountdown.toString());
         // Get the new countdown timestamp object
-        const afterCountdown = await getAndAssertCountdownOrUpObject(page, i + 3);
+        const afterCountdown = await getAndAssertCountdownOrUpObject(page, i + 4);
         // Verify that the new countdown timestamp object is less than the old one
         expect(Number(afterCountdown.seconds)).toBeLessThan(Number(beforeCountdown.seconds));
       });
@@ -155,13 +153,13 @@ test.describe('Time List with controlled clock @clock', () => {
       await test.step(`Count-up cell ${i + 1} counts up`, async () => {
         const countUpCell = countUpCells[i];
         // Get the initial count-up timestamp object
-        const beforeCountUp = await getAndAssertCountdownOrUpObject(page, i + 1);
-        // should not have a '+' sign
-        await expect(countUpCell).not.toHaveText('+');
+        const beforeCountUp = await getAndAssertCountdownOrUpObject(page, i + 2);
+        // should have a '+' sign BECAUSE IT'S A COUNTUP
+        await expect(countUpCell).toContainText('+');
         // Wait until it changes
-        await expect(countUpCell).not.toHaveText(beforeCountUp.toString());
+        await expect(countUpCell).not.toContainText(beforeCountUp.toString());
         // Get the new count-up timestamp object
-        const afterCountUp = await getAndAssertCountdownOrUpObject(page, i + 1);
+        const afterCountUp = await getAndAssertCountdownOrUpObject(page, i + 2);
         // Verify that the new count-up timestamp object is greater than the old one
         expect(Number(afterCountUp.seconds)).toBeGreaterThan(Number(beforeCountUp.seconds));
       });
@@ -203,7 +201,10 @@ test.describe('Activity progress when now is after end of the activity @clock', 
  * @returns {import('@playwright/test').Locator} cell
  */
 function getTimeListCellByIndex(page, rowIndex, columnIndex) {
-  return page.getByRole('cell').nth(rowIndex * NUM_COLUMNS + columnIndex);
+  const rowLocator = page.getByRole('row').nth(rowIndex - 1);
+  const cellLocator = rowLocator.getByRole('cell').nth(columnIndex);
+
+  return cellLocator;
 }
 
 /**
@@ -226,11 +227,7 @@ async function getTimeListCellTextByIndex(page, rowIndex, columnIndex) {
  * @returns {Promise<CountdownOrUpObject>} The countdown (or countup) object
  */
 async function getAndAssertCountdownOrUpObject(page, rowIndex) {
-  const timeToFrom = await getTimeListCellTextByIndex(
-    page,
-    HEADER_ROW + rowIndex,
-    TIME_TO_FROM_COLUMN
-  );
+  const timeToFrom = await getTimeListCellTextByIndex(page, rowIndex, TIME_TO_FROM_COLUMN);
 
   expect(timeToFrom).toMatch(COUNTDOWN_REGEXP);
   const match = timeToFrom.match(COUNTDOWN_REGEXP);

@@ -47,29 +47,43 @@ test.describe('Sine Wave Generator', () => {
     // Title
     await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/req/);
 
+    const formLocator = page.locator('.c-form__contents');
+
     // Verify that the Notes row does not have a required indicator
     await expect(
-      page.locator('.c-form__section div:nth-child(3) .form-row .c-form-row__state-indicator')
-    ).not.toContain('.req');
-    await page.locator('textarea[type="text"]').fill('Optional Note Text');
+      formLocator.locator('.form-row').nth(1).locator('.c-form-row__state-indicator')
+    ).not.toHaveClass(/req/);
+    await formLocator.locator('textarea[type="text"]').fill('Optional Note Text');
 
     // Period
-    await expect(page.locator('div:nth-child(4) .c-form-row__state-indicator')).toHaveClass(/req/);
+    await expect(
+      formLocator.locator('.form-row').nth(2).locator('.c-form-row__state-indicator')
+    ).toHaveClass(/req/);
 
     // Amplitude
-    await expect(page.locator('div:nth-child(5) .c-form-row__state-indicator')).toHaveClass(/req/);
+    await expect(
+      formLocator.locator('.form-row').nth(3).locator('.c-form-row__state-indicator')
+    ).toHaveClass(/req/);
 
     // Offset
-    await expect(page.locator('div:nth-child(6) .c-form-row__state-indicator')).toHaveClass(/req/);
+    await expect(
+      formLocator.locator('.form-row').nth(4).locator('.c-form-row__state-indicator')
+    ).toHaveClass(/req/);
 
     // Data Rate
-    await expect(page.locator('div:nth-child(7) .c-form-row__state-indicator')).toHaveClass(/req/);
+    await expect(
+      formLocator.locator('.form-row').nth(5).locator('.c-form-row__state-indicator')
+    ).toHaveClass(/req/);
 
     // Phase
-    await expect(page.locator('div:nth-child(8) .c-form-row__state-indicator')).toHaveClass(/req/);
+    await expect(
+      formLocator.locator('.form-row').nth(6).locator('.c-form-row__state-indicator')
+    ).toHaveClass(/req/);
 
     // Randomness
-    await expect(page.locator('div:nth-child(9) .c-form-row__state-indicator')).toHaveClass(/req/);
+    await expect(
+      formLocator.locator('.form-row').nth(7).locator('.c-form-row__state-indicator')
+    ).toHaveClass(/req/);
 
     // Verify that by removing value from required text field shows invalid indicator
     await page
