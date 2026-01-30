@@ -43,7 +43,8 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
 
     // Create Notebook
     testNotebook = await createDomainObjectWithDefaults(page, { type: 'Notebook' });
-    await page.goto(testNotebook.url, { waitUntil: 'networkidle' });
+    await page.goto(testNotebook.url);
+    await expect(page.getByLabel('Browse bar object name')).toHaveText(testNotebook.name);
   });
 
   test('Inspect Notebook Entry Network Requests', async ({ page }) => {
