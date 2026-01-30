@@ -331,20 +331,25 @@ export class MCT extends EventEmitter {
 
     return this._assetPath;
   }
-  /**
-   * Start running Open MCT. This should be called only after any plugins
-   * have been installed.
-   * @fires module:openmct.MCT~start
-   * @method start
-   * @param {Element?} domElement the DOM element in which to run
-   *        MCT; if undefined, MCT will be run in the body of the document
-   */
-  start(domElement = document.body.firstElementChild, isHeadlessMode = false) {
+  #bootstrap(domElementOrSelector, isHeadlessMode) {
+    let domElement;
     // Create element to mount Layout if it doesn't exist
-    if (domElement === null) {
+    if (domElementOrSelector === undefined) {
       domElement = document.createElement('div');
       document.body.appendChild(domElement);
+    } else if (typeof domElementOrSelector === 'string' && domElementOrSelector.trim().length > 0) {
+      domElement = document.querySelector(domElementOrSelector);
+      if (domElement === null) {
+        throw new Error(
+          `No element found with selector ${domElementOrSelector}. Unable to bootstrap Open MCT.`
+        );
+      }
+    } else if (domElementOrSelector instanceof HTMLElement) {
+      domElement = domElementOrSelector;
+    } else {
+      throw new Error(`Invalid HTML element or selector provided to Open MCT start function.`);
     }
+
     domElement.id = 'openmct-app';
 
     if (this.types.get('layout') === undefined) {
@@ -387,6 +392,27 @@ export class MCT extends EventEmitter {
 
       this.router.start();
       this.emit('start');
+    }
+  }
+  /**
+   * Start running Open MCT. This should be called only after any plugins
+   * have been installed.
+   * @fires module:openmct.MCT~start
+   * @method start
+   * @param {Element?} domElementOrSelector the DOM element in which to run
+   *        MCT; if undefined, MCT will be run in the body of the document
+   */
+  start(domElementOrSelector, isHeadlessMode = false) {
+    if (document.readyState === 'loading') {
+      document.addEventListener(
+        'DOMContentLoaded',
+        () => {
+          this.#bootstrap(domElementOrSelector, isHeadlessMode);
+        },
+        { once: true }
+      );
+    } else {
+      this.#bootstrap(domElementOrSelector, isHeadlessMode);
     }
   }
   startHeadless() {

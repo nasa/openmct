@@ -507,6 +507,15 @@
     @include glyphBefore($glyph-icon-folders-collapse);
 }
 
+.icon-multiline {
+    @include glyphBefore($glyph-icon-multiline);
+}
+
+.icon-singleline {
+    @include glyphBefore($glyph-icon-singleline);
+}
+
+
 .icon-activity {
     @include glyphBefore($glyph-icon-activity);
 }
@@ -699,16 +708,13 @@
     @include glyphBefore($glyph-icon-timelist);
 }
 
-.icon-plot-scatter {
-    @include glyphBefore($glyph-icon-plot-scatter);
-}
-
 .icon-notebook-shift-log {
     @include glyphBefore($glyph-icon-notebook-shift-log);
 }
 
+
 .icon-derived-telemetry {
-    @include glyphBefore($glyph-icon-derived-telemetry);
+      @include glyphBefore($glyph-icon-derived-telemetry);
 }
 
 /************************** 12 PX CLASSES */
