@@ -59,6 +59,7 @@ test.describe('Display Layout Sub-object Actions @localStorage', () => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await page.getByLabel('Expand My Items folder').click();
     const waitForDisplayLayoutNavigation = page.waitForURL(
+      //eslint-disable-next-line
       new RegExp(`.*/${TEST_DISPLAY_LAYOUT_ID.key}/\?.*`)
     );
     await page
