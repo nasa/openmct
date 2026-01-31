@@ -25,7 +25,7 @@
       :id="id"
       class="c-button c-button--menu c-switcher-menu__button"
       :class="iconClass"
-      :aria-label="title"
+      :aria-label="accessibleLabel"
       :title="title"
       @click="toggleMenu"
     />
@@ -60,6 +60,12 @@ export default {
       showMenu: false
     };
   },
+  computed: {
+    accessibleLabel() {
+      const slotText = this.$slots.default?.[0]?.text?.trim();
+      return slotText ? `${this.title} for ${slotText}` : this.title;
+    }
+  },
   mounted() {
     document.addEventListener('click', this.hideMenu);
   },
@@ -74,7 +80,6 @@ export default {
       if (this.id === e.target.id) {
         return;
       }
-
       this.showMenu = false;
     }
   }
