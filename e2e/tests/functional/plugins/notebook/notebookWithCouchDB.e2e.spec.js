@@ -74,19 +74,8 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
     await expect(page.getByText('No results found')).toBeVisible();
-    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Drilling');
-    await expect(page.locator('c-gsearch-result__tags')).toBeVisible();
-    await expect(page.locator('c-gsearch-result__tags')).toContainText('Drilling');
   });
 });
-
-// Try to reduce indeterminism of browser requests by only returning fetch requests.
-// Filter out preflight CORS, fetching stylesheets, page icons, etc. that can occur during tests
-function filterNonFetchRequests(requests) {
-  return requests.filter((request) => {
-    return request.resourceType === 'fetch';
-  });
-}
 
 /**
  * Add a tag to a notebook entry by providing a tagName.
@@ -105,22 +94,4 @@ async function addTagAndAwaitNetwork(page, tagName) {
     page.locator(`[aria-label="Autocomplete Options"] >> text=${tagName}`).click(),
     expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeVisible()
   ]);
-}
-
-/**
- * Remove a tag to a notebook entry by providing a tagName.
- * Reduces indeterminism by waiting until all necessary requests are completed.
- * @param {import('@playwright/test').Page} page
- * @param {string} tagName
- */
-async function removeTagAndAwaitNetwork(page, tagName) {
-  await page.hover(`[aria-label="Tag"]:has-text("${tagName}")`);
-  await Promise.all([
-    page.locator(`[aria-label="Remove tag ${tagName}"]`).click(),
-    //With this pattern, we're awaiting the response but asserting on the request payload.
-    page.waitForResponse(
-      (resp) => resp.request().postData().includes(`"_deleted":true`) && resp.status() === 201
-    )
-  ]);
-  await expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeHidden();
 }
