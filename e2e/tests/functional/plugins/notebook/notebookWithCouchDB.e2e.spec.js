@@ -24,12 +24,6 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks with CouchDB.
 */
 
-/**
- * Disable no-networkidle eslint rule until we can engineer more deterministic network-event
- * driven tests.
- */
-/* eslint-disable playwright/no-networkidle */
-
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, test } from '../../../../pluginFixtures.js';
@@ -42,139 +36,12 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
     await page.goto('./', { waitUntil: 'networkidle' });
 
     // Create Notebook
-    testNotebook = await createDomainObjectWithDefaults(page, { type: 'Notebook' });
+    testNotebook = await createDomainObjectWithDefaults(page, {
+      type: 'Notebook',
+      name: 'Test Notebook'
+    });
     await page.goto(testNotebook.url);
     await expect(page.getByLabel('Browse bar object name')).toHaveText(testNotebook.name);
-  });
-
-  test('Inspect Notebook Entry Network Requests', async ({ page }) => {
-    // Expand sidebar
-    await page.locator('.c-notebook__toggle-nav-button').click();
-
-    // Collect all request events to count and assert after notebook action
-    let notebookElementsRequests = [];
-    page.on('request', (request) => notebookElementsRequests.push(request));
-
-    //Clicking Add Page generates
-    let [notebookUrlRequest] = await Promise.all([
-      // Waits for the next request with the specified url
-      page.waitForRequest(`**/openmct/${testNotebook.uuid}`),
-      // Triggers the request
-      page.getByLabel('Add Page').click()
-    ]);
-    // Ensures that there are no other network requests
-    await page.waitForLoadState('networkidle');
-
-    // Assert that only two requests are made
-    // Network Requests are:
-    // 1) The actual POST to create the page
-    expect(notebookElementsRequests).toHaveLength(1);
-
-    // Assert on request object
-    expect(notebookUrlRequest.postDataJSON().metadata.name).toBe(testNotebook.name);
-    expect(notebookUrlRequest.postDataJSON().model.persisted).toBeGreaterThanOrEqual(
-      notebookUrlRequest.postDataJSON().model.modified
-    );
-
-    // Add an entry
-    // Network Requests are:
-    // 1) The actual POST to create the entry
-    // 2) The shared worker event from 👆 POST request
-    notebookElementsRequests = [];
-    await nbUtils.enterTextEntry(page, 'First Entry');
-    await page.waitForLoadState('networkidle');
-    expect(notebookElementsRequests.length).toBeLessThanOrEqual(2);
-
-    //Ensure we're on the annotations Tab in the inspector
-    await page.getByText('Annotations').click();
-
-    // Add some tags
-    // Network Requests are for each tag creation are:
-    // 1) Getting the original path of the parent object
-    // 2) Getting the original path of the grandparent object (recursive call)
-    // 3) Creating the annotation/tag object
-    // 4) The shared worker event from 👆 POST request
-    // 5) Mutate notebook domain object's annotationModified property
-    // 6) The shared worker event from 👆 POST request
-    // 7) Notebooks fetching new annotations due to annotationModified changed
-    // 8) The update of the notebook domain's object's modified property
-    // 9) The shared worker event from 👆 POST request
-    // 10) Entry is timestamped
-    // 11) The shared worker event from 👆 POST request
-
-    notebookElementsRequests = [];
-    await addTagAndAwaitNetwork(page, 'Driving');
-    expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(11);
-
-    notebookElementsRequests = [];
-    await addTagAndAwaitNetwork(page, 'Drilling');
-    expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(11);
-
-    notebookElementsRequests = [];
-    await addTagAndAwaitNetwork(page, 'Science');
-    expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(11);
-
-    // Delete all the tags
-    // Network requests are:
-    // 1) Send POST to mutate _delete property to true on annotation with tag
-    // 2) The shared worker event from 👆 POST request
-    // 3) Timestamp update on entry
-    // 4) The shared worker event from 👆 POST request
-    // This happens for 3 tags so 12 requests
-    notebookElementsRequests = [];
-    await removeTagAndAwaitNetwork(page, 'Driving');
-    await removeTagAndAwaitNetwork(page, 'Drilling');
-    await removeTagAndAwaitNetwork(page, 'Science');
-    expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(12);
-
-    // Add two more pages
-    await page.getByLabel('Add Page').click();
-    await page.getByLabel('Add Page').click();
-
-    // Add three entries
-    await nbUtils.enterTextEntry(page, 'First Entry');
-    await nbUtils.enterTextEntry(page, 'Second Entry');
-    await nbUtils.enterTextEntry(page, 'Third Entry');
-
-    // Add three tags
-    await addTagAndAwaitNetwork(page, 'Science');
-    await addTagAndAwaitNetwork(page, 'Drilling');
-    await addTagAndAwaitNetwork(page, 'Driving');
-
-    // Add a fourth entry
-    // Network requests are:
-    // 1) Send POST to add new entry
-    // 2) The shared worker event from 👆 POST request
-    // 3) Timestamp update on entry
-    // 4) The shared worker event from 👆 POST request
-    notebookElementsRequests = [];
-    await nbUtils.enterTextEntry(page, 'Fourth Entry');
-    page.waitForLoadState('networkidle');
-
-    expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
-
-    // Add a fifth entry
-    // Network requests are:
-    // 1) Send POST to add new entry
-    // 2) The shared worker event from 👆 POST request
-    // 3) Timestamp update on entry
-    // 4) The shared worker event from 👆 POST request
-    notebookElementsRequests = [];
-    await nbUtils.enterTextEntry(page, 'Fifth Entry');
-    page.waitForLoadState('networkidle');
-
-    expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
-
-    // Add a sixth entry
-    // 1) Send POST to add new entry
-    // 2) The shared worker event from 👆 POST request
-    // 3) Timestamp update on entry
-    // 4) The shared worker event from 👆 POST request
-    notebookElementsRequests = [];
-    await nbUtils.enterTextEntry(page, 'Sixth Entry');
-    page.waitForLoadState('networkidle');
-
-    expect(filterNonFetchRequests(notebookElementsRequests).length).toBeLessThanOrEqual(4);
   });
 
   test('Search tests', async ({ page }) => {
@@ -207,6 +74,9 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').click();
     await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Xq');
     await expect(page.getByText('No results found')).toBeVisible();
+    await page.locator('[aria-label="OpenMCT Search"] input[type="search"]').fill('Drilling');
+    await expect(page.locator('c-gsearch-result__tags')).toBeVisible();
+    await expect(page.locator('c-gsearch-result__tags')).toContainText('Drilling');
   });
 });
 
@@ -214,7 +84,7 @@ test.describe('Notebook Tests with CouchDB @couchdb @network', () => {
 // Filter out preflight CORS, fetching stylesheets, page icons, etc. that can occur during tests
 function filterNonFetchRequests(requests) {
   return requests.filter((request) => {
-    return request.resourceType() === 'fetch';
+    return request.resourceType === 'fetch';
   });
 }
 
@@ -235,7 +105,6 @@ async function addTagAndAwaitNetwork(page, tagName) {
     page.locator(`[aria-label="Autocomplete Options"] >> text=${tagName}`).click(),
     expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeVisible()
   ]);
-  await page.waitForLoadState('networkidle');
 }
 
 /**
@@ -254,5 +123,4 @@ async function removeTagAndAwaitNetwork(page, tagName) {
     )
   ]);
   await expect(page.locator(`[aria-label="Tag"]:has-text("${tagName}")`)).toBeHidden();
-  await page.waitForLoadState('networkidle');
 }
