@@ -61,7 +61,6 @@ export default class MCTChartAlarmPointSet {
   }
 
   reset() {
-    this.chart.resetOffsets(this.offset);
     this.points = [];
   }
 

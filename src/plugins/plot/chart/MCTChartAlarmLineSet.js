@@ -112,7 +112,6 @@ export default class MCTChartAlarmLineSet {
   reset() {
     this.limits = [];
     if (this.series.limits) {
-      this.chart.resetOffsets(this.offset);
       this.getLimitPoints(this.series);
     }
   }

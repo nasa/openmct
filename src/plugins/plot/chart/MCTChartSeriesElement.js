@@ -146,7 +146,7 @@ export default class MCTChartSeriesElement {
     }
   }
 
-  eset() {
+  reset() {
     this.buffer = new Float32Array(bufferSize);
     this.count = 0;
     this.indexCount = 0;
