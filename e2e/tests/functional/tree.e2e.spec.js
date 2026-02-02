@@ -190,26 +190,39 @@ test.describe('Main Tree', () => {
   test('Opening and closing an item before the request has been fulfilled will abort the request @couchdb @network', async ({
     page
   }) => {
-    let requestWasAborted = false;
-
-    page.on('requestfailed', (request) => {
-      // check if the request was aborted
-      if (request.failure().errorText === 'net::ERR_ABORTED') {
-        requestWasAborted = true;
-      }
-    });
-
     await createDomainObjectWithDefaults(page, {
       type: 'Folder',
       name: 'Foo'
     });
 
     // Intercept and delay request
-    const delayInMs = 500;
+    const ARTIFICIAL_NETWORK_DELAY_MS = 10000;
 
-    await page.route('**', async (route, request) => {
-      await new Promise((resolve) => setTimeout(resolve, delayInMs));
-      route.continue();
+    page.route('**/_all_docs*', async (route) => {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(resolve);
+        }, ARTIFICIAL_NETWORK_DELAY_MS);
+      });
+      return route.continue();
+    });
+
+    const allDocsRequestAbortedPromise = new Promise((resolve) => {
+      page.on('requestfailed', (request) => {
+        // check if the request was aborted
+        if (request.url().includes('_all_docs')) {
+          if (request.failure().errorText === 'net::ERR_ABORTED') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+      page.on('requestfinished', (request) => {
+        if (request.url().includes('_all_docs')) {
+          resolve(false);
+        }
+      });
     });
 
     // Quickly Expand/close the root folder
@@ -219,7 +232,8 @@ test.describe('Main Tree', () => {
       })
       .dblclick({ delay: 400 });
 
-    expect(requestWasAborted).toBe(true);
+    const allDocsRequestAborted = await allDocsRequestAbortedPromise;
+    expect(allDocsRequestAborted).toBe(true);
   });
 
   test.describe('Root objects', () => {
