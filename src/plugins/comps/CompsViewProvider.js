@@ -26,7 +26,7 @@ import CompsView from './components/CompsView.vue';
 
 const DEFAULT_VIEW_PRIORITY = 100;
 
-export default class ConditionSetViewProvider {
+export default class CompsViewProvider {
   constructor(openmct, compsManagerPool) {
     this.openmct = openmct;
     this.name = 'Comps View';

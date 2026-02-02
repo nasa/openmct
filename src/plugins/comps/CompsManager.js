@@ -150,16 +150,40 @@ export default class CompsManager extends EventEmitter {
   }
 
   async #startListeningToUnderlyingTelemetry() {
-    Object.keys(this.#telemetryCollections).forEach((keyString) => {
-      if (!this.#telemetryCollections[keyString].loaded) {
-        this.#telemetryCollections[keyString].on('add', this.#getTelemetryProcessor(keyString));
-        this.#telemetryCollections[keyString].on('clear', this.clearData);
-        const telemetryLoadedPromise = this.#telemetryCollections[keyString].load();
-        this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
+    let outstandingRequests = 0;
+
+    const allRequestsComplete = new Promise((resolve) => {
+      Object.keys(this.#telemetryCollections).forEach((keyString) => {
+        if (!this.#telemetryCollections[keyString].loaded) {
+          const telemetryCollection = this.#telemetryCollections[keyString];
+
+          telemetryCollection.on('add', this.#getTelemetryProcessor(keyString));
+          telemetryCollection.on('clear', this.clearData);
+
+          telemetryCollection.on('requestStarted', () => {
+            outstandingRequests++;
+          });
+
+          telemetryCollection.on('requestEnded', () => {
+            outstandingRequests--;
+            if (outstandingRequests === 0) {
+              resolve();
+            }
+          });
+
+          // Trigger the load process
+          telemetryCollection.load();
+        }
+      });
+
+      // If no requests were started, resolve immediately
+      if (outstandingRequests === 0) {
+        resolve();
       }
     });
-    await Promise.all(this.#telemetryLoadedPromises);
-    this.#telemetryLoadedPromises = [];
+
+    // Wait for all requests to complete
+    await allRequestsComplete;
   }
 
   #destroy() {
@@ -332,9 +356,6 @@ export default class CompsManager extends EventEmitter {
 
   clearData(telemetryLoadedPromise) {
     this.#loaded = false;
-    if (telemetryLoadedPromise) {
-      this.#telemetryLoadedPromises.push(telemetryLoadedPromise);
-    }
   }
 
   setOutputFormat(outputFormat) {

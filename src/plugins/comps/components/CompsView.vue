@@ -250,7 +250,32 @@ onBeforeMount(async () => {
   compsManager.on('parameterAdded', reloadParameters);
   compsManager.on('parameterRemoved', reloadParameters);
   compsManager.on('outputFormatChanged', updateOutputFormat);
-  await outputTelemetryCollection.load(telemetryOptions); // will implicitly load compsManager
+
+  // Track outstanding requests using a Promise
+  let outstandingRequests = 0;
+
+  const allRequestsComplete = new Promise((resolve) => {
+    outputTelemetryCollection.on('requestStarted', () => {
+      outstandingRequests++;
+    });
+
+    outputTelemetryCollection.on('requestEnded', () => {
+      outstandingRequests--;
+      if (outstandingRequests === 0) {
+        resolve();
+      }
+    });
+    // If no requests were started, resolve immediately
+    outputTelemetryCollection.load(telemetryOptions); // will implicitly load compsManager
+
+    if (outstandingRequests === 0) {
+      resolve();
+    }
+  });
+
+  await allRequestsComplete;
+
+  // Update state after all requests are complete
   parameters.value = compsManager.getParameters();
   expression.value = compsManager.getExpression();
   outputFormat.value = compsManager.getOutputFormat();

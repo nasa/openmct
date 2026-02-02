@@ -24,7 +24,7 @@ import mount from 'utils/mount';
 
 import CompsInspectorView from './components/CompsInspectorView.vue';
 
-export default class ConditionSetViewProvider {
+export default class CompsInspectorViewProvider {
   constructor(openmct, compsManagerPool) {
     this.openmct = openmct;
     this.name = 'Config';
