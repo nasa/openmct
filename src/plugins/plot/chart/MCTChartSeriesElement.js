@@ -146,19 +146,23 @@ export default class MCTChartSeriesElement {
     }
   }
 
-  reset() {
+  eset() {
     this.buffer = new Float32Array(bufferSize);
     this.count = 0;
-    //TODO: Should we call resetYOffsetAndSeriesDataForYAxis here?
     this.indexCount = 0;
-    if (this.offset.x) {
-      // reset the offset since we're starting over
-      // TODO: handle what happens when we zoom out - do we request the data again?
-      this.chart.resetOffsets(this.offset);
-      this.series.getSeriesData().forEach(function (point, index) {
-        this.append(point, index, this.series);
-      }, this);
+
+    const data = this.series.getSeriesData();
+    if (!data || data.length === 0) {
+      // Don’t clear shared y-axis offsets if this series is empty;
+      // it will blank other series on the same axis.
+      return;
     }
+
+    this.chart.resetOffsets(this.offset);
+
+    data.forEach((point, index) => {
+      this.append(point, index, this.series);
+    });
   }
 
   growIfNeeded(pointsRequired) {
