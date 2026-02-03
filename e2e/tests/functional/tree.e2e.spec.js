@@ -196,7 +196,7 @@ test.describe('Main Tree', () => {
     });
 
     // Intercept and delay request
-    const ARTIFICIAL_NETWORK_DELAY_MS = 10000;
+    const ARTIFICIAL_NETWORK_DELAY_MS = 1000;
 
     page.route('**/_all_docs*', async (route) => {
       await new Promise((resolve) => {
