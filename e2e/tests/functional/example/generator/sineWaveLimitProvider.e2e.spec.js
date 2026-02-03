@@ -90,7 +90,7 @@ test.describe('Sine Wave Generator', () => {
       .locator(
         'text=Properties Title Notes Period Amplitude Offset Data Rate (hz) Phase (radians) Ra >> input[type="text"]'
       )
-      .fill('');
+      .clear();
     await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/invalid/);
 
     // Verify that by adding value to empty required text field changes invalid to valid indicator
@@ -102,7 +102,7 @@ test.describe('Sine Wave Generator', () => {
     await expect(page.locator('.c-form-row__state-indicator').first()).toHaveClass(/valid/);
 
     // Verify that by removing value from required number field shows invalid indicator
-    await page.locator('.field.control.l-input-sm input').first().fill('');
+    await page.locator('.field.control.l-input-sm input').first().clear();
     await expect(page.locator('div:nth-child(4) .c-form-row__state-indicator')).toHaveClass(
       /invalid/
     );
