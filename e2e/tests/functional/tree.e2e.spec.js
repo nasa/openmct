@@ -200,9 +200,7 @@ test.describe('Main Tree', () => {
 
     page.route('**/_all_docs*', async (route) => {
       await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(resolve);
-        }, ARTIFICIAL_NETWORK_DELAY_MS);
+        setTimeout(resolve, ARTIFICIAL_NETWORK_DELAY_MS);
       });
       return route.continue();
     });
