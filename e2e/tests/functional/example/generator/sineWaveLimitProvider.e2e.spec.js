@@ -51,38 +51,48 @@ test.describe('Sine Wave Generator', () => {
 
     // Verify that the Notes row does not have a required indicator
     await expect(
-      formLocator.locator('.form-row').nth(1).locator('.c-form-row__state-indicator')
+      formLocator.locator('.form-row', { hasText: 'Notes' }).locator('.c-form-row__state-indicator')
     ).not.toHaveClass(/req/);
     await formLocator.locator('textarea[type="text"]').fill('Optional Note Text');
 
     // Period
     await expect(
-      formLocator.locator('.form-row').nth(2).locator('.c-form-row__state-indicator')
+      formLocator
+        .locator('.form-row', { hasText: 'Period' })
+        .locator('.c-form-row__state-indicator')
     ).toHaveClass(/req/);
 
     // Amplitude
     await expect(
-      formLocator.locator('.form-row').nth(3).locator('.c-form-row__state-indicator')
+      formLocator
+        .locator('.form-row', { hasText: 'Amplitude' })
+        .locator('.c-form-row__state-indicator')
     ).toHaveClass(/req/);
 
     // Offset
     await expect(
-      formLocator.locator('.form-row').nth(4).locator('.c-form-row__state-indicator')
+      formLocator
+        .locator('.form-row', { hasText: 'Offset' })
+        .locator('.c-form-row__state-indicator')
     ).toHaveClass(/req/);
 
     // Data Rate
     await expect(
-      formLocator.locator('.form-row').nth(5).locator('.c-form-row__state-indicator')
+      formLocator
+        .locator('.form-row', { hasText: 'Data Rate (hz)' })
+        .locator('.c-form-row__state-indicator')
     ).toHaveClass(/req/);
 
     // Phase
     await expect(
-      formLocator.locator('.form-row').nth(6).locator('.c-form-row__state-indicator')
+      formLocator.locator('.form-row', { hasText: 'Phase' }).locator('.c-form-row__state-indicator')
     ).toHaveClass(/req/);
 
     // Randomness
     await expect(
-      formLocator.locator('.form-row').nth(7).locator('.c-form-row__state-indicator')
+      formLocator
+        .locator('.form-row', { hasText: 'Randomness' })
+        .locator('.c-form-row__state-indicator')
     ).toHaveClass(/req/);
 
     // Verify that by removing value from required text field shows invalid indicator
