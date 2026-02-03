@@ -23,7 +23,7 @@
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks with CouchDB.
 */
-
+/* eslint-disable playwright/no-networkidle */
 import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import * as nbUtils from '../../../../helper/notebookUtils.js';
 import { expect, test } from '../../../../pluginFixtures.js';
