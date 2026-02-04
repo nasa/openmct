@@ -480,6 +480,7 @@ export default class TelemetryCollection extends EventEmitter {
     this.emit('clear');
 
     this._requestHistoricalTelemetry();
+    this._initiateSubscriptionTelemetry();
   }
 
   /**
