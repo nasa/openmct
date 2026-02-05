@@ -227,7 +227,7 @@ const props = defineProps({
   }
 });
 
-onBeforeMount(async () => {
+function computeMaxSampleSize() {
   let maxSampleSize = 20;
   if (parameters.value) {
     maxSampleSize =
@@ -238,15 +238,31 @@ onBeforeMount(async () => {
         return max;
       }, 0) + 20;
   }
+  return maxSampleSize;
+}
 
+function createOutputTelemetryCollection(maxSampleSize) {
   const telemetryOptions = {
     strategy: 'minmax',
     size: maxSampleSize
   };
+
   // TODO: we should dynamically set size to the largest comp input window
-  outputTelemetryCollection = openmct.telemetry.requestCollection(domainObject, telemetryOptions);
-  outputTelemetryCollection.on('add', telemetryProcessor);
-  outputTelemetryCollection.on('clear', clearData);
+  const collection = openmct.telemetry.requestCollection(
+    domainObject,
+    telemetryOptions
+  );
+
+  collection.on('add', telemetryProcessor);
+  collection.on('clear', clearData);
+
+  return collection;
+}
+
+onBeforeMount(async () => {
+  const maxSampleSize = computeMaxSampleSize();
+
+  outputTelemetryCollection = createOutputTelemetryCollection(maxSampleSize);
   compsManager.on('parameterAdded', reloadParameters);
   compsManager.on('parameterRemoved', reloadParameters);
   compsManager.on('outputFormatChanged', updateOutputFormat);
@@ -265,9 +281,9 @@ onBeforeMount(async () => {
         resolve();
       }
     });
-    // If no requests were started, resolve immediately
-    outputTelemetryCollection.load(telemetryOptions); // will implicitly load compsManager
+    outputTelemetryCollection.load(); // will implicitly load compsManager
 
+    // If no requests were started, resolve immediately
     if (outstandingRequests === 0) {
       resolve();
     }
@@ -283,12 +299,12 @@ onBeforeMount(async () => {
 });
 
 onBeforeUnmount(() => {
-  outputTelemetryCollection.off('add', telemetryProcessor);
-  outputTelemetryCollection.off('clear', clearData);
   compsManager.off('parameterAdded', reloadParameters);
   compsManager.off('parameterRemoved', reloadParameters);
   compsManager.off('outputFormatChanged', updateOutputFormat);
-  outputTelemetryCollection.destroy();
+  if (outputTelemetryCollection) {
+    outputTelemetryCollection.destroy();
+  }
 });
 
 watch(
@@ -410,7 +426,14 @@ function telemetryProcessor(data) {
 
 function reload() {
   clearData();
-  outputTelemetryCollection._requestHistoricalTelemetry();
+  if (outputTelemetryCollection) {
+    outputTelemetryCollection.destroy();
+  }
+
+  const maxSampleSize = computeMaxSampleSize();
+
+  outputTelemetryCollection = createOutputTelemetryCollection(maxSampleSize);
+  outputTelemetryCollection.load();
 }
 
 function clearData() {
