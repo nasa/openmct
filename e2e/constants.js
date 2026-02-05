@@ -30,7 +30,7 @@ export const MISSION_TIME_FIXED_END = 1732413600000 + 60000; // 1732413660000
  */
 
 /** @type {VisualUrl} */
-export const VISUAL_FIXED_URL = `./#/browse/mine?tc.mode=fixed&tc.startBound=${MISSION_TIME_FIXED_START}&tc.endBound=${MISSION_TIME_FIXED_END}&tc.timeSystem=utc&view=grid&hideInspector=true&hideTree=true`;
+export const VISUAL_FIXED_URL = `./#/browse/mine?tc.mode=fixed&tc.startBound=${MISSION_TIME_FIXED_START}&tc.endBound=${MISSION_TIME_FIXED_END}&tc.timeSystem=utc&view=grid`;
 /** @type {VisualUrl} */
 export const VISUAL_REALTIME_URL =
   './#/browse/mine?tc.mode=local&tc.timeSystem=utc&view=grid&tc.startDelta=1800000&tc.endDelta=30000&hideTree=true&hideInspector=true';

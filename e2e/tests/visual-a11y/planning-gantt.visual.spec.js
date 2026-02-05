@@ -60,7 +60,7 @@ test.describe('Visual - Gantt Chart @a11y', () => {
     await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Clipped Activity Names`);
 
     // Expand the inspect pane and uncheck the 'Clip Activity Names' option
-    await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
+    // await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
     await page.getByRole('tab', { name: 'Config' }).click();
     await page.getByLabel('Edit Object').click();
     await page.getByLabel('Clip Activity Names').click();
@@ -94,7 +94,7 @@ test.describe('Visual - Gantt Chart @a11y', () => {
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`);
 
     // Expand the inspect pane and uncheck the 'Clip Activity Names' option
-    await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
+    // await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
     await page.getByRole('tab', { name: 'Config' }).click();
     await page.getByLabel('Edit Object').click();
     await page.getByLabel('Clip Activity Names').click();

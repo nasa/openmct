@@ -95,7 +95,7 @@ test.describe('Visual - Notebook @a11y', () => {
     });
 
     //Open Tree to perform drag
-    await page.getByRole('button', { name: 'Browse' }).click();
+    // await page.getByRole('button', { name: 'Browse' }).click();
 
     await page.getByLabel('Expand My Items folder').click();
 
@@ -115,7 +115,7 @@ test.describe('Visual - Notebook @a11y', () => {
     await percySnapshot(page, `Notebook Entry (theme: '${theme}')`);
 
     // Open the Inspector
-    await page.getByRole('button', { name: 'Inspect' }).click();
+    // await page.getByRole('button', { name: 'Inspect' }).click();
     // Open the Annotations tab
     await page.getByRole('tab', { name: 'Annotations' }).click();
 

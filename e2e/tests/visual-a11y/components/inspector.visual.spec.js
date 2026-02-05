@@ -44,7 +44,7 @@ test.describe('Visual - Inspector @ally @clock', () => {
     await page.getByRole('gridcell', { name: 'Overlay Plot with 5s Delay' }).click();
 
     //Expand the Inspector Pane
-    await page.getByRole('button', { name: 'Inspect' }).click();
+    // await page.getByRole('button', { name: 'Inspect' }).click();
 
     await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
       scope: inspectorPane

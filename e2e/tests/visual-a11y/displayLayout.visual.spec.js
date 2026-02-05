@@ -105,7 +105,7 @@ test.describe('Visual - Display Layout @clock', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7036'
     });
-    await page.getByLabel('Expand Inspect Pane').click();
+    // await page.getByLabel('Expand Inspect Pane').click();
     await page.getByLabel('Resize Inspect Pane').dragTo(page.getByLabel('X:'));
     await page.getByRole('tab', { name: 'Elements' }).click();
     await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`);

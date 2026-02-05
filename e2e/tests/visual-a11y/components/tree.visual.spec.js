@@ -34,7 +34,7 @@ test.describe('Visual - Tree Pane', () => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     //Open Tree
-    await page.getByRole('button', { name: 'Browse' }).click();
+    // await page.getByRole('button', { name: 'Browse' }).click();
 
     //Create a Folder Structure
     const foo = await createDomainObjectWithDefaults(page, {
