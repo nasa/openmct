@@ -486,6 +486,7 @@
     "SSSZ",
     "pageerror",
     "annotatable",
+    "requestfinished",
     "LOCF"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
