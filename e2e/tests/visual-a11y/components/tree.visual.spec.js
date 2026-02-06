@@ -22,7 +22,7 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../../appActions.js';
+import { createDomainObjectWithDefaults, expandTreePane } from '../../../appActions.js';
 import { test } from '../../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../../constants.js';
 
@@ -34,7 +34,7 @@ test.describe('Visual - Tree Pane', () => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     //Open Tree
-    await page.getByRole('button', { name: 'Browse' }).click();
+    expandTreePane(page);
 
     //Create a Folder Structure
     const foo = await createDomainObjectWithDefaults(page, {
