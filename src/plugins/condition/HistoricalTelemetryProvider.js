@@ -267,14 +267,13 @@ export default class HistoricalTelemetryProvider {
         historicalTelemetryMap,
         timestamp
       );
-      console.log('evaluateConditionsByDate', conditionResults);
 
       // Step 2: Determine which condition should be active
       const currentCondition = this.getCurrentConditionForTimestamp(
         conditionResults,
         conditionCollectionMap
       );
-      console.log('getCurrentConditionForTimestamp', currentCondition);
+
       // Step 3: Process the output for the current condition
       const conditionOutput = this.processConditionOutput(
         historicalTelemetryMap,
@@ -282,7 +281,7 @@ export default class HistoricalTelemetryProvider {
         currentCondition,
         conditionResults
       );
-      console.log('processConditionOutput', conditionOutput);
+
       if (conditionOutput) {
         outputTelemetryDateMap.set(timestamp, conditionOutput);
       }
@@ -303,12 +302,6 @@ export default class HistoricalTelemetryProvider {
     );
 
     return outputTelemetryDateMap;
-  }
-
-  addItemToHistoricalTelemetryMap(telemetryMap, item, type, index) {
-    if (type === 'input') {
-      telemetryMap.set();
-    }
   }
 
   async getHistoricalData() {
