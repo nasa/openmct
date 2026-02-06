@@ -118,7 +118,7 @@ test.describe('Visual - Notebook @a11y', () => {
     await percySnapshot(page, `Notebook Entry (theme: '${theme}')`);
 
     // Open the Inspector
-    expandInspectorPane(page);
+    await expandInspectorPane(page);
     // Open the Annotations tab
     await page.getByRole('tab', { name: 'Annotations' }).click();
 

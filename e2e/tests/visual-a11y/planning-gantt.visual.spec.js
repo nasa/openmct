@@ -23,7 +23,11 @@
 import percySnapshot from '@percy/playwright';
 import fs from 'fs';
 
-import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createPlanFromJSON,
+  expandInspectorPane
+} from '../../appActions.js';
 import { scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import {
@@ -60,7 +64,7 @@ test.describe('Visual - Gantt Chart @a11y', () => {
     await percySnapshot(page, `Gantt Chart View (theme: ${theme}) - Clipped Activity Names`);
 
     // Expand the inspect pane and uncheck the 'Clip Activity Names' option
-    await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
+    await expandInspectorPane(page);
     await page.getByRole('tab', { name: 'Config' }).click();
     await page.getByLabel('Edit Object').click();
     await page.getByLabel('Clip Activity Names').click();
@@ -94,7 +98,7 @@ test.describe('Visual - Gantt Chart @a11y', () => {
     await percySnapshot(page, `Gantt Chart View w/ draft status (theme: ${theme})`);
 
     // Expand the inspect pane and uncheck the 'Clip Activity Names' option
-    // await page.getByRole('button', { name: 'Expand Inspect Pane' }).click();
+    await expandInspectorPane(page);
     await page.getByRole('tab', { name: 'Config' }).click();
     await page.getByLabel('Edit Object').click();
     await page.getByLabel('Clip Activity Names').click();

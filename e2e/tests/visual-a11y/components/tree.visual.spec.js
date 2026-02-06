@@ -34,7 +34,7 @@ test.describe('Visual - Tree Pane', () => {
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     //Open Tree
-    expandTreePane(page);
+    await expandTreePane(page);
 
     //Create a Folder Structure
     const foo = await createDomainObjectWithDefaults(page, {
