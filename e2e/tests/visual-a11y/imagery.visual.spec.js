@@ -21,8 +21,7 @@
  *****************************************************************************/
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, setRealTimeMode } from '../../appActions.js';
-import { waitForAnimations } from '../../baseFixtures.js';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
 import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
 const TEN_MINUTES = 10 * 60 * 1000;
