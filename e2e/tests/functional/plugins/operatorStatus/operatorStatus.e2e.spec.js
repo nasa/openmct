@@ -158,11 +158,13 @@ test.describe('Operator Status', () => {
     expect(updatedRowValuesArr[COLUMN_STATUS_INDEX]).toEqual(UNSET_VALUE_LABEL);
   });
 
-  test('Poll indicator is visible when window is really small and lots of indicators are installed', async ({ page }) => {
+  test('Poll indicator is visible when window is really small', async ({ page }) => {
     const pollIndicator = page.locator('div[title="Set my operator status"]');
     //Make window narrow
-    //await page.setViewportSize({ width: 640, height: 480 });
+    await page.setViewportSize({ width: 640, height: 480 });
     await page.getByLabel('Display as single line').click();
+    const indicatorsCount = await page.locator('.c-indicator').count();
+    expect(indicatorsCount).toBeGreaterThanOrEqual(3);
     //Install lots of indicators
     //Expect poll indicator to be visible
     await expect(pollIndicator).toBeInViewport({ ratio: 1 });
