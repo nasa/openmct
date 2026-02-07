@@ -164,8 +164,10 @@ test.describe('Operator Status', () => {
     await page.setViewportSize({ width: 640, height: 480 });
     await page.getByLabel('Display as single line').click();
     const indicatorsCount = await page.locator('.c-indicator').count();
+    //Assert that multiple indicators are active
     expect(indicatorsCount).toBeGreaterThanOrEqual(3);
-    //Install lots of indicators
+    //Assert that indicators are expanded
+    await expect(page.locator('.l-shell__head')).toContainClass('l-shell__head--expanded');
     //Expect poll indicator to be visible
     await expect(pollIndicator).toBeInViewport({ ratio: 1 });
   });
