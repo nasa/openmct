@@ -108,7 +108,7 @@ export default class ConditionManager extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.updateConditionResults({ id: keyString });
+    this.updateConditionResults(keyString);
     this.updateCurrentCondition(latestTimestamp);
 
     if (Object.keys(this.telemetryObjects).length === 0) {
@@ -467,7 +467,9 @@ export default class ConditionManager extends EventEmitter {
     this.#latestDataTable.set(normalizedDatum.id, normalizedDatum);
 
     if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
-      this.updateConditionResults(normalizedDatum);
+      // updateConditionResults expects the telemetry id keyString that changed
+      // so that conditions can decide whether they need to recompute.
+      this.updateConditionResults(normalizedDatum.id);
       this.updateCurrentCondition(timestamp, endpoint, datum);
     }
   }

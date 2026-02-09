@@ -26,6 +26,7 @@ export default class ConditionSetTelemetryProvider {
   constructor(openmct) {
     this.openmct = openmct;
     this.conditionManagerPool = {};
+    this.lastEmittedById = new Map();
   }
 
   isTelemetryObject(domainObject) {
@@ -45,15 +46,60 @@ export default class ConditionSetTelemetryProvider {
     const formattedHistoricalData = await conditionManager.getHistoricalData(options);
     let latestOutput = await conditionManager.requestLADConditionSetOutput(options);
 
-    return [...formattedHistoricalData, ...latestOutput];
+    // Avoid duplicate timestamps when historical data includes the latest point.
+    // Prefer LAD output when it overlaps, since it reflects the current evaluation path.
+    const timeKey = this.openmct.time.getTimeSystem().key;
+    const merged = [...formattedHistoricalData];
+
+    if (latestOutput?.length) {
+      const lad = latestOutput[0];
+      const ladTs = lad?.[timeKey];
+
+      if (ladTs !== undefined) {
+        const existingIndex = merged.findIndex((d) => d?.[timeKey] === ladTs);
+
+        if (existingIndex >= 0) {
+          merged[existingIndex] = lad;
+        } else {
+          merged.push(lad);
+        }
+      } else {
+        merged.push(lad);
+      }
+    }
+
+    // Seed subscribe-side dedupe with whatever we returned from request()
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    if (merged.length) {
+      this.lastEmittedById.set(id, merged[merged.length - 1]);
+    }
+
+    return merged;
   }
 
   subscribe(domainObject, callback) {
     let conditionManager = this.getConditionManager(domainObject);
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-    conditionManager.on('conditionSetResultUpdated', (data) => {
+    const handler = (data) => {
+      const timeKey = this.openmct.time.getTimeSystem().key;
+      const last = this.lastEmittedById.get(id);
+      const sameTime = last?.[timeKey] !== undefined && last?.[timeKey] === data?.[timeKey];
+      const sameValue =
+        last?.output === data?.output &&
+        last?.result === data?.result &&
+        last?.conditionId === data?.conditionId &&
+        last?.isDefault === data?.isDefault;
+
+      if (sameTime && sameValue) {
+        return;
+      }
+
+      this.lastEmittedById.set(id, data);
       callback(data);
-    });
+    };
+
+    conditionManager.on('conditionSetResultUpdated', handler);
 
     return this.destroyConditionManager.bind(
       this,
@@ -86,5 +132,7 @@ export default class ConditionSetTelemetryProvider {
       this.conditionManagerPool[id].destroy();
       delete this.conditionManagerPool[id];
     }
+
+    this.lastEmittedById.delete(id);
   }
 }

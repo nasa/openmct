@@ -32,9 +32,9 @@ import { makeKeyString } from '../../api/objects/object-utils.js';
       const telemetryIdentifier = makeKeyString(identifier);
 
       historicalTelemetry.forEach((historicalTelemetryItem) => {
-        let telemetryTimestamp = historicalTelemetryItem[timeSystemKey];
-
-        if (historicalTelemetryItem.timestamp) {
+        // Prefer the active time system key; fall back to `timestamp` only if needed.
+        let telemetryTimestamp = historicalTelemetryItem?.[timeSystemKey];
+        if (telemetryTimestamp === undefined && historicalTelemetryItem?.timestamp) {
           telemetryTimestamp = new Date(historicalTelemetryItem.timestamp)?.getTime();
         }
 
