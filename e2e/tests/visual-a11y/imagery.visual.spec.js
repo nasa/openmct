@@ -21,16 +21,18 @@
  *****************************************************************************/
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, setRealTimeMode } from '../../appActions.js';
-import { waitForAnimations } from '../../baseFixtures.js';
-import { VISUAL_FIXED_URL } from '../../constants.js';
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
 import { expect, test } from '../../pluginFixtures.js';
+const TEN_MINUTES = 10 * 60 * 1000;
 
 test.describe('Visual - Example Imagery', () => {
   let exampleImagery;
   let parentLayout;
 
   test.beforeEach(async ({ page }) => {
+    //Start at UNIX epoch time while initializing. The clock needs to run so that debounce functions etc. work.
+    await page.clock.install({ time: 0 });
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
 
     parentLayout = await createDomainObjectWithDefaults(page, {
@@ -54,6 +56,7 @@ test.describe('Visual - Example Imagery', () => {
         'https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg,https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg'
       );
     await page.getByRole('button', { name: 'Save' }).click();
+    await page.clock.pauseAt(MISSION_TIME);
     await page.reload({ waitUntil: 'domcontentloaded' });
 
     //Hide the Browse and Inspect panes to make the image more stable
@@ -63,10 +66,10 @@ test.describe('Visual - Example Imagery', () => {
 
   test('Example Imagery in Fixed Time', async ({ page, theme }) => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
-
-    // Wait for the thumbnails to finish their scroll animation
-    // (Wait until the rightmost thumbnail is in view)
-    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
+    // Scroll the rightmost thumbnail into view
+    const lastImageThumbnail = page.getByLabel('Image Thumbnail from').last();
+    await lastImageThumbnail.scrollIntoViewIfNeeded();
+    await expect(lastImageThumbnail).toBeInViewport();
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();
 
@@ -80,14 +83,18 @@ test.describe('Visual - Example Imagery', () => {
   test('Example Imagery in Real Time', async ({ page, theme }) => {
     await page.goto(exampleImagery.url, { waitUntil: 'domcontentloaded' });
 
-    // Wait for the thumbnails to finish their scroll animation
-    // (Wait until the rightmost thumbnail is in view)
-    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
-    await setRealTimeMode(page, true);
+    // Scroll the rightmost thumbnail into view
+    await scrollLastThumbnailIntoView(page);
 
-    await expect(page.getByLabel('Image Wrapper')).toBeVisible();
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+    await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+    //dismiss the time conductor popup
+    await page.getByLabel('Submit time offsets').click();
+    await page.clock.pauseAt(MISSION_TIME + TEN_MINUTES);
+    await page.waitForURL(/tc\.mode=local/);
+    await scrollLastThumbnailIntoView(page);
 
-    await waitForAnimations(page.locator('.animate-scroll'));
     await percySnapshot(page, `Example Imagery in Real Time (theme: ${theme})`);
   });
 
@@ -95,7 +102,12 @@ test.describe('Visual - Example Imagery', () => {
     await page.goto(parentLayout.url, { waitUntil: 'domcontentloaded' });
 
     await expect(page.getByLabel('Image Wrapper')).toBeVisible();
-
     await percySnapshot(page, `Example Imagery in Display Layout (theme: ${theme})`);
   });
 });
+
+async function scrollLastThumbnailIntoView(page) {
+  const lastImageThumbnail = page.getByLabel('Image Thumbnail from').last();
+  await lastImageThumbnail.scrollIntoViewIfNeeded();
+  await expect(lastImageThumbnail).toBeInViewport();
+}
