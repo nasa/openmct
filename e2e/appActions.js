@@ -747,6 +747,21 @@ async function getNextSineValueFromSWG(page, objectIdentifier, returnOnlyValue =
   return getTelemValuePromise;
 }
 
+async function expandInspectorPane(page) {
+  await page.getByRole('button', { name: 'Inspect' }).click();
+  // eslint-disable-next-line playwright/no-raw-locators
+  await expect(page.locator('.l-shell__pane-inspector > .l-pane__contents')).toHaveCSS(
+    'opacity',
+    '1'
+  );
+}
+
+async function expandTreePane(page) {
+  await page.getByRole('button', { name: 'Browse' }).click();
+  // eslint-disable-next-line playwright/no-raw-locators
+  await expect(page.locator('.l-shell__pane-tree > .l-pane__contents')).toHaveCSS('opacity', '1');
+}
+
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -754,6 +769,8 @@ export {
   createPlanFromJSON,
   createStableStateTelemetry,
   expandEntireTree,
+  expandInspectorPane,
+  expandTreePane,
   getCanvasPixels,
   getNextSineValueFromSWG,
   linkParameterToObject,
