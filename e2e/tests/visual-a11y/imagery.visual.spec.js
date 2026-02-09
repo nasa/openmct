@@ -89,11 +89,10 @@ test.describe('Visual - Example Imagery', () => {
     await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
     await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
-    await page.clock.pauseAt(MISSION_TIME + TEN_MINUTES);
-    // Resume clock to allow debounce functions to fire.
-    await page.waitForURL(/tc\.mode=local/);
     //dismiss the time conductor popup
-    await page.getByLabel('Discard changes and close time popup').click();
+    await page.getByLabel('Submit time offsets').click();
+    await page.clock.pauseAt(MISSION_TIME + TEN_MINUTES);
+    await page.waitForURL(/tc\.mode=local/);
     await scrollLastThumbnailIntoView(page);
 
     await percySnapshot(page, `Example Imagery in Real Time (theme: ${theme})`);
