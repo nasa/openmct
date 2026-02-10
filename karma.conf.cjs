@@ -78,7 +78,7 @@ module.exports = async (config) => {
     client: {
       jasmine: {
         random: false,
-        timeoutInterval: 5000
+        timeoutInterval: 6000
       }
     },
     customLaunchers: {

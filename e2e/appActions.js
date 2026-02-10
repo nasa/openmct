@@ -576,7 +576,7 @@ async function setFixedIndependentTimeConductorBounds(page, { start, end }) {
   await page.getByLabel('Enable Independent Time Conductor').click();
 
   // Bring up the time conductor popup
-  await page.getByLabel('Independent Time Conductor Settings').click();
+  await page.getByLabel('Independent Time Conductor Panel').click();
   await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
   await _setTimeBounds(page, start, end);
 
@@ -724,6 +724,60 @@ async function renameCurrentObjectFromBrowseBar(page, newName) {
   await page.getByLabel('Browse bar', { exact: true }).click();
 }
 
+/**
+ * Util for subscribing to a telemetry object by object identifier
+ * Limitations: Currently only works to return telemetry once to the node scope
+ * To Do: See if there's a way to await this multiple times to allow for multiple
+ * values to be returned over time
+ * @param {import('@playwright/test').Page} page
+ * @param {string} objectIdentifier identifier for object
+ * @returns {Promise<string>} the formatted sin telemetry value
+ */
+async function getNextSineValueFromSWG(page, objectIdentifier, returnOnlyValue = true) {
+  // Generate a unique function name for this subscription
+  const uniqueFunctionName = `getTelemValue_${genUuid().replace(/-/g, '_')}`;
+
+  const getTelemValuePromise = new Promise((resolve) =>
+    page.exposeFunction(uniqueFunctionName, resolve)
+  );
+
+  await page.evaluate(
+    async ({ telemetryIdentifier, functionName, onlyValue }) => {
+      const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
+      const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
+      const formats = await window.openmct.telemetry.getFormatMap(metadata);
+      window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
+        const sinVal = obj.sin;
+        const formattedSinVal = formats.sin.format(sinVal);
+        const formattedTimestamp = formats.utc.format(obj.utc);
+        window[functionName](onlyValue ? formattedSinVal : { ...obj, formattedTimestamp });
+      });
+    },
+    {
+      telemetryIdentifier: objectIdentifier,
+      functionName: uniqueFunctionName,
+      onlyValue: returnOnlyValue
+    }
+  );
+
+  return getTelemValuePromise;
+}
+
+async function expandInspectorPane(page) {
+  await page.getByRole('button', { name: 'Inspect' }).click();
+  // eslint-disable-next-line playwright/no-raw-locators
+  await expect(page.locator('.l-shell__pane-inspector > .l-pane__contents')).toHaveCSS(
+    'opacity',
+    '1'
+  );
+}
+
+async function expandTreePane(page) {
+  await page.getByRole('button', { name: 'Browse' }).click();
+  // eslint-disable-next-line playwright/no-raw-locators
+  await expect(page.locator('.l-shell__pane-tree > .l-pane__contents')).toHaveCSS('opacity', '1');
+}
+
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -731,8 +785,11 @@ export {
   createPlanFromJSON,
   createStableStateTelemetry,
   expandEntireTree,
+  expandInspectorPane,
+  expandTreePane,
   getCanvasPixels,
   getDomainObject,
+  getNextSineValueFromSWG,
   linkParameterToObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,

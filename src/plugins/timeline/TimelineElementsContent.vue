@@ -3,18 +3,17 @@
     <input
       :value="size"
       aria-labelledby="pixelSize"
-      class="field control"
+      class="field control c-input--sm"
       :pattern="/\d+/"
       type="number"
       name="value"
       min="0"
       @change="changeSize"
     />
-    <span>px</span>
   </template>
   <select v-model="fixed" aria-label="fixedOrFlex" @change="toggleFixed">
     <option :value="false">flex</option>
-    <option :value="true">fixed</option>
+    <option :value="true">px</option>
   </select>
 </template>
 <script>

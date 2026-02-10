@@ -122,11 +122,8 @@ test.describe('Example Imagery Object', () => {
 
     await expect(page.locator('#independentTCToggle')).toBeChecked();
     await expect(page.locator('.c-compact-tc').first()).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Independent Time Conductor Settings' })
-    ).toBeEnabled();
-    await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
-    await expect(page.getByLabel('Time Conductor Options')).toBeVisible();
+    await page.getByLabel('Independent Time Conductor Panel').click();
+    await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
     await page.getByLabel('Time Conductor Options').hover({ trial: true });
 
     await page.getByRole('textbox', { name: 'Start date' }).hover({ trial: true });
@@ -139,7 +136,6 @@ test.describe('Example Imagery Object', () => {
     await page.getByRole('textbox', { name: 'End date' }).fill('2021-12-30');
     await page.keyboard.press('Tab');
     await page.getByRole('textbox', { name: 'End time' }).hover({ trial: true });
-    await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.getByRole('textbox', { name: 'End time' }).fill('01:11:00');
     await page.getByLabel('Submit time bounds').click();
 
@@ -170,7 +166,8 @@ test.describe('Example Imagery Object', () => {
     // check image date
     await expect(page.getByText('2021-12-30 01:11:00.000Z').first()).toBeVisible();
     // change independent time to realtime
-    await page.getByRole('button', { name: 'Independent Time Conductor Settings' }).click();
+    await page.getByLabel('Independent Time Conductor Panel').click();
+    await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
     await page.getByRole('button', { name: 'Independent Time Conductor Mode Menu' }).click();
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
     // timestamp shouldn't be in the past anymore
