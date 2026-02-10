@@ -22,14 +22,17 @@
 
 import eventHelpers from '../lib/eventHelpers.js';
 
+const bufferSize = 20000;
+
 /** @abstract */
 export default class MCTChartSeriesElement {
   constructor(series, chart, offset) {
     this.series = series;
     this.chart = chart;
     this.offset = offset;
-    this.buffer = new Float32Array(20000);
+    this.buffer = new Float32Array(bufferSize);
     this.count = 0;
+    this.indexCount = 0;
 
     eventHelpers.extend(this);
 
@@ -94,7 +97,7 @@ export default class MCTChartSeriesElement {
 
   makePoint(point, series) {
     if (!this.offset.xVal) {
-      this.chart.setOffset(point, undefined, series);
+      this.chart.setOffset(point, series);
     }
 
     // Here x,y are the offsets of the current point from the first data point.
@@ -105,12 +108,27 @@ export default class MCTChartSeriesElement {
   }
 
   append(point, index, series) {
-    const pointsRequired = this.vertexCountForPointAtIndex(index);
-    const insertionPoint = this.startIndexForPointAtIndex(index);
-    this.growIfNeeded(pointsRequired);
-    this.makeInsertionPoint(insertionPoint, pointsRequired);
-    this.addPoint(this.makePoint(point, series), insertionPoint);
-    this.count += pointsRequired / 2;
+    if (this.chart.pointIsInRange(point, series, index)) {
+      // if this is the first point in the range, also add the previous point for line continuation
+      if (this.indexCount === 0 && index > 0) {
+        const previousPoint = series.getSeriesData()[index - 1];
+        const pointsRequired = this.vertexCountForPointAtIndex(this.indexCount);
+        const insertionPoint = this.startIndexForPointAtIndex(this.indexCount);
+        this.growIfNeeded(pointsRequired);
+        this.makeInsertionPoint(insertionPoint, pointsRequired);
+        this.addPoint(this.makePoint(previousPoint, series), insertionPoint);
+        this.count += pointsRequired / 2;
+        this.indexCount++;
+      }
+
+      const pointsRequired = this.vertexCountForPointAtIndex(this.indexCount);
+      const insertionPoint = this.startIndexForPointAtIndex(this.indexCount);
+      this.growIfNeeded(pointsRequired);
+      this.makeInsertionPoint(insertionPoint, pointsRequired);
+      this.addPoint(this.makePoint(point, series), insertionPoint);
+      this.count += pointsRequired / 2;
+      this.indexCount++;
+    }
   }
 
   makeInsertionPoint(insertionPoint, pointsRequired) {
@@ -129,14 +147,22 @@ export default class MCTChartSeriesElement {
   }
 
   reset() {
-    this.buffer = new Float32Array(20000);
+    this.buffer = new Float32Array(bufferSize);
     this.count = 0;
-    //TODO: Should we call resetYOffsetAndSeriesDataForYAxis here?
-    if (this.offset.x) {
-      this.series.getSeriesData().forEach(function (point, index) {
-        this.append(point, index, this.series);
-      }, this);
+    this.indexCount = 0;
+
+    const data = this.series.getSeriesData();
+    if (!data || data.length === 0) {
+      // Don’t clear shared y-axis offsets if this series is empty;
+      // it will blank other series on the same axis.
+      return;
     }
+
+    this.chart.resetOffsets(this.offset);
+
+    data.forEach((point, index) => {
+      this.append(point, index, this.series);
+    });
   }
 
   growIfNeeded(pointsRequired) {
@@ -144,7 +170,7 @@ export default class MCTChartSeriesElement {
     let temp;
 
     if (remainingPoints <= pointsRequired) {
-      temp = new Float32Array(this.buffer.length + 20000);
+      temp = new Float32Array(this.buffer.length + bufferSize);
       temp.set(this.buffer);
       this.buffer = temp;
     }
