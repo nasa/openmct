@@ -23,6 +23,7 @@
 <template>
   <div class="form-control select-field">
     <select
+      :id="`form-${model.key}`"
       v-model="selected"
       required="model.required"
       name="mctControl"
