@@ -21,6 +21,7 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
+import PRIORITIES from '../../../api/priority/PriorityAPI.js';
 import AbstractStatusIndicator from '../AbstractStatusIndicator.js';
 import OperatorStatusComponent from './OperatorStatus.vue';
 
@@ -62,6 +63,7 @@ export default class OperatorStatusIndicator extends AbstractStatusIndicator {
     operatorIndicator.element.classList.add('c-indicator--operator-status');
     operatorIndicator.element.classList.add('no-minify');
     operatorIndicator.on('click', this.showPopup);
+    operatorIndicator.priority = PRIORITIES.HIGHEST;
 
     return operatorIndicator;
   }
