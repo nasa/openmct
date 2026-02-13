@@ -35,7 +35,7 @@ class Tooltip extends EventEmitter {
     }
   ) {
     super();
-
+    this.parentElement = parentElement;
     const { vNode, destroy } = mount({
       components: {
         TooltipComponent: TooltipComponent
@@ -67,6 +67,12 @@ class Tooltip extends EventEmitter {
    * @private
    **/
   show() {
+    const parentExists = this.parentElement && document.body.contains(this.parentElement);
+
+    if (!parentExists) {
+      console.warn('Tooltip parent does not exist anymore!');
+      return;
+    }
     document.body.appendChild(this.component.$el);
     this.isActive = true;
   }
