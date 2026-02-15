@@ -24,7 +24,7 @@
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
       <textarea
-        :id="`${model.key}-textarea`"
+        :id="`form-${model.key}`"
         v-model="field"
         type="text"
         :size="model.size"
