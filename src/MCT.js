@@ -58,6 +58,7 @@ import ToolbarRegistry from './ui/registries/ToolbarRegistry.js';
 import ViewRegistry from './ui/registries/ViewRegistry.js';
 import ApplicationRouter from './ui/router/ApplicationRouter.js';
 import Browse from './ui/router/Browse.js';
+import NamespacedLocalStorage from './utils/NamespacedLocalStorage.js';
 
 /**
  * Open MCT is an extensible web application for building mission
@@ -69,9 +70,48 @@ import Browse from './ui/router/Browse.js';
  */
 
 /**
+ * Generates a unique namespace for localStorage isolation
+ * The namespace is persisted in sessionStorage to survive page reloads
+ * but remain isolated between different browser tabs/windows
+ * @private
+ * @returns {string} Unique namespace string
+ */
+function generateUniqueNamespace() {
+  const STORAGE_KEY = '__openmct_instance_namespace__';
+
+  // Use sessionStorage to persist across page reloads in the same tab
+  // but keep isolation between different tabs/windows
+  try {
+    // Try to retrieve existing namespace from sessionStorage (without any prefix)
+    const stored = window.sessionStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return stored;
+    }
+  } catch (e) {
+    // sessionStorage may not be available, continue to generate new namespace
+  }
+
+  // Generate new unique namespace
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * 1000000);
+  const namespace = `mct-${timestamp}-${random}`;
+
+  // Save it in sessionStorage for future page reloads (same tab only)
+  try {
+    window.sessionStorage.setItem(STORAGE_KEY, namespace);
+  } catch (e) {
+    // If we can't save, continue anyway
+  }
+
+  return namespace;
+}
+
+/**
  * The Open MCT application. This may be configured by installing plugins
  * or registering extensions before the application is started.
  * @constructor
+ * @param {string} namespace Optional namespace prefix for localStorage keys to prevent conflicts between multiple instances.
+ *                           If not provided, a unique namespace will be automatically generated.
  */
 export class MCT extends EventEmitter {
   /**
@@ -91,7 +131,7 @@ export class MCT extends EventEmitter {
    * @type {Selection}
    */
   selection;
-  constructor() {
+  constructor(namespace = null) {
     super();
 
     this.buildInfo = {
@@ -105,6 +145,11 @@ export class MCT extends EventEmitter {
     this.defaultClock = 'local';
     this.plugins = plugins;
     this.selection = new Selection(this);
+
+    // Generate unique namespace if not provided
+    // Always use a namespace to prevent conflicts between instances
+    this._namespace = namespace || generateUniqueNamespace();
+    this._namespacedLocalStorage = new NamespacedLocalStorage(this._namespace);
 
     /**
      * @type {TimeAPI}
@@ -427,6 +472,14 @@ export class MCT extends EventEmitter {
    */
   install(plugin) {
     plugin(this);
+  }
+
+  /**
+   * Retorna instância de LocalStorage com namespace
+   * @returns {NamespacedLocalStorage} Instância de LocalStorage com namespace
+   */
+  getNamespacedLocalStorage() {
+    return this._namespacedLocalStorage;
   }
 
   destroy() {
