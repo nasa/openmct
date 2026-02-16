@@ -34,6 +34,7 @@
         :close-overlay="closeOverlay"
         :notification="notification"
         :notifications-count="notifications.length"
+        @notification-dismissed="onNotificationDismissed"
       />
     </div>
   </div>
@@ -53,7 +54,7 @@ export default {
       required: true
     }
   },
-  emits: ['close', 'clear-all'],
+  emits: ['close', 'clear-all', 'notification-dismissed'],
   data() {
     return {};
   },
@@ -83,6 +84,9 @@ export default {
     },
     closeOverlay() {
       this.overlay.dismiss();
+    },
+    onNotificationDismissed() {
+      this.$emit('notification-dismissed');
     },
     notificationsCountDisplayMessage(count) {
       if (count > 1 || count === 0) {
