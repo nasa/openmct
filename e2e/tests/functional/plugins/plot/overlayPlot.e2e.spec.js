@@ -106,9 +106,9 @@ test.describe('Overlay Plot', () => {
     // Assert that the legend is now open
     await expect(page.getByLabel('Plot Legend Collapsed')).toBeHidden();
     await expect(page.getByLabel('Plot Legend Expanded')).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Value' })).toBeVisible();
     await expect(page.getByLabel('Expand by Default')).toHaveText(/Yes/);
     await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
 
@@ -119,9 +119,9 @@ test.describe('Overlay Plot', () => {
 
     await expect(page.getByLabel('Plot Legend Collapsed')).toBeHidden();
     await expect(page.getByLabel('Plot Legend Expanded')).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Name' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Timestamp' })).toBeVisible();
-    await expect(page.getByRole('cell', { name: 'Value' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Timestamp' })).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Value' })).toBeVisible();
     await expect(page.getByLabel('Expand by Default')).toHaveText(/Yes/);
     await expect(page.getByLabel('Plot Legend Item')).toHaveCount(3);
   });

@@ -1,7 +1,8 @@
-name: 'e2e-pr'
+name: 'e2e-full'
 on:
   push:
-    branches: master
+    branches:
+      - master
   workflow_dispatch:
   pull_request:
     types:
@@ -33,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npx playwright@1.47.2 install
+      - run: npx playwright@1.57.0 install
       - run: npx playwright install chrome-beta
       - run: npm ci --no-audit --progress=false
       - run: npm run test:e2e:full -- --max-failures=40
