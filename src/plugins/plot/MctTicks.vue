@@ -78,10 +78,15 @@ import { inject } from 'vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
-import { getFormattedTicks, getLogTicks, getTimeTicks, ticks } from './tickUtils.js';
+import {
+  getFormattedTicks,
+  getLogTicks,
+  getTimeTicks,
+  measureTextWidth,
+  ticks
+} from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
-const TIME_AXIS_TICK_COUNT = 10;
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],
@@ -154,6 +159,14 @@ export default {
     this.listenTo(this.axis, 'change:format', this.updateTicks, this);
     this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
     this.updateTicks();
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateTicks(true);
+    });
+
+    if (this.$refs.tickContainer) {
+      this.resizeObserver.observe(this.$refs.tickContainer.parentElement);
+    }
   },
   beforeUnmount() {
     this.removeAlignment({
@@ -161,6 +174,10 @@ export default {
       updateObjectPath: this.objectPath
     });
     this.stopListening();
+
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   },
   methods: {
     getAxisFromConfig() {
@@ -229,7 +246,8 @@ export default {
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
       } else if (this.isUtc) {
-        return getTimeTicks(range.min, range.max, TIME_AXIS_TICK_COUNT);
+        const dynamicCount = this.getDynamicTickCount();
+        return getTimeTicks(range.min, range.max, dynamicCount);
       } else {
         return ticks(range.min, range.max, number);
       }
@@ -323,6 +341,29 @@ export default {
       }
 
       this.tickUpdate = false;
+    },
+
+    // Inside MctTicks.vue methods:
+    getDynamicTickCount() {
+      const container = this.$refs.tickContainer.parentElement;
+      if (!container) {
+        return this.tickCount;
+      }
+
+      const availableWidth = container.offsetWidth;
+
+      // Sample format string based on current time system
+      // Measure the width of the sample text to estimate how many ticks can fit without overlap
+      const format = this.axis.get('format');
+      const sampleText = format ? format(Date.now()) : '2026-02-16 00:00:00';
+      const font = window.getComputedStyle(container).font || '12px "Open Sans", sans-serif';
+      const labelWidth = measureTextWidth(sampleText, font);
+
+      const padding = 20;
+      const count = Math.floor(availableWidth / (labelWidth + padding));
+
+      // Return at least 1 ticks, and at most 12 ticks to avoid overcrowding
+      return Math.max(1, Math.min(count, 12));
     }
   }
 };
