@@ -35,7 +35,57 @@ function tickStep(start, stop, count) {
 }
 
 /**
- * Generate time ticks based on a start and stop time, and a desired count of ticks.
+ * tickStep for time units - allows for snapping to 15/30 minutes and 6/12 hours, which are common intervals.
+ */
+function timeTickStep(start, stop, count, unitName) {
+  const step0 = Math.abs(stop - start) / Math.max(0, count);
+  let step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10));
+  const error = step0 / step1;
+
+  // For minutes and seconds, allow snapping to 15 and 30
+  if (unitName === 'minute' || unitName === 'second') {
+    // Snap to 1 hour/minute
+    if (error >= 45) {
+      return 60;
+    }
+    // Snap to 30s/30m
+    if (error >= 22.5) {
+      return 30;
+    }
+    // Snap to 15s/15m
+    if (error >= 12.5) {
+      return 15;
+    }
+  }
+
+  // For hours, use to 6 and 12
+  if (unitName === 'hour') {
+    // Snap to 1 day
+    if (error >= 18) {
+      return 24;
+    }
+    if (error >= 9) {
+      return 12;
+    }
+    if (error >= 4.5) {
+      return 6;
+    }
+  }
+
+  // Fallback to standard tickStep that already snaps to 1, 2, 5, 10
+  if (error >= e10) {
+    step1 *= 10;
+  } else if (error >= e5) {
+    step1 *= 5;
+  } else if (error >= e2) {
+    step1 *= 2;
+  }
+
+  return stop < start ? -step1 : step1;
+}
+
+/**
+ * Generate time ticks based on a start and stop time, and a desired count of ticks calculated proactively from canvas size
  * @param start beginning timestamp in Ms
  * @param stop  ending timestamp in Ms
  * @param count desired number of ticks
@@ -44,25 +94,26 @@ function tickStep(start, stop, count) {
 export function getTimeTicks(start, stop, count) {
   const duration = stop - start;
   let bestUnit = TIME_UNITS_UTC[0];
-  let bestStepSize = 1;
 
-  // Find the most appropriate time unit
+  // Find the unit where the duration divided by unit size is closest to our target count.
   for (const unit of TIME_UNITS_UTC) {
-    const numTicks = duration / unit.duration;
-    if (numTicks >= count / 2) {
-      // Find the unit that gives at least half the desired ticks
-      bestUnit = unit;
-      bestStepSize = Math.ceil(numTicks / count) || 1;
-    } else {
-      break; // Stop when the unit is too large
+    const ticksForUnit = duration / unit.duration;
+    if (ticksForUnit <= count) {
+      break;
     }
+    bestUnit = unit;
   }
 
-  // Handle month/year to avoid incorrect step sizes due to varying durations
+  // Normalize the range to the selected unit to find a "nice" step size
+  const startInUnits = start / bestUnit.duration;
+  const stopInUnits = stop / bestUnit.duration;
+
+  // Use specialized time stepping for seconds/minutes/hours
+  const bestStepSize = Math.abs(timeTickStep(startInUnits, stopInUnits, count, bestUnit.unit));
+
   if (bestUnit.unit === 'month' || bestUnit.unit === 'year') {
     return generateMonthYearTicks(start, stop, bestUnit.unit, bestStepSize);
   } else {
-    // For smaller, fixed-duration units
     return generateFixedIntervalTicks(start, stop, bestUnit.duration * bestStepSize);
   }
 }
@@ -246,14 +297,30 @@ export function getFormattedTicks(newTicks, format) {
       t.fullText = t.text;
 
       if (typeof t.text === 'string') {
-        if (suffix.length) {
-          t.text = t.text.slice(prefix.length, -suffix.length);
-        } else {
-          t.text = t.text.slice(prefix.length);
+        if (newTicks.length > 1) {
+          if (suffix.length) {
+            t.text = t.text.slice(prefix.length, -suffix.length);
+          } else {
+            t.text = t.text.slice(prefix.length);
+          }
         }
       }
     });
   }
 
   return newTicks;
+}
+
+/**
+ * Proactively measures text width using a canvas context.
+ */
+let measurementContext;
+
+export function measureTextWidth(text, font = '12px "Open Sans", sans-serif') {
+  if (!measurementContext) {
+    const canvas = document.createElement('canvas');
+    measurementContext = canvas.getContext('2d');
+  }
+  measurementContext.font = font;
+  return measurementContext.measureText(text).width;
 }
