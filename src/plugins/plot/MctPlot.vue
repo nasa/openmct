@@ -646,11 +646,23 @@ export default {
 
       this.startLoading();
       const bounds = this.timeContext.getBounds();
+      let rangeBounds = {
+        start: bounds.start,
+        end: bounds.end
+      };
+      // If we have pan/zoom history, load based on the last viewed range instead of time conductor
+      if (this.plotHistory.length > 0) {
+        const historyRange = this.plotHistory.slice(-1)[0];
+        rangeBounds = {
+          start: historyRange.x.min,
+          end: historyRange.x.max
+        };
+      }
       const options = {
         size: this.$parent.$refs.plotWrapper.offsetWidth,
         domain: this.config.xAxis.get('key'),
-        start: bounds.start,
-        end: bounds.end
+        start: rangeBounds.start,
+        end: rangeBounds.end
       };
 
       series.load(options).then(this.stopLoading.bind(this));
@@ -1489,8 +1501,8 @@ export default {
       // Don't zoom if mouse moved less than 7.5 pixels.
       if (marqueeDistance > 7.5) {
         this.config.xAxis.set('displayRange', {
-          min: Math.min(this.marquee.start.x, this.marquee.end.x),
-          max: Math.max(this.marquee.start.x, this.marquee.end.x)
+          min: Math.round(Math.min(this.marquee.start.x, this.marquee.end.x)),
+          max: Math.round(Math.max(this.marquee.start.x, this.marquee.end.x))
         });
         this.yAxisListWithRange.forEach((yAxis) => {
           const yStartPosition = this.getYPositionForYAxis(this.marquee.start, yAxis);

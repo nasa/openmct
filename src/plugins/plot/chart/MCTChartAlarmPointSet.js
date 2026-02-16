@@ -43,6 +43,9 @@ export default class MCTChartAlarmPointSet {
 
   append(datum) {
     if (datum.mctLimitState) {
+      if (!this.offset.xVal) {
+        this.chart.setOffset(datum, this.series);
+      }
       this.points.push({
         x: this.offset.xVal(datum, this.series),
         y: this.offset.yVal(datum, this.series),
