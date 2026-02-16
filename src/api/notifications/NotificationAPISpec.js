@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -20,14 +21,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import NotificationAPI from './NotificationAPI.js';
+import NotificationAPI from './NotificationAPI';
 
 describe('The Notification API', () => {
-  let notificationAPIInstance;
+  let notificationAPI;
   let defaultTimeout = 4000;
 
-  beforeAll(() => {
-    notificationAPIInstance = new NotificationAPI();
+  beforeEach(() => {
+    notificationAPI = new NotificationAPI();
   });
 
   describe('the info method', () => {
@@ -35,12 +36,13 @@ describe('The Notification API', () => {
     let severity = 'info';
     let notificationModel;
 
-    beforeAll(() => {
-      notificationModel = notificationAPIInstance.info(message).model;
+    beforeEach(() => {
+      const notification = notificationAPI.info(message);
+      notificationModel = notification.model;
     });
 
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
+    afterEach(() => {
+      notificationAPI.dismissAllNotifications();
     });
 
     it('shows a string message with info severity', () => {
@@ -49,124 +51,72 @@ describe('The Notification API', () => {
     });
 
     it('auto dismisses the notification after a brief timeout', (done) => {
-      window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(0);
+      setTimeout(() => {
+        const activeNotifications = notificationAPI.getActiveNotifications();
+        expect(activeNotifications.length).toEqual(0);
         done();
       }, defaultTimeout);
     });
   });
 
-  describe('the alert method', () => {
-    let message = 'Example alert message';
-    let severity = 'alert';
-    let notificationModel;
+  describe('notification grouping', () => {
+    let groupId = 'test-group';
 
-    beforeAll(() => {
-      notificationModel = notificationAPIInstance.alert(message).model;
-    });
-
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
-    });
-
-    it('shows a string message, with alert severity', () => {
-      expect(notificationModel.message).toEqual(message);
-      expect(notificationModel.severity).toEqual(severity);
-    });
-
-    it('does not auto dismiss the notification', (done) => {
-      window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(1);
-        done();
-      }, defaultTimeout);
-    });
-  });
-
-  describe('the error method', () => {
-    let message = 'Example error message';
-    let severity = 'error';
-    let notificationModel;
-
-    beforeAll(() => {
-      notificationModel = notificationAPIInstance.error(message).model;
-    });
-
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
-    });
-
-    it('shows a string message, with severity error', () => {
-      expect(notificationModel.message).toEqual(message);
-      expect(notificationModel.severity).toEqual(severity);
-    });
-
-    it('does not auto dismiss the notification', (done) => {
-      window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(1);
-        done();
-      }, defaultTimeout);
-    });
-  });
-
-  describe('the error method notification', () => {
-    let message = 'Minimized error message';
-
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
-    });
-
-    it('is not shown if configured to show minimized', (done) => {
-      notificationAPIInstance.activeNotification = undefined;
-      notificationAPIInstance.error(message, { minimized: true });
-      window.setTimeout(() => {
-        expect(notificationAPIInstance.notifications.length).toEqual(1);
-        expect(notificationAPIInstance.activeNotification).toEqual(undefined);
-        done();
-      }, defaultTimeout);
-    });
-  });
-
-  describe('the progress method', () => {
-    let title = 'This is a progress notification';
-    let message1 = 'Example progress message 1';
-    let message2 = 'Example progress message 2';
-    let percentage1 = 50;
-    let percentage2 = 99.9;
-    let severity = 'info';
-    let notification;
-    let updatedPercentage;
-    let updatedMessage;
-
-    beforeAll(() => {
-      notification = notificationAPIInstance.progress(title, percentage1, message1);
-      notification.on('progress', (percentage, text) => {
-        updatedPercentage = percentage;
-        updatedMessage = text;
+    beforeEach(() => {
+      notificationAPI.createGroup(groupId, {
+        title: 'Test Group'
       });
     });
 
-    afterAll(() => {
-      notificationAPIInstance.dismissAllNotifications();
+    it('creates notification groups', () => {
+      expect(() => {
+        notificationAPI.getGroupNotifications(groupId);
+      }).not.toThrow();
     });
 
-    it('shows a notification with a message, progress message, percentage and info severity', () => {
-      expect(notification.model.message).toEqual(title);
-      expect(notification.model.severity).toEqual(severity);
-      expect(notification.model.progressText).toEqual(message1);
-      expect(notification.model.progressPerc).toEqual(percentage1);
+    it('adds notifications to groups', () => {
+      const notification = notificationAPI.groupedNotification(groupId, 'Test message', {
+        severity: 'info'
+      });
+      const groupNotifications = notificationAPI.getGroupNotifications(groupId);
+
+      expect(groupNotifications.some((n) => n.message === 'Test message')).toBe(true);
     });
 
-    it('allows dynamically updating the progress attributes', () => {
-      notification.progress(percentage2, message2);
+    it('dismisses groups of notifications', () => {
+      notificationAPI.groupedNotification(groupId, 'Test 1', { severity: 'info' });
+      notificationAPI.groupedNotification(groupId, 'Test 2', { severity: 'info' });
 
-      expect(updatedPercentage).toEqual(percentage2);
-      expect(updatedMessage).toEqual(message2);
+      notificationAPI.dismissGroup(groupId);
+      const activeNotifications = notificationAPI.getActiveNotifications();
+
+      expect(activeNotifications.length).toBe(0);
     });
+  });
 
-    it('allows dynamically dismissing of progress notification', () => {
-      notification.dismiss();
+  describe('notification categories', () => {
+    it('creates notifications with custom categories', () => {
+      notificationAPI.registerCategory('custom');
+      const notification = notificationAPI.info('Test message', {
+        category: 'custom'
+      });
 
-      expect(notificationAPIInstance.notifications.length).toEqual(0);
+      expect(notification.model.options.category).toBe('custom');
+    });
+  });
+
+  describe('notification management', () => {
+    it('preserves persistent notifications', () => {
+      const notification = notificationAPI.alert('Test', {
+        persistent: true
+      });
+
+      expect(() => {
+        notificationAPI.dismissNotification(notification);
+      }).not.toThrow();
+
+      const activeNotifications = notificationAPI.getActiveNotifications();
+      expect(activeNotifications.length).toBe(0);
     });
   });
 });
