@@ -9,7 +9,7 @@
     flex-direction: row;
     align-items: center;
     overflow: hidden;
-    padding: $interiorMargin;
+    padding: 0 $interiorMargin;
 
     > * {
       // Text elements
@@ -35,6 +35,7 @@
   .c-frame & {
     @include abs();
     border: 1px solid transparent;
+    overflow: hidden;
   }
 
   .is-status__indicator {
