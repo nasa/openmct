@@ -23,10 +23,10 @@
 import { v4 as uuid } from 'uuid';
 
 export default function WorkerInterface(openmct, StalenessProvider) {
-  // eslint-disable-next-line no-undef
-  const workerUrl = `${openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}generatorWorker.js`;
   this.StalenessProvider = StalenessProvider;
-  this.worker = new Worker(workerUrl);
+  this.worker = new Worker(
+    /* webpackChunkName: "generatorWorker" */ new URL('./generatorWorker.js', import.meta.url)
+  );
   this.worker.onmessage = this.onMessage.bind(this);
   this.callbacks = {};
   this.staleTelemetryIds = {};
