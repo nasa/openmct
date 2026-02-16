@@ -658,7 +658,15 @@ export default {
       const LimitEvaluator = this.openmct.telemetry.getLimits(domainObject);
       LimitEvaluator.limits().then(this.updateLimits);
 
-      this.valueKey = this.metadata.valuesForHints(['range'])[0].source;
+      // Updating this assignment to include a check that ensures the valuesForHints(['range']) array is not empty before accessing its first element:
+
+      const ranges = this.metadata.valuesForHints(['range']);
+      if (ranges.length > 0) {
+        this.valueKey = ranges[0].source;
+      } else {
+        // Handle the case where no range is available
+        this.valueKey = null; // or set to a default value
+      }
 
       const options = {
         strategy: 'latest',
