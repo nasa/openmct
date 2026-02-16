@@ -116,7 +116,7 @@ npm run test:e2e:checksnapshots
 
 ### Updating Snapshots
 
-When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desireable or an unintended regression.
+When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desirable or an unintended regression.
 
 To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
 

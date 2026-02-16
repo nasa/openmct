@@ -1,0 +1,153 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2024, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+@mixin expressionMsg($fg, $bg) {
+  $op: 0.4;
+  color: rgba($fg, $op * 1.5);
+  background: rgba($bg, $op);
+}
+
+.c-comps {
+  display: flex;
+  flex-direction: column;
+  gap: $interiorMarginLg;
+
+  .is-editing & {
+    padding: $interiorMargin;
+  }
+
+  &__output {
+    display: flex;
+    align-items: baseline;
+    gap: $interiorMargin;
+
+    &-label {
+      flex: 0 0 auto;
+      text-transform: uppercase;
+    }
+
+    &-value {
+      flex: 0 1 auto;
+    }
+  }
+
+  &__section,
+  &__refs {
+    display: flex;
+    flex-direction: column;
+    gap: $interiorMarginSm;
+  }
+
+
+  &__apply-test-data-control {
+    padding: $interiorMargin 0;
+  }
+
+  &__refs {
+
+  }
+
+  &__ref {
+    @include discreteItem();
+    align-items: start;
+    display: flex;
+    flex-direction: column;
+    padding: 0 $interiorMargin;
+    line-height: 170%; // Aligns text with controls like selects
+
+    > * + * {
+      border-top: 1px solid $colorInteriorBorder;
+    }
+  }
+
+  &__ref-section {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $interiorMargin;
+    padding: $interiorMargin 0;
+    width: 100%;
+  }
+
+  &__ref-sub-section {
+    align-items: baseline;
+    display: flex;
+    flex: 1 1 auto;
+    gap: $interiorMargin;
+
+    &.ref-and-path {
+      flex: 0 1 auto;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__path-and-field {
+    align-items: start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $interiorMargin;
+
+    .c-comp__ref-path {
+      word-break: break-all;
+    }
+  }
+
+  &__label,
+  &__value {
+    white-space: nowrap;
+  }
+
+  &__expression {
+    *[class*=value] {
+      font-family: monospace;
+      resize: vertical; // Only applies to textarea
+    }
+    div[class*=value] {
+      padding: $interiorMargin;
+    }
+  }
+
+  &__expression-msg {
+    @include expressionMsg($colorOkFg, $colorOk);
+    border-radius: $basicCr;
+    display: flex; // Creates hanging indent from :before icon
+    padding: $interiorMarginSm $interiorMarginLg $interiorMarginSm $interiorMargin;
+    max-width: max-content;
+
+    &:before {
+      content: $glyph-icon-check;
+      font-family: symbolsfont;
+      margin-right: $interiorMarginSm;
+    }
+
+    &.--bad {
+      @include expressionMsg($colorErrorFg, $colorError);
+
+      &:before {
+        content: $glyph-icon-alert-triangle;
+      }
+    }
+  }
+
+  .--em {
+    color: $colorBodyFgEm;
+  }
+}

@@ -239,6 +239,7 @@ export default class TelemetryAPI {
       options.domain = options.timeContext.getTimeSystem().key;
     }
 
+    // if no specific start/end bounds are passed, use the timeContext bounds
     if (!Object.hasOwn(options, 'start')) {
       options.start = options.timeContext.getBounds().start;
     }
@@ -795,6 +796,15 @@ export default class TelemetryAPI {
     }
 
     return this.metadataCache.get(domainObject);
+  }
+
+  /**
+   * Remove a domain object from the telemetry metadata cache.
+   * @param {import('openmct').DomainObject} domainObject
+   */
+
+  removeMetadataFromCache(domainObject) {
+    this.metadataCache.delete(domainObject);
   }
 
   /**
