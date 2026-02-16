@@ -28,7 +28,7 @@
     <div
       ref="plotContainer"
       class="l-view-section u-style-receiver js-style-receiver"
-      aria-label="Plot Container Style Target"
+      aria-label="Real-Time Plot Container"
       :class="{
         's-status-timeconductor-unsynced': status === 'timeconductor-unsynced'
       }"
@@ -170,6 +170,8 @@ export default {
       this.triggerUnsubscribeFromStaleness(domainObject);
       this.subscribeToStaleness(domainObject);
     });
+
+    console.log('PlotView component created for domain object:', this.domainObject?.name || this.domainObject?.identifier);
   },
   unmounted() {
     this.destroy();
