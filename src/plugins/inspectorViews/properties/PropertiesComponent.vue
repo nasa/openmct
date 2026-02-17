@@ -27,14 +27,14 @@
       aria-label="Inspector Properties Details"
     >
       <div class="c-inspect-properties__header">Details</div>
-      <ul v-if="hasDetails" class="c-inspect-properties__section">
+      <template v-if="hasDetails">
         <Component
           :is="getComponent(detail)"
           v-for="detail in details"
           :key="detail.name"
           :detail="detail"
         />
-      </ul>
+      </template>
       <div v-else class="c-inspect-properties__row--span-all">
         {{ noDetailsMessage }}
       </div>
