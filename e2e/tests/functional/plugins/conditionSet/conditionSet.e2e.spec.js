@@ -293,7 +293,7 @@ test.describe('Basic Condition Set Use', () => {
     ).toBeVisible();
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Telemetry Table').click();
-    await expect(page.getByRole('searchbox', { name: 'output filter input' })).toBeVisible();
+    await expect(page.getByRole('searchbox', { name: 'value filter input' })).toBeVisible();
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Conditions View').click();
     await expect(page.getByText('Current Output')).toBeVisible();
@@ -325,40 +325,23 @@ test.describe('Basic Condition Set Use', () => {
     const conditionCollection = page.locator('#conditionCollection');
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
-    // Modify First Criterion
-    const firstCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=0'
-    );
-    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
-    const firstCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=0'
-    );
-    firstCriterionMetadata.selectOption({ label: 'Sine' });
-    const firstCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=0'
-    );
-    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
-    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
-    await firstCriterionInput.fill('0');
+    // Modify First Criterion - use value selectors (labels show path e.g. "My Items/Name")
+    await page.getByLabel('Criterion Telemetry Selection').first().selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').first().selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .first()
+      .selectOption({ value: 'greaterThanOrEq' });
+    await page.getByLabel('Criterion Input').first().fill('0');
 
-    // Modify First Criterion
-    const secondCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
-    );
-    secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
-
-    const secondCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=1'
-    );
-    secondCriterionMetadata.selectOption({ label: 'Sine' });
-
-    const secondCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=1'
-    );
-    secondCriterionComparison.selectOption({ label: 'is less than' });
-
-    const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
-    await secondCriterionInput.fill('0');
+    // Modify Second Criterion
+    await page.getByLabel('Criterion Telemetry Selection').nth(1).selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').nth(1).selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .nth(1)
+      .selectOption({ value: 'lessThan' });
+    await page.getByLabel('Criterion Input').nth(1).fill('0');
 
     // Save ConditionSet
     await page.locator('button[title="Save"]').click();
@@ -409,51 +392,29 @@ test.describe('Basic Condition Set Use', () => {
     const conditionCollection = page.locator('#conditionCollection');
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
-    // Modify First Criterion
-    const firstCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=0'
-    );
-    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
-    const firstCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=0'
-    );
-    firstCriterionMetadata.selectOption({ label: 'Sine' });
-    const firstCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=0'
-    );
-    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
-    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
-    await firstCriterionInput.fill('0');
+    // Modify First Criterion - use value selectors (labels show path e.g. "My Items/Name")
+    await page.getByLabel('Criterion Telemetry Selection').first().selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').first().selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .first()
+      .selectOption({ value: 'greaterThanOrEq' });
+    await page.getByLabel('Criterion Input').first().fill('0');
 
     // Modify Second Criterion
-    const secondCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
-    );
-    await secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    await page.getByLabel('Criterion Telemetry Selection').nth(1).selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').nth(1).selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .nth(1)
+      .selectOption({ value: 'lessThan' });
+    await page.getByLabel('Criterion Input').nth(1).fill('0');
 
-    const secondCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=1'
-    );
-    await secondCriterionMetadata.selectOption({ label: 'Sine' });
-
-    const secondCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=1'
-    );
-    await secondCriterionComparison.selectOption({ label: 'is less than' });
-
-    const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
-    await secondCriterionInput.fill('0');
-
-    // Enable test data
+    // Enable test data - use index (option 1 is first telemetry after "- Select Telemetry -")
     await page.getByLabel('Apply Test Data').nth(1).click();
-    const testDataTelemetry = page.locator('[aria-label="Test Data Telemetry Selection"] >> nth=0');
-    await testDataTelemetry.selectOption({ label: exampleTelemetry.name });
-
-    const testDataMetadata = page.locator('[aria-label="Test Data Metadata Selection"] >> nth=0');
-    await testDataMetadata.selectOption({ label: 'Sine' });
-
-    const testInput = page.locator('[aria-label="Test Data Input"] >> nth=0');
-    await testInput.fill('0');
+    await page.getByLabel('Test Data Telemetry Selection').first().selectOption({ index: 1 });
+    await page.getByLabel('Test Data Metadata Selection').first().selectOption({ value: 'sin' });
+    await page.getByLabel('Test Data Input').first().fill('0');
 
     // Validate that the condition set is evaluating and outputting
     // the correct value when the underlying telemetry subscription is active.
