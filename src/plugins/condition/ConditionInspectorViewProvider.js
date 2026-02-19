@@ -29,7 +29,13 @@ export default function ConditionInspectorView(openmct) {
     key: 'condition-config',
     name: 'Config',
     canView: function (selection) {
-      return selection.length > 0 && selection[0][0].context.item.type === 'conditionSet';
+      if (selection.length === 0 || selection[0].length === 0) {
+        return false;
+      }
+
+      let object = selection[0][0].context.item;
+
+      return object && object.type === 'conditionSet';
     },
     view: function (selection) {
       let _destroy = null;
