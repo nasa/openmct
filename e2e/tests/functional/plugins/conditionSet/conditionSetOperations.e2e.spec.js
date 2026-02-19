@@ -112,7 +112,7 @@ test.describe('Basic Condition Set Use', () => {
     ).toBeVisible();
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Telemetry Table').click();
-    await expect(page.getByRole('searchbox', { name: 'output filter input' })).toBeVisible();
+    await expect(page.getByRole('searchbox', { name: 'value filter input' })).toBeVisible();
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Conditions View').click();
     await expect(page.getByText('Current Output')).toBeVisible();
