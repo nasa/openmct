@@ -91,20 +91,18 @@ export default class HistoricalTelemetryProvider {
     const outputTelemetries = [];
     const historicalTelemetryPoolPromises = [];
 
-    const hasAnyAllTelemetry = conditionCollection.some(condition => 
-      condition.configuration.criteria.some(criterion => 
-        criterion.telemetry === 'any' || criterion.telemetry === 'all'
+    const hasAnyAllTelemetry = conditionCollection.some((condition) =>
+      condition.configuration.criteria.some(
+        (criterion) => criterion.telemetry === 'any' || criterion.telemetry === 'all'
       )
     );
 
     if (hasAnyAllTelemetry) {
       // Short-circuit and fetch ALL telemetry objects from composition
-      this.conditionSetDomainObject.composition.forEach(telemetryRef => {
+      this.conditionSetDomainObject.composition.forEach((telemetryRef) => {
         const telemetryId = this.openmct.objects.makeKeyString(telemetryRef);
         if (![...inputTelemetries, ...outputTelemetries].includes(telemetryId)) {
-          historicalTelemetryPoolPromises.push(
-            this.refreshHistoricalTelemetry(null, telemetryRef)
-          );
+          historicalTelemetryPoolPromises.push(this.refreshHistoricalTelemetry(null, telemetryRef));
           inputTelemetries.push(telemetryId);
         }
       });
@@ -116,7 +114,7 @@ export default class HistoricalTelemetryProvider {
 
         criteria.forEach((criterion) => {
           const inputTelemetry = criterion?.telemetry;
-          
+
           if (inputTelemetry) {
             const inputTelemetryId = this.openmct.objects.makeKeyString(inputTelemetry);
             if (![...inputTelemetries, ...outputTelemetries].includes(inputTelemetryId)) {
@@ -141,7 +139,7 @@ export default class HistoricalTelemetryProvider {
     }
 
     const historicalTelemetriesPool = await Promise.all(historicalTelemetryPoolPromises);
-    
+
     return {
       historicalTelemetriesPool,
       conditionCollectionMap
@@ -320,8 +318,9 @@ export default class HistoricalTelemetryProvider {
       await this.getAllTelemetries(conditionCollection);
     const historicalTelemetryDateMap =
       await this.sortTelemetriesInWorker(historicalTelemetriesPool);
-    const filledHistoricalTelemetryDateMap =
-      this.fillForwardTelemetryByTimestamp(historicalTelemetryDateMap);
+    const filledHistoricalTelemetryDateMap = this.fillForwardTelemetryByTimestamp(
+      historicalTelemetryDateMap
+    );
     const outputTelemetryDateMap = this.evaluateConditionsByDate(
       filledHistoricalTelemetryDateMap,
       conditionCollectionMap
