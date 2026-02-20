@@ -162,7 +162,6 @@ test.describe('Operator Status', () => {
     const pollIndicator = page.locator('div[title="Set my operator status"]');
     //Make window narrow
     await page.setViewportSize({ width: 640, height: 480 });
-    await page.getByLabel('Display as single line').click();
     const indicatorsCount = await page.locator('.c-indicator').count();
     //Assert that multiple indicators are active
     expect(indicatorsCount).toBeGreaterThanOrEqual(3);
