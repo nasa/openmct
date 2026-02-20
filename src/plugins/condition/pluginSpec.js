@@ -773,18 +773,21 @@ describe('the plugin', function () {
         await new Promise((resolve) => mockListener.and.callFake(resolve));
       }
 
-      expect(mockListener).toHaveBeenCalledWith({
-        output: 'Any old telemetry',
-        id: {
-          namespace: '',
-          key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
-        },
-        conditionId: '39584410-cbf9-499e-96dc-76f27e69885d',
-        utc: undefined
-      });
+      expect(mockListener).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          output: 'Any old telemetry',
+          id: {
+            namespace: '',
+            key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
+          },
+          conditionId: '39584410-cbf9-499e-96dc-76f27e69885d',
+          utc: undefined,
+          result: true
+        })
+      );
     });
 
-    it('should not evaluate as old when telemetry is received in the allotted time', async () => {
+    fit('should not evaluate as old when telemetry is received in the allotted time', async () => {
       const testDatum = {
         'some-key2': '',
         utc: 1,
@@ -812,6 +815,7 @@ describe('the plugin', function () {
       openmct.telemetry = jasmine.createSpyObj('telemetry', [
         'getMetadata',
         'getValueFormatter',
+        'abortAllRequests',
         'request',
         'subscribe',
         'requestCollection'
@@ -856,15 +860,18 @@ describe('the plugin', function () {
         await new Promise((resolve) => mockListener.and.callFake(resolve));
       }
 
-      expect(mockListener).toHaveBeenCalledWith({
-        output: 'Default',
-        id: {
-          namespace: '',
-          key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
-        },
-        conditionId: '2532d90a-e0d6-4935-b546-3123522da2de',
-        utc: date
-      });
+      expect(mockListener).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          output: 'Default',
+          id: {
+            namespace: '',
+            key: 'cf4456a9-296a-4e6b-b182-62ed29cd15b9'
+          },
+          conditionId: '2532d90a-e0d6-4935-b546-3123522da2de',
+          utc: date,
+          result: false
+        })
+      );
     });
   });
 

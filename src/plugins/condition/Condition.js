@@ -251,6 +251,7 @@ export default class Condition extends EventEmitter {
       this.criteria.map((criterion) => criterion.result),
       this.trigger
     );
+
     let latestTimestamp = {};
     latestTimestamp = getLatestTimestamp(
       latestTimestamp,
@@ -258,7 +259,22 @@ export default class Condition extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.conditionManager.updateCurrentCondition(latestTimestamp, this);
+
+    // Find the criterion that triggered this event
+    const triggeringCriterion = this.criteria.find(
+      (criterion) => criterion.id === updatedCriterion.id
+    );
+
+    // Extract telemetry object from the criterion
+    const telemetryObject = triggeringCriterion?.telemetryObject;
+    console.log('updatedCriterion', updatedCriterion);
+
+    // Pass the telemetry object and data to the condition manager
+    this.conditionManager.updateCurrentCondition(
+      latestTimestamp,
+      telemetryObject,
+      updatedCriterion.data
+    );
   }
 
   handleTelemetryStaleness() {
