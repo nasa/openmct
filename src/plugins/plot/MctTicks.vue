@@ -357,21 +357,22 @@ export default {
       const availableWidth = container.offsetWidth;
 
       // Get current range
-      // TODO: Check that the type is a Number and not a Date
       const { min, max } = range;
       const format = this.axis.get('format');
+      const isNumeric = typeof min === 'number' && typeof max === 'number';
 
       // Average start, mid and end labels to get a good estimate of label length.
       // This handles non UTC systems too now
-      const midValue = min + (max - min) / 2;
+      let midValue;
+      if (isNumeric) {
+        midValue = min + (max - min) / 2;
+      } else {
+        midValue = max;
+      }
       const formattedLabels = getFormattedTicks([min, midValue, max], format).map(
         (tick) => tick.text
       );
-      // const labelMin = format ? format(min) : String(min);
-      // const labelMax = format ? format(max) : String(max);
-      // const labelMid = format ? format(midValue) : String(midValue);
 
-      // const allLabels = [labelMin, labelMax, labelMid];
       // Use the one with more characters
       const maxLabelLength = formattedLabels.reduce(
         (maxLen, str) => Math.max(maxLen, str?.length || 0),
