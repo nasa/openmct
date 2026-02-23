@@ -78,7 +78,7 @@ test.describe('Time Tick Generation', () => {
     await testSecondsTimeSeriesTicks(page);
   });
 
-  test('Plot snaps to 5-minute intervals for an irregular 17-minute range', async ({ page }) => {
+  test('Plot snaps to 2-minute intervals for an irregular 17-minute range', async ({ page }) => {
     // Range: 01:15:00 to 01:32:00 (17 minutes)
     const startDate = '2023-03-22';
     const startTime = '01:15:00';
@@ -88,11 +88,15 @@ test.describe('Time Tick Generation', () => {
 
     const xTicks = page.locator('.gl-plot-x-tick-label');
 
-    // 5-minute increment
-    await expect(xTicks.nth(0)).toHaveText('01:15:00');
-    await expect(xTicks.nth(1)).toHaveText('01:20:00');
-    await expect(xTicks.nth(2)).toHaveText('01:25:00');
-    await expect(xTicks.nth(3)).toHaveText('01:30:00');
+    // 2-minute increment
+    await expect(xTicks.nth(0)).toHaveText('01:16:00');
+    await expect(xTicks.nth(1)).toHaveText('01:18:00');
+    await expect(xTicks.nth(2)).toHaveText('01:20:00');
+    await expect(xTicks.nth(3)).toHaveText('01:22:00');
+    await expect(xTicks.nth(4)).toHaveText('01:24:00');
+    await expect(xTicks.nth(5)).toHaveText('01:26:00');
+    await expect(xTicks.nth(6)).toHaveText('01:28:00');
+    await expect(xTicks.nth(7)).toHaveText('01:30:00');
   });
 
   test('Ticks align to round hour boundaries despite off-grid start time', async ({ page }) => {
@@ -121,12 +125,11 @@ test.describe('Time Tick Generation', () => {
     await setTimeConductorBounds(page, { startDate, startTime, endDate, endTime });
 
     const xTicks = page.locator('.gl-plot-x-tick-label');
-
     // 12-hour increments
-    await expect(xTicks.nth(0)).toHaveText('2023-03-22 08:00:00');
-    await expect(xTicks.nth(1)).toHaveText('2023-03-22 18:00:00');
-    await expect(xTicks.nth(2)).toHaveText('2023-03-23 04:00:00');
-    await expect(xTicks.nth(3)).toHaveText('2023-03-23 14:00:00');
+    await expect(xTicks.nth(0)).toHaveText('2023-03-22 00:00:00');
+    await expect(xTicks.nth(1)).toHaveText('2023-03-22 12:00:00');
+    await expect(xTicks.nth(2)).toHaveText('2023-03-23 00:00:00');
+    await expect(xTicks.nth(3)).toHaveText('2023-03-23 12:00:00');
     await expect(xTicks.nth(4)).toHaveText('2023-03-24 00:00:00');
   });
 
@@ -179,11 +182,15 @@ async function testDaysTimeSeriesTicks(page) {
 
 async function testHoursTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(4);
+  await expect(xTicks).toHaveCount(8);
   await expect(xTicks.nth(0)).toHaveText('02:00:00');
-  await expect(xTicks.nth(1)).toHaveText('04:00:00');
-  await expect(xTicks.nth(2)).toHaveText('06:00:00');
-  await expect(xTicks.nth(3)).toHaveText('08:00:00');
+  await expect(xTicks.nth(1)).toHaveText('03:00:00');
+  await expect(xTicks.nth(2)).toHaveText('04:00:00');
+  await expect(xTicks.nth(3)).toHaveText('05:00:00');
+  await expect(xTicks.nth(4)).toHaveText('06:00:00');
+  await expect(xTicks.nth(5)).toHaveText('07:00:00');
+  await expect(xTicks.nth(6)).toHaveText('08:00:00');
+  await expect(xTicks.nth(7)).toHaveText('09:00:00');
 }
 
 async function testMinutesTimeSeriesTicks(page) {
@@ -198,9 +205,12 @@ async function testMinutesTimeSeriesTicks(page) {
 
 async function testSecondsTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(4);
+  await expect(xTicks).toHaveCount(7);
   await expect(xTicks.nth(0)).toHaveText('01:22:00');
-  await expect(xTicks.nth(1)).toHaveText('01:22:20');
-  await expect(xTicks.nth(2)).toHaveText('01:22:40');
-  await expect(xTicks.nth(3)).toHaveText('01:23:00');
+  await expect(xTicks.nth(1)).toHaveText('01:22:10');
+  await expect(xTicks.nth(2)).toHaveText('01:22:20');
+  await expect(xTicks.nth(3)).toHaveText('01:22:30');
+  await expect(xTicks.nth(4)).toHaveText('01:22:40');
+  await expect(xTicks.nth(5)).toHaveText('01:22:50');
+  await expect(xTicks.nth(6)).toHaveText('01:23:00');
 }
