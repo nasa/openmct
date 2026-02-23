@@ -22,6 +22,8 @@ let gitBranch = 'error-retrieving-branch';
 const { version } = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
 
 try {
+  //Caching of GitHub actions causes git directory ownership issues.
+  execSync('git config --global --add safe.directory /__w/openmct/openmct');
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
   gitBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 } catch (err) {

@@ -117,8 +117,7 @@ test.describe('Telemetry Table', () => {
 
     endTimeStamp.setUTCMinutes(endTimeStamp.getUTCMinutes() - 5);
     const endDate = endTimeStamp.toISOString().split('T')[0];
-    const milliseconds = endTimeStamp.getMilliseconds();
-    const endTime = endTimeStamp.toISOString().split('T')[1].replace(`.${milliseconds}Z`, '');
+    const endTime = endTimeStamp.toISOString().split('T')[1].slice(0, -5);
 
     await setTimeConductorBounds(page, { endDate, endTime });
 

@@ -97,19 +97,24 @@ test.describe('Tabs View', () => {
     page
   }) => {
     await page.goto(tabsView.url);
+    const lockButton = page.getByLabel('Unlocked for editing, click to lock.', { exact: true });
+    await expect(lockButton).toBeVisible();
     //lock the view
-    await page.getByLabel('Unlocked for editing, click to lock.', { exact: true }).click();
+    await lockButton.click();
     // get the initial tab index
     const initialTab = page.getByLabel(/- selected/);
     // switch to a different tab in the view
     const swgTab = page.getByLabel(`${sineWaveGenerator.name} tab`, { exact: true });
+    const swgTabText = await swgTab.textContent();
     await swgTab.click();
     await page.getByLabel(`${sineWaveGenerator.name} Object View`).isVisible();
     // navigate away from the tabbed view and back
     await page.getByRole('treeitem', { name: 'My Items' }).click();
+    await expect(page).toHaveURL(/mine\?/);
     await page.goto(tabsView.url);
     // check that the initial tab is displayed
     const lockedSelectedTab = page.getByLabel(/- selected/);
+    await expect(lockedSelectedTab).toBeVisible();
     await expect(lockedSelectedTab).toHaveText(await initialTab.textContent());
 
     //unlock the view
@@ -119,10 +124,12 @@ test.describe('Tabs View', () => {
     await page.getByLabel(`${sineWaveGenerator.name} Object View`).isVisible();
     // navigate away from the tabbed view and back
     await page.getByRole('treeitem', { name: 'My Items' }).click();
+    await expect(page).toHaveURL(/mine\?/);
     await page.goto(tabsView.url);
     // check that the newly selected tab is displayed
     const unlockedSelectedTab = page.getByLabel(/- selected/);
     await expect(unlockedSelectedTab).toBeVisible();
+    await expect(unlockedSelectedTab).toHaveText(swgTabText);
   });
 });
 

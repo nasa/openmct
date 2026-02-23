@@ -54,15 +54,37 @@ test.describe('Staleness with Controlled Clock @clock', () => {
     test('indicates when telemetry is stale and clears staleness when telemetry is not stale', async ({
       page
     }) => {
-      await expect(objectView).toHaveClass(/is-stale/, {
-        timeout: 5 * 1000 // Give 3 seconds for the staleness to be updated
-      });
-      await expect(objectView).not.toHaveClass(/is-stale/, {
-        timeout: 5 * 1000 // Give 3 seconds for the staleness to be updated
-      });
-      await expect(objectView).toHaveClass(/is-stale/, {
-        timeout: 5 * 1000 // Give 3 seconds for the staleness to be updated
-      });
+      // Wait until telemetry goes stale
+      await page.evaluate(async (sg) => {
+        const openmct = window.openmct;
+        const domainObject = await openmct.objects.get(sg.uuid);
+        return new Promise((resolve) => {
+          openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+            if (stalenessResponse.isStale) {
+              resolve();
+            }
+          });
+        });
+      }, stateGenerator);
+
+      // Verify that the object view has the is-stale class
+      await expect(objectView).toHaveClass(/is-stale/);
+
+      // Wait until telemetry goes fresh
+      await page.evaluate(async (sg) => {
+        const openmct = window.openmct;
+        const domainObject = await openmct.objects.get(sg.uuid);
+        return new Promise((resolve) => {
+          openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+            if (!stalenessResponse.isStale) {
+              resolve();
+            }
+          });
+        });
+      }, stateGenerator);
+
+      // Verify that the object view does not have the is-stale class
+      await expect(objectView).not.toHaveClass(/is-stale/);
     });
   });
 });

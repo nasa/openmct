@@ -4,8 +4,8 @@ snapshot:
   min-height: 1440 # px
   percyCSS: |
     /* Clock indicator... your days are numbered  */
-    .t-indicator-clock > .label {
-      opacity: 0 !important;
+    .t-indicator-clock {
+      display: none !important;
     }
     .c-input--datetime {
       opacity: 0 !important;

@@ -485,7 +485,8 @@
     "Undeletes",
     "SSSZ",
     "pageerror",
-    "annotatable"
+    "annotatable",
+    "requestfinished"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [

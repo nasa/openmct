@@ -768,8 +768,10 @@ describe('the plugin', function () {
       // Wait for the 'on' callback to be called
       await onAddCalledPromise;
 
-      // Simulate the passage of time and no data received
-      await new Promise((resolve) => setTimeout(resolve, 400));
+      if (mockListener.calls.count() === 0) {
+        // Wait for the listener to be called, or timeout.
+        await new Promise((resolve) => mockListener.and.callFake(resolve));
+      }
 
       expect(mockListener).toHaveBeenCalledWith({
         output: 'Any old telemetry',
@@ -849,8 +851,10 @@ describe('the plugin', function () {
       // Simulate receiving telemetry data
       onAddCallback([testDatum]);
 
-      // Wait a bit for the condition manager to process the data
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (mockListener.calls.count() === 0) {
+        // Wait for the listener to be called, or timeout.
+        await new Promise((resolve) => mockListener.and.callFake(resolve));
+      }
 
       expect(mockListener).toHaveBeenCalledWith({
         output: 'Default',
