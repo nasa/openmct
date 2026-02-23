@@ -195,12 +195,18 @@ async function testHoursTimeSeriesTicks(page) {
 
 async function testMinutesTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(5);
-  await expect(xTicks.nth(0)).toHaveText('01:15:00');
-  await expect(xTicks.nth(1)).toHaveText('01:20:00');
-  await expect(xTicks.nth(2)).toHaveText('01:25:00');
-  await expect(xTicks.nth(3)).toHaveText('01:30:00');
-  await expect(xTicks.nth(4)).toHaveText('01:35:00');
+
+  await expect(xTicks).toHaveCount(10);
+  await expect(xTicks.nth(0)).toHaveText('01:16:00');
+  await expect(xTicks.nth(1)).toHaveText('01:18:00');
+  await expect(xTicks.nth(2)).toHaveText('01:20:00');
+  await expect(xTicks.nth(3)).toHaveText('01:22:00');
+  await expect(xTicks.nth(4)).toHaveText('01:24:00');
+  await expect(xTicks.nth(5)).toHaveText('01:26:00');
+  await expect(xTicks.nth(6)).toHaveText('01:28:00');
+  await expect(xTicks.nth(7)).toHaveText('01:30:00');
+  await expect(xTicks.nth(8)).toHaveText('01:32:00');
+  await expect(xTicks.nth(9)).toHaveText('01:34:00');
 }
 
 async function testSecondsTimeSeriesTicks(page) {
