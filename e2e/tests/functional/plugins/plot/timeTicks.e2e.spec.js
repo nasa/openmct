@@ -163,71 +163,54 @@ test.describe('Time Tick Generation', () => {
  */
 async function testYearTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(7);
+  await expect(xTicks).toHaveCount(4);
   await expect(xTicks.nth(0)).toHaveText('2022-09-01');
-  await expect(xTicks.nth(1)).toHaveText('2022-10-01');
-  await expect(xTicks.nth(2)).toHaveText('2022-11-01');
-  await expect(xTicks.nth(3)).toHaveText('2022-12-01');
-  await expect(xTicks.nth(4)).toHaveText('2023-01-01');
-  await expect(xTicks.nth(5)).toHaveText('2023-02-01');
-  await expect(xTicks.nth(6)).toHaveText('2023-03-01');
+  await expect(xTicks.nth(1)).toHaveText('2022-11-01');
+  await expect(xTicks.nth(2)).toHaveText('2023-01-01');
+  await expect(xTicks.nth(3)).toHaveText('2023-03-01');
 }
 
 async function testDaysTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(6);
-  await expect(xTicks.nth(0)).toHaveText('2023-03-24');
-  await expect(xTicks.nth(1)).toHaveText('2023-03-29');
-  await expect(xTicks.nth(2)).toHaveText('2023-04-03');
-  await expect(xTicks.nth(3)).toHaveText('2023-04-08');
-  await expect(xTicks.nth(4)).toHaveText('2023-04-13');
-  await expect(xTicks.nth(5)).toHaveText('2023-04-18');
+  await expect(xTicks).toHaveCount(5);
+  await expect(xTicks.nth(0)).toHaveText('2023-03-23');
+  await expect(xTicks.nth(1)).toHaveText('2023-03-30');
+  await expect(xTicks.nth(2)).toHaveText('2023-04-06');
+  await expect(xTicks.nth(3)).toHaveText('2023-04-13');
+  await expect(xTicks.nth(4)).toHaveText('2023-04-20');
 }
 
 async function testHoursTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(10);
-  await expect(xTicks.nth(0)).toHaveText('01:20:00');
-  await expect(xTicks.nth(1)).toHaveText('02:10:00');
-  await expect(xTicks.nth(2)).toHaveText('03:00:00');
-  await expect(xTicks.nth(3)).toHaveText('03:50:00');
-  await expect(xTicks.nth(4)).toHaveText('04:40:00');
-  await expect(xTicks.nth(5)).toHaveText('05:30:00');
-  await expect(xTicks.nth(6)).toHaveText('06:20:00');
-  await expect(xTicks.nth(7)).toHaveText('07:10:00');
-  await expect(xTicks.nth(8)).toHaveText('08:00:00');
-  await expect(xTicks.nth(9)).toHaveText('08:50:00');
+  await expect(xTicks).toHaveCount(8);
+  await expect(xTicks.nth(0)).toHaveText('02:00:00');
+  await expect(xTicks.nth(1)).toHaveText('03:00:00');
+  await expect(xTicks.nth(2)).toHaveText('04:00:00');
+  await expect(xTicks.nth(3)).toHaveText('05:00:00');
+  await expect(xTicks.nth(4)).toHaveText('06:00:00');
+  await expect(xTicks.nth(5)).toHaveText('07:00:00');
+  await expect(xTicks.nth(6)).toHaveText('08:00:00');
+  await expect(xTicks.nth(7)).toHaveText('09:00:00');
 }
 
 async function testMinutesTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(10);
-  await expect(xTicks.nth(0)).toHaveText('01:16:00');
-  await expect(xTicks.nth(1)).toHaveText('01:18:00');
-  await expect(xTicks.nth(2)).toHaveText('01:20:00');
-  await expect(xTicks.nth(3)).toHaveText('01:22:00');
-  await expect(xTicks.nth(4)).toHaveText('01:24:00');
-  await expect(xTicks.nth(5)).toHaveText('01:26:00');
-  await expect(xTicks.nth(6)).toHaveText('01:28:00');
-  await expect(xTicks.nth(7)).toHaveText('01:30:00');
-  await expect(xTicks.nth(8)).toHaveText('01:32:00');
-  await expect(xTicks.nth(9)).toHaveText('01:34:00');
+  await expect(xTicks).toHaveCount(5);
+  await expect(xTicks.nth(0)).toHaveText('01:15:00');
+  await expect(xTicks.nth(1)).toHaveText('01:20:00');
+  await expect(xTicks.nth(2)).toHaveText('01:25:00');
+  await expect(xTicks.nth(3)).toHaveText('01:30:00');
+  await expect(xTicks.nth(4)).toHaveText('01:35:00');
 }
 
 async function testSecondsTimeSeriesTicks(page) {
   const xTicks = page.locator('.gl-plot-x-tick-label');
-  await expect(xTicks).toHaveCount(11);
+  await expect(xTicks).toHaveCount(7);
   await expect(xTicks.nth(0)).toHaveText('01:22:00');
-  await expect(xTicks.nth(1)).toHaveText('01:22:05');
-  await expect(xTicks.nth(2)).toHaveText('01:22:10');
-  await expect(xTicks.nth(3)).toHaveText('01:22:15');
-  await expect(xTicks.nth(4)).toHaveText('01:22:20');
-  await expect(xTicks.nth(5)).toHaveText('01:22:25');
-  await expect(xTicks.nth(6)).toHaveText('01:22:30');
-  await expect(xTicks.nth(7)).toHaveText('01:22:35');
-  await expect(xTicks.nth(8)).toHaveText('01:22:40');
-  await expect(xTicks.nth(9)).toHaveText('01:22:45');
-  await expect(xTicks.nth(10)).toHaveText('01:22:50');
-  await expect(xTicks.nth(11)).toHaveText('01:22:55');
-  await expect(xTicks.nth(12)).toHaveText('01:23:00');
+  await expect(xTicks.nth(1)).toHaveText('01:22:10');
+  await expect(xTicks.nth(2)).toHaveText('01:22:20');
+  await expect(xTicks.nth(3)).toHaveText('01:22:30');
+  await expect(xTicks.nth(4)).toHaveText('01:22:40');
+  await expect(xTicks.nth(5)).toHaveText('01:22:50');
+  await expect(xTicks.nth(6)).toHaveText('01:23:00');
 }
