@@ -243,13 +243,18 @@ export default {
         }, this);
       }
 
+      let tickCount = number;
+      // Use dynamic ticks for xAxis to avoid overcrowding and improve readability.
+      if (this.axisType === 'xAxis') {
+        tickCount = this.getDynamicTickCount(range);
+      }
+
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
       } else if (this.isUtc) {
-        const dynamicCount = this.getDynamicTickCount();
-        return getTimeTicks(range.min, range.max, dynamicCount);
+        return getTimeTicks(range.min, range.max, tickCount);
       } else {
-        return ticks(range.min, range.max, number);
+        return ticks(range.min, range.max, tickCount);
       }
     },
 
@@ -343,8 +348,7 @@ export default {
       this.tickUpdate = false;
     },
 
-    // Inside MctTicks.vue methods:
-    getDynamicTickCount() {
+    getDynamicTickCount(range) {
       const container = this.$refs.tickContainer.parentElement;
       if (!container) {
         return this.tickCount;
@@ -352,18 +356,39 @@ export default {
 
       const availableWidth = container.offsetWidth;
 
-      // Sample format string based on current time system
-      // Measure the width of the sample text to estimate how many ticks can fit without overlap
+      // Get current range
+      // TODO: Check that the type is a Number and not a Date
+      const { min, max } = range;
       const format = this.axis.get('format');
-      const sampleText = format ? format(Date.now()) : '2026-02-16 00:00:00';
+
+      // Average start, mid and end labels to get a good estimate of label length.
+      // This handles non UTC systems too now
+      const midValue = min + (max - min) / 2;
+      const formattedLabels = getFormattedTicks([min, midValue, max], format).map(
+        (tick) => tick.text
+      );
+      // const labelMin = format ? format(min) : String(min);
+      // const labelMax = format ? format(max) : String(max);
+      // const labelMid = format ? format(midValue) : String(midValue);
+
+      // const allLabels = [labelMin, labelMax, labelMid];
+      // Use the one with more characters
+      const maxLabelLength = formattedLabels.reduce(
+        (maxLen, str) => Math.max(maxLen, str?.length || 0),
+        0
+      );
+
+      // Use a character width to get estimated length of a tick
       const font = window.getComputedStyle(container).font || '12px "Open Sans", sans-serif';
-      const labelWidth = measureTextWidth(sampleText, font);
+      const charWidth = measureTextWidth('M', font);
+
+      const estimatedLabelWidth = charWidth * maxLabelLength;
 
       const padding = 20;
-      const count = Math.floor(availableWidth / (labelWidth + padding));
+      const tickCount = Math.floor(availableWidth / (estimatedLabelWidth + padding));
 
       // Return at least 1 ticks, and at most 12 ticks to avoid overcrowding
-      return Math.max(1, Math.min(count, 12));
+      return Math.max(1, Math.min(tickCount, 12));
     }
   }
 };
