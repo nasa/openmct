@@ -78,10 +78,15 @@ import { inject } from 'vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
-import { getFormattedTicks, getLogTicks, getTimeTicks, ticks } from './tickUtils.js';
+import {
+  getFormattedTicks,
+  getLogTicks,
+  getTimeTicks,
+  measureTextWidth,
+  ticks
+} from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
-const TIME_AXIS_TICK_COUNT = 10;
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],
@@ -154,6 +159,14 @@ export default {
     this.listenTo(this.axis, 'change:format', this.updateTicks, this);
     this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
     this.updateTicks();
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateTicks(true);
+    });
+
+    if (this.$refs.tickContainer) {
+      this.resizeObserver.observe(this.$refs.tickContainer.parentElement);
+    }
   },
   beforeUnmount() {
     this.removeAlignment({
@@ -161,6 +174,10 @@ export default {
       updateObjectPath: this.objectPath
     });
     this.stopListening();
+
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   },
   methods: {
     getAxisFromConfig() {
@@ -226,12 +243,18 @@ export default {
         }, this);
       }
 
+      let tickCount = number;
+      // Use dynamic ticks for xAxis to avoid overcrowding and improve readability.
+      if (this.axisType === 'xAxis') {
+        tickCount = this.getDynamicTickCount(range);
+      }
+
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
       } else if (this.isUtc) {
-        return getTimeTicks(range.min, range.max, TIME_AXIS_TICK_COUNT);
+        return getTimeTicks(range.min, range.max, tickCount);
       } else {
-        return ticks(range.min, range.max, number);
+        return ticks(range.min, range.max, tickCount);
       }
     },
 
@@ -323,6 +346,50 @@ export default {
       }
 
       this.tickUpdate = false;
+    },
+
+    getDynamicTickCount(range) {
+      const container = this.$refs.tickContainer.parentElement;
+      if (!container) {
+        return this.tickCount;
+      }
+
+      const availableWidth = container.offsetWidth;
+
+      // Get current range
+      const { min, max } = range;
+      const format = this.axis.get('format');
+      const isNumeric = typeof min === 'number' && typeof max === 'number';
+
+      // Average start, mid and end labels to get a good estimate of label length.
+      // This handles non UTC systems too now
+      let midValue;
+      if (isNumeric) {
+        midValue = min + (max - min) / 2;
+      } else {
+        midValue = max;
+      }
+      const formattedLabels = getFormattedTicks([min, midValue, max], format).map(
+        (tick) => tick.text
+      );
+
+      // Use the one with more characters
+      const maxLabelLength = formattedLabels.reduce(
+        (maxLen, str) => Math.max(maxLen, str?.length || 0),
+        0
+      );
+
+      // Use a character width to get estimated length of a tick
+      const font = window.getComputedStyle(container).font || '12px "Open Sans", sans-serif';
+      const charWidth = measureTextWidth('M', font);
+
+      const estimatedLabelWidth = charWidth * maxLabelLength;
+
+      const padding = 20;
+      const tickCount = Math.floor(availableWidth / (estimatedLabelWidth + padding));
+
+      // Return at least 1 ticks, and at most 12 ticks to avoid overcrowding
+      return Math.max(1, Math.min(tickCount, 12));
     }
   }
 };
