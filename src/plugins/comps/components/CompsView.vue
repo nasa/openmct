@@ -248,10 +248,7 @@ function createOutputTelemetryCollection(maxSampleSize) {
   };
 
   // TODO: we should dynamically set size to the largest comp input window
-  const collection = openmct.telemetry.requestCollection(
-    domainObject,
-    telemetryOptions
-  );
+  const collection = openmct.telemetry.requestCollection(domainObject, telemetryOptions);
 
   collection.on('add', telemetryProcessor);
   collection.on('clear', clearData);
