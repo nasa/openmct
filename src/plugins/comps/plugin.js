@@ -24,7 +24,7 @@ import CompsMetadataProvider from './CompsMetadataProvider.js';
 import CompsTelemetryProvider from './CompsTelemetryProvider.js';
 import CompsViewProvider from './CompsViewProvider.js';
 
-export default function CompsPlugin() {
+export default function DerivedTelemetryPlugin() {
   const compsManagerPool = {};
 
   return function install(openmct) {
