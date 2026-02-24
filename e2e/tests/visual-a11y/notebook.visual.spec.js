@@ -22,7 +22,11 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults } from '../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  expandInspectorPane,
+  expandTreePane
+} from '../../appActions.js';
 import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
@@ -95,11 +99,12 @@ test.describe('Visual - Notebook @a11y', () => {
     });
 
     //Open Tree to perform drag
-    await page.getByRole('button', { name: 'Browse' }).click();
-
+    await expandTreePane(page);
     await page.getByLabel('Expand My Items folder').click();
 
-    await page.goto(notebook.url, { waitUntil: 'networkidle' });
+    await page.goto(notebook.url);
+
+    await expect(page.getByLabel('Browse bar object name')).toHaveText(notebook.name);
 
     await page
       .getByLabel('Navigate to Dropped Overlay Plot')
@@ -113,7 +118,7 @@ test.describe('Visual - Notebook @a11y', () => {
     await percySnapshot(page, `Notebook Entry (theme: '${theme}')`);
 
     // Open the Inspector
-    await page.getByRole('button', { name: 'Inspect' }).click();
+    await expandInspectorPane(page);
     // Open the Annotations tab
     await page.getByRole('tab', { name: 'Annotations' }).click();
 
