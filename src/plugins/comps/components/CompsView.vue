@@ -324,7 +324,7 @@ watch(
       parameters.value.forEach((param) => {
         const metadataValues = compsManager.getMetaDataValuesForParameter(param.keyString);
         if (metadataValues) {
-          paramMetadataMap[param.keyString] = metadataValues
+          paramMetadataMap[param.keyString] = metadataValues;
         }
         const telemetryObject = compsManager.getTelemetryObjectForParameter(param.keyString);
         if (telemetryObject) {
