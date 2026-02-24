@@ -84,7 +84,8 @@
                 :aria-label="`Reference ${parameter.name} Object Path`"
               >
                 <ObjectPathString
-                  :domain-object="compsManager.getTelemetryObjectForParameter(parameter.keyString)"
+                  v-if="telemetryObjectsMap[parameter.keyString]"
+                  :domain-object="telemetryObjectsMap[parameter.keyString]"
                   :show-object-itself="true"
                   class="c-comp__ref-path --em"
                 />
@@ -96,9 +97,7 @@
                   @change="updateParameters"
                 >
                   <option
-                    v-for="parameterValueOption in compsManager.getMetaDataValuesForParameter(
-                      parameter.keyString
-                    )"
+                    v-for="parameterValueOption in parameterValueOptionsMap[parameter.keyString]"
                     :key="parameterValueOption.key"
                     :value="parameterValueOption.key"
                   >
@@ -217,6 +216,8 @@ const parameters = ref(null);
 const expression = ref(null);
 const expressionOutput = ref(null);
 const outputFormat = ref(null);
+const parameterValueOptionsMap = ref({});
+const telemetryObjectsMap = ref({});
 
 let outputTelemetryCollection;
 
@@ -290,6 +291,7 @@ onBeforeMount(async () => {
 
   // Update state after all requests are complete
   parameters.value = compsManager.getParameters();
+  // Also get the metadata and objects from compsManager
   expression.value = compsManager.getExpression();
   outputFormat.value = compsManager.getOutputFormat();
   applyTestData();
@@ -309,6 +311,31 @@ watch(
   (editMode) => {
     if (!editMode) {
       testDataApplied.value = false;
+    }
+  }
+);
+
+watch(
+  () => parameters.value,
+  () => {
+    if (parameters.value?.length) {
+      const paramMetadataMap = {};
+      const telemetryObjMap = {};
+      parameters.value.forEach((param) => {
+        const metadataValues = compsManager.getMetaDataValuesForParameter(param.keyString);
+        if (metadataValues) {
+          paramMetadataMap[param.keyString] = metadataValues
+        }
+        const telemetryObject = compsManager.getTelemetryObjectForParameter(param.keyString);
+        if (telemetryObject) {
+          telemetryObjMap[param.keyString] = telemetryObject;
+        }
+      });
+      parameterValueOptionsMap.value = paramMetadataMap;
+      telemetryObjectsMap.value = telemetryObjMap;
+    } else {
+      parameterValueOptionsMap.value = {};
+      telemetryObjectsMap.value = {};
     }
   }
 );

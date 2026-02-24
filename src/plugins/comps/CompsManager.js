@@ -84,6 +84,9 @@ export default class CompsManager extends EventEmitter {
 
   getMetaDataValuesForParameter(keyString) {
     const telemetryObject = this.getTelemetryObjectForParameter(keyString);
+    if (!telemetryObject) {
+      return [];
+    }
     const metaData = this.#openmct.telemetry.getMetadata(telemetryObject);
     return metaData.valueMetadatas;
   }
