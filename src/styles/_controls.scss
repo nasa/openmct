@@ -380,12 +380,7 @@ section {
         display: flex;
         flex: 0 0 auto;
         align-items: center;
-        gap: $interiorMarginSm;
-        //margin-bottom: $interiorMargin;
-        //
-        //> * + * {
-        //    margin-left: $interiorMarginSm;
-        //}
+        gap: $interiorMargin;
     }
 
     > [class*='__label'] {
@@ -1271,7 +1266,7 @@ input[type='range'] {
 .c-output-featured {
     display: flex;
     gap: $interiorMargin;
-    padding: 0 $interiorMargin;
+    padding: $interiorMargin 0;
 
     > * {
         padding: $interiorMargin;
@@ -1284,7 +1279,6 @@ input[type='range'] {
 
     &__value {
         $p: $interiorMargin * 2;
-        //font-size: 1.25em;
         padding-left: $p;
         padding-right: $p;
         background: rgba(black, 0.2);
