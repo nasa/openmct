@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { fileURLToPath } from 'url';
+
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -29,6 +31,11 @@ import { expect, test } from '../../../../pluginFixtures.js';
 test.describe('Comps', () => {
   test.use({ failOnConsoleError: false });
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript({
+      path: fileURLToPath(
+        new URL('../../../../helper/addInitDerivedTelemetryPlugin.js', import.meta.url)
+      )
+    });
     // Open a browser, navigate to the main page, and wait until all networkevents to resolve
     await page.goto('./', { waitUntil: 'domcontentloaded' });
   });
