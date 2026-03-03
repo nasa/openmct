@@ -75,7 +75,7 @@
                 :aria-label="`Reference Name Input for ${parameter.name}`"
                 type="text"
                 class="c-input--md"
-                @change="updateParameters"
+                @input="updateParameters"
               />
               <div v-else class="--em">{{ parameter.name }}</div>
               <span class="c-test-datum__string">=</span>
@@ -135,7 +135,7 @@
                 :aria-label="`Sample Size for ${parameter.name}`"
                 type="number"
                 class="c-input--sm c-comps__value"
-                @change="updateParameters"
+                @input="updateParameters"
               />
             </div>
 
@@ -155,7 +155,7 @@
               :aria-label="`Reference Test Value for ${parameter.name}`"
               type="text"
               class="c-input--md c-comps__value"
-              @change="updateTestValue(parameter)"
+              @input="updateTestValue(parameter)"
             />
           </div>
         </div>
@@ -175,7 +175,7 @@
         v-model="expression"
         class="c-comps__expression-value"
         placeholder="Enter an expression"
-        @change="updateExpression"
+        @input="updateExpression"
       ></textarea>
       <div v-else>
         <div class="c-comps__expression-value" aria-label="Expression">
