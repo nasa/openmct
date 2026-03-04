@@ -33,7 +33,7 @@
  * Define some root level objects to represent NORAL and SFO approach
  */
 const NORCAL_NAMESPACE = 'NORCAL';
-const NORCAL_ROOT_KEY = 'NORCAL_ROOT';
+const NORCAL_ROOT_KEY = 'norcal_approach';
 const NORCAL_ROOT_OBJECT = {
   name: 'NORCAL Approach',
   type: 'folder'
@@ -41,7 +41,7 @@ const NORCAL_ROOT_OBJECT = {
 let NORCAL_OBJECT_IDS = [];
 
 const SFO_NAMESPACE = 'SFO';
-const SFO_ROOT_KEY = 'SFO_ROOT';
+const SFO_ROOT_KEY = 'sfo_approach';
 const SFO_ROOT_OBJECT = {
   name: 'SFO Approach',
   type: 'folder'
@@ -69,49 +69,49 @@ const GENERATOR_DEFAULTS = {
  */
 const ALL_OBJECTS = {
   AA123: {
-    name: 'American Airlines Flight 123',
+    name: '(AA123) American Airlines Flight 123',
     type: 'generator',
     telemetry: {
       ...GENERATOR_DEFAULTS
     }
   },
   BA098: {
-    name: 'British Airways Flight 98',
+    name: '(BA098) British Airways Flight 98',
     type: 'generator',
     telemetry: {
       ...GENERATOR_DEFAULTS
     }
   },
   BA111: {
-    name: 'British Airways Flight 111',
+    name: '(BA111) British Airways Flight 111',
     type: 'generator',
     telemetry: {
       ...GENERATOR_DEFAULTS
     }
   },
   QF001: {
-    name: 'Qantas Flight 001',
+    name: '(QF001) Qantas Flight 001',
     type: 'generator',
     telemetry: {
       ...GENERATOR_DEFAULTS
     }
   },
   QF002: {
-    name: 'Qantas Flight 002',
+    name: '(QF002) Qantas Flight 002',
     type: 'generator',
     telemetry: {
       ...GENERATOR_DEFAULTS
     }
   },
   UA123: {
-    name: 'United Airlines Flight 123',
+    name: '(UA123) United Airlines Flight 123',
     type: 'generator',
     telemetry: {
       ...GENERATOR_DEFAULTS
     }
   },
   UA321: {
-    name: 'United Airlines Flight 321',
+    name: '(UA321) United Airlines Flight 321',
     type: 'generator',
     telemetry: {
       ...GENERATOR_DEFAULTS
@@ -194,11 +194,11 @@ export default function customCompositionExample() {
         /** Return an array of all of the flight objects being tracked by NORCAL approach */
         return Promise.resolve(NORCAL_OBJECT_IDS);
       },
-      add(parent, childId) {
+      add(parent, childId, index) {
         /** Called by the Open MCT composition API when compositionCollection.add() is invoked */
-        NORCAL_OBJECT_IDS.push(childId);
+        NORCAL_OBJECT_IDS.splice(index, 0, childId);
         /** Alert any listeners that an object has been added to the composition */
-        norcalListeners.add.forEach((listener) => listener(childId));
+        norcalListeners.add.forEach((listener) => listener(childId, index));
       },
       remove(parent, childId) {
         /** Called by the Open MCT composition API when compositionCollection.remove() is invoked */
@@ -242,11 +242,11 @@ export default function customCompositionExample() {
         /** Return an array of all of the flight objects being tracked by NORCAL approach */
         return Promise.resolve(SFO_OBJECT_IDS);
       },
-      add(parent, childId) {
+      add(parent, childId, index) {
         /** Called by the Open MCT composition API when compositionCollection.add() is invoked */
-        SFO_OBJECT_IDS.push(childId);
+        SFO_OBJECT_IDS.splice(index, 0, childId);
         /** Alert any listeners that an object has been added to the composition */
-        sfoListeners.add.forEach((listener) => listener(childId));
+        sfoListeners.add.forEach((listener) => listener(childId, index));
       },
       remove(parent, childId) {
         /** Called by the Open MCT composition API when compositionCollection.remove() is invoked */
@@ -326,7 +326,6 @@ export default function customCompositionExample() {
            */
           const domainObject = {
             identifier: {
-              namespace: NORCAL_NAMESPACE,
               key: selectedFlightCode
             },
             ...ALL_OBJECTS[selectedFlightCode]
@@ -336,12 +335,26 @@ export default function customCompositionExample() {
            * Randomly select whether to add them to either SFO or NORCAL approach
            */
           if (Math.round(Math.random())) {
+            let insertIndex = NORCAL_OBJECT_IDS.findIndex(
+              (identifier) => selectedFlightCode < identifier.key
+            );
+            if (insertIndex === -1) {
+              insertIndex = NORCAL_OBJECT_IDS.length;
+            }
+            domainObject.identifier.namespace = NORCAL_NAMESPACE;
             /**
              * Call the "add" function on the corresponding composition collection
              */
-            norcalApproachComposition.add(domainObject);
+            norcalApproachComposition.add(domainObject, insertIndex);
           } else {
-            sfoApproachComposition.add(domainObject);
+            let insertIndex = SFO_OBJECT_IDS.findIndex(
+              (identifier) => selectedFlightCode < identifier.key
+            );
+            if (insertIndex === -1) {
+              insertIndex = SFO_OBJECT_IDS.length;
+            }
+            domainObject.identifier.namespace = SFO_NAMESPACE;
+            sfoApproachComposition.add(domainObject, insertIndex);
           }
         }
       }, 5000);
@@ -359,14 +372,15 @@ export default function customCompositionExample() {
           const selectedFlightCode = eligibleFlights[selectedIndex];
           const domainObject = {
             identifier: {
-              namespace: NORCAL_NAMESPACE,
               key: selectedFlightCode
             },
             ...ALL_OBJECTS[selectedFlightCode]
           };
           if (NORCAL_OBJECT_IDS.some((id) => id.key === selectedFlightCode)) {
+            domainObject.identifier.namespace = NORCAL_NAMESPACE;
             norcalApproachComposition.remove(domainObject);
           } else if (SFO_OBJECT_IDS.some((id) => id.key === selectedFlightCode)) {
+            domainObject.identifier.namespace = SFO_NAMESPACE;
             sfoApproachComposition.remove(domainObject);
           }
         }
