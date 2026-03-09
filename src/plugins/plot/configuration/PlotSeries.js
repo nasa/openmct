@@ -374,6 +374,7 @@ export default class PlotSeries extends Model {
    * @private
    */
   sortedIndex(point) {
+    // lodash's sortedIndexBy uses binary search, so it should be quite efficient for most cases.
     return _.sortedIndexBy(this.getSeriesData(), point, this.getXVal);
   }
   /**
@@ -457,6 +458,11 @@ export default class PlotSeries extends Model {
 
     this.updateStats(newData);
     newData.mctLimitState = this.evaluate(newData);
+    // Note: Splicing is a performance bottleneck for large data sets when the insert index
+    // is NOT at the end of the array, this is because inserting into the middle of an array requires
+    // shifting all subsequent elements. For now, leave it as is since for the
+    // majority of cases real-time data will be appended to the end of the array,
+    // and historical data will be added in sorted order.
     data.splice(insertIndex, 0, newData);
     this.updateSeriesData(data);
     this.emit('add', newData, insertIndex, this);
