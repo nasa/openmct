@@ -109,6 +109,12 @@ export default class MCTChartSeriesElement {
 
   append(point, index, series) {
     if (this.chart.pointIsInRange(point, series, index)) {
+      // if the index is less than the current index count,
+      // then this point is being added in the middle of the series, so we reset.
+      if (index !== undefined && index < this.indexCount) {
+        this.reset();
+        return;
+      }
       // if this is the first point in the range, also add the previous point for line continuation
       if (this.indexCount === 0 && index > 0) {
         const previousPoint = series.getSeriesData()[index - 1];
