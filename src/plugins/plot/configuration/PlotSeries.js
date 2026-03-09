@@ -214,7 +214,8 @@ export default class PlotSeries extends Model {
       this.unsubscribe = this.openmct.telemetry.subscribe(
         this.domainObject,
         (data) => {
-          this.addAll(data, true);
+          // We cannot assume that the incoming data is chronologically sound, so sorted = false
+          this.addAll(data, false);
         },
         {
           filters: this.filters,
