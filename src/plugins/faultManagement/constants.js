@@ -38,6 +38,19 @@ const FAULT_SEVERITY = {
   }
 };
 
+const FAULT_ACKNOWLEDGMENT = {
+  UNACKNOWLEDGED: {
+    name: 'UNACKNOWLEDGED',
+    value: false,
+    priority: 0
+  },
+  ACKNOWLEDGED: {
+    name: 'ACKNOWLEDGED',
+    value: true,
+    priority: 1
+  }
+};
+
 export const FAULT_MANAGEMENT_TYPE = 'faultManagement';
 export const FAULT_MANAGEMENT_INSPECTOR = 'faultManagementInspector';
 export const FAULT_MANAGEMENT_ALARMS = 'alarms';
@@ -46,6 +59,28 @@ export const FAULT_MANAGEMENT_VIEW = 'faultManagement.view';
 export const FAULT_MANAGEMENT_NAMESPACE = 'faults.taxonomy';
 export const FILTER_ITEMS = ['Standard View', 'Acknowledged', 'Unacknowledged', 'Shelved'];
 export const SORT_ITEMS = {
+  'unacknowledged-first': {
+    name: 'Unacknowledged First',
+    value: 'unacknowledged-first',
+    sortFunction: (a, b) => {
+      const aAck = Boolean(a.acknowledged);
+      const bAck = Boolean(b.acknowledged);
+
+      if (aAck !== bAck) {
+        return aAck ? 1 : -1;
+      }
+
+      if (b.triggerTime > a.triggerTime) {
+        return 1;
+      }
+
+      if (a.triggerTime > b.triggerTime) {
+        return -1;
+      }
+
+      return 0;
+    }
+  },
   'newest-first': {
     name: 'Newest First',
     value: 'newest-first',
