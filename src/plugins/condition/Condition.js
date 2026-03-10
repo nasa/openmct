@@ -180,7 +180,7 @@ export default class Condition extends EventEmitter {
 
     criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
     criterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-    criterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
+    criterion.on('telemetryStaleness', (obj) => this.handleTelemetryStaleness(obj));
     if (!this.criteria) {
       this.criteria = [];
     }
