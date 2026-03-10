@@ -215,7 +215,7 @@ export default class PlotSeries extends Model {
         this.domainObject,
         (data) => {
           // We cannot assume that the incoming data is chronologically sound, so sorted = false
-          this.addAll(_(data).sortBy(this.getXVal), false);
+          this.addAll(_(data).sortBy(this.getXVal).value(), false);
         },
         {
           filters: this.filters,
@@ -438,6 +438,7 @@ export default class PlotSeries extends Model {
     let insertIndex = data.length;
     const currentYVal = this.getYVal(newData);
     const lastYVal = this.getYVal(data[insertIndex - 1]);
+    const currentXVal = this.getXVal(newData);
 
     if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
       console.warn(`[Plot] Invalid Y Values detected: ${currentYVal} ${lastYVal}`);
@@ -446,14 +447,14 @@ export default class PlotSeries extends Model {
     }
 
     // if the first new data point has an X value > the last data point we already have,  stick it at the end.
-    const isDataInThePast = this.getXVal(newData[0]) <= this.getXVal(data[insertIndex-1]);
+    const isDataInThePast = currentXVal <= this.getXVal(data[insertIndex-1]);
     if (!sorted && isDataInThePast) {
       insertIndex = this.sortedIndex(newData);
-      if (this.getXVal(data[insertIndex]) === this.getXVal(newData)) {
+      if (this.getXVal(data[insertIndex]) === currentXVal) {
         return;
       }
 
-      if (this.getXVal(data[insertIndex - 1]) === this.getXVal(newData)) {
+      if (this.getXVal(data[insertIndex - 1]) === currentXVal) {
         return;
       }
     }
