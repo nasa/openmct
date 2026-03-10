@@ -215,7 +215,7 @@ export default class PlotSeries extends Model {
         this.domainObject,
         (data) => {
           // We cannot assume that the incoming data is chronologically sound, so sorted = false
-          this.addAll(data, false);
+          this.addAll(_(data).sortBy(this.getXVal), false);
         },
         {
           filters: this.filters,
@@ -445,7 +445,9 @@ export default class PlotSeries extends Model {
       return;
     }
 
-    if (!sorted) {
+    // if the first new data point has an X value > the last data point we already have,  stick it at the end.
+    const isDataInThePast = this.getXVal(newData[0]) <= this.getXVal(data[insertIndex-1]);
+    if (!sorted && isDataInThePast) {
       insertIndex = this.sortedIndex(newData);
       if (this.getXVal(data[insertIndex]) === this.getXVal(newData)) {
         return;
