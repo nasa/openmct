@@ -108,7 +108,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         this.telemetryDataCache[id] = stalenessResponse.isStale;
         this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
 
-        this.emitEvent('telemetryStaleness');
+        this.emitEvent('telemetryStaleness', this);
       }
     }
   }

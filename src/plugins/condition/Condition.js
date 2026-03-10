@@ -261,12 +261,19 @@ export default class Condition extends EventEmitter {
     this.conditionManager.updateCurrentCondition(latestTimestamp, this);
   }
 
-  handleTelemetryStaleness() {
+  handleTelemetryStaleness(updatedCriterion) {
     this.result = evaluateResults(
       this.criteria.map((criterion) => criterion.result),
       this.trigger
     );
-    this.conditionManager.updateCurrentCondition();
+    let latestTimestamp = {};
+    latestTimestamp = getLatestTimestamp(
+      latestTimestamp,
+      updatedCriterion.data,
+      this.timeSystems,
+      this.openmct.time.getTimeSystem()
+    );
+    this.conditionManager.updateCurrentCondition(latestTimestamp, this);
   }
 
   updateDescription() {
