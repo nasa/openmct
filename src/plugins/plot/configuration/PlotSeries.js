@@ -447,7 +447,7 @@ export default class PlotSeries extends Model {
     }
 
     // if the first new data point has an X value > the last data point we already have,  stick it at the end.
-    const isDataInThePast = currentXVal <= this.getXVal(data[insertIndex-1]);
+    const isDataInThePast = currentXVal <= this.getXVal(data[insertIndex - 1]);
     if (!sorted && isDataInThePast) {
       insertIndex = this.sortedIndex(newData);
       if (this.getXVal(data[insertIndex]) === currentXVal) {
