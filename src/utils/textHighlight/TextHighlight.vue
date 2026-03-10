@@ -47,16 +47,22 @@ export default {
   computed: {
     highlightedText() {
       const highlight = this.highlight;
+      if (!highlight) {
+        return this.text;
+      }
 
       const normalCharsRegex = /^[^A-Za-z0-9]+$/g;
 
       const newHighLight = normalCharsRegex.test(highlight) ? `\\${highlight}` : highlight;
 
-      const highlightRegex = new RegExp(`(?<!<[^>]*)(${newHighLight})`, 'gi');
+      try {
+        const highlightRegex = new RegExp(`(?<!<[^>]*)(${newHighLight})`, 'gi');
+        const replacement = `<span class="${this.highlightClass}">${highlight}</span>`;
 
-      const replacement = `<span class="${this.highlightClass}">${highlight}</span>`;
-
-      return this.text.replace(highlightRegex, replacement);
+        return this.text.replace(highlightRegex, replacement);
+      } catch (e) {
+        return this.text;
+      }
     }
   }
 };
