@@ -104,8 +104,8 @@ export default class ConditionManager extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.updateConditionResults({ id: keyString });
-    this.updateCurrentCondition(latestTimestamp);
+    const condition = this.updateConditionResults({ id: keyString });
+    this.updateCurrentCondition(latestTimestamp, condition);
 
     if (Object.keys(this.telemetryObjects).length === 0) {
       // no telemetry objects
