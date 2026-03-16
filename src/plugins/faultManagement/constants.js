@@ -38,18 +38,17 @@ const FAULT_SEVERITY = {
   }
 };
 
-const FAULT_ACKNOWLEDGMENT = {
-  UNACKNOWLEDGED: {
-    name: 'UNACKNOWLEDGED',
-    value: false,
-    priority: 0
-  },
-  ACKNOWLEDGED: {
-    name: 'ACKNOWLEDGED',
-    value: true,
-    priority: 1
+function sortByTriggerTime(a, b) {
+  if (b.triggerTime > a.triggerTime) {
+    return 1;
   }
-};
+
+  if (a.triggerTime > b.triggerTime) {
+    return -1;
+  }
+
+  return 0;
+}
 
 export const FAULT_MANAGEMENT_TYPE = 'faultManagement';
 export const FAULT_MANAGEMENT_INSPECTOR = 'faultManagementInspector';
@@ -70,31 +69,13 @@ export const SORT_ITEMS = {
         return aAck ? 1 : -1;
       }
 
-      if (b.triggerTime > a.triggerTime) {
-        return 1;
-      }
-
-      if (a.triggerTime > b.triggerTime) {
-        return -1;
-      }
-
-      return 0;
+      return sortByTriggerTime(a, b);
     }
   },
   'newest-first': {
     name: 'Newest First',
     value: 'newest-first',
-    sortFunction: (a, b) => {
-      if (b.triggerTime > a.triggerTime) {
-        return 1;
-      }
-
-      if (a.triggerTime > b.triggerTime) {
-        return -1;
-      }
-
-      return 0;
-    }
+    sortFunction: sortByTriggerTime
   },
   'oldest-first': {
     name: 'Oldest First',
@@ -120,15 +101,7 @@ export const SORT_ITEMS = {
         return diff;
       }
 
-      if (b.triggerTime > a.triggerTime) {
-        return 1;
-      }
-
-      if (a.triggerTime > b.triggerTime) {
-        return -1;
-      }
-
-      return 0;
+      return sortByTriggerTime(a, b);
     }
   }
 };
