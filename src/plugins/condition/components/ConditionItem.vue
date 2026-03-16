@@ -507,13 +507,6 @@ export default {
           this.telemetryMetadataOptions[id] = [];
         }
       });
-    },
-    getId(identifier) {
-      if (identifier) {
-        return this.openmct.objects.makeKeyString(identifier);
-      }
-
-      return [];
     }
   }
 };
