@@ -487,7 +487,8 @@
     "pageerror",
     "annotatable",
     "requestfinished",
-    "LOCF"
+    "LOCF",
+    "Unack"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [
