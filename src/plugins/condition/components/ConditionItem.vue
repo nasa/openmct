@@ -139,9 +139,7 @@
             >
               <option value="">- Select Field -</option>
               <option
-                v-for="option in telemetryMetadataOptions[
-                  condition.configuration.outputTelemetry
-                ]"
+                v-for="option in telemetryMetadataOptions[condition.configuration.outputTelemetry]"
                 :key="option.key"
                 :value="option.key"
               >
