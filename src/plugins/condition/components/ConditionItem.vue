@@ -139,10 +139,10 @@
             >
               <option value="">- Select Field -</option>
               <option
-                v-for="(option, index) in telemetryMetadataOptions[
+                v-for="option in telemetryMetadataOptions[
                   condition.configuration.outputTelemetry
                 ]"
-                :key="index"
+                :key="option.key"
                 :value="option.key"
               >
                 {{ option.name }}
@@ -507,6 +507,7 @@ export default {
           this.telemetryMetadataOptions[id] = [];
         }
       });
+      console.log('telemetryMetadataOptions', this.telemetryMetadataOptions);
     }
   }
 };
