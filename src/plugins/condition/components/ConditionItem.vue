@@ -124,8 +124,8 @@
               <option value="">- Select Telemetry -</option>
               <option
                 v-for="telemetryOption in telemetry"
-                :key="openmct.objects.makeKeyString(telemetryOption.identifier)"
-                :value="openmct.objects.makeKeyString(telemetryOption.identifier)"
+                :key="telemetryOption.keyString"
+                :value="telemetryOption.keyString"
               >
                 {{ telemetryOption.path }}
               </option>
@@ -496,7 +496,7 @@ export default {
     },
     initializeMetadata() {
       this.telemetry.forEach((telemetryObject) => {
-        const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        const id = telemetryObject.keyString;
         let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
         if (telemetryMetadata) {
           this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();

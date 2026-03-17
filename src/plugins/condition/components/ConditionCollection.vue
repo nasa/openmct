@@ -239,7 +239,11 @@ export default {
       const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
       const telemetryPath = await this.getFullTelemetryPath(domainObject);
 
-      this.telemetryObjs.push({ ...domainObject, path: telemetryPath });
+      this.telemetryObjs.push({
+        ...domainObject,
+        path: telemetryPath,
+        keyString
+      });
       this.$emit('telemetry-updated', this.telemetryObjs);
 
       this.subscribeToStaleness(domainObject, (stalenessResponse) => {
@@ -264,11 +268,7 @@ export default {
     },
     removeTelemetryObject(identifier) {
       const keyString = this.openmct.objects.makeKeyString(identifier);
-      const index = this.telemetryObjs.findIndex((obj) => {
-        let objId = this.openmct.objects.makeKeyString(obj.identifier);
-
-        return objId === keyString;
-      });
+      const index = this.telemetryObjs.findIndex((obj) => obj.keyString === keyString);
 
       const domainObject = this.telemetryObjs[index];
       this.triggerUnsubscribeFromStaleness(domainObject, () => {
