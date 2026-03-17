@@ -66,7 +66,7 @@ export default function ConditionInspectorView(openmct) {
           return isEditing;
         },
         priority: function () {
-          return 1;
+          return openmct.priority.HIGH;
         },
         destroy: function () {
           if (_destroy) {

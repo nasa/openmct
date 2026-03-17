@@ -507,12 +507,16 @@ export default class ConditionManager extends EventEmitter {
   async processBuffer() {
     this.isProcessing = true;
 
-    while (this.telemetryBuffer.length > 0) {
-      const { timestamp, telemetryObject, telemetryData } = this.telemetryBuffer.shift();
-      await this.processCondition(timestamp, telemetryObject, telemetryData);
+    try {
+      while (this.telemetryBuffer.length > 0 && !this.isProcessing) {
+        const { timestamp, telemetryObject, telemetryData } = this.telemetryBuffer.shift();
+        await this.processCondition(timestamp, telemetryObject, telemetryData);
+      }
+    } catch (error) {
+      console.error('Error processing telemetry buffer', error);
+    } finally {
+      this.isProcessing = false;
     }
-
-    this.isProcessing = false;
   }
 
   async processCondition(timestamp, telemetryObject, telemetryData) {
