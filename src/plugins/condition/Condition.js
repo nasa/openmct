@@ -81,7 +81,6 @@ export default class Condition extends EventEmitter {
 
   updateResult(latestDataTable, telemetryIdThatChanged) {
     if (!latestDataTable) {
-      console.log('no data received');
       return;
     }
 
@@ -267,7 +266,6 @@ export default class Condition extends EventEmitter {
 
     // Extract telemetry object from the criterion
     const telemetryObject = triggeringCriterion?.telemetryObject;
-    console.log('updatedCriterion', updatedCriterion);
 
     // Pass the telemetry object and data to the condition manager
     this.conditionManager.updateCurrentCondition(
