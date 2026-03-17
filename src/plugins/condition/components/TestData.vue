@@ -245,22 +245,6 @@ export default {
         applied: this.isApplied,
         conditionTestInputs: this.testInputs
       });
-    },
-    async getFullTelemetryPath(telemetry) {
-      const keyStringForObject = this.openmct.objects.makeKeyString(telemetry.identifier);
-      const originalPathObjects = await this.openmct.objects.getOriginalPath(
-        keyStringForObject,
-        []
-      );
-
-      const telemetryPath = originalPathObjects.reverse().map((pathObject) => {
-        if (pathObject.type !== 'root') {
-          return pathObject.name;
-        }
-        return undefined;
-      });
-
-      return telemetryPath.join('/');
     }
   }
 };
