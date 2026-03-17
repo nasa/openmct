@@ -507,7 +507,6 @@ export default {
           this.telemetryMetadataOptions[id] = [];
         }
       });
-      console.log('telemetryMetadataOptions', this.telemetryMetadataOptions);
     }
   }
 };
