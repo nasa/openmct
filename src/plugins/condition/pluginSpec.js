@@ -787,7 +787,7 @@ describe('the plugin', function () {
       );
     });
 
-    fit('should not evaluate as old when telemetry is received in the allotted time', async () => {
+    it('should not evaluate as old when telemetry is received in the allotted time', async () => {
       const testDatum = {
         'some-key2': '',
         utc: 1,

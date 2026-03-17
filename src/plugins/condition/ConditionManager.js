@@ -508,7 +508,7 @@ export default class ConditionManager extends EventEmitter {
     this.isProcessing = true;
 
     try {
-      while (this.telemetryBuffer.length > 0 && !this.isProcessing) {
+      while (this.telemetryBuffer.length > 0) {
         const { timestamp, telemetryObject, telemetryData } = this.telemetryBuffer.shift();
         await this.processCondition(timestamp, telemetryObject, telemetryData);
       }
