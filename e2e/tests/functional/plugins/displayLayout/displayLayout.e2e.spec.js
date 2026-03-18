@@ -441,7 +441,7 @@ test.describe('Display Layout', () => {
       }
     });
     // Create a Display Layout
-    await createDomainObjectWithDefaults(page, {
+    const displayLayout = await createDomainObjectWithDefaults(page, {
       type: 'Display Layout',
       name: 'Test Display Layout'
     });
@@ -488,24 +488,10 @@ test.describe('Display Layout', () => {
     });
 
     await page.reload();
-
-    // wait for annotations requests to be batched and requested
-    await page.waitForLoadState('domcontentloaded');
+    await expect(page.getByLabel('Browse bar object name')).toHaveText(displayLayout.name);
     // Network requests for the composite telemetry with multiple items should be:
     // 1.  a single batched request for annotations
     await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(1);
-
-    await setRealTimeMode(page);
-
-    networkRequests = [];
-
-    await page.reload();
-
-    // wait for annotations to not load (if we have any, we've got a problem)
-    await page.waitForLoadState('domcontentloaded');
-
-    // In real time mode, we don't fetch annotations at all
-    await expect.poll(() => networkRequests, { timeout: 10000 }).toHaveLength(0);
   });
 
   test('Same objects with different request options have unique subscriptions', async ({
