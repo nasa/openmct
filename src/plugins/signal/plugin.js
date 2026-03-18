@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2026, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,26 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createMyItemsIdentifier } from './createMyItemsIdentifier.js';
-import myItemsInterceptor from './myItemsInterceptor.js';
+import { installSignalObjectProvider } from './objects/signal-object-provider.js';
+import SignalCompositionPolicy from './SignalCompositionPolicy.js';
+import { installSignalTelemetryProvider } from './telemetry/signal-telemetry-provider.js';
+import { getSignalModuleTypeDefinitions } from './types/signal-types.js';
+import { installSignalViewProvider } from './views/signal-view-provider.js';
 
-const MY_ITEMS_DEFAULT_NAME = 'My Signals';
-const MY_ITEMS_DEFAULT_KEY = 'mine';
-
-export default function MyItemsPlugin(
-  name = MY_ITEMS_DEFAULT_NAME,
-  namespace = '',
-  priority = undefined,
-  key = MY_ITEMS_DEFAULT_KEY
-) {
+export default function SignalPlugin() {
   return function install(openmct) {
-    const identifierObject = createMyItemsIdentifier(namespace, key);
+    getSignalModuleTypeDefinitions().forEach(([typeKey, definition]) => {
+      openmct.types.addType(typeKey, definition);
+    });
 
-    if (priority === undefined) {
-      priority = openmct.priority.LOW;
-    }
+    openmct.composition.addPolicy(SignalCompositionPolicy());
 
-    openmct.objects.addGetInterceptor(myItemsInterceptor({ openmct, identifierObject, name }));
-    openmct.objects.addRoot(identifierObject, priority);
+    installSignalObjectProvider(openmct);
+    installSignalTelemetryProvider(openmct);
+    installSignalViewProvider(openmct);
   };
 }

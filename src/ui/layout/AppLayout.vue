@@ -33,21 +33,20 @@
       :class="{
         'l-shell__head--expanded': headExpanded,
         'l-shell__head--minify-indicators': !headExpanded,
-        'l-shell__head--indicators-single-line': !indicatorsMultiline
+        'l-shell__head--indicators-single-line': true
       }"
     >
-      <CreateButton class="l-shell__create-button" />
+      <CreateButton
+        class="l-shell__create-button"
+        button-label="SIGNALS"
+        create-menu-group="signals"
+        target-root-key="mine-signals"
+        target-namespace=""
+      />
       <GrandSearch ref="grand-search" />
       <StatusIndicators ref="indicatorsComponent" />
       <button
-        class="l-shell__head__button"
-        :class="indicatorsMultilineCssClass"
-        :aria-label="indicatorsMultilineLabel"
-        :title="indicatorsMultilineLabel"
-        @click="toggleIndicatorsMultiline"
-      ></button>
-      <button
-        class="l-shell__head__button"
+        class="l-shell__head__button c-icon-button"
         :class="headExpanded ? 'icon-items-collapse' : 'icon-items-expand'"
         :aria-label="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
         :title="`Show ${headExpanded ? 'icon only' : 'icon and name'}`"
@@ -150,11 +149,6 @@
           :show-edit-view="true"
           @change-action-collection="setActionCollection"
         />
-        <component
-          :is="conductorComponent"
-          class="l-shell__time-conductor"
-          aria-label="Global Time Conductor"
-        />
       </Pane>
       <Pane
         class="l-shell__pane-inspector l-pane--holds-multipane"
@@ -190,7 +184,6 @@ import StatusIndicators from './status-bar/StatusIndicators.vue';
 
 const SHELL_HEAD_LOCAL_STORAGE_KEY = 'openmct-shell-head';
 const DEFAULT_HEAD_EXPANDED = true;
-const DEFAULT_INDICATORS_MULTILINE = true;
 
 export default {
   components: {
@@ -210,76 +203,27 @@ export default {
   },
   inject: ['openmct'],
   setup() {
-    let resizeObserver;
-    let element;
-
     const storedHeadProps = localStorage.getItem(SHELL_HEAD_LOCAL_STORAGE_KEY);
     const storedHeadPropsObject = JSON.parse(storedHeadProps);
     const storedHeadExpanded = storedHeadPropsObject?.expanded;
-    const storedIndicatorsMultiline = storedHeadPropsObject?.multiline;
-
     // template ref of StatusIndicators component
     const indicatorsComponent = ref(null);
 
-    const width = ref(null);
-    const scrollWidth = ref(null);
     const headExpanded = ref(storedHeadExpanded ?? DEFAULT_HEAD_EXPANDED);
-    const indicatorsMultiline = ref(storedIndicatorsMultiline ?? DEFAULT_INDICATORS_MULTILINE);
-
-    const isOverflowing = computed(() => scrollWidth.value > width.value);
-    const indicatorsMultilineCssClass = computed(() => {
-      const multilineClass = indicatorsMultiline.value ? 'icon-singleline' : 'icon-multiline';
-      const overflowingClass =
-        isOverflowing.value && !indicatorsMultiline.value
-          ? 'c-button c-button--major'
-          : 'c-icon-button';
-      return `${multilineClass} ${overflowingClass}`;
-    });
-    const indicatorsMultilineLabel = computed(() => {
-      return `Display as ${indicatorsMultiline.value ? 'single line' : 'multiple lines'}`;
-    });
 
     const initialHeadProps = JSON.stringify({
-      expanded: headExpanded.value,
-      multiline: indicatorsMultiline.value
+      expanded: headExpanded.value
     });
 
     if (initialHeadProps !== storedHeadProps) {
       localStorage.setItem(SHELL_HEAD_LOCAL_STORAGE_KEY, initialHeadProps);
     }
 
-    onMounted(() => {
-      resizeObserver = new ResizeObserver((entries) => {
-        width.value = entries[0].target.clientWidth;
-        scrollWidth.value = entries[0].target.scrollWidth;
-      });
+    onMounted(() => {});
 
-      // indicatorsContainer is a template ref inside of indicatorsComponent
-      element = indicatorsComponent.value.$refs.indicatorsContainer;
+    onUnmounted(() => {});
 
-      if (!indicatorsMultiline.value) {
-        observeIndicatorsOverflow();
-      }
-    });
-
-    onUnmounted(() => {
-      resizeObserver.disconnect();
-    });
-
-    function observeIndicatorsOverflow() {
-      resizeObserver.observe(element);
-    }
-
-    function unObserveIndicatorsOverflow() {
-      resizeObserver.unobserve(element);
-    }
-
-    function checkIndicatorsElementWidths() {
-      if (!indicatorsMultiline.value) {
-        width.value = element.clientWidth;
-        scrollWidth.value = element.scrollWidth;
-      }
-    }
+    function checkIndicatorsElementWidths() {}
 
     async function toggleShellHead() {
       headExpanded.value = !headExpanded.value;
@@ -290,35 +234,18 @@ export default {
       checkIndicatorsElementWidths();
     }
 
-    function toggleIndicatorsMultiline() {
-      indicatorsMultiline.value = !indicatorsMultiline.value;
-      setLocalStorageShellHead();
-
-      if (indicatorsMultiline.value) {
-        unObserveIndicatorsOverflow();
-      } else {
-        observeIndicatorsOverflow();
-      }
-    }
-
     function setLocalStorageShellHead() {
       localStorage.setItem(
         SHELL_HEAD_LOCAL_STORAGE_KEY,
         JSON.stringify({
-          expanded: headExpanded.value,
-          multiline: indicatorsMultiline.value
+          expanded: headExpanded.value
         })
       );
     }
 
     return {
       indicatorsComponent,
-      isOverflowing,
       headExpanded,
-      indicatorsMultiline,
-      indicatorsMultilineCssClass,
-      indicatorsMultilineLabel,
-      toggleIndicatorsMultiline,
       toggleShellHead
     };
   },

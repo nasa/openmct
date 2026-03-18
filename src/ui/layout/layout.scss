@@ -234,9 +234,14 @@
     align-items: center;
     background: $colorHeadBg;
     display: grid;
-    grid-template-columns: min-content 1fr 3fr repeat(4, min-content);
+    grid-template-columns: min-content min-content 1fr repeat(4, min-content);
     grid-column-gap: $interiorMargin;
     padding: $interiorMargin $interiorMargin + 2;
+
+    > .c-gsearch {
+      width: 100%;
+      max-width: 420px;
+    }
 
     .l-shell__head__button {
       color: $colorBtnMajorBg;
