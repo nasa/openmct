@@ -31,7 +31,6 @@ import {
   setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
-import { NodePackageImporter } from 'sass';
 
 const CHILD_LAYOUT_STORAGE_STATE_PATH = fileURLToPath(
   new URL('../../../../test-data/display_layout_with_child_layouts.json', import.meta.url)
