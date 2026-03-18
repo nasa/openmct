@@ -267,9 +267,10 @@ export default class Condition extends EventEmitter {
       this.trigger
     );
     let latestTimestamp = {};
+    // !!!PAY ATTENTION!!! @ANDREW!!! - THIS IS RETURNING UNDEFINED
     latestTimestamp = getLatestTimestamp(
       latestTimestamp,
-      updatedCriterion.data,
+      updatedCriterion.data.data,
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
