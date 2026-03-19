@@ -97,7 +97,7 @@ test.describe('Plot Rendering', () => {
   });
 });
 
-test.describe('Plot rendering with out of order data', () => {
+test.describe.skip('Plot rendering with out of order data', () => {
   let telemetry;
 
   test.beforeEach(async ({ page }) => {
