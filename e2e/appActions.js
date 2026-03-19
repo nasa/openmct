@@ -245,14 +245,14 @@ async function createExampleTelemetryObject(page, parent = 'mine') {
  * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
  */
-async function createStableStateTelemetry(page, parent = 'mine', outofOrder = false) {
+async function createStableStateTelemetry(page, parent = 'mine', outOfOrder = false) {
   const parentUrl = await getHashUrlToDomainObject(page, parent);
 
   await page.goto(`${parentUrl}`);
   const createdObject = await createDomainObjectWithDefaults(page, {
     type: 'State Generator',
     name: 'Stable State Generator',
-    additionalOptions: { outofOrder }
+    additionalOptions: { outOfOrder }
   });
   // edit the state generator to have a 1 second update rate
   await page.getByLabel('More actions').click();
