@@ -23,7 +23,6 @@
 /*
 This test suite is dedicated to tests which verify the basic operations surrounding conditionSets and styling
 */
-import _ from 'lodash';
 import {
   createDomainObjectWithDefaults,
   linkParameterToObject,
