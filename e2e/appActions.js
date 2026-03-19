@@ -259,6 +259,36 @@ async function createStableStateTelemetry(page, parent = 'mine') {
 }
 
 /**
+ * Create a Out of order State Telemetry Object (State Generator) for use in visual tests
+ * and tests against plotting telemetry (e.g. logPlot tests). This will change state every 2 seconds.
+ * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
+ */
+async function createOutOfOrderStateTelemetry(page, parent = 'mine', duration = 0.25) {
+  const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+  await page.goto(`${parentUrl}`);
+  const createdObject = await createDomainObjectWithDefaults(
+    page,
+    {
+      type: 'State Generator',
+      name: 'Stable State Generator'
+    },
+    { outOfOrder: true, duration: duration.toString() }
+  );
+  // Wait until the URL is updated
+  const uuid = await getFocusedObjectUuid(page);
+  const url = await getHashUrlToDomainObject(page, uuid);
+
+  return {
+    name: createdObject.name,
+    uuid,
+    url
+  };
+}
+
+/**
  * Navigates directly to a given object url, in fixed time mode, with the given start and end bounds. Note: does not set
  * default view type.
  *
@@ -701,6 +731,7 @@ export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
+  createOutOfOrderStateTelemetry,
   createPlanFromJSON,
   createStableStateTelemetry,
   expandEntireTree,
