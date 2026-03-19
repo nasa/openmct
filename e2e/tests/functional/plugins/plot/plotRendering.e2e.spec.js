@@ -27,7 +27,7 @@
 
 import {
   createDomainObjectWithDefaults,
-  createStableStateTelemetry,
+  createOutOfOrderStateTelemetry,
   getCanvasPixels,
   setRealTimeMode
 } from '../../../../appActions.js';
@@ -103,8 +103,7 @@ test.describe.skip('Plot rendering with out of order data', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(VISUAL_REALTIME_URL, { waitUntil: 'domcontentloaded' });
 
-    // Create State generator with out of order set to TRUE to test telemetry table with out of order data
-    telemetry = await createStableStateTelemetry(page, 'mine', true);
+    telemetry = await createOutOfOrderStateTelemetry(page);
   });
 
   test('Out of Order Plot Paused', async ({ page, theme }) => {
