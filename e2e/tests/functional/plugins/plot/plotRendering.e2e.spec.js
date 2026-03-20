@@ -27,9 +27,11 @@
 
 import {
   createDomainObjectWithDefaults,
+  createOutOfOrderStateTelemetry,
   getCanvasPixels,
   setRealTimeMode
 } from '../../../../appActions.js';
+import { VISUAL_REALTIME_URL } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Rendering', () => {
@@ -92,6 +94,28 @@ test.describe('Plot Rendering', () => {
     const plotPixels = await getCanvasPixels(page, 'canvas');
     const plotPixelSize = plotPixels.length;
     expect(plotPixelSize).toBeGreaterThan(0);
+  });
+});
+
+test.describe.skip('Plot rendering with out of order data', () => {
+  let telemetry;
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(VISUAL_REALTIME_URL, { waitUntil: 'domcontentloaded' });
+
+    telemetry = await createOutOfOrderStateTelemetry(page);
+  });
+
+  test('Out of Order Plot Paused', async ({ page, theme }) => {
+    await page.goto(telemetry.url, { waitUntil: 'domcontentloaded' });
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on pause control
+    await page.getByTitle('Pause incoming real-time data').click();
+
+    // there should be no out of order data in the plot. This is verified by checking that the out of order y-axis label is not present in the plot. If the out of order data is present, the y-axis label will be present in the plot.
+    await expect(page.getByText('OUT OF ORDER', { exact: true })).toHaveCount(0);
   });
 });
 
