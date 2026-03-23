@@ -90,6 +90,7 @@ export default class ConditionManager extends EventEmitter {
   }
 
   unsubscribeFromTelemetry(endpointIdentifier) {
+    console.log('unsubscribeFromTelemetry', endpointIdentifier);
     const keyString = this.openmct.objects.makeKeyString(endpointIdentifier);
     if (!this.telemetryCollections[keyString]) {
       return;
@@ -531,11 +532,13 @@ export default class ConditionManager extends EventEmitter {
       if (currentCondition?.configuration?.outputTelemetry) {
         const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
         const outputMetadata = currentCondition?.configuration?.outputMetadata;
-        const telemetryKeystring = this.openmct.objects.makeKeyString(telemetryObject.identifier);
         const timeSystemKey = this.openmct.time.getTimeSystem().key;
+        const telemetryKeystring = telemetryObject
+          ? this.openmct.objects.makeKeyString(telemetryObject.identifier)
+          : null;
 
-        if (selectedOutputIdentifier === telemetryKeystring) {
-          telemetryValue = telemetryData[outputMetadata];
+        if (telemetryKeystring && selectedOutputIdentifier === telemetryKeystring) {
+          telemetryValue = telemetryData?.[outputMetadata];
         } else {
           const outputTelemetryObject = await this.openmct.objects.get(selectedOutputIdentifier);
           const telemetryOptions = {
