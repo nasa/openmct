@@ -98,7 +98,7 @@ test.describe('Plot Rendering', () => {
   });
 });
 
-test.describe.only('Visual - Plot rendering with out of order data @clock', () => {
+test.describe('Visual - Plot rendering with out of order data @clock', () => {
   test('Out of Order data is rendered correctly - with no backward (golf club) interpolation @snapshot', async ({
     page
   }) => {
