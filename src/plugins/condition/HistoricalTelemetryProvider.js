@@ -87,8 +87,7 @@ export default class HistoricalTelemetryProvider {
 
   async getAllTelemetries(conditionCollection) {
     const conditionCollectionMap = new Map();
-    const inputTelemetries = [];
-    const outputTelemetries = [];
+    const telemetriesToFetch = new Set();
     const historicalTelemetryPoolPromises = [];
 
     const hasAnyAllTelemetry = conditionCollection.some((condition) =>
@@ -101,9 +100,9 @@ export default class HistoricalTelemetryProvider {
       // Short-circuit and fetch ALL telemetry objects from composition
       this.conditionSetDomainObject.composition.forEach((telemetryRef) => {
         const telemetryId = this.openmct.objects.makeKeyString(telemetryRef);
-        if (![...inputTelemetries, ...outputTelemetries].includes(telemetryId)) {
+        if (!telemetriesToFetch.has(telemetryId)) {
           historicalTelemetryPoolPromises.push(this.refreshHistoricalTelemetry(null, telemetryRef));
-          inputTelemetries.push(telemetryId);
+          telemetriesToFetch.add(telemetryId);
         }
       });
     } else {
@@ -117,23 +116,23 @@ export default class HistoricalTelemetryProvider {
 
           if (inputTelemetry) {
             const inputTelemetryId = this.openmct.objects.makeKeyString(inputTelemetry);
-            if (![...inputTelemetries, ...outputTelemetries].includes(inputTelemetryId)) {
+            if (!telemetriesToFetch.has(inputTelemetryId)) {
               historicalTelemetryPoolPromises.push(
                 this.refreshHistoricalTelemetry(null, inputTelemetry)
               );
             }
-            inputTelemetries.push(inputTelemetryId);
+            telemetriesToFetch.add(inputTelemetryId);
           }
         });
 
         // Handle output telemetry outside of criteria loop, only need to fetch once at condition level
         if (outputTelemetry) {
-          if (![...inputTelemetries, ...outputTelemetries].includes(outputTelemetry)) {
+          if (!telemetriesToFetch.has(outputTelemetry)) {
             historicalTelemetryPoolPromises.push(
               this.refreshHistoricalTelemetry(null, outputTelemetry)
             );
           }
-          outputTelemetries.push(outputTelemetry);
+          telemetriesToFetch.add(outputTelemetry);
         }
       });
     }
