@@ -29,9 +29,10 @@ import {
   createDomainObjectWithDefaults,
   createOutOfOrderStateTelemetry,
   getCanvasPixels,
-  setRealTimeMode
+  setEndOffset,
+  setRealTimeMode,
+  setStartOffset
 } from '../../../../appActions.js';
-import { VISUAL_REALTIME_URL } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Rendering', () => {
@@ -97,25 +98,64 @@ test.describe('Plot Rendering', () => {
   });
 });
 
-test.describe.skip('Plot rendering with out of order data', () => {
-  let telemetry;
+test.describe.only('Visual - Plot rendering with out of order data @clock', () => {
+  test('Out of Order data is rendered correctly - with no backward (golf club) interpolation @snapshot', async ({
+    page
+  }) => {
+    await page.addInitScript(() => {
+      window.glBuffers = [];
+      const orgBufferData = WebGLRenderingContext.prototype.bufferData;
 
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_REALTIME_URL, { waitUntil: 'domcontentloaded' });
+      WebGLRenderingContext.prototype.bufferData = function (target, data, usage) {
+        if (data instanceof Float32Array && data.length > 10) {
+          // Store the buffer so the test can inspect it
+          window.glBuffers.push(Array.from(data));
+        }
+        return orgBufferData.call(this, target, data, usage);
+      };
+    });
 
-    telemetry = await createOutOfOrderStateTelemetry(page);
-  });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-  test('Out of Order Plot Paused', async ({ page, theme }) => {
-    await page.goto(telemetry.url, { waitUntil: 'domcontentloaded' });
+    const startOffset = {
+      startMins: '00',
+      startSecs: '10'
+    };
 
-    // hover over plot for plot controls
-    await page.getByLabel('Plot Canvas').hover();
-    // click on pause control
-    await page.getByTitle('Pause incoming real-time data').click();
+    const endOffset = {
+      endMins: '01',
+      endSecs: '00'
+    };
 
-    // there should be no out of order data in the plot. This is verified by checking that the out of order y-axis label is not present in the plot. If the out of order data is present, the y-axis label will be present in the plot.
-    await expect(page.getByText('OUT OF ORDER', { exact: true })).toHaveCount(0);
+    await setRealTimeMode(page);
+    await setStartOffset(page, startOffset);
+
+    await setEndOffset(page, endOffset);
+
+    await createOutOfOrderStateTelemetry(page);
+
+    await page.getByText('OUT OF ORDER', { exact: true }).waitFor({ timeout: 10000 });
+    // after out of order data is received, we need a couple more cycles for the plot to update
+    const bufferCount = await page.evaluate(() => window.glBuffers.length);
+
+    // This proves the renderer has cycled at least once since the data arrived
+    await page.waitForFunction((oldLimit) => window.glBuffers.length > oldLimit + 60, bufferCount);
+
+    // Inspect the Buffers
+    const hasBackwardsLine = await page.evaluate(() => {
+      return window.glBuffers.some((buffer) => {
+        for (let i = 2; i < buffer.length; i += 2) {
+          const currentX = buffer[i];
+          const prevX = buffer[i - 2];
+          // If current X is less than previous X, the line draws backward
+          if (currentX < prevX && currentX !== 0 && prevX !== 0) {
+            return true;
+          }
+        }
+        return false;
+      });
+    });
+    expect(hasBackwardsLine).toBe(false);
   });
 });
 
