@@ -127,12 +127,13 @@ export default class HistoricalTelemetryProvider {
 
         // Handle output telemetry outside of criteria loop, only need to fetch once at condition level
         if (outputTelemetry) {
-          if (!telemetriesToFetch.has(outputTelemetry)) {
+          const outputTelemetryId = this.openmct.objects.makeKeyString(outputTelemetry);
+          if (!telemetriesToFetch.has(outputTelemetryId)) {
             historicalTelemetryPoolPromises.push(
               this.refreshHistoricalTelemetry(null, outputTelemetry)
             );
           }
-          telemetriesToFetch.add(outputTelemetry);
+          telemetriesToFetch.add(outputTelemetryId);
         }
       });
     }
