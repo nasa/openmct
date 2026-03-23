@@ -208,7 +208,6 @@ async function testHoursTimeSeriesTicks(page) {
   await expect(xTicks.nth(7)).toHaveText('07:10:00');
   await expect(xTicks.nth(8)).toHaveText('08:00:00');
   await expect(xTicks.nth(9)).toHaveText('08:50:00');
-
 }
 
 async function testMinutesTimeSeriesTicks(page) {
