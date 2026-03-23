@@ -235,7 +235,7 @@ export default class HistoricalTelemetryProvider {
     return conditionResults;
   }
 
-  getCurrentConditionForTimestamp(conditionResults, conditionCollectionMap) {
+  getCurrentConditionForTimestamp(conditionResults) {
     const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
     let currentCondition = conditionCollection[conditionCollection.length - 1];
 
@@ -291,10 +291,7 @@ export default class HistoricalTelemetryProvider {
       );
 
       // Step 2: Determine which condition should be active
-      const currentCondition = this.getCurrentConditionForTimestamp(
-        conditionResults,
-        conditionCollectionMap
-      );
+      const currentCondition = this.getCurrentConditionForTimestamp(conditionResults);
 
       // Step 3: Process the output for the current condition
       const conditionOutput = this.processConditionOutput(
