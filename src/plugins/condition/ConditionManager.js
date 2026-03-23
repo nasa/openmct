@@ -330,7 +330,7 @@ export default class ConditionManager extends EventEmitter {
     return currentCondition;
   }
 
-  getHistoricalData(options) {
+  async getHistoricalData(options) {
     if (!this.conditionSetDomainObject.configuration.shouldFetchHistorical) {
       return [];
     }
@@ -342,7 +342,7 @@ export default class ConditionManager extends EventEmitter {
       this.conditionSetDomainObject,
       options
     );
-    const historicalData = historicalTelemetry.getHistoricalData();
+    const historicalData = await historicalTelemetry.getHistoricalData();
     historicalTelemetry = null;
 
     return historicalData;
