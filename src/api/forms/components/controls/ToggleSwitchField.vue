@@ -24,7 +24,7 @@
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
       <ToggleSwitch
-        id="switchId"
+        :id="`form-${model.key}`"
         :checked="isChecked"
         :name="model.name"
         @change="toggleCheckBox"
@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid';
-
 import ToggleSwitch from '@/ui/components/ToggleSwitch.vue';
 
 import toggleMixin from '../../toggle-check-box-mixin.js';
@@ -53,7 +51,6 @@ export default {
   },
   data() {
     return {
-      switchId: `toggleSwitch-${uuid}`,
       isChecked: this.model.value
     };
   }
