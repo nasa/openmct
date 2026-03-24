@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { EventEmitter } from 'eventemitter3';
+import { isEqual } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import Condition from './Condition.js';
@@ -610,7 +611,7 @@ export default class ConditionManager extends EventEmitter {
   }
 
   updateTestData(testData) {
-    if (!_.isEqual(testData, this.testData)) {
+    if (!isEqual(testData, this.testData)) {
       this.testData = JSON.parse(JSON.stringify(testData));
       this.openmct.objects.mutate(
         this.conditionSetDomainObject,
