@@ -26,6 +26,7 @@ class StalenessUtils {
     this.domainObject = domainObject;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
     this.lastStalenessResponseTime = 0;
+    this.lastStalenessTimeSystem = undefined;
 
     this.setTimeSystem(this.openmct.time.getTimeSystem());
     this.watchTimeSystem();
@@ -38,6 +39,7 @@ class StalenessUtils {
     // regardless of whether the update occurred within time conductor bounds.
     if (stalenessResponseTime > this.lastStalenessResponseTime) {
       this.lastStalenessResponseTime = stalenessResponseTime;
+      this.lastStalenessTimeSystem = this.timeSystem;
 
       return true;
     } else {
@@ -55,6 +57,10 @@ class StalenessUtils {
 
   setTimeSystem(timeSystem) {
     this.timeSystem = timeSystem;
+  }
+
+  getTimeSystem() {
+    return this.timeSystem;
   }
 
   parseTime(stalenessResponse) {

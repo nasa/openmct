@@ -63,6 +63,7 @@ export default class ConditionSetTelemetryProvider {
       subscription.conditionManager.on('conditionSetResultUpdated', informAllSubscribers);
       subscription.destroy = () => {
         subscription.conditionManager.off('conditionSetResultUpdated', informAllSubscribers);
+        delete this.subscribers[id];
       };
     }
     subscription.callbacks.push(callback);

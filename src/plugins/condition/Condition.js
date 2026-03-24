@@ -266,15 +266,15 @@ export default class Condition extends EventEmitter {
       this.criteria.map((criterion) => criterion.result),
       this.trigger
     );
-    let latestTimestamp = {};
-    // !!!PAY ATTENTION!!! @ANDREW!!! - THIS IS RETURNING UNDEFINED
-    latestTimestamp = getLatestTimestamp(
-      latestTimestamp,
-      updatedCriterion.data.data,
-      this.timeSystems,
-      this.openmct.time.getTimeSystem()
-    );
-    this.conditionManager.updateCurrentCondition(latestTimestamp, this);
+    if (this.result === true) {
+      const lastTimeStamp = updatedCriterion.data.getLastUpdatedTime();
+      const lastTimeSystem = updatedCriterion.data.getLastUpdatedTimeSystem().key;
+      const timestampObject = {};
+
+      timestampObject[lastTimeSystem] = lastTimeStamp;
+
+      this.conditionManager.updateCurrentCondition(timestampObject, this);
+    }
   }
 
   updateDescription() {
