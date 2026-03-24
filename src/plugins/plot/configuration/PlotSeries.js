@@ -214,7 +214,8 @@ export default class PlotSeries extends Model {
       this.unsubscribe = this.openmct.telemetry.subscribe(
         this.domainObject,
         (data) => {
-          this.addAll(data, true);
+          // We cannot assume that the incoming data is chronologically sound, so sorted = false
+          this.addAll(_(data).sortBy(this.getXVal).value(), false);
         },
         {
           filters: this.filters,
@@ -225,7 +226,13 @@ export default class PlotSeries extends Model {
 
     try {
       const points = await this.openmct.telemetry.request(this.domainObject, options);
-      const data = this.getSeriesData();
+      // if derived, we can't use the old data
+      let data = this.getSeriesData();
+
+      if (this.metadata.value(this.get('yKey')).derived) {
+        data = [];
+      }
+
       // eslint-disable-next-line you-dont-need-lodash-underscore/concat
       const newPoints = _(data)
         .concat(points)
@@ -367,6 +374,7 @@ export default class PlotSeries extends Model {
    * @private
    */
   sortedIndex(point) {
+    // lodash's sortedIndexBy uses binary search, so it should be quite efficient for most cases.
     return _.sortedIndexBy(this.getSeriesData(), point, this.getXVal);
   }
   /**
@@ -430,6 +438,7 @@ export default class PlotSeries extends Model {
     let insertIndex = data.length;
     const currentYVal = this.getYVal(newData);
     const lastYVal = this.getYVal(data[insertIndex - 1]);
+    const currentXVal = this.getXVal(newData);
 
     if (this.isValueInvalid(currentYVal) && this.isValueInvalid(lastYVal)) {
       console.warn(`[Plot] Invalid Y Values detected: ${currentYVal} ${lastYVal}`);
@@ -437,19 +446,26 @@ export default class PlotSeries extends Model {
       return;
     }
 
-    if (!sorted) {
+    // if the first new data point has an X value > the last data point we already have,  stick it at the end.
+    const isDataInThePast = currentXVal <= this.getXVal(data[insertIndex - 1]);
+    if (!sorted && isDataInThePast) {
       insertIndex = this.sortedIndex(newData);
-      if (this.getXVal(data[insertIndex]) === this.getXVal(newData)) {
+      if (this.getXVal(data[insertIndex]) === currentXVal) {
         return;
       }
 
-      if (this.getXVal(data[insertIndex - 1]) === this.getXVal(newData)) {
+      if (this.getXVal(data[insertIndex - 1]) === currentXVal) {
         return;
       }
     }
 
     this.updateStats(newData);
     newData.mctLimitState = this.evaluate(newData);
+    // Note: Splicing is a performance bottleneck for large data sets when the insert index
+    // is NOT at the end of the array, this is because inserting into the middle of an array requires
+    // shifting all subsequent elements. For now, leave it as is since for the
+    // majority of cases real-time data will be appended to the end of the array,
+    // and historical data will be added in sorted order.
     data.splice(insertIndex, 0, newData);
     this.updateSeriesData(data);
     this.emit('add', newData, insertIndex, this);
