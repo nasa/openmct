@@ -39,7 +39,7 @@ class StalenessUtils {
     // regardless of whether the update occurred within time conductor bounds.
     if (stalenessResponseTime > this.lastStalenessResponseTime) {
       this.lastStalenessResponseTime = stalenessResponseTime;
-      this.lastStalenessTimeSystem = this.timeSystem;
+      this.lastStalenessTimeSystem = this.getTimeSystem();
 
       return true;
     } else {
