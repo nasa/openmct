@@ -88,6 +88,10 @@ export default class TelemetryAPI {
     return SUBSCRIBE_STRATEGY;
   }
 
+  /**
+   *
+   * @param {import('../../MCT.js').MCT} openmct
+   */
   constructor(openmct) {
     this.openmct = openmct;
 
