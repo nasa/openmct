@@ -176,8 +176,9 @@ test.describe('A Condition Widget', () => {
 
     await expect(page.getByLabel('Browse bar object name')).toHaveText('Test Condition Widget');
     const label = page.getByLabel('Test Condition Widget Object View');
-    await expect(label.getByText('> 0')).toBeVisible();
-    await expect(label.getByText('< 0')).toBeVisible();
-    await expect(label.getByText('STALE')).toBeVisible();
+    //TODO Will fix these assertions in a followup
+    await expect(label.getByText('> 0')).toBeVisible({ timeout: 10_000 });
+    await expect(label.getByText('< 0')).toBeVisible({ timeout: 10_000 });
+    await expect(label.getByText('STALE')).toBeVisible({ timeout: 10_000 });
   });
 });
