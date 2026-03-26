@@ -373,23 +373,17 @@ export default {
         (tick) => tick.text
       );
 
-      // Use the one with more characters
-      const maxLabelLength = formattedLabels.reduce(
-        (maxLen, str) => Math.max(maxLen, str?.length || 0),
-        0
-      );
+      // Use the one with most characters
+      const longestLabel = formattedLabels.reduce((a, b) => (a.length > b.length ? a : b));
 
-      // Use a character width to get estimated length of a tick
-      const font = window.getComputedStyle(container).font || '12px "Open Sans", sans-serif';
-      const charWidth = measureTextWidth('M', font);
-
-      const estimatedLabelWidth = charWidth * maxLabelLength;
+      const font = window.getComputedStyle(container).font || '12px "Helvetica", sans-serif';
+      const estimatedLabelWidth = measureTextWidth(longestLabel, font);
 
       const padding = 20;
       const tickCount = Math.floor(availableWidth / (estimatedLabelWidth + padding));
 
-      // Return at least 1 ticks, and at most 12 ticks to avoid overcrowding
-      return Math.max(1, Math.min(tickCount, 12));
+      // Return at least 1 ticks, and at most 32 ticks to avoid overcrowding
+      return Math.max(1, Math.min(tickCount, 32));
     }
   }
 };

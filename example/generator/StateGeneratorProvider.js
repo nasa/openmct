@@ -35,10 +35,17 @@ export default class StateGeneratorProvider {
 
   subscribe(domainObject, callback, options) {
     const duration = domainObject.telemetry.duration * 1000;
-
+    let tick = 0;
     const interval = setInterval(() => {
-      const now = this.openmct.time.now() || Date.now();
-      const datum = this.#pointForTimestamp(now, duration, domainObject.name);
+      tick += 1;
+      let now = this.openmct.time.now() || Date.now();
+      let flip = false;
+      if (domainObject.telemetry.outOfOrder && tick % 3 === 0) {
+        // 2 steps forward, 1 step back by duration * 2 to simulate out of order data
+        now -= duration * 1.5;
+        flip = true;
+      }
+      const datum = this.#pointForTimestamp(now, duration, domainObject.name, flip);
 
       if (!this.#shouldBeFiltered(datum, options)) {
         datum.value = String(datum.value);
@@ -73,12 +80,15 @@ export default class StateGeneratorProvider {
     return Promise.resolve(data);
   }
 
-  #pointForTimestamp(timestamp, duration, name) {
+  #pointForTimestamp(timestamp, duration, name, flip = false) {
     const key = this.openmct.time.getTimeSystem()?.key || 'utc';
     const point = {
       name: name,
       value: Math.floor(timestamp / duration) % 2
     };
+    if (flip) {
+      point.value = 99;
+    }
     point[key] = Math.floor(timestamp / duration) * duration;
     return point;
   }

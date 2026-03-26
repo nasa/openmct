@@ -73,11 +73,11 @@ function timeTickStep(start, stop, count, unitName) {
   }
 
   // Fallback to standard tickStep that already snaps to 1, 2, 5, 10
-  if (error >= e10) {
+  if (error >= 7.5) {
     step1 *= 10;
-  } else if (error >= e5) {
+  } else if (error >= 3.0) {
     step1 *= 5;
-  } else if (error >= e2) {
+  } else if (error >= 1.5) {
     step1 *= 2;
   }
 
@@ -316,7 +316,7 @@ export function getFormattedTicks(newTicks, format) {
  */
 let measurementContext;
 
-export function measureTextWidth(text, font = '12px "Open Sans", sans-serif') {
+export function measureTextWidth(text, font = '12px "Helvetica", sans-serif') {
   if (!measurementContext) {
     const canvas = document.createElement('canvas');
     measurementContext = canvas.getContext('2d');
