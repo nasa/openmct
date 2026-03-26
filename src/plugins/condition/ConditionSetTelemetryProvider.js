@@ -142,10 +142,7 @@ export default class ConditionSetTelemetryProvider {
   destroyConditionManager(id) {
     const subscription = this.subscribers[id];
     if (subscription) {
-      subscription.conditionManager.off(
-        'conditionSetResultUpdated',
-        subscription.dedupingHandler
-      );
+      subscription.conditionManager.off('conditionSetResultUpdated', subscription.dedupingHandler);
       delete this.subscribers[id];
     }
 
