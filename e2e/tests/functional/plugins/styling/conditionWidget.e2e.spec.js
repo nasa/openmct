@@ -26,13 +26,20 @@ This test suite is dedicated to tests which verify the basic operations surround
 import {
   createDomainObjectWithDefaults,
   linkParameterToObject,
-  setRealTimeMode
+  setRealTimeMode,
+  waitForFormattedTelemetryValue
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('A Condition Widget', () => {
   let swg;
+  /**
+   * @type {import('../../../../appActions.js').CreatedObjectInfo}
+   */
   let conditionSet;
+  /**
+   * @type {import('../../../../appActions.js').CreatedObjectInfo}
+   */
   let conditionWidget;
 
   test.beforeEach(async ({ page }) => {
@@ -138,7 +145,7 @@ test.describe('A Condition Widget', () => {
     await expect(label.getByText('< 0')).toBeVisible();
   });
 
-  test('Show correct output when a staleness rule is applied', async ({ page }) => {
+  test('Shows the correct output when a staleness rule is applied', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/8277'
@@ -174,11 +181,30 @@ test.describe('A Condition Widget', () => {
 
     await page.goto(conditionWidget.url);
 
+    const conditionSetIdentifier = {
+      namespace: '',
+      key: conditionSet.uuid
+    };
+
     await expect(page.getByLabel('Browse bar object name')).toHaveText('Test Condition Widget');
     const label = page.getByLabel('Test Condition Widget Object View');
-    //TODO Will fix these assertions in a followup
-    await expect(label.getByText('> 0')).toBeVisible({ timeout: 10_000 });
-    await expect(label.getByText('< 0')).toBeVisible({ timeout: 10_000 });
-    await expect(label.getByText('STALE')).toBeVisible({ timeout: 10_000 });
+    await waitForFormattedTelemetryValue({
+      page,
+      identifier: conditionSetIdentifier,
+      expectedValue: '> 0'
+    });
+    await expect(label.getByText('> 0')).toBeVisible();
+    await waitForFormattedTelemetryValue({
+      page,
+      identifier: conditionSetIdentifier,
+      expectedValue: '< 0'
+    });
+    await expect(label.getByText('< 0')).toBeVisible();
+    await waitForFormattedTelemetryValue({
+      page,
+      identifier: conditionSetIdentifier,
+      expectedValue: 'STALE'
+    });
+    await expect(label.getByText('STALE')).toBeVisible();
   });
 });

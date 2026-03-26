@@ -6,6 +6,10 @@
   "compilerOptions": {
     "target": "ES6",
     "baseUrl": "./",
+    "paths": {
+      "openmct/api/*": ["src/api/*"],
+      "openmct/*":["src/*"]
+    },
     "allowJs": true,
     "checkJs": false,
     "declaration": true,
