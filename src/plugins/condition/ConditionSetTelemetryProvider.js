@@ -26,6 +26,7 @@ export default class ConditionSetTelemetryProvider {
   constructor(openmct) {
     this.openmct = openmct;
     this.conditionManagerPool = {};
+    this.subscribers = {};
     this.lastEmittedById = new Map();
   }
 
@@ -78,33 +79,45 @@ export default class ConditionSetTelemetryProvider {
   }
 
   subscribe(domainObject, callback) {
-    let conditionManager = this.getConditionManager(domainObject);
     const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    let subscription = this.subscribers[id];
 
-    const handler = (data) => {
-      const timeKey = this.openmct.time.getTimeSystem().key;
-      const last = this.lastEmittedById.get(id);
-      const sameTime = last?.[timeKey] !== undefined && last?.[timeKey] === data?.[timeKey];
-      const sameValue =
-        last?.output === data?.output &&
-        last?.result === data?.result &&
-        last?.conditionId === data?.conditionId &&
-        last?.isDefault === data?.isDefault;
+    if (!subscription) {
+      const conditionManager = this.getConditionManager(domainObject);
+      subscription = {
+        callbacks: [],
+        conditionManager,
+        dedupingHandler: null
+      };
+      subscription.dedupingHandler = (data) => {
+        const timeKey = this.openmct.time.getTimeSystem().key;
+        const last = this.lastEmittedById.get(id);
+        const sameTime = last?.[timeKey] !== undefined && last?.[timeKey] === data?.[timeKey];
+        const sameValue =
+          last?.output === data?.output &&
+          last?.result === data?.result &&
+          last?.conditionId === data?.conditionId &&
+          last?.isDefault === data?.isDefault;
 
-      if (sameTime && sameValue) {
-        return;
+        if (sameTime && sameValue) {
+          return;
+        }
+
+        this.lastEmittedById.set(id, data);
+        subscription.callbacks.forEach((cb) => cb(data));
+      };
+      this.subscribers[id] = subscription;
+      subscription.conditionManager.on('conditionSetResultUpdated', subscription.dedupingHandler);
+    }
+
+    subscription.callbacks.push(callback);
+
+    return () => {
+      subscription.callbacks = subscription.callbacks.filter((cb) => cb !== callback);
+      if (subscription.callbacks.length === 0) {
+        this.destroyConditionManager(id);
       }
-
-      this.lastEmittedById.set(id, data);
-      callback(data);
     };
-
-    conditionManager.on('conditionSetResultUpdated', handler);
-
-    return this.destroyConditionManager.bind(
-      this,
-      this.openmct.objects.makeKeyString(domainObject.identifier)
-    );
   }
 
   /**
@@ -127,6 +140,15 @@ export default class ConditionSetTelemetryProvider {
    * can be called manually for views that only request but do not subscribe to data
    */
   destroyConditionManager(id) {
+    const subscription = this.subscribers[id];
+    if (subscription) {
+      subscription.conditionManager.off(
+        'conditionSetResultUpdated',
+        subscription.dedupingHandler
+      );
+      delete this.subscribers[id];
+    }
+
     if (this.conditionManagerPool[id]) {
       this.conditionManagerPool[id].off('conditionSetResultUpdated');
       this.conditionManagerPool[id].destroy();
