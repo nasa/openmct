@@ -180,7 +180,7 @@ export default class Condition extends EventEmitter {
 
     criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
     criterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-    criterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
+    criterion.on('telemetryStaleness', (obj) => this.handleTelemetryStaleness(obj));
     if (!this.criteria) {
       this.criteria = [];
     }
@@ -261,12 +261,20 @@ export default class Condition extends EventEmitter {
     this.conditionManager.updateCurrentCondition(latestTimestamp, this);
   }
 
-  handleTelemetryStaleness() {
+  handleTelemetryStaleness(updatedCriterion) {
     this.result = evaluateResults(
       this.criteria.map((criterion) => criterion.result),
       this.trigger
     );
-    this.conditionManager.updateCurrentCondition();
+    if (this.result === true) {
+      const lastTimeStamp = updatedCriterion.data.getLastUpdatedTime();
+      const lastTimeSystem = updatedCriterion.data.getLastUpdatedTimeSystem().key;
+      const timestampObject = {};
+
+      timestampObject[lastTimeSystem] = lastTimeStamp;
+
+      this.conditionManager.updateCurrentCondition(timestampObject, this);
+    }
   }
 
   updateDescription() {
