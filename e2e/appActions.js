@@ -95,8 +95,13 @@ async function createDomainObjectWithDefaults(
 
   if (additionalOptions) {
     for (const [key, value] of Object.entries(additionalOptions)) {
-      // eslint-disable-next-line playwright/no-raw-locators
-      await page.locator(`#form-${key}`).fill(value);
+      if (typeof value === 'boolean') {
+        // eslint-disable-next-line playwright/no-raw-locators
+        await page.locator(`#form-${key}`).check();
+      } else {
+        // eslint-disable-next-line playwright/no-raw-locators
+        await page.locator(`#form-${key}`).fill(value);
+      }
     }
   }
 
