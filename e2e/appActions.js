@@ -793,6 +793,24 @@ async function expandTreePane(page) {
 }
 
 /**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForRawTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'parse', ...arguments[0] });
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForFormattedTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'format', ...arguments[0] });
+}
+
+/**
  * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object, parseOrFormat: 'parse'|'format' }} options
  * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
  * the first subscription callback to match the expectedValue if one is provided.
@@ -848,24 +866,6 @@ function waitForTelemetryValue({ page, identifier, expectedValue, parseOrFormat 
     },
     { identifier, expectedValue, parseOrFormat }
   );
-}
-
-/**
- * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
- * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
- * the first subscription callback to match the expectedValue if one is provided.
- */
-function waitForRawTelemetryValue({ page, identifier, expectedValue }) {
-  return waitForTelemetryValue({ parseOrFormat: 'parse', ...arguments[0] });
-}
-
-/**
- * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
- * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
- * the first subscription callback to match the expectedValue if one is provided.
- */
-function waitForFormattedTelemetryValue({ page, identifier, expectedValue }) {
-  return waitForTelemetryValue({ parseOrFormat: 'format', ...arguments[0] });
 }
 
 export {
