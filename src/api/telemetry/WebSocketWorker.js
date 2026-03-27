@@ -240,50 +240,25 @@ export default function installWorker() {
    * Responsible for buffering messages
    */
   class MessageBuffer {
-    #buffer;
-    #currentBufferLength;
-    #dropped;
-    #maxBufferSize;
-    #readyForNextBatch;
+    #messageBatch;
+    #messageTimestamps;
     #worker;
     #throttledSendNextBatch;
     #throttleMessagePattern;
 
     constructor(worker) {
-      // No dropping telemetry unless we're explicitly told to.
-      this.#maxBufferSize = Number.POSITIVE_INFINITY;
       this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
       this.setThrottleRate(ONE_SECOND);
     }
     #resetBatch() {
-      //this.#batch = {};
-      this.#buffer = [];
-      this.#currentBufferLength = 0;
-      this.#dropped = false;
+      this.#messageBatch = [];
+      this.#messageTimestamps = [];
     }
 
     addMessageToBuffer(message) {
-      this.#buffer.push(message);
-      this.#currentBufferLength += message.length;
-
-      for (
-        let i = 0;
-        this.#currentBufferLength > this.#maxBufferSize && i < this.#buffer.length;
-        i++
-      ) {
-        const messageToConsider = this.#buffer[i];
-        if (this.#shouldThrottle(messageToConsider)) {
-          this.#buffer.splice(i, 1);
-          this.#currentBufferLength -= messageToConsider.length;
-          this.#dropped = true;
-        }
-      }
-
-      if (this.#readyForNextBatch) {
-        this.#throttledSendNextBatch();
-      }
+      this.#messageBatch.push(message);
     }
 
     #shouldThrottle(message) {
@@ -312,23 +287,17 @@ export default function installWorker() {
       }
     }
     #sendNextBatch() {
-      const buffer = this.#buffer;
       const dropped = this.#dropped;
       const currentBufferLength = this.#currentBufferLength;
 
       this.#resetBatch();
       this.#worker.postMessage({
         type: 'batch',
-        dropped,
-        currentBufferLength: currentBufferLength,
-        maxBufferSize: this.#maxBufferSize,
-        batch: buffer
+        batch: {
+          messages: this.#messageBatch,
+          timestamps: this.#messageTimestamps
+        }
       });
-
-      this.#readyForNextBatch = false;
-    }
-    #hasData() {
-      return this.#currentBufferLength > 0;
     }
     setThrottleMessagePattern(priorityMessagePattern) {
       this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');

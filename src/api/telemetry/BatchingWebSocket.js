@@ -29,33 +29,8 @@ import installWorker from './WebSocketWorker.js';
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback
  */
 
-/**
- * Mocks requestIdleCallback for Safari using setTimeout. Functionality will be
- * identical to setTimeout in Safari, which is to fire the callback function
- * after the provided timeout period.
- *
- * In browsers that support requestIdleCallback, this const is just a
- * pointer to the native function.
- *
- * @param {Function} callback a callback to be invoked during the next idle period, or
- * after the specified timeout
- * @param {RequestIdleCallbackOptions} options
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback
- *
- */
-function requestIdleCallbackPolyfill(callback, options) {
-  return (
-    // eslint-disable-next-line compat/compat
-    window.requestIdleCallback ??
-    ((fn, { timeout }) =>
-      setTimeout(() => {
-        fn({ didTimeout: false });
-      }, timeout))
-  );
-}
-const requestIdleCallback = requestIdleCallbackPolyfill();
-
 const ONE_SECOND = 1000;
+const THREE_SECONDS = 3 * ONE_SECOND;
 
 /**
  * Provides a WebSocket abstraction layer that handles a lot of boilerplate common
@@ -76,9 +51,9 @@ class BatchingWebSocket extends EventTarget {
   #showingRateLimitNotification;
   #maxBufferSize;
   #throttleRate;
-  #firstBatchReceived;
   #lastBatchReceived;
   #peakBufferSize = Number.NEGATIVE_INFINITY;
+  #maxTelemetryAge;
 
   /**
    * @param {import('openmct.js').OpenMCT} openmct
@@ -92,9 +67,8 @@ class BatchingWebSocket extends EventTarget {
     this.#worker = new Worker(workerUrl);
     this.#openmct = openmct;
     this.#showingRateLimitNotification = false;
-    this.#maxBufferSize = Number.POSITIVE_INFINITY;
     this.#throttleRate = ONE_SECOND;
-    this.#firstBatchReceived = false;
+    this.#maxTelemetryAge = THREE_SECONDS;
 
     const routeMessageToHandler = this.#routeMessageToHandler.bind(this);
     this.#worker.addEventListener('message', routeMessageToHandler);
@@ -165,17 +139,7 @@ class BatchingWebSocket extends EventTarget {
     this.#sendThrottleRateToWorker(this.#throttleRate);
   }
   setThrottleMessagePattern(throttleMessagePattern) {
-    this.#worker.postMessage({
-      type: 'setThrottleMessagePattern',
-      throttleMessagePattern
-    });
-  }
-
-  #sendMaxBufferSizeToWorker(maxBufferSize) {
-    this.#worker.postMessage({
-      type: 'setMaxBufferSize',
-      maxBufferSize
-    });
+    this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
   }
 
   #sendThrottleRateToWorker(throttleRate) {
@@ -195,13 +159,26 @@ class BatchingWebSocket extends EventTarget {
     });
   }
 
+  #discardOldMessages(batch) {
+    const now = performance.now();
+    const messages = batch.messages;
+    const timestamps = batch.timestamps;
+    const oldestAcceptableTimestamp = now + MAX_TELEMETRY_AGE;
+    const firstToDiscard = 0;
+    let lastToDiscard = -1;
+    for (let i=0; i < timestamps.length && timestamps[i] > oldestAcceptableTimestamp; i++) {
+      if (this.#throttleMessagePattern !== undefined && this.#throttleMessagePattern.test(message)) {
+        batch.
+      }
+    }
+  }
+
   #routeMessageToHandler(message) {
     if (message.data.type === 'batch') {
       const batch = message.data.batch;
       const now = performance.now();
 
       let currentBufferLength = message.data.currentBufferLength;
-      let maxBufferSize = message.data.maxBufferSize;
       let parameterCount = batch.length;
       if (this.#peakBufferSize < currentBufferLength) {
         this.#peakBufferSize = currentBufferLength;
@@ -216,19 +193,16 @@ class BatchingWebSocket extends EventTarget {
             Math.floor(parameterCount / elapsed)
           );
         }
-        this.#openmct.performance.measurements.set(
-          'Buff. Util. (bytes)',
-          `${currentBufferLength} / ${maxBufferSize}`
-        );
+        this.#openmct.performance.measurements.set('Buff. Util. (bytes)', `${currentBufferLength}`);
         this.#openmct.performance.measurements.set(
           'Peak Buff. Util. (bytes)',
-          `${this.#peakBufferSize} / ${maxBufferSize}`
+          `${this.#peakBufferSize}`
         );
       }
 
-      this.start = Date.now();
-      const dropped = message.data.dropped;
-      if (dropped === true && !this.#showingRateLimitNotification) {
+      const dropped = this.#discardOldMessages(batch);
+
+      if (dropped > 0 && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
           'Telemetry dropped due to client rate limiting.',
           { hint: 'Refresh individual telemetry views to retrieve dropped telemetry if needed.' }
@@ -240,7 +214,6 @@ class BatchingWebSocket extends EventTarget {
       }
 
       this.dispatchEvent(new CustomEvent('batch', { detail: batch }));
-      this.#waitUntilIdleAndRequestNextBatch(batch);
     } else if (message.data.type === 'message') {
       this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
     } else if (message.data.type === 'reconnected') {
@@ -248,32 +221,6 @@ class BatchingWebSocket extends EventTarget {
     } else {
       throw new Error(`Unknown message type: ${message.data.type}`);
     }
-  }
-
-  #waitUntilIdleAndRequestNextBatch(batch) {
-    requestIdleCallback(
-      (state) => {
-        if (this.#firstBatchReceived === false) {
-          this.#firstBatchReceived = true;
-        }
-        const now = Date.now();
-        const waitedFor = now - this.start;
-        if (state.didTimeout === true) {
-          if (document.visibilityState === 'visible') {
-            console.warn(`Event loop is too busy to process batch.`);
-            this.#waitUntilIdleAndRequestNextBatch(batch);
-          } else {
-            this.#readyForNextBatch();
-          }
-        } else {
-          if (waitedFor > this.#throttleRate) {
-            console.warn(`Warning, batch processing took ${waitedFor}ms`);
-          }
-          this.#readyForNextBatch();
-        }
-      },
-      { timeout: this.#throttleRate }
-    );
   }
 }
 
