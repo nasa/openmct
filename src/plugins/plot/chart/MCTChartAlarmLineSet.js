@@ -61,7 +61,7 @@ export default class MCTChartAlarmLineSet {
 
   makePoint(point, series) {
     if (!this.offset.xVal) {
-      this.chart.setOffset(point, undefined, series);
+      this.chart.setOffset(point, series);
     }
 
     return {
