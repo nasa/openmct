@@ -328,7 +328,11 @@ export default class TableRowCollection extends EventEmitter {
 
   setColumnRegexFilter(columnKey, filter) {
     filter = filter.trim();
-    this.columnFilters[columnKey] = new RegExp(filter);
+    try {
+      this.columnFilters[columnKey] = new RegExp(filter);
+    } catch (e) {
+      delete this.columnFilters[columnKey];
+    }
 
     this.emit('resetRowsFromAllData');
   }

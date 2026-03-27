@@ -116,8 +116,12 @@ export default {
 
       const pattern = data.model.pattern;
       if (valid && pattern) {
-        const regex = new RegExp(pattern);
-        valid = regex.test(data.value);
+        try {
+          const regex = new RegExp(pattern);
+          valid = regex.test(data.value);
+        } catch (e) {
+          valid = false;
+        }
       }
 
       const validate = data.model.validate;
