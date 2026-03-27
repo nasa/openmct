@@ -813,6 +813,82 @@ async function expandTreePane(page) {
   await expect(page.locator('.l-shell__pane-tree > .l-pane__contents')).toHaveCSS('opacity', '1');
 }
 
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForRawTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'parse', ...arguments[0] });
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForFormattedTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'format', ...arguments[0] });
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object, parseOrFormat: 'parse'|'format' }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForTelemetryValue({ page, identifier, expectedValue, parseOrFormat }) {
+  if (parseOrFormat !== 'parse' && parseOrFormat !== 'format') {
+    throw new Error("Invalid function invocation. Must be one of 'parse' or 'format'");
+  }
+
+  return page.evaluate(
+    /**
+     * @param {{identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object, parseOrFormat: 'parse'|'format'}} options
+     * @returns {Promise<Object>}
+     */
+    // eslint-disable-next-line no-shadow
+    async ({ identifier, expectedValue, parseOrFormat }) => {
+      // @ts-ignore
+      const openmct = window.openmct;
+      const domainObject = await openmct.objects.get(identifier);
+      const metadata = openmct.telemetry.getMetadata(domainObject);
+      const valueMetadatum = metadata.getDefaultDisplayValue();
+      const formatter = openmct.telemetry.getValueFormatter(valueMetadatum);
+      /**
+       * @type {() => void}
+       */
+      let unsubscribe;
+
+      return new Promise((resolve) => {
+        unsubscribe = openmct.telemetry.subscribe(domainObject, checkForMatchingTelemetry);
+
+        /**
+         * @param {Object} telemetryDatum
+         */
+        function checkForMatchingTelemetry(telemetryDatum) {
+          const telemetryValue = formatter[parseOrFormat](telemetryDatum);
+          if (expectedValue === undefined) {
+            resolve(telemetryValue);
+          } else {
+            if (typeof telemetryValue === 'string' && typeof expectedValue === 'string') {
+              if (telemetryValue.trim() === expectedValue.trim()) {
+                resolve(telemetryValue);
+              }
+            } else {
+              if (telemetryValue === expectedValue) {
+                resolve(telemetryValue);
+              }
+            }
+          }
+        }
+      }).finally(() => {
+        unsubscribe();
+      });
+    },
+    { identifier, expectedValue, parseOrFormat }
+  );
+}
+
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -836,5 +912,7 @@ export {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
-  waitForPlotsToRender
+  waitForFormattedTelemetryValue,
+  waitForPlotsToRender,
+  waitForRawTelemetryValue
 };
