@@ -40,8 +40,7 @@ export default class StateGeneratorProvider {
       tick += 1;
       let now = this.openmct.time.now() || Date.now();
       let flip = false;
-      if (domainObject.telemetry.outOfOrder && tick % 3 === 0) {
-        // 2 steps forward, 1 step back by duration * 2 to simulate out of order data
+      if (domainObject.telemetry.outOfOrder && tick % 2 === 0) {
         now -= duration * 1.5;
         flip = true;
       }
