@@ -137,11 +137,31 @@ test.describe('A Condition Widget', () => {
       description: 'https://github.com/nasa/openmct/issues/8277'
     });
 
+    const conditionSetIdentifier = {
+      namespace: '',
+      key: conditionSet.uuid
+    };
+
     const label = page.getByLabel('Test Condition Widget Object View');
 
     await expect(page.getByLabel('Browse bar object name')).toBeVisible();
+    await waitForFormattedTelemetryValue({
+      page,
+      identifier: conditionSetIdentifier
+    });
+
     await expect(label.getByText('default')).toBeHidden();
+    await waitForFormattedTelemetryValue({
+      page,
+      identifier: conditionSetIdentifier,
+      expectedValue: '> 0'
+    });
     await expect(label.getByText('> 0')).toBeVisible();
+    await waitForFormattedTelemetryValue({
+      page,
+      identifier: conditionSetIdentifier,
+      expectedValue: '< 0'
+    });
     await expect(label.getByText('< 0')).toBeVisible();
   });
 
