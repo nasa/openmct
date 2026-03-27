@@ -83,6 +83,7 @@
     "sanitize-html": "2.15.0",
     "sass": "1.71.1",
     "sass-loader": "14.1.1",
+    "satellite.js": "^5.0.0",
     "style-loader": "4.0.0",
     "terser-webpack-plugin": "5.3.9",
     "tiny-emitter": "2.1.0",

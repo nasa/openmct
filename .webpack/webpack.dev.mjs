@@ -54,6 +54,13 @@ export default merge(common, {
         changeOrigin: true,
         pathRewrite: { '^/dsn-config': '/apps/dsn-now' },
         secure: true
+      },
+      {
+        context: ['/celestrak-api'],
+        target: 'https://celestrak.org/NORAD/elements',
+        changeOrigin: true,
+        pathRewrite: { '^/celestrak-api': '' },
+        secure: true
       }
     ],
     static: [{
