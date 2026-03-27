@@ -843,24 +843,24 @@ function waitForTelemetryValue({ page, identifier, expectedValue, parseOrFormat 
        */
       let unsubscribe;
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         unsubscribe = openmct.telemetry.subscribe(domainObject, checkForMatchingTelemetry);
 
         /**
          * @param {Object} telemetryDatum
          */
         function checkForMatchingTelemetry(telemetryDatum) {
-          const parsedValue = formatter[parseOrFormat](telemetryDatum);
+          const telemetryValue = formatter[parseOrFormat](telemetryDatum);
           if (expectedValue === undefined) {
-            resolve(parsedValue);
+            resolve(telemetryValue);
           } else {
-            if (typeof parsedValue === 'string' && typeof expectedValue === 'string') {
-              if (parsedValue.trim() === expectedValue.trim()) {
-                resolve(parsedValue);
+            if (typeof telemetryValue === 'string' && typeof expectedValue === 'string') {
+              if (telemetryValue.trim() === expectedValue.trim()) {
+                resolve(telemetryValue);
               }
             } else {
-              if (parsedValue === expectedValue) {
-                resolve(parsedValue);
+              if (telemetryValue === expectedValue) {
+                resolve(telemetryValue);
               }
             }
           }
