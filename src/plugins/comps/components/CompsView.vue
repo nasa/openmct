@@ -75,7 +75,7 @@
                 :aria-label="`Reference Name Input for ${parameter.name}`"
                 type="text"
                 class="c-input--md"
-                @change="updateParameters"
+                @input="updateParameters"
               />
               <div v-else class="--em">{{ parameter.name }}</div>
               <span class="c-test-datum__string">=</span>
@@ -135,7 +135,7 @@
                 :aria-label="`Sample Size for ${parameter.name}`"
                 type="number"
                 class="c-input--sm c-comps__value"
-                @change="updateParameters"
+                @input="updateParameters"
               />
             </div>
 
@@ -155,7 +155,7 @@
               :aria-label="`Reference Test Value for ${parameter.name}`"
               type="text"
               class="c-input--md c-comps__value"
-              @change="updateTestValue(parameter)"
+              @input="updateTestValue(parameter)"
             />
           </div>
         </div>
@@ -175,7 +175,7 @@
         v-model="expression"
         class="c-comps__expression-value"
         placeholder="Enter an expression"
-        @change="updateExpression"
+        @input="updateExpression"
       ></textarea>
       <div v-else>
         <div class="c-comps__expression-value" aria-label="Expression">
@@ -199,11 +199,14 @@
 </template>
 
 <script setup>
-import { evaluate } from 'mathjs';
+import { all, create } from 'mathjs';
 import { inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 
 import ObjectPathString from '../../../ui/components/ObjectPathString.vue';
 import CompsManager from '../CompsManager';
+
+const config = {};
+const math = create(all, config);
 
 const openmct = inject('openmct');
 const domainObject = inject('domainObject');
@@ -428,7 +431,7 @@ function applyTestData() {
   }
 
   try {
-    const testOutput = evaluate(expression.value, scope);
+    const testOutput = validateAndEvaluateExpression(expression.value, scope);
     const formattedData = getValueFormatter().format(testOutput);
     currentTestOutput.value = formattedData;
     expressionOutput.value = null;
@@ -436,6 +439,33 @@ function applyTestData() {
     currentTestOutput.value = null;
     expressionOutput.value = error.message;
   }
+}
+
+function validateAndEvaluateExpression(evalExpression, scope) {
+  const parsed = math.parse(evalExpression);
+  const dependencies = parsed
+    .filter((node) => node.isSymbolNode || node.isFunctionNode)
+    .map((node) => node.name);
+
+  const uniqueDeps = Array.from(new Set(dependencies));
+
+  // check if any variables are predefined mathjs functions or constants
+  // then check if any variables are defined in the scope
+  // anything else is considered undefined and will throw an error
+  const undefinedVars = uniqueDeps.filter((dep) => {
+    if (math[dep] !== undefined) {
+      return false;
+    }
+    if (Object.prototype.hasOwnProperty.call(scope, dep)) {
+      return false;
+    }
+    return true;
+  });
+
+  if (undefinedVars.length > 0) {
+    throw new Error(`Undefined variables: ${undefinedVars.join(', ')}`);
+  }
+  return math.evaluate(evalExpression, scope);
 }
 
 function telemetryProcessor(data) {

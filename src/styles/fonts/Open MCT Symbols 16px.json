@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1726681576505
+    "created": 1725468793547
   },
   "iconSets": [
     {
@@ -449,7 +449,7 @@
         },
         {
           "order": 215,
-          "id": 185,
+          "id": 186,
           "name": "icon-stale",
           "prevSize": 16,
           "code": 59703,
@@ -945,7 +945,7 @@
         },
         {
           "order": 217,
-          "id": 186,
+          "id": 188,
           "name": "icon-singleline",
           "prevSize": 16,
           "code": 59965,
@@ -957,7 +957,7 @@
           "name": "icon-activity",
           "prevSize": 16,
           "code": 60160,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 104,
@@ -965,7 +965,7 @@
           "name": "icon-activity-mode",
           "prevSize": 16,
           "code": 60161,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 137,
@@ -973,7 +973,7 @@
           "name": "icon-autoflow-tabular",
           "prevSize": 16,
           "code": 60162,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -981,7 +981,7 @@
           "name": "icon-clock",
           "prevSize": 16,
           "code": 60163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -989,7 +989,7 @@
           "name": "icon-database",
           "prevSize": 16,
           "code": 60164,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -997,7 +997,7 @@
           "name": "icon-database-query",
           "prevSize": 16,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 67,
@@ -1005,7 +1005,7 @@
           "name": "icon-dataset",
           "prevSize": 16,
           "code": 60166,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
@@ -1013,7 +1013,7 @@
           "name": "icon-datatable",
           "prevSize": 16,
           "code": 60167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 136,
@@ -1021,7 +1021,7 @@
           "name": "icon-dictionary",
           "prevSize": 16,
           "code": 60168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
@@ -1029,7 +1029,7 @@
           "name": "icon-folder",
           "prevSize": 16,
           "code": 60169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 147,
@@ -1037,7 +1037,7 @@
           "name": "icon-image",
           "prevSize": 16,
           "code": 60170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 4,
@@ -1045,7 +1045,7 @@
           "name": "icon-layout",
           "prevSize": 16,
           "code": 60171,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -1053,7 +1053,7 @@
           "name": "icon-object",
           "prevSize": 16,
           "code": 60172,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -1061,7 +1061,7 @@
           "name": "icon-object-unknown",
           "prevSize": 16,
           "code": 60173,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 105,
@@ -1069,7 +1069,7 @@
           "name": "icon-packet",
           "prevSize": 16,
           "code": 60174,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
@@ -1077,7 +1077,7 @@
           "name": "icon-page",
           "prevSize": 16,
           "code": 60175,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 130,
@@ -1085,7 +1085,7 @@
           "name": "icon-plot-overlay",
           "prevSize": 16,
           "code": 60176,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
@@ -1093,7 +1093,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 16,
           "code": 60177,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 134,
@@ -1101,7 +1101,7 @@
           "name": "icon-session",
           "prevSize": 16,
           "code": 60178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 109,
@@ -1109,7 +1109,7 @@
           "name": "icon-tabular",
           "prevSize": 16,
           "code": 60179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 107,
@@ -1117,7 +1117,7 @@
           "name": "icon-tabular-lad",
           "prevSize": 16,
           "code": 60180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 106,
@@ -1125,7 +1125,7 @@
           "name": "icon-tabular-lad-set",
           "prevSize": 16,
           "code": 60181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 70,
@@ -1133,7 +1133,7 @@
           "name": "icon-tabular-realtime",
           "prevSize": 16,
           "code": 60182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
@@ -1141,7 +1141,7 @@
           "name": "icon-tabular-scrolling",
           "prevSize": 16,
           "code": 60183,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 131,
@@ -1149,7 +1149,7 @@
           "name": "icon-telemetry",
           "prevSize": 16,
           "code": 60184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 202,
@@ -1157,7 +1157,7 @@
           "name": "icon-timeline",
           "prevSize": 16,
           "code": 60185,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 81,
@@ -1165,7 +1165,7 @@
           "name": "icon-timer",
           "prevSize": 16,
           "code": 60186,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 69,
@@ -1173,7 +1173,7 @@
           "name": "icon-topic",
           "prevSize": 16,
           "code": 60187,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
@@ -1181,7 +1181,7 @@
           "name": "icon-box-with-dashed-lines-v2",
           "prevSize": 16,
           "code": 60188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -1189,7 +1189,7 @@
           "name": "icon-summary-widget",
           "prevSize": 16,
           "code": 60189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 92,
@@ -1197,7 +1197,7 @@
           "name": "icon-notebook",
           "prevSize": 16,
           "code": 60190,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 168,
@@ -1205,7 +1205,7 @@
           "name": "icon-tabs-view",
           "prevSize": 16,
           "code": 60191,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 117,
@@ -1213,7 +1213,7 @@
           "name": "icon-flexible-layout",
           "prevSize": 16,
           "code": 60192,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 166,
@@ -1221,7 +1221,7 @@
           "name": "icon-generator-sine",
           "prevSize": 16,
           "code": 60193,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 167,
@@ -1229,7 +1229,7 @@
           "name": "icon-generator-event",
           "prevSize": 16,
           "code": 60194,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 165,
@@ -1237,7 +1237,7 @@
           "name": "icon-gauge-v2",
           "prevSize": 16,
           "code": 60195,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 170,
@@ -1245,7 +1245,7 @@
           "name": "icon-spectra",
           "prevSize": 16,
           "code": 60196,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 171,
@@ -1253,7 +1253,7 @@
           "name": "icon-telemetry-spectra",
           "prevSize": 16,
           "code": 60197,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 172,
@@ -1261,7 +1261,7 @@
           "name": "icon-pushbutton",
           "prevSize": 16,
           "code": 60198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 174,
@@ -1269,7 +1269,7 @@
           "name": "icon-conditional",
           "prevSize": 16,
           "code": 60199,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 178,
@@ -1277,7 +1277,7 @@
           "name": "icon-condition-widget",
           "prevSize": 16,
           "code": 60200,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 180,
@@ -1285,7 +1285,7 @@
           "name": "icon-alphanumeric",
           "prevSize": 16,
           "code": 60201,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 183,
@@ -1293,7 +1293,7 @@
           "name": "icon-image-telemetry",
           "prevSize": 16,
           "code": 60202,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 198,
@@ -1301,7 +1301,7 @@
           "name": "icon-telemetry-aggregate",
           "prevSize": 16,
           "code": 60203,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 199,
@@ -1309,7 +1309,7 @@
           "name": "icon-bar-graph",
           "prevSize": 16,
           "code": 60204,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 200,
@@ -1317,7 +1317,7 @@
           "name": "icon-map",
           "prevSize": 16,
           "code": 60205,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 203,
@@ -1325,7 +1325,7 @@
           "name": "icon-plan",
           "prevSize": 16,
           "code": 60206,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 204,
@@ -1333,15 +1333,15 @@
           "name": "icon-timelist",
           "prevSize": 16,
           "code": 60207,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 205,
-          "id": 176,
+          "id": 185,
           "name": "icon-plot-scatter",
           "prevSize": 16,
           "code": 60208,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 218,
@@ -1349,7 +1349,15 @@
           "name": "icon-notebook-restricted",
           "prevSize": 16,
           "code": 60209,
-          "tempChar": ""
+          "tempChar": ""
+        },
+        {
+          "order": 219,
+          "id": 189,
+          "name": "icon-telemetry-derived",
+          "prevSize": 16,
+          "code": 60210,
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -3396,7 +3404,7 @@
           }
         },
         {
-          "id": 188,
+          "id": 187,
           "paths": [
             "M832.4 128.6c22.8 0 38 11.8 45 19 7 7 19 22.4 19 45v640c0 22.8-11.8 38-19 45-7 7-22.4 19-45 19h-640c-22.8 0-38-11.8-45-19-7-7-19-22.4-19-45v-640c0-22.8 11.8-38 19-45 7-7 22.4-19 45-19h640zM832.4 0.6h-640c-105.6 0-192 86.4-192 192v640c0 105.6 86.4 192 192 192h640c105.6 0 192-86.4 192-192v-640c0-105.6-86.4-192-192-192v0z",
             "M256.4 320.6h512v128h-512v-128z",
@@ -3422,7 +3430,7 @@
           }
         },
         {
-          "id": 187,
+          "id": 188,
           "paths": [
             "M832.4 0.6h-640c-105.6 0-192 86.4-192 192v640c0 105.6 86.4 192 192 192h640c105.6 0 192-86.4 192-192v-640c0-105.6-86.4-192-192-192zM896.4 448.6h-512v128h512v256c0 22.8-11.8 38-19 45-7 7-22.4 19-45 19h-640c-22.8 0-38-11.8-45-19-7-7-19-22.4-19-45v-640c0-22.8 11.8-38 19-45 7-7 22.4-19 45-19h640c22.8 0 38 11.8 45 19 7 7 19 22.4 19 45v256z"
           ],
@@ -4363,6 +4371,30 @@
           "tags": [
             "icon-notebook-restricted"
           ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 189,
+          "paths": [
+            "M109.36 522.46c5.18-11.26 10.4-23.46 15.6-36.72 42.46-108.46 116.32-237.76 227.040-237.76 52.4 0 101.42 29.16 145.7 86.68 37.34 48.5 64.84 108.92 81.34 151.080 38.52 98.38 78.68 140.3 92.96 145.92 14.28-5.62 54.44-47.54 92.96-145.92 23.42-59.8 56.38-125.92 99.8-173.24l-49.84-188.8c-17.96-68.040-89.88-123.7-159.84-123.7h-556.44c-69.94 0-112.48 55.66-94.52 123.7l105.24 398.76z",
+            "M914.64 501.54c-5.18 11.26-10.4 23.46-15.6 36.72-42.46 108.46-116.32 237.76-227.040 237.76-52.4 0-101.42-29.16-145.7-86.68-37.34-48.5-64.84-108.92-81.34-151.080-38.52-98.38-78.68-140.3-92.96-145.92-14.28 5.62-54.44 47.52-92.96 145.92-23.42 59.8-56.38 125.92-99.8 173.24l49.84 188.8c17.96 68.040 89.88 123.7 159.84 123.7h556.44c69.96 0 112.5-55.66 94.54-123.7l-105.26-398.76z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "width": 1152,
+          "grid": 16,
+          "tags": [
+            "icon-telemetry-derived"
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
           "colorPermutations": {
             "12552552551": [
               {},
