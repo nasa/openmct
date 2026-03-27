@@ -295,7 +295,6 @@ export class MCT extends EventEmitter {
     this.install(this.plugins.ReloadAction());
     this.install(this.plugins.WebPage());
     this.install(this.plugins.Condition());
-    this.install(this.plugins.ConditionWidget());
     this.install(this.plugins.URLTimeSettingsSynchronizer());
     this.install(this.plugins.NotificationIndicator());
     this.install(this.plugins.NewFolderAction());
@@ -304,7 +303,6 @@ export class MCT extends EventEmitter {
     this.install(this.plugins.ObjectInterceptors());
     this.install(this.plugins.DeviceClassifier());
     this.install(this.plugins.UserIndicator());
-    this.install(this.plugins.Gauge());
     this.install(this.plugins.InspectorViews());
   }
   /**

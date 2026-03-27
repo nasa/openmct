@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2026, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,26 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createMyItemsIdentifier } from './createMyItemsIdentifier.js';
-import myItemsInterceptor from './myItemsInterceptor.js';
+import { isSignalModuleType } from './types/signal-types.js';
 
-const MY_ITEMS_DEFAULT_NAME = 'My Signals';
-const MY_ITEMS_DEFAULT_KEY = 'mine';
-
-export default function MyItemsPlugin(
-  name = MY_ITEMS_DEFAULT_NAME,
-  namespace = '',
-  priority = undefined,
-  key = MY_ITEMS_DEFAULT_KEY
-) {
-  return function install(openmct) {
-    const identifierObject = createMyItemsIdentifier(namespace, key);
-
-    if (priority === undefined) {
-      priority = openmct.priority.LOW;
+/**
+ * Composition policy for Signal modules.
+ * Ensures Signal modules (like Earthquakes) can only be created in mine-signals folder.
+ */
+export default function SignalCompositionPolicy() {
+  return function (parent, child) {
+    // Allow Signal types to be created only in mine-signals root
+    if (isSignalModuleType(child.type)) {
+      return parent.identifier?.key === 'mine-signals';
     }
 
-    openmct.objects.addGetInterceptor(myItemsInterceptor({ openmct, identifierObject, name }));
-    openmct.objects.addRoot(identifierObject, priority);
+    // Allow other types normally
+    return true;
   };
 }

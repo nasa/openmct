@@ -33,7 +33,7 @@ export default function ConditionPlugin() {
       key: 'conditionSet',
       description:
         'Monitor and evaluate telemetry values in real-time with a wide variety of criteria. Use to control the styling of many objects in Open MCT.',
-      creatable: true,
+      creatable: false,
       cssClass: 'icon-conditional',
       initialize: function (domainObject) {
         domainObject.configuration = {
