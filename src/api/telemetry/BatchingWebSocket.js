@@ -159,16 +159,25 @@ class BatchingWebSocket extends EventTarget {
     });
   }
 
-  #discardOldMessages(batch) {
+  #extractMessagesAndDiscardOld(batch) {
+    const oldestAcceptableTimestamp = now + MAX_TELEMETRY_AGE;
+    if (timestamps[i] < oldestAcceptableTimestamp) {
+      //No messages to discard
+      return batch.messages;
+    }
+
     const now = performance.now();
     const messages = batch.messages;
     const timestamps = batch.timestamps;
-    const oldestAcceptableTimestamp = now + MAX_TELEMETRY_AGE;
+    const retainedMessages = [];
+
     const firstToDiscard = 0;
     let lastToDiscard = -1;
     for (let i=0; i < timestamps.length && timestamps[i] > oldestAcceptableTimestamp; i++) {
       if (this.#throttleMessagePattern !== undefined && this.#throttleMessagePattern.test(message)) {
-        batch.
+        continue;
+      } else {
+        
       }
     }
   }
