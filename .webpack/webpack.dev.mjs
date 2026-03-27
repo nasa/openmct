@@ -40,6 +40,22 @@ export default merge(common, {
       }
     },
     watchFiles: ['src/**/*.css', 'example/**/*.css'],
+    proxy: [
+      {
+        context: ['/dsn-api'],
+        target: 'https://eyes.nasa.gov',
+        changeOrigin: true,
+        pathRewrite: { '^/dsn-api': '/dsn/data' },
+        secure: true
+      },
+      {
+        context: ['/dsn-config'],
+        target: 'https://eyes.nasa.gov',
+        changeOrigin: true,
+        pathRewrite: { '^/dsn-config': '/apps/dsn-now' },
+        secure: true
+      }
+    ],
     static: [{
       directory: fileURLToPath(new URL('../dist', import.meta.url)),
       publicPath: '/dist',

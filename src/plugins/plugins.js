@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import ExampleDataVisualizationSourcePlugin from '../../example/dataVisualization/plugin.js';
+import DSNPlugin from '../../example/dsn/plugin.js';
 import EventGeneratorPlugin from '../../example/eventGenerator/plugin.js';
 import ExampleStaleness from '../../example/exampleStalenessProvider/plugin.js';
 import ExampleTags from '../../example/exampleTags/plugin.js';
@@ -105,6 +106,7 @@ plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationS
 plugins.example.ExampleTags = ExampleTags;
 plugins.example.Generator = () => GeneratorPlugin;
 plugins.example.ExampleStaleness = ExampleStaleness;
+plugins.example.DSN = DSNPlugin;
 
 plugins.UTCTimeSystem = UTCTimeSystem;
 plugins.LocalTimeSystem = LocalTimeSystem;
