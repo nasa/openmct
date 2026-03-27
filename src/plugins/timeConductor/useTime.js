@@ -75,8 +75,15 @@ export function useTime(
   const { timeContext } = useTimeContext(openmct, objectPath);
   const { timeSystemKey, timeSystemFormatter, timeSystemDurationFormatter, isTimeSystemUTCBased } =
     useTimeSystem(openmct, timeContext);
-  const { timeMode, isFixedTimeMode, isRealTimeMode, getAllModeMetadata, getModeMetadata } =
-    useTimeMode(openmct, timeContext, independentTimeOptions, useIndependentTime);
+  const {
+    timeMode,
+    isFixedTimeMode,
+    isRealTimeMode,
+    getAllModeMetadata,
+    getModeMetadata,
+    commitMode,
+    revertMode
+  } = useTimeMode(openmct, timeContext, independentTimeOptions, useIndependentTime);
   const { bounds, isTick } = useTimeBounds(openmct, timeContext, throttleRate);
   const { clock, getAllClockMetadata, getClockMetadata } = useClock(openmct, timeContext);
   const { offsets } = useClockOffsets(openmct, timeContext);
@@ -142,6 +149,8 @@ export function useTime(
     isRealTimeMode,
     getAllModeMetadata,
     getModeMetadata,
+    commitMode,
+    revertMode,
     currentValue,
     bounds,
     isTick,

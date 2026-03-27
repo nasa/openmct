@@ -167,7 +167,7 @@
 import { nextTick } from 'vue';
 
 export default {
-  inject: ['timeContext', 'timeSystemDurationFormatter'],
+  inject: ['timeContext', 'timeSystemDurationFormatter', 'commitMode', 'revertMode'],
   props: {
     offsets: {
       type: Object,
@@ -246,12 +246,14 @@ export default {
         end: endOffset
       };
 
+      this.commitMode();
       this.timeContext.setClockOffsets(offsets);
 
       this.$emit('dismiss');
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
+        this.revertMode();
         this.$emit('dismiss');
       }
     },
