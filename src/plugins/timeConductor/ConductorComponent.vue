@@ -107,6 +107,8 @@ export default {
       isRealTimeMode,
       getAllModeMetadata,
       getModeMetadata,
+      commitMode,
+      revertMode,
       currentValue,
       bounds,
       isTick,
@@ -127,6 +129,8 @@ export default {
     provide('isRealTimeMode', isRealTimeMode);
     provide('getAllModeMetadata', getAllModeMetadata);
     provide('getModeMetadata', getModeMetadata);
+    provide('commitMode', commitMode);
+    provide('revertMode', revertMode);
     provide('currentValue', currentValue);
     provide('bounds', bounds);
     provide('isTick', isTick);

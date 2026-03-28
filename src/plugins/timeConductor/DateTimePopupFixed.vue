@@ -140,7 +140,9 @@ export default {
     'timeSystemKey',
     'timeSystemFormatter',
     'timeSystemDurationFormatter',
-    'bounds'
+    'bounds',
+    'commitMode',
+    'revertMode'
   ],
   emits: ['update', 'dismiss'],
   data() {
@@ -252,6 +254,7 @@ export default {
           this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
 
         const bounds = { start, end };
+        this.commitMode();
         this.timeContext.setBounds(bounds);
       }
 
@@ -392,6 +395,7 @@ export default {
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
+        this.revertMode();
         this.$emit('dismiss');
       }
     }

@@ -53,6 +53,8 @@ export function useTimeMode(openmct, timeContext, independentTimeOptions, useInd
   let stopObservingTimeMode;
 
   const timeMode = ref(timeContext.value.getMode());
+  // Track the committed mode so we can revert on discard
+  const committedMode = ref(timeContext.value.getMode());
   const isFixedTimeMode = computed(() => timeMode.value === FIXED_MODE_KEY);
   const isRealTimeMode = computed(() => timeMode.value === REALTIME_MODE_KEY);
 
@@ -83,7 +85,7 @@ export function useTimeMode(openmct, timeContext, independentTimeOptions, useInd
       name: 'Fixed Timespan',
       description: 'Query and explore data that falls between two fixed datetimes.',
       cssClass: 'icon-tabular',
-      onItemClicked: () => setTimeMode(key)
+      onItemClicked: () => setPendingTimeMode(key)
     };
 
     const realTimeModeMetadata = {
@@ -92,26 +94,50 @@ export function useTimeMode(openmct, timeContext, independentTimeOptions, useInd
       description:
         'Monitor streaming data in real-time. The Time Conductor and displays will automatically advance themselves based on the active clock.',
       cssClass: 'icon-clock',
-      onItemClicked: () => setTimeMode(key)
+      onItemClicked: () => setPendingTimeMode(key)
     };
 
     return key === FIXED_MODE_KEY ? fixedModeMetadata : realTimeModeMetadata;
   }
 
-  function setTimeMode(_timeMode) {
-    if (useIndependentTime?.value === true) {
-      const boundsOrOffsets =
-        _timeMode === FIXED_MODE_KEY
-          ? independentTimeOptions.value.fixedOffsets
-          : independentTimeOptions.value.clockOffsets;
-      timeContext.value.setMode(_timeMode, boundsOrOffsets);
-    } else {
-      timeContext.value.setMode(_timeMode);
+  /**
+   * Stage a mode change locally without applying it to the time context.
+   * The change is only applied when commitMode() is called.
+   */
+  function setPendingTimeMode(_timeMode) {
+    timeMode.value = _timeMode;
+  }
+
+  /**
+   * Apply the pending mode change to the time context.
+   * Called when the user confirms via the tick/confirm button.
+   */
+  function commitMode() {
+    if (timeMode.value !== committedMode.value) {
+      if (useIndependentTime?.value === true) {
+        const boundsOrOffsets =
+          timeMode.value === FIXED_MODE_KEY
+            ? independentTimeOptions.value.fixedOffsets
+            : independentTimeOptions.value.clockOffsets;
+        timeContext.value.setMode(timeMode.value, boundsOrOffsets);
+      } else {
+        timeContext.value.setMode(timeMode.value);
+      }
+      committedMode.value = timeMode.value;
     }
+  }
+
+  /**
+   * Revert the pending mode change back to the last committed mode.
+   * Called when the user discards via the X/discard button.
+   */
+  function revertMode() {
+    timeMode.value = committedMode.value;
   }
 
   function updateTimeMode(_timeMode) {
     timeMode.value = _timeMode;
+    committedMode.value = _timeMode;
   }
 
   return {
@@ -119,6 +145,8 @@ export function useTimeMode(openmct, timeContext, independentTimeOptions, useInd
     getAllModeMetadata,
     getModeMetadata,
     isFixedTimeMode,
-    isRealTimeMode
+    isRealTimeMode,
+    commitMode,
+    revertMode
   };
 }
