@@ -740,7 +740,9 @@ export default {
       const parsedValue = this.timeFormatter.parse(this.datum);
 
       const beforeStartOfBounds = parsedValue < start;
-      const afterEndOfBounds = parsedValue > end;
+      // Add tolerance for near-future data to account for clock drift and latency
+      const FUTURE_TOLERANCE_MS = 1000;
+      const afterEndOfBounds = parsedValue > end + FUTURE_TOLERANCE_MS;
       if (afterEndOfBounds || beforeStartOfBounds) {
         return;
       }
