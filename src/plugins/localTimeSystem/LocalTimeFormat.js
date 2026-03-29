@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import moment from 'moment';
+import { formatLocal, parseMultiFormat, validateMultiFormat } from '../../utils/time.js';
 
-const DATE_FORMAT = 'YYYY-MM-DD h:mm:ss.SSS a';
+const DATE_FORMAT = 'yyyy-MM-dd h:mm:ss.SSS a';
 
-const DATE_FORMATS = [DATE_FORMAT, 'YYYY-MM-DD h:mm:ss a', 'YYYY-MM-DD h:mm a', 'YYYY-MM-DD'];
+const DATE_FORMATS = [DATE_FORMAT, 'yyyy-MM-dd h:mm:ss a', 'yyyy-MM-dd h:mm a', 'yyyy-MM-dd'];
 
 /**
  * @typedef Scale
@@ -33,7 +33,7 @@ const DATE_FORMATS = [DATE_FORMAT, 'YYYY-MM-DD h:mm:ss a', 'YYYY-MM-DD h:mm a', 
  */
 
 /**
- * Formatter for UTC timestamps. Interprets numeric values as
+ * Formatter for local timestamps. Interprets numeric values as
  * milliseconds since the start of 1970.
  *
  * @implements {Format}
@@ -49,7 +49,7 @@ export default function LocalTimeFormat() {
  * @returns {string} the formatted date
  */
 LocalTimeFormat.prototype.format = function (value, scale) {
-  return moment(value).format(DATE_FORMAT);
+  return formatLocal(value, DATE_FORMAT);
 };
 
 LocalTimeFormat.prototype.parse = function (text) {
@@ -57,9 +57,9 @@ LocalTimeFormat.prototype.parse = function (text) {
     return text;
   }
 
-  return moment(text, DATE_FORMATS).valueOf();
+  return parseMultiFormat(text, DATE_FORMATS, { utc: false });
 };
 
 LocalTimeFormat.prototype.validate = function (text) {
-  return moment(text, DATE_FORMATS).isValid();
+  return validateMultiFormat(text, DATE_FORMATS, { utc: false });
 };

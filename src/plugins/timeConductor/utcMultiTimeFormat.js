@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import moment from 'moment';
+import { DateTime } from 'luxon';
 
 export default function multiFormat(date) {
-  const momentified = moment.utc(date);
+  const millis = date instanceof Date ? date.getTime() : date;
+  const dt = DateTime.fromMillis(millis, { zone: 'utc' });
   /**
    * Uses logic from d3 Time-Scales, v3 of the API. See
    * https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Scales.md
@@ -33,57 +34,57 @@ export default function multiFormat(date) {
   const format = [
     [
       '.SSS',
-      function (m) {
-        return m.milliseconds();
+      function (d) {
+        return d.millisecond;
       }
     ],
     [
       ':ss',
-      function (m) {
-        return m.seconds();
+      function (d) {
+        return d.second;
       }
     ],
     [
       'HH:mm',
-      function (m) {
-        return m.minutes();
+      function (d) {
+        return d.minute;
       }
     ],
     [
       'HH:mm',
-      function (m) {
-        return m.hours();
+      function (d) {
+        return d.hour;
       }
     ],
     [
-      'ddd DD',
-      function (m) {
-        return m.days() && m.date() !== 1;
+      'EEE dd',
+      function (d) {
+        return d.weekday < 7 && d.day !== 1;
       }
     ],
     [
-      'MMM DD',
-      function (m) {
-        return m.date() !== 1;
+      'MMM dd',
+      function (d) {
+        return d.day !== 1;
       }
     ],
     [
       'MMMM',
-      function (m) {
-        return m.month();
+      function (d) {
+        return d.month !== 1;
       }
     ],
     [
-      'YYYY',
+      'yyyy',
       function () {
         return true;
       }
     ]
   ].filter(function (row) {
-    return row[1](momentified);
+    return row[1](dt);
   })[0][0];
 
   if (format !== undefined) {
-    return moment.utc(date).format(format);
+    return dt.toFormat(format);
   }
 }
