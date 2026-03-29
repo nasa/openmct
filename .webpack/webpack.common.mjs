@@ -91,6 +91,10 @@ const config = {
       __OPENMCT_BUILD_DATE__: `'${new Date()}'`,
       __OPENMCT_REVISION__: `'${gitRevision}'`,
       __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
+      __SIGNAL_OPENSKY_RELAY_URL__: JSON.stringify(process.env.OPENSKY_RELAY_URL || ''),
+      __SIGNAL_AIS_RELAY_URL__: JSON.stringify(process.env.AIS_RELAY_URL || ''),
+      __SIGNAL_RELAY_AUTH_HEADER__: JSON.stringify(process.env.RELAY_AUTH_HEADER || 'x-relay-key'),
+      __SIGNAL_RELAY_SHARED_SECRET__: JSON.stringify(process.env.RELAY_SHARED_SECRET || ''),
       __VUE_OPTIONS_API__: true, // enable/disable Options API support, default: true
       __VUE_PROD_DEVTOOLS__: false, // enable/disable devtools support in production, default: false
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false, // enable/disable hydration mismatch details in production, default: false

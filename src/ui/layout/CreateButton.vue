@@ -24,17 +24,40 @@
     <button
       class="c-create-button c-button--menu c-button--major icon-plus"
       :aria-disabled="isEditing"
-      aria-labelledby="create-button-label"
+      :aria-label="buttonLabel"
       @click.prevent.stop="showCreateMenu"
     >
-      <span id="create-button-label" class="c-button__label">Create</span>
+      <span class="c-button__label">{{ buttonLabel }}</span>
     </button>
   </div>
 </template>
 <script>
 import { CREATE_ACTION_KEY } from '@/plugins/formActions/CreateAction';
+import { MY_ITEMS_KEY } from '@/plugins/myItems/createMyItemsIdentifier.js';
 
 export default {
+  props: {
+    buttonLabel: {
+      type: String,
+      default: 'Create'
+    },
+    staticMenuItems: {
+      type: Array,
+      default: null
+    },
+    targetRootKey: {
+      type: String,
+      default: MY_ITEMS_KEY
+    },
+    targetNamespace: {
+      type: String,
+      default: null
+    },
+    createMenuGroup: {
+      type: String,
+      default: null
+    }
+  },
   inject: ['openmct'],
   data: function () {
     return {
@@ -46,7 +69,7 @@ export default {
   },
   computed: {
     sortedItems() {
-      let items = this.getItems();
+      let items = [...this.getItems()];
 
       return items.sort((a, b) => {
         if (a.name < b.name) {
@@ -67,13 +90,20 @@ export default {
   },
   methods: {
     getItems() {
+      if (this.staticMenuItems !== null) {
+        return this.staticMenuItems;
+      }
+
       let keys = this.openmct.types.listKeys();
 
       keys.forEach((key) => {
         if (!this.menuItems[key]) {
           let typeDef = this.openmct.types.get(key).definition;
 
-          if (typeDef.creatable) {
+          const isInCreateMenuGroup =
+            this.createMenuGroup === null || typeDef.createMenuGroup === this.createMenuGroup;
+
+          if (typeDef.creatable && isInCreateMenuGroup) {
             this.menuItems[key] = {
               cssClass: typeDef.cssClass,
               name: typeDef.name,
@@ -100,9 +130,18 @@ export default {
     toggleEdit(isEditing) {
       this.isEditing = isEditing;
     },
-    create(key) {
+    async create(key) {
       const createAction = this.openmct.actions.getAction(CREATE_ACTION_KEY);
-      createAction.invoke(key, this.openmct.router.path[0]);
+      let targetParent = this.openmct.router.path[0];
+
+      if (this.targetNamespace !== null || this.targetRootKey !== MY_ITEMS_KEY) {
+        targetParent = await this.openmct.objects.get({
+          key: this.targetRootKey,
+          namespace: this.targetNamespace
+        });
+      }
+
+      createAction.invoke(key, targetParent);
     }
   }
 };
