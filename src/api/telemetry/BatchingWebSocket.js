@@ -31,6 +31,7 @@ import installWorker from './WebSocketWorker.js';
 
 const ONE_SECOND = 1000;
 const THREE_SECONDS = 3 * ONE_SECOND;
+const MAX_TELEMETRY_AGE = THREE_SECONDS;
 
 /**
  * Provides a WebSocket abstraction layer that handles a lot of boilerplate common
@@ -54,6 +55,7 @@ class BatchingWebSocket extends EventTarget {
   #lastBatchReceived;
   #peakBufferSize = Number.NEGATIVE_INFINITY;
   #maxTelemetryAge;
+  #throttleMessagePattern;
 
   /**
    * @param {import('openmct.js').OpenMCT} openmct
@@ -91,14 +93,6 @@ class BatchingWebSocket extends EventTarget {
       type: 'connect',
       url
     });
-
-    this.#readyForNextBatch();
-  }
-
-  #readyForNextBatch() {
-    this.#worker.postMessage({
-      type: 'readyForNextBatch'
-    });
   }
 
   /**
@@ -113,33 +107,13 @@ class BatchingWebSocket extends EventTarget {
     });
   }
 
-  /**
-   * @param {number} maxBufferSize the maximum length of the receive buffer in characters.
-   * Note that this is a fail-safe that is only invoked if performance drops to the
-   * point where Open MCT cannot keep up with the amount of telemetry it is receiving.
-   * In this event it will sacrifice the oldest telemetry in the batch in favor of the
-   * most recent telemetry. The user will be informed that telemetry has been dropped.
-   *
-   * This should be set appropriately for the expected data rate. eg. If typical usage
-   * sees 2000 messages arriving at a client per second, with an average message size
-   * of 500 bytes, then 2000 * 500 = 1000000 characters will be right on the limit.
-   * In this scenario, a buffer size of 1500000 character might be more appropriate
-   * to allow some overhead for bursty telemetry, and temporary UI load during page
-   * load.
-   *
-   * The PerformanceIndicator plugin (openmct.plugins.PerformanceIndicator) gives
-   * statistics on buffer utilization. It can be used to scale the buffer appropriately.
-   */
-  setMaxBufferSize(maxBatchSize) {
-    this.#maxBufferSize = maxBatchSize;
-    this.#sendMaxBufferSizeToWorker(this.#maxBufferSize);
-  }
   setThrottleRate(throttleRate) {
     this.#throttleRate = throttleRate;
     this.#sendThrottleRateToWorker(this.#throttleRate);
   }
+
   setThrottleMessagePattern(throttleMessagePattern) {
-    this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
+    this.#throttleMessagePattern = new RegExp(throttleMessagePattern, 'm');
   }
 
   #sendThrottleRateToWorker(throttleRate) {
@@ -160,26 +134,33 @@ class BatchingWebSocket extends EventTarget {
   }
 
   #extractMessagesAndDiscardOld(batch) {
+    const now = performance.now();
+    const timestamps = batch.timestamps;
+
     const oldestAcceptableTimestamp = now + MAX_TELEMETRY_AGE;
-    if (timestamps[i] < oldestAcceptableTimestamp) {
+    if (timestamps[0] < oldestAcceptableTimestamp) {
       //No messages to discard
       return batch.messages;
     }
 
-    const now = performance.now();
     const messages = batch.messages;
-    const timestamps = batch.timestamps;
-    const retainedMessages = [];
+    let retainedMessages = [];
 
-    const firstToDiscard = 0;
-    let lastToDiscard = -1;
-    for (let i=0; i < timestamps.length && timestamps[i] > oldestAcceptableTimestamp; i++) {
-      if (this.#throttleMessagePattern !== undefined && this.#throttleMessagePattern.test(message)) {
+    let i = 0;
+
+    for (; i < timestamps.length && timestamps[i] > oldestAcceptableTimestamp; i++) {
+      if (
+        this.#throttleMessagePattern !== undefined &&
+        this.#throttleMessagePattern.test(messages[i])
+      ) {
+        //Discard these messages, do not copy them across
         continue;
       } else {
-        
+        retainedMessages.push(messages[i]);
       }
     }
+
+    retainedMessages = retainedMessages.concat(messages.slice(i));
   }
 
   #routeMessageToHandler(message) {
@@ -209,9 +190,10 @@ class BatchingWebSocket extends EventTarget {
         );
       }
 
-      const dropped = this.#discardOldMessages(batch);
+      const messages = this.#extractMessagesAndDiscardOld(batch);
+      const droppedCount = batch.messages.length - messages.length;
 
-      if (dropped > 0 && !this.#showingRateLimitNotification) {
+      if (droppedCount > 0 && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
           'Telemetry dropped due to client rate limiting.',
           { hint: 'Refresh individual telemetry views to retrieve dropped telemetry if needed.' }

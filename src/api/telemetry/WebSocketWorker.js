@@ -211,17 +211,8 @@ export default function installWorker() {
         case 'message':
           this.#websocket.enqueueMessage(message.data.message);
           break;
-        case 'readyForNextBatch':
-          this.#messageBatcher.readyForNextBatch();
-          break;
-        case 'setMaxBufferSize':
-          this.#messageBatcher.setMaxBufferSize(message.data.maxBufferSize);
-          break;
         case 'setThrottleRate':
           this.#messageBatcher.setThrottleRate(message.data.throttleRate);
-          break;
-        case 'setThrottleMessagePattern':
-          this.#messageBatcher.setThrottleMessagePattern(message.data.throttleMessagePattern);
           break;
         default:
           throw new Error(`Unknown message type: ${type}`);
@@ -244,10 +235,8 @@ export default function installWorker() {
     #messageTimestamps;
     #worker;
     #throttledSendNextBatch;
-    #throttleMessagePattern;
 
     constructor(worker) {
-      this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
       this.setThrottleRate(ONE_SECOND);
@@ -261,35 +250,11 @@ export default function installWorker() {
       this.#messageBatch.push(message);
     }
 
-    #shouldThrottle(message) {
-      return (
-        this.#throttleMessagePattern !== undefined && this.#throttleMessagePattern.test(message)
-      );
-    }
-
-    setMaxBufferSize(maxBufferSize) {
-      this.#maxBufferSize = maxBufferSize;
-    }
     setThrottleRate(throttleRate) {
       this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), throttleRate);
     }
-    /**
-     * Indicates that client code is ready to receive the next batch of
-     * messages. If a batch is available, it will be immediately sent.
-     * Otherwise a flag will be set to send the next batch as soon as
-     * any new data is available.
-     */
-    readyForNextBatch() {
-      if (this.#hasData()) {
-        this.#throttledSendNextBatch();
-      } else {
-        this.#readyForNextBatch = true;
-      }
-    }
-    #sendNextBatch() {
-      const dropped = this.#dropped;
-      const currentBufferLength = this.#currentBufferLength;
 
+    #sendNextBatch() {
       this.#resetBatch();
       this.#worker.postMessage({
         type: 'batch',
@@ -298,9 +263,6 @@ export default function installWorker() {
           timestamps: this.#messageTimestamps
         }
       });
-    }
-    setThrottleMessagePattern(priorityMessagePattern) {
-      this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
     }
   }
 
