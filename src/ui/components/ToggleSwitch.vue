@@ -22,8 +22,8 @@
 <template>
   <div class="c-toggle-switch">
     <label class="c-toggle-switch__control">
-      <input :id="id" type="checkbox" :checked="checked" @change="onUserSelect($event)" />
-      <span class="c-toggle-switch__slider" role="switch" :aria-label="name"></span>
+      <input type="checkbox" :checked="checked" @change="onUserSelect($event)" />
+      <span :id="id" class="c-toggle-switch__slider" role="switch" :aria-label="name"></span>
     </label>
     <div v-if="label && label.length" class="c-toggle-switch__label">
       {{ label }}

@@ -24,7 +24,7 @@
   <span class="form-control shell">
     <span class="field control" :class="model.cssClass">
       <ToggleSwitch
-        id="switchId"
+        :id="`form-${model.key || switchId}`"
         :checked="isChecked"
         :name="model.name"
         @change="toggleCheckBox"

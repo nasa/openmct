@@ -95,8 +95,13 @@ async function createDomainObjectWithDefaults(
 
   if (additionalOptions) {
     for (const [key, value] of Object.entries(additionalOptions)) {
-      // eslint-disable-next-line playwright/no-raw-locators
-      await page.locator(`#form-${key}`).fill(value);
+      if (typeof value === 'boolean') {
+        // eslint-disable-next-line playwright/no-raw-locators
+        await page.locator(`#form-${key}`).check();
+      } else {
+        // eslint-disable-next-line playwright/no-raw-locators
+        await page.locator(`#form-${key}`).fill(value);
+      }
     }
   }
 
@@ -258,6 +263,36 @@ async function createStableStateTelemetry(page, parent = 'mine') {
   await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
   await page.getByLabel('State Duration (seconds)', { exact: true }).fill('2');
   await page.getByLabel('Save').click();
+  // Wait until the URL is updated
+  const uuid = await getFocusedObjectUuid(page);
+  const url = await getHashUrlToDomainObject(page, uuid);
+
+  return {
+    name: createdObject.name,
+    uuid,
+    url
+  };
+}
+
+/**
+ * Create a Out of order State Telemetry Object (State Generator) for use in visual tests
+ * and tests against plotting telemetry (e.g. logPlot tests). This will change state every 2 seconds.
+ * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
+ */
+async function createOutOfOrderStateTelemetry(page, parent = 'mine', duration = 0.25) {
+  const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+  await page.goto(`${parentUrl}`);
+  const createdObject = await createDomainObjectWithDefaults(
+    page,
+    {
+      type: 'State Generator',
+      name: 'Stable State Generator'
+    },
+    { outOfOrder: true, duration: duration.toString() }
+  );
   // Wait until the URL is updated
   const uuid = await getFocusedObjectUuid(page);
   const url = await getHashUrlToDomainObject(page, uuid);
@@ -762,10 +797,87 @@ async function expandTreePane(page) {
   await expect(page.locator('.l-shell__pane-tree > .l-pane__contents')).toHaveCSS('opacity', '1');
 }
 
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForRawTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'parse', ...arguments[0] });
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForFormattedTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'format', ...arguments[0] });
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object, parseOrFormat: 'parse'|'format' }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForTelemetryValue({ page, identifier, expectedValue, parseOrFormat }) {
+  if (parseOrFormat !== 'parse' && parseOrFormat !== 'format') {
+    throw new Error("Invalid function invocation. Must be one of 'parse' or 'format'");
+  }
+
+  return page.evaluate(
+    /**
+     * @param {{identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object, parseOrFormat: 'parse'|'format'}} options
+     * @returns {Promise<Object>}
+     */
+    // eslint-disable-next-line no-shadow
+    async ({ identifier, expectedValue, parseOrFormat }) => {
+      // @ts-ignore
+      const openmct = window.openmct;
+      const domainObject = await openmct.objects.get(identifier);
+      const metadata = openmct.telemetry.getMetadata(domainObject);
+      const valueMetadatum = metadata.getDefaultDisplayValue();
+      const formatter = openmct.telemetry.getValueFormatter(valueMetadatum);
+      /**
+       * @type {() => void}
+       */
+      let unsubscribe;
+
+      return new Promise((resolve) => {
+        unsubscribe = openmct.telemetry.subscribe(domainObject, checkForMatchingTelemetry);
+
+        /**
+         * @param {Object} telemetryDatum
+         */
+        function checkForMatchingTelemetry(telemetryDatum) {
+          const telemetryValue = formatter[parseOrFormat](telemetryDatum);
+          if (expectedValue === undefined) {
+            resolve(telemetryValue);
+          } else {
+            if (typeof telemetryValue === 'string' && typeof expectedValue === 'string') {
+              if (telemetryValue.trim() === expectedValue.trim()) {
+                resolve(telemetryValue);
+              }
+            } else {
+              if (telemetryValue === expectedValue) {
+                resolve(telemetryValue);
+              }
+            }
+          }
+        }
+      }).finally(() => {
+        unsubscribe();
+      });
+    },
+    { identifier, expectedValue, parseOrFormat }
+  );
+}
+
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
+  createOutOfOrderStateTelemetry,
   createPlanFromJSON,
   createStableStateTelemetry,
   expandEntireTree,
@@ -783,5 +895,7 @@ export {
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
-  waitForPlotsToRender
+  waitForFormattedTelemetryValue,
+  waitForPlotsToRender,
+  waitForRawTelemetryValue
 };
