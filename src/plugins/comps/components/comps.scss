@@ -19,7 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@mixin expressionMsg($fg, $bg) {
+@mixin expressionMsg($fg) {
+  $op: 0.7;
+  color: rgba($fg, $op);
+}
+
+@mixin expressionMsgStrong($fg, $bg) {
   $op: 0.4;
   color: rgba($fg, $op * 1.5);
   background: rgba($bg, $op);
@@ -126,24 +131,40 @@
   }
 
   &__expression-msg {
-    @include expressionMsg($colorOkFg, $colorOk);
+    // Default is green --good state
     border-radius: $basicCr;
     display: flex; // Creates hanging indent from :before icon
+    align-items: center;
     padding: $interiorMarginSm $interiorMarginLg $interiorMarginSm $interiorMargin;
     max-width: max-content;
 
     &:before {
-      content: $glyph-icon-check;
       font-family: symbolsfont;
+      font-size: 0.85em;
       margin-right: $interiorMarginSm;
     }
 
-    &.--bad {
-      @include expressionMsg($colorErrorFg, $colorError);
+    &.--good,
+    &.--good-strong {
+      color: rgba($colorOk, 0.6);
+      &:before {
+        content: $glyph-icon-check;
+      }
+    }
 
+    &.--bad,
+    &.--bad-strong {
       &:before {
         content: $glyph-icon-alert-triangle;
       }
+    }
+
+    &.--good-strong {
+      @include expressionMsgStrong($colorOkFg, $colorOk);
+    }
+
+    &.--bad-strong {
+      @include expressionMsgStrong($colorErrorFg, $colorError);
     }
   }
 

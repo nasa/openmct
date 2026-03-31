@@ -184,7 +184,7 @@
       </div>
       <span
         v-if="expression && expressionOutput"
-        class="icon-alert-triangle c-comps__expression-msg --bad"
+        class="c-comps__expression-msg --bad"
       >
         Invalid: {{ expressionOutput }}
       </span>
