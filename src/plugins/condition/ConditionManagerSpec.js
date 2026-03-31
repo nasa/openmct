@@ -225,4 +225,79 @@ describe('ConditionManager', () => {
       mockCondition2.id
     );
   });
+  it('should emit the default condition when no other conditions match', () => {
+    // Simulate all conditions being false
+    conditionMgr.conditions = [
+      { id: '1', result: false, configuration: { output: 'Condition 1' } },
+      { id: '2', result: false, configuration: { output: 'Condition 2' } },
+      { id: '3', result: false, configuration: { output: 'Default Condition' } }
+    ];
+    conditionSetDomainObject.configuration.conditionCollection = [
+      {
+        id: '1',
+        configuration: { output: 'Condition 1', criteria: [] }
+      },
+      {
+        id: '2',
+        configuration: { output: 'Condition 2', criteria: [] }
+      },
+      {
+        id: '3',
+        configuration: { output: 'Default Condition', criteria: [] }
+      }
+    ];
+
+    conditionSetDomainObject.configuration.conditionCollection[2].id = '3';
+    conditionSetDomainObject.configuration.conditionCollection[2].configuration.output =
+      'Default Condition';
+
+    conditionMgr.evaluateCurrentCondition();
+
+    expect(mockListener).toHaveBeenCalledWith({
+      output: 'Default Condition',
+      id: conditionSetDomainObject.identifier,
+      conditionId: '3'
+    });
+  });
+
+  it('should emit the first matching condition', () => {
+    // Simulate the first condition being true
+    conditionMgr.conditions = [
+      { id: '1', result: true, configuration: { output: 'Condition 1' } },
+      { id: '2', result: false, configuration: { output: 'Condition 2' } },
+      { id: '3', result: false, configuration: { output: 'Default Condition' } }
+    ];
+
+    conditionMgr.evaluateCurrentCondition();
+
+    expect(mockListener).toHaveBeenCalledWith({
+      output: 'Condition 1',
+      id: conditionSetDomainObject.identifier,
+      conditionId: '1'
+    });
+  });
+
+  it('should update the condition if another condition becomes true', () => {
+    // First, condition 1 is true
+    conditionMgr.conditions = [
+      { id: '1', result: true, configuration: { output: 'Condition 1' } },
+      { id: '2', result: false, configuration: { output: 'Condition 2' } },
+      { id: '3', result: false, configuration: { output: 'Default Condition' } }
+    ];
+    conditionMgr.evaluateCurrentCondition();
+
+    // Then condition 1 becomes false, and condition 2 becomes true
+    conditionMgr.conditions = [
+      { id: '1', result: false, configuration: { output: 'Condition 1' } },
+      { id: '2', result: true, configuration: { output: 'Condition 2' } },
+      { id: '3', result: false, configuration: { output: 'Default Condition' } }
+    ];
+    conditionMgr.evaluateCurrentCondition();
+
+    expect(mockListener.calls.mostRecent().args[0]).toEqual({
+      output: 'Condition 2',
+      id: conditionSetDomainObject.identifier,
+      conditionId: '2'
+    });
+  });
 });
