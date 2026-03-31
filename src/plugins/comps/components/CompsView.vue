@@ -176,6 +176,7 @@
         class="c-comps__expression-value"
         placeholder="Enter an expression"
         @input="updateExpression"
+        @blur="handleExpressionBlur"
       ></textarea>
       <div v-else>
         <div class="c-comps__expression-value" aria-label="Expression">
@@ -184,13 +185,13 @@
       </div>
       <span
         v-if="expression && expressionOutput"
-        class="c-comps__expression-msg --bad"
+        :class="['c-comps__expression-msg', expressionBlurResult === 'invalid' ? '--bad-strong' : '--bad']"
       >
-        Invalid: {{ expressionOutput }}
+        {{ expressionOutput }}
       </span>
       <span
         v-else-if="expression && !expressionOutput && isEditing"
-        class="c-comps__expression-msg --good"
+        :class="['c-comps__expression-msg', expressionBlurResult === 'valid' ? '--good-strong' : '--good']"
       >
         Expression valid
       </span>
@@ -218,6 +219,7 @@ const testDataApplied = ref(false);
 const parameters = ref(null);
 const expression = ref(null);
 const expressionOutput = ref(null);
+const expressionBlurResult = ref(null); // 'valid' | 'invalid' | null
 const outputFormat = ref(null);
 const parameterValueOptionsMap = ref({});
 const telemetryObjectsMap = ref({});
@@ -298,6 +300,11 @@ onBeforeMount(async () => {
   expression.value = compsManager.getExpression();
   outputFormat.value = compsManager.getOutputFormat();
   applyTestData();
+  
+  // Set initial blur state if expression is invalid on load
+  if (expressionOutput.value) {
+    expressionBlurResult.value = 'invalid';
+  }
 });
 
 onBeforeUnmount(() => {
@@ -390,6 +397,7 @@ function toggleTestData() {
 }
 
 function updateExpression() {
+  expressionBlurResult.value = null; // Reset blur evaluation when typing
   openmct.objects.mutate(domainObject, `configuration.comps.expression`, expression.value);
   compsManager.setDomainObject(domainObject);
   applyTestData();
@@ -492,5 +500,18 @@ function reload() {
 
 function clearData() {
   currentCompOutput.value = null;
+}
+
+function handleExpressionBlur() {
+  applyTestData();
+  
+  // Set blur result based on expressionOutput after evaluation
+  if (expressionOutput.value) {
+    expressionBlurResult.value = 'invalid';
+  } else if (expression.value && !expressionOutput.value) {
+    expressionBlurResult.value = 'valid';
+  } else {
+    expressionBlurResult.value = null;
+  }
 }
 </script>
