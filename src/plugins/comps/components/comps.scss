@@ -135,6 +135,12 @@
     }
 
     &.--good,
+    &.--bad {
+      $t: 500ms;
+      transition: background $t, color $t;
+    }
+
+    &.--good,
     &.--good-strong {
       &:before {
         content: $glyph-icon-check;
@@ -150,12 +156,12 @@
 
     &.--good-strong {
       color: $colorOkFg;
-      background: $colorOk;
+      background: rgba($colorOk, 0.5);
     }
 
     &.--bad-strong {
       color: $colorAlertFg;
-      background: $colorAlert;
+      background: rgba($colorAlert, 0.5);
     }
   }
 
