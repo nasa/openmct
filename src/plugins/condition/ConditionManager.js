@@ -154,16 +154,32 @@ export default class ConditionManager extends EventEmitter {
     this.conditionSetDomainObject.configuration.conditionCollection.forEach(
       (conditionConfiguration, conditionIndex) => {
         let conditionChanged = false;
+        const config = conditionConfiguration.configuration;
+
+        // need to handle removing the output telemetry object from the condition set if it is removed from the composition
+        if (config.output === TELEMETRY_VALUE && config.outputTelemetry) {
+          const outputKeyString =
+            typeof config.outputTelemetry === 'string'
+              ? config.outputTelemetry
+              : this.openmct.objects.makeKeyString(config.outputTelemetry);
+          if (!this.telemetryObjects[outputKeyString]) {
+            config.outputTelemetry = null;
+            config.outputMetadata = null;
+            delete config.valueMetadata;
+            config.output = undefined;
+            conditionChanged = true;
+          }
+        }
+
         conditionConfiguration.configuration.criteria.forEach((criterion, index) => {
           const isAnyAllTelemetry =
             criterion.telemetry && (criterion.telemetry === 'any' || criterion.telemetry === 'all');
           if (!isAnyAllTelemetry) {
-            const found = Object.values(this.telemetryObjects).find((telemetryObject) => {
-              return this.openmct.objects.areIdsEqual(
-                telemetryObject.identifier,
-                criterion.telemetry
-              );
-            });
+            const found = Object.values(this.telemetryObjects).find(
+              (telemetryObject) =>
+                telemetryObject &&
+                this.openmct.objects.areIdsEqual(telemetryObject.identifier, criterion.telemetry)
+            );
             if (!found) {
               criterion.telemetry = '';
               criterion.metadata = '';

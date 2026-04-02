@@ -356,6 +356,7 @@ export default {
     telemetry: {
       handler() {
         this.initializeMetadata();
+        this.clearOutputTelemetryIfRemoved();
       },
       deep: true
     }
@@ -366,6 +367,7 @@ export default {
   mounted() {
     this.setOutputSelection();
     this.initializeMetadata();
+    this.clearOutputTelemetryIfRemoved();
   },
   methods: {
     setOutputSelection() {
@@ -505,6 +507,29 @@ export default {
           this.telemetryMetadataOptions[id] = [];
         }
       });
+    },
+    clearOutputTelemetryIfRemoved() {
+      const config = this.condition?.configuration;
+      if (config?.output !== TELEMETRY_VALUE || !config.outputTelemetry) {
+        return;
+      }
+
+      const outputKey =
+        typeof config.outputTelemetry === 'string'
+          ? config.outputTelemetry
+          : this.openmct.objects.makeKeyString(config.outputTelemetry);
+      const outputStillInComposition = this.telemetry.some(
+        (telemetryObj) => telemetryObj.keyString === outputKey
+      );
+
+      if (!outputStillInComposition) {
+        config.outputTelemetry = null;
+        config.outputMetadata = null;
+        delete config.valueMetadata;
+        config.output = undefined;
+        this.setOutputSelection();
+        this.persist();
+      }
     }
   }
 };
