@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "4.1.0-next",
+  "version": "4.2.0-next",
   "description": "The Open MCT core platform",
   "module": "dist/openmct.js",
   "main": "dist/openmct.js",
@@ -98,6 +98,7 @@
   },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./coverage ./html-test-results ./e2e/test-results ./.nyc_output ./e2e/.nyc_output",
+    "build":"npm run build:prod && npx tsc",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.mjs",
     "start:prod": "npx webpack serve --config ./.webpack/webpack.prod.mjs",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.mjs",
@@ -131,8 +132,7 @@
     "test:perf:memory": "npm test --workspace e2e -- --config=playwright-performance-prod.config.js --project=chrome-memory",
     "update-about-dialog-copyright": "perl -pi -e 's/20\\d\\d\\-202\\d/2014\\-2024/gm' ./src/ui/layout/AboutDialog.vue",
     "update-copyright-date": "npm run update-about-dialog-copyright && grep -lr --null --include=*.{js,scss,vue,ts,sh,html,md,frag} 'Copyright (c) 20' . | xargs -r0 perl -pi -e 's/Copyright\\s\\(c\\)\\s20\\d\\d\\-20\\d\\d/Copyright \\(c\\)\\ 2014\\-2024/gm'",
-    "cov:e2e:report": "nyc report --reporter=lcovonly --report-dir=./coverage/e2e",
-    "prepare": "npm run build:prod && npx tsc"
+    "cov:e2e:report": "nyc report --reporter=lcovonly --report-dir=./coverage/e2e"
   },
   "homepage": "https://nasa.github.io/openmct",
   "repository": {
@@ -140,7 +140,7 @@
     "url": "git+https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=18.14.2 <23"
+    "node": ">=24.14.1"
   },
   "browserslist": [
     "Firefox ESR",
