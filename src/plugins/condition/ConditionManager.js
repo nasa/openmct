@@ -97,8 +97,8 @@ export default class ConditionManager extends EventEmitter {
     }
 
     this.telemetryCollections[keyString].destroy();
-    this.telemetryCollections[keyString] = null;
-    this.telemetryObjects[keyString] = null;
+    delete this.telemetryCollections[keyString];
+    delete this.telemetryObjects[keyString];
     this.removeConditionTelemetryObjects();
 
     //force re-computation of condition set result as we might be in a state where
