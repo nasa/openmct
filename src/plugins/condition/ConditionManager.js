@@ -636,7 +636,7 @@ export default class ConditionManager extends EventEmitter {
     if (!telemetryRef) {
       return false;
     }
-    
+
     return Boolean(this.telemetryObjects[telemetryRef]);
   }
 
@@ -709,7 +709,7 @@ export default class ConditionManager extends EventEmitter {
     if (!conditionCollectionItem?.configuration) {
       return;
     }
-    
+
     if (!this.#clearInvalidOutputTelemetryConfiguration(conditionCollectionItem.configuration)) {
       return;
     }
