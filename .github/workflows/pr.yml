@@ -23,7 +23,7 @@ jobs:
           - uses: actions/checkout@v4
           - id: generate_cache_key
             run: |
-                lock_hash="$(sha256sum package-lock.json | awk '{print $1}')"
+                lock_hash="$(sha256sum package-lock.json e2e/package-lock.json | sha256sum | awk '{print $1}')"
                 echo "cache_key=node${NODE_VERSION}-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
         outputs:
             cache_key: ${{ steps.generate_cache_key.outputs.cache_key }}
