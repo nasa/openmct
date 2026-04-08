@@ -140,7 +140,9 @@
     "node": ">=24.14.1"
   },
   "overrides": {
-    "minimatch": "10.2.5"
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "9.0.9"
+    }
   },
   "browserslist": [
     "Firefox ESR",
