@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/hydrogen'
+          node-version: '24.14.1'
 
       - name: Cache NPM dependencies
         uses: actions/cache@v3
