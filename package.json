@@ -102,7 +102,7 @@
     "lint:js": "eslint \"example/**/*.js\" \"src/**/*.js\" \"e2e/**/*.js\" \"openmct.js\" --max-warnings=0",
     "lint:vue": "eslint \"src/**/*.vue\"",
     "lint:spelling": "cspell \"**/*.{js,md,vue}\" --show-context --gitignore --quiet",
-    "lint": "run-p \"lint:js -- {1}\" \"lint:vue -- {1}\" \"lint:spelling -- {1}\" --",
+    "lint": "npm run lint:js && npm run lint:vue && npm run lint:spelling",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "webpack --config ./.webpack/webpack.prod.mjs",
     "build:dev": "webpack --config ./.webpack/webpack.dev.mjs",
