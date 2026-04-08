@@ -20,12 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import fs from 'fs/promises';
+
 import {
   createDomainObjectWithDefaults,
   navigateToObjectWithRealTime,
   setTimeConductorBounds
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
+
+/** Names that should be prefixed with ' in CSV (see sanitizeCsvFormulaInjection). */
+const FORMULA_INJECTION_LIKE_OBJECT_NAMES = [
+  '=inject-eq',
+  '+inject-plus',
+  '-inject-minus',
+  '@inject-at',
+  '\tinject-tab',
+  '  =inject-leading-space'
+];
 
 test.describe('Telemetry Table', () => {
   let table;
@@ -218,6 +230,41 @@ test.describe('Telemetry Table', () => {
 
     // Click pause button
     await page.getByLabel('Pause').click();
+  });
+
+  test('CSV export prefixes the Name column for spreadsheet formula-injection patterns', async ({
+    page
+  }) => {
+    for (const name of FORMULA_INJECTION_LIKE_OBJECT_NAMES) {
+      await createDomainObjectWithDefaults(page, {
+        type: 'Sine Wave Generator',
+        name,
+        parent: table.uuid
+      });
+    }
+
+    await navigateToObjectWithRealTime(page, table.url);
+
+    const rows = page.getByLabel('table content').getByLabel('Table Row');
+    await expect(rows.first()).toBeVisible();
+
+    await page.getByRole('button', { name: 'SHOW UNLIMITED' }).click();
+    await expect(rows.first()).toBeVisible({ timeout: 30000 });
+
+    await page.getByLabel('More actions').click();
+
+    const exportMenuItem = page.getByRole('menuitem', {
+      name: /Export Table Data|Export this view's data/
+    });
+
+    const [download] = await Promise.all([page.waitForEvent('download'), exportMenuItem.click()]);
+
+    const downloadPath = await download.path();
+    const csvText = await fs.readFile(downloadPath, 'utf8');
+
+    for (const name of FORMULA_INJECTION_LIKE_OBJECT_NAMES) {
+      expect(csvText).toContain(`'${name}`);
+    }
   });
 });
 
