@@ -1344,7 +1344,7 @@
           "tempChar": ""
         },
         {
-          "order": 214,
+          "order": 218,
           "id": 184,
           "name": "icon-notebook-restricted",
           "prevSize": 16,
@@ -1356,7 +1356,7 @@
       "metadata": {
         "name": "Open MCT Symbols 16px",
         "importSize": {
-          "width": 512,
+          "width": 576,
           "height": 512
         },
         "designer": "Charles Hacskaylo"

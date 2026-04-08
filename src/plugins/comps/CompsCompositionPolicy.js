@@ -20,53 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const ALLOWED_TYPES = [
-  'telemetry.plot.overlay',
-  'telemetry.plot.stacked',
-  'plan',
-  'gantt-chart',
-  'eventGenerator',
-  'eventGeneratorWithAcknowledge',
-  'yamcs.events',
-  'yamcs.events.severity',
-  'yamcs.events.source',
-  'yamcs.events.source.severity',
-  'yamcs.commands',
-  'yamcs.commands.queue'
-];
-const DISALLOWED_TYPES = ['telemetry.plot.bar-graph', 'telemetry.plot.scatter-plot'];
-export default function TimelineCompositionPolicy(openmct) {
-  function hasImageTelemetry(domainObject, metadata) {
-    if (!metadata) {
-      return false;
-    }
-
-    return metadata.valuesForHints(['image']).length > 0;
-  }
-
+export default function CompsCompositionPolicy(openmct) {
   return {
     allow: function (parent, child) {
-      if (parent.type === 'time-strip') {
-        const metadata = openmct.telemetry.getMetadata(child);
-
-        if (child.type === 'yamcs.event.specific.severity') {
-          console.warn(
-            'Type yamcs.event.specific.severity is deprecated. Use yamcs.events.source.severity.'
-          );
-        }
-
-        if (
-          !DISALLOWED_TYPES.includes(child.type) &&
-          (openmct.telemetry.hasNumericTelemetry(child) ||
-            hasImageTelemetry(child, metadata) ||
-            ALLOWED_TYPES.includes(child.type))
-        ) {
-          return true;
-        }
-
+      if (parent.type === 'comps' && !openmct.telemetry.isTelemetryObject(child)) {
         return false;
       }
-
       return true;
     }
   };

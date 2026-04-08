@@ -133,7 +133,7 @@ export async function shelveFault(page, rowNumber) {
 
 /**
  * @param {import('@playwright/test').Page} page
- * @param {'severity' | 'newest-first' | 'oldest-first'} sort
+ * @param {'unacknowledged-first' | 'severity' | 'newest-first' | 'oldest-first'} sort
  * @returns {Promise<void>}
  */
 export async function sortFaultsBy(page, sort) {

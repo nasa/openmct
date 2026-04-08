@@ -26,6 +26,7 @@ export default class ConditionSetTelemetryProvider {
   constructor(openmct) {
     this.openmct = openmct;
     this.conditionManagerPool = {};
+    this.subscribers = {};
   }
 
   isTelemetryObject(domainObject) {
@@ -47,16 +48,31 @@ export default class ConditionSetTelemetryProvider {
   }
 
   subscribe(domainObject, callback) {
-    let conditionManager = this.getConditionManager(domainObject);
-
-    conditionManager.on('conditionSetResultUpdated', (data) => {
-      callback(data);
-    });
-
-    return this.destroyConditionManager.bind(
-      this,
-      this.openmct.objects.makeKeyString(domainObject.identifier)
-    );
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    let subscription = this.subscribers[id];
+    if (!subscription) {
+      subscription = {
+        conditionManager: new ConditionManager(domainObject, this.openmct),
+        callbacks: [],
+        destroy: undefined
+      };
+      this.subscribers[id] = subscription;
+      function informAllSubscribers(data) {
+        subscription.callbacks.forEach((cb) => cb(data));
+      }
+      subscription.conditionManager.on('conditionSetResultUpdated', informAllSubscribers);
+      subscription.destroy = () => {
+        subscription.conditionManager.off('conditionSetResultUpdated', informAllSubscribers);
+        delete this.subscribers[id];
+      };
+    }
+    subscription.callbacks.push(callback);
+    return () => {
+      subscription.callbacks = subscription.callbacks.filter((s) => s !== callback);
+      if (subscription.callbacks.length === 0) {
+        subscription.destroy();
+      }
+    };
   }
 
   /**

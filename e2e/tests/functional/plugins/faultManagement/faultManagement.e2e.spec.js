@@ -44,8 +44,8 @@ test.describe('The Fault Management Plugin using example faults', () => {
   });
 
   test('Shows a criticality icon for every fault', async ({ page }) => {
-    const faultCount = await page.locator('c-fault-mgmt__list').count();
-    const criticalityIconCount = await page.locator('c-fault-mgmt__list-severity').count();
+    const faultCount = await page.locator('.c-fault-mgmt__list').count();
+    const criticalityIconCount = await page.locator('.c-fault-mgmt__list-severity').count();
 
     expect(faultCount).toEqual(criticalityIconCount);
   });
@@ -109,7 +109,8 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     await acknowledgeFault(page, 3);
 
-    const fault = getFault(page, 3);
+    // the acknowledged fault moves to position 5 since the list is sorted by unacknowledged first
+    const fault = getFault(page, 5);
     await expect(fault).toHaveClass(/is-acknowledged/);
 
     await changeViewTo(page, 'acknowledged');
@@ -151,11 +152,12 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     await acknowledgeMultipleFaults(page, 2, 5);
 
-    const faultTwo = getFault(page, 2);
+    // the acknowledged faults move to positions 4 and 5 since the list is sorted by unacknowledged first
+    const faultTwoNowFour = getFault(page, 4);
     const faultFive = getFault(page, 5);
 
     // check they have been acknowledged
-    await expect(faultTwo).toHaveClass(/is-acknowledged/);
+    await expect(faultTwoNowFour).toHaveClass(/is-acknowledged/);
     await expect(faultFive).toHaveClass(/is-acknowledged/);
 
     await changeViewTo(page, 'acknowledged');
@@ -211,6 +213,21 @@ test.describe('The Fault Management Plugin using example faults', () => {
     expect(await getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
   });
 
+  test('Confirms default sort is unacknowledged-first', async ({ page }) => {
+    // acknowledge 2 faults
+    await acknowledgeMultipleFaults(page, 2, 5);
+    // get a list of all faults.
+    const allFaults = page.locator('.c-fault-mgmt__list');
+
+    const { lastUnack, firstAck } =
+      await getFirstAndLastUnacknowledgedAndAcknowledgedFaults(allFaults);
+
+    // confirm that the last unacknowledged fault is before the first acknowledged fault.
+    expect(lastUnack).toBeGreaterThan(-1);
+    expect(firstAck).toBeGreaterThan(-1);
+    expect(lastUnack).toBeLessThan(firstAck);
+  });
+
   test('Allows you to sort faults', async ({ page }) => {
     /**
      * Compares two severity levels and returns a number indicating their relative order.
@@ -253,6 +270,19 @@ test.describe('The Fault Management Plugin using example faults', () => {
     const lastFaultSeverity = lastFaultSeverityLabel.split(' ').slice(1).join(' ');
 
     expect(compareSeverity(firstFaultSeverity, lastFaultSeverity)).toBeGreaterThan(0);
+
+    // acknowledge 2 faults
+    await acknowledgeMultipleFaults(page, 2, 5);
+    // Sort by Unacknowledged First
+    await sortFaultsBy(page, 'unacknowledged-first');
+    let allFaults = page.locator('.c-fault-mgmt__list');
+    const { lastUnack, firstAck } =
+      await getFirstAndLastUnacknowledgedAndAcknowledgedFaults(allFaults);
+
+    // confirm that the last unacknowledged fault is before the first acknowledged fault.
+    expect(lastUnack).toBeGreaterThan(-1);
+    expect(firstAck).toBeGreaterThan(-1);
+    expect(lastUnack).toBeLessThan(firstAck);
   });
 });
 
@@ -277,3 +307,29 @@ test.describe('The Fault Management Plugin without using example faults', () => 
     await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
   });
 });
+
+async function getFirstAndLastUnacknowledgedAndAcknowledgedFaults(allFaults) {
+  const { lastUnack, firstAck } = await allFaults.evaluateAll((faults) => {
+    let lastUnackIndex = -1;
+    let firstAckIndex = -1;
+    console.log('faults', faults);
+
+    for (let i = 0; i < faults.length; i++) {
+      const fault = faults[i];
+
+      // get the index of the last unacknowledged fault in the list.
+      if (fault.classList.contains('is-unacknowledged')) {
+        lastUnackIndex = i;
+      }
+
+      // get the index of the first acknowledged fault in the list.
+      if (fault.classList.contains('is-acknowledged') && firstAckIndex === -1) {
+        firstAckIndex = i;
+        break;
+      }
+    }
+
+    return { lastUnack: lastUnackIndex, firstAck: firstAckIndex };
+  });
+  return { lastUnack, firstAck };
+}
