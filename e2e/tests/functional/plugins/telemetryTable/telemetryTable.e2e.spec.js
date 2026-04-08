@@ -253,9 +253,7 @@ test.describe('Telemetry Table', () => {
 
     await page.getByLabel('More actions').click();
 
-    const exportMenuItem = page.getByRole('menuitem', {
-      name: /Export Table Data|Export this view's data/
-    });
+    const exportMenuItem = page.getByRole('menuitem', { name: 'Export Table Data' });
 
     const [download] = await Promise.all([page.waitForEvent('download'), exportMenuItem.click()]);
 
