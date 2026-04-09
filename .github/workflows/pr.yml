@@ -102,23 +102,16 @@ jobs:
         needs: 
             - build_and_cache_dependencies_if_needed
         runs-on: ubuntu-latest
-        container: mcr.microsoft.com/playwright:v1.57.0-jammy
         steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
             with:
                 node-version: ${{ env.NODE_VERSION }}
                 cache: npm
-          - uses: actions/cache/restore@v4
-            with:
-              path: |
-                node_modules
-                e2e/node_modules
-                dist
-              key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: |
               mkdir -p dist/reports/tests/
               npm ci
+              npm run build
               npm run test
           - uses: codecov/codecov-action@v4
             if: always()
