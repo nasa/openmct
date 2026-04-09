@@ -102,6 +102,7 @@ jobs:
         needs: 
             - build_and_cache_dependencies_if_needed
         runs-on: ubuntu-latest
+        container: mcr.microsoft.com/playwright:v1.57.0-jammy
         steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
