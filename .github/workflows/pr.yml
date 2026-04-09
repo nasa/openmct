@@ -24,7 +24,7 @@ jobs:
           - id: generate_cache_key
             run: |
                 lock_hash="$(sha256sum package-lock.json e2e/package-lock.json | sha256sum | awk '{print $1}')"
-                echo "cache_key=node${NODE_VERSION}-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
+                echo "cache_key=node${NODE_VERSION}-deps-${lock_hash}-v2" >> "$GITHUB_OUTPUT"
         outputs:
             cache_key: ${{ steps.generate_cache_key.outputs.cache_key }}
     build_and_cache_dependencies_if_needed:
@@ -67,20 +67,6 @@ jobs:
                   });
                 } catch (error) {
                   core.warning(`Failed to remove ' + labelToRemove + ' label: ${error.message}`);
-                }
-          - name: Delete existing cache (to allow re-save on build:clean)
-            if: steps.node_deps_restore_cache.outputs.cache-hit == 'true' && contains(github.event.pull_request.labels.*.name, 'build:clean')
-            uses: actions/github-script@v6
-            with:
-              script: |
-                try {
-                  await github.rest.actions.deleteActionsCacheByKey({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    key: '${{ needs.generate_cache_key.outputs.cache_key }}'
-                  });
-                } catch (error) {
-                  core.warning(`Failed to delete cache: ${error.message}`);
                 }
           - uses: actions/cache/save@v4
             id: node_deps_save_cache
