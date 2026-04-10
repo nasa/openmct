@@ -367,7 +367,6 @@ export default {
   mounted() {
     this.setOutputSelection();
     this.initializeMetadata();
-    this.clearOutputTelemetryIfRemoved();
   },
   methods: {
     setOutputSelection() {
@@ -510,6 +509,7 @@ export default {
     },
     clearOutputTelemetryIfRemoved() {
       const config = this.condition?.configuration;
+
       if (config?.output !== TELEMETRY_VALUE || !config.outputTelemetry) {
         return;
       }
