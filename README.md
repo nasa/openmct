@@ -75,7 +75,7 @@ If you encounter an issue with a particular browser, OS, or NodeJS API, please [
 > [!NOTE]
 > If you are building a project with Open MCT as a git dependency rather than an npm dependency, an extra step is now 
 > necessary to build the source. Due to the threat posed by Supply Chain Attacks `ignore-scripts` is now enabled in 
-> this repository. Developers building with Open MCT as a git dependency will now need to execute `npm run build:dist`
+> this repository. Developers building with Open MCT as a git dependency will now need to execute `npm run build`
 > manually. We always encourage developers to use Open MCT as a prebuilt npm repository, rather than building from github.
 
 ## Plugins
