@@ -1,10 +1,10 @@
-import moment from 'moment';
+import { formatUtc, parseDuration, validateMultiFormat } from '../../utils/time.js';
 
 const DATE_FORMAT = 'HH:mm:ss';
 const DATE_FORMATS = [DATE_FORMAT, `${DATE_FORMAT}.SSS`];
 
 /**
- * Formatter for duration. Uses moment to produce a date from a given
+ * Formatter for duration. Uses Luxon to produce a date from a given
  * value, but output is formatted to display only time. Can be used for
  * specifying a time duration. For specifying duration, it's best to
  * specify a date of January 1, 1970, as the ms offset will equal the
@@ -18,15 +18,15 @@ class DurationFormat {
     this.key = 'duration';
   }
   format(value, formatString) {
-    return moment.utc(value).format(formatString || DATE_FORMAT);
+    return formatUtc(value, formatString || DATE_FORMAT);
   }
 
   parse(text) {
-    return moment.duration(text).asMilliseconds();
+    return parseDuration(text);
   }
 
   validate(text) {
-    return moment.utc(text, DATE_FORMATS, true).isValid();
+    return validateMultiFormat(text, DATE_FORMATS);
   }
 }
 

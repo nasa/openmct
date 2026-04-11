@@ -29,7 +29,7 @@
  * and then minimized to a banner notification if needed.
  */
 import { EventEmitter } from 'eventemitter3';
-import moment from 'moment';
+import { nowUtc } from '../../utils/time.js';
 
 const DEFAULT_AUTO_DISMISS_TIMEOUT = 3000;
 const MINIMIZE_ANIMATION_TIMEOUT = 300;
@@ -269,7 +269,7 @@ export default class NotificationAPI extends EventEmitter {
     let activeNotification = this.activeNotification;
 
     notificationModel.severity = notificationModel.severity || 'info';
-    notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
+    notificationModel.timestamp = nowUtc('yyyy-MM-dd HH:mm:ss.SSS');
 
     notification = this._createNotification(notificationModel);
 

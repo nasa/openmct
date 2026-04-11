@@ -20,7 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import moment from 'moment';
+import {
+  formatUtc,
+  parseMultiFormat,
+  validateMultiFormat,
+  toLuxonFormat
+} from '../../utils/time.js';
 
 /**
  * Formatter for UTC timestamps. Interprets numeric values as
@@ -32,17 +37,47 @@ import moment from 'moment';
 export default class UTCTimeFormat {
   constructor() {
     this.key = 'utc';
-    this.DATE_FORMAT = `YYYY-MM-DD HH:mm:ss.SSS`;
+    this.DATE_FORMAT = 'yyyy-MM-dd HH:mm:ss.SSS';
     this.DATE_FORMATS = {
       PRECISION_DEFAULT: this.DATE_FORMAT,
       PRECISION_DEFAULT_WITH_ZULU: `${this.DATE_FORMAT}Z`,
-      PRECISION_DEFAULT_WITH_ZULU_MOMENT: `${this.DATE_FORMAT}[Z]`,
-      PRECISION_SECONDS: `YYYY-MM-DD HH:mm:ss`,
-      PRECISION_MINUTES: `YYYY-MM-DD HH:mm`,
-      PRECISION_DAYS: 'YYYY-MM-DD',
+      PRECISION_DEFAULT_WITH_ZULU_LUXON: `${this.DATE_FORMAT}'Z'`,
+      PRECISION_SECONDS: 'yyyy-MM-dd HH:mm:ss',
+      PRECISION_MINUTES: 'yyyy-MM-dd HH:mm',
+      PRECISION_DAYS: 'yyyy-MM-dd',
       PRECISION_SECONDS_TIME_ONLY: 'HH:mm:ss',
       PRECISION_MINUTES_TIME_ONLY: 'HH:mm'
     };
+    // Keep legacy Moment format strings mapped for backwards compatibility
+    // with callers that pass Moment-style format strings directly.
+    this._legacyFormats = {
+      'YYYY-MM-DD HH:mm:ss.SSS': this.DATE_FORMATS.PRECISION_DEFAULT,
+      'YYYY-MM-DD HH:mm:ss.SSSZ': this.DATE_FORMATS.PRECISION_DEFAULT_WITH_ZULU,
+      [`YYYY-MM-DD HH:mm:ss.SSS[Z]`]: this.DATE_FORMATS.PRECISION_DEFAULT_WITH_ZULU_LUXON,
+      'YYYY-MM-DD HH:mm:ss': this.DATE_FORMATS.PRECISION_SECONDS,
+      'YYYY-MM-DD HH:mm': this.DATE_FORMATS.PRECISION_MINUTES,
+      'YYYY-MM-DD': this.DATE_FORMATS.PRECISION_DAYS,
+      'HH:mm:ss': this.DATE_FORMATS.PRECISION_SECONDS_TIME_ONLY,
+      'HH:mm': this.DATE_FORMATS.PRECISION_MINUTES_TIME_ONLY
+    };
+  }
+
+  /**
+   * Normalize a format string, converting legacy Moment tokens to Luxon if needed.
+   * @param {string} formatString
+   * @returns {string} Luxon-compatible format string
+   */
+  _normalizeFormat(formatString) {
+    if (this._legacyFormats[formatString]) {
+      return this._legacyFormats[formatString];
+    }
+
+    if (Object.values(this.DATE_FORMATS).includes(formatString)) {
+      return formatString;
+    }
+
+    // Auto-convert any remaining Moment format strings
+    return toLuxonFormat(formatString);
   }
 
   /**
@@ -50,7 +85,10 @@ export default class UTCTimeFormat {
    * @returns the value of formatString if the value is a string type and exists in the DATE_FORMATS array; otherwise the DATE_FORMAT value.
    */
   isValidFormatString(formatString) {
-    return Object.values(this.DATE_FORMATS).includes(formatString);
+    return (
+      Object.values(this.DATE_FORMATS).includes(formatString) ||
+      this._legacyFormats[formatString] !== undefined
+    );
   }
 
   /**
@@ -62,15 +100,11 @@ export default class UTCTimeFormat {
    */
   format(value, formatString) {
     if (value !== undefined) {
-      const utc = moment.utc(value);
+      const format = formatString
+        ? this._normalizeFormat(formatString)
+        : this.DATE_FORMATS.PRECISION_DEFAULT_WITH_ZULU_LUXON;
 
-      if (formatString !== undefined && !this.isValidFormatString(formatString)) {
-        throw 'Invalid format requested from UTC Time Formatter ';
-      }
-
-      const format = formatString || this.DATE_FORMATS.PRECISION_DEFAULT_WITH_ZULU_MOMENT;
-
-      return utc.format(format);
+      return formatUtc(value, format);
     }
   }
 
@@ -95,10 +129,18 @@ export default class UTCTimeFormat {
       return text;
     }
 
-    return moment.utc(text, Object.values(this.DATE_FORMATS)).valueOf();
+    if (typeof text !== 'string') {
+      return NaN;
+    }
+
+    return parseMultiFormat(text, Object.values(this.DATE_FORMATS));
   }
 
   validate(text) {
-    return moment.utc(text, Object.values(this.DATE_FORMATS), true).isValid();
+    if (typeof text !== 'string') {
+      return false;
+    }
+
+    return validateMultiFormat(text, Object.values(this.DATE_FORMATS));
   }
 }
