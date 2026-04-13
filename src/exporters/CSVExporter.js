@@ -48,8 +48,8 @@ export function sanitizeCsvFormulaInjection(value) {
  * Encodes tabular data as CSV and triggers a browser download via FileSaver.
  *
  * This layer does not sanitize cell values or filenames. Any user-controlled text
- * (including Open MCT object `name` fields shown in exported rows) should be passed 
- * through {@link sanitizeCsvFormulaInjection} where spreadsheet tools could treat 
+ * (including Open MCT object `name` fields shown in exported rows) should be passed
+ * through {@link sanitizeCsvFormulaInjection} where spreadsheet tools could treat
  * leading `=`, `+`, etc. as formulas.
  */
 class CSVExporter {
