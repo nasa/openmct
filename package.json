@@ -105,6 +105,7 @@
     "lint:spelling": "cspell \"**/*.{js,md,vue}\" --show-context --gitignore --quiet",
     "lint": "run-p \"lint:js -- {1}\" \"lint:vue -- {1}\" \"lint:spelling -- {1}\" --",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
+    "build": "npm run build:prod && npx tsc",
     "build:prod": "webpack --config ./.webpack/webpack.prod.mjs",
     "build:dev": "webpack --config ./.webpack/webpack.dev.mjs",
     "build:coverage": "webpack --config ./.webpack/webpack.coverage.mjs",
