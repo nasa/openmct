@@ -95,6 +95,9 @@
     "webpack-dev-server": "5.0.2",
     "webpack-merge": "5.10.0"
   },
+  "optionalDependencies": {
+    "fsevents": "2.3.2"
+  },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./coverage ./html-test-results ./e2e/test-results ./.nyc_output ./e2e/.nyc_output",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.mjs",
