@@ -53,7 +53,7 @@ test.describe('Visual - Telemetry Views', () => {
     await page.goto(telemetry.url, { waitUntil: 'domcontentloaded' });
 
     //Click this button to see telemetry display options
-    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel(/Open the View Switcher Menu/).click();
     await page.getByLabel('Telemetry Table').click();
 
     //Get Table View in place
