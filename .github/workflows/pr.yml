@@ -9,7 +9,7 @@ on:
 
 env:
   NODE_ENV: development
-  NODE_VERSION: 22
+  NODE_VERSION: 24.14.1
   PERCY_POSTINSTALL_BROWSER: "true"
   PERCY_LOGLEVEL: "debug"
   PERCY_PARALLEL_TOTAL: 2
@@ -23,14 +23,16 @@ jobs:
           - uses: actions/checkout@v4
           - id: generate_cache_key
             run: |
-                lock_hash="$(sha256sum package-lock.json | awk '{print $1}')"
-                echo "cache_key=node${NODE_VERSION}-deps-${lock_hash}" >> "$GITHUB_OUTPUT"
+                lock_hash="$(sha256sum package-lock.json e2e/package-lock.json | sha256sum | awk '{print $1}')"
+                echo "cache_key=node${NODE_VERSION}-deps-${lock_hash}-v2" >> "$GITHUB_OUTPUT"
         outputs:
             cache_key: ${{ steps.generate_cache_key.outputs.cache_key }}
     build_and_cache_dependencies_if_needed:
         needs: generate_cache_key
         runs-on: ubuntu-latest
-        container: mcr.microsoft.com/playwright:v1.57.0-jammy 
+        container: mcr.microsoft.com/playwright:v1.57.0-jammy
+        permissions:
+          actions: write
         steps:
           - uses: actions/checkout@v4
           - uses: actions/setup-node@v4
@@ -45,7 +47,9 @@ jobs:
                 e2e/node_modules
                 dist
               key: ${{ needs.generate_cache_key.outputs.cache_key }}
-          - run: npm ci
+          - run: | 
+              npm ci
+              npm run build
             if: steps.node_deps_restore_cache.outputs.cache-hit != 'true' || contains(github.event.pull_request.labels.*.name, 'build:clean')
           - name: Remove build:clean label (if present)
             if: contains(github.event.pull_request.labels.*.name, 'build:clean')
@@ -104,16 +108,10 @@ jobs:
             with:
                 node-version: ${{ env.NODE_VERSION }}
                 cache: npm
-          - uses: actions/cache/restore@v4
-            with:
-              path: |
-                node_modules
-                e2e/node_modules
-                dist
-              key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: |
               mkdir -p dist/reports/tests/
               npm ci
+              npm run build
               npm run test
           - uses: codecov/codecov-action@v4
             if: always()
