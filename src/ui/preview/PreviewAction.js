@@ -19,19 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 
 import PreviewContainer from './PreviewContainer.vue';
 
-export default class PreviewAction extends EventEmitter {
+const PREVIEW_ACTION_KEY = 'preview';
+
+class PreviewAction extends EventEmitter {
   constructor(openmct) {
     super();
     /**
      * Metadata
      */
     this.name = 'View';
-    this.key = 'preview';
+    this.key = PREVIEW_ACTION_KEY;
     this.description = 'View in large dialog';
     this.cssClass = 'icon-items-expand';
     this.group = 'windowing';
@@ -110,3 +112,7 @@ export default class PreviewAction extends EventEmitter {
     return noPreviewTypes.includes(objectPath[0].type);
   }
 }
+
+export { PREVIEW_ACTION_KEY };
+
+export default PreviewAction;

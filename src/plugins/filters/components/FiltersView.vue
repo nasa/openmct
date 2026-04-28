@@ -25,12 +25,12 @@
     <div v-if="hasActiveFilters" class="c-filter-indication">
       {{ label }}
     </div>
-    <global-filters
+    <GlobalFilters
       :global-filters="globalFilters"
       :global-metadata="globalMetadata"
       @persist-global-filters="persistGlobalFilters"
     />
-    <filter-object
+    <FilterObject
       v-for="(child, key) in children"
       :key="key"
       :filter-object="child"
@@ -38,6 +38,9 @@
       @update-filters="persistFilters"
     />
   </ul>
+  <span v-else>
+    This view doesn't include any parameters that have configured filter criteria.
+  </span>
 </template>
 
 <script>

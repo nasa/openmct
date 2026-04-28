@@ -22,8 +22,9 @@
 import { v4 as uuid } from 'uuid';
 
 import JSONExporter from '/src/exporters/JSONExporter.js';
+const EXPORT_AS_JSON_ACTION_KEY = 'export.JSON';
 
-export default class ExportAsJSONAction {
+class ExportAsJSONAction {
   #openmct;
 
   /**
@@ -39,7 +40,7 @@ export default class ExportAsJSONAction {
     this.saveAs = this.saveAs.bind(this);
 
     this.name = 'Export as JSON';
-    this.key = 'export.JSON';
+    this.key = EXPORT_AS_JSON_ACTION_KEY;
     this.description = '';
     this.cssClass = 'icon-export';
     this.group = 'export';
@@ -107,7 +108,7 @@ export default class ExportAsJSONAction {
 
   /**
    * @private
-   * @param {import('../../api/objects/ObjectAPI').DomainObject} parent
+   * @param {import('openmct').DomainObject} parent
    */
   async #write(parent) {
     this.totalToExport++;
@@ -410,3 +411,7 @@ export default class ExportAsJSONAction {
     return JSON.parse(JSON.stringify(object));
   }
 }
+
+export { EXPORT_AS_JSON_ACTION_KEY };
+
+export default ExportAsJSONAction;

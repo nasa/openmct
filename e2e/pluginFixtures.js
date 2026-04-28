@@ -127,6 +127,11 @@ const extendedTest = test.extend({
       await page.addInitScript({
         path: fileURLToPath(new URL('./helper/useSnowTheme.js', import.meta.url))
       });
+    } else if (theme === 'darkmatter') {
+      //inject darkmatter theme
+      await page.addInitScript({
+        path: fileURLToPath(new URL('./helper/useDarkmatterTheme.js', import.meta.url))
+      });
     }
 
     // Attach info about the currently running test and its project.

@@ -22,8 +22,12 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { createDomainObjectWithDefaults, expandTreePaneItemByName } from '../../appActions.js';
-import { expect, test } from '../../avpFixtures.js';
+import {
+  createDomainObjectWithDefaults,
+  expandInspectorPane,
+  expandTreePane
+} from '../../appActions.js';
+import { expect, scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import { enterTextEntry, startAndAddRestrictedNotebookObject } from '../../helper/notebookUtils.js';
 
@@ -61,8 +65,9 @@ test.describe('Visual - Notebook Snapshot @a11y', () => {
     await percySnapshot(page, `Notebook Snapshot with text entry open (theme: '${theme}')`);
 
     // When working with Painterro, we need to check that the Apply button is hidden after clicking
-    await page.getByTitle('Apply').click();
-    await expect(page.getByTitle('Apply')).toBeHidden();
+    const painterroApplyButton = page.locator('.ptro-text-tool-buttons').getByTitle('Apply');
+    await painterroApplyButton.click();
+    await expect(painterroApplyButton).toBeHidden();
 
     // Save and exit annotation window
     await page.getByRole('button', { name: 'Save' }).click();
@@ -86,9 +91,7 @@ test.describe('Visual - Notebook @a11y', () => {
       name: 'Test Notebook'
     });
   });
-  test('Accepts dropped objects as embeds', async ({ page, theme, openmctConfig }) => {
-    const { myItemsFolderName } = openmctConfig;
-
+  test('Accepts dropped objects as embeds', async ({ page, theme }) => {
     // Create Overlay Plot
     await createDomainObjectWithDefaults(page, {
       type: 'Overlay Plot',
@@ -96,13 +99,16 @@ test.describe('Visual - Notebook @a11y', () => {
     });
 
     //Open Tree to perform drag
-    await page.getByRole('button', { name: 'Browse' }).click();
-
-    await expandTreePaneItemByName(page, myItemsFolderName);
+    await expandTreePane(page);
+    await page.getByLabel('Expand My Items folder').click();
 
     await page.goto(notebook.url);
 
-    await page.dragAndDrop('role=treeitem[name=/Dropped Overlay Plot/]', '.c-notebook__drag-area');
+    await expect(page.getByLabel('Browse bar object name')).toHaveText(notebook.name);
+
+    await page
+      .getByLabel('Navigate to Dropped Overlay Plot')
+      .dragTo(page.getByLabel('To start a new entry, click here or drag and drop any object'));
 
     await percySnapshot(page, `Notebook w/ dropped embed (theme: ${theme})`);
   });
@@ -112,7 +118,7 @@ test.describe('Visual - Notebook @a11y', () => {
     await percySnapshot(page, `Notebook Entry (theme: '${theme}')`);
 
     // Open the Inspector
-    await page.getByRole('button', { name: 'Inspect' }).click();
+    await expandInspectorPane(page);
     // Open the Annotations tab
     await page.getByRole('tab', { name: 'Annotations' }).click();
 
@@ -163,8 +169,7 @@ test.describe('Visual - Notebook @a11y', () => {
     // Take a snapshot
     await percySnapshot(page, `Notebook Selected Entry Text Area Active (theme: '${theme}')`);
   });
-  // Skipping for https://github.com/nasa/openmct/issues/7421
-  // test.afterEach(async ({ page }, testInfo) => {
-  //   await scanForA11yViolations(page, testInfo.title);
-  // });
+  test.afterEach(async ({ page }, testInfo) => {
+    await scanForA11yViolations(page, testInfo.title);
+  });
 });

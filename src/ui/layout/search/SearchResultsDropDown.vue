@@ -41,7 +41,7 @@
         aria-label="Object Results"
       >
         <div class="c-gsearch__results-section-title">Object Results</div>
-        <object-search-result
+        <ObjectSearchResult
           v-for="objectResult in objectResults"
           :key="openmct.objects.makeKeyString(objectResult.identifier)"
           :result="objectResult"
@@ -56,7 +56,7 @@
         aria-label="Annotation Results"
       >
         <div class="c-gsearch__results-section-title">Annotation Results</div>
-        <annotation-search-result
+        <AnnotationSearchResult
           v-for="annotationResult in annotationResults"
           :key="makeKeyForAnnotationResult(annotationResult)"
           :result="annotationResult"
@@ -65,7 +65,7 @@
       </div>
       <div v-if="searchLoading" class="c-gsearch__result-pane-msg">
         <div class="hint">Searching...</div>
-        <progress-bar :model="{ progressPerc: null }" />
+        <ProgressBar :model="{ progressPerc: null }" />
       </div>
       <div
         v-if="

@@ -5,14 +5,14 @@
 import { devices } from '@playwright/test';
 import { fileURLToPath } from 'url';
 const MAX_FAILURES = 5;
-const NUM_WORKERS = 2;
+const NUM_WORKERS = 4;
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   retries: 2, //Retries 2 times for a total of 3 runs. When running sharded and with max-failures=5, this should ensure that flake is managed without failing the full suite
   testDir: 'tests',
   grepInvert: /@mobile/, //Ignore mobile tests
-  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-perfromance.config.js
+  testIgnore: '**/*.perf.spec.js', //Ignore performance tests and define in playwright-performance.config.js
   timeout: 60 * 1000,
   webServer: {
     command: 'npm run start:coverage',
@@ -22,7 +22,7 @@ const config = {
     reuseExistingServer: true //This was originally disabled to prevent differences in local debugging vs. CI. However, it significantly speeds up local debugging.
   },
   maxFailures: MAX_FAILURES, //Limits failures to 5 to reduce CI Waste
-  workers: NUM_WORKERS, //Limit to 2 for CircleCI Agent
+  workers: NUM_WORKERS,
   use: {
     baseURL: 'http://localhost:8080/',
     headless: true,

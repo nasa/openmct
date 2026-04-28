@@ -126,7 +126,7 @@ export default class PlotConfigurationModel extends Model {
   }
   /**
    * Retrieve the persisted series config for a given identifier.
-   * @param {import('./PlotSeries').Identifier} identifier
+   * @param {import('openmct').Identifier} identifier
    * @returns {import('./PlotSeries').PlotSeriesModelType=}
    */
   getPersistedSeriesConfig(identifier) {

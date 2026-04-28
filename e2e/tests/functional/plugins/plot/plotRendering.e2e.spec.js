@@ -25,7 +25,14 @@
  *
  */
 
-import { createDomainObjectWithDefaults, getCanvasPixels } from '../../../../appActions.js';
+import {
+  createDomainObjectWithDefaults,
+  createOutOfOrderStateTelemetry,
+  getCanvasPixels,
+  setEndOffset,
+  setRealTimeMode,
+  setStartOffset
+} from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Plot Rendering', () => {
@@ -50,13 +57,37 @@ test.describe('Plot Rendering', () => {
       createMineFolderRequests.push(req);
     });
     expect(createMineFolderRequests.length).toEqual(0);
+    await page.getByLabel('Plot Canvas').hover();
   });
 
-  test.fixme('Plot is rendered when infinity values exist', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'issue',
-      description: 'https://github.com/nasa/openmct/issues/7421'
-    });
+  test('Time conductor synchronizes with plot time range when that plot control is clicked', async ({
+    page
+  }) => {
+    // Navigate to Sine Wave Generator
+    await page.goto(sineWaveGeneratorObject.url);
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on pause control
+    await page.getByTitle('Pause incoming real-time data').click();
+
+    // expect plot to be paused
+    await expect(page.getByTitle('Resume displaying real-time data')).toBeVisible();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // click on synchronize with time conductor
+    await page.getByTitle('Synchronize Time Conductor').click();
+
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+
+    //confirm that you're now in fixed mode with the correct range
+    await expect(page.getByLabel('Time Conductor Mode')).toHaveText('Fixed Timespan');
+  });
+
+  test('Plot is rendered when infinity values exist', async ({ page }) => {
     // Edit Plot
     await editSineWaveToUseInfinityOption(page, sineWaveGeneratorObject);
 
@@ -64,6 +95,67 @@ test.describe('Plot Rendering', () => {
     const plotPixels = await getCanvasPixels(page, 'canvas');
     const plotPixelSize = plotPixels.length;
     expect(plotPixelSize).toBeGreaterThan(0);
+  });
+});
+
+test.describe('Visual - Plot rendering with out of order data @clock', () => {
+  test('Out of Order data is rendered correctly - with no backward (golf club) interpolation @snapshot', async ({
+    page
+  }) => {
+    await page.addInitScript(() => {
+      window.glBuffers = [];
+      const orgBufferData = WebGLRenderingContext.prototype.bufferData;
+
+      WebGLRenderingContext.prototype.bufferData = function (target, data, usage) {
+        if (data instanceof Float32Array && data.length > 10) {
+          // Store the buffer so the test can inspect it
+          window.glBuffers.push(Array.from(data));
+        }
+        return orgBufferData.call(this, target, data, usage);
+      };
+    });
+
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    const startOffset = {
+      startMins: '00',
+      startSecs: '10'
+    };
+
+    const endOffset = {
+      endMins: '01',
+      endSecs: '00'
+    };
+
+    await setRealTimeMode(page);
+    await setStartOffset(page, startOffset);
+
+    await setEndOffset(page, endOffset);
+
+    await createOutOfOrderStateTelemetry(page);
+
+    await page.getByText('OUT OF ORDER', { exact: true }).waitFor({ timeout: 10000 });
+    // after out of order data is received, we need a couple more cycles for the plot to update
+    const bufferCount = await page.evaluate(() => window.glBuffers.length);
+
+    // This proves the renderer has cycled at least once since the data arrived
+    await page.waitForFunction((oldLimit) => window.glBuffers.length > oldLimit + 60, bufferCount);
+
+    // Inspect the Buffers
+    const hasBackwardsLine = await page.evaluate(() => {
+      return window.glBuffers.some((buffer) => {
+        for (let i = 2; i < buffer.length; i += 2) {
+          const currentX = buffer[i];
+          const prevX = buffer[i - 2];
+          // If current X is less than previous X, the line draws backward
+          if (currentX < prevX && currentX !== 0 && prevX !== 0) {
+            return true;
+          }
+        }
+        return false;
+      });
+    });
+    expect(hasBackwardsLine).toBe(false);
   });
 });
 

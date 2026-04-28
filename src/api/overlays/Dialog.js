@@ -22,7 +22,7 @@ class Dialog extends Overlay {
     super({
       element: vNode.el,
       size: 'fit',
-      dismissable: false,
+      dismissible: false,
       ...options
     });
 

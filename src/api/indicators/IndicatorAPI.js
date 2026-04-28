@@ -20,11 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 
 import vueWrapHtmlElement from '../../utils/vueWrapHtmlElement.js';
 import SimpleIndicator from './SimpleIndicator.js';
 
+/**
+ * The Indicator API is used to add indicators to the Open MCT UI.
+ * An indicator appears in the top navigation bar and can be used to
+ * display information or trigger actions.
+ *
+ * @extends EventEmitter
+ */
 class IndicatorAPI extends EventEmitter {
   /** @type {import('../../../openmct.js').OpenMCT} */
   openmct;
@@ -51,38 +58,39 @@ class IndicatorAPI extends EventEmitter {
 
   /**
    * @typedef {Object} Indicator
-   * @property {HTMLElement} [element]
-   * @property {VueComponent|Promise<VueComponent>} [vueComponent]
-   * @property {string} key
-   * @property {number} priority
+   * @property {HTMLElement} [element] - The HTML element of the indicator. Optional if using vueComponent.
+   * @property {VueComponent|Promise<VueComponent>} [vueComponent] - The Vue component for the indicator. Optional if using element.
+   * @property {string} key - The unique key for the indicator.
+   * @property {number} priority - The priority of the indicator (default: -1).
    */
 
   /**
-   * Accepts an indicator object, which is a simple object
-   * with a two attributes: 'element' which has an HTMLElement
-   * as its value, and 'priority' with an integer that specifies its order in the layout.
-   * The lower the priority, the further to the right the element is placed.
-   * If undefined, the priority will be assigned -1.
+   * Adds an indicator to the API.
    *
-   * We provide .simpleIndicator() as a convenience function
-   * which will create a default Open MCT indicator that can
-   * be passed to .add(indicator). This indicator also exposes
-   * functions for changing its appearance to support customization
-   * and dynamic behavior.
+   * @param {Indicator} indicator - The indicator object to add.
    *
-   * Eg.
+   * @description
+   * The indicator object is a simple object with two main attributes:
+   * - 'element': An HTMLElement (optional if using vueComponent).
+   * - 'priority': An integer specifying its order in the layout. Lower priority
+   *   places the element further to the right. If undefined, defaults to -1.
+   *
+   * A convenience function `.simpleIndicator()` is provided to create a default
+   * Open MCT indicator that can be passed to `.add(indicator)`. This indicator
+   * exposes functions for customizing its appearance and behavior.
+   *
+   * Example usage:
+   * ```
    * const myIndicator = openmct.indicators.simpleIndicator();
    * openmct.indicators.add(myIndicator);
    *
    * myIndicator.text("Hello World!");
    * myIndicator.iconClass("icon-info");
+   * ```
    *
-   * If you would like to use a Vue component, you can pass it in
-   * directly as the 'vueComponent' attribute of the indicator object.
-   * This accepts a Vue component or a promise that resolves to a Vue component (for asynchronous
-   * rendering).
-   *
-   * @param {Indicator} indicator
+   * For Vue components, pass the component directly as the 'vueComponent'
+   * attribute. This can be a Vue component or a promise resolving to a
+   * Vue component for asynchronous rendering.
    */
   add(indicator) {
     if (!indicator.priority) {

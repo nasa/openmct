@@ -59,6 +59,6 @@ test.describe('Clear Data Action', () => {
 
     // Verify that the background image is no longer visible
     await expect(page.locator(backgroundImageSelector)).toBeHidden();
-    expect(await page.locator('.c-thumb__image').count()).toBe(0);
+    await expect(page.locator('.c-thumb__image')).toHaveCount(0);
   });
 });

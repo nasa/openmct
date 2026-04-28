@@ -26,19 +26,22 @@ import { v4 as uuid } from 'uuid';
 import CreateWizard from './CreateWizard.js';
 import PropertiesAction from './PropertiesAction.js';
 
-export default class CreateAction extends PropertiesAction {
+const CREATE_ACTION_KEY = 'create';
+
+class CreateAction extends PropertiesAction {
   #transaction;
 
-  constructor(openmct, type, parentDomainObject) {
+  constructor(openmct) {
     super(openmct);
 
-    this.type = type;
-    this.parentDomainObject = parentDomainObject;
     this.#transaction = null;
+    this.key = CREATE_ACTION_KEY;
+    // Hide the create action from context menus by default
+    this.isHidden = true;
   }
 
-  invoke() {
-    this._showCreateForm(this.type);
+  get invoke() {
+    return (type, parentDomainObject) => this._showCreateForm(type, parentDomainObject);
   }
 
   /**
@@ -142,7 +145,7 @@ export default class CreateAction extends PropertiesAction {
   /**
    * @private
    */
-  _showCreateForm(type) {
+  _showCreateForm(type, parentDomainObject) {
     const typeDefinition = this.openmct.types.get(type);
     const definition = typeDefinition.definition;
     const domainObject = {
@@ -150,7 +153,7 @@ export default class CreateAction extends PropertiesAction {
       type,
       identifier: {
         key: uuid(),
-        namespace: this.parentDomainObject.identifier.namespace
+        namespace: parentDomainObject.identifier.namespace
       }
     };
 
@@ -160,7 +163,7 @@ export default class CreateAction extends PropertiesAction {
       definition.initialize(this.domainObject);
     }
 
-    const createWizard = new CreateWizard(this.openmct, this.domainObject, this.parentDomainObject);
+    const createWizard = new CreateWizard(this.openmct, this.domainObject, parentDomainObject);
     const formStructure = createWizard.getFormStructure(true);
     formStructure.title = 'Create a New ' + definition.name;
 
@@ -191,3 +194,7 @@ export default class CreateAction extends PropertiesAction {
     this.#transaction = null;
   }
 }
+
+export { CREATE_ACTION_KEY };
+
+export default CreateAction;

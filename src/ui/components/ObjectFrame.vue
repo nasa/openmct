@@ -64,7 +64,7 @@
         :aria-label="`${ariaLabel} Controls`"
       >
         <div v-if="supportsIndependentTime" class="c-conductor-holder--compact">
-          <independent-time-conductor :domain-object="domainObject" :object-path="objectPath" />
+          <IndependentTimeConductor :domain-object="domainObject" :object-path="objectPath" />
         </div>
         <NotebookMenuSwitcher
           v-if="notebookEnabled"
@@ -94,7 +94,7 @@
       </div>
     </div>
 
-    <object-view
+    <ObjectView
       ref="objectView"
       class="c-so-view__object-view js-object-view js-notebook-snapshot-item"
       :show-edit-view="showEditView"

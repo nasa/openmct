@@ -41,16 +41,25 @@ export default function (openmct) {
         key: 'duration',
         required: true,
         property: ['telemetry', 'duration']
+      },
+      {
+        name: 'Out of order data',
+        control: 'toggleSwitch',
+        cssClass: 'l-input',
+        key: 'outOfOrder',
+        required: true,
+        property: ['telemetry', 'outOfOrder']
       }
     ],
     initialize: function (object) {
       object.telemetry = {
-        duration: 5
+        duration: 5,
+        outOfOrder: false
       };
     }
   });
 
-  openmct.telemetry.addProvider(new StateGeneratorProvider());
+  openmct.telemetry.addProvider(new StateGeneratorProvider(openmct));
 
   openmct.types.addType('generator', {
     name: 'Sine Wave Generator',

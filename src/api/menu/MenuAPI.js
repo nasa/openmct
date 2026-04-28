@@ -23,31 +23,13 @@
 import Menu, { MENU_PLACEMENT } from './menu.js';
 
 /**
- * Popup Menu options
- * @typedef {Object} MenuOptions
- * @property {string} menuClass Class for popup menu
- * @property {MENU_PLACEMENT} placement Placement for menu relative to click
- * @property {Function} onDestroy callback function: invoked when menu is destroyed
- */
-
-/**
- * Popup Menu Item/action
- * @typedef {Object} Action
- * @property {string} cssClass Class for menu item
- * @property {boolean} isDisabled adds disable class if true
- * @property {string} name Menu item text
- * @property {string} description Menu item description
- * @property {Function} onItemClicked callback function: invoked when item is clicked
- */
-
-/**
  * The MenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
  * custom HTML elements.
- * @interface MenuAPI
- * @memberof module:openmct
  */
-
 class MenuAPI {
+  /**
+   * @param {import('openmct').OpenMCT} openmct
+   */
   constructor(openmct) {
     this.openmct = openmct;
 
@@ -61,10 +43,10 @@ class MenuAPI {
 
   /**
    * Show popup menu
-   * @param {number} x x-coordinates for popup
-   * @param {number} y x-coordinates for popup
-   * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions{@link Action} or collection of groups of actions {@link Action}
-   * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
+   * @param {number} x - x-coordinates for popup
+   * @param {number} y - y-coordinates for popup
+   * @param {Action[]|Action[][]} items - collection of actions or collection of groups of actions
+   * @param {MenuOptions} [menuOptions] - The options for Menu
    */
   showMenu(x, y, items, menuOptions) {
     this._createMenuComponent(x, y, items, menuOptions);
@@ -72,6 +54,13 @@ class MenuAPI {
     this.menuComponent.showMenu();
   }
 
+  /**
+   * Convert actions to menu items
+   * @param {Action[]} actions - collection of actions
+   * @param {import('openmct').ObjectPath} objectPath - The object path
+   * @param {import('openmct').ViewProvider} view - The view provider
+   * @returns {Action[]}
+   */
   actionsToMenuItems(actions, objectPath, view) {
     return actions.map((action) => {
       const isActionGroup = Array.isArray(action);
@@ -87,10 +76,10 @@ class MenuAPI {
 
   /**
    * Show popup menu with description of item on hover
-   * @param {number} x x-coordinates for popup
-   * @param {number} y x-coordinates for popup
-   * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions {@link Action} or collection of groups of actions {@link Action}
-   * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
+   * @param {number} x - x-coordinates for popup
+   * @param {number} y - y-coordinates for popup
+   * @param {Action[]|Action[][]} actions - collection of actions or collection of groups of actions
+   * @param {MenuOptions} [menuOptions] - The options for Menu
    */
   showSuperMenu(x, y, actions, menuOptions) {
     this._createMenuComponent(x, y, actions, menuOptions);
@@ -98,11 +87,23 @@ class MenuAPI {
     this.menuComponent.showSuperMenu();
   }
 
+  /**
+   * Clear the menu component
+   * @private
+   */
   _clearMenuComponent() {
     this.menuComponent = undefined;
     delete this.menuComponent;
   }
 
+  /**
+   * Create a menu component
+   * @param {number} x - x-coordinates for popup
+   * @param {number} y - y-coordinates for popup
+   * @param {Action[]|Action[][]} actions - collection of actions or collection of groups of actions
+   * @param {MenuOptions} menuOptions - The options for Menu
+   * @private
+   */
   _createMenuComponent(x, y, actions, menuOptions = {}) {
     if (this.menuComponent) {
       this.menuComponent.dismiss();
@@ -119,6 +120,14 @@ class MenuAPI {
     this.menuComponent.once('destroy', this._clearMenuComponent);
   }
 
+  /**
+   * Show object menu
+   * @param {import('openmct').ObjectPath} objectPath - The object path
+   * @param {number} x - x-coordinates for popup
+   * @param {number} y - y-coordinates for popup
+   * @param {string[]} actionsToBeIncluded - Actions to be included in the menu
+   * @private
+   */
   _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {
     let applicableActions = this.openmct.actions._groupedAndSortedObjectActions(
       objectPath,
@@ -129,3 +138,14 @@ class MenuAPI {
   }
 }
 export default MenuAPI;
+
+/**
+ * @typedef {Object} MenuOptions
+ * @property {string} [menuClass] - Class for popup menu
+ * @property {MENU_PLACEMENT} [placement] - Placement for menu relative to click
+ * @property {() => void} [onDestroy] - callback function: invoked when menu is destroyed
+ */
+
+/**
+ * @typedef {import('openmct').Action} Action
+ */

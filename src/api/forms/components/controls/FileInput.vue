@@ -29,6 +29,7 @@
         type="file"
         :accept="acceptableFileTypes"
         style="display: none"
+        aria-labelledby="fileSelect"
       />
       <button id="fileSelect" class="c-button" @click="selectFile">
         {{ name }}

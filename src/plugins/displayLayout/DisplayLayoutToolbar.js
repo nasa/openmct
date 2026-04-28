@@ -268,7 +268,7 @@ export default class DisplayLayoutToolbar {
           message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
           buttons: [
             {
-              label: 'OK',
+              label: 'Ok',
               emphasis: 'true',
               callback: () => {
                 this.#openmct.objectViews.emit(

@@ -73,14 +73,23 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
+import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
-import { getFormattedTicks, getLogTicks, ticks } from './tickUtils.js';
+import {
+  getFormattedTicks,
+  getLogTicks,
+  getTimeTicks,
+  measureTextWidth,
+  ticks
+} from './tickUtils.js';
 
 const SECONDARY_TICK_NUMBER = 2;
 
 export default {
-  inject: ['openmct', 'domainObject'],
+  inject: ['openmct', 'domainObject', 'objectPath'],
   props: {
     axisType: {
       type: String,
@@ -102,6 +111,12 @@ export default {
         return null;
       }
     },
+    isUtc: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     position: {
       required: true,
       type: String,
@@ -111,9 +126,23 @@ export default {
     }
   },
   emits: ['plot-tick-width'],
+  setup() {
+    const domainObject = inject('domainObject');
+    const objectPath = inject('objectPath');
+    const openmct = inject('openmct');
+    const { update: updateAlignment, remove: removeAlignment } = useAlignment(
+      domainObject,
+      objectPath,
+      openmct
+    );
+
+    return { updateAlignment, removeAlignment };
+  },
   data() {
     return {
-      ticks: []
+      ticks: [],
+      interval: undefined,
+      min: undefined
     };
   },
   mounted() {
@@ -130,9 +159,25 @@ export default {
     this.listenTo(this.axis, 'change:format', this.updateTicks, this);
     this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
     this.updateTicks();
+
+    this.resizeObserver = new ResizeObserver(() => {
+      this.updateTicks(true);
+    });
+
+    if (this.$refs.tickContainer) {
+      this.resizeObserver.observe(this.$refs.tickContainer.parentElement);
+    }
   },
   beforeUnmount() {
+    this.removeAlignment({
+      yAxisId: this.axisId,
+      updateObjectPath: this.objectPath
+    });
     this.stopListening();
+
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   },
   methods: {
     getAxisFromConfig() {
@@ -198,10 +243,18 @@ export default {
         }, this);
       }
 
+      let tickCount = number;
+      // Use dynamic ticks for xAxis to avoid overcrowding and improve readability.
+      if (this.axisType === 'xAxis') {
+        tickCount = this.getDynamicTickCount(range);
+      }
+
       if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
         return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
+      } else if (this.isUtc) {
+        return getTimeTicks(range.min, range.max, tickCount);
       } else {
-        return ticks(range.min, range.max, number);
+        return ticks(range.min, range.max, tickCount);
       }
     },
 
@@ -279,12 +332,58 @@ export default {
               width: tickWidth,
               yAxisId: this.axisType === 'yAxis' ? this.axisId : ''
             });
+            if (this.axisType === 'yAxis') {
+              this.updateAlignment({
+                width: tickWidth,
+                yAxisId: this.axisId,
+                updateObjectPath: this.objectPath
+              });
+            }
+
             this.shouldCheckWidth = false;
           }
         }
       }
 
       this.tickUpdate = false;
+    },
+
+    getDynamicTickCount(range) {
+      const container = this.$refs.tickContainer.parentElement;
+      if (!container) {
+        return this.tickCount;
+      }
+
+      const availableWidth = container.offsetWidth;
+
+      // Get current range
+      const { min, max } = range;
+      const format = this.axis.get('format');
+      const isNumeric = typeof min === 'number' && typeof max === 'number';
+
+      // Average start, mid and end labels to get a good estimate of label length.
+      // This handles non UTC systems too now
+      let midValue;
+      if (isNumeric) {
+        midValue = min + (max - min) / 2;
+      } else {
+        midValue = max;
+      }
+      const formattedLabels = getFormattedTicks([min, midValue, max], format).map(
+        (tick) => tick.text
+      );
+
+      // Use the one with most characters
+      const longestLabel = formattedLabels.reduce((a, b) => (a.length > b.length ? a : b));
+
+      const font = window.getComputedStyle(container).font || '12px "Helvetica", sans-serif';
+      const estimatedLabelWidth = measureTextWidth(longestLabel, font);
+
+      const padding = 20;
+      const tickCount = Math.floor(availableWidth / (estimatedLabelWidth + padding));
+
+      // Return at least 1 ticks, and at most 32 ticks to avoid overcrowding
+      return Math.max(1, Math.min(tickCount, 32));
     }
   }
 };

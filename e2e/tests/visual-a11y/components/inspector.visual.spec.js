@@ -22,28 +22,30 @@
 
 import percySnapshot from '@percy/playwright';
 
-import { test } from '../../../avpFixtures.js';
+import { expandInspectorPane } from '../../../appActions.js';
+import { scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { MISSION_TIME, VISUAL_FIXED_URL } from '../../../constants.js';
 
 //Declare the scope of the visual test
 const inspectorPane = '.l-shell__pane-inspector';
 
 test.describe('Visual - Inspector @ally @clock', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
-  });
   test.use({
-    storageState: 'test-data/overlay_plot_with_delay_storage.json',
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: true
-    }
+    storageState: 'test-data/overlay_plot_with_delay_storage.json'
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
+    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
 
   test('Inspector from overlay_plot_with_delay_storage @localStorage', async ({ page, theme }) => {
-    //Expand the Inspector Pane
-    await page.getByRole('button', { name: 'Inspect' }).click();
+    // navigate to the plot
+    await page.getByRole('gridcell', { name: 'Overlay Plot with 5s Delay' }).click();
 
+    //Expand the Inspector Pane
+    await expandInspectorPane(page);
     await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
       scope: inspectorPane
     });
@@ -55,7 +57,6 @@ test.describe('Visual - Inspector @ally @clock', () => {
     });
   });
 });
-// Skipping for https://github.com/nasa/openmct/issues/7421
-// test.afterEach(async ({ page }, testInfo) => {
-//   await scanForA11yViolations(page, testInfo.title);
-// });
+test.afterEach(async ({ page }, testInfo) => {
+  await scanForA11yViolations(page, testInfo.title);
+});

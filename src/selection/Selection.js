@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 /**
@@ -30,12 +30,13 @@ import _ from 'lodash';
  */
 
 /**
- * @typedef {import('../../openmct').OpenMCT} OpenMCT
+ * @typedef {import('../../src/MCT').MCT} OpenMCT
  */
 
 /**
  * Manages selection state for Open MCT
- * @private
+ * @constructor
+ * @extends EventEmitter
  */
 export default class Selection extends EventEmitter {
   /**

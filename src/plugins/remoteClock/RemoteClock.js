@@ -149,20 +149,21 @@ export default class RemoteClock extends DefaultClock {
 
   /**
    * Waits for the clock to have a non-default tick value.
-   *
-   * @private
    */
   #waitForReady() {
     const waitForInitialTick = (resolve) => {
-      if (this.lastTick > 0) {
-        const offsets = this.openmct.time.getClockOffsets();
-        resolve({
-          start: this.lastTick + offsets.start,
-          end: this.lastTick + offsets.end
-        });
-      } else {
-        setTimeout(() => waitForInitialTick(resolve), 100);
-      }
+      const tickListener = () => {
+        if (this.lastTick > 0) {
+          const offsets = this.openmct.time.getClockOffsets();
+          this.openmct.time.off('tick', tickListener); // Unregister the tick listener
+          resolve({
+            start: this.lastTick + offsets.start,
+            end: this.lastTick + offsets.end
+          });
+        }
+      };
+
+      this.openmct.time.on('tick', tickListener);
     };
 
     return new Promise(waitForInitialTick);

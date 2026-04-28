@@ -21,15 +21,19 @@
 -->
 <template>
   <ul>
-    <li class="c-tree__item menus-to-left" :class="isAliasCss">
+    <li class="c-tree__item menus-to-left" :class="isAliasCss" role="treeitem">
       <span
         class="c-disclosure-triangle is-enabled flex-elem"
         :class="expandedCssClass"
+        role="button"
+        :aria-label="ariaLabelValue"
+        tabindex="0"
         @click="toggleExpanded"
+        @keydown.enter="toggleExpanded"
       >
       </span>
       <div :class="objectLabelCss">
-        <div class="c-object-label__type-icon" :class="[seriesCss]">
+        <div class="c-object-label__type-icon" :class="seriesCss">
           <span class="is-status__indicator" title="This item is missing or suspect"></span>
         </div>
         <div class="c-object-label__name">{{ series.domainObject.name }}</div>
@@ -43,12 +47,7 @@
         </div>
         <div class="grid-cell value">
           <select v-model="yKey" @change="updateForm('yKey')">
-            <option
-              v-for="option in yKeyOptions"
-              :key="option.value"
-              :value="option.value"
-              :selected="option.value == yKey"
-            >
+            <option v-for="option in yKeyOptions" :key="option.value" :value="option.value">
               {{ option.name }}
             </option>
           </select>
@@ -84,10 +83,15 @@
       </li>
       <li class="grid-row">
         <div class="grid-cell label" title="Display markers visually denoting points in alarm.">
-          Alarm Markers
+          <label for="alarm-markers-checkbox">Alarm Markers</label>
         </div>
         <div class="grid-cell value">
-          <input v-model="alarmMarkers" type="checkbox" @change="updateForm('alarmMarkers')" />
+          <input
+            id="alarm-markers-checkbox"
+            v-model="alarmMarkers"
+            type="checkbox"
+            @change="updateForm('alarmMarkers')"
+          />
         </div>
       </li>
       <li class="grid-row">
@@ -169,18 +173,23 @@ export default {
     };
   },
   computed: {
+    ariaLabelValue() {
+      const name = this.series.domainObject.name ? ` ${this.series.domainObject.name}` : '';
+
+      return `${this.expanded ? 'Collapse' : 'Expand'}${name} Plot Series Options`;
+    },
     colorPalette() {
       return this.series.collection.palette.groups();
     },
     objectLabelCss() {
-      return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
+      return this.status ? `c-object-label is-status--${this.status}` : 'c-object-label';
     },
     seriesCss() {
-      let type = this.openmct.types.get(this.series.domainObject.type);
+      const type = this.openmct.types.get(this.series.domainObject.type);
+      const baseClass = 'c-object-label__type-icon';
+      const typeClass = type.definition.cssClass || '';
 
-      return type.definition.cssClass
-        ? `c-object-label__type-icon ${type.definition.cssClass}`
-        : `c-object-label__type-icon`;
+      return `${baseClass} ${typeClass}`.trim();
     },
     isAliasCss() {
       let cssClass = '';

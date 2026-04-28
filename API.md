@@ -31,6 +31,10 @@
         - [`latest` request strategy](#latest-request-strategy)
         - [`minmax` request strategy](#minmax-request-strategy)
       - [Telemetry Formats](#telemetry-formats)
+        - [Built-in Formats](#built-in-formats)
+          - [**Number Format (default):**](#number-format-default)
+          - [**String Format**](#string-format)
+          - [**Enum Format**](#enum-format)
         - [Registering Formats](#registering-formats)
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
@@ -59,6 +63,12 @@
     - [Custom Indicators](#custom-indicators)
   - [Priority API](#priority-api)
     - [Priority Types](#priority-types)
+  - [User API](#user-api)
+    - [Example](#example)
+  - [Visibility-Based Rendering in View Providers](#visibility-based-rendering-in-view-providers)
+    - [Overview](#overview)
+    - [Implementing Visibility-Based Rendering](#implementing-visibility-based-rendering)
+    - [Example](#example-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -83,6 +93,7 @@ If you have `git`, and `node` installed, you can build Open MCT with the command
 git clone https://github.com/nasa/openmct.git
 cd openmct
 npm install
+npm run build
 ```
 
 These commands will fetch the Open MCT source from our GitHub repository, and
@@ -116,19 +127,30 @@ script loaders are also supported.
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Open MCT</title>
-    <script src="dist/openmct.js"></script>
+  <title>Open MCT</title>
+  <script src="dist/openmct.js"></script>
+  <script>
+    openmct.install(openmct.plugins.LocalStorage());
+    openmct.install(openmct.plugins.MyItems());
+    openmct.install(openmct.plugins.UTCTimeSystem());
+    openmct.time.setTimeSystem('utc');
+    openmct.install(openmct.plugins.Espresso());
+
+    openmct.start();
+  </script>
 </head>
 <body>
-    <script>
-        openmct.install(openmct.plugins.LocalStorage());
-        openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.start();
-    </script>
 </body>
 </html>
+
 ```
+
+Calling `openmct.start()` will start Open MCT and mount it into the 
+specified element once the DOM is ready. An element or a selector 
+string may be provided for this purposes. A selector string is 
+supported to obviate the need for boilerplate code to wait for the 
+body to load. If no argument is provided, Open MCT will create a 
+div element as a child of the body, and bootstrap into it.
 
 The Open MCT library included above requires certain assets such as html
 templates, images, and css. If you installed Open MCT from GitHub as described
@@ -139,7 +161,7 @@ There are some plugins bundled with the application that provide UI,
 persistence, and other default configuration which are necessary to be able to
 do anything with the application initially. Any of these plugins can, in
 principle, be replaced with a custom plugin. The included plugins are
-documented in the [Included Plugins](#included-plugins) section.  
+documented in the [Included Plugins](#plugins) section.  
 
 ## Types
 
@@ -381,6 +403,7 @@ openmct.composition.addProvider({
 
 The `addProvider` function accepts a Composition Provider object as its sole
 argument. A Composition Provider is a javascript object exposing two functions:
+
 - `appliesTo`: A `function` that accepts a `domainObject` argument, and returns
 a `boolean` value indicating whether this composition provider applies to the
 given object.
@@ -413,24 +436,24 @@ var domainObject = {
 
 ## Telemetry API
 
-The Open MCT telemetry API provides two main sets of interfaces-- one for
-integrating telemetry data into Open MCT, and another for developing Open MCT
-visualization plugins utilizing the telemetry API.  
+The Open MCT telemetry API provides two main sets of interfaces 
+1. For integrating telemetry data into Open MCT, and 
+2. For developing Open MCT visualization plugins utilizing the telemetry API.  
 
-The APIs for visualization plugins are still a work in progress and docs may
-change at any time.  However, the APIs for integrating telemetry metadata into
-Open MCT are stable and documentation is included below.
+The APIs for integrating telemetry metadata into Open MCT are stable and documentation is included below. However, the APIs for visualization plugins are still a work in progress and docs may change at any time.
 
 ### Integrating Telemetry Sources
 
-There are two main tasks for integrating telemetry sources-- describing telemetry objects with relevant metadata, and then providing telemetry data for those objects.  You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata), and then register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.  Alternatively, you can register a telemetry metadata provider to provide the necessary telemetry metadata.
+There are two main tasks for integrating telemetry sources 
+* Describing telemetry objects with relevant metadata. You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata). Alternatively, you can register a telemetry metadata provider to provide the necessary telemetry metadata.
+* Providing telemetry data for those objects.  You'll register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.
 
 For a step-by-step guide to building a telemetry adapter, please see the
 [Open MCT Tutorials](https://github.com/nasa/openmct-tutorial).
 
 #### Telemetry Metadata
 
-A telemetry object is a domain object with a telemetry property.  To take an example from the tutorial, here is the telemetry object for the "fuel" measurement of the spacecraft:
+A telemetry object is a domain object with a `telemetry` property.  To take an example from the tutorial, here is the telemetry object for the "fuel" measurement of the spacecraft:
 
 ```json
 {
@@ -467,23 +490,24 @@ A telemetry object is a domain object with a telemetry property.  To take an exa
 }
 ```
 
-The most important part of the telemetry metadata is the `values` property-- this describes the attributes of telemetry datums (objects) that a telemetry provider returns.  These descriptions must be provided for telemetry views to work properly.
+The most important part of the telemetry metadata is the `values` property. This describes the attributes of telemetry datums (objects) that a telemetry provider returns.  These descriptions must be provided for telemetry views to work properly.
 
 ##### Values
 
 `telemetry.values` is an array of value description objects, which have the following fields:
 
-attribute      | type   | flags    | notes
----            |  ---   |  ---     | ---
-`key`          | string | required | unique identifier for this field.  
-`hints`        | object | required | Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on "Value Hints" below.
-`name`         | string | optional | a human readable label for this field.  If omitted, defaults to `key`.
-`source`       | string | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
-`format`       | string | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format.  
-`unit`        | string | optional | the unit of this value, e.g. `km`, `seconds`, `parsecs`
-`min`          | number | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
-`max`          | number | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
-`enumerations` | array  | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.
+attribute      | type    | flags    | notes
+---            |---------|----------| ---
+`key`          | string  | required | unique identifier for this field.  
+`hints`        | object  | required | Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on "Value Hints" below.
+`name`         | string  | optional | a human readable label for this field.  If omitted, defaults to `key`.
+`source`       | string  | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
+`format`       | string  | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format. For arrays use `number[]` or `string[]` See arrays below in the this table.  
+`unit`        | string  | optional | the unit of this value, e.g. `km`, `seconds`, `parsecs`
+`min`          | number  | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
+`max`          | number  | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
+`enumerations` | array   | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.
+`arrays` | string  | optional | for objects where `format` is `"number[]" or "string[]"`. Will be used by plots, gauges, etc to automatically interpret values as arrays.
 
 ###### Value Hints
 
@@ -618,9 +642,10 @@ interface Formatter {
 
 Open MCT on its own defines a handful of built-in formats:
 
-###### **Number Format (default):** 
+###### **Number Format (default):**
 
 Applied to data with `format: 'number'`
+
 ```js
 valueMetadata = {
     format: 'number'
@@ -635,15 +660,18 @@ interface NumberFormatter extends Formatter {
     validate: (value: any) => boolean;
 }
 ```
-###### **String Format**:
+
+###### **String Format**
 
 Applied to data with `format: 'string'`
+
 ```js
 valueMetadata = {
     format: 'string'
     // ...
 };
 ```
+
 ```ts
 interface StringFormatter extends Formatter {
     parse: (value: any) => string;
@@ -652,8 +680,10 @@ interface StringFormatter extends Formatter {
 }
 ```
 
-###### **Enum Format**:
+###### **Enum Format**
+
 Applied to data with `format: 'enum'`
+
 ```js
 valueMetadata = {
     format: 'enum',
@@ -676,6 +706,7 @@ valueMetadata = {
 
 Creates a two-way mapping between enum string and value to be used in the `parse` and `format` methods.
 Ex:
+
 - `formatter.parse('APPLE') === 1;`
 - `formatter.format(1) === 'APPLE';`
 
@@ -686,11 +717,24 @@ interface EnumFormatter extends Formatter {
     validate: (value: any) => boolean;
 }
 ```
+##### Time Formats
+
+Time formatters are used to format and parse datetime values. See as an example the UTC time formatter provided in src/plugins/utcTimeSystem/UTCTimeFormat.js.
+
+If a formatDate method is provided, it will be used in conjunction with a duration formatter to provide split date and time inputs for the time conductor.
+
+```ts
+interface TimeFormatter extends Formatter {
+    parse: (value: string) => number;
+    format: (value: number) => string;
+    formatDate?: (value: number) => string;
+    validate: (value: any) => boolean;
+}
+```
 
 ##### Registering Formats
 
 Formats implement the following interface (provided here as TypeScript for simplicity):
-
 
 Formats are registered with the Telemetry API using the `addFormat` function. eg.
 
@@ -713,7 +757,7 @@ openmct.telemetry.addFormat({
 
 A single telemetry point is considered a Datum, and is represented by a standard
 javascript object.  Realtime subscriptions (obtained via **subscribe**) will
-invoke the supplied callback once for each telemetry datum recieved.  Telemetry
+invoke the supplied callback once for each telemetry datum received.  Telemetry
 requests (obtained via **request**) will return a promise for an array of
 telemetry datums.
 
@@ -738,7 +782,7 @@ section.
 Limit evaluators allow a telemetry integrator to define which limits exist for a
 telemetry endpoint and how limits should be applied to telemetry from a given domain object.
 
-A limit evaluator can implement the `evalute` method which is used to define how limits
+A limit evaluator can implement the `evaluate` method which is used to define how limits
 should be applied to telemetry and the `getLimits` method which is used to specify
 what the limit values are for different limit levels.
 
@@ -763,8 +807,8 @@ state of the application, and emits events to inform listeners when the state ch
 
 Because the data displayed tends to be time domain data, Open MCT must always
 have at least one time system installed and activated. When you download Open
-MCT, it will be pre-configured to use the UTC time system, which is installed and activated, 
-along with other default plugins, in `index.html`. Installing and activating a time system 
+MCT, it will be pre-configured to use the UTC time system, which is installed and activated,
+along with other default plugins, in `index.html`. Installing and activating a time system
 is simple, and is covered [in the next section](#defining-and-registering-time-systems).
 
 ### Time Systems and Bounds
@@ -817,7 +861,7 @@ numbers in UTC terrestrial time.
 #### Getting and Setting the Active Time System
 
 Once registered, a time system can be activated by calling `setTimeSystem` with
-the timeSystem `key` or an instance of the time system.  You can also specify 
+the timeSystem `key` or an instance of the time system.  You can also specify
 valid [bounds](#time-bounds) for the timeSystem.
 
 ```javascript
@@ -841,9 +885,8 @@ Setting the active time system will trigger a [`'timeSystemChanged'`](#time-even
 event.  If you supplied bounds, a [`'boundsChanged'`](#time-events) event will be triggered afterwards with your newly supplied bounds.
 
 > ⚠️ **Deprecated**
+>
 > - The method `timeSystem()` is deprecated. Please use `getTimeSystem()` and `setTimeSystem()` as a replacement.
-
-
 
 #### Time Bounds
 
@@ -875,15 +918,16 @@ To respond to bounds change events, listen for the [`'boundsChanged'`](#time-eve
 event.
 
 > ⚠️ **Deprecated**
+>
 > - The method `bounds()` is deprecated and will be removed in a future release. Please use `getBounds()` and `setBounds()` as a replacement.
 
 ### Clocks
 
-The Time API requires a clock source which will cause the bounds to be updated 
-automatically whenever the clock source "ticks". A clock is simply an object that 
-supports registration of listeners and periodically invokes its listeners with a 
-number. Open MCT supports registration of new clock sources that tick on almost 
-anything. A tick occurs when the clock invokes callback functions registered by its 
+The Time API requires a clock source which will cause the bounds to be updated
+automatically whenever the clock source "ticks". A clock is simply an object that
+supports registration of listeners and periodically invokes its listeners with a
+number. Open MCT supports registration of new clock sources that tick on almost
+anything. A tick occurs when the clock invokes callback functions registered by its
 listeners with a new time value.
 
 An example of a clock source is the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js)
@@ -972,6 +1016,7 @@ openmct.time.getClock();
 ```
 
 > ⚠️ **Deprecated**
+>
 > - The method `clock()` is deprecated and will be removed in a future release. Please use `getClock()` and `setClock()` as a replacement.
 
 #### ⚠️ [DEPRECATED] Stopping an active clock
@@ -986,12 +1031,13 @@ openmct.time.stopClock();
 ```
 
 > ⚠️ **Deprecated**
+>
 > - The method `stopClock()` is deprecated and will be removed in a future release.
 
 #### Clock Offsets
 
-When in Real-time [mode](#time-modes), the time bounds of the application will be updated automatically each time the 
-clock "ticks". The bounds are calculated based on the current value provided by 
+When in Real-time [mode](#time-modes), the time bounds of the application will be updated automatically each time the
+clock "ticks". The bounds are calculated based on the current value provided by
 the active clock (via its `tick` event, or its `currentValue()` method).
 
 Unlike bounds, which represent absolute time values, clock offsets represent
@@ -1026,13 +1072,14 @@ new bounds will be calculated based on the `currentValue()` of the active clock.
 Clock offsets are only relevant when in Real-time [mode](#time-modes).
 
 > ⚠️ **Deprecated**
+>
 > - The method `clockOffsets()` is deprecated and will be removed in a future release. Please use `getClockOffsets()` and `setClockOffsets()` as a replacement.
 
 ### Time Modes
 
-There are two time modes in Open MCT, "Fixed" and "Real-time". In Real-time mode the 
+There are two time modes in Open MCT, "Fixed" and "Real-time". In Real-time mode the
 time bounds of the application will be updated automatically each time the clock "ticks".
-The bounds are calculated based on the current value provided by the active clock. In 
+The bounds are calculated based on the current value provided by the active clock. In
 Fixed mode, the time bounds are set for a specified time range. When Open MCT is first
 initialized, it will be in Real-time mode.
 
@@ -1120,6 +1167,7 @@ The events emitted by the Time API are:
   - `mode`: A string representation of the current time mode, either `'realtime'` or `'fixed'`.
 
 > ⚠️ **Deprecated Events** (These will be removed in a future release):
+>
 > - `bounds` → `boundsChanged`
 > - `timeSystem` → `timeSystemChanged`
 > - `clock` → `clockChanged`
@@ -1180,7 +1228,7 @@ An example time conductor configuration is provided below. It sets up some
 default options for the [UTCTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/UTCTimeSystem.js)
 and [LocalTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/localTimeSystem/LocalTimeSystem.js),
 in both fixed mode, and for the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js)
-source. In this configutation, the local clock supports both the UTCTimeSystem
+source. In this configuration, the local clock supports both the UTCTimeSystem
 and LocalTimeSystem. Configuration for fixed bounds mode is specified by omitting
 a clock key.
 
@@ -1190,7 +1238,7 @@ const ONE_MINUTE = 60 * 1000;
 
 openmct.install(openmct.plugins.Conductor({
     menuOptions: [
-        // 'Fixed' bounds mode configuation for the UTCTimeSystem
+        // 'Fixed' bounds mode configuration for the UTCTimeSystem
         {
             timeSystem: 'utc',
             bounds: {start: Date.now() - 30 * ONE_MINUTE, end: Date.now()},
@@ -1262,7 +1310,7 @@ Returns the currently set text as a `string`.
 [the built-in glyphs](https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home/glyphs?view=styleguide.glyphs)
 may be used here, or a custom CSS class can be provided. Returns the currently defined CSS
 class as a `string`.
-- `.statusClass([className])`: Gets or sets the CSS class used to determine status. Accepts an __optional__
+- `.statusClass([className])`: Gets or sets the CSS class used to determine status. Accepts an **optional**
 `string` parameter to be used to set a status class applied to the indicator. May be used to apply
 different colors to indicate status.
 
@@ -1290,9 +1338,11 @@ Open MCT provides some built-in priority values that can be used in the applicat
 
 Currently, the Open MCT Priority API provides (type: numeric value):
 
+- HIGHEST: Infinity
 - HIGH: 1000
 - Default: 0
 - LOW: -1000
+- LOWEST: -Infinity
 
 View provider Example:
 
@@ -1312,7 +1362,7 @@ can be used to manage user information and roles.
 
 ### Example
 
-Open MCT provides an example [user](example/exampleUser/exampleUserCreator.js) and [user provider](example/exampleUser/ExampleUserProvider.js) which 
+Open MCT provides an example [user](example/exampleUser/exampleUserCreator.js) and [user provider](example/exampleUser/ExampleUserProvider.js) which
 can be used as a starting point for creating a custom user provider.
 
 ## Visibility-Based Rendering in View Providers
@@ -1335,10 +1385,10 @@ Here’s the signature for the show function:
 
 `show(element, isEditing, viewOptions)`
 
-  * `element` (HTMLElement) - The DOM element where the view should be rendered.
-  * `isEditing` (boolean) - Indicates whether the view is in editing mode.
-  * `viewOptions` (Object) - An object with configuration options for the view, including:
-    * `renderWhenVisible` (Function) - This function wraps the `requestAnimationFrame` and only triggers the provided render logic when the view is visible in the viewport.
+- `element` (HTMLElement) - The DOM element where the view should be rendered.
+- `isEditing` (boolean) - Indicates whether the view is in editing mode.
+- `viewOptions` (Object) - An object with configuration options for the view, including:
+  - `renderWhenVisible` (Function) - This function wraps the `requestAnimationFrame` and only triggers the provided render logic when the view is visible in the viewport.
 
 ### Example
 
@@ -1367,8 +1417,6 @@ const myViewProvider = {
 };
 ```
 
-
 Note that `renderWhenVisible` defers rendering while the view is not visible and caters to the latest execution call. This provides responsiveness for dynamic content while ensuring performance optimizations.
 
 Ensure your view logic is prepared to handle potentially multiple deferrals if using this API, as only the last call to renderWhenVisible will be queued for execution upon the view becoming visible.
-

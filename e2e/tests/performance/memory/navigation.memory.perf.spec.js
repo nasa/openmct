@@ -213,7 +213,6 @@ test.describe('Navigation memory leak is not detected in', () => {
       page,
       'example-imagery-memory-leak-test'
     );
-
     // If we got here without timing out, then the root view object was garbage collected and no memory leak was detected.
     expect(result).toBe(true);
   });
@@ -228,9 +227,7 @@ test.describe('Navigation memory leak is not detected in', () => {
     expect(result).toBe(true);
   });
 
-  test('display layout with plots of swgs, alphanumerics, and condition sets, ', async ({
-    page
-  }) => {
+  test('display layout with plots of swgs, alphanumerics, and condition sets', async ({ page }) => {
     const result = await navigateToObjectAndDetectMemoryLeak(
       page,
       'display-layout-simple-telemetry'
@@ -319,6 +316,12 @@ test.describe('Navigation memory leak is not detected in', () => {
 
       // Manually invoke the garbage collector once all references are removed.
       window.gc();
+      window.gc();
+      window.gc();
+
+      setTimeout(() => {
+        window.gc();
+      }, 1000);
 
       return gcPromise;
     });

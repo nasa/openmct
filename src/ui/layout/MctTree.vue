@@ -28,7 +28,7 @@
     }"
   >
     <div ref="search" class="c-tree-and-search__search">
-      <search
+      <Search
         v-show="isSelectorTree"
         ref="shell-search"
         class="c-search"
@@ -81,10 +81,11 @@
         @scroll="updateVisibleItems()"
       >
         <div :style="childrenHeightStyles">
-          <tree-item
+          <TreeItem
             v-for="(treeItem, index) in visibleItems"
             :key="`${treeItem.navigationPath}-${index}-${treeItem.object.name}`"
             :node="treeItem"
+            :draggable="true"
             :is-selector-tree="isSelectorTree"
             :selected-item="selectedItem"
             :active-search="activeSearch"
@@ -596,7 +597,7 @@ export default {
         composition = sortedComposition;
       }
 
-      if (parentObjectPath.length && !this.isSelectorTree) {
+      if (!this.isSelectorTree) {
         let navigationPath = this.buildNavigationPath(parentObjectPath);
 
         if (this.compositionCollections[navigationPath]) {
@@ -730,15 +731,16 @@ export default {
     compositionAddHandler(navigationPath) {
       return (domainObject) => {
         const parentItem = this.getTreeItemByPath(navigationPath);
-        const newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
-        const descendants = this.getChildrenInTreeFor(parentItem, true);
-        const directDescendants = this.getChildrenInTreeFor(parentItem);
+        const parentObjectPath = parentItem?.objectPath || [];
+        const newItem = this.buildTreeItem(domainObject, parentObjectPath, true);
+        const descendants = this.getChildrenInTreeFor(navigationPath, true);
+        const directDescendants = this.getChildrenInTreeFor(navigationPath);
 
         if (domainObject.isMutable) {
-          this.addMutable(domainObject, parentItem.objectPath);
+          this.addMutable(domainObject, parentObjectPath);
         }
 
-        this.addTreeItemObserver(domainObject, parentItem.objectPath);
+        this.addTreeItemObserver(domainObject, parentObjectPath);
 
         if (directDescendants.length === 0) {
           this.addItemToTreeAfter(newItem, parentItem);
@@ -746,7 +748,7 @@ export default {
           return;
         }
 
-        if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
+        if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
           const newItemIndex = directDescendants.findIndex(
             (descendant) => this.sortNameAscending(descendant, newItem) > 0
           );
@@ -770,8 +772,7 @@ export default {
     compositionRemoveHandler(navigationPath) {
       return (identifier) => {
         const removeKeyString = this.openmct.objects.makeKeyString(identifier);
-        const parentItem = this.getTreeItemByPath(navigationPath);
-        const directDescendants = this.getChildrenInTreeFor(parentItem);
+        const directDescendants = this.getChildrenInTreeFor(navigationPath);
         const removeItem = directDescendants.find((item) => item.id === removeKeyString);
 
         // Remove the item from the tree, unobserve it, and clean up any mutables

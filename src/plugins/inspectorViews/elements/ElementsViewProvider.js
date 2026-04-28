@@ -24,15 +24,20 @@ import mount from 'utils/mount';
 
 import ElementsPool from './ElementsPool.vue';
 
+const CUSTOM_ELEMENTS_VIEW_PROVIDER_TYPES = ['time-strip', 'telemetry.plot.overlay'];
+
 export default function ElementsViewProvider(openmct) {
   return {
     key: 'elementsView',
     name: 'Elements',
     canView: function (selection) {
       const hasValidSelection = selection?.length;
-      const isOverlayPlot = selection?.[0]?.[0]?.context?.item?.type === 'telemetry.plot.overlay';
+      const isFolder = selection?.[0]?.[0]?.context?.item?.type === 'folder';
+      const type = selection?.[0]?.[0]?.context?.item?.type;
 
-      return hasValidSelection && !isOverlayPlot;
+      const hasCustomElementsViewProvider = CUSTOM_ELEMENTS_VIEW_PROVIDER_TYPES.includes(type);
+
+      return hasValidSelection && !hasCustomElementsViewProvider && !isFolder;
     },
     view: function (selection) {
       let _destroy = null;
@@ -62,10 +67,10 @@ export default function ElementsViewProvider(openmct) {
         showTab: function (isEditing) {
           const hasComposition = Boolean(domainObject && openmct.composition.get(domainObject));
 
-          return hasComposition && isEditing;
+          return hasComposition;
         },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.DEFAULT : openmct.priority.LOW;
         },
         destroy: function () {
           if (_destroy) {

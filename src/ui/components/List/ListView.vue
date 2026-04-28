@@ -24,7 +24,7 @@
     <table class="c-table__body js-table__body">
       <thead class="c-table__header">
         <tr>
-          <list-header
+          <ListHeader
             v-for="headerItem in headerItems"
             :key="headerItem.property"
             :direction="sortBy === headerItem.property ? ascending : headerItem.defaultDirection"
@@ -38,7 +38,7 @@
         </tr>
       </thead>
       <tbody>
-        <list-item
+        <ListItem
           v-for="item in sortedItems"
           :key="item.key"
           :item="item"

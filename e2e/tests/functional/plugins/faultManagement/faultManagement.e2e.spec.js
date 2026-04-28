@@ -24,19 +24,13 @@ import {
   acknowledgeFault,
   acknowledgeMultipleFaults,
   changeViewTo,
-  clearSearch,
-  enterSearchTerm,
   getFault,
   getFaultByName,
   getFaultName,
   getFaultNamespace,
-  getFaultResultCount,
-  getFaultSeverity,
   getFaultTriggerTime,
-  getHighestSeverity,
-  getLowestSeverity,
-  navigateToFaultManagementWithExample,
   navigateToFaultManagementWithoutExample,
+  navigateToFaultManagementWithStaticExample,
   selectFaultItem,
   shelveFault,
   shelveMultipleFaults,
@@ -46,33 +40,29 @@ import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('The Fault Management Plugin using example faults', () => {
   test.beforeEach(async ({ page }) => {
-    await navigateToFaultManagementWithExample(page);
+    await navigateToFaultManagementWithStaticExample(page);
   });
 
   test('Shows a criticality icon for every fault', async ({ page }) => {
-    const faultCount = await page.locator('c-fault-mgmt__list').count();
-    const criticalityIconCount = await page.locator('c-fault-mgmt__list-severity').count();
+    const faultCount = await page.locator('.c-fault-mgmt__list').count();
+    const criticalityIconCount = await page.locator('.c-fault-mgmt__list-severity').count();
 
     expect(faultCount).toEqual(criticalityIconCount);
   });
 
-  test('When selecting a fault, it has an "is-selected" class and it\'s information shows in the inspector', async ({
+  test('When selecting a fault, it has an "is-selected" class and its information shows in the inspector', async ({
     page
   }) => {
     await selectFaultItem(page, 1);
 
     await page.getByRole('tab', { name: 'Config' }).click();
-    const selectedFaultName = await page
-      .locator('.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname')
-      .textContent();
-    const inspectorFaultNameCount = await page
-      .locator(`.c-inspector__properties >> :text("${selectedFaultName}")`)
-      .count();
 
-    await expect(
-      page.locator('.c-faults-list-view-item-body > .c-fault-mgmt__list').first()
-    ).toHaveClass(/is-selected/);
-    expect(inspectorFaultNameCount).toEqual(1);
+    const inspectorFaultName = page
+      .getByLabel('Source inspector properties')
+      .getByLabel('inspector property value');
+
+    await expect(page.getByLabel('Fault triggered at').first()).toHaveClass(/is-selected/);
+    await expect(inspectorFaultName).toHaveCount(1);
   });
 
   test('When selecting multiple faults, no specific fault information is shown in the inspector', async ({
@@ -81,23 +71,18 @@ test.describe('The Fault Management Plugin using example faults', () => {
     await selectFaultItem(page, 1);
     await selectFaultItem(page, 2);
 
-    const selectedRows = page.locator(
-      '.c-fault-mgmt__list.is-selected .c-fault-mgmt__list-faultname'
-    );
-    expect(await selectedRows.count()).toEqual(2);
+    const selectedRows = page.getByRole('checkbox', { checked: true });
+    await expect(selectedRows).toHaveCount(2);
 
     await page.getByRole('tab', { name: 'Config' }).click();
     const firstSelectedFaultName = await selectedRows.nth(0).textContent();
     const secondSelectedFaultName = await selectedRows.nth(1).textContent();
-    const firstNameInInspectorCount = await page
-      .locator(`.c-inspector__properties >> :text("${firstSelectedFaultName}")`)
-      .count();
-    const secondNameInInspectorCount = await page
-      .locator(`.c-inspector__properties >> :text("${secondSelectedFaultName}")`)
-      .count();
-
-    expect(firstNameInInspectorCount).toEqual(0);
-    expect(secondNameInInspectorCount).toEqual(0);
+    await expect(
+      page.locator(`.c-inspector__properties >> :text("${firstSelectedFaultName}")`)
+    ).toHaveCount(0);
+    await expect(
+      page.locator(`.c-inspector__properties >> :text("${secondSelectedFaultName}")`)
+    ).toHaveCount(0);
   });
 
   test('Allows you to shelve a fault', async ({ page }) => {
@@ -110,13 +95,13 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     // check it is removed from standard view
     const afterShelvedFault = getFaultByName(page, shelvedFaultName);
-    expect(await afterShelvedFault.count()).toBe(0);
+    await expect(afterShelvedFault).toHaveCount(0);
 
     await changeViewTo(page, 'shelved');
 
     const shelvedViewFault = getFaultByName(page, shelvedFaultName);
 
-    expect(await shelvedViewFault.count()).toBe(1);
+    await expect(shelvedViewFault).toHaveCount(1);
   });
 
   test('Allows you to acknowledge a fault', async ({ page }) => {
@@ -124,7 +109,8 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     await acknowledgeFault(page, 3);
 
-    const fault = getFault(page, 3);
+    // the acknowledged fault moves to position 5 since the list is sorted by unacknowledged first
+    const fault = getFault(page, 5);
     await expect(fault).toHaveClass(/is-acknowledged/);
 
     await changeViewTo(page, 'acknowledged');
@@ -166,11 +152,12 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     await acknowledgeMultipleFaults(page, 2, 5);
 
-    const faultTwo = getFault(page, 2);
+    // the acknowledged faults move to positions 4 and 5 since the list is sorted by unacknowledged first
+    const faultTwoNowFour = getFault(page, 4);
     const faultFive = getFault(page, 5);
 
     // check they have been acknowledged
-    await expect(faultTwo).toHaveClass(/is-acknowledged/);
+    await expect(faultTwoNowFour).toHaveClass(/is-acknowledged/);
     await expect(faultFive).toHaveClass(/is-acknowledged/);
 
     await changeViewTo(page, 'acknowledged');
@@ -188,44 +175,75 @@ test.describe('The Fault Management Plugin using example faults', () => {
     const faultFiveTriggerTime = await getFaultTriggerTime(page, 5);
 
     // should be all faults (5)
-    let faultResultCount = await getFaultResultCount(page);
-    expect(faultResultCount).toEqual(5);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(5);
 
     // search namespace
-    await enterSearchTerm(page, faultThreeNamespace);
+    await page
+      .getByLabel('Fault Management Object View')
+      .getByLabel('Search Input')
+      .fill(faultThreeNamespace);
 
-    faultResultCount = await getFaultResultCount(page);
-    expect(faultResultCount).toEqual(1);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(1);
     expect(await getFaultNamespace(page, 1)).toEqual(faultThreeNamespace);
 
     // all faults
-    await clearSearch(page);
-    faultResultCount = await getFaultResultCount(page);
-    expect(faultResultCount).toEqual(5);
+    await page.getByLabel('Fault Management Object View').getByLabel('Search Input').fill('');
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(5);
 
     // search name
-    await enterSearchTerm(page, faultTwoName);
+    await page
+      .getByLabel('Fault Management Object View')
+      .getByLabel('Search Input')
+      .fill(faultTwoName);
 
-    faultResultCount = await getFaultResultCount(page);
-    expect(faultResultCount).toEqual(1);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(1);
     expect(await getFaultName(page, 1)).toEqual(faultTwoName);
 
     // all faults
-    await clearSearch(page);
-    faultResultCount = await getFaultResultCount(page);
-    expect(faultResultCount).toEqual(5);
+    await page.getByLabel('Fault Management Object View').getByLabel('Search Input').fill('');
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(5);
 
     // search triggerTime
-    await enterSearchTerm(page, faultFiveTriggerTime);
+    await page
+      .getByLabel('Fault Management Object View')
+      .getByLabel('Search Input')
+      .fill(faultFiveTriggerTime);
 
-    faultResultCount = await getFaultResultCount(page);
-    expect(faultResultCount).toEqual(1);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(1);
     expect(await getFaultTriggerTime(page, 1)).toEqual(faultFiveTriggerTime);
   });
 
+  test('Confirms default sort is unacknowledged-first', async ({ page }) => {
+    // acknowledge 2 faults
+    await acknowledgeMultipleFaults(page, 2, 5);
+    // get a list of all faults.
+    const allFaults = page.locator('.c-fault-mgmt__list');
+
+    const { lastUnack, firstAck } =
+      await getFirstAndLastUnacknowledgedAndAcknowledgedFaults(allFaults);
+
+    // confirm that the last unacknowledged fault is before the first acknowledged fault.
+    expect(lastUnack).toBeGreaterThan(-1);
+    expect(firstAck).toBeGreaterThan(-1);
+    expect(lastUnack).toBeLessThan(firstAck);
+  });
+
   test('Allows you to sort faults', async ({ page }) => {
-    const highestSeverity = await getHighestSeverity(page);
-    const lowestSeverity = await getLowestSeverity(page);
+    /**
+     * Compares two severity levels and returns a number indicating their relative order.
+     *
+     * @param {'CRITICAL' | 'WARNING' | 'WATCH'} severity1 - The first severity level to compare.
+     * @param {'CRITICAL' | 'WARNING' | 'WATCH'} severity2 - The second severity level to compare.
+     * @returns {number} - A negative number if severity1 is less severe than severity2,
+     *                     a positive number if severity1 is more severe than severity2,
+     *                     or 0 if they are equally severe.
+     */
+    // eslint-disable-next-line func-style
+    const compareSeverity = (severity1, severity2) => {
+      const severityOrder = ['WATCH', 'WARNING', 'CRITICAL'];
+      return severityOrder.indexOf(severity1) - severityOrder.indexOf(severity2);
+    };
+
     const faultOneName = 'Example Fault 1';
     const faultFiveName = 'Example Fault 5';
     let firstFaultName = await getFaultName(page, 1);
@@ -239,10 +257,32 @@ test.describe('The Fault Management Plugin using example faults', () => {
 
     await sortFaultsBy(page, 'severity');
 
-    const sortedHighestSeverity = await getFaultSeverity(page, 1);
-    const sortedLowestSeverity = await getFaultSeverity(page, 5);
-    expect(sortedHighestSeverity).toEqual(highestSeverity);
-    expect(sortedLowestSeverity).toEqual(lowestSeverity);
+    const firstFaultSeverityLabel = await page
+      .getByLabel('Severity:')
+      .first()
+      .getAttribute('aria-label');
+    const firstFaultSeverity = firstFaultSeverityLabel.split(' ').slice(1).join(' ');
+
+    const lastFaultSeverityLabel = await page
+      .getByLabel('Severity:')
+      .last()
+      .getAttribute('aria-label');
+    const lastFaultSeverity = lastFaultSeverityLabel.split(' ').slice(1).join(' ');
+
+    expect(compareSeverity(firstFaultSeverity, lastFaultSeverity)).toBeGreaterThan(0);
+
+    // acknowledge 2 faults
+    await acknowledgeMultipleFaults(page, 2, 5);
+    // Sort by Unacknowledged First
+    await sortFaultsBy(page, 'unacknowledged-first');
+    let allFaults = page.locator('.c-fault-mgmt__list');
+    const { lastUnack, firstAck } =
+      await getFirstAndLastUnacknowledgedAndAcknowledgedFaults(allFaults);
+
+    // confirm that the last unacknowledged fault is before the first acknowledged fault.
+    expect(lastUnack).toBeGreaterThan(-1);
+    expect(firstAck).toBeGreaterThan(-1);
+    expect(lastUnack).toBeLessThan(firstAck);
   });
 });
 
@@ -252,24 +292,44 @@ test.describe('The Fault Management Plugin without using example faults', () => 
   });
 
   test('Shows no faults when no faults are provided', async ({ page }) => {
-    const faultCount = await page.locator('c-fault-mgmt__list').count();
-
-    expect(faultCount).toEqual(0);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
 
     await changeViewTo(page, 'acknowledged');
-    const acknowledgedCount = await page.locator('c-fault-mgmt__list').count();
-    expect(acknowledgedCount).toEqual(0);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
 
     await changeViewTo(page, 'shelved');
-    const shelvedCount = await page.locator('c-fault-mgmt__list').count();
-    expect(shelvedCount).toEqual(0);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
   });
 
   test('Will return no faults when searching', async ({ page }) => {
-    await enterSearchTerm(page, 'fault');
+    await page.getByLabel('Fault Management Object View').getByLabel('Search Input').fill('fault');
 
-    const faultCount = await page.locator('c-fault-mgmt__list').count();
-
-    expect(faultCount).toEqual(0);
+    await expect(page.getByLabel('Fault triggered at')).toHaveCount(0);
   });
 });
+
+async function getFirstAndLastUnacknowledgedAndAcknowledgedFaults(allFaults) {
+  const { lastUnack, firstAck } = await allFaults.evaluateAll((faults) => {
+    let lastUnackIndex = -1;
+    let firstAckIndex = -1;
+    console.log('faults', faults);
+
+    for (let i = 0; i < faults.length; i++) {
+      const fault = faults[i];
+
+      // get the index of the last unacknowledged fault in the list.
+      if (fault.classList.contains('is-unacknowledged')) {
+        lastUnackIndex = i;
+      }
+
+      // get the index of the first acknowledged fault in the list.
+      if (fault.classList.contains('is-acknowledged') && firstAckIndex === -1) {
+        firstAckIndex = i;
+        break;
+      }
+    }
+
+    return { lastUnack: lastUnackIndex, firstAck: firstAckIndex };
+  });
+  return { lastUnack, firstAck };
+}

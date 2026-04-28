@@ -35,7 +35,7 @@
       role="group"
       @dragstart="initDrag"
     >
-      <object-frame
+      <ObjectFrame
         v-if="domainObject"
         ref="objectFrame"
         :domain-object="domainObject"

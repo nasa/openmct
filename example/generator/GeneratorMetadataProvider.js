@@ -106,6 +106,20 @@ const METADATA_BY_TYPE = {
           {
             value: 1,
             string: 'ON'
+          },
+          {
+            value: 99,
+            string: 'OUT OF ORDER'
+          }
+        ],
+        filters: [
+          {
+            singleSelectionThreshold: true,
+            comparator: 'equals',
+            possibleValues: [
+              { label: 'OFF', value: 0 },
+              { label: 'ON', value: 1 }
+            ]
           }
         ],
         hints: {

@@ -66,12 +66,15 @@
 </template>
 
 <script>
+import { NEW_TAB_ACTION_KEY } from '@/plugins/openInNewTabAction/openInNewTabAction.js';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
 export default {
   inject: ['openmct'],
   provide() {
     return {
       domainObject: this.telemetryObject,
-      path: this.path,
+      objectPath: this.path,
       renderWhenVisible: this.renderWhenVisible
     };
   },
@@ -119,7 +122,7 @@ export default {
         'tc.endBound': timeBounds?.end,
         'tc.mode': 'fixed'
       };
-      const newTabAction = this.openmct.actions.getAction('newTab');
+      const newTabAction = this.openmct.actions.getAction(NEW_TAB_ACTION_KEY);
       // No view context needed, so pass undefined.
       // The urlParams arg will override the global time bounds with the data visualization
       // plot bounds.
@@ -127,7 +130,7 @@ export default {
       this.showMenu = false;
     },
     previewTelemetry() {
-      const previewAction = this.openmct.actions.getAction('preview');
+      const previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
       previewAction.invoke([this.telemetryObject]);
       this.showMenu = false;
     }

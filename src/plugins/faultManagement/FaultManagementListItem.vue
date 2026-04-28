@@ -21,7 +21,12 @@
 -->
 
 <template>
-  <div class="c-fault-mgmt__list data-selectable" :class="classesFromState">
+  <div
+    role="listitem"
+    :aria-label="listItemAriaLabel"
+    class="c-fault-mgmt__list data-selectable"
+    :class="classesFromState"
+  >
     <div class="c-fault-mgmt-item c-fault-mgmt__list-checkbox">
       <input
         type="checkbox"
@@ -33,29 +38,44 @@
     <div class="c-fault-mgmt-item">
       <div
         class="c-fault-mgmt__list-severity"
-        :aria-label="fault.severity"
-        :title="fault.severity"
+        :aria-label="severityAriaLabel"
         :class="['is-severity-' + severity]"
       ></div>
     </div>
     <div class="c-fault-mgmt-item c-fault-mgmt__list-content">
       <div class="c-fault-mgmt-item c-fault-mgmt__list-pathname">
-        <div class="c-fault-mgmt__list-path">{{ fault.namespace }}</div>
-        <div class="c-fault-mgmt__list-faultname">{{ fault.name }}</div>
+        <div class="c-fault-mgmt__list-path" aria-label="Fault namespace">
+          {{ fault.namespace }}
+        </div>
+        <div class="c-fault-mgmt__list-faultname" aria-label="Fault name">{{ fault.name }}</div>
       </div>
       <div class="c-fault-mgmt__list-content-right">
         <div class="c-fault-mgmt-item c-fault-mgmt__list-trigVal">
-          <div class="c-fault-mgmt-item__value" :class="tripValueClassname" title="Trip Value">
+          <div
+            class="c-fault-mgmt-item__value"
+            :class="tripValueClassname"
+            title="Trip Value"
+            aria-label="Trip Value"
+          >
             {{ fault.triggerValueInfo.value }}
           </div>
         </div>
         <div class="c-fault-mgmt-item c-fault-mgmt__list-curVal">
-          <div class="c-fault-mgmt-item__value" :class="liveValueClassname" title="Live Value">
+          <div
+            class="c-fault-mgmt-item__value"
+            :class="liveValueClassname"
+            title="Live Value"
+            aria-label="Live Value"
+          >
             {{ fault.currentValueInfo.value }}
           </div>
         </div>
         <div class="c-fault-mgmt-item c-fault-mgmt__list-trigTime">
-          <div class="c-fault-mgmt-item__value" title="Last Trigger Time">
+          <div
+            class="c-fault-mgmt-item__value"
+            title="Last Trigger Time"
+            aria-label="Last Trigger Time"
+          >
             {{ fault.triggerTime }}
           </div>
         </div>
@@ -98,7 +118,7 @@ export default {
   emits: ['acknowledge-selected', 'shelve-selected', 'toggle-selected', 'clear-all-selected'],
   computed: {
     checkBoxAriaLabel() {
-      return `Select fault: ${this.fault.name}`;
+      return `Select fault: ${this.fault.name || 'Unknown'} in ${this.fault.namespace || 'Unknown'}`;
     },
     classesFromState() {
       const exclusiveStates = [
@@ -165,6 +185,12 @@ export default {
       classname += SEVERITY_CLASS[triggerValueInfo.monitoringResult] || '';
 
       return classname.trim();
+    },
+    listItemAriaLabel() {
+      return `Fault triggered at ${this.fault.triggerTime || 'Unknown'} with severity ${this.fault.severity || 'Unknown'} in ${this.fault.namespace || 'Unknown'}`;
+    },
+    severityAriaLabel() {
+      return `Severity: ${this.fault.severity || 'Unknown'}`;
     }
   },
   methods: {

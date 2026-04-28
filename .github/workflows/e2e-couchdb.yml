@@ -1,24 +1,18 @@
 name: 'e2e-couchdb'
 on:
   push:
-    branches: master
-  workflow_dispatch:
   pull_request:
     types:
-      - labeled
       - opened
-  schedule:
-    - cron: '0 0 * * *'
 jobs:
   e2e-couchdb:
-    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e:couchdb') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event.action == 'opened'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/hydrogen'
+          node-version: '24.14.1'
 
       - name: Cache NPM dependencies
         uses: actions/cache@v3
@@ -37,12 +31,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - run: npx playwright@1.44.0 install
+      - run: npm exec --workspace e2e -- playwright install --with-deps
 
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
-          docker-compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+          docker compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
           sleep 3
           bash src/plugins/persistence/couch/setup-couchdb.sh
           bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
@@ -52,22 +46,33 @@ jobs:
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha }}
         run: npm run test:e2e:couchdb
 
+      - name: Generate Code Coverage Report
+        run: npm run cov:e2e:report
+
       - name: Publish Results to Codecov.io
-        env:
-          SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
-        run: npm run cov:e2e:full:publish
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/e2e/lcov.info
+          flags: e2e-full
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Archive test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-test-results
           path: test-results
+          overwrite: true
 
       - name: Archive html test results
         if: success() || failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: e2e-couchdb-html-test-results
           path: html-test-results
+          overwrite: true
 
       - name: Remove pr:e2e:couchdb label (if present)
         if: always()

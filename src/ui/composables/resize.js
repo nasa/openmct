@@ -64,7 +64,7 @@ export function useResizeObserver() {
  * A composable function which can be used to listen to and handle window resize events.
  * Throttles the resize event to prevent performance issues.
  * @param {number} [throttleMs=100] The number of milliseconds to throttle the resize event.
- * @returns {Ref<{ width: number, height: number }>} windowSize
+ * @returns {{ windowSize: { width: number, height: number } }}
  */
 export function useWindowResize(throttleMs = 100) {
   const windowSize = reactive({ width: window.innerWidth, height: window.innerHeight });

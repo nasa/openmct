@@ -63,7 +63,7 @@
                   :key="index"
                   :value="telemetryOption.identifier"
                 >
-                  {{ telemetryOption.name }}
+                  {{ telemetryOption.path || telemetryOption.name }}
                 </option>
               </select>
             </span>
@@ -114,7 +114,7 @@
         class="c-button c-button--major icon-plus labeled"
         @click="addTestInput"
       >
-        <span class="c-cs-button__label">Add Test Datum</span>
+        <span class="c-cs-button__label" aria-label="Add Test Datum">Add Test Datum</span>
       </button>
     </div>
   </section>
@@ -147,7 +147,8 @@ export default {
       expanded: true,
       isApplied: false,
       testInputs: [],
-      telemetryMetadataOptions: {}
+      telemetryMetadataOptions: {},
+      telemetryPaths: []
     };
   },
   watch: {

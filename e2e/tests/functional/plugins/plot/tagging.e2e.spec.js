@@ -89,7 +89,7 @@ test.describe('Plot Tagging', () => {
     await setRealTimeMode(page);
 
     // Search for Science Tag
-    await page.getByRole('searchbox', { name: 'Search Input' });
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
     await page.getByRole('searchbox', { name: 'Search Input' }).fill('sc');
 
     // Click on the search object result
@@ -116,6 +116,35 @@ test.describe('Plot Tagging', () => {
       canvas
     });
     await basicTagsTests(page);
+  });
+
+  test('Plots use index to retrieve tags @couchdb @network', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/8184'
+    });
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    const tagsRequestPromise = new Promise((resolve) => {
+      page.on('request', async (request) => {
+        const isTagsRequest = request.url().endsWith('by_keystring');
+        if (isTagsRequest) {
+          const response = await request.response();
+          resolve(response.status() === 200);
+        }
+      });
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator'
+    });
+
+    const pauseButton = page.getByLabel('Pause incoming real-time data');
+    pauseButton.click();
+
+    const didUseIndexForTagsRequest = await tagsRequestPromise;
+
+    expect(didUseIndexForTagsRequest).toBe(true);
   });
 
   test('Tags work with Stacked Plots', async ({ page }) => {

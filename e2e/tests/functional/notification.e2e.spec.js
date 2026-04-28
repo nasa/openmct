@@ -50,13 +50,13 @@ test.describe('Notifications List', () => {
     });
 
     // Verify that there is a button with aria-label "Review 2 Notifications"
-    expect(await page.locator('button[aria-label="Review 2 Notifications"]').count()).toBe(1);
+    await expect(page.locator('button[aria-label="Review 2 Notifications"]')).toHaveCount(1);
 
     // Click on button with aria-label "Review 2 Notifications"
-    await page.click('button[aria-label="Review 2 Notifications"]');
+    await page.getByLabel('Review 2 Notifications').click();
 
     // Click on button with aria-label="Dismiss notification of Error message"
-    await page.click('button[aria-label="Dismiss notification of Error message"]');
+    await page.getByLabel('Dismiss notification of Error message').click();
 
     // Verify there is no a notification (listitem) with the text "Error message" since it was dismissed
     expect(await page.locator('div[role="dialog"] div[role="listitem"]').innerText()).not.toContain(
@@ -69,10 +69,10 @@ test.describe('Notifications List', () => {
     );
 
     // Click on button with aria-label="Dismiss notification of Alert message"
-    await page.click('button[aria-label="Dismiss notification of Alert message"]');
+    await page.getByLabel('Dismiss notification of Alert message').click();
 
     // Verify that there is no dialog since the notification overlay was closed automatically after all notifications were dismissed
-    expect(await page.locator('div[role="dialog"]').count()).toBe(0);
+    await expect(page.locator('div[role="dialog"]')).toHaveCount(0);
   });
 });
 

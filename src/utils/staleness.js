@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class StalenessUtils {
+class StalenessUtils {
   constructor(openmct, domainObject) {
     this.openmct = openmct;
     this.domainObject = domainObject;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
     this.lastStalenessResponseTime = 0;
+    this.lastStalenessTimeSystem = undefined;
 
     this.setTimeSystem(this.openmct.time.getTimeSystem());
     this.watchTimeSystem();
@@ -33,11 +34,12 @@ export default class StalenessUtils {
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
-    const { start } = this.openmct.time.getBounds();
-    const isStalenessInCurrentClock = stalenessResponseTime > start;
 
-    if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {
+    // Accept latest staleness updates from staleness provider,
+    // regardless of whether the update occurred within time conductor bounds.
+    if (stalenessResponseTime > this.lastStalenessResponseTime) {
       this.lastStalenessResponseTime = stalenessResponseTime;
+      this.lastStalenessTimeSystem = this.getTimeSystem();
 
       return true;
     } else {
@@ -54,25 +56,30 @@ export default class StalenessUtils {
   }
 
   setTimeSystem(timeSystem) {
-    let metadataValue = { format: timeSystem.key };
+    this.timeSystem = timeSystem;
+  }
 
-    if (this.metadata) {
-      metadataValue = this.metadata.value(timeSystem.key) ?? metadataValue;
-    }
+  getTimeSystem() {
+    return this.timeSystem;
+  }
 
+  parseTime(stalenessResponse) {
+    const metadataValue = this.metadata.value(this.timeSystem.key) ?? {
+      format: this.timeSystem.key
+    };
     const valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
-    this.parseTime = (stalenessResponse) => {
-      const stalenessDatum = {
-        ...stalenessResponse,
-        source: stalenessResponse[timeSystem.key]
-      };
-
-      return valueFormatter.parse(stalenessDatum);
+    const stalenessDatum = {
+      ...stalenessResponse,
+      source: stalenessResponse[this.timeSystem.key]
     };
+
+    return valueFormatter.parse(stalenessDatum);
   }
 
   destroy() {
     this.unwatchTimeSystem();
   }
 }
+
+export default StalenessUtils;

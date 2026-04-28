@@ -327,16 +327,16 @@ export default {
   },
   mounted() {
     this.debounceResizeSvg = throttle(this.resizeSvg, 100);
-
-    this.$nextTick(() => {
-      this.debounceResizeSvg();
-    });
+    this.debounceResizeSvg();
   },
   methods: {
     resizeSvg() {
       const svg = this.$refs.compassRoseSvg;
-      svg.setAttribute('width', this.$refs.compassRoseWrapper.clientWidth);
-      svg.setAttribute('height', this.$refs.compassRoseWrapper.clientHeight);
+      // Component may have been unmounted before final debounce executes, so ensure it still exists.
+      if (svg !== null && svg !== undefined) {
+        svg.setAttribute('width', this.$refs.compassRoseWrapper.clientWidth);
+        svg.setAttribute('height', this.$refs.compassRoseWrapper.clientHeight);
+      }
     },
     toggleLockCompass() {
       this.lockCompass = !this.lockCompass;

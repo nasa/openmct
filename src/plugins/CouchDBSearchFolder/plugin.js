@@ -24,6 +24,9 @@ export default function (folderName, couchPlugin, searchFilter) {
             location: 'ROOT'
           });
         }
+      },
+      search() {
+        return Promise.resolve([]);
       }
     });
 
@@ -35,9 +38,17 @@ export default function (folderName, couchPlugin, searchFilter) {
         );
       },
       load() {
-        return couchProvider.getObjectsByFilter(searchFilter).then((objects) => {
-          return objects.map((object) => object.identifier);
-        });
+        let searchResults;
+
+        if (searchFilter.viewName !== undefined) {
+          // Use a view to search, instead of an _all_docs find
+          searchResults = couchProvider.getObjectsByView(searchFilter);
+        } else {
+          // Use the _find endpoint to search _all_docs
+          searchResults = couchProvider.getObjectsByFilter(searchFilter);
+        }
+
+        return searchResults;
       }
     });
   };

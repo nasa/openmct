@@ -9,6 +9,7 @@ import { defineComponent, h, onMounted, ref } from 'vue';
 export default function vueWrapHtmlElement(element) {
   return defineComponent({
     setup() {
+      /** @type {import('vue').Ref<HTMLElement | null>} */
       const wrapper = ref(null);
 
       onMounted(() => {

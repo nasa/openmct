@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -39,7 +39,7 @@
         :layout-font="item.font"
       />
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>

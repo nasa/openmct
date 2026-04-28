@@ -84,7 +84,7 @@ test.describe('Plot Tagging Performance', () => {
     await setRealTimeMode(page);
 
     // Search for Science
-    await page.getByRole('searchbox', { name: 'Search Input' });
+    await page.getByRole('searchbox', { name: 'Search Input' }).click();
     await page.getByRole('searchbox', { name: 'Search Input' }).fill('sc');
 
     // click on the search result

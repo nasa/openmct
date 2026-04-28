@@ -38,13 +38,15 @@ import isEqual from 'lodash/isEqual';
 import { toRaw } from 'vue';
 
 import TagEditorClassNames from '../../inspectorViews/annotations/tags/TagEditorClassNames.js';
+import { OPEN_IMAGE_IN_NEW_TAB_ACTION_KEY } from '../actions/OpenImageInNewTabAction.js';
+import { SAVE_IMAGE_ACTION_KEY } from '../actions/SaveImageAsAction.js';
 
 const EXISTING_ANNOTATION_STROKE_STYLE = '#D79078';
 const EXISTING_ANNOTATION_FILL_STYLE = 'rgba(202, 202, 142, 0.2)';
 const SELECTED_ANNOTATION_STROKE_COLOR = '#BD8ECC';
 const SELECTED_ANNOTATION_FILL_STYLE = 'rgba(199, 87, 231, 0.2)';
 
-const CONTEXT_MENU_ACTIONS = ['openImageInNewTab', 'saveImageAs'];
+const CONTEXT_MENU_ACTIONS = [OPEN_IMAGE_IN_NEW_TAB_ACTION_KEY, SAVE_IMAGE_ACTION_KEY];
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],

@@ -24,7 +24,7 @@
   <div class="c-inspector__saved-styles c-inspect-styles">
     <div class="c-inspect-styles__content">
       <div class="c-inspect-styles__saved-styles">
-        <saved-style-selector
+        <SavedStyleSelector
           v-for="(savedStyle, index) in savedStyles"
           :key="index"
           class="c-inspect-styles__saved-style"
@@ -90,7 +90,7 @@ export default {
         message: message,
         buttons: [
           {
-            label: 'OK',
+            label: 'Ok',
             callback: () => {
               dialog.dismiss();
             }
@@ -109,7 +109,7 @@ export default {
         message: message,
         buttons: [
           {
-            label: 'OK',
+            label: 'Ok',
             callback: () => {
               dialog.dismiss();
             }

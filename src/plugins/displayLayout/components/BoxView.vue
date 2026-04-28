@@ -21,7 +21,7 @@
 -->
 
 <template>
-  <layout-frame
+  <LayoutFrame
     :item="item"
     :grid-size="gridSize"
     :is-editing="isEditing"
@@ -38,7 +38,7 @@
         aria-label="Box"
       ></div>
     </template>
-  </layout-frame>
+  </LayoutFrame>
 </template>
 
 <script>

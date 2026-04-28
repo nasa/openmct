@@ -99,6 +99,48 @@ create_replicator_table() {
 add_index_and_views() {
     echo "Adding index and views to $OPENMCT_DATABASE_NAME database"
 
+    # Add object names search index
+    response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request PUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_design/object_names/\
+    --header 'Content-Type: application/json' \
+    --data '{
+      "_id":"_design/object_names",
+      "views":{
+        "object_names":{
+          "map":"function(doc) { if (doc.model && doc.model.name) { const name = doc.model.name.toLowerCase().trim(); if (name.length > 0) { emit(name, doc._id); const tokens = name.split(/[^a-zA-Z0-9]/); tokens.forEach((token) => { if (token.length > 0) { emit(token, doc._id); } }); } } }"
+        }
+      }
+    }');
+
+    if [[ $response =~ "\"ok\":true" ]]; then
+        echo "Successfully created object_names"
+    elif [[ $response =~ "\"error\":\"conflict\"" ]]; then
+        echo "object_names already exists, skipping creation"
+    else
+        echo "Unable to create object_names"
+        echo $response
+    fi
+
+    # Add object types search index
+    response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request PUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_design/object_types/\
+    --header 'Content-Type: application/json' \
+    --data '{
+      "_id":"_design/object_types",
+      "views":{
+        "object_types":{
+          "map":"function(doc) { if (doc.model && doc.model.type) { const type = doc.model.type.toLowerCase().trim(); if (type.length > 0) { emit(type, null); } } }"
+        }
+      }
+    }')
+
+    if [[ $response =~ "\"ok\":true" ]]; then
+        echo "Successfully created object_types"
+    elif [[ $response =~ "\"error\":\"conflict\"" ]]; then
+        echo "object_types already exists, skipping creation"
+    else
+        echo "Unable to create object_types"
+        echo $response
+    fi
+
     # Add type_tags_index
     response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request POST "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_index/\
     --header 'Content-Type: application/json' \
@@ -158,6 +200,24 @@ add_index_and_views() {
         echo "annotation_keystring_index already exists, skipping creation"
     else
         echo "Unable to create annotation_keystring_index"
+        echo $response
+    fi
+
+    # Add auth database for locked objects
+    response=$(curl --silent --user "${CURL_USERPASS_ARG}" --request PUT "$COUCH_BASE_LOCAL"/"$OPENMCT_DATABASE_NAME"/_design/auth \
+    --header 'Content-Type: application/json' \
+    --data '{
+      "_id": "_design/auth",
+      "language": "javascript",
+      "validate_doc_update": "function (newDoc, oldDoc, userCtx) {  if (userCtx.roles.indexOf('\''_admin'\'') !== -1) {    return;  } else if (oldDoc === null) {    return;  } else if (oldDoc.model.type === '\''timer'\'' || oldDoc.model.type === '\''notebook'\'' || oldDoc.model.type === '\''restricted-notebook'\'') {    if (oldDoc.model.name !== newDoc.model.name) {      throw ({        forbidden: '\''Read-only object'\''      });    } else {      return;    }  } else if (oldDoc.model.locked === true && oldDoc.model.disallowUnlock === true) {    throw ({      forbidden: '\''Read-only object'\''    });  } else {    return;  }}"
+    }')
+
+    if [[ $response =~ "\"ok\":true" ]]; then
+        echo "Successfully created _design/auth design document for locked objects"
+    elif [[ $response =~ "\"error\":\"conflict\"" ]]; then
+        echo "_design/auth already exists, skipping creation"
+    else
+        echo "Unable to create _design/auth"
         echo $response
     fi
 }

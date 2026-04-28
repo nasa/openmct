@@ -37,7 +37,7 @@
         <div class="c-elements-pool__instructions">
           Select and drag an element to move it into a different axis.
         </div>
-        <element-item-group
+        <ElementItemGroup
           v-for="(yAxis, index) in yAxes"
           :key="`element-group-yaxis-${yAxis.id}`"
           :parent-object="parentObject"
@@ -46,7 +46,7 @@
           @drop-group="moveTo($event, 0, yAxis.id)"
         >
           <li class="js-first-place" @drop="moveTo($event, 0, yAxis.id)"></li>
-          <element-item
+          <ElementItem
             v-for="(element, elemIndex) in yAxis.elements"
             :key="element.identifier.key"
             :index="elemIndex"
@@ -61,7 +61,7 @@
             class="js-last-place"
             @drop="moveTo($event, yAxis.elements.length, yAxis.id)"
           ></li>
-        </element-item-group>
+        </ElementItemGroup>
       </ul>
       <div v-show="!hasElements">No contained elements</div>
     </div>

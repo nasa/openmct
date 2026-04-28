@@ -31,7 +31,7 @@ import { test } from '../../pluginFixtures.js';
 test.describe.skip('pluginFixtures tests', () => {
   // test.use({ domainObjectName: 'Timer' });
   // let timerUUID;
-  // test('Creates a timer object @framework @unstable', ({ domainObject }) => {
+  // test('Creates a timer object @framework', ({ domainObject }) => {
   //     const { uuid } = domainObject;
   //     const uuidRegexp = /[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/;
   //     expect(uuid).toMatch(uuidRegexp);

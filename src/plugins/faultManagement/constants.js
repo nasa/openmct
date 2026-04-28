@@ -38,46 +38,44 @@ const FAULT_SEVERITY = {
   }
 };
 
+function sortByTriggerTime(a, b) {
+  if (b.triggerTime > a.triggerTime) {
+    return 1;
+  }
+
+  if (a.triggerTime > b.triggerTime) {
+    return -1;
+  }
+
+  return 0;
+}
+
 export const FAULT_MANAGEMENT_TYPE = 'faultManagement';
 export const FAULT_MANAGEMENT_INSPECTOR = 'faultManagementInspector';
 export const FAULT_MANAGEMENT_ALARMS = 'alarms';
 export const FAULT_MANAGEMENT_GLOBAL_ALARMS = 'global-alarm-status';
-export const FAULT_MANAGEMENT_SHELVE_DURATIONS_IN_MS = [
-  {
-    name: '5 Minutes',
-    value: 300000
-  },
-  {
-    name: '10 Minutes',
-    value: 600000
-  },
-  {
-    name: '15 Minutes',
-    value: 900000
-  },
-  {
-    name: 'Indefinite',
-    value: 0
-  }
-];
 export const FAULT_MANAGEMENT_VIEW = 'faultManagement.view';
 export const FAULT_MANAGEMENT_NAMESPACE = 'faults.taxonomy';
 export const FILTER_ITEMS = ['Standard View', 'Acknowledged', 'Unacknowledged', 'Shelved'];
 export const SORT_ITEMS = {
+  'unacknowledged-first': {
+    name: 'Unacknowledged First',
+    value: 'unacknowledged-first',
+    sortFunction: (a, b) => {
+      const aAck = Boolean(a.acknowledged);
+      const bAck = Boolean(b.acknowledged);
+
+      if (aAck !== bAck) {
+        return aAck ? 1 : -1;
+      }
+
+      return sortByTriggerTime(a, b);
+    }
+  },
   'newest-first': {
     name: 'Newest First',
     value: 'newest-first',
-    sortFunction: (a, b) => {
-      if (b.triggerTime > a.triggerTime) {
-        return 1;
-      }
-
-      if (a.triggerTime > b.triggerTime) {
-        return -1;
-      }
-
-      return 0;
-    }
+    sortFunction: sortByTriggerTime
   },
   'oldest-first': {
     name: 'Oldest First',
@@ -103,15 +101,7 @@ export const SORT_ITEMS = {
         return diff;
       }
 
-      if (b.triggerTime > a.triggerTime) {
-        return 1;
-      }
-
-      if (a.triggerTime > b.triggerTime) {
-        return -1;
-      }
-
-      return 0;
+      return sortByTriggerTime(a, b);
     }
   }
 };

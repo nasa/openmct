@@ -26,7 +26,7 @@ relates to how we've extended it (i.e. ./e2e/baseFixtures.js) and assumptions ma
 (`npm start` and ./e2e/webpack-dev-middleware.js)
 */
 
-import { expect, test } from '../../baseFixtures.js';
+import { test } from '../../baseFixtures.js';
 import { MISSION_TIME } from '../../constants.js';
 
 test.describe('baseFixtures tests', () => {
@@ -34,6 +34,21 @@ test.describe('baseFixtures tests', () => {
   test('Verify that tests fail if console.error is thrown', async ({ page }) => {
     test.fail();
     //Go to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    //Verify that ../fixtures.js detects console log errors
+    await Promise.all([
+      page.evaluate(() => console.error('This should result in a failure')),
+      page.waitForEvent('console') // always wait for the event to happen while triggering it!
+    ]);
+  });
+  test('Verify that tests fail if console.error is thrown with clock override @clock', async ({
+    page
+  }) => {
+    test.fail();
+    //Set clock time
+    await page.clock.install({ time: MISSION_TIME });
+    await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
     //Verify that ../fixtures.js detects console log errors
@@ -51,29 +66,5 @@ test.describe('baseFixtures tests', () => {
       page.evaluate(() => console.warn('This should result in a pass')),
       page.waitForEvent('console') // always wait for the event to happen while triggering it!
     ]);
-  });
-});
-
-test.describe('baseFixtures tests @clock', () => {
-  test.use({
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: false
-    }
-  });
-
-  test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-  });
-
-  test('Can use clockOptions and tick fixtures to control the clock', async ({ page, tick }) => {
-    let time = await page.evaluate(() => new Date().getTime());
-    expect(time).toBe(MISSION_TIME);
-    await tick(1000);
-    time = await page.evaluate(() => new Date().getTime());
-    expect(time).toBe(MISSION_TIME + 1000 * 1);
-    await tick(1000);
-    time = await page.evaluate(() => new Date().getTime());
-    expect(time).toBe(MISSION_TIME + 1000 * 2);
   });
 });

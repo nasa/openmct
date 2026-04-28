@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import mount from 'utils/mount';
 import {
   createMouseEvent,
@@ -422,7 +422,7 @@ describe('the plugin', function () {
         expect(xAxisElement.length).toBe(1);
 
         let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
-        expect(ticks.length).toBe(9);
+        expect(ticks.length).toBe(5);
 
         done();
       });

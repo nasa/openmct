@@ -21,7 +21,7 @@
  *****************************************************************************/
 import { createOpenMct, getMockObjects, resetApplicationState } from 'utils/testing';
 
-import LinkAction from './LinkAction.js';
+import { LINK_ACTION_KEY } from './LinkAction.js';
 import LinkActionPlugin from './plugin.js';
 
 describe('The Link Action plugin', () => {
@@ -31,8 +31,7 @@ describe('The Link Action plugin', () => {
   let parentObject;
   let anotherParentObject;
   const ORIGINAL_PARENT_ID = 'original-parent-object';
-  const LINK_ACITON_KEY = 'link';
-  const LINK_ACITON_NAME = 'Create Link';
+  const LINK_ACTION_NAME = 'Create Link';
 
   beforeEach((done) => {
     const appHolder = document.createElement('div');
@@ -97,14 +96,14 @@ describe('The Link Action plugin', () => {
   it('should make the link action available for an appropriate domainObject', () => {
     const actionCollection = openmct.actions.getActionsCollection([childObject]);
     const visibleActions = actionCollection.getVisibleActions();
-    linkAction = visibleActions.find((a) => a.key === LINK_ACITON_KEY);
+    linkAction = visibleActions.find((a) => a.key === LINK_ACTION_KEY);
 
-    expect(linkAction.name).toEqual(LINK_ACITON_NAME);
+    expect(linkAction.name).toEqual(LINK_ACTION_NAME);
   });
 
   describe('when linking an object in a new parent', () => {
     beforeEach(() => {
-      linkAction = new LinkAction(openmct);
+      linkAction = openmct.actions.getAction(LINK_ACTION_KEY);
       linkAction.linkInNewParent(childObject, anotherParentObject);
     });
 

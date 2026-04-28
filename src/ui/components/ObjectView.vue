@@ -21,7 +21,13 @@
 -->
 <template>
   <div>
-    <div ref="objectViewWrapper" class="c-object-view" :class="viewClasses"></div>
+    <div
+      ref="objectViewWrapper"
+      role="region"
+      :aria-label="ariaLabel"
+      class="c-object-view"
+      :class="viewClasses"
+    ></div>
   </div>
 </template>
 
@@ -71,6 +77,9 @@ export default {
     };
   },
   computed: {
+    ariaLabel() {
+      return this.domainObject ? `${this.domainObject.name} Object View` : 'Object View';
+    },
     path() {
       return this.domainObject && (this.currentObjectPath || this.objectPath);
     },
@@ -351,6 +360,10 @@ export default {
     },
     show(object, viewKey, immediatelySelect, currentObjectPath) {
       this.updateStyle();
+
+      if (this.domainObject) {
+        this.triggerUnsubscribeFromStaleness(this.domainObject);
+      }
 
       if (this.removeSelectable) {
         this.removeSelectable();

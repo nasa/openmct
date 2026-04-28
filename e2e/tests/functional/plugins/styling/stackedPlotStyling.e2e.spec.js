@@ -45,6 +45,8 @@ const setFontFamily = '"Andale Mono", sans-serif';
 
 test.describe('Stacked Plot styling', () => {
   let stackedPlot;
+  let overlayPlot1;
+  let overlayPlot2;
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
@@ -54,17 +56,30 @@ test.describe('Stacked Plot styling', () => {
       name: 'StackedPlot1'
     });
 
+    // create two overlay plots
+    overlayPlot1 = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Overlay Plot 1',
+      parent: stackedPlot.uuid
+    });
+
+    overlayPlot2 = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Overlay Plot 2',
+      parent: stackedPlot.uuid
+    });
+
     // Create two SWGs and attach them to the Stacked Plot
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Sine Wave Generator 1',
-      parent: stackedPlot.uuid
+      parent: overlayPlot1.uuid
     });
 
     await createDomainObjectWithDefaults(page, {
       type: 'Sine Wave Generator',
       name: 'Sine Wave Generator 2',
-      parent: stackedPlot.uuid
+      parent: overlayPlot2.uuid
     });
   });
 
@@ -138,21 +153,21 @@ test.describe('Stacked Plot styling', () => {
       NO_STYLE_RGBA,
       NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Item Overlay Plot 1')
     );
 
     await checkStyles(
       NO_STYLE_RGBA,
       NO_STYLE_RGBA,
       hexToRGB(setTextColor),
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
+      page.getByLabel('Stacked Plot Item Overlay Plot 2')
     );
 
     await checkFontStyles(
       setFontSize,
       setFontWeight,
       setFontFamily,
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Item Overlay Plot 1')
     );
   });
 
@@ -169,19 +184,19 @@ test.describe('Stacked Plot styling', () => {
 
     await page.getByRole('tab', { name: 'Styles' }).click();
 
-    //Check default styles for SWG1 and SWG2
+    //Check default styles for overlayPlot1 and overlayPlot2
     await checkStyles(
       NO_STYLE_RGBA,
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Item Overlay Plot 1')
     );
 
     await checkStyles(
       NO_STYLE_RGBA,
       NO_STYLE_RGBA,
       hexToRGB(defaultTextColor),
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 2')
+      page.getByLabel('Stacked Plot Item Overlay Plot 2')
     );
 
     // Set styles using setStyles function on StackedPlot1 but not StackedPlot2
@@ -190,11 +205,11 @@ test.describe('Stacked Plot styling', () => {
       setBorderColor,
       setBackgroundColor,
       setTextColor,
-      page.getByLabel('Stacked Plot Item Sine Wave Generator 1')
+      page.getByLabel('Stacked Plot Item Overlay Plot 1')
     );
 
     //Set Font Styles on SWG1 but not SWG2
-    await page.getByLabel('Stacked Plot Item Sine Wave Generator 1').click();
+    await page.getByLabel('Stacked Plot Item Overlay Plot 1').click();
     //Set Font Size to 72
     await page.getByLabel('Set Font Size').click();
     await page.getByRole('menuitem', { name: '72px' }).click();

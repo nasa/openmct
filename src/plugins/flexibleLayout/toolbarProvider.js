@@ -99,7 +99,7 @@ function ToolbarProvider(openmct) {
               message: `This action will remove this frame from this Flexible Layout. Do you want to continue?`,
               buttons: [
                 {
-                  label: 'OK',
+                  label: 'Ok',
                   emphasis: 'true',
                   callback: function () {
                     openmct.objectViews.emit(
@@ -170,7 +170,7 @@ function ToolbarProvider(openmct) {
                 'This action will permanently delete this container from this Flexible Layout. Do you want to continue?',
               buttons: [
                 {
-                  label: 'OK',
+                  label: 'Ok',
                   emphasis: 'true',
                   callback: function () {
                     openmct.objectViews.emit(

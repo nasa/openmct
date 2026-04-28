@@ -31,7 +31,7 @@ export default function () {
       openmct.overlays.overlay({
         element: vNode.el,
         size: 'fullscreen',
-        dismissable: false,
+        dismissible: false,
         onDestroy: destroy
       });
     });

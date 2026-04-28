@@ -34,7 +34,7 @@
       :aria-label="`Flexible Layout ${rowsLayout ? 'Rows' : 'Columns'}`"
     >
       <template v-for="(container, index) in containers" :key="`component-${container.id}`">
-        <drop-hint
+        <DropHint
           v-if="index === 0 && containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="-1"
@@ -42,7 +42,7 @@
           @object-drop-to="moveContainer"
         />
 
-        <container-component
+        <ContainerComponent
           :index="index"
           :container="container"
           :rows-layout="rowsLayout"
@@ -54,7 +54,7 @@
           @persist="persist"
         />
 
-        <resize-handle
+        <ResizeHandle
           v-if="index !== containers.length - 1"
           :index="index"
           :drag-orientation="rowsLayout ? 'vertical' : 'horizontal'"
@@ -64,7 +64,7 @@
           @end-move="endContainerResizing"
         />
 
-        <drop-hint
+        <DropHint
           v-if="containers.length > 1"
           class="c-fl-frame__drop-hint"
           :index="index"
@@ -77,11 +77,12 @@
 </template>
 
 <script>
-import Container from '../utils/container.js';
-import Frame from '../utils/frame.js';
+import Container from '@/ui/layout/Container.js';
+import Frame from '@/ui/layout/Frame.js';
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
+
 import ContainerComponent from './ContainerComponent.vue';
 import DropHint from './DropHint.vue';
-import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -158,6 +159,7 @@ export default {
     this.composition.on('remove', this.removeChildObject);
     this.composition.on('add', this.addFrame);
     this.composition.load();
+
     this.unObserveContainers = this.openmct.objects.observe(
       this.domainObject,
       'configuration.containers',

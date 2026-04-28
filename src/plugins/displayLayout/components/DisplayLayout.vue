@@ -22,6 +22,7 @@
 
 <template>
   <div
+    id="display-layout-drop-area"
     class="l-layout u-style-receiver js-style-receiver"
     :class="{
       'is-multi-selected': selectedLayoutItems.length > 1,
@@ -453,7 +454,7 @@ export default {
             message: 'This item is already in layout and will not be added again.',
             buttons: [
               {
-                label: 'OK',
+                label: 'Ok',
                 callback: function () {
                   prompt.dismiss();
                 }

@@ -66,8 +66,8 @@ The e2e line coverage is a bit more complex than the karma implementation. This 
 1. Each e2e suite will start webpack with the ```npm run start:coverage``` command with config `webpack.coverage.mjs` and the `babel-plugin-istanbul` plugin to generate code coverage during e2e test execution using our custom [baseFixture](./baseFixtures.js). 
 1. During testcase execution, each e2e shard will generate its piece of the larger coverage suite. **This coverage file is not merged**. The raw coverage file is stored in a `.nyc_report` directory.
 1. [nyc](https://github.com/istanbuljs/nyc) converts this directory into a `lcov` file with the following command `npm run cov:e2e:report`
-1. Most of the tests are run in the '@stable' configuration and focus on chrome/ubuntu at a single resolution. This coverage is published to codecov with `npm run cov:e2e:stable:publish`.
-1. The rest of our coverage only appears when run against `@unstable` tests, persistent datastore (couchdb), non-ubuntu machines, and non-chrome browsers with the `npm run cov:e2e:full:publish` flag. Since this happens about once a day, we have leveraged codecov.io's carryforward flag to report on lines covered outside of each commit on an individual PR.
+1. Most of the tests focus on chrome/ubuntu at a single resolution. This coverage is published to codecov with `npm run cov:e2e:ci:publish`.
+1. The rest of our coverage only appears when run against persistent datastore (couchdb), non-ubuntu machines, and non-chrome browsers with the `npm run cov:e2e:full:publish` flag. Since this happens about once a day, we have leveraged codecov.io's carryforward flag to report on lines covered outside of each commit on an individual PR.
 
 
 ### Limitations in our code coverage reporting

@@ -24,7 +24,6 @@ export default class InterceptorRegistry {
   /**
    * A InterceptorRegistry maintains the definitions for different interceptors that may be invoked on domain objects.
    * @interface InterceptorRegistry
-   * @memberof module:openmct
    */
   constructor() {
     this.interceptors = [];
@@ -35,7 +34,6 @@ export default class InterceptorRegistry {
    * @property {function} appliesTo function that determines if this interceptor should be called for the given identifier/object
    * @property {function} invoke function that transforms the provided domain object and returns the transformed domain object
    * @property {function} priority the priority for this interceptor. A higher number returned has more weight than a lower number
-   * @memberof module:openmct InterceptorRegistry#
    */
 
   /**
@@ -43,7 +41,6 @@ export default class InterceptorRegistry {
    *
    * @param {module:openmct.InterceptorDef} interceptorDef the interceptor to add
    * @method addInterceptor
-   * @memberof module:openmct.InterceptorRegistry#
    */
   addInterceptor(interceptorDef) {
     this.interceptors.push(interceptorDef);
@@ -53,7 +50,6 @@ export default class InterceptorRegistry {
    * Retrieve all interceptors applicable to a domain object.
    * @method getInterceptors
    * @returns [module:openmct.InterceptorDef] the registered interceptors for this identifier/object
-   * @memberof module:openmct.InterceptorRegistry#
    */
   getInterceptors(identifier, object) {
     function byPriority(interceptorA, interceptorB) {

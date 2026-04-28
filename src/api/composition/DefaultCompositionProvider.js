@@ -21,15 +21,15 @@
  *****************************************************************************/
 import { toRaw } from 'vue';
 
-import { makeKeyString } from '../objects/object-utils.js';
+import { makeKeyString, parseKeyString } from '../objects/object-utils.js';
 import CompositionProvider from './CompositionProvider.js';
 
 /**
- * @typedef {import('../objects/ObjectAPI').DomainObject} DomainObject
+ * @typedef {import('openmct').DomainObject} DomainObject
  */
 
 /**
- * @typedef {import('../objects/ObjectAPI').Identifier} Identifier
+ * @typedef {import('openmct').Identifier} Identifier
  */
 
 /**
@@ -75,7 +75,11 @@ export default class DefaultCompositionProvider extends CompositionProvider {
    *          the Identifiers in this composition
    */
   load(domainObject) {
-    return Promise.all(domainObject.composition);
+    const identifiers = domainObject.composition
+      .filter((idOrKeystring) => idOrKeystring !== null && idOrKeystring !== undefined)
+      .map((idOrKeystring) => parseKeyString(idOrKeystring));
+
+    return Promise.all(identifiers);
   }
   /**
    * Attach listeners for changes to the composition of a given domain object.

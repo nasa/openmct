@@ -31,25 +31,36 @@
           Label
         </div>
         <div class="grid-cell value">
-          <input v-model="label" class="c-input--flex" type="text" @change="updateForm('label')" />
-        </div>
-      </li>
-      <li class="grid-row">
-        <div id="log-mode-checkbox" class="grid-cell label" title="Enable log mode.">Log mode</div>
-        <div class="grid-cell value">
-          <!-- eslint-disable-next-line vue/html-self-closing -->
+          <label :for="`y-axis-${id}-label`" class="visually-hidden">Y Axis {{ id }} Label</label>
           <input
-            v-model="logMode"
-            class="js-log-mode-input"
-            aria-labelledby="log-mode-checkbox"
-            type="checkbox"
-            @change="updateForm('logMode')"
+            :id="`y-axis-${id}-label`"
+            v-model="label"
+            class="c-input--flex"
+            type="text"
+            @change="updateForm('label')"
           />
         </div>
       </li>
       <li class="grid-row">
+        <div :id="`log-mode-checkbox-${id}`" class="grid-cell label" title="Enable log mode.">
+          Log mode
+        </div>
+        <div class="grid-cell value">
+          <input
+            :id="`log-mode-input-${id}`"
+            v-model="logMode"
+            class="js-log-mode-input"
+            type="checkbox"
+            @change="updateForm('logMode')"
+          />
+          <label :for="`log-mode-input-${id}`" class="visually-hidden"
+            >Y Axis {{ id }} Log mode</label
+          >
+        </div>
+      </li>
+      <li class="grid-row">
         <div
-          id="autoscale-checkbox"
+          :id="`autoscale-checkbox-${id}`"
           class="grid-cell label"
           title="Automatically scale the Y axis to keep all values in view."
         >
@@ -57,11 +68,14 @@
         </div>
         <div class="grid-cell value">
           <input
+            :id="`autoscale-input-${id}`"
             v-model="autoscale"
             type="checkbox"
-            aria-labelledby="autoscale-checkbox"
             @change="updateForm('autoscale')"
           />
+          <label :for="`autoscale-input-${id}`" class="visually-hidden"
+            >Y Axis {{ id }} Auto scale</label
+          >
         </div>
       </li>
       <li v-show="autoscale" class="grid-row">
@@ -72,7 +86,11 @@
           Padding
         </div>
         <div class="grid-cell value">
+          <label :for="`autoscale-padding-${id}`" class="visually-hidden"
+            >Y Axis {{ id }} Autoscale Padding</label
+          >
           <input
+            :id="`autoscale-padding-${id}`"
             v-model="autoscalePadding"
             class="c-input--flex"
             type="text"
@@ -88,8 +106,12 @@
       <li class="grid-row force-border">
         <div class="grid-cell label" title="Minimum Y axis value.">Minimum Value</div>
         <div class="grid-cell value">
+          <label :for="`range-min-${id}`" class="visually-hidden"
+            >Y Axis {{ id }} Minimum value</label
+          >
           <input
-            v-model.lazy="rangeMin"
+            :id="`range-min-${id}`"
+            v-model="rangeMin"
             class="c-input--flex"
             type="number"
             @change="updateForm('range')"
@@ -99,8 +121,12 @@
       <li class="grid-row">
         <div class="grid-cell label" title="Maximum Y axis value.">Maximum Value</div>
         <div class="grid-cell value">
+          <label :for="`range-max-${id}`" class="visually-hidden"
+            >Y Axis {{ id }} Maximum value</label
+          >
           <input
-            v-model.lazy="rangeMax"
+            :id="`range-max-${id}`"
+            v-model="rangeMax"
             class="c-input--flex"
             type="number"
             @change="updateForm('range')"

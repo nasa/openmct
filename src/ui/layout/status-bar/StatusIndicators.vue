@@ -17,7 +17,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-  <div class="l-shell__head-section l-shell__indicators">
+  <div
+    ref="indicatorsContainer"
+    aria-label="Status Indicators"
+    class="l-shell__head-section l-shell__indicators"
+  >
     <component
       :is="indicator.value.vueComponent"
       v-for="indicator in sortedIndicators"
@@ -28,9 +32,15 @@
 </template>
 
 <script>
-import { shallowRef } from 'vue';
+import { defineExpose, ref, shallowRef } from 'vue';
+
 export default {
   inject: ['openmct'],
+  setup() {
+    const indicatorsContainer = ref(null);
+
+    defineExpose({ indicatorsContainer });
+  },
   data() {
     return {
       indicators: this.openmct.indicators.getIndicatorObjectsByPriority().map(shallowRef)

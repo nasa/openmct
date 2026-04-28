@@ -23,7 +23,7 @@
 <template>
   <div ref="GrandSearch" aria-label="OpenMCT Search" class="c-gsearch" role="search">
     <SearchResultsDropDown ref="searchResultsDropDown" />
-    <search
+    <Search
       ref="shell-search"
       class="c-gsearch__input"
       :value="searchValue"
@@ -111,9 +111,8 @@ export default {
             return null;
           }
 
-          const keyStringForObject = this.openmct.objects.makeKeyString(domainObject.identifier);
           const originalPathObjects = await this.openmct.objects.getOriginalPath(
-            keyStringForObject,
+            domainObject,
             [],
             abortSignal
           );

@@ -20,10 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
+/**
+ * A collection of actions applicable to a domain object.
+ * @extends EventEmitter
+ */
 class ActionCollection extends EventEmitter {
+  /**
+   * Creates an instance of ActionCollection.
+   * @param {Object.<string, Action>} applicableActions - The actions applicable to the domain object.
+   * @param {import('openmct').ObjectPath} objectPath - The path to the domain object.
+   * @param {import('openmct').View} view - The view displaying the domain object.
+   * @param {import('openmct').OpenMCT} openmct - The Open MCT API.
+   * @param {boolean} skipEnvironmentObservers - Whether to skip setting up environment observers.
+   */
   constructor(applicableActions, objectPath, view, openmct, skipEnvironmentObservers) {
     super();
 
@@ -48,6 +60,10 @@ class ActionCollection extends EventEmitter {
     }
   }
 
+  /**
+   * Disables the specified actions.
+   * @param {string[]} actionKeys - The keys of the actions to disable.
+   */
   disable(actionKeys) {
     actionKeys.forEach((actionKey) => {
       if (this.applicableActions[actionKey]) {
@@ -57,6 +73,10 @@ class ActionCollection extends EventEmitter {
     this._update();
   }
 
+  /**
+   * Enables the specified actions.
+   * @param {string[]} actionKeys - The keys of the actions to enable.
+   */
   enable(actionKeys) {
     actionKeys.forEach((actionKey) => {
       if (this.applicableActions[actionKey]) {
@@ -66,6 +86,10 @@ class ActionCollection extends EventEmitter {
     this._update();
   }
 
+  /**
+   * Hides the specified actions.
+   * @param {string[]} actionKeys - The keys of the actions to hide.
+   */
   hide(actionKeys) {
     actionKeys.forEach((actionKey) => {
       if (this.applicableActions[actionKey]) {
@@ -75,6 +99,10 @@ class ActionCollection extends EventEmitter {
     this._update();
   }
 
+  /**
+   * Shows the specified actions.
+   * @param {string[]} actionKeys - The keys of the actions to show.
+   */
   show(actionKeys) {
     actionKeys.forEach((actionKey) => {
       if (this.applicableActions[actionKey]) {
@@ -84,6 +112,9 @@ class ActionCollection extends EventEmitter {
     this._update();
   }
 
+  /**
+   * Destroys the action collection, removing all listeners and observers.
+   */
   destroy() {
     if (!this.skipEnvironmentObservers) {
       this.objectUnsubscribes.forEach((unsubscribe) => {
@@ -97,6 +128,10 @@ class ActionCollection extends EventEmitter {
     this.removeAllListeners();
   }
 
+  /**
+   * Gets all visible actions.
+   * @returns {Action[]} An array of visible actions.
+   */
   getVisibleActions() {
     let actionsArray = Object.keys(this.applicableActions);
     let visibleActions = [];
@@ -112,6 +147,10 @@ class ActionCollection extends EventEmitter {
     return visibleActions;
   }
 
+  /**
+   * Gets all actions that should be shown in the status bar.
+   * @returns {Action[]} An array of status bar actions.
+   */
   getStatusBarActions() {
     let actionsArray = Object.keys(this.applicableActions);
     let statusBarActions = [];
@@ -127,17 +166,34 @@ class ActionCollection extends EventEmitter {
     return statusBarActions;
   }
 
+  /**
+   * Gets the object containing all applicable actions.
+   * @returns {Object.<string, Action>} The object of applicable actions.
+   */
   getActionsObject() {
     return this.applicableActions;
   }
 
+  /**
+   * Emits an update event with the current applicable actions.
+   * @private
+   */
   _update() {
     this.emit('update', this.applicableActions);
   }
 
+  /**
+   * Sets up observers for the object path.
+   * @private
+   */
   _observeObjectPath() {
     let actionCollection = this;
 
+    /**
+     * Updates an object with new properties.
+     * @param {Object} oldObject - The object to update.
+     * @param {Object} newObject - The object containing new properties.
+     */
     function updateObject(oldObject, newObject) {
       Object.assign(oldObject, newObject);
 
@@ -157,6 +213,10 @@ class ActionCollection extends EventEmitter {
     });
   }
 
+  /**
+   * Updates the applicable actions.
+   * @private
+   */
   _updateActions() {
     let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.view);
 
@@ -167,6 +227,13 @@ class ActionCollection extends EventEmitter {
     this._update();
   }
 
+  /**
+   * Merges old and new actions, preserving existing action states.
+   * @param {Object.<string, Action>} oldActions - The existing actions.
+   * @param {Object.<string, Action>} newActions - The new actions.
+   * @returns {Object.<string, Action>} The merged actions.
+   * @private
+   */
   _mergeOldAndNewActions(oldActions, newActions) {
     let mergedActions = {};
     Object.keys(newActions).forEach((key) => {
@@ -182,3 +249,7 @@ class ActionCollection extends EventEmitter {
 }
 
 export default ActionCollection;
+
+/**
+ * @typedef {import('openmct').Action} Action
+ */

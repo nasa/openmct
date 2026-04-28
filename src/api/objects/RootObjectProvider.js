@@ -20,7 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * Provides the root object for the Open MCT application.
+ */
 class RootObjectProvider {
+  /**
+   * @param {RootRegistry} rootRegistry - The registry containing root objects.
+   */
   constructor(rootRegistry) {
     if (!RootObjectProvider.instance) {
       this.rootRegistry = rootRegistry;
@@ -30,8 +36,7 @@ class RootObjectProvider {
           namespace: ''
         },
         name: 'Open MCT',
-        type: 'root',
-        composition: []
+        type: 'root'
       };
       RootObjectProvider.instance = this;
     } else if (rootRegistry) {
@@ -42,20 +47,47 @@ class RootObjectProvider {
     return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
   }
 
+  /**
+   * Updates the name of the root object.
+   * @param {string} name - The new name for the root object.
+   */
   updateName(name) {
     this.rootObject.name = name;
   }
 
-  async get() {
-    let roots = await this.rootRegistry.getRoots();
-    this.rootObject.composition = roots;
-
-    return this.rootObject;
+  /**
+   * Retrieves the root object
+   * @returns {Promise<RootObject>} A promise that resolves to the root object.
+   */
+  get() {
+    return Promise.resolve(this.rootObject);
   }
 }
 
+/**
+ * Creates or returns an instance of RootObjectProvider.
+ * @param {RootRegistry} rootRegistry - The registry containing root objects.
+ * @returns {RootObjectProvider} An instance of RootObjectProvider.
+ */
 function instance(rootRegistry) {
   return new RootObjectProvider(rootRegistry);
 }
 
 export default instance;
+
+/**
+ * @typedef {import('openmct').Identifier} Identifier
+ */
+
+/**
+ * @typedef {Object} RootObject
+ * @property {Identifier} identifier - The identifier of the root object.
+ * @property {string} name - The name of the root object.
+ * @property {string} type - The type of the root object.
+ * @property {Identifier[]} composition - The composition of the root object.
+ */
+
+/**
+ * @typedef {Object} RootRegistry
+ * @property {() => Promise<Identifier[]>} getRoots - A method that returns a promise resolving to an array of root identifiers.
+ */

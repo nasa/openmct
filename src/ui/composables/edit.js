@@ -27,7 +27,7 @@ import { useEventEmitter } from './event.js';
 /**
  * Provides a reactive `isEditing` property that reflects the current editing state of the
  * application.
- * @param {OpenMCT} openmct the Open MCT API
+ * @param {import('openmct').OpenMCT} openmct the Open MCT API
  * @returns {{
  *  isEditing: import('vue').Ref<boolean>
  * }}

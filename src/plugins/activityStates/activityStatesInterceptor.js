@@ -24,7 +24,7 @@ import { ACTIVITY_STATES_KEY } from './createActivityStatesIdentifier.js';
 
 /**
  * @typedef {Object} ActivityStatesInterceptorOptions
- * @property {import('../../api/objects/ObjectAPI').Identifier} identifier the {namespace, key} to use for the activity states object.
+ * @property {import('openmct').Identifier} identifier the {namespace, key} to use for the activity states object.
  * @property {string} name The name of the activity states model.
  * @property {number} priority the priority of the interceptor. By default, it is low.
  */

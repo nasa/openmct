@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { openObjectTreeContextMenu } from '../../../../appActions.js';
 import {
   dragAndDropEmbed,
   enterTextEntry,
@@ -51,27 +50,22 @@ test.describe('Restricted Notebook', () => {
     const restrictedNotebookTreeObject = page.locator(`a:has-text("${notebook.name}")`);
 
     // notebook tree object exists
-    expect.soft(await restrictedNotebookTreeObject.count()).toEqual(1);
+    await expect(restrictedNotebookTreeObject).toHaveCount(1);
 
     // Click Remove Text
     await page.locator('li[role="menuitem"]:has-text("Remove")').click();
 
-    // Click 'OK' on confirmation window and wait for save banner to appear
-    await Promise.all([
-      page.waitForNavigation(),
-      page.locator('button:has-text("OK")').click(),
-      page.waitForSelector('.c-message-banner__message')
-    ]);
+    // Click 'Ok' on confirmation window
+    await page.locator('button:has-text("OK")').click();
 
     // has been deleted
-    expect(await restrictedNotebookTreeObject.count()).toEqual(0);
+    await expect(restrictedNotebookTreeObject).toHaveCount(0);
   });
 
   test('Can be locked if at least one page has one entry @addInit', async ({ page }) => {
     await enterTextEntry(page, TEST_TEXT);
 
-    const commitButton = page.locator('button:has-text("Commit Entries")');
-    expect(await commitButton.count()).toEqual(1);
+    await expect(page.getByLabel('Commit Entries')).toHaveCount(1);
   });
 });
 
@@ -86,20 +80,18 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     await page.locator('button.c-notebook__toggle-nav-button').click();
   });
 
-  test('Locked page should now be in a locked state @addInit @unstable', async ({
-    page
-  }, testInfo) => {
+  test('Locked page should now be in a locked state @addInit', async ({ page }, testInfo) => {
     // eslint-disable-next-line playwright/no-skipped-test
     test.skip(testInfo.project === 'chrome-beta', 'Test is unreliable on chrome-beta');
     // main lock message on page
     const lockMessage = page.locator(
       'text=This page has been committed and cannot be modified or removed'
     );
-    expect.soft(await lockMessage.count()).toEqual(1);
+    await expect(lockMessage).toHaveCount(1);
 
     // lock icon on page in sidebar
     const pageLockIcon = page.locator('ul.c-notebook__pages li div.icon-lock');
-    expect.soft(await pageLockIcon.count()).toEqual(1);
+    await expect(pageLockIcon).toHaveCount(1);
 
     // no way to remove a restricted notebook with a locked page
     await openObjectTreeContextMenu(page, notebook.url);
@@ -119,17 +111,14 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     await page.getByText('Unnamed Page').nth(1).fill(TEST_TEXT_NAME);
 
     // expect to be able to rename unlocked pages
-    const newPageElement = page.getByText(TEST_TEXT_NAME);
-    const newPageCount = await newPageElement.count();
-    await newPageElement.press('Enter'); // exit contenteditable state
-    expect.soft(newPageCount).toEqual(1);
+    await page.getByText(TEST_TEXT_NAME).press('Enter'); // exit contenteditable state
+    await expect(page.locator('div').filter({ hasText: /^Test Page$/ })).toHaveCount(1);
 
     // enter test text
     await enterTextEntry(page, TEST_TEXT);
 
     // expect new page to be lockable
-    const commitButton = page.getByRole('button', { name: ' Commit Entries' });
-    expect.soft(await commitButton.count()).toEqual(1);
+    await expect(page.getByLabel('Commit Entries')).toHaveCount(1);
 
     // Click the context menu button for the new page
     await page.getByTitle('Open context menu').click();
@@ -140,7 +129,7 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
     // deleted page, should no longer exist
     const deletedPageElement = page.getByText(TEST_TEXT_NAME);
-    expect(await deletedPageElement.count()).toEqual(0);
+    await expect(deletedPageElement).toHaveCount(0);
   });
 });
 
@@ -173,7 +162,7 @@ test.describe('can export restricted notebook as text', () => {
     await startAndAddRestrictedNotebookObject(page);
   });
 
-  test('basic functionality ', async ({ page }) => {
+  test('basic functionality', async ({ page }) => {
     await enterTextEntry(page, `Foo bar entry`);
     // Click on 3 Dot Menu
     await page.locator('button[title="More actions"]').click();
@@ -190,8 +179,23 @@ test.describe('can export restricted notebook as text', () => {
     expect(exportedText).toContain('Foo bar entry');
   });
 
-  test.fixme('can export multiple notebook entries as text ', async ({ page }) => {});
+  test.fixme('can export multiple notebook entries as text', async ({ page }) => {});
   test.fixme('can export all notebook entry metdata', async ({ page }) => {});
   test.fixme('can export all notebook tags', async ({ page }) => {});
   test.fixme('can export all notebook snapshots', async ({ page }) => {});
 });
+
+/**
+ * Open the given `domainObject`'s context menu from the object tree.
+ * Expands the path to the object and scrolls to it if necessary.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url the url to the object
+ */
+async function openObjectTreeContextMenu(page, url) {
+  await page.goto(url);
+  await page.getByLabel('Show selected item in tree').click();
+  await page.locator('.is-navigated-object').click({
+    button: 'right'
+  });
+}

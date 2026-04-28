@@ -20,16 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * Intercepts requests to ensure the remote clock is ready.
+ *
+ * @param {import('../../openmct').OpenMCT} openmct - The OpenMCT instance.
+ * @param {import('../../openmct').Identifier} _remoteClockIdentifier - The identifier for the remote clock.
+ * @param {Function} waitForBounds - A function that returns a promise resolving to the initial bounds.
+ * @returns {Object} The request interceptor.
+ */
 function remoteClockRequestInterceptor(openmct, _remoteClockIdentifier, waitForBounds) {
   let remoteClockLoaded = false;
 
   return {
-    appliesTo: () => {
+    /**
+     * Determines if the interceptor applies to the given request.
+     *
+     * @param {Object} _ - Unused parameter.
+     * @param {import('../../api/telemetry/TelemetryAPI').TelemetryRequestOptions} request - The request object.
+     * @returns {boolean} True if the interceptor applies, false otherwise.
+     */
+    appliesTo: (_, request) => {
       // Get the activeClock from the Global Time Context
+      /** @type {import("../../api/time/TimeContext").default} */
       const { activeClock } = openmct.time;
+
+      // this type of request does not rely on clock having bounds
+      if (request.strategy === 'latest' && request.timeContext.isRealTime()) {
+        return false;
+      }
 
       return activeClock?.key === 'remote-clock' && !remoteClockLoaded;
     },
+    /**
+     * Invokes the interceptor to modify the request.
+     *
+     * @param {Object} request - The request object.
+     * @returns {Promise<Object>} The modified request object.
+     */
     invoke: async (request) => {
       const timeContext = request?.timeContext ?? openmct.time;
 

@@ -100,7 +100,7 @@
         }}
       </div>
 
-      <toggle-switch
+      <ToggleSwitch
         id="show-filtered-rows-toggle"
         label="Show selected items only"
         :checked="isShowingMarkedRowsOnly"
@@ -139,7 +139,7 @@
         :style="dropTargetStyle"
       ></div>
 
-      <progress-bar
+      <ProgressBar
         v-if="loading"
         class="c-telemetry-table__progress-bar"
         :model="{ progressPerc: null }"
@@ -155,7 +155,7 @@
         <table class="c-table__headers c-telemetry-table__headers">
           <thead>
             <tr class="c-telemetry-table__headers__labels">
-              <table-column-header
+              <TableColumnHeader
                 v-for="(title, key, headerIndex) in headers"
                 :key="key"
                 :header-key="key"
@@ -171,10 +171,10 @@
                 @resize-column-end="updateConfiguredColumnWidths"
               >
                 <span class="c-telemetry-table__headers__label">{{ title }}</span>
-              </table-column-header>
+              </TableColumnHeader>
             </tr>
             <tr v-if="allowFiltering" class="c-telemetry-table__headers__filter">
-              <table-column-header
+              <TableColumnHeader
                 v-for="(title, key, headerIndex) in headers"
                 :key="key"
                 :header-key="key"
@@ -188,7 +188,7 @@
                 @reorder-column="reorderColumn"
                 @resize-column-end="updateConfiguredColumnWidths"
               >
-                <search
+                <Search
                   :value="filters[key]"
                   class="c-table__search"
                   :aria-label="`${key} filter input`"
@@ -204,8 +204,8 @@
                   >
                     /R/
                   </button>
-                </search>
-              </table-column-header>
+                </Search>
+              </TableColumnHeader>
             </tr>
           </thead>
         </table>
@@ -225,7 +225,7 @@
           :aria-label="`${table.domainObject.name} table content`"
         >
           <tbody>
-            <telemetry-table-row
+            <TelemetryTableRow
               v-for="(row, rowIndex) in visibleRows"
               :key="rowIndex"
               :headers="headers"
@@ -250,7 +250,7 @@
         class="c-telemetry-table__sizing js-telemetry-table__sizing"
         :style="sizingTableWidth"
       >
-        <sizing-row :is-editing="isEditing" @change-height="setRowHeight" />
+        <SizingRow :is-editing="isEditing" @change-height="setRowHeight" />
         <tr>
           <template v-for="(title, key) in headers" :key="key">
             <th
@@ -263,7 +263,7 @@
             </th>
           </template>
         </tr>
-        <telemetry-table-row
+        <TelemetryTableRow
           v-for="(sizingRowData, objectKeyString) in sizingRows"
           :key="objectKeyString"
           :headers="headers"
@@ -273,7 +273,7 @@
           @row-context-click="updateViewContext"
         />
       </table>
-      <table-footer-indicator
+      <TableFooterIndicator
         class="c-telemetry-table__footer"
         :marked-rows="markedRows.length"
         :total-rows="totalNumberOfRows"
@@ -296,6 +296,7 @@ import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import { useResizeObserver } from '../../../ui/composables/resize.js';
+import { MODE, ORDER } from '../constants.js';
 import SizingRow from './SizingRow.vue';
 import TableColumnHeader from './TableColumnHeader.vue';
 import TableFooterIndicator from './TableFooterIndicator.vue';
@@ -372,7 +373,6 @@ export default {
       configuredColumnWidths: configuration.columnWidths,
       sizingRows: {},
       rowHeight: ROW_HEIGHT,
-      scrollOffset: 0,
       totalHeight: 0,
       totalWidth: 0,
       rowOffset: 0,
@@ -551,6 +551,7 @@ export default {
     //Default sort
     this.sortOptions = this.table.tableRows.sortBy();
     this.scrollable = this.$refs.scrollable;
+    this.lastScrollLeft = this.scrollable.scrollLeft;
     this.contentTable = this.$refs.contentTable;
     this.sizingTable = this.$refs.sizingTable;
     this.headersHolderEl = this.$refs.headersHolderEl;
@@ -713,7 +714,7 @@ export default {
     sortBy(columnKey) {
       let timeSystemKey = this.openmct.time.getTimeSystem().key;
 
-      if (this.telemetryMode === 'performance' && columnKey !== timeSystemKey) {
+      if (this.telemetryMode === MODE.PERFORMANCE && columnKey !== timeSystemKey) {
         this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Sort', () => {
           this.initiateSort(columnKey);
         });
@@ -724,22 +725,24 @@ export default {
     initiateSort(columnKey) {
       // If sorting by the same column, flip the sort direction.
       if (this.sortOptions.key === columnKey) {
-        if (this.sortOptions.direction === 'asc') {
-          this.sortOptions.direction = 'desc';
+        if (this.sortOptions.direction === ORDER.ASCENDING) {
+          this.sortOptions.direction = ORDER.DESCENDING;
         } else {
-          this.sortOptions.direction = 'asc';
+          this.sortOptions.direction = ORDER.ASCENDING;
         }
       } else {
         this.sortOptions = {
           key: columnKey,
-          direction: 'desc'
+          direction: ORDER.DESCENDING
         };
       }
 
       this.table.sortBy(this.sortOptions);
     },
     scroll() {
-      this.throttledUpdateVisibleRows();
+      if (this.lastScrollLeft === this.scrollable.scrollLeft) {
+        this.throttledUpdateVisibleRows();
+      }
       this.synchronizeScrollX();
 
       if (this.shouldAutoScroll()) {
@@ -751,7 +754,7 @@ export default {
       }
     },
     shouldAutoScroll() {
-      if (this.sortOptions.direction === 'desc') {
+      if (this.sortOptions.direction === ORDER.DESCENDING) {
         return false;
       }
 
@@ -764,6 +767,8 @@ export default {
       this.scrollable.scrollTop = Number.MAX_SAFE_INTEGER;
     },
     synchronizeScrollX() {
+      this.lastScrollLeft = this.scrollable.scrollLeft;
+
       if (this.$refs.headersHolderEl && this.scrollable) {
         this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
       }
@@ -844,7 +849,7 @@ export default {
       return justTheData;
     },
     exportAllDataAsCSV() {
-      if (this.telemetryMode === 'performance') {
+      if (this.telemetryMode === MODE.PERFORMANCE) {
         this.confirmUnlimitedMode('Switch to Unlimited Telemetry and Export', () => {
           const data = this.getTableRowData();
 
@@ -1226,7 +1231,8 @@ export default {
       });
     },
     updateTelemetryMode() {
-      this.telemetryMode = this.telemetryMode === 'unlimited' ? 'performance' : 'unlimited';
+      this.telemetryMode =
+        this.telemetryMode === MODE.UNLIMITED ? MODE.PERFORMANCE : MODE.UNLIMITED;
 
       if (this.persistModeChange) {
         this.table.configuration.setTelemetryMode(this.telemetryMode);
@@ -1236,7 +1242,7 @@ export default {
 
       const timeSystemKey = this.openmct.time.getTimeSystem().key;
 
-      if (this.telemetryMode === 'performance' && this.sortOptions.key !== timeSystemKey) {
+      if (this.telemetryMode === MODE.PERFORMANCE && this.sortOptions.key !== timeSystemKey) {
         this.openmct.notifications.info(
           'Switched to Performance Mode: Table now sorted by time for optimized efficiency.'
         );

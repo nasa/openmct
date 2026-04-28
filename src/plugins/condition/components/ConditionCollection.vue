@@ -27,14 +27,16 @@
     aria-label="Condition Set Condition Collection"
   >
     <div class="c-cs__header c-section__header">
-      <span
+      <button
         class="c-disclosure-triangle c-tree__item__view-control is-enabled"
         :class="{ 'c-disclosure-triangle--expanded': expanded }"
-        @click="expanded = !expanded"
-      ></span>
+        :aria-expanded="expanded"
+        aria-controls="conditionContent"
+        @click="toggleExpanded"
+      ></button>
       <div class="c-cs__header-label c-section__label">Conditions</div>
     </div>
-    <div v-if="expanded" class="c-cs__content">
+    <div v-if="expanded" id="conditionContent" class="c-cs__content">
       <div
         v-show="isEditing"
         class="hint"
@@ -54,9 +56,10 @@
         v-show="isEditing"
         id="addCondition"
         class="c-button c-button--major icon-plus labeled"
+        aria-labelledby="addConditionButtonLabel"
         @click="addCondition"
       >
-        <span class="c-cs-button__label">Add Condition</span>
+        <span id="addConditionButtonLabel" class="c-cs-button__label">Add Condition</span>
       </button>
 
       <div class="c-cs__conditions-h" :class="{ 'is-active-dragging': isDragging }">
@@ -232,10 +235,15 @@ export default {
 
       return arr;
     },
-    addTelemetryObject(domainObject) {
+    async addTelemetryObject(domainObject) {
       const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+      const telemetryPath = await this.getFullTelemetryPath(domainObject);
 
-      this.telemetryObjs.push(domainObject);
+      this.telemetryObjs.push({
+        ...domainObject,
+        path: telemetryPath,
+        keyString
+      });
       this.$emit('telemetry-updated', this.telemetryObjs);
 
       this.subscribeToStaleness(domainObject, (stalenessResponse) => {
@@ -245,13 +253,22 @@ export default {
         });
       });
     },
+    async getFullTelemetryPath(telemetry) {
+      const keyString = this.openmct.objects.makeKeyString(telemetry.identifier);
+      const originalPathObjects = await this.openmct.objects.getOriginalPath(keyString, []);
+
+      const telemetryPath = originalPathObjects.reverse().map((pathObject) => {
+        if (pathObject.type !== 'root') {
+          return pathObject.name;
+        }
+        return undefined;
+      });
+
+      return telemetryPath.join('/');
+    },
     removeTelemetryObject(identifier) {
       const keyString = this.openmct.objects.makeKeyString(identifier);
-      const index = this.telemetryObjs.findIndex((obj) => {
-        let objId = this.openmct.objects.makeKeyString(obj.identifier);
-
-        return objId === keyString;
-      });
+      const index = this.telemetryObjs.findIndex((obj) => obj.keyString === keyString);
 
       const domainObject = this.telemetryObjs[index];
       this.triggerUnsubscribeFromStaleness(domainObject, () => {

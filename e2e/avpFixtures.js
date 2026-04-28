@@ -34,7 +34,7 @@
  */
 
 import AxeBuilder from '@axe-core/playwright';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -88,6 +88,27 @@ const extendedTest = test.extend({
 });
 
 /**
+ * Writes the accessibility report to the specified path.
+ *
+ * @param {string} reportPath - The path to write the report to.
+ * @param {Object} accessibilityScanResults - The results of the accessibility scan.
+ * @returns {Promise<Object>} The accessibility scan results.
+ * @throws Will throw an error if writing the report fails.
+ */
+async function writeAccessibilityReport(reportPath, accessibilityScanResults) {
+  try {
+    await fs.mkdir(path.dirname(reportPath), { recursive: true });
+    const data = JSON.stringify(accessibilityScanResults, null, 2);
+    await fs.writeFile(reportPath, data);
+    console.log(`Accessibility report with violations saved successfully as ${reportPath}`);
+    return accessibilityScanResults;
+  } catch (err) {
+    console.error(`Error writing the accessibility report to file ${reportPath}:`, err);
+    throw err;
+  }
+}
+
+/**
  * Scans for accessibility violations on a page and writes a report to disk if violations are found.
  * Automatically asserts that no violations should be present.
  *
@@ -104,25 +125,29 @@ export async function scanForA11yViolations(page, testCaseName, options = {}) {
   const accessibilityScanResults = await builder.analyze();
 
   // Assert that no violations should be present
-  expect(
-    accessibilityScanResults.violations,
-    `Accessibility violations found in test case: ${testCaseName}`
-  ).toEqual([]);
+  expect
+    .soft(
+      accessibilityScanResults.violations,
+      `Accessibility violations found in test case: ${testCaseName}`
+    )
+    .toEqual([]);
 
   // Check if there are any violations
   if (accessibilityScanResults.violations.length > 0) {
-    let reportName = options.reportName || testCaseName;
-    let sanitizedReportName = reportName.replace(/\//g, '_');
-    const reportPath = path.join(TEST_RESULTS_DIR, `${sanitizedReportName}.json`);
+    const reportName = options.reportName || testCaseName;
+    const sanitizedReportName = reportName.replace(/\//g, '_');
+    const reportPath = path.join(
+      TEST_RESULTS_DIR,
+      'a11y-json-reports',
+      `${sanitizedReportName}.json`
+    );
 
     try {
-      if (!fs.existsSync(TEST_RESULTS_DIR)) {
-        fs.mkdirSync(TEST_RESULTS_DIR);
-      }
+      await page.screenshot({
+        path: path.join(TEST_RESULTS_DIR, 'a11y-screenshots', `${sanitizedReportName}.png`)
+      });
 
-      fs.writeFileSync(reportPath, JSON.stringify(accessibilityScanResults, null, 2));
-      console.log(`Accessibility report with violations saved successfully as ${reportPath}`);
-      return accessibilityScanResults;
+      return await writeAccessibilityReport(reportPath, accessibilityScanResults);
     } catch (err) {
       console.error(`Error writing the accessibility report to file ${reportPath}:`, err);
       throw err;

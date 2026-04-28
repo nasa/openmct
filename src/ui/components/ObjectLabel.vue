@@ -50,11 +50,12 @@
 <script>
 import { inject } from 'vue';
 
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
+
 import tooltipHelpers from '../../api/tooltips/tooltipMixins.js';
 import { useIsEditing } from '../../ui/composables/edit.js';
 import ContextMenuGesture from '../mixins/context-menu-gesture.js';
 import ObjectLink from '../mixins/object-link.js';
-import PreviewAction from '../preview/PreviewAction.js';
 
 export default {
   mixins: [ObjectLink, ContextMenuGesture, tooltipHelpers],
@@ -116,7 +117,7 @@ export default {
       this.setStatus
     );
     this.status = this.openmct.status.get(this.domainObject.identifier);
-    this.previewAction = new PreviewAction(this.openmct);
+    this.previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
   },
   unmounted() {
     this.removeStatusListener();

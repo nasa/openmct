@@ -21,7 +21,7 @@
  *****************************************************************************/
 import fs from 'fs';
 
-import { createPlanFromJSON } from '../../../appActions.js';
+import { createPlanFromJSON, navigateToObjectWithFixedTimeBounds } from '../../../appActions.js';
 import {
   addPlanGetInterceptor,
   assertPlanActivities,
@@ -81,9 +81,7 @@ test.describe('Plan', () => {
     }
 
     // Switch to fixed time mode with all plan events within the bounds
-    await page.goto(
-      `${plan.url}?tc.mode=fixed&tc.startBound=${startBound}&tc.endBound=${endBound}&tc.timeSystem=utc&view=plan.view`
-    );
+    await navigateToObjectWithFixedTimeBounds(page, plan.url, startBound, endBound);
 
     // select the first activity in the list
     await page.getByText('Past event 1').click();

@@ -22,3 +22,6 @@
 !index.html
 !openmct.js
 !SECURITY.md
+
+# Dont include the example html
+dist/index.html

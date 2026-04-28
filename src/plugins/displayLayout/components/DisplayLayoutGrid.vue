@@ -24,7 +24,7 @@
     class="l-layout__grid-holder"
     :class="{ 'c-grid': showGrid }"
     role="grid"
-    :aria-label="'Layout Grid'"
+    aria-label="Layout Grid"
     :aria-hidden="showGrid ? 'false' : 'true'"
     :aria-live="showGrid ? 'polite' : 'off'"
   >

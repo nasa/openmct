@@ -41,7 +41,7 @@ test.describe('CouchDB Status Indicator with mocked responses @couchdb', () => {
 
     //Go to baseURL
     await page.goto('./#/browse/mine?hideTree=true&hideInspector=true', {
-      waitUntil: 'networkidle'
+      waitUntil: 'domcontentloaded'
     });
     await expect(page.locator('div:has-text("CouchDB is connected")').nth(3)).toBeVisible();
   });
@@ -56,7 +56,7 @@ test.describe('CouchDB Status Indicator with mocked responses @couchdb', () => {
 
     //Go to baseURL
     await page.goto('./#/browse/mine?hideTree=true&hideInspector=true', {
-      waitUntil: 'networkidle'
+      waitUntil: 'domcontentloaded'
     });
     await expect(page.locator('div:has-text("CouchDB is offline")').nth(3)).toBeVisible();
   });
@@ -71,7 +71,7 @@ test.describe('CouchDB Status Indicator with mocked responses @couchdb', () => {
 
     //Go to baseURL
     await page.goto('./#/browse/mine?hideTree=true&hideInspector=true', {
-      waitUntil: 'networkidle'
+      waitUntil: 'domcontentloaded'
     });
     await expect(page.locator('div:has-text("CouchDB connectivity unknown")').nth(3)).toBeVisible();
   });

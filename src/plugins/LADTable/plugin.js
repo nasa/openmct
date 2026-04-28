@@ -39,6 +39,9 @@ export default function plugin() {
       cssClass: 'icon-tabular-lad',
       initialize(domainObject) {
         domainObject.composition = [];
+        domainObject.configuration = {
+          objectStyles: {}
+        };
       }
     });
 

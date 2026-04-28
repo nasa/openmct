@@ -81,13 +81,13 @@ export default function InspectorDataVisualizationViewProvider(openmct, configur
           );
           _destroy = destroy;
         },
+        priority() {
+          return openmct.priority.HIGH;
+        },
         destroy() {
           if (_destroy) {
             _destroy();
           }
-        },
-        priority() {
-          return openmct.priority.HIGH;
         }
       };
     }

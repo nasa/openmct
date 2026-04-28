@@ -63,7 +63,7 @@ async function dragAndDropEmbed(page, notebookObject) {
   // Expand the tree to reveal the notebook
   await page.getByLabel('Show selected item in tree').click();
   // Drag and drop the SWG into the notebook
-  await page.dragAndDrop(`text=${swg.name}`, NOTEBOOK_DROP_AREA);
+  await page.getByLabel(`Navigate to ${swg.name}`).dragTo(page.locator(NOTEBOOK_DROP_AREA));
   await commitEntry(page);
 }
 
@@ -84,6 +84,7 @@ async function startAndAddRestrictedNotebookObject(page) {
     path: fileURLToPath(new URL('./addInitRestrictedNotebook.js', import.meta.url))
   });
   await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.waitForURL('**/browse/mine?**');
 
   return createDomainObjectWithDefaults(page, {
     type: CUSTOM_NAME,
@@ -95,10 +96,9 @@ async function startAndAddRestrictedNotebookObject(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function lockPage(page) {
-  const commitButton = page.locator('button:has-text("Commit Entries")');
-  await commitButton.click();
-
-  //Wait until Lock Banner is visible
+  // Click the Commit Entries button
+  await page.getByLabel('Commit Entries').click();
+  // Wait until Lock Banner is visible
   await page.locator('text=Lock Page').click();
 }
 

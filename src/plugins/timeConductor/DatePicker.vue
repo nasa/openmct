@@ -107,10 +107,6 @@ export default {
       type: String,
       default: undefined
     },
-    formatter: {
-      type: Object,
-      required: true
-    },
     bottom: {
       type: Boolean,
       default() {

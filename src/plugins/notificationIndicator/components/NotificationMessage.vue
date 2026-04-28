@@ -31,7 +31,7 @@
             <div class="c-message__title">{{ notification.model.message }}</div>
           </div>
           <div class="message-body">
-            <progress-bar v-if="isProgressNotification" :model="progressObject" />
+            <ProgressBar v-if="isProgressNotification" :model="progressObject" />
           </div>
         </div>
       </div>

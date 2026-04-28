@@ -24,7 +24,7 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  setIndependentTimeConductorBounds
+  setFixedIndependentTimeConductorBounds
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -248,7 +248,7 @@ test.describe('Flexible Layout', () => {
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
     // flip on independent time conductor
-    await setIndependentTimeConductorBounds(page, {
+    await setFixedIndependentTimeConductorBounds(page, {
       start: '2021-12-30 01:01:00.000Z',
       end: '2021-12-30 01:11:00.000Z'
     });
@@ -292,7 +292,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will permanently delete this container from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     expect(await containerHandles.count()).toEqual(2);
   });
   test('Remove Frame', async ({ page }) => {
@@ -302,7 +302,7 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await expect(page.getByRole('dialog', { name: 'Overlay' })).toContainText(
       'This action will remove this frame from this Flexible Layout. Do you want to continue?'
     );
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
   test('Columns/Rows Layout Toggle', async ({ page }) => {

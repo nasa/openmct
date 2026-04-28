@@ -32,18 +32,14 @@ import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Visual - Controlled Clock @clock', () => {
   test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: MISSION_TIME });
     await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
   });
   test.use({
-    storageState: 'test-data/overlay_plot_with_delay_storage.json',
-    clockOptions: {
-      now: MISSION_TIME,
-      shouldAdvanceTime: false //Don't advance the clock
-    }
+    storageState: 'test-data/overlay_plot_with_delay_storage.json'
   });
 
   test('Overlay Plot Loading Indicator @localStorage', async ({ page, theme }) => {
-    await page.goto(VISUAL_FIXED_URL, { waitUntil: 'domcontentloaded' });
     await page
       .getByRole('gridcell', { hasText: 'Overlay Plot with 5s Delay Overlay Plot' })
       .click();

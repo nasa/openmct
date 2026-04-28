@@ -26,10 +26,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 
 import fs from 'fs/promises';
 
-import {
-  createDomainObjectWithDefaults,
-  openObjectTreeContextMenu
-} from '../../../../appActions.js';
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../baseFixtures.js';
 import { navigateToFaultManagementWithExample } from '../../../../helper/faultUtils.js';
 
@@ -51,7 +48,10 @@ test.describe('ExportAsJSON', () => {
     await page.goto(folder.url);
 
     // Open context menu and initiate download
-    await openObjectTreeContextMenu(page, folder.url);
+    await page.getByLabel('Show selected item in tree').click();
+    await page.getByRole('treeitem', { name: 'Expand e2e folder folder' }).click({
+      button: 'right'
+    });
     const [download] = await Promise.all([
       page.waitForEvent('download'), // Waits for the download event
       page.getByLabel('Export as JSON').click() // Triggers the download
@@ -105,7 +105,12 @@ test.describe('ExportAsJSON', () => {
     await page.goto(timer.url);
 
     //do this against parent folder.url, NOT timer.url child
-    await openObjectTreeContextMenu(page, folder.url);
+    // Open context menu and initiate download
+    await page.getByLabel('Show selected item in tree').click();
+    await page.getByRole('treeitem', { name: 'Collapse e2e folder folder' }).click({
+      button: 'right'
+    });
+
     // Open context menu and initiate download
     const [download] = await Promise.all([
       page.waitForEvent('download'), // Waits for the download event
@@ -141,18 +146,18 @@ test.describe('ExportAsJSON Disabled Actions', () => {
   });
   test('Verify that the ExportAsJSON dropdown does not appear for the item X', async ({ page }) => {
     await page.getByLabel('More actions').click();
-    await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
+    await expect(page.getByLabel('Export as JSON')).toHaveCount(0);
 
     await page.getByRole('treeitem', { name: 'Fault Management' }).click({
       button: 'right'
     });
-    await expect(await page.getByLabel('Export as JSON')).toHaveCount(0);
+    await expect(page.getByLabel('Export as JSON')).toHaveCount(0);
   });
 });
 test.describe('ExportAsJSON ProgressBar @couchdb', () => {
   let folder;
   test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'networkidle' });
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
     // Perform actions to create the domain object
     folder = await createDomainObjectWithDefaults(page, {
       type: 'Folder'

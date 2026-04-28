@@ -29,7 +29,8 @@ import { fileURLToPath } from 'url';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject
+  createExampleTelemetryObject,
+  getDomainObject
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -41,11 +42,10 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await page.getByRole('button', { name: 'Create' }).click();
-
-    await page.locator('li[role="menuitem"]:has-text("Condition Set")').click();
-
-    await Promise.all([page.waitForNavigation(), page.click('button:has-text("OK")')]);
+    const conditionSet = await createDomainObjectWithDefaults(page, {
+      type: 'Condition Set',
+      name: 'Unnamed Condition Set'
+    });
 
     //Save localStorage for future test execution
     await context.storageState({
@@ -55,7 +55,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     });
 
     //Set object identifier from url
-    conditionSetUrl = page.url();
+    conditionSetUrl = conditionSet.url;
 
     await page.close();
   });
@@ -68,44 +68,39 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
   });
 
   //Begin suite of tests again localStorage
-  test.fixme(
-    'Condition set object properties persist in main view and inspector @localStorage',
-    async ({ page }) => {
-      test.info().annotations.push({
-        type: 'issue',
-        description: 'https://github.com/nasa/openmct/issues/7421'
-      });
-      //Navigate to baseURL with injected localStorage
-      await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+  test('Condition set object properties persist in main view and inspector after reload @localStorage', async ({
+    page
+  }) => {
+    //Navigate to baseURL with injected localStorage
+    await page.goto(conditionSetUrl, { waitUntil: 'domcontentloaded' });
 
-      //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
-      await expect
-        .soft(page.locator('.l-browse-bar__object-name'))
-        .toContainText('Unnamed Condition Set');
+    //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
+    await expect.soft(page.getByRole('main')).toContainText('Unnamed Condition Set');
 
-      //Assertions on loaded Condition Set in Inspector
-      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
+    //Assertions on loaded Condition Set in Inspector
+    await expect(
+      page.getByLabel('Title inspector properties').getByLabel('inspector property value')
+    ).toContainText('Unnamed Condition Set');
 
-      //Reload Page
-      await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+    //Reload Page
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
-      //Re-verify after reload
-      await expect
-        .soft(page.locator('.l-browse-bar__object-name'))
-        .toContainText('Unnamed Condition Set');
-      //Assertions on loaded Condition Set in Inspector
-      expect.soft(page.locator('_vue=item.name=Unnamed Condition Set')).toBeTruthy();
-    }
-  );
+    //Re-verify after reload
+    await expect(page.getByRole('main')).toContainText('Unnamed Condition Set');
+
+    //Assertions on loaded Condition Set in Inspector
+    await expect(
+      page.getByLabel('Title inspector properties').getByLabel('inspector property value')
+    ).toContainText('Unnamed Condition Set');
+  });
+
   test('condition set object can be modified on @localStorage', async ({ page, openmctConfig }) => {
     const { myItemsFolderName } = openmctConfig;
 
-    await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+    await page.goto(conditionSetUrl, { waitUntil: 'domcontentloaded' });
 
     //Assertions on loaded Condition Set in main view. This is a stateful transition step after page.goto()
-    await expect
-      .soft(page.locator('.l-browse-bar__object-name'))
-      .toContainText('Unnamed Condition Set');
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
 
     //Update the Condition Set properties
     // Click Edit Button
@@ -151,7 +146,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
     expect(page.locator('a:has-text("Renamed Condition Set")')).toBeTruthy();
 
     //Reload Page
-    await Promise.all([page.reload(), page.waitForLoadState('networkidle')]);
+    await Promise.all([page.reload(), page.waitForLoadState('domcontentloaded')]);
 
     //Verify Main section reflects updated Name Property
     await expect
@@ -213,7 +208,7 @@ test.describe.serial('Condition Set CRUD Operations on @localStorage @2p', () =>
 
     //Feature?
     //Domain Object is still available by direct URL after delete
-    await page.goto(conditionSetUrl, { waitUntil: 'networkidle' });
+    await page.goto(conditionSetUrl, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
   });
 });
@@ -267,7 +262,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.getByLabel('Edit Object').click();
 
     // Expand the 'My Items' folder in the left tree
-    page.click('button[title="Show selected item in tree"]');
+    await page.getByLabel('Show selected item in tree').click();
     // Add the Alpha & Beta Sine Wave Generator to the Condition Set and save changes
     const treePane = page.getByRole('tree', {
       name: 'Main Tree'
@@ -298,7 +293,7 @@ test.describe('Basic Condition Set Use', () => {
     ).toBeVisible();
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Telemetry Table').click();
-    await expect(page.getByRole('searchbox', { name: 'output filter input' })).toBeVisible();
+    await expect(page.getByRole('searchbox', { name: 'value filter input' })).toBeVisible();
     await page.getByLabel('Open the View Switcher Menu').click();
     await page.getByLabel('Conditions View').click();
     await expect(page.getByText('Current Output')).toBeVisible();
@@ -330,40 +325,23 @@ test.describe('Basic Condition Set Use', () => {
     const conditionCollection = page.locator('#conditionCollection');
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
-    // Modify First Criterion
-    const firstCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=0'
-    );
-    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
-    const firstCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=0'
-    );
-    firstCriterionMetadata.selectOption({ label: 'Sine' });
-    const firstCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=0'
-    );
-    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
-    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
-    await firstCriterionInput.fill('0');
+    // Modify First Criterion - use value selectors (labels show path e.g. "My Items/Name")
+    await page.getByLabel('Criterion Telemetry Selection').first().selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').first().selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .first()
+      .selectOption({ value: 'greaterThanOrEq' });
+    await page.getByLabel('Criterion Input').first().fill('0');
 
-    // Modify First Criterion
-    const secondCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
-    );
-    secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
-
-    const secondCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=1'
-    );
-    secondCriterionMetadata.selectOption({ label: 'Sine' });
-
-    const secondCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=1'
-    );
-    secondCriterionComparison.selectOption({ label: 'is less than' });
-
-    const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
-    await secondCriterionInput.fill('0');
+    // Modify Second Criterion
+    await page.getByLabel('Criterion Telemetry Selection').nth(1).selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').nth(1).selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .nth(1)
+      .selectOption({ value: 'lessThan' });
+    await page.getByLabel('Criterion Input').nth(1).fill('0');
 
     // Save ConditionSet
     await page.locator('button[title="Save"]').click();
@@ -414,51 +392,29 @@ test.describe('Basic Condition Set Use', () => {
     const conditionCollection = page.locator('#conditionCollection');
     await sineWaveGeneratorTreeItem.dragTo(conditionCollection);
 
-    // Modify First Criterion
-    const firstCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=0'
-    );
-    firstCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
-    const firstCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=0'
-    );
-    firstCriterionMetadata.selectOption({ label: 'Sine' });
-    const firstCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=0'
-    );
-    firstCriterionComparison.selectOption({ label: 'is greater than or equal to' });
-    const firstCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=0');
-    await firstCriterionInput.fill('0');
+    // Modify First Criterion - use value selectors (labels show path e.g. "My Items/Name")
+    await page.getByLabel('Criterion Telemetry Selection').first().selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').first().selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .first()
+      .selectOption({ value: 'greaterThanOrEq' });
+    await page.getByLabel('Criterion Input').first().fill('0');
 
     // Modify Second Criterion
-    const secondCriterionTelemetry = page.locator(
-      '[aria-label="Criterion Telemetry Selection"] >> nth=1'
-    );
-    await secondCriterionTelemetry.selectOption({ label: exampleTelemetry.name });
+    await page.getByLabel('Criterion Telemetry Selection').nth(1).selectOption({ value: 'all' });
+    await page.getByLabel('Criterion Metadata Selection').nth(1).selectOption({ value: 'sin' });
+    await page
+      .locator('select[aria-label="Criterion Comparison Selection"]')
+      .nth(1)
+      .selectOption({ value: 'lessThan' });
+    await page.getByLabel('Criterion Input').nth(1).fill('0');
 
-    const secondCriterionMetadata = page.locator(
-      '[aria-label="Criterion Metadata Selection"] >> nth=1'
-    );
-    await secondCriterionMetadata.selectOption({ label: 'Sine' });
-
-    const secondCriterionComparison = page.locator(
-      '[aria-label="Criterion Comparison Selection"] >> nth=1'
-    );
-    await secondCriterionComparison.selectOption({ label: 'is less than' });
-
-    const secondCriterionInput = page.locator('[aria-label="Criterion Input"] >> nth=1');
-    await secondCriterionInput.fill('0');
-
-    // Enable test data
+    // Enable test data - use index (option 1 is first telemetry after "- Select Telemetry -")
     await page.getByLabel('Apply Test Data').nth(1).click();
-    const testDataTelemetry = page.locator('[aria-label="Test Data Telemetry Selection"] >> nth=0');
-    await testDataTelemetry.selectOption({ label: exampleTelemetry.name });
-
-    const testDataMetadata = page.locator('[aria-label="Test Data Metadata Selection"] >> nth=0');
-    await testDataMetadata.selectOption({ label: 'Sine' });
-
-    const testInput = page.locator('[aria-label="Test Data Input"] >> nth=0');
-    await testInput.fill('0');
+    await page.getByLabel('Test Data Telemetry Selection').first().selectOption({ index: 1 });
+    await page.getByLabel('Test Data Metadata Selection').first().selectOption({ value: 'sin' });
+    await page.getByLabel('Test Data Input').first().fill('0');
 
     // Validate that the condition set is evaluating and outputting
     // the correct value when the underlying telemetry subscription is active.
@@ -473,6 +429,34 @@ test.describe('Basic Condition Set Use', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7484'
     });
+  });
+
+  test('should toggle shouldFetchHistorical property in inspector', async ({ page }) => {
+    await page.goto(conditionSet.url);
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    let toggleSwitch = page.getByLabel('condition-historical-toggle');
+    const initialState = await toggleSwitch.isChecked();
+    expect(initialState).toBe(false);
+
+    await toggleSwitch.click();
+    let toggledState = await toggleSwitch.isChecked();
+    expect(toggledState).toBe(true);
+    await page.click('button[title="Save"]');
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    let conditionSetObject = await getDomainObject(page, conditionSet.uuid);
+    expect(conditionSetObject.configuration.shouldFetchHistorical).toBe(true);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    toggleSwitch = page.getByLabel('condition-historical-toggle');
+    await toggleSwitch.click();
+    toggledState = await toggleSwitch.isChecked();
+    expect(toggledState).toBe(false);
+    await page.click('button[title="Save"]');
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+    conditionSetObject = await getDomainObject(page, conditionSet.uuid);
+    expect(conditionSetObject.configuration.shouldFetchHistorical).toBe(false);
   });
 });
 
@@ -538,7 +522,7 @@ test.describe('Condition Set Composition', () => {
       .getByLabel(`${exampleTelemetry.name} Context Menu`)
       .getByRole('menuitem', { name: 'Remove' })
       .click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
 
     await page
       .getByLabel(`Navigate to ${conditionSet.name} conditionSet Object`, { exact: true })

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2023, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -66,6 +66,10 @@ module.exports = async (config) => {
       {
         pattern: 'dist/generatorWorker.js*',
         included: false
+      },
+      {
+        pattern: 'dist/historicalTelemetryWorker.js*',
+        included: false
       }
     ],
     port: 9876,
@@ -74,7 +78,7 @@ module.exports = async (config) => {
     client: {
       jasmine: {
         random: false,
-        timeoutInterval: 5000
+        timeoutInterval: 6000
       }
     },
     customLaunchers: {

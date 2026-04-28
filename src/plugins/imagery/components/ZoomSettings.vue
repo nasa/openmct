@@ -26,14 +26,21 @@
         <button
           class="c-button t-btn-zoom-out icon-minus"
           title="Zoom out"
+          aria-label="Zoom out"
           @click="zoomOut"
         ></button>
 
-        <button class="c-button t-btn-zoom-in icon-plus" title="Zoom in" @click="zoomIn"></button>
+        <button
+          class="c-button t-btn-zoom-in icon-plus"
+          title="Zoom in"
+          aria-label="Zoom in"
+          @click="zoomIn"
+        ></button>
 
         <button
           class="c-button t-btn-zoom-lock"
           title="Lock current zoom and pan across all images"
+          aria-label="Lock current zoom and pan across all images"
           :class="{ 'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked }"
           @click="toggleZoomLock"
         ></button>
@@ -41,7 +48,8 @@
         <button
           class="c-button icon-reset t-btn-zoom-reset"
           title="Remove zoom and pan"
-          @click="handleResetImage"
+          aria-label="Remove zoom and pan"
+          @click="resetImage"
         ></button>
       </div>
       <div class="c-image-controls__zoom-factor">x{{ formattedZoomFactor }}</div>
@@ -49,13 +57,14 @@
     <button
       v-if="isMenu"
       class="c-click-icon icon-x t-btn-close c-switcher-menu__close-button"
+      aria-label="Close menu"
     ></button>
   </div>
 </template>
 
 <script>
 export default {
-  inject: ['openmct'],
+  inject: ['zoomIn', 'zoomOut', 'toggleZoomLock', 'resetImage'],
   props: {
     zoomFactor: {
       type: Number,
@@ -70,10 +79,6 @@ export default {
       required: false
     }
   },
-  emits: ['handle-reset-image', 'toggle-zoom-lock', 'zoom-in', 'zoom-out'],
-  data() {
-    return {};
-  },
   computed: {
     formattedZoomFactor() {
       return Number.parseFloat(this.zoomFactor).toPrecision(2);
@@ -85,18 +90,6 @@ export default {
       if (!closeButton) {
         e.stopPropagation();
       }
-    },
-    handleResetImage() {
-      this.$emit('handle-reset-image');
-    },
-    toggleZoomLock() {
-      this.$emit('toggle-zoom-lock');
-    },
-    zoomIn() {
-      this.$emit('zoom-in');
-    },
-    zoomOut() {
-      this.$emit('zoom-out');
     }
   }
 };

@@ -6,7 +6,7 @@ information to pull requests.
 
 import config from './webpack.dev.mjs';
 
-config.devtool = 'source-map';
+config.devtool = 'inline-source-map';
 config.devServer.hot = false;
 
 config.module.rules.push({

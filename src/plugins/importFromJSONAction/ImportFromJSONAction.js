@@ -24,10 +24,12 @@ import { parseKeyString } from 'objectUtils';
 import { filter__proto__ } from 'utils/sanitization';
 import { v4 as uuid } from 'uuid';
 
-export default class ImportAsJSONAction {
+const IMPORT_FROM_JSON_ACTION_KEY = 'import.JSON';
+
+class ImportFromJSONAction {
   constructor(openmct) {
     this.name = 'Import from JSON';
-    this.key = 'import.JSON';
+    this.key = IMPORT_FROM_JSON_ACTION_KEY;
     this.description = '';
     this.cssClass = 'icon-import';
     this.group = 'import';
@@ -405,3 +407,7 @@ export default class ImportAsJSONAction {
     return success;
   }
 }
+
+export { IMPORT_FROM_JSON_ACTION_KEY };
+
+export default ImportFromJSONAction;

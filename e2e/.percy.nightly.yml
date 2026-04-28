@@ -4,8 +4,8 @@ snapshot:
   min-height: 1440 # px
   percyCSS: |
     /* Clock indicator... your days are numbered  */
-    .t-indicator-clock > .label {
-      opacity: 0 !important;
+    .t-indicator-clock {
+      display: none !important;
     }
     .c-input--datetime {
       opacity: 0 !important;
@@ -28,5 +28,17 @@ snapshot:
     }
     /* Chart Area for Plots */
     .gl-plot-chart-area{
+      opacity: 0 !important;
+    }
+    /* SWG Time values on plot */
+    .gl-plot-x{
+      opacity: 0 !important;
+    }
+    /* Notification Time in modal */
+    .c-ne__time{
+      opacity: 0 !important;
+    }
+    /* Snapshot name with embedded time */
+    .l-browse-bar__snapshot-datetime{
       opacity: 0 !important;
     }

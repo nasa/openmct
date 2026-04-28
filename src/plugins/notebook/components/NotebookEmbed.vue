@@ -54,10 +54,10 @@ import Moment from 'moment';
 import mount from 'utils/mount';
 
 import { objectPathToUrl } from '@/tools/url';
+import { PREVIEW_ACTION_KEY } from '@/ui/preview/PreviewAction.js';
 
 import tooltipHelpers from '../../../api/tooltips/tooltipMixins.js';
 import ImageExporter from '../../../exporters/ImageExporter.js';
-import PreviewAction from '../../../ui/preview/PreviewAction.js';
 import { updateNotebookImageDomainObject } from '../utils/notebook-image.js';
 import PainterroInstance from '../utils/painterroInstance.js';
 import RemoveDialog from '../utils/removeDialog.js';
@@ -216,7 +216,7 @@ export default {
       const annotateOverlay = this.openmct.overlays.overlay({
         element: vNode.el,
         size: 'large',
-        dismissable: false,
+        dismissible: false,
         buttons: [
           {
             label: 'Cancel',
@@ -371,7 +371,7 @@ export default {
         onDestroy: destroy,
         size: 'large',
         autoHide: false,
-        dismissable: true,
+        dismissible: true,
         buttons: [
           {
             label: 'Done',
@@ -393,10 +393,9 @@ export default {
       }
     },
     previewEmbed() {
-      const self = this;
-      const previewAction = new PreviewAction(self.openmct);
+      const previewAction = this.openmct.actions.getAction(PREVIEW_ACTION_KEY);
       this.openmct.objects
-        .get(self.embed.domainObject.identifier)
+        .get(this.embed.domainObject.identifier)
         .then((domainObject) => previewAction.invoke([domainObject]));
     },
     removeEmbed(success) {

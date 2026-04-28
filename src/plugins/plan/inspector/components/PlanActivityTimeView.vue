@@ -31,7 +31,7 @@
         :key="timeProperty.id"
         class="c-inspect-properties__section"
       >
-        <activity-property :label="timeProperty.label" :value="timeProperty.value" />
+        <ActivityProperty :label="timeProperty.label" :value="timeProperty.value" />
       </ul>
     </div>
   </div>

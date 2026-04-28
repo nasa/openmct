@@ -257,7 +257,9 @@ export default {
 
       return {
         end,
-        start
+        start,
+        size: 1,
+        strategy: 'latest'
       };
     },
     loadComposition() {
@@ -330,7 +332,11 @@ export default {
         this.domainObject.configuration.axes.xKey === undefined ||
         this.domainObject.configuration.axes.yKey === undefined
       ) {
-        return;
+        const { xKey, yKey } = this.identifyAxesKeys(axisMetadata);
+        this.openmct.objects.mutate(this.domainObject, 'configuration.axes', {
+          xKey,
+          yKey
+        });
       }
 
       let xValues = [];
@@ -429,6 +435,30 @@ export default {
     subscribeToAll() {
       const telemetryObjects = Object.values(this.telemetryObjects);
       telemetryObjects.forEach(this.subscribeToObject);
+    },
+    identifyAxesKeys(metadata) {
+      const { xAxisMetadata, yAxisMetadata } = metadata;
+
+      let xKey;
+      let yKey;
+
+      // If xAxisMetadata contains array values, use the first one for xKey
+      const arrayValues = xAxisMetadata.filter((metaDatum) => metaDatum.isArrayValue);
+      const nonArrayValues = xAxisMetadata.filter((metaDatum) => !metaDatum.isArrayValue);
+
+      if (arrayValues.length > 0) {
+        xKey = arrayValues[0].key;
+        yKey = arrayValues.length > 1 ? arrayValues[1].key : yAxisMetadata.key;
+      } else if (nonArrayValues.length > 0) {
+        xKey = nonArrayValues[0].key;
+        yKey = 'none';
+      } else {
+        // Fallback if no valid xKey or yKey is found
+        xKey = 'none';
+        yKey = 'none';
+      }
+
+      return { xKey, yKey };
     }
   }
 };

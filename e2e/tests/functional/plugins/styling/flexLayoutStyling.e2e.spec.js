@@ -466,7 +466,7 @@ test.describe('Flexible Layout styling', () => {
       page.getByLabel('Flexible Layout Column')
     );
     await page.getByLabel('Cancel Editing').click();
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
     await checkStyles(
       hexToRGB(defaultBorderTargetColor),
       NO_STYLE_RGBA,

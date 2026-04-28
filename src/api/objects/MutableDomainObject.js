@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 import { makeKeyString, refresh } from './object-utils.js';
@@ -38,7 +38,6 @@ const ANY_OBJECT_EVENT = 'mutation';
  * (via openmct.objects.destroy) when you're done with it.
  *
  * @typedef MutableDomainObject
- * @memberof module:openmct
  */
 class MutableDomainObject {
   constructor(eventEmitter) {

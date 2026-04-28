@@ -22,6 +22,7 @@
 
 import ExampleDataVisualizationSourcePlugin from '../../example/dataVisualization/plugin.js';
 import EventGeneratorPlugin from '../../example/eventGenerator/plugin.js';
+import ExampleStaleness from '../../example/exampleStalenessProvider/plugin.js';
 import ExampleTags from '../../example/exampleTags/plugin.js';
 import ExampleUser from '../../example/exampleUser/plugin.js';
 import ExampleFaultSource from '../../example/faultManagement/exampleFaultSource.js';
@@ -32,12 +33,15 @@ import BarChartPlugin from './charts/bar/plugin.js';
 import ScatterPlotPlugin from './charts/scatter/plugin.js';
 import ClearData from './clearData/plugin.js';
 import Clock from './clock/plugin.js';
+import DerivedTelemetryPlugin from './comps/plugin.js';
 import ConditionPlugin from './condition/plugin.js';
 import ConditionWidgetPlugin from './conditionWidget/plugin.js';
+import CorrelationTelemetryPlugin from './correlationTelemetryPlugin/plugin.js';
 import CouchDBSearchFolder from './CouchDBSearchFolder/plugin.js';
 import DefaultRootName from './defaultRootName/plugin.js';
 import DeviceClassifier from './DeviceClassifier/plugin.js';
 import DisplayLayoutPlugin from './displayLayout/plugin.js';
+import EventTimestripPlugin from './events/plugin.js';
 import FaultManagementPlugin from './faultManagement/FaultManagementPlugin.js';
 import Filters from './filters/plugin.js';
 import FlexibleLayout from './flexibleLayout/plugin.js';
@@ -87,6 +91,9 @@ import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
 
+/**
+ * @type {Object}
+ */
 const plugins = {};
 
 plugins.example = {};
@@ -97,6 +104,7 @@ plugins.example.EventGeneratorPlugin = EventGeneratorPlugin;
 plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationSourcePlugin;
 plugins.example.ExampleTags = ExampleTags;
 plugins.example.Generator = () => GeneratorPlugin;
+plugins.example.ExampleStaleness = ExampleStaleness;
 
 plugins.UTCTimeSystem = UTCTimeSystem;
 plugins.LocalTimeSystem = LocalTimeSystem;
@@ -173,5 +181,8 @@ plugins.Gauge = GaugePlugin;
 plugins.Timelist = TimeList;
 plugins.InspectorViews = InspectorViews;
 plugins.InspectorDataVisualization = InspectorDataVisualization;
+plugins.CorrelationTelemetry = CorrelationTelemetryPlugin;
+plugins.DerivedTelemetry = DerivedTelemetryPlugin;
+plugins.EventTimestripPlugin = EventTimestripPlugin;
 
 export default plugins;

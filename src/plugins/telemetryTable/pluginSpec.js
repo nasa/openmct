@@ -28,6 +28,7 @@ import {
 } from 'utils/testing';
 import { nextTick } from 'vue';
 
+import { MODE } from './constants.js';
 import TablePlugin from './plugin.js';
 
 class MockDataTransfer {
@@ -198,7 +199,7 @@ describe('the plugin', () => {
           },
           persistModeChange: true,
           rowLimit: 50,
-          telemetryMode: 'performance'
+          telemetryMode: MODE.PERFORMANCE
         }
       };
       const testTelemetry = [

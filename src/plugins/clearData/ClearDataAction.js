@@ -32,16 +32,18 @@ function inSelectionPath(openmct, domainObject) {
   });
 }
 
-export default class ClearDataAction {
+const CLEAR_DATA_ACTION_KEY = 'clear-data-action';
+class ClearDataAction {
   constructor(openmct, appliesToObjects) {
     this.name = 'Clear Data for Object';
-    this.key = 'clear-data-action';
+    this.key = CLEAR_DATA_ACTION_KEY;
     this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
     this.cssClass = 'icon-clear-data';
 
     this._openmct = openmct;
     this._appliesToObjects = appliesToObjects;
   }
+
   invoke(objectPath) {
     let domainObject = null;
     if (objectPath) {
@@ -76,3 +78,7 @@ export default class ClearDataAction {
     }
   }
 }
+
+export { CLEAR_DATA_ACTION_KEY };
+
+export default ClearDataAction;

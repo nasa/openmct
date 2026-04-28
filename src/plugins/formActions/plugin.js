@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import CreateAction from './CreateAction.js';
 import EditPropertiesAction from './EditPropertiesAction.js';
 
 export default function () {
   return function (openmct) {
     openmct.actions.register(new EditPropertiesAction(openmct));
+    openmct.actions.register(new CreateAction(openmct));
   };
 }
