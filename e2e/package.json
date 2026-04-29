@@ -20,6 +20,9 @@
     "@playwright/test": "1.57.0",
     "yaml": "2.8.3"
   },
+  "optionalDependencies": {
+    "fsevents": "2.3.2"
+  },
   "author": {
     "name": "National Aeronautics and Space Administration",
     "url": "https://www.nasa.gov"

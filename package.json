@@ -93,6 +93,9 @@
     "webpack-dev-server": "5.2.2",
     "webpack-merge": "6.0.1"
   },
+  "optionalDependencies": {
+    "fsevents": "2.3.2"
+  },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./coverage ./html-test-results ./e2e/test-results ./.nyc_output ./e2e/.nyc_output",
     "build": "npm run build:prod && npx tsc",
