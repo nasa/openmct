@@ -248,6 +248,7 @@ export default function installWorker() {
 
     addMessageToBuffer(message) {
       this.#messageBatch.push(message);
+      this.#throttledSendNextBatch();
     }
 
     setThrottleRate(throttleRate) {
