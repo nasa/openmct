@@ -89,7 +89,7 @@ test.describe('A Condition Widget', () => {
       .first()
       .selectOption({ label: 'is less than' });
     await page.getByLabel('Criterion Input').first().fill('0');
-    await page.getByLabel('Condition Output Type').first().selectOption({ label: 'String' });
+    await page.getByLabel('Condition Output Type').first().selectOption({ value: 'string' });
     await page.getByLabel('Condition Output String').first().fill('< 0');
 
     await page.getByLabel('Add Condition').click();
@@ -104,7 +104,7 @@ test.describe('A Condition Widget', () => {
       .first()
       .selectOption({ label: 'is greater than or equal to' });
     await page.getByLabel('Criterion Input').first().fill('0');
-    await page.getByLabel('Condition Output Type').first().selectOption({ label: 'String' });
+    await page.getByLabel('Condition Output Type').first().selectOption({ value: 'string' });
     await page.getByLabel('Condition Output String').first().fill('> 0');
 
     await page.getByLabel('Save').click();
@@ -187,7 +187,7 @@ test.describe('A Condition Widget', () => {
       .getByLabel('Criterion Comparison Selection')
       .first()
       .selectOption({ label: 'is stale' });
-    await page.getByLabel('Condition Output Type').first().selectOption({ label: 'String' });
+    await page.getByLabel('Condition Output Type').first().selectOption({ value: 'string' });
     await page.getByLabel('Condition Output String').first().fill('STALE');
 
     await page.getByLabel('Save').click();
