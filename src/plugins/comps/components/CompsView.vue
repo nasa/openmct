@@ -185,13 +185,19 @@
       </div>
       <span
         v-if="expression && expressionOutput"
-        :class="['c-comps__expression-msg', expressionBlurResult === 'invalid' ? '--bad-strong' : '--bad']"
+        :class="[
+          'c-comps__expression-msg',
+          expressionBlurResult === 'invalid' ? '--bad-strong' : '--bad'
+        ]"
       >
         {{ expressionOutput }}
       </span>
       <span
         v-else-if="expression && !expressionOutput && isEditing"
-        :class="['c-comps__expression-msg', expressionBlurResult === 'valid' ? '--good-strong' : '--good']"
+        :class="[
+          'c-comps__expression-msg',
+          expressionBlurResult === 'valid' ? '--good-strong' : '--good'
+        ]"
       >
         Expression valid
       </span>
@@ -300,7 +306,7 @@ onBeforeMount(async () => {
   expression.value = compsManager.getExpression();
   outputFormat.value = compsManager.getOutputFormat();
   applyTestData();
-  
+
   // Set initial blur state if expression is invalid on load
   if (expressionOutput.value) {
     expressionBlurResult.value = 'invalid';
@@ -504,7 +510,7 @@ function clearData() {
 
 function handleExpressionBlur() {
   applyTestData();
-  
+
   // Set blur result based on expressionOutput after evaluation
   if (expressionOutput.value) {
     expressionBlurResult.value = 'invalid';
