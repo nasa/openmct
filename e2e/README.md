@@ -105,25 +105,27 @@ For those interested in the mechanics of snapshot testing with Playwright, you c
 
 - Our Snapshot tests receive a `@snapshot` tag.
 - Snapshots need to be executed within the official Playwright container to ensure we're using the exact rendering platform in CI and locally. To do a valid comparison locally:
+- Note, microsoft might have retired older images like `-jammy`. Run the following command to find the available tags:
+`curl -s https://mcr.microsoft.com/v2/playwright/tags/list | jq -r '.tags[]' | grep "v{X.X.X}`
 
 ```sh
 // Replace {X.X.X} with the current Playwright version 
 // from our package.json configuration file
-docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-jammy /bin/bash
 npm install
 npm run test:e2e:checksnapshots
 ```
 
 ### Updating Snapshots
 
-When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desireable or an unintended regression.
+When the `@snapshot` tests fail, they will need to be evaluated to determine if the failure is an acceptable and desirable or an unintended regression.
 
 To compare a snapshot, run a test and open the html report with the 'Expected' vs 'Actual' screenshot. If the actual screenshot is preferred, then the source-controlled 'Expected' snapshots will need to be updated with the following scripts.
 
 ```sh
 // Replace {X.X.X} with the current Playwright version 
 // from our package.json configuration file
-docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-focal /bin/bash
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v{X.X.X}-jammy /bin/bash
 npm install
 npm run test:e2e:updatesnapshots
 ```

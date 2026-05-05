@@ -125,7 +125,9 @@ export default class TelemetryCriterion extends EventEmitter {
       this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)
     ) {
       this.result = stalenessResponse.isStale;
-      this.emitEvent('telemetryStaleness');
+      this.setLastUpdatedTime(this.stalenessUtils.lastStalenessResponseTime);
+      this.setLastUpdatedTimeSystem(this.stalenessUtils.lastStalenessTimeSystem);
+      this.emitEvent('telemetryStaleness', this);
     }
   }
 
@@ -366,5 +368,21 @@ export default class TelemetryCriterion extends EventEmitter {
     if (this.unsubscribeFromStaleness) {
       this.unsubscribeFromStaleness();
     }
+  }
+
+  getLastUpdatedTime() {
+    return this.#lastUpdated;
+  }
+
+  setLastUpdatedTime(lastUpdatedTime) {
+    this.#lastUpdated = lastUpdatedTime;
+  }
+
+  getLastUpdatedTimeSystem() {
+    return this.#lastTimeSystem;
+  }
+
+  setLastUpdatedTimeSystem(lastTimeSystem) {
+    this.#lastTimeSystem = lastTimeSystem;
   }
 }

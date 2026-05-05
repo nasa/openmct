@@ -515,6 +515,7 @@
     @include glyphBefore($glyph-icon-singleline);
 }
 
+
 .icon-activity {
     @include glyphBefore($glyph-icon-activity);
 }
@@ -711,8 +712,9 @@
     @include glyphBefore($glyph-icon-notebook-shift-log);
 }
 
-.icon-plot-scatter {
-    @include glyphBefore($glyph-icon-plot-scatter);
+
+.icon-derived-telemetry {
+      @include glyphBefore($glyph-icon-derived-telemetry);
 }
 
 /************************** 12 PX CLASSES */
@@ -952,6 +954,10 @@
 
 .bg-icon-camera {
     @include glyphBg($bg-icon-camera);
+}
+
+.bg-icon-derived-telemetry {
+    @include glyphBg($bg-icon-derived-telemetry);
 }
 
 /************************** COLOR-ABLE BG SVG GLYPHS */

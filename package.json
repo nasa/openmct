@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "4.1.0-next",
+  "version": "4.2.0-next",
   "description": "The Open MCT core platform",
   "module": "dist/openmct.js",
   "main": "dist/openmct.js",
@@ -28,7 +28,7 @@
     "babel-loader": "9.1.0",
     "babel-plugin-istanbul": "7.0.0",
     "comma-separated-values": "3.6.4",
-    "copy-webpack-plugin": "13.0.0",
+    "copy-webpack-plugin": "14.0.0",
     "cspell": "7.3.8",
     "css-loader": "6.10.0",
     "d3-axis": "3.0.0",
@@ -48,7 +48,6 @@
     "eventemitter3": "5.0.1",
     "file-saver": "2.0.5",
     "flatbush": "4.2.0",
-    "git-rev-sync": "3.0.2",
     "html2canvas": "1.4.1",
     "imports-loader": "5.0.0",
     "jasmine-core": "5.6.0",
@@ -63,14 +62,14 @@
     "karma-spec-reporter": "0.0.36",
     "karma-webpack": "5.0.1",
     "location-bar": "3.0.1",
-    "lodash": "4.17.21",
+    "lodash": "4.18.1",
     "marked": "15.0.7",
+    "mathjs": "13.1.1",
     "mini-css-extract-plugin": "2.9.2",
     "moment": "2.30.1",
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.5.41",
-    "nano": "10.1.4",
-    "npm-run-all2": "7.0.2",
+    "nano": "11.0.4",
     "nyc": "17.1.0",
     "painterro": "1.2.87",
     "plotly.js-basic-dist-min": "2.29.1",
@@ -83,27 +82,30 @@
     "sass": "1.71.1",
     "sass-loader": "14.1.1",
     "style-loader": "4.0.0",
-    "terser-webpack-plugin": "5.3.9",
     "tiny-emitter": "2.1.0",
     "typescript": "5.3.3",
     "uuid": "11.1.0",
     "vue": "3.4.24",
     "vue-eslint-parser": "9.4.2",
     "vue-loader": "16.8.3",
-    "webpack": "5.98.0",
+    "webpack": "5.105.4",
     "webpack-cli": "5.1.1",
     "webpack-dev-server": "5.2.2",
     "webpack-merge": "6.0.1"
   },
+  "optionalDependencies": {
+    "fsevents": "2.3.2"
+  },
   "scripts": {
     "clean": "rm -rf ./dist ./node_modules ./coverage ./html-test-results ./e2e/test-results ./.nyc_output ./e2e/.nyc_output",
+    "build": "npm run build:prod && npx tsc",
     "start": "npx webpack serve --config ./.webpack/webpack.dev.mjs",
     "start:prod": "npx webpack serve --config ./.webpack/webpack.prod.mjs",
     "start:coverage": "npx webpack serve --config ./.webpack/webpack.coverage.mjs",
     "lint:js": "eslint \"example/**/*.js\" \"src/**/*.js\" \"e2e/**/*.js\" \"openmct.js\" --max-warnings=0",
     "lint:vue": "eslint \"src/**/*.vue\"",
     "lint:spelling": "cspell \"**/*.{js,md,vue}\" --show-context --gitignore --quiet",
-    "lint": "run-p \"lint:js -- {1}\" \"lint:vue -- {1}\" \"lint:spelling -- {1}\" --",
+    "lint": "npm run lint:js && npm run lint:vue && npm run lint:spelling",
     "lint:fix": "eslint example src e2e --ext .js,.vue openmct.js --fix",
     "build:prod": "webpack --config ./.webpack/webpack.prod.mjs",
     "build:dev": "webpack --config ./.webpack/webpack.dev.mjs",
@@ -130,8 +132,7 @@
     "test:perf:memory": "npm test --workspace e2e -- --config=playwright-performance-prod.config.js --project=chrome-memory",
     "update-about-dialog-copyright": "perl -pi -e 's/20\\d\\d\\-202\\d/2014\\-2024/gm' ./src/ui/layout/AboutDialog.vue",
     "update-copyright-date": "npm run update-about-dialog-copyright && grep -lr --null --include=*.{js,scss,vue,ts,sh,html,md,frag} 'Copyright (c) 20' . | xargs -r0 perl -pi -e 's/Copyright\\s\\(c\\)\\s20\\d\\d\\-20\\d\\d/Copyright \\(c\\)\\ 2014\\-2024/gm'",
-    "cov:e2e:report": "nyc report --reporter=lcovonly --report-dir=./coverage/e2e",
-    "prepare": "npm run build:prod && npx tsc"
+    "cov:e2e:report": "nyc report --reporter=lcovonly --report-dir=./coverage/e2e"
   },
   "homepage": "https://nasa.github.io/openmct",
   "repository": {
@@ -139,7 +140,12 @@
     "url": "git+https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=18.14.2 <23"
+    "node": ">=24.14.1"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "9.0.9"
+    }
   },
   "browserslist": [
     "Firefox ESR",

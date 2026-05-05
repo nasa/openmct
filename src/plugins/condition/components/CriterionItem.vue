@@ -40,7 +40,7 @@
             :key="telemetryOption.identifier.key"
             :value="telemetryOption.identifier"
           >
-            {{ telemetryOption.name }}
+            {{ telemetryOption.path }}
           </option>
         </select>
       </span>

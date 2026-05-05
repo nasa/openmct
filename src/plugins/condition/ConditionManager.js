@@ -21,9 +21,12 @@
  *****************************************************************************/
 
 import { EventEmitter } from 'eventemitter3';
+import { isEqual } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import Condition from './Condition.js';
+import HistoricalTelemetryProvider from './HistoricalTelemetryProvider.js';
+import { TELEMETRY_VALUE } from './utils/constants.js';
 import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
@@ -52,6 +55,8 @@ export default class ConditionManager extends EventEmitter {
       applied: false
     };
     this.initialize();
+    this.telemetryBuffer = [];
+    this.isProcessing = false;
   }
 
   subscribeToTelemetry(telemetryObject) {
@@ -92,8 +97,8 @@ export default class ConditionManager extends EventEmitter {
     }
 
     this.telemetryCollections[keyString].destroy();
-    this.telemetryCollections[keyString] = null;
-    this.telemetryObjects[keyString] = null;
+    delete this.telemetryCollections[keyString];
+    delete this.telemetryObjects[keyString];
     this.removeConditionTelemetryObjects();
 
     //force re-computation of condition set result as we might be in a state where
@@ -104,7 +109,7 @@ export default class ConditionManager extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.updateConditionResults({ id: keyString });
+    this.updateConditionResults(keyString);
     this.updateCurrentCondition(latestTimestamp);
 
     if (Object.keys(this.telemetryObjects).length === 0) {
@@ -148,24 +153,16 @@ export default class ConditionManager extends EventEmitter {
     this.conditionSetDomainObject.configuration.conditionCollection.forEach(
       (conditionConfiguration, conditionIndex) => {
         let conditionChanged = false;
-        conditionConfiguration.configuration.criteria.forEach((criterion, index) => {
-          const isAnyAllTelemetry =
-            criterion.telemetry && (criterion.telemetry === 'any' || criterion.telemetry === 'all');
-          if (!isAnyAllTelemetry) {
-            const found = Object.values(this.telemetryObjects).find((telemetryObject) => {
-              return this.openmct.objects.areIdsEqual(
-                telemetryObject.identifier,
-                criterion.telemetry
-              );
-            });
-            if (!found) {
-              criterion.telemetry = '';
-              criterion.metadata = '';
-              criterion.input = [];
-              criterion.operation = '';
-              conditionChanged = true;
-            }
-          } else {
+        const config = conditionConfiguration.configuration;
+
+        if (this.#clearInvalidOutputTelemetryConfiguration(config)) {
+          conditionChanged = true;
+        }
+
+        conditionConfiguration.configuration.criteria.forEach((criterion) => {
+          if (this.#isAnyOrAllTelemetryCriterion(criterion)) {
+            conditionChanged = true;
+          } else if (this.#clearInvalidCriterionTelemetryIfStale(criterion)) {
             conditionChanged = true;
           }
         });
@@ -310,6 +307,43 @@ export default class ConditionManager extends EventEmitter {
     this.persistConditions();
   }
 
+  getCurrentCondition() {
+    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
+    let currentCondition = conditionCollection[conditionCollection.length - 1];
+
+    for (let i = 0; i < conditionCollection.length - 1; i++) {
+      const condition = this.findConditionById(conditionCollection[i].id);
+      if (condition.result) {
+        //first condition to be true wins
+        currentCondition = conditionCollection[i];
+        break;
+      }
+    }
+
+    return currentCondition;
+  }
+
+  async getHistoricalData(options) {
+    if (!this.conditionSetDomainObject.configuration.shouldFetchHistorical) {
+      return [];
+    }
+
+    await this.compositionLoad;
+    this.#sanitizeAllStaleOutputTelemetryInCollection();
+
+    let historicalTelemetry = new HistoricalTelemetryProvider(
+      this.openmct,
+      this.telemetryObjects,
+      this.conditions,
+      this.conditionSetDomainObject,
+      options
+    );
+    const historicalData = await historicalTelemetry.getHistoricalData();
+    historicalTelemetry = null;
+
+    return historicalData;
+  }
+
   getCurrentConditionLAD(conditionResults) {
     const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
     let currentCondition = conditionCollection[conditionCollection.length - 1];
@@ -365,14 +399,38 @@ export default class ConditionManager extends EventEmitter {
     }
 
     const currentCondition = this.getCurrentConditionLAD(conditionResults);
+    this.#sanitizeOutputTelemetryCompositionMismatch(currentCondition);
+
+    let output = currentCondition?.configuration?.output;
+
+    if (output === TELEMETRY_VALUE) {
+      const { outputTelemetry, outputMetadata } = currentCondition.configuration;
+      const outputTelemetryObject = await this.openmct.objects.get(outputTelemetry);
+      const telemetryOptions = {
+        size: 1,
+        strategy: 'latest',
+        timeContext: this.openmct.time.getContextForView([])
+      };
+      const latestData = await this.openmct.telemetry.request(
+        outputTelemetryObject,
+        telemetryOptions
+      );
+      if (latestData?.[0]?.[outputMetadata]) {
+        output = latestData?.[0]?.[outputMetadata];
+      }
+    }
+
+    let result = currentCondition?.isDefault ? false : conditionResults[currentCondition.id];
     const currentOutput = {
-      output: currentCondition.configuration.output,
-      id: this.conditionSetDomainObject.identifier,
       conditionId: currentCondition.id,
-      ...latestTimestamp
+      id: this.conditionSetDomainObject.identifier,
+      output: output,
+      ...latestTimestamp,
+      result,
+      isDefault: currentCondition?.isDefault
     };
 
-    return [currentOutput];
+    return output !== undefined ? [currentOutput] : [];
   }
 
   isTelemetryUsed(endpoint) {
@@ -407,8 +465,10 @@ export default class ConditionManager extends EventEmitter {
     this.#latestDataTable.set(normalizedDatum.id, normalizedDatum);
 
     if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
-      const matchingCondition = this.updateConditionResults(normalizedDatum.id);
-      this.updateCurrentCondition(timestamp, matchingCondition);
+      // updateConditionResults expects the telemetry id keyString that changed
+      // so that conditions can decide whether they need to recompute.
+      this.updateConditionResults(normalizedDatum.id);
+      this.updateCurrentCondition(timestamp, endpoint, datum);
     }
   }
 
@@ -423,23 +483,94 @@ export default class ConditionManager extends EventEmitter {
     return matchingCondition;
   }
 
-  updateCurrentCondition(timestamp, matchingCondition) {
-    const conditionCollection = this.conditionSetDomainObject.configuration.conditionCollection;
-    const defaultCondition = conditionCollection[conditionCollection.length - 1];
+  emitConditionSetResult(currentCondition, timestamp, outputValue, result, isDefault) {
+    this.emit('conditionSetResultUpdated', {
+      conditionId: currentCondition.id,
+      id: this.conditionSetDomainObject.identifier,
+      output: outputValue,
+      ...timestamp,
+      result,
+      isDefault
+    });
+  }
 
-    const currentCondition = matchingCondition || defaultCondition;
+  updateCurrentCondition(timestamp, telemetryObject, telemetryData) {
+    this.telemetryBuffer.push({ timestamp, telemetryObject, telemetryData });
 
-    this.emit(
-      'conditionSetResultUpdated',
-      Object.assign(
-        {
-          output: currentCondition.configuration.output,
-          id: this.conditionSetDomainObject.identifier,
-          conditionId: currentCondition.id
-        },
-        timestamp
-      )
-    );
+    if (!this.isProcessing) {
+      this.processBuffer();
+    }
+  }
+
+  async processBuffer() {
+    this.isProcessing = true;
+
+    try {
+      while (this.telemetryBuffer.length > 0) {
+        const { timestamp, telemetryObject, telemetryData } = this.telemetryBuffer.shift();
+        await this.processCondition(timestamp, telemetryObject, telemetryData);
+      }
+    } catch (error) {
+      console.error('Error processing telemetry buffer', error);
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+
+  async processCondition(timestamp, telemetryObject, telemetryData) {
+    await this.compositionLoad;
+    const currentCondition = this.getCurrentCondition();
+    this.#sanitizeOutputTelemetryCompositionMismatch(currentCondition);
+
+    const conditionDetails = this.conditions.filter(
+      (condition) => condition.id === currentCondition.id
+    )?.[0];
+    const conditionResult = currentCondition?.isDefault ? false : conditionDetails?.result;
+    let telemetryValue = currentCondition.configuration.output;
+
+    if (telemetryValue !== undefined) {
+      if (currentCondition?.configuration?.outputTelemetry) {
+        const selectedOutputIdentifier = currentCondition?.configuration?.outputTelemetry;
+        const outputMetadata = currentCondition?.configuration?.outputMetadata;
+        const timeSystemKey = this.openmct.time.getTimeSystem().key;
+        const telemetryKeystring = telemetryObject
+          ? this.openmct.objects.makeKeyString(telemetryObject.identifier)
+          : null;
+
+        if (telemetryKeystring && selectedOutputIdentifier === telemetryKeystring) {
+          telemetryValue = telemetryData?.[outputMetadata];
+        } else {
+          const outputTelemetryObject = await this.openmct.objects.get(selectedOutputIdentifier);
+          const telemetryOptions = {
+            size: 1,
+            strategy: 'latest',
+            start: timestamp?.[timeSystemKey] - 1000,
+            end: timestamp?.[timeSystemKey] + 1000
+          };
+          const outputTelemetryData = await this.openmct.telemetry.request(
+            outputTelemetryObject,
+            telemetryOptions
+          );
+          const outputTelemetryValue =
+            outputTelemetryData?.length > 0 ? outputTelemetryData.slice(-1)[0] : null;
+          if (outputTelemetryData.length && outputTelemetryValue?.[outputMetadata]) {
+            telemetryValue = outputTelemetryValue?.[outputMetadata];
+          } else {
+            telemetryValue = undefined;
+          }
+        }
+      } else if (currentCondition?.configuration?.output) {
+        telemetryValue = currentCondition?.configuration?.output;
+      }
+
+      this.emitConditionSetResult(
+        currentCondition,
+        timestamp,
+        telemetryValue,
+        conditionResult,
+        currentCondition?.isDefault
+      );
+    }
   }
 
   getTestData(metadatum, identifier) {
@@ -479,7 +610,7 @@ export default class ConditionManager extends EventEmitter {
   }
 
   updateTestData(testData) {
-    if (!_.isEqual(testData, this.testData)) {
+    if (!isEqual(testData, this.testData)) {
       this.testData = JSON.parse(JSON.stringify(testData));
       this.openmct.objects.mutate(
         this.conditionSetDomainObject,
@@ -490,11 +621,134 @@ export default class ConditionManager extends EventEmitter {
   }
 
   persistConditions() {
+    const collection = this.conditionSetDomainObject.configuration.conditionCollection;
     this.openmct.objects.mutate(
       this.conditionSetDomainObject,
       'configuration.conditionCollection',
-      this.conditionSetDomainObject.configuration.conditionCollection
+      [...collection] // just in case, spread to create new array to implicitly trigger any mutation observers
     );
+  }
+
+  /**
+   * True if a stored telemetry reference is still a child of this condition set (in telemetryObjects).
+   */
+  #telemetryRefStillInComposition(telemetryRef) {
+    if (!telemetryRef) {
+      return false;
+    }
+
+    return Boolean(this.telemetryObjects[telemetryRef]);
+  }
+
+  /**
+   * Clears outputTelemetry/outputMetadata when output mode is telemetry value but the endpoint
+   * is no longer in composition. Returns whether configuration changed.
+   */
+  #clearInvalidOutputTelemetryConfiguration(config) {
+    if (config.output !== TELEMETRY_VALUE || !config.outputTelemetry) {
+      return false;
+    }
+
+    if (this.#telemetryRefStillInComposition(config.outputTelemetry)) {
+      return false;
+    }
+
+    config.outputTelemetry = null;
+    config.outputMetadata = null;
+    delete config.valueMetadata;
+    config.output = undefined;
+
+    return true;
+  }
+
+  /**
+   * Criterion uses "any telemetry" / "all telemetry" instead of a single endpoint.
+   */
+  #isAnyOrAllTelemetryCriterion(criterion) {
+    return Boolean(
+      criterion.telemetry && (criterion.telemetry === 'any' || criterion.telemetry === 'all')
+    );
+  }
+
+  /**
+   * Whether criterion.telemetry identifies an object still in this condition set's composition.
+   */
+  #criterionTelemetryRefStillInComposition(criterion) {
+    return Object.values(this.telemetryObjects).some(
+      (telemetryObject) =>
+        telemetryObject &&
+        this.openmct.objects.areIdsEqual(telemetryObject.identifier, criterion.telemetry)
+    );
+  }
+
+  /**
+   * Clears criterion fields when its telemetry endpoint is no longer in composition.
+   * @returns {boolean} whether the criterion was changed
+   */
+  #clearInvalidCriterionTelemetryIfStale(criterion) {
+    if (this.#isAnyOrAllTelemetryCriterion(criterion)) {
+      return false;
+    }
+
+    if (this.#criterionTelemetryRefStillInComposition(criterion)) {
+      return false;
+    }
+
+    criterion.telemetry = '';
+    criterion.metadata = '';
+    criterion.input = [];
+    criterion.operation = '';
+
+    return true;
+  }
+
+  /**
+   * Guard + persist: fixes stale config when resolving live or LAD output (e.g. alphanumeric view).
+   */
+  #sanitizeOutputTelemetryCompositionMismatch(conditionCollectionItem) {
+    if (!conditionCollectionItem?.configuration) {
+      return;
+    }
+
+    if (!this.#clearInvalidOutputTelemetryConfiguration(conditionCollectionItem.configuration)) {
+      return;
+    }
+
+    const condition = this.findConditionById(conditionCollectionItem.id);
+
+    if (condition) {
+      conditionCollectionItem.summary = this.updateConditionDescription(condition);
+    }
+
+    this.persistConditions();
+  }
+
+  /**
+   * Batch cleanup for historical evaluation and persistence (single save).
+   */
+  #sanitizeAllStaleOutputTelemetryInCollection() {
+    let any = false;
+
+    this.conditionSetDomainObject.configuration.conditionCollection.forEach((item) => {
+      if (!item.configuration) {
+        return;
+      }
+
+      if (!this.#clearInvalidOutputTelemetryConfiguration(item.configuration)) {
+        return;
+      }
+
+      any = true;
+      const condition = this.findConditionById(item.id);
+
+      if (condition) {
+        item.summary = this.updateConditionDescription(condition);
+      }
+    });
+
+    if (any) {
+      this.persistConditions();
+    }
   }
 
   destroy() {
