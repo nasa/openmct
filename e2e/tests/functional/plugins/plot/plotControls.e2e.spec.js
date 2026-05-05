@@ -108,4 +108,43 @@ test.describe('Plot Controls', () => {
     // Expect before and after plot points to match
     await expect(plotPixelSizeAtPause).toEqual(plotPixelSizeAfterWait);
   });
+
+  /*
+  Test to verify that switching a plot's time context from global to
+  its own independent time context and then back to global context works correctly.
+
+  After switching from fixed time mode (ITC) to real time mode (global context),
+  the pause control for the plot should be available, indicating that it is following the right context.
+  */
+  test('Plots follow the right time context', async ({ page }) => {
+    // Set global time conductor to real-time mode
+    await setRealTimeMode(page);
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // Ensure pause control is visible since global time conductor is in Real time mode.
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeVisible();
+
+    // Toggle independent time conductor ON
+    await page.getByLabel('Enable Independent Time Conductor').click();
+
+    // Bring up the independent time conductor popup and switch to fixed time mode
+    await page.getByLabel('Independent Time Conductor Panel').click();
+    await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
+    await page.getByLabel('Independent Time Conductor Mode Menu').click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // Ensure pause control is no longer visible since the plot is following the independent time context
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeHidden();
+
+    // Toggle independent time conductor OFF - Note that the global time conductor is still in Real time mode
+    await page.getByLabel('Disable Independent Time Conductor').click();
+
+    // hover over plot for plot controls
+    await page.getByLabel('Plot Canvas').hover();
+    // Ensure pause control is visible since the global time conductor is in real time mode
+    await expect(page.getByTitle('Pause incoming real-time data')).toBeVisible();
+  });
 });

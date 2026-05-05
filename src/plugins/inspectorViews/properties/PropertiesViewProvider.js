@@ -30,7 +30,9 @@ export default function PropertiesViewProvider(openmct) {
     name: 'Properties',
     glyph: 'icon-info',
     canView: function (selection) {
-      return selection.length > 0;
+      const domainObject = selection?.[0]?.[0]?.context?.item;
+
+      return domainObject && selection.length > 0;
     },
     view: function (selection) {
       let _destroy = null;
@@ -56,7 +58,7 @@ export default function PropertiesViewProvider(openmct) {
           _destroy = destroy;
         },
         priority: function () {
-          return openmct.priority.DEFAULT;
+          return openmct.editor.isEditing() ? openmct.priority.LOW : openmct.priority.HIGH;
         },
         destroy: function () {
           if (_destroy) {

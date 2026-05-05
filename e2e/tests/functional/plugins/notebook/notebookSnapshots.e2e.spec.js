@@ -104,8 +104,9 @@ test.describe('Snapshot Container tests', () => {
     await page.locator('.ptro-crp-el').click();
     await page.locator('.ptro-text-tool-input').fill('...is there life on mars?');
     // When working with Painterro, we need to check that the Apply button is hidden after clicking
-    await page.getByTitle('Apply').click();
-    await expect(page.getByTitle('Apply')).toBeHidden();
+    const painterroApplyButton = page.locator('.ptro-text-tool-buttons').getByTitle('Apply');
+    await painterroApplyButton.click();
+    await expect(painterroApplyButton).toBeHidden();
 
     // Save and exit annotation window
     await page.getByRole('button', { name: 'Save' }).click();
@@ -130,8 +131,9 @@ test.describe('Snapshot Container tests', () => {
     await page.locator('.ptro-crp-el').click();
     await page.locator('.ptro-text-tool-input').fill('...is there life on mars?');
     // When working with Painterro, we need to check that the Apply button is hidden after clicking
-    await page.getByTitle('Apply').click();
-    await expect(page.getByTitle('Apply')).toBeHidden();
+    const painterroApplyButton = page.locator('.ptro-text-tool-buttons').getByTitle('Apply');
+    await painterroApplyButton.click();
+    await expect(painterroApplyButton).toBeHidden();
 
     // Save and exit annotation window
     await page.getByRole('button', { name: 'Save' }).click();

@@ -36,8 +36,7 @@ class RootObjectProvider {
           namespace: ''
         },
         name: 'Open MCT',
-        type: 'root',
-        composition: []
+        type: 'root'
       };
       RootObjectProvider.instance = this;
     } else if (rootRegistry) {
@@ -57,14 +56,11 @@ class RootObjectProvider {
   }
 
   /**
-   * Retrieves the root object with updated composition.
+   * Retrieves the root object
    * @returns {Promise<RootObject>} A promise that resolves to the root object.
    */
-  async get() {
-    let roots = await this.rootRegistry.getRoots();
-    this.rootObject.composition = roots;
-
-    return this.rootObject;
+  get() {
+    return Promise.resolve(this.rootObject);
   }
 }
 

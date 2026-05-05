@@ -62,9 +62,6 @@ export default function WebPage(openmct) {
           }
         }
       };
-    },
-    priority: function () {
-      return 1;
     }
   };
 }

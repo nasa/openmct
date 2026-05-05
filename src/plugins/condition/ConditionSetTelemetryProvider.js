@@ -26,6 +26,8 @@ export default class ConditionSetTelemetryProvider {
   constructor(openmct) {
     this.openmct = openmct;
     this.conditionManagerPool = {};
+    this.subscribers = {};
+    this.lastEmittedById = new Map();
   }
 
   isTelemetryObject(domainObject) {
@@ -42,21 +44,80 @@ export default class ConditionSetTelemetryProvider {
 
   async request(domainObject, options) {
     let conditionManager = this.getConditionManager(domainObject);
+    const formattedHistoricalData = await conditionManager.getHistoricalData(options);
     let latestOutput = await conditionManager.requestLADConditionSetOutput(options);
-    return latestOutput;
+
+    // Avoid duplicate timestamps when historical data includes the latest point.
+    // Prefer LAD output when it overlaps, since it reflects the current evaluation path.
+    const timeKey = this.openmct.time.getTimeSystem().key;
+    const merged = [...formattedHistoricalData];
+
+    if (latestOutput?.length) {
+      const lad = latestOutput[0];
+      const ladTs = lad?.[timeKey];
+
+      if (ladTs !== undefined) {
+        const existingIndex = merged.findIndex((d) => d?.[timeKey] === ladTs);
+
+        if (existingIndex >= 0) {
+          merged[existingIndex] = lad;
+        } else {
+          merged.push(lad);
+        }
+      } else {
+        merged.push(lad);
+      }
+    }
+
+    // Seed subscribe-side dedupe with whatever we returned from request()
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    if (merged.length) {
+      this.lastEmittedById.set(id, merged[merged.length - 1]);
+    }
+
+    return merged;
   }
 
   subscribe(domainObject, callback) {
-    let conditionManager = this.getConditionManager(domainObject);
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    let subscription = this.subscribers[id];
 
-    conditionManager.on('conditionSetResultUpdated', (data) => {
-      callback(data);
-    });
+    if (!subscription) {
+      const conditionManager = this.getConditionManager(domainObject);
+      subscription = {
+        callbacks: [],
+        conditionManager,
+        dedupingHandler: null
+      };
+      subscription.dedupingHandler = (data) => {
+        const timeKey = this.openmct.time.getTimeSystem().key;
+        const last = this.lastEmittedById.get(id);
+        const sameTime = last?.[timeKey] !== undefined && last?.[timeKey] === data?.[timeKey];
+        const sameValue =
+          last?.output === data?.output &&
+          last?.result === data?.result &&
+          last?.conditionId === data?.conditionId &&
+          last?.isDefault === data?.isDefault;
 
-    return this.destroyConditionManager.bind(
-      this,
-      this.openmct.objects.makeKeyString(domainObject.identifier)
-    );
+        if (sameTime && sameValue) {
+          return;
+        }
+
+        this.lastEmittedById.set(id, data);
+        subscription.callbacks.forEach((cb) => cb(data));
+      };
+      this.subscribers[id] = subscription;
+      subscription.conditionManager.on('conditionSetResultUpdated', subscription.dedupingHandler);
+    }
+
+    subscription.callbacks.push(callback);
+
+    return () => {
+      subscription.callbacks = subscription.callbacks.filter((cb) => cb !== callback);
+      if (subscription.callbacks.length === 0) {
+        this.destroyConditionManager(id);
+      }
+    };
   }
 
   /**
@@ -79,10 +140,19 @@ export default class ConditionSetTelemetryProvider {
    * can be called manually for views that only request but do not subscribe to data
    */
   destroyConditionManager(id) {
+    const subscription = this.subscribers[id];
+
+    if (subscription) {
+      subscription.conditionManager.off('conditionSetResultUpdated', subscription.dedupingHandler);
+      delete this.subscribers[id];
+    }
+
     if (this.conditionManagerPool[id]) {
       this.conditionManagerPool[id].off('conditionSetResultUpdated');
       this.conditionManagerPool[id].destroy();
       delete this.conditionManagerPool[id];
     }
+
+    this.lastEmittedById.delete(id);
   }
 }

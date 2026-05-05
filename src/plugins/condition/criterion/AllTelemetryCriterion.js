@@ -28,6 +28,7 @@ import { checkIfOld, getLatestTimestamp } from '../utils/time.js';
 import TelemetryCriterion from './TelemetryCriterion.js';
 
 export default class AllTelemetryCriterion extends TelemetryCriterion {
+  #emptyMap = new Map();
   /**
    * Subscribes/Unsubscribes to telemetry and emits the result
    * of operations performed on the telemetry data returned and a given input value.
@@ -106,8 +107,13 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
       if (this.stalenessSubscription[id].stalenessUtils.shouldUpdateStaleness(stalenessResponse)) {
         this.telemetryDataCache[id] = stalenessResponse.isStale;
         this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
-
-        this.emitEvent('telemetryStaleness');
+        this.setLastUpdatedTime(
+          this.stalenessSubscription[id].stalenessUtils.lastStalenessResponseTime
+        );
+        this.setLastUpdatedTimeSystem(
+          this.stalenessSubscription[id].stalenessUtils.lastStalenessTimeSystem
+        );
+        this.emitEvent('telemetryStaleness', this);
       }
     }
   }
@@ -176,18 +182,24 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
     return datum;
   }
 
-  updateResult(data, telemetryObjects) {
-    const validatedData = this.isValid() ? data : {};
+  updateResult(allTelemetryDataMap, telemetryObjects) {
+    const validatedData = this.isValid() ? allTelemetryDataMap : this.#emptyMap;
 
     if (validatedData && !this.isStalenessCheck()) {
       if (this.isOldCheck()) {
-        if (this.ageCheck?.[validatedData.id]) {
-          this.ageCheck[validatedData.id].update(validatedData);
-        }
+        Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
+          if (this.ageCheck?.[objectIdKeystring]) {
+            this.ageCheck[objectIdKeystring].update(validatedData.get(objectIdKeystring));
+          }
 
-        this.telemetryDataCache[validatedData.id] = false;
+          this.telemetryDataCache[objectIdKeystring] = false;
+        });
       } else {
-        this.telemetryDataCache[validatedData.id] = this.computeResult(validatedData);
+        Object.keys(this.telemetryDataCache).forEach((objectIdKeystring) => {
+          this.telemetryDataCache[objectIdKeystring] = this.computeResult(
+            validatedData.get(objectIdKeystring)
+          );
+        });
       }
     }
 

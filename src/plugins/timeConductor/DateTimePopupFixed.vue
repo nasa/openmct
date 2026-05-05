@@ -1,0 +1,400 @@
+<!--
+ Open MCT, Copyright (c) 2014-2024, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+
+<template>
+  <form ref="fixedDeltaInput">
+    <div class="c-tc-input-popup__input-grid-utc">
+      <div class="pr-time-label pr-time-label-start-date"><em>Start</em> Date</div>
+      <div class="pr-time-label pr-time-label-start-time">Time</div>
+      <div class="pr-time-label pr-time-label-end-date"><em>End</em> Date</div>
+      <div class="pr-time-label pr-time-label-end-time">Time</div>
+
+      <div
+        class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-start-date"
+      >
+        <DatePicker
+          class="c-ctrl-wrapper--menus-right"
+          :default-date-time="formattedBounds.startDate"
+          @date-selected="startDateSelected"
+        />
+        <input
+          ref="startDate"
+          v-model="formattedBounds.startDate"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="Start date"
+          @input="validateInput('startDate')"
+          @change="reportValidity('startDate')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
+        />
+      </div>
+
+      <div class="pr-time-input pr-time-input--time pr-time-input-start-time">
+        <input
+          ref="startTime"
+          v-model="formattedBounds.startTime"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="Start time"
+          @input="validateInput('startTime')"
+          @change="reportValidity('startTime')"
+          @copy.prevent.stop="copyToClipboard('start')"
+          @paste.prevent.stop="pasteFromClipboard('start')"
+        />
+      </div>
+
+      <div class="pr-time-input pr-time-input__start-end-sep icon-arrows-right-left"></div>
+
+      <div
+        class="pr-time-input pr-time-input--date pr-time-input--input-and-button pr-time-input-end-date"
+      >
+        <DatePicker
+          class="c-ctrl-wrapper--menus-left"
+          :default-date-time="formattedBounds.endDate"
+          @date-selected="endDateSelected"
+        />
+        <input
+          ref="endDate"
+          v-model="formattedBounds.endDate"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="End date"
+          @input="validateInput('endDate')"
+          @change="reportValidity('endDate')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
+        />
+      </div>
+
+      <div class="pr-time-input pr-time-input--time pr-time-input-end-time">
+        <input
+          ref="endTime"
+          v-model="formattedBounds.endTime"
+          class="c-input--datetime"
+          type="text"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="End time"
+          @input="validateInput('endTime')"
+          @change="reportValidity('endTime')"
+          @copy.prevent.stop="copyToClipboard('end')"
+          @paste.prevent.stop="pasteFromClipboard('end')"
+        />
+      </div>
+
+      <div class="pr-time-input pr-time-input--buttons">
+        <button
+          class="c-button c-button--major icon-check"
+          :disabled="hasInputValidityError"
+          aria-label="Submit time bounds"
+          @click.prevent="submitForm(true)"
+        ></button>
+        <button
+          class="c-button icon-x"
+          aria-label="Discard changes and close time popup"
+          @click.prevent="hide"
+        ></button>
+      </div>
+    </div>
+  </form>
+</template>
+
+<script>
+import DatePicker from './DatePicker.vue';
+
+export default {
+  components: {
+    DatePicker
+  },
+  inject: [
+    'openmct',
+    'configuration',
+    'isTimeSystemUTCBased',
+    'timeContext',
+    'timeSystemKey',
+    'timeSystemFormatter',
+    'timeSystemDurationFormatter',
+    'bounds'
+  ],
+  emits: ['update', 'dismiss'],
+  data() {
+    return {
+      formattedBounds: {},
+      inputValidityMap: {
+        startDate: { valid: true },
+        startTime: { valid: true },
+        endDate: { valid: true },
+        endTime: { valid: true }
+      },
+      logicalValidityMap: {
+        limit: { valid: true },
+        bounds: { valid: true }
+      }
+    };
+  },
+  computed: {
+    hasInputValidityError() {
+      return Object.values(this.inputValidityMap).some((inputValidity) => !inputValidity.valid);
+    },
+    hasLogicalValidationErrors() {
+      return Object.values(this.logicalValidityMap).some(
+        (logicalValidity) => !logicalValidity.valid
+      );
+    },
+    isValid() {
+      return !this.hasInputValidityError && !this.hasLogicalValidationErrors;
+    }
+  },
+  watch: {
+    bounds: {
+      handler() {
+        this.setViewFromBounds();
+      }
+    }
+  },
+  mounted() {
+    this.setViewFromBounds();
+  },
+  beforeUnmount() {
+    this.clearInputValidation();
+    this.clearLogicalValidation();
+  },
+  methods: {
+    async copyToClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      const bound =
+        this.timeSystemFormatter.parse(this.formattedBounds[`${startOrEnd}Date`]) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds[`${startOrEnd}Time`]);
+      const timeStampString = this.timeSystemFormatter.format(bound);
+
+      try {
+        await navigator.clipboard.writeText(timeStampString);
+      } catch (err) {
+        this.openmct.notifications.error('Failed to copy timestamp to clipboard');
+        console.error(err);
+      }
+    },
+    async pasteFromClipboard(startOrEnd) {
+      if (startOrEnd !== 'start' && startOrEnd !== 'end') {
+        console.warn('Invalid startOrEnd value');
+        return;
+      }
+
+      let timeStampString;
+      try {
+        timeStampString = await navigator.clipboard.readText();
+      } catch (err) {
+        this.openmct.notifications.error('Failed to get timestamp from clipboard');
+        console.error(err);
+        return;
+      }
+
+      if (!this.timeSystemFormatter.validate(timeStampString)) {
+        this.openmct.notifications.warn(`"${timeStampString}" is not a valid timestamp format`);
+        return;
+      }
+
+      const bound = this.timeSystemFormatter.parse(timeStampString);
+      this.formattedBounds[`${startOrEnd}Date`] = this.timeSystemFormatter.formatDate(bound);
+      this.formattedBounds[`${startOrEnd}Time`] = this.timeSystemDurationFormatter.format(
+        Math.abs(bound),
+        'HH:mm:ss.SSS'
+      );
+
+      this.validateInput([`${startOrEnd}Date`, `${startOrEnd}Time`]);
+      this.reportValidity([`${startOrEnd}Date`, `${startOrEnd}Time`]);
+    },
+    setViewFromBounds() {
+      this.formattedBounds = {
+        startDate: this.timeSystemFormatter.formatDate(this.bounds.start),
+        startTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.start)),
+        endDate: this.timeSystemFormatter.formatDate(this.bounds.end),
+        endTime: this.timeSystemDurationFormatter.format(Math.abs(this.bounds.end))
+      };
+    },
+    setBoundsFromView(shouldDismiss) {
+      if (this.$refs.fixedDeltaInput.checkValidity()) {
+        const start =
+          this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+          this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+        const end =
+          this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+          this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
+
+        const bounds = { start, end };
+        this.timeContext.setBounds(bounds);
+      }
+
+      if (shouldDismiss) {
+        this.$emit('dismiss');
+
+        return false;
+      }
+    },
+    clearInputValidation() {
+      Object.keys(this.inputValidityMap).forEach((refName) => {
+        const input = this.getInput(refName);
+
+        input.setCustomValidity('');
+        input.title = '';
+      });
+    },
+    clearLogicalValidation() {
+      Object.keys(this.logicalValidityMap).forEach((refName) => {
+        const input = this.getInput(refName);
+
+        input.setCustomValidity('');
+        input.title = '';
+
+        if (this.logicalValidityMap[refName] !== undefined) {
+          this.logicalValidityMap[refName] = { valid: true };
+        }
+      });
+    },
+    submitForm(shouldDismiss) {
+      this.clearLogicalValidation();
+
+      this.validateBounds();
+      this.reportValidity('bounds');
+
+      if (!this.isValid) {
+        return;
+      }
+
+      this.validateLimit();
+      this.reportValidity('limit');
+
+      if (!this.isValid) {
+        return;
+      }
+
+      this.setBoundsFromView(shouldDismiss);
+    },
+    validateInput(refNames) {
+      if (!Array.isArray(refNames)) {
+        refNames = [refNames];
+      }
+
+      this.clearInputValidation();
+
+      refNames.forEach((refName) => {
+        const inputType = refName.includes('Date') ? 'Date' : 'Time';
+        const formatter =
+          inputType === 'Date' ? this.timeSystemFormatter : this.timeSystemDurationFormatter;
+        const validationResult = formatter.validate(this.formattedBounds[refName])
+          ? { valid: true }
+          : { valid: false, message: `Invalid ${inputType}` };
+
+        this.inputValidityMap[refName] = validationResult;
+      });
+    },
+    validateBounds() {
+      const start =
+        this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+      const end =
+        this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
+
+      const bounds = { start, end };
+
+      this.logicalValidityMap.bounds = this.openmct.time.validateBounds(bounds);
+    },
+    validateLimit() {
+      const start =
+        this.timeSystemFormatter.parse(this.formattedBounds.startDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.startTime);
+      const end =
+        this.timeSystemFormatter.parse(this.formattedBounds.endDate) +
+        this.timeSystemDurationFormatter.parse(this.formattedBounds.endTime);
+
+      const bounds = { start, end };
+
+      const limit = this.configuration?.menuOptions
+        ?.filter((option) => option.timeSystem === this.timeSystemKey)
+        ?.find((option) => option.limit)?.limit;
+
+      if (limit && bounds.end - bounds.start > limit) {
+        this.logicalValidityMap.limit = {
+          valid: false,
+          message: 'Start and end difference exceeds allowable limit'
+        };
+      } else {
+        this.logicalValidityMap.limit = { valid: true };
+      }
+    },
+    reportValidity(refNames) {
+      if (!Array.isArray(refNames)) {
+        refNames = [refNames];
+      }
+
+      refNames.forEach((refName) => {
+        const input = this.getInput(refName);
+        const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
+
+        if (validationResult.valid !== true) {
+          input.setCustomValidity(validationResult.message);
+          input.title = validationResult.message;
+        } else {
+          input.setCustomValidity('');
+          input.title = '';
+        }
+      });
+
+      this.$refs.fixedDeltaInput.reportValidity();
+    },
+    getInput(refName) {
+      if (Object.keys(this.inputValidityMap).includes(refName)) {
+        return this.$refs[refName];
+      }
+
+      return this.$refs.startDate;
+    },
+    startDateSelected(date) {
+      this.formattedBounds.startDate = this.timeSystemFormatter.formatDate(date);
+      this.validateInput('startDate');
+      this.reportValidity('startDate');
+    },
+    endDateSelected(date) {
+      this.formattedBounds.endDate = this.timeSystemFormatter.formatDate(date);
+      this.validateInput('endDate');
+      this.reportValidity('endDate');
+    },
+    hide($event) {
+      if ($event.target.className.indexOf('c-button icon-x') > -1) {
+        this.$emit('dismiss');
+      }
+    }
+  }
+};
+</script>

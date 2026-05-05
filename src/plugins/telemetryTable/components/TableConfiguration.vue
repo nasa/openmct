@@ -21,53 +21,57 @@
 -->
 <template>
   <div class="c-inspect-properties">
-    <template v-if="isEditing">
-      <div class="c-inspect-properties__header">Layout</div>
-      <ul class="c-inspect-properties__section">
-        <li class="c-inspect-properties__row">
-          <div class="c-inspect-properties__label" title="Auto-size table">
-            <label for="AutoSizeControl">Auto-size</label>
-          </div>
-          <div class="c-inspect-properties__value">
-            <input
-              id="AutoSizeControl"
-              type="checkbox"
-              :checked="configuration.autosize !== false"
-              @change="toggleAutosize()"
-            />
-          </div>
-        </li>
-        <li class="c-inspect-properties__row">
-          <div class="c-inspect-properties__label" title="Show or hide headers">
-            <label for="header-visibility">Hide Header</label>
-          </div>
-          <div class="c-inspect-properties__value">
-            <input
-              id="header-visibility"
-              type="checkbox"
-              :checked="configuration.hideHeaders === true"
-              @change="toggleHeaderVisibility"
-            />
-          </div>
-        </li>
-      </ul>
-      <div class="c-inspect-properties__header">Columns</div>
-      <ul class="c-inspect-properties__section">
-        <li v-for="(title, key) in headers" :key="key" class="c-inspect-properties__row">
-          <div class="c-inspect-properties__label" title="Show or hide column">
-            <label :for="key + 'ColumnControl'">{{ title }}</label>
-          </div>
-          <div class="c-inspect-properties__value">
-            <input
-              :id="key + 'ColumnControl'"
-              type="checkbox"
-              :checked="configuration.hiddenColumns[key] !== true"
-              @change="toggleColumn(key)"
-            />
-          </div>
-        </li>
-      </ul>
-    </template>
+    <div class="c-inspect-properties__header">Layout</div>
+    <ul class="c-inspect-properties__section">
+      <li class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Auto-size table">
+          <label for="AutoSizeControl">Auto-size</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            id="AutoSizeControl"
+            type="checkbox"
+            :checked="configuration.autosize !== false"
+            @change="toggleAutosize()"
+          />
+          <span v-if="!isEditing && configuration.autosize !== false">Enabled</span>
+        </div>
+      </li>
+      <li class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Show or hide headers">
+          <label for="header-visibility">Hide Header</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            id="header-visibility"
+            type="checkbox"
+            :checked="configuration.hideHeaders === true"
+            @change="toggleHeaderVisibility"
+          />
+          <span v-if="!isEditing && configuration.hideHeaders === true">True</span>
+        </div>
+      </li>
+    </ul>
+    <div class="c-inspect-properties__header">Columns</div>
+    <ul class="c-inspect-properties__section">
+      <li v-for="(title, key) in headers" :key="key" class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" title="Show or hide column">
+          <label :for="key + 'ColumnControl'">{{ title }}</label>
+        </div>
+        <div class="c-inspect-properties__value">
+          <input
+            v-if="isEditing"
+            :id="key + 'ColumnControl'"
+            type="checkbox"
+            :checked="configuration.hiddenColumns[key] !== true"
+            @change="toggleColumn(key)"
+          />
+          <span v-if="!isEditing && configuration.hiddenColumns[key] !== true">Visible</span>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -112,6 +116,15 @@ export default {
   },
   methods: {
     updateHeaders(headers) {
+      // add name column if it doesn't exist,
+      // it's always the first column when it's manually added
+      if (!headers.name) {
+        headers = {
+          name: 'Name',
+          ...headers
+        };
+      }
+
       this.headers = headers;
     },
     toggleColumn(key) {

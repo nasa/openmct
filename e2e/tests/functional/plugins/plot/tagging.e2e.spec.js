@@ -118,6 +118,35 @@ test.describe('Plot Tagging', () => {
     await basicTagsTests(page);
   });
 
+  test('Plots use index to retrieve tags @couchdb @network', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/8184'
+    });
+    // Switch to real-time mode
+    await setRealTimeMode(page);
+
+    const tagsRequestPromise = new Promise((resolve) => {
+      page.on('request', async (request) => {
+        const isTagsRequest = request.url().endsWith('by_keystring');
+        if (isTagsRequest) {
+          const response = await request.response();
+          resolve(response.status() === 200);
+        }
+      });
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator'
+    });
+
+    const pauseButton = page.getByLabel('Pause incoming real-time data');
+    pauseButton.click();
+
+    const didUseIndexForTagsRequest = await tagsRequestPromise;
+
+    expect(didUseIndexForTagsRequest).toBe(true);
+  });
+
   test('Tags work with Stacked Plots', async ({ page }) => {
     const stackedPlot = await createDomainObjectWithDefaults(page, {
       type: 'Stacked Plot'

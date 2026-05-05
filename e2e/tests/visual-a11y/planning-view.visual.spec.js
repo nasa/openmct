@@ -27,36 +27,16 @@ import { createPlanFromJSON } from '../../appActions.js';
 import { scanForA11yViolations, test } from '../../avpFixtures.js';
 import { VISUAL_FIXED_URL } from '../../constants.js';
 import {
-  createTimelistWithPlanAndSetActivityInProgress,
   getFirstActivity,
   setBoundsToSpanAllActivities,
   setDraftStatusForPlan
 } from '../../helper/planningUtils.js';
 
-const examplePlanSmall1 = JSON.parse(
-  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url))
-);
-
 const examplePlanSmall2 = JSON.parse(
   fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small2.json', import.meta.url))
 );
 
-const FIRST_ACTIVITY_SMALL_1 = getFirstActivity(examplePlanSmall1);
 const FIRST_ACTIVITY_SMALL_2 = getFirstActivity(examplePlanSmall2);
-
-test.describe('Visual - Timelist progress bar @clock @a11y', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.end + 10000 });
-    await page.clock.resume();
-    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-    await page.getByLabel('Click to collapse items').click();
-  });
-
-  test('progress pie is full', async ({ page, theme }) => {
-    // Progress pie is completely full and doesn't update if now is greater than the end time
-    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
-  });
-});
 
 test.describe('Visual - Plan View @a11y', () => {
   test.beforeEach(async ({ page }) => {

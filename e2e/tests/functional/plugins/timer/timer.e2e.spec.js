@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createDomainObjectWithDefaults } from '../../../../appActions.js';
+import { createDomainObjectWithDefaults, setRealTimeMode } from '../../../../appActions.js';
 import { MISSION_TIME } from '../../../../constants.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -65,6 +65,7 @@ test.describe('Timer with target date @clock', () => {
     await page.clock.install({ time: MISSION_TIME });
     await page.clock.resume();
     await page.goto('./', { waitUntil: 'domcontentloaded' });
+    await setRealTimeMode(page);
     await createDomainObjectWithDefaults(page, { type: 'timer' });
   });
 
@@ -78,6 +79,8 @@ test.describe('Timer with target date @clock', () => {
     await page.locator('input[name="min"]').fill('30');
     await page.locator('input[name="sec"]').fill('00');
     await page.getByLabel('Save').click();
+    await page.locator('.c-timer__direction').hover();
+    await page.getByLabel('Start', { exact: true }).click();
 
     // Get the current timer seconds value
     const timerSecValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);
@@ -101,6 +104,8 @@ test.describe('Timer with target date @clock', () => {
     await page.locator('input[name="min"]').fill('30');
     await page.locator('input[name="sec"]').fill('00');
     await page.getByLabel('Save').click();
+    await page.locator('.c-timer__direction').hover();
+    await page.getByLabel('Start', { exact: true }).click();
 
     // Get the current timer seconds value
     const timerSecValue = (await page.locator('.c-timer__value').innerText()).split(':').at(-1);

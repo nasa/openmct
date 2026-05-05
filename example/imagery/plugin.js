@@ -23,24 +23,24 @@
 import { seededRandom } from 'utils/random.js';
 
 const DEFAULT_IMAGE_SAMPLES = [
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18731.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18732.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18733.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18734.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18735.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18736.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18737.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18738.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18739.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18740.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18741.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18742.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18743.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18744.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18745.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18746.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18747.jpg',
-  'https://www.nasa.gov/wp-content/uploads/static/history/alsj/a16/AS16-117-18748.jpg'
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18731.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18732.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18733.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18734.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18735.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18736.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18737.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18738.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18739.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18740.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18741.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18742.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18743.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18744.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18745.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18746.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18747.jpg',
+  'https://lpi.usra.edu/resources/apollo/images/browse/AS16/117/18748.jpg'
 ];
 const DEFAULT_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 20000;
 const MIN_IMAGE_LOAD_DELAY_IN_MILLISECONDS = 5000;

@@ -28,7 +28,9 @@ import { v4 as uuid } from 'uuid';
 
 import {
   createDomainObjectWithDefaults,
-  createExampleTelemetryObject
+  createExampleTelemetryObject,
+  setRealTimeMode,
+  setStartOffset
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -164,6 +166,57 @@ test.describe('Gauge', () => {
       'aria-valuenow',
       '--'
     );
+  });
+
+  test('Gauge does not break when an object is missing', async ({ page }) => {
+    // Set up error listeners
+    const pageErrors = [];
+
+    // Listen for uncaught exceptions
+    page.on('pageerror', (err) => {
+      pageErrors.push(err.message);
+    });
+
+    await setRealTimeMode(page);
+
+    // Create a Gauge
+    const gauge = await createDomainObjectWithDefaults(page, {
+      type: 'Gauge',
+      name: 'Gauge with missing object'
+    });
+
+    // Create a Sine Wave Generator in the Gauge with a loading delay
+    const missingSWG = await createExampleTelemetryObject(page, gauge.uuid);
+
+    // Remove the object from local storage
+    await page.evaluate(
+      ([missingObject]) => {
+        const mct = localStorage.getItem('mct');
+        const mctObjects = JSON.parse(mct);
+        delete mctObjects[missingObject.uuid];
+        localStorage.setItem('mct', JSON.stringify(mctObjects));
+      },
+      [missingSWG]
+    );
+
+    // Verify start bounds
+    await expect(page.getByLabel('Start offset: 00:30:00')).toBeVisible();
+
+    // Nav to the Gauge
+    await page.goto(gauge.url, { waitUntil: 'domcontentloaded' });
+
+    // adjust time bounds and ensure they are updated
+    await setStartOffset(page, {
+      startHours: '00',
+      startMins: '45',
+      startSecs: '00'
+    });
+
+    // Verify start bounds changed
+    await expect(page.getByLabel('Start offset: 00:45:00')).toBeVisible();
+
+    // // Verify no errors were thrown
+    expect(pageErrors).toHaveLength(0);
   });
 
   test('Gauge enforces composition policy', async ({ page }) => {

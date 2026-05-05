@@ -22,6 +22,8 @@ let gitBranch = 'error-retrieving-branch';
 const { version } = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
 
 try {
+  //Caching of GitHub actions causes git directory ownership issues.
+  execSync('git config --global --add safe.directory /__w/openmct/openmct');
   gitRevision = execSync('git rev-parse HEAD').toString().trim();
   gitBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 } catch (err) {
@@ -48,9 +50,11 @@ const config = {
     generatorWorker: './example/generator/generatorWorker.js',
     couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
     inMemorySearchWorker: './src/api/objects/InMemorySearchWorker.js',
+    compsMathWorker: './src/plugins/comps/CompsMathWorker.js',
     espressoTheme: './src/plugins/themes/espresso-theme.scss',
     snowTheme: './src/plugins/themes/snow-theme.scss',
-    darkmatterTheme: './src/plugins/themes/darkmatter-theme.scss'
+    darkmatterTheme: './src/plugins/themes/darkmatter-theme.scss',
+    historicalTelemetryWorker: './src/plugins/condition/historicalTelemetryWorker.js',
   },
   output: {
     globalObject: 'this',
@@ -89,7 +93,8 @@ const config = {
       __OPENMCT_REVISION__: `'${gitRevision}'`,
       __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
       __VUE_OPTIONS_API__: true, // enable/disable Options API support, default: true
-      __VUE_PROD_DEVTOOLS__: false // enable/disable devtools support in production, default: false
+      __VUE_PROD_DEVTOOLS__: false, // enable/disable devtools support in production, default: false
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false, // enable/disable hydration mismatch details in production, default: false
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin({

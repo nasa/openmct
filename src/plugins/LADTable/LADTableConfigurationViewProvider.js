@@ -27,7 +27,7 @@ import LadTableConfiguration from './components/LadTableConfiguration.vue';
 export default function LADTableConfigurationViewProvider(openmct) {
   return {
     key: 'lad-table-configuration',
-    name: 'LAD Table Configuration',
+    name: 'Config',
     canView(selection) {
       if (selection.length !== 1 || selection[0].length === 0) {
         return false;
@@ -61,7 +61,7 @@ export default function LADTableConfigurationViewProvider(openmct) {
           _destroy = destroy;
         },
         priority() {
-          return 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
         },
         destroy() {
           if (_destroy) {

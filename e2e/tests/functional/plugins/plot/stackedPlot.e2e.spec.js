@@ -152,13 +152,13 @@ test.describe('Stacked Plot', () => {
   }) => {
     await page.goto(stackedPlot.url);
 
-    await page.getByRole('tab', { name: 'Config' }).click();
-
     // Click on the 1st plot
     await page
       .getByLabel('Stacked Plot Item Sine Wave Generator A')
       .getByLabel('Plot Canvas')
       .click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     // Assert that the inspector shows the Y Axis properties for swgA
     await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
@@ -172,6 +172,9 @@ test.describe('Stacked Plot', () => {
       .getByLabel('Stacked Plot Item Sine Wave Generator B')
       .getByLabel('Plot Canvas')
       .click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
     // Assert that the inspector shows the Y Axis properties for swgB
     await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
@@ -184,6 +187,9 @@ test.describe('Stacked Plot', () => {
       .getByLabel('Stacked Plot Item Sine Wave Generator C')
       .getByLabel('Plot Canvas')
       .click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
     // Assert that the inspector shows the Y Axis properties for swgB
     await expect(page.getByRole('heading', { name: 'Plot Series' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Y Axis' })).toBeVisible();
@@ -194,7 +200,7 @@ test.describe('Stacked Plot', () => {
     // Go into edit mode
     await page.getByLabel('Edit Object').click();
 
-    await page.getByRole('tab', { name: 'Config' }).click();
+    // await page.getByRole('tab', { name: 'Config' }).click();
 
     // Click on the 1st plot
     await page.getByLabel('Stacked Plot Item Sine Wave Generator A').click();
@@ -233,10 +239,10 @@ test.describe('Stacked Plot', () => {
     // Go into edit mode
     await page.getByLabel('Edit Object').click();
 
-    await page.getByRole('tab', { name: 'Config' }).click();
-
     // Click on canvas for the 1st plot
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     // Expand config for the series
     await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
@@ -254,6 +260,8 @@ test.describe('Stacked Plot', () => {
 
     // Click on canvas for the 1st plot
     await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
 
     // Expand config for the series
     await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();

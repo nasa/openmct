@@ -428,11 +428,11 @@ mct-plot {
   &.tick-label-x {
     right: auto;
     bottom: auto;
-    left: auto;
+    left: 50%;
     height: auto;
-    width: 20%;
-    margin-left: -10%;
+    width: auto;
     text-align: center;
+    transform: translateX(-50%);
   }
   &.gl-plot-y-tick-label,
   &.tick-label-y {

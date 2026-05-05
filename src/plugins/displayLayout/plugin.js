@@ -25,6 +25,7 @@ import mount from 'utils/mount';
 import CopyToClipboardAction from './actions/CopyToClipboardAction.js';
 import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
 import DisplayLayout from './components/DisplayLayout.vue';
+import displayLayoutStylesInterceptor from './displayLayoutStylesInterceptor.js';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutDrawingObjectTypes from './DrawingObjectTypes.js';
@@ -118,11 +119,9 @@ export default function DisplayLayoutPlugin(options) {
       },
       view: function (domainObject, objectPath) {
         return new DisplayLayoutView(openmct, domainObject, objectPath, options);
-      },
-      priority() {
-        return 100;
       }
     });
+    openmct.objects.addGetInterceptor(displayLayoutStylesInterceptor(openmct));
     openmct.types.addType('layout', DisplayLayoutType());
     openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
     openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));

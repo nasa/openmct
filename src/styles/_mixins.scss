@@ -434,6 +434,14 @@
   left: $m;
 }
 
+@mixin absCenter() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+}
+
 @mixin propertiesHeader() {
   border-radius: $smallCr;
   background-color: $colorInspectorSectionHeaderBg;

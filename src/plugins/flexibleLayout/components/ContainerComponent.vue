@@ -80,9 +80,10 @@
 </template>
 
 <script>
+import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
+
 import DropHint from './DropHint.vue';
 import FrameComponent from './FrameComponent.vue';
-import ResizeHandle from './ResizeHandle.vue';
 
 const MIN_FRAME_SIZE = 5;
 

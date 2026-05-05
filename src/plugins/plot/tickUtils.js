@@ -4,6 +4,18 @@ const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
 const e2 = Math.sqrt(2);
 
+// A complete list of time units and their duration in milliseconds - UTC
+const TIME_UNITS_UTC = [
+  { unit: 'millisecond', duration: 1 },
+  { unit: 'second', duration: 1000 },
+  { unit: 'minute', duration: 1000 * 60 },
+  { unit: 'hour', duration: 1000 * 60 * 60 },
+  { unit: 'day', duration: 1000 * 60 * 60 * 24 },
+  { unit: 'week', duration: 1000 * 60 * 60 * 24 * 7 },
+  { unit: 'month', duration: 1000 * 60 * 60 * 24 * 30.4375 }, // Average month
+  { unit: 'year', duration: 1000 * 60 * 60 * 24 * 365.25 } // Average year
+];
+
 /**
  * Nicely formatted tick steps from d3-array.
  */
@@ -20,6 +32,148 @@ function tickStep(start, stop, count) {
   }
 
   return stop < start ? -step1 : step1;
+}
+
+/**
+ * tickStep for time units - allows for snapping to 15/30 minutes and 6/12 hours, which are common intervals.
+ */
+function timeTickStep(start, stop, count, unitName) {
+  const step0 = Math.abs(stop - start) / Math.max(0, count);
+  let step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10));
+  const error = step0 / step1;
+
+  // For minutes and seconds, allow snapping to 15 and 30
+  if (unitName === 'minute' || unitName === 'second') {
+    // Snap to 1 hour/minute
+    if (error >= 45) {
+      return 60;
+    }
+    // Snap to 30s/30m
+    if (error >= 22.5) {
+      return 30;
+    }
+    // Snap to 15s/15m
+    if (error >= 12.5) {
+      return 15;
+    }
+  }
+
+  // For hours, use to 6 and 12
+  if (unitName === 'hour') {
+    // Snap to 1 day
+    if (error >= 18) {
+      return 24;
+    }
+    if (error >= 9) {
+      return 12;
+    }
+    if (error >= 4.5) {
+      return 6;
+    }
+  }
+
+  // Fallback to standard tickStep that already snaps to 1, 2, 5, 10
+  if (error >= 7.5) {
+    step1 *= 10;
+  } else if (error >= 3.0) {
+    step1 *= 5;
+  } else if (error >= 1.5) {
+    step1 *= 2;
+  }
+
+  return stop < start ? -step1 : step1;
+}
+
+/**
+ * Generate time ticks based on a start and stop time, and a desired count of ticks calculated proactively from canvas size
+ * @param start beginning timestamp in Ms
+ * @param stop  ending timestamp in Ms
+ * @param count desired number of ticks
+ * @returns {*[]} Array of timestamps in Ms
+ */
+export function getTimeTicks(start, stop, count) {
+  const duration = stop - start;
+  let bestUnit = TIME_UNITS_UTC[0];
+
+  // Find the unit where the duration divided by unit size is closest to our target count.
+  for (const unit of TIME_UNITS_UTC) {
+    const ticksForUnit = duration / unit.duration;
+    if (ticksForUnit <= count) {
+      break;
+    }
+    bestUnit = unit;
+  }
+
+  // Normalize the range to the selected unit to find a "nice" step size
+  const startInUnits = start / bestUnit.duration;
+  const stopInUnits = stop / bestUnit.duration;
+
+  // Use specialized time stepping for seconds/minutes/hours
+  const bestStepSize = Math.abs(timeTickStep(startInUnits, stopInUnits, count, bestUnit.unit));
+
+  if (bestUnit.unit === 'month' || bestUnit.unit === 'year') {
+    return generateMonthYearTicks(start, stop, bestUnit.unit, bestStepSize);
+  } else {
+    return generateFixedIntervalTicks(start, stop, bestUnit.duration * bestStepSize);
+  }
+}
+
+// Helper for variable-duration units (months, years)
+/**
+ * Generate ticks for month/year intervals - these are variable due to leap years etc.
+ * @param start beginning timestamp in Ms
+ * @param stop ending timestamp in Ms
+ * @param unit 'month' or 'year'
+ * @param stepSize number of months/years to step
+ * @returns {*[]} Array of timestamps in Ms
+ */
+function generateMonthYearTicks(start, stop, unit, stepSize) {
+  const resultingTicks = [];
+  let currentDate = new Date(start);
+
+  // Use UTC to avoid DST issues.
+  // Set to the beginning of the interval (e.g., beginning of the month/year)
+  if (unit === 'month') {
+    // currentDate.setDate(1);
+    currentDate.setUTCDate(1);
+    currentDate.setUTCHours(0, 0, 0, 0);
+  } else if (unit === 'year') {
+    // currentDate.setMonth(0, 1);
+    currentDate.setUTCMonth(0, 1);
+    currentDate.setUTCHours(0, 0, 0, 0);
+  }
+
+  while (currentDate.getTime() <= stop) {
+    resultingTicks.push(currentDate.getTime());
+    if (unit === 'month') {
+      // currentDate.setMonth(currentDate.getMonth() + stepSize);
+      currentDate.setUTCMonth(currentDate.getUTCMonth() + stepSize);
+    } else {
+      // unit is 'year'
+      // currentDate.setFullYear(currentDate.getFullYear() + stepSize);
+      currentDate.setUTCFullYear(currentDate.getUTCFullYear() + stepSize);
+    }
+  }
+  return resultingTicks;
+}
+
+// Helper for fixed-duration units (seconds, days)
+/**
+ * Generate ticks for fixed-duration intervals (seconds, minutes, hours, etc.)
+ * @param start beginning timestamp in Ms
+ * @param stop ending timestamp in Ms
+ * @param interval duration of each tick in Ms
+ * @returns {*[]} Array of timestamps in Ms
+ */
+function generateFixedIntervalTicks(start, stop, interval) {
+  const fixedIntervalTicks = [];
+  const firstTick = Math.ceil(start / interval) * interval;
+
+  for (let i = firstTick; i <= stop; i += interval) {
+    fixedIntervalTicks.push(i);
+  }
+
+  return fixedIntervalTicks;
 }
 
 /**
@@ -94,7 +248,7 @@ export function ticks(start, stop, count) {
 }
 
 export function commonPrefix(a, b) {
-  const maxLen = Math.min(a.length, b.length);
+  const maxLen = Math.min(a.length, b?.length);
   let breakpoint = 0;
   for (let i = 0; i < maxLen; i++) {
     if (a[i] !== b[i]) {
@@ -110,7 +264,7 @@ export function commonPrefix(a, b) {
 }
 
 export function commonSuffix(a, b) {
-  const maxLen = Math.min(a.length, b.length);
+  const maxLen = Math.min(a.length, b?.length);
   let breakpoint = 0;
   for (let i = 0; i <= maxLen; i++) {
     if (a[a.length - i] !== b[b.length - i]) {
@@ -143,14 +297,30 @@ export function getFormattedTicks(newTicks, format) {
       t.fullText = t.text;
 
       if (typeof t.text === 'string') {
-        if (suffix.length) {
-          t.text = t.text.slice(prefix.length, -suffix.length);
-        } else {
-          t.text = t.text.slice(prefix.length);
+        if (newTicks.length > 1) {
+          if (suffix.length) {
+            t.text = t.text.slice(prefix.length, -suffix.length);
+          } else {
+            t.text = t.text.slice(prefix.length);
+          }
         }
       }
     });
   }
 
   return newTicks;
+}
+
+/**
+ * Proactively measures text width using a canvas context.
+ */
+let measurementContext;
+
+export function measureTextWidth(text, font = '12px "Helvetica", sans-serif') {
+  if (!measurementContext) {
+    const canvas = document.createElement('canvas');
+    measurementContext = canvas.getContext('2d');
+  }
+  measurementContext.font = font;
+  return measurementContext.measureText(text).width;
 }

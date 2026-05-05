@@ -68,7 +68,11 @@ import { v4 as genUuid } from 'uuid';
  * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [options.parent='mine'] - The Identifier or uuid of the parent object. Defaults to 'mine' folder
  * @returns {Promise<CreatedObjectInfo>} An object containing information about the newly created domain object.
  */
-async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine' }) {
+async function createDomainObjectWithDefaults(
+  page,
+  { type, name, parent = 'mine' },
+  additionalOptions = {}
+) {
   if (!name) {
     name = `${type}:${genUuid()}`;
   }
@@ -89,6 +93,18 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
   await page.getByLabel('Title', { exact: true }).fill('');
   await page.getByLabel('Title', { exact: true }).fill(name);
 
+  if (additionalOptions) {
+    for (const [key, value] of Object.entries(additionalOptions)) {
+      if (typeof value === 'boolean') {
+        // eslint-disable-next-line playwright/no-raw-locators
+        await page.locator(`#form-${key}`).check();
+      } else {
+        // eslint-disable-next-line playwright/no-raw-locators
+        await page.locator(`#form-${key}`).fill(value);
+      }
+    }
+  }
+
   if (page.testNotes) {
     // Fill the "Notes" section with information about the
     // currently running test and its project.
@@ -105,7 +121,7 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
 
   if (await _isInEditMode(page, uuid)) {
     // Save (exit edit mode)
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
   }
 
@@ -114,6 +130,22 @@ async function createDomainObjectWithDefaults(page, { type, name, parent = 'mine
     uuid,
     url: objectUrl
   };
+}
+
+/**
+ * Retrieves the properties of an OpenMCT domain object by its identifier.
+ *
+ * @param {import('@playwright/test').Page} page - The Playwright page object.
+ * @param {string | identifier - The identifier or UUID of the domain object.
+ * @returns {Promise<Object>} An object containing the properties of the domain object.
+ */
+async function getDomainObject(page, identifier) {
+  const domainObject = await page.evaluate(async (objIdentifier) => {
+    const object = await window.openmct.objects.get(objIdentifier);
+    return object;
+  }, identifier);
+
+  return domainObject;
 }
 
 /**
@@ -247,6 +279,36 @@ async function createStableStateTelemetry(page, parent = 'mine') {
   await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
   await page.getByLabel('State Duration (seconds)', { exact: true }).fill('2');
   await page.getByLabel('Save').click();
+  // Wait until the URL is updated
+  const uuid = await getFocusedObjectUuid(page);
+  const url = await getHashUrlToDomainObject(page, uuid);
+
+  return {
+    name: createdObject.name,
+    uuid,
+    url
+  };
+}
+
+/**
+ * Create a Out of order State Telemetry Object (State Generator) for use in visual tests
+ * and tests against plotting telemetry (e.g. logPlot tests). This will change state every 2 seconds.
+ * @param {import('@playwright/test').Page} page
+ * @param {string | import('../src/api/objects/ObjectAPI').Identifier} [parent] the uuid or identifier of the parent object. Defaults to 'mine'
+ * @returns {Promise<CreatedObjectInfo>} An object containing information about the telemetry object.
+ */
+async function createOutOfOrderStateTelemetry(page, parent = 'mine', duration = 0.25) {
+  const parentUrl = await getHashUrlToDomainObject(page, parent);
+
+  await page.goto(`${parentUrl}`);
+  const createdObject = await createDomainObjectWithDefaults(
+    page,
+    {
+      type: 'State Generator',
+      name: 'Stable State Generator'
+    },
+    { outOfOrder: true, duration: duration.toString() }
+  );
   // Wait until the URL is updated
   const uuid = await getFocusedObjectUuid(page);
   const url = await getHashUrlToDomainObject(page, uuid);
@@ -549,7 +611,7 @@ async function setFixedIndependentTimeConductorBounds(page, { start, end }) {
   await page.getByLabel('Enable Independent Time Conductor').click();
 
   // Bring up the time conductor popup
-  await page.getByLabel('Independent Time Conductor Settings').click();
+  await page.getByLabel('Independent Time Conductor Panel').click();
   await expect(page.getByLabel('Time Conductor Options')).toBeInViewport();
   await _setTimeBounds(page, start, end);
 
@@ -682,22 +744,175 @@ async function linkParameterToObject(page, parameterName, objectName) {
   await page.getByLabel('Save').click();
 }
 
+/**
+ * Rename the currently viewed `domainObject` from the browse bar.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} newName
+ */
+async function renameCurrentObjectFromBrowseBar(page, newName) {
+  const nameInput = page.getByLabel('Browse bar object name');
+  await nameInput.click();
+  await nameInput.fill('');
+  await nameInput.fill(newName);
+  // Click the browse bar container to save changes
+  await page.getByLabel('Browse bar', { exact: true }).click();
+}
+
+/**
+ * Util for subscribing to a telemetry object by object identifier
+ * Limitations: Currently only works to return telemetry once to the node scope
+ * To Do: See if there's a way to await this multiple times to allow for multiple
+ * values to be returned over time
+ * @param {import('@playwright/test').Page} page
+ * @param {string} objectIdentifier identifier for object
+ * @returns {Promise<string>} the formatted sin telemetry value
+ */
+async function getNextSineValueFromSWG(page, objectIdentifier, returnOnlyValue = true) {
+  // Generate a unique function name for this subscription
+  const uniqueFunctionName = `getTelemValue_${genUuid().replace(/-/g, '_')}`;
+
+  const getTelemValuePromise = new Promise((resolve) =>
+    page.exposeFunction(uniqueFunctionName, resolve)
+  );
+
+  await page.evaluate(
+    async ({ telemetryIdentifier, functionName, onlyValue }) => {
+      const telemetryObject = await window.openmct.objects.get(telemetryIdentifier);
+      const metadata = window.openmct.telemetry.getMetadata(telemetryObject);
+      const formats = await window.openmct.telemetry.getFormatMap(metadata);
+      window.openmct.telemetry.subscribe(telemetryObject, (obj) => {
+        const sinVal = obj.sin;
+        const formattedSinVal = formats.sin.format(sinVal);
+        const formattedTimestamp = formats.utc.format(obj.utc);
+        window[functionName](onlyValue ? formattedSinVal : { ...obj, formattedTimestamp });
+      });
+    },
+    {
+      telemetryIdentifier: objectIdentifier,
+      functionName: uniqueFunctionName,
+      onlyValue: returnOnlyValue
+    }
+  );
+
+  return getTelemValuePromise;
+}
+
+async function expandInspectorPane(page) {
+  await page.getByRole('button', { name: 'Inspect' }).click();
+  // eslint-disable-next-line playwright/no-raw-locators
+  await expect(page.locator('.l-shell__pane-inspector > .l-pane__contents')).toHaveCSS(
+    'opacity',
+    '1'
+  );
+}
+
+async function expandTreePane(page) {
+  await page.getByRole('button', { name: 'Browse' }).click();
+  // eslint-disable-next-line playwright/no-raw-locators
+  await expect(page.locator('.l-shell__pane-tree > .l-pane__contents')).toHaveCSS('opacity', '1');
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForRawTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'parse', ...arguments[0] });
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForFormattedTelemetryValue({ page, identifier, expectedValue }) {
+  return waitForTelemetryValue({ parseOrFormat: 'format', ...arguments[0] });
+}
+
+/**
+ * @param {{ page: import('@playwright/test').Page, identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object, parseOrFormat: 'parse'|'format' }} options
+ * @returns {Promise<Object>} a promise that will resolve with the parameter value returned by the first subscription callback, or
+ * the first subscription callback to match the expectedValue if one is provided.
+ */
+function waitForTelemetryValue({ page, identifier, expectedValue, parseOrFormat }) {
+  if (parseOrFormat !== 'parse' && parseOrFormat !== 'format') {
+    throw new Error("Invalid function invocation. Must be one of 'parse' or 'format'");
+  }
+
+  return page.evaluate(
+    /**
+     * @param {{identifier: import('../../../../../src/api/objects/ObjectAPI').Identifier, expectedValue?: Object, parseOrFormat: 'parse'|'format'}} options
+     * @returns {Promise<Object>}
+     */
+    // eslint-disable-next-line no-shadow
+    async ({ identifier, expectedValue, parseOrFormat }) => {
+      // @ts-ignore
+      const openmct = window.openmct;
+      const domainObject = await openmct.objects.get(identifier);
+      const metadata = openmct.telemetry.getMetadata(domainObject);
+      const valueMetadatum = metadata.getDefaultDisplayValue();
+      const formatter = openmct.telemetry.getValueFormatter(valueMetadatum);
+      /**
+       * @type {() => void}
+       */
+      let unsubscribe;
+
+      return new Promise((resolve) => {
+        unsubscribe = openmct.telemetry.subscribe(domainObject, checkForMatchingTelemetry);
+
+        /**
+         * @param {Object} telemetryDatum
+         */
+        function checkForMatchingTelemetry(telemetryDatum) {
+          const telemetryValue = formatter[parseOrFormat](telemetryDatum);
+          if (expectedValue === undefined) {
+            resolve(telemetryValue);
+          } else {
+            if (typeof telemetryValue === 'string' && typeof expectedValue === 'string') {
+              if (telemetryValue.trim() === expectedValue.trim()) {
+                resolve(telemetryValue);
+              }
+            } else {
+              if (telemetryValue === expectedValue) {
+                resolve(telemetryValue);
+              }
+            }
+          }
+        }
+      }).finally(() => {
+        unsubscribe();
+      });
+    },
+    { identifier, expectedValue, parseOrFormat }
+  );
+}
+
 export {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
   createNotification,
+  createOutOfOrderStateTelemetry,
   createPlanFromJSON,
   createStableStateTelemetry,
   expandEntireTree,
+  expandInspectorPane,
+  expandTreePane,
   getCanvasPixels,
+  getDomainObject,
+  getNextSineValueFromSWG,
   linkParameterToObject,
   navigateToObjectWithFixedTimeBounds,
   navigateToObjectWithRealTime,
+  renameCurrentObjectFromBrowseBar,
   setEndOffset,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
   setRealTimeMode,
   setStartOffset,
   setTimeConductorBounds,
-  waitForPlotsToRender
+  waitForFormattedTelemetryValue,
+  waitForPlotsToRender,
+  waitForRawTelemetryValue
 };

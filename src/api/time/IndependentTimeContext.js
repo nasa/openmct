@@ -321,8 +321,19 @@ class IndependentTimeContext extends TimeContext {
       return this.upstreamTimeContext.setMode(...arguments);
     }
 
-    if (mode === MODES.realtime && this.activeClock === undefined) {
-      throw `Unknown clock. Has a clock been registered with 'addClock'?`;
+    if (mode === MODES.realtime) {
+      // TODO: This should probably happen up front in creating an independent time context
+      // TODO: not just in time every time setMode is called
+      if (this.activeClock === undefined) {
+        this.activeClock = this.globalTimeContext.getClock();
+        this.emit('clock', this.activeClock);
+        this.emit(TIME_CONTEXT_EVENTS.clockChanged, this.activeClock);
+        this.activeClock.on('tick', this.tick);
+      }
+
+      if (this.activeClock === undefined) {
+        throw `Unknown clock. Has a clock been registered with 'addClock'?`;
+      }
     }
 
     if (mode !== this.mode) {
@@ -356,6 +367,18 @@ class IndependentTimeContext extends TimeContext {
       return this.upstreamTimeContext.isRealTime(...arguments);
     } else {
       return super.isRealTime(...arguments);
+    }
+  }
+
+  /**
+   * @returns {boolean}
+   * @override
+   */
+  isFixed() {
+    if (this.upstreamTimeContext) {
+      return this.upstreamTimeContext.isFixed(...arguments);
+    } else {
+      return super.isFixed(...arguments);
     }
   }
 
@@ -400,7 +423,7 @@ class IndependentTimeContext extends TimeContext {
   }
 
   /**
-   * Reset the time context to the global time context
+   * Reset the time context from the global time context
    */
   resetContext() {
     if (this.upstreamTimeContext) {
@@ -428,6 +451,10 @@ class IndependentTimeContext extends TimeContext {
     // Emit bounds so that views that are changing context get the upstream bounds
     this.emit('bounds', this.getBounds());
     this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
+    // Also emit the mode in case it's different from previous time context
+    if (this.getMode()) {
+      this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
+    }
   }
 
   /**
@@ -502,6 +529,10 @@ class IndependentTimeContext extends TimeContext {
       // Emit bounds so that views that are changing context get the upstream bounds
       this.emit('bounds', this.getBounds());
       this.emit(TIME_CONTEXT_EVENTS.boundsChanged, this.getBounds());
+      // Also emit the mode in case it's different from the global time context
+      if (this.getMode()) {
+        this.emit(TIME_CONTEXT_EVENTS.modeChanged, this.#copy(this.getMode()));
+      }
       // now that the view's context is set, tell others to check theirs in case they were following this view's context.
       this.globalTimeContext.emit('refreshContext', viewKey);
     }

@@ -20,35 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import percySnapshot from '@percy/playwright';
-import fs from 'fs';
+/**
+ * @typedef {Object} TimeStripConfig configuration for Time Strip views
+ * @property {boolean} useIndependentTime true for independent time, false for global time
+ * @property {Array<import('./Container').default>} containers
+ * @property {number} swimLaneLabelWidth
+ */
 
-import { scanForA11yViolations, test } from '../../avpFixtures.js';
-import {
-  createTimelistWithPlanAndSetActivityInProgress,
-  getFirstActivity
-} from '../../helper/planningUtils.js';
-
-const examplePlanSmall1 = JSON.parse(
-  fs.readFileSync(new URL('../../test-data/examplePlans/ExamplePlan_Small1.json', import.meta.url))
-);
-
-const FIRST_ACTIVITY_SMALL_1 = getFirstActivity(examplePlanSmall1);
-
-test.describe('Visual - Timelist progress bar @clock @a11y', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.clock.install({ time: FIRST_ACTIVITY_SMALL_1.end + 10000 });
-    await page.clock.resume();
-    await createTimelistWithPlanAndSetActivityInProgress(page, examplePlanSmall1);
-    await page.getByLabel('Click to collapse items').click();
-  });
-
-  test('progress pie is full', async ({ page, theme }) => {
-    // Progress pie is completely full and doesn't update if now is greater than the end time
-    await percySnapshot(page, `Time List with Activity in Progress (theme: ${theme})`);
-  });
-});
-
-test.afterEach(async ({ page }, testInfo) => {
-  await scanForA11yViolations(page, testInfo.title);
-});
+/**
+ * @returns {TimeStripConfig} configuration
+ */
+export default function getDefaultConfiguration() {
+  return {
+    useIndependentTime: false,
+    containers: [],
+    swimLaneLabelWidth: 200
+  };
+}
