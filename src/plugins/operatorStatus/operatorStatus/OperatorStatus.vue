@@ -84,7 +84,6 @@ export default {
   },
   async mounted() {
     this.unsubscribe = [];
-    await this.fetchUser();
     this.fetchPossibleStatusesForUser();
     this.fetchCurrentPoll();
     await this.fetchMyStatus();
@@ -93,9 +92,6 @@ export default {
     this.subscribeToRoleChange();
   },
   methods: {
-    async fetchUser() {
-      this.user = await this.openmct.user.getCurrentUser();
-    },
     async fetchCurrentPoll() {
       const pollQuestion = await this.openmct.user.status.getPollQuestion();
       if (pollQuestion !== undefined) {
