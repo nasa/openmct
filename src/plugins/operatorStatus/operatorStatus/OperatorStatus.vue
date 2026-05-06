@@ -43,7 +43,7 @@
 </template>
 
 <script>
-const DEFAULT_POLL_QUESTION = 'NO POLL QUESTION';
+const DEFAULT_POLL_QUESTION = 'NO POLL';
 export default {
   inject: ['openmct', 'indicator', 'configuration'],
   props: {
