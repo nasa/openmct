@@ -29,7 +29,12 @@ export default class MCTChartSeriesElement {
     this.chart = chart;
     this.offset = offset;
     this.buffer = new Float32Array(20000);
+    // this is the vertex count (# of floating point numbers per point)
     this.count = 0;
+    // this is a pointer to the index in the full series data that was last in-range
+    this.lastIndexInRange = 0;
+    // this is the number of points we've added to the buffer (different from this.count)
+    this.numberOfPointsInBuffer = 0;
 
     eventHelpers.extend(this);
 
@@ -105,12 +110,34 @@ export default class MCTChartSeriesElement {
   }
 
   append(point, index, series) {
-    const pointsRequired = this.vertexCountForPointAtIndex(index);
-    const insertionPoint = this.startIndexForPointAtIndex(index);
+    // Check if the point is within the visual window (including edge points)
+    if (this.chart.pointIsInRange(point, series, index)) {
+      // If a point arrives that's being inserted in the middle of the buffer and not at the end, we need to reconstruct the buffer.
+      if (index !== undefined && index < this.lastIndexInRange) {
+        this.reset();
+        return;
+      }
+
+      // save the series index of the last point that was in-range
+      this.lastIndexInRange = index;
+
+      if (this.numberOfPointsInBuffer === 0 && index > 0) {
+        const previousPoint = series.getSeriesData()[index - 1];
+        this.appendToBuffer(previousPoint, series);
+      }
+
+      this.appendToBuffer(point, series);
+    }
+  }
+
+  appendToBuffer(point, series) {
+    const pointsRequired = this.vertexCountForPointAtIndex(this.numberOfPointsInBuffer);
+    const insertionPoint = this.startIndexForPointAtIndex(this.numberOfPointsInBuffer);
     this.growIfNeeded(pointsRequired);
     this.makeInsertionPoint(insertionPoint, pointsRequired);
     this.addPoint(this.makePoint(point, series), insertionPoint);
     this.count += pointsRequired / 2;
+    this.numberOfPointsInBuffer++;
   }
 
   makeInsertionPoint(insertionPoint, pointsRequired) {
@@ -131,7 +158,8 @@ export default class MCTChartSeriesElement {
   reset() {
     this.buffer = new Float32Array(20000);
     this.count = 0;
-    //TODO: Should we call resetYOffsetAndSeriesDataForYAxis here?
+    this.lastIndexInRange = 0;
+    this.numberOfPointsInBuffer = 0;
     if (this.offset.x) {
       this.series.getSeriesData().forEach(function (point, index) {
         this.append(point, index, this.series);

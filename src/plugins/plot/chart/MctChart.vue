@@ -266,7 +266,7 @@ export default {
     this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
     this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
 
-    this.listenTo(this.config.xAxis, 'change:displayRange', this.scheduleDraw);
+    this.listenTo(this.config.xAxis, 'change:displayRange', this.resetAllSeriesAndRedraw);
     this.listenTo(this.config.xAxis, 'change', this.redrawIfNotAlreadyHandled);
     this.config.series.forEach(this.onSeriesAdd, this);
     this.$emit('chart-loaded');
@@ -366,6 +366,11 @@ export default {
       this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     onAddPoint(point, insertIndex, series) {
+      if (this.pointIsInRange(point, series, insertIndex)) {
+        this.scheduleDraw();
+      }
+    },
+    pointIsInRange(point, series, index) {
       const mainYAxisId = this.config.yAxis.get('id');
       const seriesYAxisId = series.get('yAxisId');
       const xRange = this.config.xAxis.get('displayRange');
@@ -378,19 +383,40 @@ export default {
           .find((yAxis) => yAxis.get('id') === seriesYAxisId)
           .get('displayRange');
       }
-
       const xValue = series.getXVal(point);
       const yValue = series.getYVal(point);
-
       // if user is not looking at data within the current bounds, don't draw the point
-      if (
-        xValue > xRange.min &&
-        xValue < xRange.max &&
-        yValue > yRange.min &&
-        yValue < yRange.max
-      ) {
-        this.scheduleDraw();
+
+      const isInRange =
+        xValue >= xRange.min &&
+        xValue <= xRange.max &&
+        yValue >= yRange.min &&
+        yValue <= yRange.max;
+
+      if (isInRange) {
+        return true;
       }
+
+      // Include edge points for plot integrity (lines should continue to edge of plot)
+      // Only check if point is outside x range (y range doesn't affect this)
+      if (xValue < xRange.min || xValue > xRange.max) {
+        const seriesData = series.getSeriesData();
+
+        // Check before range, then after range
+        // Technically the `if` condition below won't be triggered since index < seriesData.length-1 will be false, but it's there for completeness.
+        // this condition is handled upstream
+        if (xValue < xRange.min && index < seriesData.length - 1) {
+          if (series.getXVal(seriesData[index + 1]) >= xRange.min) {
+            return true;
+          }
+        } else if (xValue > xRange.max && index > 0) {
+          if (series.getXVal(seriesData[index - 1]) <= xRange.max) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     },
     changeInterpolate(mode, o, series) {
       if (mode === o) {
@@ -451,6 +477,26 @@ export default {
 
       this.makeLimitLines(series);
       this.updateLimitLines();
+    },
+    resetAllSeriesAndRedraw() {
+      this.resetAllSeries();
+      this.scheduleDraw(true);
+    },
+    /**
+     * Called when the viewport changes (pan/zoom).
+     * Forces all series to clear buffers and re-filter data against the new range.
+     */
+    resetAllSeries() {
+      this.config.series.forEach((series) => {
+        const element = this.seriesElements.get(toRaw(series));
+        if (element) {
+          element.lines.forEach((line) => line.reset());
+          element.pointSets.forEach((pointSet) => pointSet.reset());
+          if (element.alarmSet) {
+            element.alarmSet.reset();
+          }
+        }
+      });
     },
     resetAxisAndRedraw(newYAxisId, oldYAxisId, series) {
       if (!oldYAxisId) {
