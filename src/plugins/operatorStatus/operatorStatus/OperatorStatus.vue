@@ -95,17 +95,20 @@ export default {
     async fetchCurrentPoll() {
       const pollQuestion = await this.openmct.user.status.getPollQuestion();
       if (pollQuestion !== undefined) {
-        this.setPollQuestion(pollQuestion);
+        await this.setPollQuestion(pollQuestion);
       }
     },
     async fetchPossibleStatusesForUser() {
       this.allStatuses = await this.openmct.user.status.getPossibleStatuses();
     },
-    setPollQuestion(pollQuestion) {
+    async setPollQuestion(pollQuestion) {
       this.currentPollQuestion = pollQuestion.question;
       this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
 
-      this.indicator.text(pollQuestion?.question || '');
+      const isStatusCapable = await this.openmct.user.canProvideStatusForRole();
+      if (isStatusCapable) {
+        this.indicator.text(pollQuestion?.question || '');
+      }
     },
     async fetchMyStatus() {
       // hide indicator for observer
