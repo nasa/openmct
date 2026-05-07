@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -19,8 +20,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 /* eslint-disable max-classes-per-file */
 export default function installWorker() {
+  const nowAtStart = performance.now();
+  const epoch = performance.timeOrigin;
+  console.log(`Now at start ${nowAtStart} epoch ${epoch}`);
+
   const ONE_SECOND = 1000;
   const FALLBACK_AND_WAIT_MS = [1000, 5000, 5000, 10000, 10000, 30000];
 
@@ -129,7 +135,7 @@ export default function installWorker() {
     }
 
     #message(event) {
-      this.#messageCallbacks.forEach((callback) => callback(event.data));
+      this.#messageCallbacks.forEach((callback) => callback(event));
     }
 
     disconnect() {
@@ -246,8 +252,9 @@ export default function installWorker() {
       this.#messageTimestamps = [];
     }
 
-    addMessageToBuffer(message) {
-      this.#messageBatch.push(message);
+    addMessageToBuffer(messageEvent) {
+      this.#messageBatch.push(messageEvent.data);
+      this.#messageTimestamps.push(messageEvent.timeStamp);
       this.#throttledSendNextBatch();
     }
 
@@ -256,12 +263,16 @@ export default function installWorker() {
     }
 
     #sendNextBatch() {
+      const messages = this.#messageBatch;
+      const timestamps = this.#messageTimestamps;
       this.#resetBatch();
+
       this.#worker.postMessage({
         type: 'batch',
+        epoch: epoch,
         batch: {
-          messages: this.#messageBatch,
-          timestamps: this.#messageTimestamps
+          messages,
+          timestamps
         }
       });
     }
@@ -301,8 +312,8 @@ export default function installWorker() {
   self.addEventListener('message', (message) => {
     workerBroker.routeMessageToHandler(message);
   });
-  websocket.registerMessageCallback((data) => {
-    messageBuffer.addMessageToBuffer(data);
+  websocket.registerMessageCallback((messageEvent) => {
+    messageBuffer.addMessageToBuffer(messageEvent);
   });
 
   self.websocketInstance = websocket;

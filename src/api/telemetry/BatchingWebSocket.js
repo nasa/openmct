@@ -161,6 +161,9 @@ class BatchingWebSocket extends EventTarget {
     }
 
     retainedMessages = retainedMessages.concat(messages.slice(i));
+    batch.messages = retainedMessages;
+
+    return batch;
   }
 
   #routeMessageToHandler(message) {
@@ -194,6 +197,7 @@ class BatchingWebSocket extends EventTarget {
       const droppedCount = batch.messages.length - messages.length;
 
       if (droppedCount > 0 && !this.#showingRateLimitNotification) {
+        console.log('Dropped!');
         const notification = this.#openmct.notifications.alert(
           'Telemetry dropped due to client rate limiting.',
           { hint: 'Refresh individual telemetry views to retrieve dropped telemetry if needed.' }
@@ -204,7 +208,7 @@ class BatchingWebSocket extends EventTarget {
         });
       }
 
-      this.dispatchEvent(new CustomEvent('batch', { detail: batch }));
+      this.dispatchEvent(new CustomEvent('batch', { detail: batch.messages }));
     } else if (message.data.type === 'message') {
       this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
     } else if (message.data.type === 'reconnected') {
