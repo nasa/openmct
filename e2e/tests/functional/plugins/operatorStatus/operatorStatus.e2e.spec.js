@@ -33,13 +33,11 @@ Precondition: Inject Example User, Operator Status Plugins
 Verify that user 1 sees updates from user/role 2 (Not possible without openmct-yamcs implementation)
 
 Clear Role Status of single user test
-STUB (test.fixme) Rolling through each
 
 */
 
 test.describe('Operator Status', () => {
   test.beforeEach(async ({ page }) => {
-    // FIXME: determine if plugins will be added to index.html or need to be injected
     await page.addInitScript({
       path: fileURLToPath(new URL('../../../../helper/addInitExampleUser.js', import.meta.url))
     });
@@ -60,8 +58,6 @@ test.describe('Operator Status', () => {
   test('operator status is visible and expands when clicked', async ({ page }) => {
     await expect(page.locator('div[title="Set my operator status"]')).toBeVisible();
     await page.locator('div[title="Set my operator status"]').click();
-
-    // expect default status to be 'GO'
     await expect(page.locator('.c-status-poll-panel')).toBeVisible();
   });
 
