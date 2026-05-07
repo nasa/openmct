@@ -24,7 +24,11 @@
     ref="timeConductorOptionsHolder"
     class="c-compact-tc"
     :class="[
-      isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode',
+      isFixedTimeMode
+        ? 'is-fixed-mode'
+        : independentTCEnabled
+          ? 'is-realtime-mode'
+          : 'is-fixed-mode',
       { 'is-expanded': independentTCEnabled }
     ]"
     aria-label="Independent Time Conductor Panel"
@@ -42,7 +46,6 @@
     <ConductorInputsFixed
       v-if="showFixedInputs"
       class="c-compact-tc__bounds--fixed"
-      :object-path="objectPath"
       :read-only="true"
       :compact="true"
     />
@@ -50,46 +53,34 @@
     <ConductorInputsRealtime
       v-if="showRealtimeInputs"
       class="c-compact-tc__bounds--real-time"
-      :object-path="objectPath"
       :read-only="true"
       :compact="true"
     />
-    <div
-      v-if="independentTCEnabled"
-      role="button"
-      class="c-not-button c-not-button--compact c-compact-tc__gear icon-gear"
-      aria-label="Independent Time Conductor Settings"
-    ></div>
 
     <ConductorPopUp
       v-if="showConductorPopup"
-      ref="conductorPopup"
-      :object-path="objectPath"
+      ref="conductorPopupComponent"
       :is-independent="true"
-      :time-options="timeOptions"
-      :is-fixed="isFixed"
       :bottom="true"
       :position-x="positionX"
       :position-y="positionY"
       @popup-loaded="initializePopup"
-      @independent-mode-updated="saveMode"
-      @independent-clock-updated="saveClock"
-      @fixed-bounds-updated="saveFixedBounds"
-      @clock-offsets-updated="saveClockOffsets"
       @dismiss="clearPopup"
     />
   </div>
 </template>
 
 <script>
+import { computed, inject, onBeforeMount, onBeforeUnmount, provide, ref, watch } from 'vue';
+
 import ConductorModeIcon from '@/plugins/timeConductor/ConductorModeIcon.vue';
 
-import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../../api/time/constants.js';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import ConductorInputsFixed from '../ConductorInputsFixed.vue';
 import ConductorInputsRealtime from '../ConductorInputsRealtime.vue';
 import ConductorPopUp from '../ConductorPopUp.vue';
-import independentTimeConductorPopUpManager from './independentTimeConductorPopUpManager.js';
+import { useTime } from '../useTime.js';
+import { useIndependentTimeConductorPopUp } from './useIndependentTimeConductorPopUp.js';
 
 export default {
   components: {
@@ -98,14 +89,6 @@ export default {
     ConductorInputsFixed,
     ConductorPopUp,
     ToggleSwitch
-  },
-  mixins: [independentTimeConductorPopUpManager],
-  inject: {
-    openmct: 'openmct',
-    configuration: {
-      from: 'configuration',
-      default: undefined
-    }
   },
   props: {
     domainObject: {
@@ -117,219 +100,265 @@ export default {
       required: true
     }
   },
-  emits: ['updated'],
-  data() {
-    const fixedOffsets = this.openmct.time.getBounds();
-    const clockOffsets = this.openmct.time.getClockOffsets();
-    const clock = this.openmct.time.getClock().key;
-    const mode = this.openmct.time.getMode();
-    const timeOptions = this.domainObject.configuration.timeOptions ?? {
-      clockOffsets,
-      fixedOffsets
-    };
+  setup(props) {
+    let unregisterIndependentTimeContext;
+    const timeConductorOptionsHolder = ref(null);
+    const conductorPopupComponent = ref(null);
+    const openmct = inject('openmct');
+    const configuration = openmct.layout?.conductorComponent?.provide?.configuration;
 
-    timeOptions.clock = timeOptions.clock ?? clock;
-    timeOptions.mode = timeOptions.mode ?? mode;
+    const keyString = ref(openmct.objects.makeKeyString(props.domainObject.identifier));
+    const independentTCEnabled = ref(props.domainObject.configuration?.useIndependentTime === true);
+    const timeOptions = ref(props.domainObject.configuration?.timeOptions);
 
-    // check for older configurations that stored a key
-    if (timeOptions.mode.key) {
-      timeOptions.mode = timeOptions.mode.key;
-    }
+    const {
+      timeContext,
+      timeSystemKey,
+      timeSystemFormatter,
+      timeSystemDurationFormatter,
+      isTimeSystemUTCBased,
+      timeMode,
+      isFixedTimeMode,
+      isRealTimeMode,
+      getAllModeMetadata,
+      getModeMetadata,
+      currentValue,
+      bounds,
+      isTick,
+      offsets,
+      clock,
+      getAllClockMetadata,
+      getClockMetadata
+    } = useTime(openmct, () => props.objectPath, configuration, timeOptions, independentTCEnabled);
 
-    const isFixed = timeOptions.mode === FIXED_MODE_KEY;
-
-    return {
-      timeOptions,
-      isFixed,
-      independentTCEnabled: this.domainObject.configuration.useIndependentTime === true,
-      viewBounds: {
-        start: fixedOffsets.start,
-        end: fixedOffsets.end
-      }
-    };
-  },
-  computed: {
-    toggleTitle() {
-      return `${this.independentTCEnabled ? 'Disable' : 'Enable'} Independent Time Conductor`;
-    },
-    showFixedInputs() {
-      return this.isFixed && this.independentTCEnabled;
-    },
-    showRealtimeInputs() {
-      return !this.isFixed && this.independentTCEnabled;
-    }
-  },
-  watch: {
-    domainObject: {
-      handler(domainObject) {
-        const key = this.openmct.objects.makeKeyString(domainObject.identifier);
-        if (key !== this.keyString) {
-          //domain object has changed
-          this.destroyIndependentTime();
-
-          this.independentTCEnabled = domainObject.configuration.useIndependentTime === true;
-          this.timeOptions = domainObject.configuration.timeOptions ?? {
-            clockOffsets: this.openmct.time.getClockOffsets(),
-            fixedOffsets: this.openmct.time.getBounds()
-          };
-
-          // these may not be set due to older configurations
-          this.timeOptions.clock = this.timeOptions.clock ?? this.openmct.time.getClock().key;
-          this.timeOptions.mode = this.timeOptions.mode ?? this.openmct.time.getMode();
-
-          // check for older configurations that stored a key
-          if (this.timeOptions.mode.key) {
-            this.timeOptions.mode = this.timeOptions.mode.key;
-          }
-
-          this.isFixed = this.timeOptions.mode === FIXED_MODE_KEY;
-
-          this.initialize();
-        }
-      },
-      deep: true
-    },
-    objectPath: {
-      handler(newPath, oldPath) {
-        //domain object or view has probably changed
-        this.setTimeContext();
-      },
-      deep: true
-    }
-  },
-  created() {
-    this.initialize();
-  },
-  beforeUnmount() {
-    this.stopFollowingTimeContext();
-    this.destroyIndependentTime();
-  },
-  methods: {
-    initialize() {
-      this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-      this.setTimeContext();
-
-      if (this.independentTCEnabled) {
-        this.registerIndependentTimeOffsets();
-      }
-    },
-    toggleIndependentTC() {
-      this.independentTCEnabled = !this.independentTCEnabled;
-
-      if (this.independentTCEnabled) {
-        this.registerIndependentTimeOffsets();
-      } else {
-        this.clearPopup();
-        this.destroyIndependentTime();
-      }
-
-      this.openmct.objects.mutate(
-        this.domainObject,
-        'configuration.useIndependentTime',
-        this.independentTCEnabled
+    const { positionX, positionY, showConductorPopup, initializePopup, clearPopup } =
+      useIndependentTimeConductorPopUp(
+        conductorPopupComponent,
+        timeConductorOptionsHolder,
+        independentTCEnabled
       );
-    },
-    setTimeContext() {
-      if (this.timeContext) {
-        this.stopFollowingTimeContext();
+
+    const toggleTitle = computed(() => {
+      return `${independentTCEnabled.value ? 'Disable' : 'Enable'} Independent Time Conductor`;
+    });
+    const showFixedInputs = computed(() => {
+      return isFixedTimeMode.value && independentTCEnabled.value;
+    });
+    const showRealtimeInputs = computed(() => {
+      return isRealTimeMode.value && independentTCEnabled.value;
+    });
+
+    function initialize() {
+      timeOptions.value = props.domainObject.configuration?.timeOptions;
+      if (independentTCEnabled.value) {
+        registerIndependentTimeContext();
       }
+    }
 
-      this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-      this.timeContext.on(TIME_CONTEXT_EVENTS.clockChanged, this.setTimeOptionsClock);
-      this.timeContext.on(TIME_CONTEXT_EVENTS.modeChanged, this.setTimeOptionsMode);
-    },
-    stopFollowingTimeContext() {
-      this.timeContext.off(TIME_CONTEXT_EVENTS.clockChanged, this.setTimeOptionsClock);
-      this.timeContext.off(TIME_CONTEXT_EVENTS.modeChanged, this.setTimeOptionsMode);
-    },
-    setTimeOptionsClock(clock) {
-      // If the user has persisted any time options, then don't override them with global settings.
-      if (this.independentTCEnabled) {
-        return;
-      }
-      this.setTimeOptionsOffsets();
-      this.timeOptions.clock = clock.key;
-    },
-    setTimeOptionsMode(mode) {
-      // If the user has persisted any time options, then don't override them with global settings.
-      if (this.independentTCEnabled) {
-        this.setTimeOptionsOffsets();
-        this.timeOptions.mode = mode;
-        this.isFixed = this.timeOptions.mode === FIXED_MODE_KEY;
-      }
-    },
-    setTimeOptionsOffsets() {
-      this.timeOptions.clockOffsets =
-        this.timeOptions.clockOffsets ?? this.timeContext.getClockOffsets();
-      this.timeOptions.fixedOffsets = this.timeOptions.fixedOffsets ?? this.timeContext.getBounds();
-    },
-    saveFixedBounds(bounds) {
-      const newOptions = this.updateTimeOptionProperty({
-        fixedOffsets: bounds
-      });
-      this.updateTimeOptions(newOptions);
-    },
-    saveClockOffsets(offsets) {
-      const newOptions = this.updateTimeOptionProperty({
-        clockOffsets: offsets
-      });
-
-      this.updateTimeOptions(newOptions);
-    },
-    saveMode(mode) {
-      this.isFixed = mode === FIXED_MODE_KEY;
-      const newOptions = this.updateTimeOptionProperty({
-        mode: mode
-      });
-
-      this.updateTimeOptions(newOptions);
-    },
-    saveClock(clock) {
-      const newOptions = this.updateTimeOptionProperty({
-        clock
-      });
-
-      this.updateTimeOptions(newOptions);
-    },
-    updateTimeOptions(options) {
-      this.timeOptions = options;
-
-      this.registerIndependentTimeOffsets();
-      this.$emit('updated', this.timeOptions); // no longer use this, but may be used elsewhere
-      this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', this.timeOptions);
-    },
-    registerIndependentTimeOffsets() {
-      const timeContext = this.openmct.time.getIndependentContext(this.keyString);
-      let offsets;
-
-      if (this.isFixed) {
-        offsets = this.timeOptions.fixedOffsets ?? this.timeContext.getBounds();
+    function handleIndependentTimeConductorChange() {
+      if (independentTCEnabled.value) {
+        registerIndependentTimeContext();
       } else {
-        offsets = this.timeOptions.clockOffsets ?? this.openmct.time.getClockOffsets();
+        clearPopup();
+        unregisterIndependentTimeContext?.();
+        unregisterIndependentTimeContext = null;
+      }
+    }
+
+    function registerIndependentTimeContext() {
+      let shouldUpdateTimeOptions = false;
+
+      if (timeOptions.value === undefined) {
+        timeOptions.value = {};
+        shouldUpdateTimeOptions = true;
       }
 
-      if (!timeContext.hasOwnContext()) {
-        this.unregisterIndependentTime = this.openmct.time.addIndependentContext(
-          this.keyString,
-          offsets,
-          this.isFixed ? undefined : this.timeOptions.clock
+      if (timeOptions.value.fixedOffsets === undefined) {
+        timeOptions.value.fixedOffsets = bounds.value;
+        shouldUpdateTimeOptions = true;
+      }
+
+      if (timeOptions.value.clockOffsets === undefined) {
+        timeOptions.value.clockOffsets = offsets.value;
+        shouldUpdateTimeOptions = true;
+      }
+
+      if (timeOptions.value.mode === undefined) {
+        timeOptions.value.mode = timeMode.value;
+        shouldUpdateTimeOptions = true;
+
+        // check for older configurations that stored a key
+        if (timeOptions.value.mode.key) {
+          timeOptions.value.mode = timeOptions.value.mode.key;
+        }
+      }
+
+      if (timeOptions.value.clock === undefined && timeOptions.value.mode === 'realtime') {
+        timeOptions.value.clock = clock.value.key;
+        shouldUpdateTimeOptions = true;
+      }
+
+      if (timeOptions.value.clock !== undefined && timeOptions.value.mode === 'fixed') {
+        timeOptions.value.clock = undefined;
+        shouldUpdateTimeOptions = true;
+      }
+
+      if (shouldUpdateTimeOptions) {
+        updateTimeOptions();
+      }
+
+      const _isFixedTimeMode = timeOptions.value.mode === 'fixed';
+      const independentTimeContextBoundsOrOffsets = _isFixedTimeMode
+        ? timeOptions.value.fixedOffsets
+        : timeOptions.value.clockOffsets;
+
+      const independentTimeContext = openmct.time.getIndependentContext(keyString.value);
+
+      if (!independentTimeContext.hasOwnContext()) {
+        unregisterIndependentTimeContext = openmct.time.addIndependentContext(
+          keyString.value,
+          independentTimeContextBoundsOrOffsets,
+          timeOptions.value.clock
         );
       } else {
-        if (!this.isFixed) {
-          timeContext.setClock(this.timeOptions.clock);
+        if (!_isFixedTimeMode) {
+          independentTimeContext.setClock(timeOptions.value.clock);
         }
-
-        timeContext.setMode(this.timeOptions.mode, offsets);
+        independentTimeContext.setMode(
+          timeOptions.value.mode,
+          independentTimeContextBoundsOrOffsets
+        );
       }
-    },
-    destroyIndependentTime() {
-      if (this.unregisterIndependentTime) {
-        this.unregisterIndependentTime();
-      }
-    },
-    updateTimeOptionProperty(option) {
-      return Object.assign({}, this.timeOptions, option);
     }
+
+    function toggleIndependentTC() {
+      independentTCEnabled.value = !independentTCEnabled.value;
+
+      openmct.objects.mutate(
+        props.domainObject,
+        'configuration.useIndependentTime',
+        independentTCEnabled.value
+      );
+    }
+
+    function saveFixedBounds() {
+      timeOptions.value.fixedOffsets = bounds.value;
+      updateTimeOptions();
+    }
+
+    function saveClockOffsets() {
+      timeOptions.value.clockOffsets = offsets.value;
+      updateTimeOptions();
+    }
+
+    function saveMode() {
+      timeOptions.value.mode = timeMode.value;
+      updateTimeOptions();
+    }
+
+    function saveClock() {
+      timeOptions.value.clock = clock.value.key;
+      updateTimeOptions();
+    }
+
+    function updateTimeOptions() {
+      openmct.objects.mutate(props.domainObject, 'configuration.timeOptions', timeOptions.value);
+    }
+
+    onBeforeMount(() => {
+      initialize();
+    });
+
+    onBeforeUnmount(() => {
+      unregisterIndependentTimeContext?.();
+      unregisterIndependentTimeContext = null;
+    });
+
+    watch(independentTCEnabled, () => {
+      handleIndependentTimeConductorChange();
+    });
+
+    watch(timeContext, () => {
+      const _keyString = openmct.objects.makeKeyString(props.domainObject.identifier);
+
+      if (_keyString !== keyString.value) {
+        // domain object in object view has changed (via tree navigation)
+        unregisterIndependentTimeContext?.();
+        unregisterIndependentTimeContext = null;
+        keyString.value = _keyString;
+        independentTCEnabled.value = props.domainObject.configuration.useIndependentTime === true;
+
+        initialize();
+      }
+    });
+
+    watch(clock, () => {
+      if (independentTCEnabled.value) {
+        saveClock();
+      }
+    });
+
+    watch(timeMode, () => {
+      if (independentTCEnabled.value && timeMode.value) {
+        saveMode();
+      }
+    });
+
+    watch(offsets, () => {
+      if (independentTCEnabled.value) {
+        saveClockOffsets();
+      }
+    });
+
+    watch(bounds, () => {
+      if (independentTCEnabled.value && isTick.value === false && isFixedTimeMode.value === true) {
+        saveFixedBounds();
+      }
+    });
+
+    provide('timeContext', timeContext);
+    provide('timeSystemKey', timeSystemKey);
+    provide('timeSystemFormatter', timeSystemFormatter);
+    provide('timeSystemDurationFormatter', timeSystemDurationFormatter);
+    provide('isTimeSystemUTCBased', isTimeSystemUTCBased);
+    provide('timeMode', timeMode);
+    provide('isFixedTimeMode', isFixedTimeMode);
+    provide('isRealTimeMode', isRealTimeMode);
+    provide('getAllModeMetadata', getAllModeMetadata);
+    provide('getModeMetadata', getModeMetadata);
+    provide('currentValue', currentValue);
+    provide('bounds', bounds);
+    provide('isTick', isTick);
+    provide('offsets', offsets);
+    provide('clock', clock);
+    provide('getAllClockMetadata', getAllClockMetadata);
+    provide('getClockMetadata', getClockMetadata);
+
+    return {
+      toggleTitle,
+      toggleIndependentTC,
+      showFixedInputs,
+      showRealtimeInputs,
+      keyString,
+      independentTCEnabled,
+      openmct,
+      timeContext,
+      timeMode,
+      clock,
+      timeSystemFormatter,
+      isFixedTimeMode,
+      isRealTimeMode,
+      bounds,
+      isTick,
+      offsets,
+      timeConductorOptionsHolder,
+      conductorPopupComponent,
+      positionX,
+      positionY,
+      showConductorPopup,
+      initializePopup,
+      clearPopup
+    };
   }
 };
 </script>

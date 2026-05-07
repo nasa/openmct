@@ -52,6 +52,7 @@
             v-show="gridLines && !options.compact"
             :axis-type="'xAxis'"
             :position="'right'"
+            :is-utc="isUtc"
           />
 
           <MctTicks
@@ -295,7 +296,8 @@ export default {
       yAxes: [],
       hiddenYAxisIds: [],
       yAxisListWithRange: [],
-      config: {}
+      config: {},
+      isUtc: this.openmct.time.getTimeSystem().isUTCBased
     };
   },
   computed: {
@@ -542,12 +544,14 @@ export default {
       this.updateMode();
       this.updateDisplayBounds(this.timeContext.getBounds());
       this.timeContext.on('modeChanged', this.updateMode);
+      this.timeContext.on('timeSystemChanged', this.setUtc);
       this.timeContext.on('boundsChanged', this.updateDisplayBounds);
       this.synchronized(true);
     },
     stopFollowingTimeContext() {
       if (this.timeContext) {
         this.timeContext.off('modeChanged', this.updateMode);
+        this.timeContext.off('timeSystemChanged', this.setUtc);
         this.timeContext.off('boundsChanged', this.updateDisplayBounds);
       }
     },
@@ -737,6 +741,21 @@ export default {
         );
       });
     },
+    plotCompositionContainsId(domainObjectToFind) {
+      if (!this.domainObject.composition) {
+        return false;
+      }
+      if (!domainObjectToFind.identifier) {
+        return false;
+      }
+
+      return this.domainObject.composition.some((compositionIdentifier) => {
+        return this.openmct.objects.areIdsEqual(
+          compositionIdentifier,
+          domainObjectToFind.identifier
+        );
+      });
+    },
 
     clearData(domainObjectToClear) {
       // If we don't have an object to clear (global), or the IDs are equal, just clear the data.
@@ -750,7 +769,8 @@ export default {
           domainObjectToClear.identifier,
           this.domainObject.identifier
         ) ||
-        this.compositionPathContainsId(domainObjectToClear)
+        this.compositionPathContainsId(domainObjectToClear) ||
+        this.plotCompositionContainsId(domainObjectToClear)
       ) {
         this.clearSeries();
       }
@@ -766,6 +786,10 @@ export default {
     },
     updateMode() {
       this.isRealTime = this.timeContext.isRealTime();
+    },
+
+    setUtc(timeSystem) {
+      this.isUtc = timeSystem.isUTCBased;
     },
 
     /**

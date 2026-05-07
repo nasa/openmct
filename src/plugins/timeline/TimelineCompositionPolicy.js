@@ -28,7 +28,9 @@ const ALLOWED_TYPES = [
   'eventGenerator',
   'eventGeneratorWithAcknowledge',
   'yamcs.events',
-  'yamcs.event.specific.severity',
+  'yamcs.events.severity',
+  'yamcs.events.source',
+  'yamcs.events.source.severity',
   'yamcs.commands',
   'yamcs.commands.queue'
 ];
@@ -46,6 +48,12 @@ export default function TimelineCompositionPolicy(openmct) {
     allow: function (parent, child) {
       if (parent.type === 'time-strip') {
         const metadata = openmct.telemetry.getMetadata(child);
+
+        if (child.type === 'yamcs.event.specific.severity') {
+          console.warn(
+            'Type yamcs.event.specific.severity is deprecated. Use yamcs.events.source.severity.'
+          );
+        }
 
         if (
           !DISALLOWED_TYPES.includes(child.type) &&

@@ -53,7 +53,8 @@ test.describe('Grand Search @a11y', () => {
     theme
   }) => {
     // Navigate to display layout
-    await page.goto(displayLayout.url, { waitUntil: 'networkidle' });
+    await page.goto(displayLayout.url);
+    await expect(page.getByLabel('Browse bar object name')).toHaveText(displayLayout.name);
 
     // Search for the object
     await page.getByRole('searchbox', { name: 'Search Input' }).click();

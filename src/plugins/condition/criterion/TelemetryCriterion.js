@@ -125,7 +125,9 @@ export default class TelemetryCriterion extends EventEmitter {
       this.stalenessUtils.shouldUpdateStaleness(stalenessResponse)
     ) {
       this.result = stalenessResponse.isStale;
-      this.emitEvent('telemetryStaleness');
+      this.setLastUpdatedTime(this.stalenessUtils.lastStalenessResponseTime);
+      this.setLastUpdatedTimeSystem(this.stalenessUtils.lastStalenessTimeSystem);
+      this.emitEvent('telemetryStaleness', this);
     }
   }
 
@@ -158,6 +160,10 @@ export default class TelemetryCriterion extends EventEmitter {
   }
 
   createNormalizedDatum(telemetryDatum, endpoint) {
+    if (!telemetryDatum) {
+      return;
+    }
+
     const id = this.openmct.objects.makeKeyString(endpoint.identifier);
     const metadata = this.openmct.telemetry.getMetadata(endpoint).valueMetadatas;
     const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
@@ -362,5 +368,21 @@ export default class TelemetryCriterion extends EventEmitter {
     if (this.unsubscribeFromStaleness) {
       this.unsubscribeFromStaleness();
     }
+  }
+
+  getLastUpdatedTime() {
+    return this.#lastUpdated;
+  }
+
+  setLastUpdatedTime(lastUpdatedTime) {
+    this.#lastUpdated = lastUpdatedTime;
+  }
+
+  getLastUpdatedTimeSystem() {
+    return this.#lastTimeSystem;
+  }
+
+  setLastUpdatedTimeSystem(lastTimeSystem) {
+    this.#lastTimeSystem = lastTimeSystem;
   }
 }

@@ -62,3 +62,5 @@ export const ERROR = {
 
 export const IS_OLD_KEY = 'isStale';
 export const IS_STALE_KEY = 'isStale.new';
+
+export const TELEMETRY_VALUE = 'telemetry value';

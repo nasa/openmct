@@ -26,19 +26,20 @@ class StalenessUtils {
     this.domainObject = domainObject;
     this.metadata = this.openmct.telemetry.getMetadata(domainObject);
     this.lastStalenessResponseTime = 0;
+    this.lastStalenessTimeSystem = undefined;
 
     this.setTimeSystem(this.openmct.time.getTimeSystem());
     this.watchTimeSystem();
-    this.timeSystemKey = null;
   }
 
   shouldUpdateStaleness(stalenessResponse, id) {
     const stalenessResponseTime = this.parseTime(stalenessResponse);
-    const { start } = this.openmct.time.getBounds();
-    const isStalenessInCurrentClock = stalenessResponseTime > start;
 
-    if (stalenessResponseTime > this.lastStalenessResponseTime && isStalenessInCurrentClock) {
+    // Accept latest staleness updates from staleness provider,
+    // regardless of whether the update occurred within time conductor bounds.
+    if (stalenessResponseTime > this.lastStalenessResponseTime) {
       this.lastStalenessResponseTime = stalenessResponseTime;
+      this.lastStalenessTimeSystem = this.getTimeSystem();
 
       return true;
     } else {
@@ -56,6 +57,10 @@ class StalenessUtils {
 
   setTimeSystem(timeSystem) {
     this.timeSystem = timeSystem;
+  }
+
+  getTimeSystem() {
+    return this.timeSystem;
   }
 
   parseTime(stalenessResponse) {

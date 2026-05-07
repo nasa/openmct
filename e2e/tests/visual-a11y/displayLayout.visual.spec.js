@@ -25,6 +25,7 @@ import percySnapshot from '@percy/playwright';
 import {
   createDomainObjectWithDefaults,
   createStableStateTelemetry,
+  expandInspectorPane,
   linkParameterToObject
 } from '../../appActions.js';
 import { MISSION_TIME, VISUAL_FIXED_URL } from '../../constants.js';
@@ -105,7 +106,7 @@ test.describe('Visual - Display Layout @clock', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/7036'
     });
-    await page.getByLabel('Expand Inspect Pane').click();
+    await expandInspectorPane(page);
     await page.getByLabel('Resize Inspect Pane').dragTo(page.getByLabel('X:'));
     await page.getByRole('tab', { name: 'Elements' }).click();
     await percySnapshot(page, `Toolbar does not overflow into inspector (theme: '${theme}')`);

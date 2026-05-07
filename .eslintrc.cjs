@@ -14,7 +14,8 @@ const config = {
     __OPENMCT_VERSION__: 'readonly',
     __OPENMCT_BUILD_DATE__: 'readonly',
     __OPENMCT_REVISION__: 'readonly',
-    __OPENMCT_BUILD_BRANCH__: 'readonly'
+    __OPENMCT_BUILD_BRANCH__: 'readonly',
+    __OPENMCT_ROOT_RELATIVE__: 'readonly'
   },
   plugins: ['prettier', 'unicorn', 'simple-import-sort'],
   extends: [

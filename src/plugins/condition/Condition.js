@@ -81,7 +81,6 @@ export default class Condition extends EventEmitter {
 
   updateResult(latestDataTable, telemetryIdThatChanged) {
     if (!latestDataTable) {
-      console.log('no data received');
       return;
     }
 
@@ -180,7 +179,7 @@ export default class Condition extends EventEmitter {
 
     criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
     criterion.on('telemetryIsOld', (obj) => this.handleOldTelemetryCriterion(obj));
-    criterion.on('telemetryStaleness', () => this.handleTelemetryStaleness());
+    criterion.on('telemetryStaleness', (obj) => this.handleTelemetryStaleness(obj));
     if (!this.criteria) {
       this.criteria = [];
     }
@@ -251,6 +250,7 @@ export default class Condition extends EventEmitter {
       this.criteria.map((criterion) => criterion.result),
       this.trigger
     );
+
     let latestTimestamp = {};
     latestTimestamp = getLatestTimestamp(
       latestTimestamp,
@@ -258,15 +258,37 @@ export default class Condition extends EventEmitter {
       this.timeSystems,
       this.openmct.time.getTimeSystem()
     );
-    this.conditionManager.updateCurrentCondition(latestTimestamp, this);
+
+    // Find the criterion that triggered this event
+    const triggeringCriterion = this.criteria.find(
+      (criterion) => criterion.id === updatedCriterion.id
+    );
+
+    // Extract telemetry object from the criterion
+    const telemetryObject = triggeringCriterion?.telemetryObject;
+
+    // Pass the telemetry object and data to the condition manager
+    this.conditionManager.updateCurrentCondition(
+      latestTimestamp,
+      telemetryObject,
+      updatedCriterion.data
+    );
   }
 
-  handleTelemetryStaleness() {
+  handleTelemetryStaleness(updatedCriterion) {
     this.result = evaluateResults(
       this.criteria.map((criterion) => criterion.result),
       this.trigger
     );
-    this.conditionManager.updateCurrentCondition();
+    if (this.result === true) {
+      const lastTimeStamp = updatedCriterion.data.getLastUpdatedTime();
+      const lastTimeSystem = updatedCriterion.data.getLastUpdatedTimeSystem().key;
+      const timestampObject = {};
+
+      timestampObject[lastTimeSystem] = lastTimeStamp;
+
+      this.conditionManager.updateCurrentCondition(timestampObject, this);
+    }
   }
 
   updateDescription() {

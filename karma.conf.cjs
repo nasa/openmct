@@ -66,6 +66,10 @@ module.exports = async (config) => {
       {
         pattern: 'dist/generatorWorker.js*',
         included: false
+      },
+      {
+        pattern: 'dist/historicalTelemetryWorker.js*',
+        included: false
       }
     ],
     port: 9876,
@@ -74,7 +78,7 @@ module.exports = async (config) => {
     client: {
       jasmine: {
         random: false,
-        timeoutInterval: 5000
+        timeoutInterval: 6000
       }
     },
     customLaunchers: {

@@ -28,7 +28,9 @@ import ConflictError from './ConflictError.js';
 import InMemorySearchProvider from './InMemorySearchProvider.js';
 import InterceptorRegistry from './InterceptorRegistry.js';
 import MutableDomainObject from './MutableDomainObject.js';
+import NamespaceProvider from './NamespaceProvider.js';
 import { isIdentifier, isKeyString } from './object-utils.js';
+import RootObjectCompositionProvider from './RootObjectCompositionProvider.js';
 import RootObjectProvider from './RootObjectProvider.js';
 import RootRegistry from './RootRegistry.js';
 import Transaction from './Transaction.js';
@@ -88,11 +90,13 @@ export default class ObjectAPI {
       TAGS: 'TAGS'
     });
     this.eventEmitter = new EventEmitter();
-    this.providers = {};
+    this.providers = [];
     this.rootRegistry = new RootRegistry(openmct);
     this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
+    openmct.composition.addProvider(new RootObjectCompositionProvider(openmct, this.rootRegistry));
+
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
@@ -120,7 +124,23 @@ export default class ObjectAPI {
       return this.rootProvider;
     }
 
-    return this.providers[identifier.namespace] || this.fallbackProvider;
+    const provider = this.providers.find((candidateProvider) => {
+      return candidateProvider.appliesTo(identifier);
+    });
+
+    if (provider?.getWrappedProvider && typeof provider.getWrappedProvider === 'function') {
+      return provider.getWrappedProvider();
+    } else {
+      return provider || this.fallbackProvider;
+    }
+  }
+
+  /**
+   * Get the root registry
+   * @returns {RootRegistry} the root registry
+   */
+  getRootRegistry() {
+    return this.rootRegistry;
   }
 
   /**
@@ -142,11 +162,33 @@ export default class ObjectAPI {
   /**
    * Register a new object provider for a particular namespace.
    *
-   * @param {string} namespace the namespace for which to provide objects
-   * @param {ObjectProvider} provider the provider which will handle loading domain objects from this namespace
+   * @param {string|ObjectProvider} namespaceOrProvider Either a namespace or a provider. In the case of a namespace, a provider must be provided as the second argument
+   * @param {ObjectProvider} [providerOrNothing] the provider which will handle loading domain objects from the provided namespace (required when first argument is a namespace)
    */
-  addProvider(namespace, provider) {
-    this.providers[namespace] = provider;
+  addProvider(namespaceOrProvider, providerOrNothing) {
+    let namespace;
+    let provider;
+
+    // if no namespace is provided, we expect a provider to be provided
+    if (arguments.length === 1) {
+      if (
+        namespaceOrProvider !== undefined &&
+        typeof namespaceOrProvider.appliesTo === 'function'
+      ) {
+        provider = namespaceOrProvider;
+      } else {
+        throw new Error('If no namespace is defined, provider must have an appliesTo function');
+      }
+    }
+
+    // if a namespace is provided, we expect a provider to be provided
+    if (arguments.length === 2) {
+      namespace = namespaceOrProvider;
+      provider = new NamespaceProvider(namespace, providerOrNothing);
+    }
+
+    //Unshift rather than push because we want to last added provider to match first. This is to replicate legacy map behavior
+    this.providers.unshift(provider);
   }
 
   /**
@@ -242,7 +284,7 @@ export default class ObjectAPI {
       throw new Error(`Unknown search type: ${searchType}`);
     }
 
-    const searchPromises = Object.values(this.providers)
+    const searchPromises = this.providers
       .filter((provider) => {
         return provider.supportsSearchType !== undefined && provider.supportsSearchType(searchType);
       })
@@ -455,6 +497,10 @@ export default class ObjectAPI {
    */
   addRoot(identifier, priority) {
     this.rootRegistry.addRoot(identifier, priority);
+  }
+
+  removeRoot(identifier) {
+    this.rootRegistry.removeRoot(identifier);
   }
 
   /**

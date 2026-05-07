@@ -201,7 +201,7 @@ test.describe('Stacked Plot styling @a11y', () => {
     // Save Flexible Layout
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
+    await page.getByRole('tab', { name: 'Styles' }).click();
     await percySnapshot(page, `Saved Styled StackedPlot (theme: '${theme}')`);
   });
   test.afterEach(async ({ page }, testInfo) => {

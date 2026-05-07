@@ -24,12 +24,9 @@
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
       <button
         aria-label="Time Conductor History"
-        class="c-button--menu c-history-button icon-history"
-        :class="buttonCssClass"
+        class="c-button--minor c-history-button icon-history c-icon-button"
         @click.prevent.stop="showHistoryMenu"
-      >
-        <span class="c-button__label">History</span>
-      </button>
+      />
     </div>
   </div>
 </template>
@@ -47,23 +44,14 @@ import UTCTimeFormat from '../utcTimeSystem/UTCTimeFormat.js';
 
 export default {
   inject: ['openmct', 'configuration'],
-  props: {
-    buttonCssClass: {
-      type: String,
-      required: false,
-      default() {
-        return '';
-      }
-    }
-  },
   data() {
     const mode = this.openmct.time.getMode();
 
     return {
       /**
-       * previous bounds entries available for easy re-use
+       * previous offsets entries available for easy re-use
        * @realtimeHistory array of timespans
-       * @timespans {start, end} number representing timestamp
+       * @timespans {start, end} number representing offset
        */
       realtimeHistory: {},
       /**
@@ -71,9 +59,9 @@ export default {
        * @fixedHistory array of timespans
        * @timespans {start, end} number representing timestamp
        */
+      fixedHistory: {},
       mode,
       currentHistory: mode + 'History',
-      fixedHistory: {},
       presets: [],
       timeSystem: this.openmct.time.getTimeSystem(),
       isFixed: this.openmct.time.isFixed()
@@ -201,8 +189,8 @@ export default {
       );
       currentHistory.unshift(timespan); // add to front
 
-      if (currentHistory.length > this.MAX_RECORDS_LENGTH) {
-        currentHistory.length = this.MAX_RECORDS_LENGTH;
+      if (currentHistory.length > this.maxRecords) {
+        currentHistory.length = this.maxRecords;
       }
 
       this[this.currentHistory][key] = currentHistory;
@@ -225,14 +213,14 @@ export default {
       });
     },
     loadConfiguration() {
+      this.presets = this.getPresets();
+      this.maxRecords = this.getMaxRecords();
+    },
+    getPresets() {
       const configurations = this.configuration.menuOptions.filter(
         (option) => option.timeSystem === this.timeSystem.key
       );
 
-      this.presets = this.loadPresets(configurations);
-      this.MAX_RECORDS_LENGTH = this.loadRecords(configurations);
-    },
-    loadPresets(configurations) {
       const configuration = configurations.find((option) => {
         return option.presets && option.name.toLowerCase() === this.mode;
       });
@@ -240,11 +228,21 @@ export default {
 
       return presets;
     },
-    loadRecords(configurations) {
-      const configuration = configurations.find((option) => option.records);
-      const maxRecordsLength = configuration ? configuration.records : DEFAULT_RECORDS_LENGTH;
+    getMaxRecords() {
+      let maxRecords = this.configuration.records;
 
-      return maxRecordsLength;
+      if (maxRecords === undefined) {
+        const configurations = this.configuration.menuOptions.filter(
+          (option) => option.timeSystem === this.timeSystem.key
+        );
+
+        const deprecatedUsageOfRecordsDefinedInSpecificMenuOption = configurations.find(
+          (option) => option.records
+        );
+        maxRecords = deprecatedUsageOfRecordsDefinedInSpecificMenuOption?.records;
+      }
+
+      return maxRecords ?? DEFAULT_RECORDS_LENGTH;
     },
     formatTime(time, utcDateFormat) {
       let format = this.timeSystem.timeFormat;

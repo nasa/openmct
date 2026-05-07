@@ -88,6 +88,10 @@ export default class TelemetryAPI {
     return SUBSCRIBE_STRATEGY;
   }
 
+  /**
+   *
+   * @param {import('../../MCT.js').MCT} openmct
+   */
   constructor(openmct) {
     this.openmct = openmct;
 
@@ -239,6 +243,7 @@ export default class TelemetryAPI {
       options.domain = options.timeContext.getTimeSystem().key;
     }
 
+    // if no specific start/end bounds are passed, use the timeContext bounds
     if (!Object.hasOwn(options, 'start')) {
       options.start = options.timeContext.getBounds().start;
     }
@@ -765,6 +770,9 @@ export default class TelemetryAPI {
 
   /**
    * @private
+   * @param {import('openmct').DomainObject} domainObject the object
+   *        which has associated telemetry staleness
+   * @returns {StalenessProvider | undefined}
    */
   #findStalenessProvider(domainObject) {
     return this.stalenessProviders.find((provider) => {
@@ -792,6 +800,15 @@ export default class TelemetryAPI {
     }
 
     return this.metadataCache.get(domainObject);
+  }
+
+  /**
+   * Remove a domain object from the telemetry metadata cache.
+   * @param {import('openmct').DomainObject} domainObject
+   */
+
+  removeMetadataFromCache(domainObject) {
+    this.metadataCache.delete(domainObject);
   }
 
   /**

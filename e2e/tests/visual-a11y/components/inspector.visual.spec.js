@@ -22,6 +22,7 @@
 
 import percySnapshot from '@percy/playwright';
 
+import { expandInspectorPane } from '../../../appActions.js';
 import { scanForA11yViolations, test } from '../../../avpFixtures.js';
 import { MISSION_TIME, VISUAL_FIXED_URL } from '../../../constants.js';
 
@@ -44,8 +45,7 @@ test.describe('Visual - Inspector @ally @clock', () => {
     await page.getByRole('gridcell', { name: 'Overlay Plot with 5s Delay' }).click();
 
     //Expand the Inspector Pane
-    await page.getByRole('button', { name: 'Inspect' }).click();
-
+    await expandInspectorPane(page);
     await percySnapshot(page, `Inspector view of overlayPlot (theme: ${theme})`, {
       scope: inspectorPane
     });

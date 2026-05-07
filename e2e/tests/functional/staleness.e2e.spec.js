@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2025, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,43 +20,71 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { fileURLToPath } from 'url';
+
 import { createDomainObjectWithDefaults, navigateToObjectWithRealTime } from '../../appActions.js';
 import { expect, test } from '../../pluginFixtures.js';
 
-test.describe('Staleness', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-  });
+test.describe('Staleness with Controlled Clock @clock', () => {
+  test.describe('Using ExampleStalenessProvider in realtime mode', () => {
+    let objectView;
+    let stateGenerator;
 
-  test('Does not show staleness after navigating from a stale object', async ({ page }) => {
-    const staleSWG = await createDomainObjectWithDefaults(page, {
-      type: 'Sine Wave Generator',
-      name: 'SWG'
+    test.beforeEach(async ({ page }) => {
+      objectView = page.getByLabel('Object View');
+
+      await page.addInitScript({
+        path: fileURLToPath(
+          new URL('../../helper/addInitExampleStalenessProvider.js', import.meta.url)
+        )
+      });
+
+      // Go to baseURL
+      await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+      // Create a state generator object, since it can have sparse data
+      stateGenerator = await createDomainObjectWithDefaults(page, {
+        type: 'State Generator',
+        name: 'Test State Generator'
+      });
+
+      await navigateToObjectWithRealTime(page, stateGenerator.url);
     });
 
-    // edit properties and enable staleness updates
-    await page.getByLabel('More actions').click();
-    await page.getByLabel('Edit properties...').click();
-    await page.getByLabel('Provide Staleness Updates', { exact: true }).click();
-    await page.getByLabel('Save').click();
+    test('indicates when telemetry is stale and clears staleness when telemetry is not stale', async ({
+      page
+    }) => {
+      // Wait until telemetry goes stale
+      await page.evaluate(async (sg) => {
+        const openmct = window.openmct;
+        const domainObject = await openmct.objects.get(sg.uuid);
+        return new Promise((resolve) => {
+          openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+            if (stalenessResponse.isStale) {
+              resolve();
+            }
+          });
+        });
+      }, stateGenerator);
 
-    const folder = await createDomainObjectWithDefaults(page, {
-      type: 'Folder',
-      name: 'Folder 1'
+      // Verify that the object view has the is-stale class
+      await expect(objectView).toHaveClass(/is-stale/);
+
+      // Wait until telemetry goes fresh
+      await page.evaluate(async (sg) => {
+        const openmct = window.openmct;
+        const domainObject = await openmct.objects.get(sg.uuid);
+        return new Promise((resolve) => {
+          openmct.telemetry.subscribeToStaleness(domainObject, (stalenessResponse) => {
+            if (!stalenessResponse.isStale) {
+              resolve();
+            }
+          });
+        });
+      }, stateGenerator);
+
+      // Verify that the object view does not have the is-stale class
+      await expect(objectView).not.toHaveClass(/is-stale/);
     });
-
-    // Navigate to the stale object
-    await navigateToObjectWithRealTime(page, staleSWG.url);
-
-    // Assert that staleness is shown
-    await expect(page.getByLabel('Object View')).toHaveClass(/is-stale/, {
-      timeout: 30 * 1000 // Give 30 seconds for the staleness to be updated
-    });
-
-    // Immediately navigate to the folder
-    await page.goto(folder.url);
-
-    // Verify that staleness is not shown
-    await expect(page.getByLabel('Object View')).not.toHaveClass(/is-stale/);
   });
 });
