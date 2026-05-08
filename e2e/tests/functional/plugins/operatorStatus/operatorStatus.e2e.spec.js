@@ -37,138 +37,157 @@ Clear Role Status of single user test
 */
 
 test.describe('Operator Status', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.addInitScript({
-      path: fileURLToPath(
-        new URL('../../../../helper/addInitExampleUserMultipleRoles.js', import.meta.url)
-      )
+  test.describe('as user with status and poll permissions', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript({
+        path: fileURLToPath(
+          new URL('../../../../helper/addInitExampleUserMultipleRoles.js', import.meta.url)
+        )
+      });
+      await page.addInitScript({
+        path: fileURLToPath(new URL('../../../../helper/addInitOperatorStatus.js', import.meta.url))
+      });
+      await page.goto('./', { waitUntil: 'domcontentloaded' });
+      await expect(page.getByText('Select Role')).toBeVisible();
+      // Description should be empty https://github.com/nasa/openmct/issues/6978
+      await expect(page.locator('.c-message__action-text')).toBeHidden();
+      // set role
+      await page.getByRole('button', { name: 'Select', exact: true }).click();
+      // dismiss role confirmation popup
+      await page.getByRole('button', { name: 'Dismiss' }).click();
     });
-    await page.addInitScript({
-      path: fileURLToPath(new URL('../../../../helper/addInitOperatorStatus.js', import.meta.url))
+
+    // verify that operator status is visible
+    test('operator status is visible and expands when clicked', async ({ page }) => {
+      await expect(page.locator('div[title="Set my operator status"]')).toBeVisible();
+      await page.locator('div[title="Set my operator status"]').click();
+      await expect(page.locator('.c-status-poll-panel')).toBeVisible();
     });
-    await page.goto('./', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByText('Select Role')).toBeVisible();
-    // Description should be empty https://github.com/nasa/openmct/issues/6978
-    await expect(page.locator('.c-message__action-text')).toBeHidden();
-    // set role
-    await page.getByRole('button', { name: 'Select', exact: true }).click();
-    // dismiss role confirmation popup
-    await page.getByRole('button', { name: 'Dismiss' }).click();
+
+    test('poll question indicator remains when blank poll set', async ({ page }) => {
+      await expect(page.locator('div[title="Set the current poll question"]')).toBeVisible();
+      await page.locator('div[title="Set the current poll question"]').click();
+      // set to blank
+      await page.getByRole('button', { name: 'Update' }).click();
+
+      // should still be visible
+      await expect(page.locator('div[title="Set the current poll question"]')).toBeVisible();
+    });
+
+    // Verify that user 1 sees updates from user/role 2 (Not possible without openmct-yamcs implementation)
+    test('operator status table reflects answered values', async ({ page }) => {
+      // user navigates to operator status poll
+      const statusPollIndicator = page.locator('div[title="Set my operator status"]');
+      await statusPollIndicator.click();
+
+      // get user role value
+      const userRole = page.locator('.c-status-poll-panel__user-role');
+      const userRoleText = await userRole.innerText();
+
+      // get selected status value
+      const selectStatus = page.locator('select[name="setStatus"]');
+      await selectStatus.selectOption({ index: 1 });
+      const initialStatusValue = await selectStatus.inputValue();
+
+      // open manage status poll
+      const manageStatusPollIndicator = page.locator('div[title="Set the current poll question"]');
+      await manageStatusPollIndicator.click();
+      // parse the table row values
+      const row = page.locator(`tr:has-text("${userRoleText}")`);
+      const rowValues = await row.innerText();
+      const rowValuesArr = rowValues.split('\t');
+      const COLUMN_STATUS_INDEX = 1;
+      // check initial set value matches status table
+      expect(rowValuesArr[COLUMN_STATUS_INDEX].toLowerCase()).toEqual(
+        initialStatusValue.toLowerCase()
+      );
+
+      // change user status
+      await statusPollIndicator.click();
+      // FIXME: might want to grab a dynamic option instead of arbitrary
+      await page.locator('select[name="setStatus"]').selectOption({ index: 2 });
+      const updatedStatusValue = await selectStatus.inputValue();
+      // verify user status is reflected in table
+      await manageStatusPollIndicator.click();
+
+      const updatedRow = page.locator(`tr:has-text("${userRoleText}")`);
+      const updatedRowValues = await updatedRow.innerText();
+      const updatedRowValuesArr = updatedRowValues.split('\t');
+
+      expect(updatedRowValuesArr[COLUMN_STATUS_INDEX].toLowerCase()).toEqual(
+        updatedStatusValue.toLowerCase()
+      );
+    });
+
+    test('clear poll button removes poll responses', async ({ page }) => {
+      // user navigates to operator status poll
+      const statusPollIndicator = page.locator('div[title="Set my operator status"]');
+      await statusPollIndicator.click();
+
+      // get user role value
+      const userRole = page.locator('.c-status-poll-panel__user-role');
+      const userRoleText = await userRole.innerText();
+
+      // get selected status value
+      const selectStatus = page.locator('select[name="setStatus"]');
+      // FIXME: might want to grab a dynamic option instead of arbitrary
+      await selectStatus.selectOption({ index: 1 });
+      const initialStatusValue = await selectStatus.inputValue();
+
+      // open manage status poll
+      const manageStatusPollIndicator = page.locator('div[title="Set the current poll question"]');
+      await manageStatusPollIndicator.click();
+      // parse the table row values
+      const row = page.locator(`tr:has-text("${userRoleText}")`);
+      const rowValues = await row.innerText();
+      const rowValuesArr = rowValues.split('\t');
+      const COLUMN_STATUS_INDEX = 1;
+      // check initial set value matches status table
+      expect(rowValuesArr[COLUMN_STATUS_INDEX].toLowerCase()).toEqual(
+        initialStatusValue.toLowerCase()
+      );
+
+      // clear the poll
+      await page.locator('button[title="Clear the previous poll question"]').click();
+
+      const updatedRow = page.locator('tr').filter({ hasText: userRoleText });
+
+      await expect(updatedRow).toContainText('Not set');
+    });
+
+    test('Poll indicator is visible when window is really small', async ({ page }) => {
+      const pollIndicator = page.locator('div[title="Set my operator status"]');
+      //Make window narrow
+      await page.setViewportSize({ width: 640, height: 480 });
+      await page.getByLabel('Display as single line').click();
+      const indicatorsCount = await page.locator('.c-indicator').count();
+      //Assert that multiple indicators are active
+      expect(indicatorsCount).toBeGreaterThanOrEqual(3);
+      //Assert that indicators are expanded
+      await expect(page.locator('.l-shell__head')).toContainClass('l-shell__head--expanded');
+      //Expect poll indicator to be visible
+      await expect(pollIndicator).toBeInViewport({ ratio: 1 });
+    });
+
+    test.fixme('iterate through all possible response values', async ({ page }) => {
+      // test all possible response values for the poll
+    });
   });
 
-  // verify that operator status is visible
-  test('operator status is visible and expands when clicked', async ({ page }) => {
-    await expect(page.locator('div[title="Set my operator status"]')).toBeVisible();
-    await page.locator('div[title="Set my operator status"]').click();
-    await expect(page.locator('.c-status-poll-panel')).toBeVisible();
-  });
+  test.describe('as user without status permissions', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript({
+        path: fileURLToPath(new URL('../../../../helper/addInitExampleUser.js', import.meta.url))
+      });
+      await page.addInitScript({
+        path: fileURLToPath(new URL('../../../../helper/addInitOperatorStatus.js', import.meta.url))
+      });
+      await page.goto('./', { waitUntil: 'domcontentloaded' });
+    });
 
-  test('poll question indicator remains when blank poll set', async ({ page }) => {
-    await expect(page.locator('div[title="Set the current poll question"]')).toBeVisible();
-    await page.locator('div[title="Set the current poll question"]').click();
-    // set to blank
-    await page.getByRole('button', { name: 'Update' }).click();
-
-    // should still be visible
-    await expect(page.locator('div[title="Set the current poll question"]')).toBeVisible();
-  });
-
-  // Verify that user 1 sees updates from user/role 2 (Not possible without openmct-yamcs implementation)
-  test('operator status table reflects answered values', async ({ page }) => {
-    // user navigates to operator status poll
-    const statusPollIndicator = page.locator('div[title="Set my operator status"]');
-    await statusPollIndicator.click();
-
-    // get user role value
-    const userRole = page.locator('.c-status-poll-panel__user-role');
-    const userRoleText = await userRole.innerText();
-
-    // get selected status value
-    const selectStatus = page.locator('select[name="setStatus"]');
-    await selectStatus.selectOption({ index: 1 });
-    const initialStatusValue = await selectStatus.inputValue();
-
-    // open manage status poll
-    const manageStatusPollIndicator = page.locator('div[title="Set the current poll question"]');
-    await manageStatusPollIndicator.click();
-    // parse the table row values
-    const row = page.locator(`tr:has-text("${userRoleText}")`);
-    const rowValues = await row.innerText();
-    const rowValuesArr = rowValues.split('\t');
-    const COLUMN_STATUS_INDEX = 1;
-    // check initial set value matches status table
-    expect(rowValuesArr[COLUMN_STATUS_INDEX].toLowerCase()).toEqual(
-      initialStatusValue.toLowerCase()
-    );
-
-    // change user status
-    await statusPollIndicator.click();
-    // FIXME: might want to grab a dynamic option instead of arbitrary
-    await page.locator('select[name="setStatus"]').selectOption({ index: 2 });
-    const updatedStatusValue = await selectStatus.inputValue();
-    // verify user status is reflected in table
-    await manageStatusPollIndicator.click();
-
-    const updatedRow = page.locator(`tr:has-text("${userRoleText}")`);
-    const updatedRowValues = await updatedRow.innerText();
-    const updatedRowValuesArr = updatedRowValues.split('\t');
-
-    expect(updatedRowValuesArr[COLUMN_STATUS_INDEX].toLowerCase()).toEqual(
-      updatedStatusValue.toLowerCase()
-    );
-  });
-
-  test('clear poll button removes poll responses', async ({ page }) => {
-    // user navigates to operator status poll
-    const statusPollIndicator = page.locator('div[title="Set my operator status"]');
-    await statusPollIndicator.click();
-
-    // get user role value
-    const userRole = page.locator('.c-status-poll-panel__user-role');
-    const userRoleText = await userRole.innerText();
-
-    // get selected status value
-    const selectStatus = page.locator('select[name="setStatus"]');
-    // FIXME: might want to grab a dynamic option instead of arbitrary
-    await selectStatus.selectOption({ index: 1 });
-    const initialStatusValue = await selectStatus.inputValue();
-
-    // open manage status poll
-    const manageStatusPollIndicator = page.locator('div[title="Set the current poll question"]');
-    await manageStatusPollIndicator.click();
-    // parse the table row values
-    const row = page.locator(`tr:has-text("${userRoleText}")`);
-    const rowValues = await row.innerText();
-    const rowValuesArr = rowValues.split('\t');
-    const COLUMN_STATUS_INDEX = 1;
-    // check initial set value matches status table
-    expect(rowValuesArr[COLUMN_STATUS_INDEX].toLowerCase()).toEqual(
-      initialStatusValue.toLowerCase()
-    );
-
-    // clear the poll
-    await page.locator('button[title="Clear the previous poll question"]').click();
-
-    const updatedRow = page.locator('tr').filter({ hasText: userRoleText });
-
-    await expect(updatedRow).toContainText('Not set');
-  });
-
-  test('Poll indicator is visible when window is really small', async ({ page }) => {
-    const pollIndicator = page.locator('div[title="Set my operator status"]');
-    //Make window narrow
-    await page.setViewportSize({ width: 640, height: 480 });
-    await page.getByLabel('Display as single line').click();
-    const indicatorsCount = await page.locator('.c-indicator').count();
-    //Assert that multiple indicators are active
-    expect(indicatorsCount).toBeGreaterThanOrEqual(3);
-    //Assert that indicators are expanded
-    await expect(page.locator('.l-shell__head')).toContainClass('l-shell__head--expanded');
-    //Expect poll indicator to be visible
-    await expect(pollIndicator).toBeInViewport({ ratio: 1 });
-  });
-
-  test.fixme('iterate through all possible response values', async ({ page }) => {
-    // test all possible response values for the poll
+    // verify that operator status is visible
+    test('operator status is not visible', async ({ page }) => {
+      await expect(page.locator('div[title="Set my operator status"]')).toBeHidden();
+    });
   });
 });
