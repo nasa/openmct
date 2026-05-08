@@ -39,7 +39,9 @@ Clear Role Status of single user test
 test.describe('Operator Status', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: fileURLToPath(new URL('../../../../helper/addInitExampleUser.js', import.meta.url))
+      path: fileURLToPath(
+        new URL('../../../../helper/addInitExampleUserMultipleRoles.js', import.meta.url)
+      )
     });
     await page.addInitScript({
       path: fileURLToPath(new URL('../../../../helper/addInitOperatorStatus.js', import.meta.url))
