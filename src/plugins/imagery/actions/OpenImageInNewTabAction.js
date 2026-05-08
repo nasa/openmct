@@ -34,8 +34,25 @@ class OpenImageInNewTabAction {
   }
 
   invoke(objectPath, view) {
-    const viewContext = (view.getViewContext && view.getViewContext()) || {};
-    window.open(viewContext.imageUrl, '_blank').focus();
+    const viewContext = view?.getViewContext?.() || {};
+    const url = viewContext.imageUrl;
+
+    // XSS protection: Prevents "javascript:alert('XSS')" attacks by only allowing certain images to load
+    // - urls that start with http/https.
+    // - data:image types that are NOT SVG (since svgs allow script tags)
+    // Do we need to support any other protocols? blob:?
+    const safeAbsoluteUrl = url && /^(https?:\/\/)/i.test(url);
+    const safeRelativeUrl = url && /^\/(?!\/)/.test(url);
+    const isSafeUrl = safeAbsoluteUrl || safeRelativeUrl;
+    const isSafeData =
+      /^data:image\/(png|jpeg|jpg|gif|webp|avif|bmp);base64,[A-Za-z0-9+/=]+$/i.test(url);
+
+    if (isSafeUrl || isSafeData) {
+      // Tabnabbing protection: Open with noopener,noreferrer
+      window.open(url, '_blank', 'noopener,noreferrer')?.focus();
+    } else {
+      console.warn('Blocked unsafe or missing URL:', url);
+    }
   }
 
   appliesTo(objectPath, view = {}) {
