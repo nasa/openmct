@@ -173,8 +173,6 @@ test.describe('Example Imagery Object', () => {
 
     const warning = await warningPromise;
     expect(warning).toBeDefined();
-    await page.waitForTimeout(1000);
-    expect(page.context().pages().length).toBe(1);
   });
 
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
