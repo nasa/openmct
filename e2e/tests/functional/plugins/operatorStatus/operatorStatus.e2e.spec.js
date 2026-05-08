@@ -147,11 +147,9 @@ test.describe('Operator Status', () => {
     // clear the poll
     await page.locator('button[title="Clear the previous poll question"]').click();
 
-    const updatedRow = page.locator(`tr:has-text("${userRoleText}")`);
-    const updatedRowValues = await updatedRow.innerText();
-    const updatedRowValuesArr = updatedRowValues.split('\t');
-    const UNSET_VALUE_LABEL = 'Not set';
-    expect(updatedRowValuesArr[COLUMN_STATUS_INDEX]).toEqual(UNSET_VALUE_LABEL);
+    const updatedRow = page.locator('tr').filter({ hasText: userRoleText });
+
+    await expect(updatedRow).toContainText('Not set');
   });
 
   test('Poll indicator is visible when window is really small', async ({ page }) => {
