@@ -174,7 +174,7 @@ describe('The Menu API', () => {
       document.body.click();
     });
 
-    fit('Mouse over a superMenu shows correct description', (done) => {
+    it('Mouse over a superMenu shows correct description', (done) => {
       menuOptions.onDestroy = done;
 
       menuAPI.showSuperMenu(x, y, actionsArray, menuOptions);

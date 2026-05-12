@@ -106,7 +106,7 @@ export default {
   data() {
     return {
       hoveredItem: null,
-      filteredActions: [],
+      filteredActions: this.options.actions,
       searchTerm: ''
     };
   },
@@ -130,8 +130,6 @@ export default {
     }
   },
   mounted() {
-    this.filteredActions = this.options.actions;
-    console.log('mounted', this.filteredActions);
     if (this.options.filterable) {
       this.$nextTick(() => {
         this.$refs.filterInput.focus();

@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     destroy() {
-      const hasCancel = this.buttons.find((button) => button.label.toLowerCase() === 'cancel');
+      const hasCancel = this.buttons?.some((button) => button.label.toLowerCase() === 'cancel');
 
       if (this.dismissible || hasCancel) {
         document.removeEventListener('keydown', this.handleKeyDown);

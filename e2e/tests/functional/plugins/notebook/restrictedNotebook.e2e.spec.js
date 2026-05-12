@@ -112,7 +112,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
 
     // expect to be able to rename unlocked pages
     await page.getByText(TEST_TEXT_NAME).press('Enter'); // exit contenteditable state
-    await expect(page.locator('div').filter({ hasText: /^Test Page$/ })).toHaveCount(1);
+    await expect(
+      page.locator('.c-notebook__pages .js-list__item.is-selected .js-list__item__name')
+    ).toHaveText(TEST_TEXT_NAME);
 
     // enter test text
     await enterTextEntry(page, TEST_TEXT);
