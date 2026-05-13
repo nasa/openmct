@@ -146,11 +146,23 @@ export default {
     document.removeEventListener('keydown', this.handleKeyDown);
   },
   methods: {
-    handleKeyDown({ key }) {
-      if (key === 'Enter' && !this.hasInputValidityError) {
-        this.submitForm(true);
-      } else if (key === 'Escape') {
+    handleKeyDown(event) {
+      const { key, target } = event;
+
+      if (key === 'Escape') {
+        event.preventDefault();
         this.dismiss();
+
+        return;
+      }
+
+      if (!this.$el.contains(target)) {
+        return;
+      }
+
+      if (key === 'Enter' && !this.hasInputValidityError) {
+        event.preventDefault();
+        this.submitForm(true);
       }
     },
     async copyToClipboard(startOrEnd) {
