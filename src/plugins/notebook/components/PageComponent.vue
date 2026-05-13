@@ -38,8 +38,8 @@
         :class="[{ 'c-input-inline': isSelected }]"
         :data-id="page.id"
         :contenteditable="isSelected"
-        @keydown.escape="updateName"
-        @keydown.enter="updateName"
+        @keydown.escape.stop.prevent="updateName"
+        @keydown.enter.stop.prevent="updateName"
         @blur="updateName"
       >
         {{ pageName }}

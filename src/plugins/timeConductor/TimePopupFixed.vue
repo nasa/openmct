@@ -137,12 +137,34 @@ export default {
     }
   },
   mounted() {
+    document.addEventListener('keydown', this.handleKeyDown);
+    this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.getTimeSystem())));
     this.setViewFromBounds();
   },
   beforeUnmount() {
     this.clearAllValidation();
+    document.removeEventListener('keydown', this.handleKeyDown);
   },
   methods: {
+    handleKeyDown(event) {
+      const { key, target } = event;
+
+      if (key === 'Escape') {
+        event.preventDefault();
+        this.dismiss();
+
+        return;
+      }
+
+      if (!this.$el.contains(target)) {
+        return;
+      }
+
+      if (key === 'Enter' && !this.hasInputValidityError) {
+        event.preventDefault();
+        this.submitForm(true);
+      }
+    },
     async copyToClipboard(startOrEnd) {
       if (startOrEnd !== 'start' && startOrEnd !== 'end') {
         console.warn('Invalid startOrEnd value');
@@ -275,8 +297,11 @@ export default {
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
-        this.$emit('dismiss');
+        this.dismiss();
       }
+    },
+    dismiss() {
+      this.$emit('dismiss');
     }
   }
 };

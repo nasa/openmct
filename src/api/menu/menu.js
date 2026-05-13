@@ -114,7 +114,8 @@ class Menu extends EventEmitter {
         return h(SuperMenuComponent);
       },
       provide: {
-        options: this.options
+        options: this.options,
+        dismiss: this.dismiss
       }
     });
 

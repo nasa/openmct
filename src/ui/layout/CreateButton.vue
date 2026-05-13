@@ -92,7 +92,8 @@ export default {
       const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
       const menuOptions = {
-        menuClass: 'c-create-menu'
+        menuClass: 'c-create-menu',
+        filterable: true
       };
 
       this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);

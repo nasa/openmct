@@ -185,6 +185,7 @@ describe('The Menu API', () => {
 
       superMenuItem.dispatchEvent(mouseOverEvent);
       const itemDescription = document.querySelector('.l-item-description__description');
+      console.log(itemDescription);
 
       nextTick(() => {
         expect(menuElement).not.toBeNull();

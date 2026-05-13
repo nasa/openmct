@@ -151,11 +151,12 @@ test.describe('Operator Status', () => {
     // clear the poll
     await page.locator('button[title="Clear the previous poll question"]').click();
 
-    const updatedRow = page.locator(`tr:has-text("${userRoleText}")`);
-    const updatedRowValues = await updatedRow.innerText();
-    const updatedRowValuesArr = updatedRowValues.split('\t');
+    const updatedStatusCell = page
+      .locator(`tr:has-text("${userRoleText}")`)
+      .locator('td')
+      .nth(COLUMN_STATUS_INDEX);
     const UNSET_VALUE_LABEL = 'Not set';
-    expect(updatedRowValuesArr[COLUMN_STATUS_INDEX]).toEqual(UNSET_VALUE_LABEL);
+    await expect(updatedStatusCell).toHaveText(UNSET_VALUE_LABEL);
   });
 
   test('Poll indicator is visible when window is really small', async ({ page }) => {

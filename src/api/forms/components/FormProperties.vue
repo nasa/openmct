@@ -129,6 +129,7 @@ export default {
     }
   },
   mounted() {
+    document.addEventListener('keydown', this.handleKeyDown);
     this.formSections = this.model.sections.map((section) => {
       section.id = uuid();
 
@@ -141,6 +142,9 @@ export default {
       return section;
     });
   },
+  unmounted() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  },
   methods: {
     onChange(data) {
       this.invalidProperties[data.model.key] = data.invalid;
@@ -152,6 +156,13 @@ export default {
     },
     onSave() {
       this.$emit('on-save');
+    },
+    handleKeyDown({ key }) {
+      if (key === 'Enter' && !this.isInvalid) {
+        this.onSave();
+      } else if (key === 'Escape') {
+        this.onCancel();
+      }
     }
   }
 };

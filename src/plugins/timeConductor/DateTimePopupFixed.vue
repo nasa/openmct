@@ -179,13 +179,34 @@ export default {
     }
   },
   mounted() {
+    document.addEventListener('keydown', this.handleKeyDown);
     this.setViewFromBounds();
   },
   beforeUnmount() {
     this.clearInputValidation();
     this.clearLogicalValidation();
+    document.removeEventListener('keydown', this.handleKeyDown);
   },
   methods: {
+    handleKeyDown(event) {
+      const { key, target } = event;
+
+      if (key === 'Escape') {
+        event.preventDefault();
+        this.dismiss();
+
+        return;
+      }
+
+      if (!this.$el.contains(target)) {
+        return;
+      }
+
+      if (key === 'Enter' && !this.hasInputValidityError) {
+        event.preventDefault();
+        this.submitForm(true);
+      }
+    },
     async copyToClipboard(startOrEnd) {
       if (startOrEnd !== 'start' && startOrEnd !== 'end') {
         console.warn('Invalid startOrEnd value');
@@ -256,7 +277,7 @@ export default {
       }
 
       if (shouldDismiss) {
-        this.$emit('dismiss');
+        this.dismiss();
 
         return false;
       }
@@ -264,6 +285,10 @@ export default {
     clearInputValidation() {
       Object.keys(this.inputValidityMap).forEach((refName) => {
         const input = this.getInput(refName);
+
+        if (!input) {
+          return;
+        }
 
         input.setCustomValidity('');
         input.title = '';
@@ -273,12 +298,16 @@ export default {
       Object.keys(this.logicalValidityMap).forEach((refName) => {
         const input = this.getInput(refName);
 
-        input.setCustomValidity('');
-        input.title = '';
-
         if (this.logicalValidityMap[refName] !== undefined) {
           this.logicalValidityMap[refName] = { valid: true };
         }
+
+        if (!input) {
+          return;
+        }
+
+        input.setCustomValidity('');
+        input.title = '';
       });
     },
     submitForm(shouldDismiss) {
@@ -362,6 +391,10 @@ export default {
         const input = this.getInput(refName);
         const validationResult = this.inputValidityMap[refName] ?? this.logicalValidityMap[refName];
 
+        if (!input || !validationResult.valid) {
+          return;
+        }
+
         if (validationResult.valid !== true) {
           input.setCustomValidity(validationResult.message);
           input.title = validationResult.message;
@@ -371,7 +404,7 @@ export default {
         }
       });
 
-      this.$refs.fixedDeltaInput.reportValidity();
+      this.$refs.fixedDeltaInput?.reportValidity();
     },
     getInput(refName) {
       if (Object.keys(this.inputValidityMap).includes(refName)) {
@@ -392,8 +425,11 @@ export default {
     },
     hide($event) {
       if ($event.target.className.indexOf('c-button icon-x') > -1) {
-        this.$emit('dismiss');
+        this.dismiss();
       }
+    },
+    dismiss() {
+      this.$emit('dismiss');
     }
   }
 };

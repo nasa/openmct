@@ -49,20 +49,22 @@
     flex-direction: column;
     position: absolute;
     z-index: 100;
-
+  
     > * {
-        flex: 0 0 auto;
+      flex: 0 0 auto;
     }
 }
 
 @mixin menuInner() {
-    li {
-        @include cControl();
-        justify-content: start;
-        cursor: pointer;
-        display: flex;
-        padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
-        white-space: nowrap;
+  li {
+    @include cControl();
+    align-items: baseline;
+    justify-content: start;
+    cursor: pointer;
+    display: flex;
+    line-height: 1.2em;
+    padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
+    white-space: nowrap;
 
         @include hover {
             background: $colorMenuHovBg;
@@ -693,71 +695,71 @@ select {
 }
 
 .c-super-menu {
-    // Two column layout, menu items on left with detail of hover element on right
-    $m: $interiorMarginLg;
-    @include menuOuter();
-    @include menuPositioning();
+  // Two column layout, menu items on left with detail of hover element on right
+  $m: $interiorMarginLg;
+  @include menuOuter();
+  @include menuPositioning();
+  display: flex;
+  height: auto;
+  padding: $interiorMarginLg;
+  flex-direction: row;
+
+  &__left-col {
     display: flex;
-    height: auto;
-    padding: $interiorMarginLg;
-    flex-direction: row;
+    flex-direction: column;
+    flex: 1 1 50%;
+    gap: $interiorMargin;
+    margin-right: $m;
+  }
 
-    > [class*='__'] {
-        //flex: 1 1 50%;
-        //&:first-child {
-        //  margin-right: $m;
-        //}
+  &__filter {
+    flex: 0 0 auto;
+  }
 
-        &:last-child {
-            //border-left: 1px solid $colorInteriorBorder;
-            //padding-left: $m;
-        }
+  &__menu {
+    @include menuInner();
+    flex: 1 1 auto;
+    overflow: auto;
+
+      ul {
+          margin-right: $interiorMarginSm; // Fend off scrollbar
+      }
+
+      li {
+        border-radius: $controlCr;
+        white-space: normal; // Let long names wrap
+      }
+  }
+
+  &__item-description {
+    border-left: 1px solid $colorInteriorBorder;
+    flex: 1 1 50%;
+    padding-left: $m;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+
+    > * + * {
+      margin-top: $interiorMarginLg;
     }
 
-    &__menu {
-        @include menuInner();
-        flex: 1 1 50%;
-        margin-right: $m;
-        overflow: auto;
+    .l-item-description {
+      &__icon {
+        min-height: 20%;
+        margin: 10% 25%;
+      }
 
-        ul {
-            margin-right: $interiorMarginSm; // Fend off scrollbar
-        }
+      &__name {
+        color: $colorMenuFg;
+        flex: 0 0 auto;
+        font-size: 1.25em;
+      }
 
-        li {
-            border-radius: $controlCr;
-        }
+      &__description {
+        font-size: $fontBaseSize;
+      }
     }
-
-    &__item-description {
-        border-left: 1px solid $colorInteriorBorder;
-        flex: 1 1 50%;
-        padding-left: $m;
-        display: flex;
-        flex-direction: column;
-        justify-content: stretch;
-
-        > * + * {
-            margin-top: $interiorMarginLg;
-        }
-
-        .l-item-description {
-            &__icon {
-                min-height: 20%;
-                margin: 10% 25%;
-            }
-
-            &__name {
-                color: $colorMenuFg;
-                flex: 0 0 auto;
-                font-size: 1.25em;
-            }
-
-            &__description {
-                font-size: $fontBaseSize;
-            }
-        }
-    }
+  }
 }
 
 .c-super-menu--sm {
