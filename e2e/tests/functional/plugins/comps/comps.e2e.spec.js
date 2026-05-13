@@ -63,7 +63,7 @@ test.describe('Comps', () => {
     // Check that expressions are marked invalid
     await page.getByLabel('Reference Name Input for a').fill('b');
     await page.getByText('Current Output').click();
-    await expect(page.getByText('Invalid: Undefined symbol a')).toBeVisible();
+    await expect(page.getByText('Undefined variables: a')).toBeVisible();
 
     // Check that test data works
     await page.getByPlaceholder('Enter an expression').fill('b*2');
