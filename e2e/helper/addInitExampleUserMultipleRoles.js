@@ -20,27 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExampleUserProvider from './ExampleUserProvider.js';
-const AUTO_LOGIN_USER = 'mct-user';
-const STATUS_ROLES = ['flight', 'driver'];
-
-export default function ExampleUserPlugin(
-  { autoLoginUser, statusRoles, roles } = {
-    autoLoginUser: AUTO_LOGIN_USER,
-    statusRoles: STATUS_ROLES,
-    roles: ['observer']
-  }
-) {
-  return function install(openmct) {
-    const userProvider = new ExampleUserProvider(openmct, {
-      statusRoles,
-      roles
-    });
-
-    if (autoLoginUser !== undefined) {
-      userProvider.autoLogin(autoLoginUser);
-    }
-
-    openmct.user.setProvider(userProvider);
-  };
-}
+// This should be used to install the Example User with multiple roles
+document.addEventListener('DOMContentLoaded', () => {
+  const openmct = window.openmct;
+  openmct.install(
+    openmct.plugins.example.ExampleUser({
+      autoLoginUser: 'mct-user',
+      statusRoles: ['flight', 'driver'],
+      roles: ['flight', 'driver']
+    })
+  );
+});
