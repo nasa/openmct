@@ -487,6 +487,13 @@ export default {
      * Forces all series to clear buffers and re-filter data against the new range.
      */
     resetAllSeries() {
+      Object.keys(this.offset).forEach((yAxisId) => {
+        this.offset[yAxisId].x = undefined;
+        this.offset[yAxisId].xVal = undefined;
+        this.offset[yAxisId].y = undefined;
+        this.offset[yAxisId].yVal = undefined;
+      });
+
       this.config.series.forEach((series) => {
         const element = this.seriesElements.get(toRaw(series));
         if (element) {

@@ -160,11 +160,11 @@ export default class MCTChartSeriesElement {
     this.count = 0;
     this.lastIndexInRange = 0;
     this.numberOfPointsInBuffer = 0;
-    if (this.offset.x) {
-      this.series.getSeriesData().forEach(function (point, index) {
-        this.append(point, index, this.series);
-      }, this);
-    }
+    // if (this.offset.x) {
+    this.series.getSeriesData().forEach(function (point, index) {
+      this.append(point, index, this.series);
+    }, this);
+    // }
   }
 
   growIfNeeded(pointsRequired) {
