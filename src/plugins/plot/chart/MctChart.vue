@@ -478,7 +478,10 @@ export default {
       this.makeLimitLines(series);
       this.updateLimitLines();
     },
-    resetAllSeriesAndRedraw() {
+    resetAllSeriesAndRedraw(bounds, isTick) {
+      if (isTick) {
+        return;
+      }
       this.resetAllSeries();
       this.scheduleDraw(true);
     },

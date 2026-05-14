@@ -110,8 +110,16 @@ export default class MCTChartSeriesElement {
   }
 
   append(point, index, series) {
-    // Check if the point is within the visual window (including edge points)
+    // 2 Hour safety threshold. Technically the 32-bit data would get truncated around 4.6 hours, but this is fine.
+    const MAX_DRIFT_MS = 2 * 60 * 60 * 1000;
     if (this.chart.pointIsInRange(point, series, index)) {
+      const offsetPoint = this.makePoint(point, series);
+      const hasOffsetDrifted = offsetPoint.x > MAX_DRIFT_MS;
+      if (hasOffsetDrifted) {
+        this.chart.resetAllSeries();
+        return;
+      }
+      // Check if the point is within the visual window (including edge points)
       // If a point arrives that's being inserted in the middle of the buffer and not at the end, we need to reconstruct the buffer.
       if (index !== undefined && index < this.lastIndexInRange) {
         this.reset();
@@ -123,19 +131,20 @@ export default class MCTChartSeriesElement {
 
       if (this.numberOfPointsInBuffer === 0 && index > 0) {
         const previousPoint = series.getSeriesData()[index - 1];
-        this.appendToBuffer(previousPoint, series);
+        const previousOffsetPoint = this.makePoint(previousPoint, series);
+        this.appendToBuffer(previousOffsetPoint, series);
       }
 
-      this.appendToBuffer(point, series);
+      this.appendToBuffer(offsetPoint, series, offsetPoint);
     }
   }
 
-  appendToBuffer(point, series) {
+  appendToBuffer(offsetPoint) {
     const pointsRequired = this.vertexCountForPointAtIndex(this.numberOfPointsInBuffer);
     const insertionPoint = this.startIndexForPointAtIndex(this.numberOfPointsInBuffer);
     this.growIfNeeded(pointsRequired);
     this.makeInsertionPoint(insertionPoint, pointsRequired);
-    this.addPoint(this.makePoint(point, series), insertionPoint);
+    this.addPoint(offsetPoint, insertionPoint);
     this.count += pointsRequired / 2;
     this.numberOfPointsInBuffer++;
   }
@@ -160,11 +169,9 @@ export default class MCTChartSeriesElement {
     this.count = 0;
     this.lastIndexInRange = 0;
     this.numberOfPointsInBuffer = 0;
-    // if (this.offset.x) {
     this.series.getSeriesData().forEach(function (point, index) {
       this.append(point, index, this.series);
     }, this);
-    // }
   }
 
   growIfNeeded(pointsRequired) {
