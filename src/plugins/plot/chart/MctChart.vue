@@ -552,6 +552,7 @@ export default {
       this.drawAPI = DrawLoader.getDrawAPI(mainCanvas, overlayCanvas);
       if (this.drawAPI?.on) {
         this.listenTo(this.drawAPI, 'error', this.fallbackToCanvas, this);
+        this.listenTo(this.drawAPI, 'restored', this.onDrawAPIRestored, this);
       }
 
       return Boolean(this.drawAPI);
@@ -575,6 +576,9 @@ export default {
       this.buildCanvasElements();
       this.drawAPI = DrawLoader.getFallbackDrawAPI(this.canvas, this.overlay);
       this.$emit('plot-reinitialize-canvas');
+    },
+    onDrawAPIRestored() {
+      this.scheduleDraw(true);
     },
     removeChartElement(series) {
       const elements = this.seriesElements.get(toRaw(series));
