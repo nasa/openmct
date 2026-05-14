@@ -16,6 +16,8 @@ config.module.rules.push({
     loader: 'babel-loader',
     options: {
       retainLines: true,
+      cacheDirectory: true,
+      cacheCompression: false,
       plugins: [
         [
           'babel-plugin-istanbul',
