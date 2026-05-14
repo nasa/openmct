@@ -266,8 +266,15 @@ export default {
   },
   async mounted() {
     this.initialize();
-    await this.loadRoot();
-    this.isLoading = false;
+    try {
+      await this.loadRoot();
+    } catch (error) {
+      console.error('Error loading root object:', error);
+      // Even if root loading fails, we should still clear the loading state
+      // and show the tree in an empty state rather than infinite spinner
+    } finally {
+      this.isLoading = false;
+    }
 
     if (!this.isSelectorTree) {
       await this.syncTreeOpenItems();
@@ -313,12 +320,28 @@ export default {
       this.treeItems = [];
       const root = await this.openmct.objects.get('ROOT');
 
-      if (!root.identifier) {
+      if (!root || !root.identifier) {
+        console.warn('Root object is missing or has no identifier. Tree will remain empty.');
         return false;
       }
 
-      // will need to listen for root composition changes as well
-      this.treeItems = await this.loadAndBuildTreeItemsFor(root.identifier, []);
+      // Check if this is a missing object created by the interceptor
+      if (this.openmct.objects.isMissing(root)) {
+        console.warn('Root object is missing. Tree will show the missing root object.');
+        // Create a tree item for the missing root so users can see what's wrong
+        this.treeItems = [this.buildTreeItem(root, [])];
+        return false;
+      }
+
+      try {
+        // will need to listen for root composition changes as well
+        this.treeItems = await this.loadAndBuildTreeItemsFor(root.identifier, []);
+      } catch (error) {
+        console.error('Error loading root composition:', error);
+        // If composition loading fails, still show the root object
+        this.treeItems = [this.buildTreeItem(root, [])];
+        return false;
+      }
     },
     treeItemAction(parentItem, type) {
       if (type === 'close') {
