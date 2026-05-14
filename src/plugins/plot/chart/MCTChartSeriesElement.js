@@ -21,6 +21,8 @@
  *****************************************************************************/
 
 import eventHelpers from '../lib/eventHelpers.js';
+// 2 Hour safety threshold. Technically the 32-bit data would get truncated around 4.6 hours, but this is fine.
+const MAX_DRIFT_MS = 2 * 60 * 60 * 1000;
 
 /** @abstract */
 export default class MCTChartSeriesElement {
@@ -110,8 +112,6 @@ export default class MCTChartSeriesElement {
   }
 
   append(point, index, series) {
-    // 2 Hour safety threshold. Technically the 32-bit data would get truncated around 4.6 hours, but this is fine.
-    const MAX_DRIFT_MS = 2 * 60 * 60 * 1000;
     if (this.chart.pointIsInRange(point, series, index)) {
       const offsetPoint = this.makePoint(point, series);
       const hasOffsetDrifted = offsetPoint.x > MAX_DRIFT_MS;
