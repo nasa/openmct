@@ -65,11 +65,20 @@ const FRAGMENT_SHADER = `
         }
     `;
 
-/* This code is taking a 2D vertex position (aVertexPosition) and transforming it into a clip-space coordinate system (where x and y range from -1 to 1)
-   1. (aVertexPosition - uOrigin): effectively translates the aVertexPosition so that the uOrigin becomes the new (0,0). It shifts the coordinate system.
-   2. (aVertexPosition - uOrigin) / uDimensions: performs a normalization step. If uDimensions represents the full width and height, this scales the coordinates so that they fall within the range [0, 1] for both x and y, relative to the uOrigin and uDimensions bounding box
-   3. 2.0 * ((aVertexPosition - uOrigin) / uDimensions): scales the coordinates to be in the range [0, 2]
-   4. 2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1): shifts the range from [0, 2] to [-1, 1]
+/* This shader transforms chart coordinates into WebGL Clip Space (-1 to 1).
+   
+   1. (attr - uOrigin): Translates the position relative to the chart origin.
+      - For X: aVertexPosition.x is already a 0.0-1.0 ratio, and uOrigin.x is 0.0.
+      - For Y: This subtracts the Y-axis minimum value.
+      
+   2. (... / uDimensions): Scales the value to a 0.0 to 1.0 range.
+      - For X: uDimensions.x is 1.0, so this maintains the precise 0-1 ratio.
+      - For Y: This scales the value based on the total Y-axis height.
+
+   3. (2.0 * normalized) - 1.0: Maps the [0, 1] range to the [-1, 1] Clip Space.
+      - 0.0 becomes -1.0 (Left/Bottom)
+      - 0.5 becomes  0.0 (Center)
+      - 1.0 becomes  1.0 (Right/Top)
 */
 const VERTEX_SHADER = `
         attribute vec2 aVertexPosition;
@@ -78,7 +87,9 @@ const VERTEX_SHADER = `
         uniform float uPointSize;
         
         void main(void) {
-            gl_Position = vec4(2.0 * ((aVertexPosition - uOrigin) / uDimensions) - vec2(1,1), 0, 1);
+            float xPos = 2.0 * ((aVertexPosition.x - uOrigin.x) / uDimensions.x) - 1.0;
+            float yPos = 2.0 * ((aVertexPosition.y - uOrigin.y) / uDimensions.y) - 1.0;
+            gl_Position = vec4(xPos, yPos, 0, 1);
             gl_PointSize = uPointSize;
         }
     `;

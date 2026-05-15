@@ -568,13 +568,15 @@ export default {
         return;
       }
 
+      const xRange = this.config.xAxis.get('displayRange');
+      const viewRangeDuration = xRange.max - xRange.min;
       const offsets = {
-        x: series.getXVal(offsetPoint),
+        x: xRange.min,
         y: series.getYVal(offsetPoint)
       };
 
       this.offset[yAxisId].x = function (x) {
-        return x - offsets.x;
+        return (x - offsets.x) / viewRangeDuration;
       }.bind(this);
       this.offset[yAxisId].y = function (y) {
         return y - offsets.y;
@@ -835,10 +837,10 @@ export default {
         return;
       }
 
-      const dimensions = [xRange.max - xRange.min, yRange.max - yRange.min];
-
-      let origin;
-      origin = [this.offset[yAxisId].x(xRange.min), this.offset[yAxisId].y(yRange.min)];
+      // The X-axis is normalized to a 0.0 - 1.0 range (percentage of view)
+      // to maintain 32-bit float precision over long time ranges.
+      const dimensions = [1.0, yRange.max - yRange.min];
+      const origin = [0.0, this.offset[yAxisId].y(yRange.min)];
 
       this.drawAPI.setDimensions(dimensions, origin);
     },
