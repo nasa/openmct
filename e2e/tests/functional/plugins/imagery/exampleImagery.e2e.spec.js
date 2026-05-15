@@ -25,6 +25,8 @@ This test suite is dedicated to tests which verify the basic operations surround
 but only assume that example imagery is present.
 */
 
+import { fileURLToPath } from 'url';
+
 import {
   createDomainObjectWithDefaults,
   navigateToObjectWithRealTime,
@@ -59,6 +61,11 @@ test.describe('Example Imagery Object', () => {
 
     // Wait for image thumbnail auto-scroll to complete
     await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
+
+    // This is for malicious url testing when we open an image in a new tab
+    await page.addInitScript({
+      path: fileURLToPath(new URL('../../../../helper/addMaliciousImagery.js', import.meta.url))
+    });
   });
 
   test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
@@ -94,6 +101,78 @@ test.describe('Example Imagery Object', () => {
     await newPage.waitForLoadState();
     // expect new tab url to have jpg in it
     expect(newPage.url()).toContain('.jpg');
+  });
+
+  test('Open Image in New Tab is secure and prevents XSS/Tabnabbing', async ({ page, context }) => {
+    // try to right click on image
+    const backgroundImage = page.getByLabel('Focused Image Element');
+
+    await backgroundImage.click({
+      button: 'right',
+      // Need force option here due to annotation overlay which blocks playwright's click
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+
+    // click on open image in new tab
+    const pagePromise = context.waitForEvent('page');
+    await page.getByRole('menuitem', { name: 'Open Image in New Tab' }).click();
+    // expect new tab to be in browser
+    const newPage = await pagePromise;
+    await newPage.waitForLoadState();
+
+    // Ensure it navigated to a valid http/https URL (XSS Protection)
+    const url = newPage.url();
+    // check that the tab opened with the right protocol
+    expect(url).toMatch(/^https?:\/\//);
+    expect(url).toContain('.jpg');
+
+    // Verify the connection back to the parent is severed
+    const hasOpener = await newPage.evaluate(() => window.opener !== null);
+    expect(hasOpener).toBe(false);
+  });
+
+  test('Blocks navigation and warns when imagery is configured with a javascript: URL', async ({
+    page
+  }) => {
+    //Go to baseURL
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    // Create a default 'Example Imagery' object
+    const maliciousImagery = await createDomainObjectWithDefaults(page, {
+      type: 'Malicious Test Imagery'
+    });
+
+    // Verify that the created object is focused
+    await expect(page.locator('.l-browse-bar__object-name')).toContainText(maliciousImagery.name);
+    // await page.getByLabel('Focused Image Element').hover({ trial: true });
+
+    // Wait for image thumbnail auto-scroll to complete
+    await expect(page.getByLabel('Image Thumbnail from').last()).toBeInViewport();
+
+    // listen for the console warning
+    const warningPromise = page.waitForEvent('console', {
+      predicate: (msg) => {
+        const text = msg.text();
+        const isBlocked = msg.type() === 'warning' && text.includes('Blocked unsafe');
+        return isBlocked;
+      },
+      timeout: 5000
+    });
+
+    const backgroundImage = page.getByLabel('Focused Image Element');
+
+    await backgroundImage.click({
+      button: 'right',
+      // Need force option here due to annotation overlay which blocks playwright's click
+      // eslint-disable-next-line playwright/no-force-option
+      force: true
+    });
+
+    await page.getByRole('menuitem', { name: 'Open Image in New Tab' }).click();
+
+    const warning = await warningPromise;
+    expect(warning).toBeDefined();
   });
 
   test('Can adjust image brightness/contrast by dragging the sliders', async ({
@@ -1001,3 +1080,37 @@ async function waitForZoomAndPanTransitions(page) {
   // Wait for image to stabilize
   await page.getByLabel('Focused Image Element').hover({ trial: true });
 }
+
+// async function addMaliciousTypeAndProvider(page) {
+//   await page.evaluate(() => {
+//     const maliciousTypeConfig = {
+//       key: 'malicious.imagery',
+//       name: 'Malicious Test Imagery',
+//       cssClass: 'icon-image',
+//       creatable: true,
+//       initialize: (object) => {
+//         object.telemetry = {
+//           values: [
+//             { name: 'Time', key: 'utc', format: 'utc', hints: { domain: 1 } },
+//             { name: 'Image', key: 'url', format: 'image', hints: { image: 1 } }
+//           ]
+//         };
+//       }
+//     };
+
+//     const mockProvider = {
+//       supportsRequest: (domainObject) => domainObject.type === 'malicious.imagery',
+//       request: (domainObject) => {
+//         return Promise.resolve([
+//           {
+//             utc: Date.now(),
+//             url: 'javascript:alert("XSS")'
+//           }
+//         ]);
+//       }
+//     };
+
+//     window.openmct.types.addType(maliciousTypeConfig.key, maliciousTypeConfig);
+//     window.openmct.telemetry.addProvider(mockProvider);
+//   });
+// }
