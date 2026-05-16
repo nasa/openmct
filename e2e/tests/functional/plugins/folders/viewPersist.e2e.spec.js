@@ -47,7 +47,7 @@ test.describe('Folder View Persistence', () => {
 
   test('Folder view persists when navigating away and back', async ({ page }) => {
     // Click the view switcher button to open the menu
-    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel(/Open the View Switcher Menu/).click();
 
     // Click the List View option from the dropdown menu
     await page.getByRole('menuitem', { name: /List View/ }).click();
