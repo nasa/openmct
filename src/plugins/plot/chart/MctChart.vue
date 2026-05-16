@@ -366,6 +366,12 @@ export default {
       this.seriesModels.splice(seriesIndexToRemove, 1);
     },
     onAddPoint(point, insertIndex, series) {
+      // if user is not looking at data within the current bounds, don't draw the point
+      if (this.pointIsInRange(point, series, insertIndex)) {
+        this.scheduleDraw();
+      }
+    },
+    pointIsInRange(point, series, index) {
       const mainYAxisId = this.config.yAxis.get('id');
       const seriesYAxisId = series.get('yAxisId');
       const xRange = this.config.xAxis.get('displayRange');
@@ -378,19 +384,40 @@ export default {
           .find((yAxis) => yAxis.get('id') === seriesYAxisId)
           .get('displayRange');
       }
-
       const xValue = series.getXVal(point);
       const yValue = series.getYVal(point);
-
       // if user is not looking at data within the current bounds, don't draw the point
-      if (
-        xValue > xRange.min &&
-        xValue < xRange.max &&
-        yValue > yRange.min &&
-        yValue < yRange.max
-      ) {
-        this.scheduleDraw();
+
+      const isInRange =
+        xValue >= xRange.min &&
+        xValue <= xRange.max &&
+        yValue >= yRange.min &&
+        yValue <= yRange.max;
+
+      if (isInRange) {
+        return true;
       }
+
+      // Include edge points for plot integrity (lines should continue to edge of plot)
+      // Only check if point is outside x range (y range doesn't affect this)
+      if (xValue < xRange.min || xValue > xRange.max) {
+        const seriesData = series.getSeriesData();
+
+        // Check before range, then after range
+        // Technically the `if` condition below won't be triggered since index < seriesData.length-1 will be false, but it's there for completeness.
+        // this condition is handled upstream
+        if (xValue < xRange.min && index < seriesData.length - 1) {
+          if (series.getXVal(seriesData[index + 1]) >= xRange.min) {
+            return true;
+          }
+        } else if (xValue > xRange.max && index > 0) {
+          if (series.getXVal(seriesData[index - 1]) <= xRange.max) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     },
     changeInterpolate(mode, o, series) {
       if (mode === o) {
@@ -478,6 +505,12 @@ export default {
         this.chartResizeObserver.disconnect();
       }
     },
+    resetOffsets(offset) {
+      delete offset.x;
+      delete offset.y;
+      delete offset.xVal;
+      delete offset.yVal;
+    },
     resetYOffsetAndSeriesDataForYAxis(yAxisId) {
       delete this.offset[yAxisId].y;
       delete this.offset[yAxisId].xVal;
@@ -505,17 +538,23 @@ export default {
         pointSet.reset();
       });
     },
-    setOffset(offsetPoint, index, series) {
+    // This function is designed to establish a relative coordinate system for a data series.
+    // It defines a specific data point as the new origin (0, 0).
+    // In the context of plotting large time-series data using relative time,
+    // this function is a key step in implementing the "Relative Time".
+    // It shifts the entire series so that one chosen point (offsets) now corresponds to zero on both the X and Y axes.
+    // Any subsequent data points are then plotted relative to this new origin (x - offsets.x and y - offsets.y)
+    setOffset(offsetPoint, series) {
       const mainYAxisId = this.config.yAxis.get('id');
       const yAxisId = series.get('yAxisId') || mainYAxisId;
       if (this.offset[yAxisId].x && this.offset[yAxisId].y) {
         return;
       }
 
-      const offsets = {
-        x: series.getXVal(offsetPoint),
-        y: series.getYVal(offsetPoint)
-      };
+      // Set the origin point.
+      let offsets = {};
+      offsets.x = series.getXVal(offsetPoint);
+      offsets.y = series.getYVal(offsetPoint);
 
       this.offset[yAxisId].x = function (x) {
         return x - offsets.x;
