@@ -215,6 +215,12 @@ export default {
         return;
       }
 
+      const isPlottable =
+        child.type === 'telemetry.plot.overlay' || this.openmct.telemetry.isTelemetryObject(child);
+      if (!isPlottable) {
+        return;
+      }
+
       const id = this.openmct.objects.makeKeyString(child.identifier);
 
       this.compositionObjects.push({
