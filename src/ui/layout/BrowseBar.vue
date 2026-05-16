@@ -221,7 +221,7 @@ export default {
         return [];
       }
 
-      if (!this.domainObject) {
+      if (!this.domainObject || !this.openmct.router.path) {
         return [];
       }
 
@@ -276,7 +276,7 @@ export default {
     },
     isViewEditable() {
       let currentViewKey = this.currentView.key;
-      if (currentViewKey !== undefined) {
+      if (currentViewKey !== undefined && this.openmct.router.path) {
         let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
 
         return (

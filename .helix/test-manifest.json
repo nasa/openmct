@@ -1,0 +1,8 @@
+{
+  "tests/passing-test1": "src/MCTSpec.js",
+  "tests/passing-test2": "src/utils/rafSpec.js",
+  "tests/unit-test1": "src/MCTSpec.js",
+  "tests/unit-test2": "src/utils/rafSpec.js",
+  "tests/failing-test1": "src/api/EditorSpec.js",
+  "tests/failing-test2": "src/plugins/localStorage/pluginSpec.js"
+}
