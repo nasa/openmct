@@ -24,6 +24,13 @@ import LocalStorageObjectProvider from './LocalStorageObjectProvider.js';
 
 export default function (namespace = '', storageSpace = 'mct') {
   return function (openmct) {
-    openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
+    const namespacedStorage = openmct.getNamespacedLocalStorage();
+
+    // Always use empty namespace for backward compatibility with URLs like /browse/mine
+    // The namespacedStorage will handle namespace isolation at the localStorage level
+    openmct.objects.addProvider(
+      namespace,
+      new LocalStorageObjectProvider(storageSpace, namespacedStorage)
+    );
   };
 }
