@@ -1,0 +1,3 @@
+.helix/*.sh text eol=lf
+.helix/*.cjs text eol=lf
+.helix/*.json text eol=lf

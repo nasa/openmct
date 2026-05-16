@@ -86,6 +86,20 @@ export function resetApplicationState(openmct) {
   clearBuiltinSpies();
 
   if (openmct) {
+    if (openmct.app) {
+      openmct.app.unmount();
+      openmct.app = undefined;
+      openmct.layout = undefined;
+    }
+
+    if (openmct.element) {
+      openmct.element.innerHTML = '';
+    }
+
+    if (openmct.router) {
+      openmct.router.path = [];
+    }
+
     openmct.destroy();
   }
 

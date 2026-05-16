@@ -48,6 +48,10 @@ export default class ViewRegistry extends EventEmitter {
       throw 'objectPath must be provided to get applicable views for an object';
     }
 
+    if (objectPath === null) {
+      return [];
+    }
+
     function byPriority(providerA, providerB) {
       let priorityA = providerA.priority ? providerA.priority(item) : PRIORITIES.DEFAULT;
       let priorityB = providerB.priority ? providerB.priority(item) : PRIORITIES.DEFAULT;
