@@ -70,7 +70,7 @@ const play = {
   name: 'Play',
   key: 'play-data',
   description: 'Continue real-time data flow',
-  cssClass: 'c-button pause-play is-paused',
+  cssClass: 'icon-play',
   invoke: (objectPath, view) => {
     view.getViewContext().togglePauseByButton();
   },
