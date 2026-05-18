@@ -40,14 +40,27 @@ class OpenImageInNewTabAction {
     // XSS protection: Prevents "javascript:alert('XSS')" attacks by only allowing certain images to load
     // - urls that start with http/https.
     // - data:image types that are NOT SVG (since svgs allow script tags)
-    // Do we need to support any other protocols? blob:?
+    // - blob: with the same origin
     const safeAbsoluteUrl = url && /^(https?:\/\/)/i.test(url);
     const safeRelativeUrl = url && /^\/(?!\/)/.test(url);
     const isSafeUrl = safeAbsoluteUrl || safeRelativeUrl;
     const isSafeData =
       /^data:image\/(png|jpeg|jpg|gif|webp|avif|bmp);base64,[A-Za-z0-9+/=]+$/i.test(url);
 
-    if (isSafeUrl || isSafeData) {
+    let isSafeBlob = false;
+    if (url && /^blob:/i.test(url)) {
+      try {
+        const parsedUrl = new URL(url);
+        // same origin?
+        if (parsedUrl.origin === window.location.origin) {
+          isSafeBlob = true;
+        }
+      } catch (e) {
+        isSafeBlob = false;
+      }
+    }
+
+    if (isSafeUrl || isSafeData || isSafeBlob) {
       // Tabnabbing protection: Open with noopener,noreferrer
       window.open(url, '_blank', 'noopener,noreferrer')?.focus();
     } else {
