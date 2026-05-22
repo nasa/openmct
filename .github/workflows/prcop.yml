@@ -22,7 +22,7 @@ jobs:
     name: Template Check
     steps:
       - name: Linting Pull Request
-        uses: makaroni4/prcop@v1.0.35
+        uses: makaroni4/prcop@5f76e0c9ed4f3a6bf580b1aa684cdf7d5b1031e0 # v1.0.35
         with:
           config-file: '.github/workflows/prcop-config.json'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
