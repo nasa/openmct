@@ -169,7 +169,7 @@ export default {
       let pollQuestionText = pollQuestion.question;
       if (!pollQuestionText || pollQuestionText === '') {
         pollQuestionText = '--';
-        this.indicator.text('No Poll Question');
+        this.indicator.text('No Poll');
       } else {
         this.indicator.text(pollQuestionText);
       }
