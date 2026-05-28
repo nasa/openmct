@@ -1,5 +1,5 @@
-<div class="c-notebook-snapshot">
-  <div class="c-notebook-snapshot__header l-browse-bar">
+<div class="c-measuring-tool">
+  <div class="c-measuring-tool__header l-browse-bar">
     <div class="l-browse-bar__start">
       <div class="l-browse-bar__object-name--w">
         <span class="c-object-label l-browse-bar__object-name">
@@ -8,33 +8,68 @@
         </span>
       </div>
     </div>
-    <div id="snapshotDescriptor" class="l-browse-bar__snapshot-datetime">
-      SNAPSHOT {{ createdOn }}
-    </div>
-    <div class="c-button-set c-button-set--strip-h" role="toolbar">
-      <button class="c-button icon-download" aria-label="Export as PNG" @click="exportImage('png')">
-        <span class="c-button__label">PNG</span>
-      </button>
-      <button class="c-button icon-download" aria-label="Export as JPG" @click="exportImage('jpg')">
-        <span class="c-button__label">JPG</span>
-      </button>
-    </div>
     <div class="l-browse-bar__end">
-      <button
-        class="l-browse-bar__annotate-button c-button icon-pencil"
-        aria-label="Annotate this snapshot"
-        @click="annotateSnapshot"
-      >
-        <span class="title-label">Annotate</span>
-      </button>
+      <div class="mt__title">MEASURING TOOL</div>
+      <div class="mt__status --good" ref="status-disparity-map" title="Disparity Map loaded successfully.">Disparity
+        Map
+      </div>
+      <div class="mt__status --bad" ref="status-camera-model" title="Camera Model could not be loaded, check system.">
+        Camera Model
+      </div>
+      <div class="mt__image-datetime">IMAGE DATETIME {{ createdOn }}</div>
     </div>
   </div>
 
-  <div
-    ref="snapshot-image"
-    class="c-notebook-snapshot__image"
-    :style="{ backgroundImage: 'url(' + src + ')' }"
-    role="img"
-    alt="Annotatable Snapshot"
-  ></div>
+  <div class="c-measuring-tool__main">
+    <div
+      ref="snapshot-image"
+      class="c-notebook-snapshot__image c-measuring-tool__image"
+      :style="{ backgroundImage: 'url(' + src + ')' }"
+      role="img"
+      alt="Annotatable Snapshot"
+    ></div>
+    <div class="c-measuring-tool__sidebar">
+      <div class="__header c-object-label__name">Measuring: Rover <span class="icon-arrow-right"></span> A</div>
+      <div class="__properties c-inspect-properties" aria-label="Measuring Tool Properties Details">
+        <div class="c-inspect-properties__header">Points</div>
+        <ul class="c-inspect-properties__section">
+          <li class="c-inspect-properties__row" aria-label="Range">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Range</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">0.269 m</div>
+          </li>
+          <li class="c-inspect-properties__row" aria-label="Heading">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Heading</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">334 deg</div>
+          </li>
+          <li class="c-inspect-properties__row" aria-label="Slope">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Slope</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">1.9 deg</div>
+          </li>
+          <li class="c-inspect-properties__row" aria-label="Elevation">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Elevation</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">0.009 m</div>
+          </li>
+        </ul>
+        <div class="c-inspect-properties__header">Rover and Camera</div>
+        <ul class="c-inspect-properties__section">
+          <li class="c-inspect-properties__row" aria-label="Rover Heading">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Rover Heading</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">158 deg</div>
+          </li>
+          <li class="c-inspect-properties__row" aria-label="Camera Pan">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Camera Pan</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">-14.3 deg</div>
+          </li>
+          <li class="c-inspect-properties__row" aria-label="Camera Tilt">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Camera Tilt</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">-25.8 deg</div>
+          </li>
+          <li class="c-inspect-properties__row" aria-label="Auto-level">
+            <div class="c-inspect-properties__label" aria-label="inspector property name">Auto-level</div>
+            <div class="c-inspect-properties__value" aria-label="inspector property value">ON</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
