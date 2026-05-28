@@ -291,7 +291,7 @@ import { onMounted, ref, toRaw } from 'vue';
 
 import stalenessMixin from '@/ui/mixins/staleness-mixin';
 
-import CSVExporter from '../../../exporters/CSVExporter.js';
+import CSVExporter, { sanitizeCsvFormulaInjection } from '../../../exporters/CSVExporter.js';
 import ProgressBar from '../../../ui/components/ProgressBar.vue';
 import Search from '../../../ui/components/SearchComponent.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
@@ -833,10 +833,25 @@ export default {
       // which causes subsequent scroll to use an out of date height.
       this.contentTable.style.height = this.totalHeight + 'px';
     },
+    /**
+     * Object display names are user input; sanitize the name column for CSV injection.
+     * If other call sites pass object names into CSV, use the same helper on those fields.
+     */
     exportAsCSV(data) {
       const headerKeys = Object.keys(this.headers);
+      const nameKey = 'name';
+      const sanitizedData = data.map((row) => {
+        if (!row[nameKey]) {
+          return row;
+        }
 
-      this.csvExporter.export(data, {
+        return {
+          ...row,
+          [nameKey]: sanitizeCsvFormulaInjection(row[nameKey])
+        };
+      });
+
+      this.csvExporter.export(sanitizedData, {
         filename: this.table.domainObject.name + '.csv',
         headers: headerKeys
       });
