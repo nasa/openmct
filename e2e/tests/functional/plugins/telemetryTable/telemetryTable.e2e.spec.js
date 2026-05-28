@@ -39,6 +39,15 @@ const FORMULA_INJECTION_LIKE_OBJECT_NAMES = [
   '  =inject-leading-space'
 ];
 
+/** Names that must appear in CSV without a formula-neutralizing quote prefix. */
+const NON_FORMULA_INJECTION_OBJECT_NAMES = [
+  'Plain Channel',
+  'a=b ratio',
+  'plus in middle + value',
+  'user@example.com',
+  'well-known'
+];
+
 test.describe('Telemetry Table', () => {
   let table;
   test.beforeEach(async ({ page }) => {
@@ -254,14 +263,40 @@ test.describe('Telemetry Table', () => {
     await page.getByLabel('More actions').click();
 
     const exportMenuItem = page.getByRole('menuitem', { name: 'Export Table Data' });
-
     const [download] = await Promise.all([page.waitForEvent('download'), exportMenuItem.click()]);
-
     const downloadPath = await download.path();
     const csvText = await fs.readFile(downloadPath, 'utf8');
 
     for (const name of FORMULA_INJECTION_LIKE_OBJECT_NAMES) {
       expect(csvText).toContain(`'${name}`);
+    }
+  });
+
+  test('CSV export does not prefix the Name column for non-formula-injection object names', async ({
+    page
+  }) => {
+    for (const name of NON_FORMULA_INJECTION_OBJECT_NAMES) {
+      await createDomainObjectWithDefaults(page, {
+        type: 'Sine Wave Generator',
+        name,
+        parent: table.uuid
+      });
+    }
+
+    await navigateToObjectWithRealTime(page, table.url);
+    await expect(page.getByLabel('table content').getByLabel('Table Row').first()).toBeVisible();
+    await page.getByRole('button', { name: 'SHOW UNLIMITED' }).click();
+    await page.getByLabel('More actions').click();
+
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('menuitem', { name: 'Export Table Data' }).click()
+    ]);
+    const csvText = await fs.readFile(await download.path(), 'utf8');
+
+    for (const name of NON_FORMULA_INJECTION_OBJECT_NAMES) {
+      expect(csvText).toContain(name);
+      expect(csvText).not.toContain(`'${name}`);
     }
   });
 });
