@@ -20,47 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const TRIGGER = {
-  ANY: 'any',
-  ALL: 'all',
-  NOT: 'not',
-  XOR: 'xor'
-};
-
-export const TRIGGER_LABEL = {
-  any: 'any criteria are met',
-  all: 'all criteria are met',
-  not: 'no criteria are met',
-  xor: 'only one criterion is met'
-};
-
-export const TRIGGER_CONJUNCTION = {
-  any: 'or',
-  all: 'and',
-  not: 'and',
-  xor: 'or'
-};
-
-export const STYLE_CONSTANTS = {
-  isStyleInvisible: 'is-style-invisible',
-  borderColorTitle: 'Set border color',
-  textColorTitle: 'Set text color',
-  backgroundColorTitle: 'Set background color',
-  imagePropertiesTitle: 'Edit image properties',
-  visibilityHidden: 'Hidden',
-  visibilityVisible: 'Visible'
-};
-
-export const ERROR = {
-  TELEMETRY_NOT_FOUND: {
-    errorText: 'Telemetry not found for criterion'
-  },
-  CONDITION_NOT_FOUND: {
-    errorText: 'Condition not found'
-  }
-};
-
-export const IS_OLD_KEY = 'isStale';
-export const IS_STALE_KEY = 'isStale.new';
-
-export const TELEMETRY_VALUE = 'telemetry value';
+// This should be used to install the Example User with multiple roles
+document.addEventListener('DOMContentLoaded', () => {
+  const openmct = window.openmct;
+  openmct.install(
+    openmct.plugins.example.ExampleUser({
+      autoLoginUser: 'mct-user',
+      statusRoles: ['flight', 'driver'],
+      roles: ['flight', 'driver']
+    })
+  );
+});

@@ -97,7 +97,9 @@ test.describe('Visual - Header @a11y', () => {
 test.describe('Mission Header @a11y', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: fileURLToPath(new URL('../../../helper/addInitExampleUser.js', import.meta.url))
+      path: fileURLToPath(
+        new URL('../../../helper/addInitExampleUserMultipleRoles.js', import.meta.url)
+      )
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Select Role')).toBeVisible();

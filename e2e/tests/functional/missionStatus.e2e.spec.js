@@ -34,7 +34,9 @@ test.describe('Mission Status @addInit', () => {
   test.beforeEach(async ({ page }) => {
     // FIXME: determine if plugins will be added to index.html or need to be injected
     await page.addInitScript({
-      path: fileURLToPath(new URL('../../helper/addInitExampleUser.js', import.meta.url))
+      path: fileURLToPath(
+        new URL('../../helper/addInitExampleUserMultipleRoles.js', import.meta.url)
+      )
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Select Role')).toBeVisible();

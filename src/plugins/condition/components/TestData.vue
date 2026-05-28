@@ -63,7 +63,7 @@
                   :key="index"
                   :value="telemetryOption.identifier"
                 >
-                  {{ telemetryOption.name }}
+                  {{ telemetryOption.path || telemetryOption.name }}
                 </option>
               </select>
             </span>
@@ -147,7 +147,8 @@ export default {
       expanded: true,
       isApplied: false,
       testInputs: [],
-      telemetryMetadataOptions: {}
+      telemetryMetadataOptions: {},
+      telemetryPaths: []
     };
   },
   watch: {

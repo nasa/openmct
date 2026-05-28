@@ -78,8 +78,9 @@ export default class ExampleUserProvider extends EventEmitter {
   #actionToStatusMap;
   constructor(
     openmct,
-    { statusRoles } = {
-      statusRoles: []
+    { statusRoles, roles } = {
+      statusRoles: [],
+      roles: []
     }
   ) {
     super();
@@ -99,13 +100,14 @@ export default class ExampleUserProvider extends EventEmitter {
     }));
     this.pollQuestion = undefined;
     this.statusRoles = statusRoles;
+    this.roles = roles;
 
     this.ExampleUser = createExampleUser(this.openmct.user.User);
     this.loginPromise = undefined;
   }
 
   isLoggedIn() {
-    return this.loggedIn;
+    return this.loggedIn === true;
   }
 
   autoLogin(username) {
@@ -125,7 +127,7 @@ export default class ExampleUserProvider extends EventEmitter {
   }
 
   canSetPollQuestion() {
-    return Promise.resolve(true);
+    return Promise.resolve(this.roles.includes('flight'));
   }
 
   canSetMissionStatus() {
@@ -136,7 +138,6 @@ export default class ExampleUserProvider extends EventEmitter {
     if (!this.loggedIn) {
       Promise.resolve(undefined);
     }
-
     return Promise.resolve(this.user.getRoles().includes(roleId));
   }
 
@@ -230,7 +231,7 @@ export default class ExampleUserProvider extends EventEmitter {
     // for testing purposes, this will skip the form, this wouldn't be used in
     // a normal authentication process
     if (this.autoLoginUser) {
-      this.user = new this.ExampleUser(id, this.autoLoginUser, ['flight', 'driver', 'observer']);
+      this.user = new this.ExampleUser(id, this.autoLoginUser, this.roles);
       this.loggedIn = true;
 
       return Promise.resolve();
