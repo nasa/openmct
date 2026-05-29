@@ -842,7 +842,7 @@ export default {
 
       this.drawAPI.setDimensions(dimensions, origin);
 
-      // Invoke the step-quantization logic before building frame offsets
+      // Invoke the Fixed Baseline Strategy before building frame offsets
       this.checkAndApplyReanchor(yAxisId, xRange.min, currentSpan);
     },
     // match items by their yAxisId, but don't care if the series is hidden or not.
