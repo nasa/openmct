@@ -807,7 +807,7 @@ export default {
         axisOffset.anchorX = viewportMinX;
         axisOffset.lastThresholdSpan = currentSpan;
 
-        // Command the drawing elements to dump and repack their vertex array data spaces
+        // Reset all elements of the series to recalculate buffers
         this.resetResetChartElements(yAxisId);
       }
     },
