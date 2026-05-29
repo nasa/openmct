@@ -93,6 +93,7 @@ export default class MCTChartSeriesElement {
   }
 
   makePoint(point, series) {
+    // This acts as an initial value till we get a stable anchor point
     if (!this.offset.xVal) {
       this.chart.setOffset(point, undefined, series);
     }
