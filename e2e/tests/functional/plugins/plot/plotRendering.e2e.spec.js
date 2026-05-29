@@ -188,10 +188,9 @@ test.describe('WebGL Precision and Dynamic Re-anchoring', () => {
   test('Verify sub-millisecond timeline coordinate precision under high-magnitude offsets (Micro-Zoom Mode)', async ({
     page
   }) => {
-    // Navigate straight to the created object view
     await page.goto(precisionSineWaveGenerator.url);
 
-    // 2. Edit properties to crank the data rate to 1000 Hz (1 point per millisecond)
+    // Edit properties to set the data rate to 1000 Hz (1 point per millisecond)
     await page.locator('[title="More actions"]').click();
     await page.locator('[title="Edit properties of this object."]').click();
 
@@ -204,23 +203,14 @@ test.describe('WebGL Precision and Dynamic Re-anchoring', () => {
     const periodInput = page.getByRole('spinbutton', { name: 'Period' });
     await periodInput.clear();
     await periodInput.fill('0.001');
-    // Fill the existing frequency input field to match a normal 1Hz rendering load
-    // const dataRateInput = page.getByRole('spinbutton', { name: 'Data Rate (hz)' });
-    // await dataRateInput.clear();
-    // await dataRateInput.fill('1'); // Lower to 1 sample per second
-
-    // // Set period back to a normal 60 seconds
-    // const periodInput = page.getByRole('spinbutton', { name: 'Period' });
-    // await periodInput.clear();
-    // await periodInput.fill('60'); // Clear high frequency jitter
 
     await page.getByRole('button', { name: 'Save' }).click();
 
-    // Navigate away and back to guarantee the object properties load clean
+    // Navigate away and back to guarantee the object properties load cleanly
     await page.goto('./#/browse/mine');
     await page.goto(precisionSineWaveGenerator.url);
 
-    // 3. Target TODAY's calendar date, but set a hyper-focused 10-millisecond fixed frame.
+    // Fixed timespan with a hyper-zoomed in 10-millisecond range.
     const now = new Date();
     function pad(n, m = 2) {
       return String(n).padStart(m, '0');
@@ -250,13 +240,12 @@ test.describe('WebGL Precision and Dynamic Re-anchoring', () => {
 
     await page.waitForFunction(() => window.glBuffers.length > 0);
 
-    // 4. Inspect the low-level graphics card vertex buffer allocations directly
+    // Inspect the low-level graphics card vertex buffer allocations directly to see if stepping happens because x-axis points are getting truncated
     const isStairSteppingDetected = await page.evaluate(() => {
       if (!window.glBuffers || window.glBuffers.length === 0) {
         return false;
       }
 
-      // This will now only audit the clean, wide-open timeline frames!
       return window.glBuffers.some((buffer) => {
         let duplicateFound = false;
 
@@ -277,7 +266,6 @@ test.describe('WebGL Precision and Dynamic Re-anchoring', () => {
       });
     });
 
-    // This will now throw a clear, instant assertion failure instead of a timeout
     expect(isStairSteppingDetected).toBe(false);
   });
 });
