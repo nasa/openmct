@@ -27,8 +27,8 @@ import PreviewContainer from '@/ui/preview/PreviewContainer.vue';
 
 class OpenImageryToolsAction {
   constructor(openmct) {
-    this.cssClass = 'icon-items-expand';
-    this.description = 'Open the imagery measurement tool';
+    this.cssClass = 'icon-crosshair-in-circle';
+    this.description = 'Open the Imagery Measurement Tool';
     this.group = 'action';
     this.key = OPEN_IMAGERY_TOOLS_ACTION_KEY;
     this.name = 'Open Imagery Tools';

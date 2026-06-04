@@ -1,0 +1,125 @@
+.c-measuring-tool {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: $interiorMarginLg;
+  height: 100%;
+
+  &__main {
+    display: inherit;
+    flex: inherit;
+    gap: inherit;
+  }
+
+  // Main elements
+  &__image-wrapper {
+    background: rgba(black, 0.1);
+    flex: 1 1 auto; // height: 100%
+  }
+
+  &__image {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+  }
+
+  &__sidebar {
+    //background: rgba(green, 0.2);
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: $interiorMargin;
+    width: 300px;
+
+    .__header {
+      flex: 0 0 auto;
+      font-size: 1.25em;
+
+      .icon-arrow-right {
+        font-size: 0.7rem;
+        opacity: 0.5;
+      }
+    }
+
+    .__load-status {
+      display: flex;
+      gap: $interiorMargin;
+    }
+
+    .__properties {
+      //flex: 1 1 auto;
+      overflow: auto;
+    }
+  }
+
+  &__load-status {
+    align-items: center;
+    display: inherit;
+    flex: 0 0 auto;
+    gap: $interiorMargin;
+  }
+}
+
+.mt {
+  // measuring-tool elements
+  &__image-datetime {
+    $m: $interiorMargin;
+    border-left: 1px solid $colorInteriorBorder;
+    margin-left: $m;
+    padding-left: $m;
+  }
+
+  &__point {
+    background: $colorKeyBg;
+    border-radius: 50%;
+    color: $colorKeyFg;
+    display: inline-block;
+    min-width: 20px;
+    min-height: 20px;
+    padding: 1px;
+    text-align: center;
+  }
+
+  &__title {
+    font-weight: bold;
+  }
+
+  &__status {
+    user-select: none;
+    border-radius: 2px;
+    color: rgba($colorBodyFgEm, 0.6);
+    display: flex;
+    flex-shrink: 0;
+    font-size: 0.9em;
+    align-items: center;
+    padding: 3px 5px;
+    text-transform: uppercase;
+
+    &:before {
+      display: block;
+      font-family: symbolsfont;
+      font-size: 0.8em;
+      margin-right: $interiorMarginSm;
+    }
+
+    &.--bad {
+      background: rgba($colorStatusError, 0.7);
+      &:before {
+        content: $glyph-icon-alert-triangle;
+      }
+    }
+
+    &.--good {
+      background: rgba($colorOk, 0.7);
+      &:before {
+        content: $glyph-icon-check;
+      }
+    }
+  }
+
+  &__status-title {
+    opacity: 0.5;
+    text-transform: uppercase;
+  }
+}
