@@ -289,7 +289,7 @@
     .l-shell__head--indicators-single-line & {
       flex-wrap: nowrap;
       justify-content: flex-start; // Overflow detection doesn't work with flex-end.
-      overflow: hidden;
+      clip-path: inset(-20px 0 -500px -500px);
 
       > *:first-child {
         margin-left: auto; // Mimics justify-content: flex-end when in single line mode.
