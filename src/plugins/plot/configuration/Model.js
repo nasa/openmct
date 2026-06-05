@@ -49,8 +49,6 @@ export default class Model extends EventEmitter {
       options = {};
     }
 
-    // FIXME: this.id is defined as a method further below, but here it is
-    // assigned a possibly-undefined value. Is this code unused?
     this.id = options.id;
 
     /** @type {ModelType<T>} */
@@ -89,10 +87,6 @@ export default class Model extends EventEmitter {
   destroy() {
     this.emit('destroy');
     this.removeAllListeners();
-  }
-
-  id() {
-    return this.get(this.idAttr);
   }
 
   /**
