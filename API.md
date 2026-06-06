@@ -782,6 +782,42 @@ section.
 Limit evaluators allow a telemetry integrator to define which limits exist for a
 telemetry endpoint and how limits should be applied to telemetry from a given domain object.
 
+##### Limit Evaluation Results
+
+When a limit evaluator's `evaluate` method detects that a telemetry datum has violated
+a configured limit, it returns a limit state object. Open MCT uses this object as
+metadata for display and stores it on plotted telemetry as `mctLimitState`. Return
+`undefined` from `evaluate` when the datum is within limits.
+
+```javascript
+{
+    cssClass: 'class-name class-name',
+    name: 'Human-readable limit name',
+    low: lowerThresholdMetadata,
+    high: upperThresholdMetadata
+}
+```
+
+- `cssClass` required. The class, or space-separated classes, applied to display elements for telemetry values that violate this limit. Required for built-in styling by telemetry tables, LAD tables, display layouts, event timelines, and plot limit-state markers.
+- `name` optional. The human-readable name for the limit violation. Carried with the returned state for providers and custom consumers that need a label for the limit state.
+- `low` optional. Provider-defined lower threshold metadata for the violation. Carried with the returned state, and through `mctLimitState` for plotted telemetry, for consumers that need to inspect or display the lower bound associated with the evaluated state.
+- `high` optional. Provider-defined upper threshold metadata for the violation. Carried with the returned state, and through `mctLimitState` for plotted telemetry, for consumers that need to inspect or display the upper bound associated with the evaluated state.
+
+A small example object:
+
+```javascript
+{
+    cssClass: 'is-limit--upr is-limit--red',
+    name: 'Red High',
+    low: 0.9,
+    high: Number.POSITIVE_INFINITY
+}
+```
+
+The returned object's `cssClass` should map the evaluated datum to the same limit
+visualization colors supported by limit levels: `purple`, `red`, `orange`,
+`yellow` and `cyan`.
+
 A limit evaluator can implement the `evaluate` method which is used to define how limits
 should be applied to telemetry and the `getLimits` method which is used to specify
 what the limit values are for different limit levels.
