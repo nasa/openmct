@@ -21,19 +21,15 @@
  *****************************************************************************/
 
 import OpenImageInNewTabAction from './actions/OpenImageInNewTabAction.js';
-import OpenImageryToolsAction from './actions/OpenImageryToolsAction.js';
 import SaveImageAsAction from './actions/SaveImageAsAction.js';
 import ImageryTimestripViewProvider from './ImageryTimestripViewProvider.js';
-import ImageryToolsViewProvider from './ImageryToolsViewProvider.js';
 import ImageryViewProvider from './ImageryViewProvider.js';
 
 export default function (options) {
   return function install(openmct) {
     openmct.objectViews.addProvider(new ImageryViewProvider(openmct, options));
     openmct.objectViews.addProvider(new ImageryTimestripViewProvider(openmct));
-    openmct.objectViews.addProvider(new ImageryToolsViewProvider(openmct, options));
     openmct.actions.register(new OpenImageInNewTabAction(openmct));
     openmct.actions.register(new SaveImageAsAction(openmct));
-    openmct.actions.register(new OpenImageryToolsAction(openmct));
   };
 }
