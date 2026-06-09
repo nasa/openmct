@@ -258,22 +258,17 @@ class BatchingWebSocket extends EventTarget {
         }
         const now = Date.now();
         const waitedFor = now - this.start;
-        if (state.didTimeout === true) {
-          if (document.visibilityState === 'visible') {
-            console.warn(`Event loop is too busy to process batch.`);
-            this.#waitUntilIdleAndRequestNextBatch(batch);
-          } else {
-            this.#readyForNextBatch();
-          }
-        } else {
-          if (waitedFor > this.#throttleRate) {
-            console.warn(`Warning, batch processing took ${waitedFor}ms`);
-          }
-          this.#readyForNextBatch();
+        if (waitedFor > this.#throttleRate) {
+          console.warn(`Warning, batch processing took ${waitedFor}ms`);
         }
+        this.#readyForNextBatch();
       },
-      { timeout: this.#throttleRate }
+      { timeout: this.#forcedUpdateTimeout }
     );
+  }
+
+  get #forcedUpdateTimeout() {
+    return this.#throttleRate * 2;
   }
 }
 
