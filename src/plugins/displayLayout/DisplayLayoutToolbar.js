@@ -524,11 +524,18 @@ export default class DisplayLayoutToolbar {
   }
 
   #getPropertyFromPath(object, path) {
+    const FORBIDDEN_KEYS = ['__proto__', 'constructor', 'prototype'];
     let splitPath = path.split('.');
     let property = Object.assign({}, object);
 
     while (splitPath.length && property) {
-      property = property[splitPath.shift()];
+      const key = splitPath.shift();
+      // Don't traverse into prototype-related keys to avoid reaching or
+      // mutating the object's prototype chain.
+      if (FORBIDDEN_KEYS.includes(key)) {
+        return undefined;
+      }
+      property = property[key];
     }
 
     return property;
