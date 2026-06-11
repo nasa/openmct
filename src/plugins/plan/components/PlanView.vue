@@ -151,17 +151,21 @@ export default {
     this.contentElement = this.isNested
       ? this.$el.closest('.is-object-type-time-strip')
       : this.$refs.plan;
-    this.swimLaneLabelWidth = this.isNested ? this.timeStrip.configuration.swimLaneLabelWidth : 200;
+    if (this.isNested) {
+      this.swimLaneLabelWidth = this.timeStrip.configuration.swimLaneLabelWidth;
+      this.unobserveSwimLaneLabelWidth = this.openmct.objects.observe(
+        this.timeStrip,
+        'configuration.swimLaneLabelWidth',
+        this.resizeSwimLane
+      );
+    } else {
+      this.swimLaneLabelWidth = 200;
+    }
     const boundingClientRect = this.contentElement.getBoundingClientRect();
     const width = boundingClientRect.width - this.swimLaneLabelWidth;
     if (this.width !== width) {
       this.width = width;
     }
-    this.unobserveSwimLaneLabelWidth = this.openmct.objects.observe(
-      this.timeStrip,
-      'configuration.swimLaneLabelWidth',
-      this.resizeSwimLane
-    );
 
     this.setTimeContext();
     this.handleConfigurationChange(this.configuration);
