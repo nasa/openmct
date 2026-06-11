@@ -154,28 +154,29 @@ export default {
 
     const canvas = document.createElement('canvas');
     this.canvasContext = canvas.getContext('2d');
-    if (this.timeStrip !== undefined) {
-      this.swimLaneLabelWidth = this.timeStrip.configuration.swimLaneLabelWidth;
-      this.unobserveSwimLaneLabelWidth = this.openmct.objects.observe(
-        this.timeStrip,
-        'configuration.swimLaneLabelWidth',
-        this.updateSwimLaneLabelWidth
-      );
-    } else {
-      this.swimLaneLabelWidth = 200;
-    }
+
     this.contentElement = this.isNested
       ? this.$el.closest('.is-object-type-time-strip')
       : this.$refs.plan;
+    this.swimLaneLabelWidth =
+      this.timeStrip !== undefined ? this.timeStrip.configuration.swimLaneLabelWidth : 200;
     const boundingClientRect = this.contentElement.getBoundingClientRect();
-    this.width = boundingClientRect.width - this.swimLaneLabelWidth;
-    this.height = boundingClientRect.height;
+    const width = boundingClientRect.width - this.swimLaneLabelWidth;
+    if (this.width !== width) {
+      this.width = width;
+    }
+    this.unobserveSwimLaneLabelWidth = this.openmct.objects.observe(
+      this.timeStrip,
+      'configuration.swimLaneLabelWidth',
+      this.resizeSwimLane
+    );
+
     this.setTimeContext();
     this.handleConfigurationChange(this.configuration);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
     this.loadComposition();
 
-    this.resizeObserver = new ResizeObserver(this.resize);
+    this.resizeObserver = new ResizeObserver(this.resizeElement);
     this.resizeObserver.observe(this.contentElement);
   },
   beforeUnmount() {
@@ -326,16 +327,25 @@ export default {
     removeFromComposition(domainObject) {
       this.composition.remove(domainObject);
     },
-    resize(observerEntries) {
-      observerEntries.forEach((entry) => {
-        this.height = entry.contentRect.height;
-        const clientWidth = entry.contentRect.width - this.swimLaneLabelWidth;
-
-        if (clientWidth !== this.width) {
-          this.width = clientWidth;
-          this.updateViewBounds();
+    resizeElement() {
+      const boundingClientRect = this.contentElement.getBoundingClientRect();
+      this.height = boundingClientRect.height;
+      const width = boundingClientRect.width - this.swimLaneLabelWidth;
+      if (this.width !== width) {
+        this.width = width;
+        this.updateViewBounds();
+      }
+    },
+    resizeSwimLane() {
+      if (this.timeStrip !== undefined) {
+        this.swimLaneLabelWidth = this.timeStrip.configuration.swimLaneLabelWidth;
+        const boundingClientRect = this.contentElement.getBoundingClientRect();
+        this.height = boundingClientRect.height;
+        const width = boundingClientRect.width - this.swimLaneLabelWidth;
+        if (this.width !== width) {
+          this.width = width;
         }
-      });
+      }
     },
     updateViewBounds(bounds) {
       if (bounds) {

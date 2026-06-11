@@ -30,6 +30,11 @@ export default function PlanViewProvider(openmct) {
 
     return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
   }
+  function getParentTimeStrip(objectPath) {
+    if (!openmct.router.isNavigatedObject(objectPath)) {
+      return objectPath.find((object) => object.type === 'time-strip');
+    }
+  }
 
   return {
     key: 'plan.view',
@@ -48,7 +53,7 @@ export default function PlanViewProvider(openmct) {
 
       return {
         show: function (element) {
-          const timeStrip = objectPath.find((object) => object.type === 'time-strip');
+          const timeStrip = getParentTimeStrip(objectPath);
           let isCompact = isCompactView(objectPath);
 
           const { destroy } = mount(
@@ -66,9 +71,9 @@ export default function PlanViewProvider(openmct) {
                 return {
                   options: {
                     compact: isCompact,
-                    isChildObject: isCompact,
-                    timeStrip
-                  }
+                    isChildObject: isCompact
+                  },
+                  timeStrip
                 };
               },
               template: '<plan :options="options" :time-strip="timeStrip"></plan>'
