@@ -48,6 +48,7 @@ export default function PlanViewProvider(openmct) {
 
       return {
         show: function (element) {
+          const timeStrip = objectPath.find((object) => object.type === 'time-strip');
           let isCompact = isCompactView(objectPath);
 
           const { destroy } = mount(
@@ -65,11 +66,12 @@ export default function PlanViewProvider(openmct) {
                 return {
                   options: {
                     compact: isCompact,
-                    isChildObject: isCompact
+                    isChildObject: isCompact,
+                    timeStrip
                   }
                 };
               },
-              template: '<plan :options="options"></plan>'
+              template: '<plan :options="options" :time-strip="timeStrip"></plan>'
             },
             {
               app: openmct.app,

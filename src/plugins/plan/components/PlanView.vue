@@ -97,6 +97,12 @@ export default {
         };
       }
     },
+    timeStrip: {
+      type: Object,
+      default() {
+        return;
+      }
+    },
     renderingEngine: {
       type: String,
       default() {
@@ -148,25 +154,36 @@ export default {
 
     const canvas = document.createElement('canvas');
     this.canvasContext = canvas.getContext('2d');
-    this.setDimensions();
+    if (this.timeStrip !== undefined) {
+      this.swimLaneLabelWidth = this.timeStrip.configuration.swimLaneLabelWidth;
+      this.unobserveSwimLaneLabelWidth = this.openmct.objects.observe(
+        this.timeStrip,
+        'configuration.swimLaneLabelWidth',
+        this.updateSwimLaneLabelWidth
+      );
+    } else {
+      this.swimLaneLabelWidth = 200;
+    }
+    this.contentElement = this.isNested
+      ? this.$el.closest('.is-object-type-time-strip')
+      : this.$refs.plan;
+    const boundingClientRect = this.contentElement.getBoundingClientRect();
+    this.width = boundingClientRect.width - this.swimLaneLabelWidth;
+    this.height = boundingClientRect.height;
     this.setTimeContext();
     this.handleConfigurationChange(this.configuration);
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
     this.loadComposition();
 
     this.resizeObserver = new ResizeObserver(this.resize);
-    this.resizeObserver.observe(this.$refs.plan);
+    this.resizeObserver.observe(this.contentElement);
   },
   beforeUnmount() {
     this.resizeObserver.disconnect();
     this.stopFollowingTimeContext();
-    if (this.unlisten) {
-      this.unlisten();
-    }
+    this.unlisten?.();
 
-    if (this.removeStatusListener) {
-      this.removeStatusListener();
-    }
+    this.removeStatusListener?.();
 
     if (this.composition) {
       this.composition.off('add', this.handleCompositionAdd);
@@ -174,14 +191,11 @@ export default {
     }
 
     this.planViewConfiguration.off('change', this.handleConfigurationChange);
-    if (this.stopObservingPlanChanges) {
-      this.stopObservingPlanChanges();
-    }
+    this.stopObservingPlanChanges?.();
     this.planViewConfiguration.destroy();
 
-    if (this.stopObservingPlanExecutionMonitoringStatusObject) {
-      this.stopObservingPlanExecutionMonitoringStatusObject();
-    }
+    this.stopObservingPlanExecutionMonitoringStatusObject?.();
+    this.unobserveSwimLaneLabelWidth?.();
   },
   methods: {
     setupPlan(domainObject) {
@@ -312,46 +326,16 @@ export default {
     removeFromComposition(domainObject) {
       this.composition.remove(domainObject);
     },
-    resize() {
-      let clientWidth = this.getClientWidth();
-      let clientHeight = this.getClientHeight();
-      if (clientWidth !== this.width) {
-        this.setDimensions();
-        this.updateViewBounds();
-      }
+    resize(observerEntries) {
+      observerEntries.forEach((entry) => {
+        this.height = entry.contentRect.height;
+        const clientWidth = entry.contentRect.width - this.swimLaneLabelWidth;
 
-      if (clientHeight !== this.height) {
-        this.setDimensions();
-      }
-    },
-    getClientWidth() {
-      let clientWidth = this.$refs.plan.clientWidth;
-
-      if (!clientWidth) {
-        //this is a hack - need a better way to find the parent of this component
-        let parent = this.getParent();
-        if (parent) {
-          clientWidth = parent.getBoundingClientRect().width;
+        if (clientWidth !== this.width) {
+          this.width = clientWidth;
+          this.updateViewBounds();
         }
-      }
-
-      return clientWidth - 200;
-    },
-    getParent() {
-      //this is a hack - need a better way to find the parent of this component
-      return this.$el.closest('.is-object-type-time-strip');
-    },
-    getClientHeight() {
-      let clientHeight = this.$refs.plan.clientHeight;
-
-      if (!clientHeight) {
-        let parent = this.getParent();
-        if (parent) {
-          clientHeight = parent.getBoundingClientRect().height;
-        }
-      }
-
-      return clientHeight;
+      });
     },
     updateViewBounds(bounds) {
       if (bounds) {
@@ -373,10 +357,6 @@ export default {
       if (this.xScale) {
         this.generateActivities();
       }
-    },
-    setDimensions() {
-      this.width = this.getClientWidth();
-      this.height = this.getClientHeight();
     },
     setScale(timeSystem) {
       if (!this.width) {
@@ -648,6 +628,9 @@ export default {
         ],
         multiSelect
       );
+    },
+    updateSwimLaneLabelWidth(width) {
+      this.swimLaneLabelWidth = width;
     }
   }
 };
