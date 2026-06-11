@@ -22,7 +22,7 @@
 
 <template>
   <div ref="plan" class="c-plan c-timeline-holder">
-    <template v-if="viewBounds && !options.compact">
+    <template v-if="viewBounds && !isNested">
       <SwimLane class="c-swimlane__time-axis">
         <template #label>{{ timeSystem.name }}</template>
         <template #object>
@@ -46,7 +46,7 @@
         :height="group.height"
         :row-height="rowHeight"
         :width="group.width"
-        :is-nested="options.isChildObject"
+        :is-nested="isNested"
         :status="status"
         @activity-selected="selectActivity"
       />
@@ -88,15 +88,6 @@ export default {
   },
   inject: ['openmct', 'domainObject', 'path'],
   props: {
-    options: {
-      type: Object,
-      default() {
-        return {
-          compact: false,
-          isChildObject: false
-        };
-      }
-    },
     timeStrip: {
       type: Object,
       default() {
@@ -132,6 +123,9 @@ export default {
           (group) => this.swimlaneVisibility[group.heading] === true
         );
       }
+    },
+    isNested() {
+      return this.timeStrip !== undefined;
     }
   },
   watch: {
@@ -143,7 +137,6 @@ export default {
     this.composition = this.openmct.composition.get(this.domainObject);
     this.planViewConfiguration = new PlanViewConfiguration(this.domainObject, this.openmct);
     this.configuration = this.planViewConfiguration.getConfiguration();
-    this.isNested = this.options.isChildObject;
     this.swimlaneVisibility = this.configuration.swimlaneVisibility;
     this.clipActivityNames = this.configuration.clipActivityNames;
 
@@ -158,8 +151,7 @@ export default {
     this.contentElement = this.isNested
       ? this.$el.closest('.is-object-type-time-strip')
       : this.$refs.plan;
-    this.swimLaneLabelWidth =
-      this.timeStrip !== undefined ? this.timeStrip.configuration.swimLaneLabelWidth : 200;
+    this.swimLaneLabelWidth = this.isNested ? this.timeStrip.configuration.swimLaneLabelWidth : 200;
     const boundingClientRect = this.contentElement.getBoundingClientRect();
     const width = boundingClientRect.width - this.swimLaneLabelWidth;
     if (this.width !== width) {
@@ -337,7 +329,7 @@ export default {
       }
     },
     resizeSwimLane() {
-      if (this.timeStrip !== undefined) {
+      if (this.isNested) {
         this.swimLaneLabelWidth = this.timeStrip.configuration.swimLaneLabelWidth;
         const boundingClientRect = this.contentElement.getBoundingClientRect();
         this.height = boundingClientRect.height;
