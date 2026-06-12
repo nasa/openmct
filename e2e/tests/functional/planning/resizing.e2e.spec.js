@@ -45,16 +45,28 @@ test.describe('Resizing the window', () => {
     const activityCount = Object.values(testPlan).flat().length;
     const activities = page.locator('.c-plan__activity.activity-bounds');
 
-    await expect(activities).toBeInViewport();
     await expect(activities).toHaveCount(activityCount);
+    for (const activity of await activities.all()) {
+      await expect(activity).toBeInViewport();
+    }
 
+    const timeaxis = await page
+      .locator('.c-swimlane__time-axis')
+      .locator('.c-swimlane__lane-object')
+      .boundingBox();
+
+    const { width } = timeaxis;
     // drag the inspector handle to shrink the view size
-    await page.getByLabel('Resize Inspect Pane').hover();
-    await page.mouse.down();
-    await page.mouse.move(-100, 0);
-    await page.mouse.up();
+    const resizeHandle = page.getByLabel('Resize Inspect Pane');
+    const { x, y } = await resizeHandle.boundingBox();
 
-    await expect(activities).toBeInViewport();
+    await resizeHandle.hover();
+    await page.mouse.down();
+    await page.mouse.move(x - width + 15, y);
+    await page.mouse.up();
     await expect(activities).toHaveCount(activityCount);
+    for (const activity of await activities.all()) {
+      await expect(activity).toBeInViewport();
+    }
   });
 });
