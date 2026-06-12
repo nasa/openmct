@@ -24,8 +24,10 @@ import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
   navigateToObjectWithFixedTimeBounds,
+  setEndOffset,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
+  setRealTimeMode,
   setTimeConductorBounds
 } from '../../../appActions.js';
 import { expect, test } from '../../../pluginFixtures.js';
@@ -228,6 +230,49 @@ test.describe('Time Strip', () => {
       });
 
       await expect(page.getByLabel('Now Marker')).toBeHidden();
+    });
+  });
+
+  test('Time strip ahead/behind line', async ({ page }) => {
+    const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
+    await setRealTimeMode(page);
+    await setEndOffset(page, {
+      endMins: '15',
+      endSecs: '00'
+    });
+
+    await test.step('set the ahead line', async () => {
+      // select the first plan in the timestrip
+      await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
+      await page.getByRole('button', { name: 'Edit Object' }).click();
+      await page
+        .locator('select[aria-label="Plan Execution Monitoring Status"]')
+        .selectOption({ label: 'Ahead by' });
+      page.getByLabel('Plan Execution Monitoring Duration').fill('5');
+
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+      await expect(aheadBehindMarker).toBeVisible();
+      await expect(aheadBehindMarker).toContainClass('--ahead');
+      await expect(aheadBehindMarker).not.toContainClass('--behind');
+    });
+
+    await test.step('set the behind line', async () => {
+      // select the first plan in the timestrip
+      await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
+      await page.getByRole('button', { name: 'Edit Object' }).click();
+      await page
+        .locator('select[aria-label="Plan Execution Monitoring Status"]')
+        .selectOption({ label: 'Behind by' });
+      page.getByLabel('Plan Execution Monitoring Duration').fill('5');
+
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+      await expect(aheadBehindMarker).toBeVisible();
+      await expect(aheadBehindMarker).not.toContainClass('--ahead');
+      await expect(aheadBehindMarker).toContainClass('--behind');
     });
   });
 });
