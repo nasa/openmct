@@ -29,32 +29,6 @@ import installWorker from './WebSocketWorker.js';
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback
  */
 
-/**
- * Mocks requestIdleCallback for Safari using setTimeout. Functionality will be
- * identical to setTimeout in Safari, which is to fire the callback function
- * after the provided timeout period.
- *
- * In browsers that support requestIdleCallback, this const is just a
- * pointer to the native function.
- *
- * @param {Function} callback a callback to be invoked during the next idle period, or
- * after the specified timeout
- * @param {RequestIdleCallbackOptions} options
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback
- *
- */
-function requestIdleCallbackPolyfill(callback, options) {
-  return (
-    // eslint-disable-next-line compat/compat
-    window.requestIdleCallback ??
-    ((fn, { timeout }) =>
-      setTimeout(() => {
-        fn({ didTimeout: false });
-      }, timeout))
-  );
-}
-const requestIdleCallback = requestIdleCallbackPolyfill();
-
 const ONE_SECOND = 1000;
 
 /**
@@ -199,6 +173,11 @@ class BatchingWebSocket extends EventTarget {
     if (message.data.type === 'batch') {
       const batch = message.data.batch;
       const now = performance.now();
+      const processingTime = now - this.#lastBatchReceived;
+
+      if (processingTime > this.#processingTimeWarningThreshold) {
+        console.warning(`Warning: Batch processing took ${processingTime}`);
+      }
 
       let currentBufferLength = message.data.currentBufferLength;
       let maxBufferSize = message.data.maxBufferSize;
@@ -226,11 +205,10 @@ class BatchingWebSocket extends EventTarget {
         );
       }
 
-      this.start = Date.now();
       const dropped = message.data.dropped;
       if (dropped === true && !this.#showingRateLimitNotification) {
         const notification = this.#openmct.notifications.alert(
-          'Telemetry dropped due to client rate limiting.',
+          'Telemetry dropped due to buffer overflow.',
           { hint: 'Refresh individual telemetry views to retrieve dropped telemetry if needed.' }
         );
         this.#showingRateLimitNotification = true;
@@ -240,7 +218,6 @@ class BatchingWebSocket extends EventTarget {
       }
 
       this.dispatchEvent(new CustomEvent('batch', { detail: batch }));
-      this.#waitUntilIdleAndRequestNextBatch(batch);
     } else if (message.data.type === 'message') {
       this.dispatchEvent(new CustomEvent('message', { detail: message.data.message }));
     } else if (message.data.type === 'reconnected') {
@@ -250,25 +227,8 @@ class BatchingWebSocket extends EventTarget {
     }
   }
 
-  #waitUntilIdleAndRequestNextBatch(batch) {
-    requestIdleCallback(
-      (state) => {
-        if (this.#firstBatchReceived === false) {
-          this.#firstBatchReceived = true;
-        }
-        const now = Date.now();
-        const waitedFor = now - this.start;
-        if (waitedFor > this.#throttleRate) {
-          console.warn(`Warning, batch processing took ${waitedFor}ms`);
-        }
-        this.#readyForNextBatch();
-      },
-      { timeout: this.#forcedUpdateTimeout }
-    );
-  }
-
-  get #forcedUpdateTimeout() {
-    return this.#throttleRate * 2;
+  get #processingTimeWarningThreshold() {
+    return this.#throttleRate * 1.1;
   }
 }
 
