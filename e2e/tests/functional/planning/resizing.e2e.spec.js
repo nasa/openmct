@@ -21,7 +21,7 @@
  *****************************************************************************/
 import fs from 'fs';
 
-import { createPlanFromJSON, navigateToObjectWithFixedTimeBounds } from '../../../appActions.js';
+import { createDomainObjectWithDefaults, createPlanFromJSON } from '../../../appActions.js';
 import { setBoundsToSpanAllActivities } from '../../../helper/planningUtils.js';
 import { expect, test } from '../../../pluginFixtures.js';
 
@@ -32,41 +32,110 @@ const testPlan = JSON.parse(
 );
 
 test.describe('Resizing the window', () => {
-  let plan;
+  let activities;
+  let activitiesCount;
+  let timeAxisScale;
+  let resizeHandle;
+
   test.beforeEach(async ({ page }) => {
     await page.goto('./', { waitUntil: 'domcontentloaded' });
-    plan = await createPlanFromJSON(page, {
-      json: testPlan
-    });
+
+    activities = page.locator('.c-plan__activity.activity-bounds');
+    activitiesCount = Object.values(testPlan).flat().length;
+    timeAxisScale = page.locator('.c-swimlane__time-axis').locator('.c-swimlane__lane-object');
+    resizeHandle = page.getByLabel('Resize Inspect Pane');
   });
 
   test('will scale activities properly in the Plan View', async ({ page }) => {
+    const plan = await createPlanFromJSON(page, {
+      json: testPlan
+    });
     await setBoundsToSpanAllActivities(page, testPlan, plan.url);
-    const activityCount = Object.values(testPlan).flat().length;
-    const activities = page.locator('.c-plan__activity.activity-bounds');
 
-    await expect(activities).toHaveCount(activityCount);
-    for (const activity of await activities.all()) {
-      await expect(activity).toBeInViewport();
-    }
+    await test.step('all activities are in viewport', async () => {
+      await expect(activities).toHaveCount(activitiesCount);
+      for (const activity of await activities.all()) {
+        await expect(activity).toBeInViewport();
+      }
+    });
 
-    const timeaxis = await page
-      .locator('.c-swimlane__time-axis')
-      .locator('.c-swimlane__lane-object')
-      .boundingBox();
+    await test.step('shrink viewport and all activities should still fit in timespan', async () => {
+      const { width } = await timeAxisScale.boundingBox();
+      const { x, y } = await resizeHandle.boundingBox();
 
-    const { width } = timeaxis;
-    // drag the inspector handle to shrink the view size
-    const resizeHandle = page.getByLabel('Resize Inspect Pane');
-    const { x, y } = await resizeHandle.boundingBox();
+      await resizeHandle.hover();
+      await page.mouse.down();
+      await page.mouse.move(x - width + 15, y);
+      await page.mouse.up();
 
-    await resizeHandle.hover();
-    await page.mouse.down();
-    await page.mouse.move(x - width + 15, y);
-    await page.mouse.up();
-    await expect(activities).toHaveCount(activityCount);
-    for (const activity of await activities.all()) {
-      await expect(activity).toBeInViewport();
-    }
+      await expect(activities).toHaveCount(activitiesCount);
+      for (const activity of await activities.all()) {
+        await expect(activity).toBeInViewport();
+      }
+    });
+  });
+
+  test('will scale activities properly in the Gantt View', async ({ page }) => {
+    const ganttChart = await createDomainObjectWithDefaults(page, {
+      type: 'Gantt Chart'
+    });
+    const plan = await createPlanFromJSON(page, {
+      json: testPlan,
+      parent: ganttChart.uuid
+    });
+    await setBoundsToSpanAllActivities(page, testPlan, plan.url);
+
+    await test.step('all activities are in viewport', async () => {
+      await expect(activities).toHaveCount(activitiesCount);
+      for (const activity of await activities.all()) {
+        await expect(activity).toBeInViewport();
+      }
+    });
+
+    await test.step('shrink viewport and all activities should still fit in timespan', async () => {
+      const { width } = await timeAxisScale.boundingBox();
+      const { x, y } = await resizeHandle.boundingBox();
+
+      await resizeHandle.hover();
+      await page.mouse.down();
+      await page.mouse.move(x - width + 15, y);
+      await page.mouse.up();
+
+      await expect(activities).toHaveCount(activitiesCount);
+      for (const activity of await activities.all()) {
+        await expect(activity).toBeInViewport();
+      }
+    });
+  });
+
+  test('will scale activities properly in the Time Strip View', async ({ page }) => {
+    const timeStrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
+    const plan = await createPlanFromJSON(page, {
+      json: testPlan,
+      parent: timeStrip.uuid
+    });
+    await setBoundsToSpanAllActivities(page, testPlan, plan.url);
+
+    await test.step('all activities are in viewport', async () => {
+      await expect(activities).toHaveCount(activitiesCount);
+      for (const activity of await activities.all()) {
+        await expect(activity).toBeInViewport();
+      }
+    });
+
+    await test.step('shrink viewport and all activities should still fit in timespan', async () => {
+      const { width } = await timeAxisScale.boundingBox();
+      const { x, y } = await resizeHandle.boundingBox();
+
+      await resizeHandle.hover();
+      await page.mouse.down();
+      await page.mouse.move(x - width + 15, y);
+      await page.mouse.up();
+
+      await expect(activities).toHaveCount(activitiesCount);
+      for (const activity of await activities.all()) {
+        await expect(activity).toBeInViewport();
+      }
+    });
   });
 });
