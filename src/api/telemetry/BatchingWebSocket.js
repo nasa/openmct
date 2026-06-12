@@ -89,15 +89,8 @@ class BatchingWebSocket extends EventTarget {
   connect(url) {
     this.#worker.postMessage({
       type: 'connect',
-      url
-    });
-
-    this.#readyForNextBatch();
-  }
-
-  #readyForNextBatch() {
-    this.#worker.postMessage({
-      type: 'readyForNextBatch'
+      url,
+      throttleRate: this.#throttleRate
     });
   }
 

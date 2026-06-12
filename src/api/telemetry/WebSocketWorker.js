@@ -225,8 +225,9 @@ export default function installWorker() {
       }
     }
     connect(message) {
-      const { url } = message.data;
+      const { url, throttleRate } = message.data;
       this.#websocket.connect(url);
+      this.#messageBatcher.setThrottleRate(throttleRate);
     }
     disconnect() {
       this.#websocket.disconnect();
@@ -296,8 +297,6 @@ export default function installWorker() {
 
     #sendNextBatch() {
       if (this.#currentBufferLength > 0) {
-        this.#resetBatch();
-
         this.#worker.postMessage({
           type: 'batch',
           dropped: this.#dropped,
@@ -305,6 +304,7 @@ export default function installWorker() {
           maxBufferSize: this.#maxBufferSize,
           batch: this.#buffer
         });
+        this.#resetBatch();
       }
     }
 
