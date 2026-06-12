@@ -3,6 +3,7 @@
   let connected = false;
   let couchEventSource;
   let changesFeedUrl;
+  let lastSequence = 'now';
   const keepAliveTime = 20 * 1000;
   let keepAliveTimer;
   const controller = new AbortController();
@@ -61,6 +62,7 @@
     console.debug('📩 Received message from CouchDB 📩');
 
     const objectChanges = JSON.parse(event.data);
+    lastSequence = objectChanges.seq !== undefined ? objectChanges.seq : lastSequence;
     connections.forEach(function (connection) {
       connection.postMessage({
         objectChanges
@@ -81,6 +83,9 @@
 
     if (!couchEventSource || couchEventSource.readyState === EventSource.CLOSED) {
       console.debug(`⇿ Opening CouchDB change feed connection for ${changesFeedUrl} ⇿`);
+      const sseURL = new URL(changesFeedUrl);
+      sseURL.searchParams.set('since', lastSequence);
+      changesFeedUrl = sseURL.toString();
       couchEventSource = new EventSource(changesFeedUrl);
       couchEventSource.onerror = self.onerror;
       couchEventSource.onopen = self.onopen;
