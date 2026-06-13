@@ -37,7 +37,7 @@ class StalenessUtils {
 
     // Accept latest staleness updates from staleness provider,
     // regardless of whether the update occurred within time conductor bounds.
-    if (stalenessResponseTime > this.lastStalenessResponseTime) {
+    if (stalenessResponseTime >= this.lastStalenessResponseTime) {
       this.lastStalenessResponseTime = stalenessResponseTime;
       this.lastStalenessTimeSystem = this.getTimeSystem();
 
