@@ -24,10 +24,10 @@ import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
   navigateToObjectWithFixedTimeBounds,
+  navigateToObjectWithRealTime,
   setEndOffset,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
-  setRealTimeMode,
   setTimeConductorBounds
 } from '../../../appActions.js';
 import { expect, test } from '../../../pluginFixtures.js';
@@ -85,32 +85,13 @@ test.describe('Time Strip', () => {
     // Goto baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    timestrip = await test.step('Create a Time Strip', async () => {
-      const createdTimeStrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
-      const objectName = await page.locator('.l-browse-bar__object-name').innerText();
-      expect(objectName).toBe(createdTimeStrip.name);
-
-      return createdTimeStrip;
-    });
-
-    plan = await test.step('Create a Plan and add it to the timestrip', async () => {
-      const createdPlan = await createPlanFromJSON(page, {
-        name: 'Test Plan',
-        json: testPlan
-      });
-
-      await page.goto(timestrip.url);
-      // Expand the tree to show the plan
-      await page.getByLabel('Show selected item in tree').click();
-      await page
-        .getByLabel(`Navigate to ${createdPlan.name}`)
-        .dragTo(page.getByLabel('Object View'));
-      await page.getByLabel('Save').click();
-      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-      return createdPlan;
+    timestrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
+    plan = await createPlanFromJSON(page, {
+      json: testPlan,
+      parent: timestrip.uuid
     });
   });
+
   test('Create two Time Strips, add a single Plan to both, and verify they can have separate Independent Time Contexts', async ({
     page
   }) => {
@@ -152,19 +133,17 @@ test.describe('Time Strip', () => {
 
     await test.step('Can have multiple TimeStrips with the same plan linked and different Independent Time Contexts', async () => {
       // Create another Time Strip and verify that it has been created
-      const createdTimeStrip = await createDomainObjectWithDefaults(page, {
+      const secondTimeStrip = await createDomainObjectWithDefaults(page, {
         type: 'Time Strip',
         name: 'Another Time Strip'
       });
 
-      const objectName = await page.locator('.l-browse-bar__object-name').innerText();
-      expect(objectName).toBe(createdTimeStrip.name);
+      await createPlanFromJSON(page, {
+        json: testPlan,
+        parent: secondTimeStrip.uuid
+      });
 
-      // Drag the existing Plan onto the newly created Time Strip, and save.
-      await page.getByLabel(`Navigate to ${plan.name}`).dragTo(page.getByLabel('Object View'));
-      await page.getByLabel('Save').click();
-      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
+      await navigateToObjectWithFixedTimeBounds(page, secondTimeStrip.url);
       // All events should be displayed at this point because the
       // initial independent context bounds will match the global bounds
       expect(await activityBounds.count()).toEqual(5);
@@ -235,7 +214,7 @@ test.describe('Time Strip', () => {
 
   test('Time strip ahead/behind line', async ({ page }) => {
     const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
-    await setRealTimeMode(page);
+    await navigateToObjectWithRealTime(page, timestrip.url);
     await setEndOffset(page, {
       endMins: '15',
       endSecs: '00'
