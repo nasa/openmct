@@ -78,17 +78,16 @@ const testPlan = {
 };
 
 test.describe('Time Strip', () => {
-  let timestrip;
-  let plan;
+  let timeStrip;
 
   test.beforeEach(async ({ page }) => {
     // Goto baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    timestrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
-    plan = await createPlanFromJSON(page, {
+    timeStrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
+    await createPlanFromJSON(page, {
       json: testPlan,
-      parent: timestrip.uuid
+      parent: timeStrip.uuid
     });
   });
 
@@ -108,7 +107,7 @@ test.describe('Time Strip', () => {
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
       // Switch to fixed time mode with all plan events within the bounds
-      await navigateToObjectWithFixedTimeBounds(page, timestrip.url, startBound, endBound);
+      await navigateToObjectWithFixedTimeBounds(page, timeStrip.url, startBound, endBound);
 
       // Verify all events are displayed
       const eventCount = await page.locator('.activity-bounds').count();
@@ -163,7 +162,7 @@ test.describe('Time Strip', () => {
       expect(await activityBounds.count()).toEqual(2);
 
       // Switch to the previous Time Strip and verify that only one event is displayed
-      await page.goto(timestrip.url);
+      await page.goto(timeStrip.url);
       expect(await activityBounds.count()).toEqual(1);
     });
   });
@@ -214,14 +213,14 @@ test.describe('Time Strip', () => {
 
   test('Time strip ahead/behind line', async ({ page }) => {
     const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
-    await navigateToObjectWithRealTime(page, timestrip.url);
+    await navigateToObjectWithRealTime(page, timeStrip.url);
     await setEndOffset(page, {
       endMins: '15',
       endSecs: '00'
     });
 
     await test.step('set the ahead line', async () => {
-      // select the first plan in the timestrip
+      // select the first plan in the timeStrip
       await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
       await page.getByRole('button', { name: 'Edit Object' }).click();
       await page
@@ -238,7 +237,7 @@ test.describe('Time Strip', () => {
     });
 
     await test.step('set the behind line', async () => {
-      // select the first plan in the timestrip
+      // select the first plan in the timeStrip
       await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
       await page.getByRole('button', { name: 'Edit Object' }).click();
       await page
