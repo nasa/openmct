@@ -166,11 +166,6 @@ class BatchingWebSocket extends EventTarget {
     if (message.data.type === 'batch') {
       const batch = message.data.batch;
       const now = performance.now();
-      const processingTime = now - this.#lastBatchReceived;
-
-      if (processingTime > this.#processingTimeWarningThreshold) {
-        console.warning(`Warning: Batch processing took ${processingTime}`);
-      }
 
       let currentBufferLength = message.data.currentBufferLength;
       let maxBufferSize = message.data.maxBufferSize;
