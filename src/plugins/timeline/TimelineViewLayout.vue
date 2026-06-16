@@ -38,6 +38,7 @@
           :bounds="timeSystemItem.bounds"
           :time-system="timeSystemItem.timeSystem"
           :content-height="height"
+          :ahead-behind="aheadBehind"
           :rendering-engine="'svg'"
         />
       </template>
@@ -86,6 +87,7 @@ import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import { PLAN_EXECUTION_MONITORING_KEY } from '../planExecutionMonitoring/planExecutionMonitoringIdentifier.js';
 import Container from './Container.js';
 import ExtendedLinesOverlay from './ExtendedLinesOverlay.vue';
 import TimelineObjectView from './TimelineObjectView.vue';
@@ -117,7 +119,7 @@ export default {
     const timeSystems = ref([]);
     let timeContext;
 
-    // returned from composition api setup()
+    // groups composable properties to return in setup() return
     const setupTimeContexts = {
       timeSystems
     };
@@ -185,7 +187,7 @@ export default {
     let handleContentResize;
     let contentResizeObserver;
 
-    // returned from composition api setup()
+    // groups composable properties to return in setup() return
     const setupContentHeight = {
       timelineHolder,
       height
@@ -260,7 +262,7 @@ export default {
       openmct
     );
 
-    // returned from composition api setup()
+    // groups composable properties to return in setup() return
     const setupExtendedLines = {
       extendedLinesBus,
       extendedLinesPerKey,
@@ -334,7 +336,7 @@ export default {
     provide('swimLaneLabelWidth', swimLaneLabelWidth);
     provide('mousedown', mousedown);
 
-    // returned from composition api setup()
+    // groups composable properties to return in setup() return
     const setupSwimLaneLabelWidth = {
       changeSwimLaneLabelWidthContextAction
     };
@@ -373,7 +375,7 @@ export default {
       callback: mutateContainers
     });
 
-    // returned from composition api setup()
+    // groups composable properties to return in setup() return
     const setupFlexContainers = {
       containers,
       startContainerResizing,
@@ -513,6 +515,106 @@ export default {
       sizeFixedContainer(index, size);
     }
 
+    // COMPOSABLE - ahead behind
+    const aheadBehind = ref();
+    let plans = [];
+    let planExecutionMonitoringStatusObject;
+    let stopObservingPlanExecutionMonitoringStatusObject;
+
+    const DEFAULT_AHEAD_BEHIND_STATUS = {
+      duration: 0,
+      status: ''
+    };
+
+    // groups composable properties to return in setup() return
+    const setupAheadBehind = {
+      aheadBehind
+    };
+
+    onMounted(async () => {
+      compositionCollection.on('add', checkAddedForPlan);
+      compositionCollection.on('remove', checkRemovedForPlan);
+
+      planExecutionMonitoringStatusObject = await openmct.objects.get(
+        PLAN_EXECUTION_MONITORING_KEY
+      );
+      setPlanExecutionMonitoringStatus(planExecutionMonitoringStatusObject);
+      stopObservingPlanExecutionMonitoringStatusObject = openmct.objects.observe(
+        planExecutionMonitoringStatusObject,
+        '*',
+        setPlanExecutionMonitoringStatus
+      );
+    });
+
+    onBeforeUnmount(() => {
+      compositionCollection.off('add', checkAddedForPlan);
+      compositionCollection.off('remove', checkRemovedForPlan);
+
+      stopObservingPlanExecutionMonitoringStatusObject?.();
+    });
+
+    function setPlanExecutionMonitoringStatus(newStatusObject) {
+      let planIdentifier;
+
+      planIdentifier = plans.filter(
+        (identifier) => openmct.status.get(identifier) === 'current'
+      )?.[0];
+      if (planIdentifier === undefined) {
+        planIdentifier = plans?.[0];
+      }
+
+      if (
+        newStatusObject &&
+        newStatusObject.execution_monitoring &&
+        newStatusObject.execution_monitoring[planIdentifier]
+      ) {
+        aheadBehind.value = newStatusObject.execution_monitoring[planIdentifier];
+      } else {
+        aheadBehind.value = DEFAULT_AHEAD_BEHIND_STATUS;
+      }
+    }
+
+    /*
+     * Does not check for deeply nested plans
+     */
+    async function checkAddedForPlan(_domainObject) {
+      const planIdentifier = await getPlanIdentifier(_domainObject);
+
+      if (planIdentifier) {
+        plans.push(planIdentifier);
+      }
+    }
+
+    async function checkRemovedForPlan(_domainObject) {
+      const planIdentifier = await getPlanIdentifier(_domainObject);
+
+      if (planIdentifier) {
+        const index = plans.indexOf(planIdentifier);
+
+        if (index > -1) {
+          plans.splice(index, 1);
+        }
+      }
+    }
+
+    async function getPlanIdentifier(_domainObject) {
+      let planIdentifier;
+
+      if (_domainObject.type === 'plan') {
+        planIdentifier = openmct.objects.makeKeyString(_domainObject.identifier);
+      } else if (_domainObject.type === 'gantt-chart') {
+        const ganttChartComposition = openmct.composition.get(_domainObject);
+        await ganttChartComposition.load();
+        ganttChartComposition.forEach((child) => {
+          if (child.type === 'plan') {
+            planIdentifier = openmct.objects.makeKeyString(child.identifier);
+          }
+        });
+      }
+
+      return planIdentifier;
+    }
+
     return {
       openmct,
       domainObject,
@@ -523,7 +625,8 @@ export default {
       ...setupContentHeight,
       ...setupExtendedLines,
       ...setupSwimLaneLabelWidth,
-      ...setupFlexContainers
+      ...setupFlexContainers,
+      ...setupAheadBehind
     };
   }
 };
