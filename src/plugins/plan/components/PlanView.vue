@@ -148,7 +148,7 @@ export default {
     const canvas = document.createElement('canvas');
     this.canvasContext = canvas.getContext('2d');
 
-    this.contentElement = this.isNested
+    this.sizingElement = this.isNested
       ? this.$el.closest('.is-object-type-time-strip')
       : this.$refs.plan;
     if (this.isNested) {
@@ -161,7 +161,7 @@ export default {
     } else {
       this.swimLaneLabelWidth = 200;
     }
-    const boundingClientRect = this.contentElement.getBoundingClientRect();
+    const boundingClientRect = this.sizingElement.getBoundingClientRect();
     const width = boundingClientRect.width - this.swimLaneLabelWidth;
     if (this.width !== width) {
       this.width = width;
@@ -172,8 +172,8 @@ export default {
     this.planViewConfiguration.on('change', this.handleConfigurationChange);
     this.loadComposition();
 
-    this.resizeObserver = new ResizeObserver(this.resizeElement);
-    this.resizeObserver.observe(this.contentElement);
+    this.resizeObserver = new ResizeObserver(this.resizePlan);
+    this.resizeObserver.observe(this.sizingElement);
   },
   beforeUnmount() {
     this.resizeObserver.disconnect();
@@ -323,8 +323,8 @@ export default {
     removeFromComposition(domainObject) {
       this.composition.remove(domainObject);
     },
-    resizeElement() {
-      const boundingClientRect = this.contentElement.getBoundingClientRect();
+    resizePlan() {
+      const boundingClientRect = this.sizingElement.getBoundingClientRect();
       this.height = boundingClientRect.height;
       const width = boundingClientRect.width - this.swimLaneLabelWidth;
       if (this.width !== width) {
@@ -335,7 +335,7 @@ export default {
     resizeSwimLane() {
       if (this.isNested) {
         this.swimLaneLabelWidth = this.timeStrip.configuration.swimLaneLabelWidth;
-        const boundingClientRect = this.contentElement.getBoundingClientRect();
+        const boundingClientRect = this.sizingElement.getBoundingClientRect();
         this.height = boundingClientRect.height;
         const width = boundingClientRect.width - this.swimLaneLabelWidth;
         if (this.width !== width) {
