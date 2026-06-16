@@ -616,6 +616,7 @@ class CouchObjectProvider {
     const sseURL = new URL(sseChangesPath);
     sseURL.searchParams.append('feed', 'eventsource');
     sseURL.searchParams.append('style', 'main_only');
+    sseURL.searchParams.append('since', 'now');
     sseURL.searchParams.append('heartbeat', HEARTBEAT);
 
     if (typeof SharedWorker === 'undefined') {
