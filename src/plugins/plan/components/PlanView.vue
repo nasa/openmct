@@ -89,10 +89,7 @@ export default {
   inject: ['openmct', 'domainObject', 'path'],
   props: {
     timeStrip: {
-      type: Object,
-      default() {
-        return;
-      }
+      type: Object
     },
     renderingEngine: {
       type: String,
