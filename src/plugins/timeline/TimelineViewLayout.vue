@@ -31,6 +31,7 @@
           :bounds="timeSystemItem.bounds"
           :time-system="timeSystemItem.timeSystem"
           :content-height="height"
+          :ahead-behind="aheadBehind"
           :rendering-engine="'svg'"
         />
       </template>
@@ -56,6 +57,7 @@ import SwimLane from '@/ui/components/swim-lane/SwimLane.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import { getValidatedData, getValidatedGroups } from '../plan/util.js';
+import { PLAN_EXECUTION_MONITORING_KEY } from '../planExecutionMonitoring/planExecutionMonitoringIdentifier.js';
 import TimelineObjectView from './TimelineObjectView.vue';
 
 const unknownObjectType = {
@@ -63,6 +65,11 @@ const unknownObjectType = {
     cssClass: 'icon-object-unknown',
     name: 'Unknown Type'
   }
+};
+
+const DEFAULT_AHEAD_BEHIND_STATUS = {
+  duration: 0,
+  status: ''
 };
 
 export default {
@@ -86,6 +93,7 @@ export default {
   },
   data() {
     return {
+      aheadBehind: DEFAULT_AHEAD_BEHIND_STATUS,
       items: [],
       timeSystems: [],
       height: 0,
@@ -101,21 +109,33 @@ export default {
     this.stopFollowingTimeContext();
     this.handleContentResize.cancel();
     this.contentResizeObserver.disconnect();
+    this.stopObservingPlanExecutionMonitoringStatusObject?.();
   },
-  mounted() {
+  async mounted() {
     this.items = [];
+    this.plans = [];
     this.setTimeContext();
 
     if (this.composition) {
       this.composition.on('add', this.addItem);
       this.composition.on('remove', this.removeItem);
       this.composition.on('reorder', this.reorder);
-      this.composition.load();
+      await this.composition.load();
     }
 
     this.handleContentResize = _.debounce(this.handleContentResize, 500);
     this.contentResizeObserver = new ResizeObserver(this.handleContentResize);
     this.contentResizeObserver.observe(this.$refs.timelineHolder);
+
+    this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
+      PLAN_EXECUTION_MONITORING_KEY
+    );
+    this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
+    this.stopObservingPlanExecutionMonitoringStatusObject = this.openmct.objects.observe(
+      this.planExecutionMonitoringStatusObject,
+      '*',
+      this.setPlanExecutionMonitoringStatus
+    );
   },
   methods: {
     addItem(domainObject) {
@@ -144,12 +164,16 @@ export default {
       };
 
       this.items.push(item);
+
+      this.checkAddedForPlan(domainObject);
     },
     removeItem(identifier) {
       let index = this.items.findIndex((item) =>
         this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier)
       );
       this.items.splice(index, 1);
+
+      this.checkRemovedForPlan(identifier);
     },
     reorder(reorderPlan) {
       let oldItems = this.items.slice();
@@ -222,6 +246,65 @@ export default {
         this.timeContext.off('boundsChanged', this.updateViewBounds);
         this.timeContext.off('clockChanged', this.updateViewBounds);
       }
+    },
+    setPlanExecutionMonitoringStatus(newStatusObject) {
+      let planIdentifier;
+
+      planIdentifier = this.plans.filter(
+        (identifier) => this.openmct.status.get(identifier) === 'current'
+      )?.[0];
+      if (planIdentifier === undefined) {
+        planIdentifier = this.plans?.[0];
+      }
+
+      if (
+        newStatusObject &&
+        newStatusObject.execution_monitoring &&
+        newStatusObject.execution_monitoring[planIdentifier]
+      ) {
+        this.aheadBehind = newStatusObject.execution_monitoring[planIdentifier];
+      } else {
+        this.aheadBehind = DEFAULT_AHEAD_BEHIND_STATUS;
+      }
+    },
+    /*
+     * Does not check for deeply nested plans
+     */
+    async checkAddedForPlan(_domainObject) {
+      const planIdentifier = await this.getPlanIdentifier(_domainObject);
+
+      if (planIdentifier) {
+        this.plans.push(planIdentifier);
+      }
+    },
+    async checkRemovedForPlan(_domainObject) {
+      const planIdentifier = await this.getPlanIdentifier(_domainObject);
+
+      if (planIdentifier) {
+        const index = this.plans.indexOf(planIdentifier);
+
+        if (index > -1) {
+          this.plans.splice(index, 1);
+          this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
+        }
+      }
+    },
+    async getPlanIdentifier(_domainObject) {
+      let planIdentifier;
+
+      if (_domainObject.type === 'plan') {
+        planIdentifier = this.openmct.objects.makeKeyString(_domainObject.identifier);
+      } else if (_domainObject.type === 'gantt-chart') {
+        const ganttChartComposition = this.openmct.composition.get(_domainObject);
+        await ganttChartComposition.load();
+        ganttChartComposition.forEach((child) => {
+          if (child.type === 'plan') {
+            planIdentifier = this.openmct.objects.makeKeyString(child.identifier);
+          }
+        });
+      }
+
+      return planIdentifier;
     }
   }
 };
