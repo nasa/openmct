@@ -24,6 +24,8 @@ import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
   navigateToObjectWithFixedTimeBounds,
+  navigateToObjectWithRealTime,
+  setEndOffset,
   setFixedIndependentTimeConductorBounds,
   setFixedTimeMode,
   setTimeConductorBounds
@@ -76,39 +78,19 @@ const testPlan = {
 };
 
 test.describe('Time Strip', () => {
-  let timestrip;
-  let plan;
+  let timeStrip;
 
   test.beforeEach(async ({ page }) => {
     // Goto baseURL
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-    timestrip = await test.step('Create a Time Strip', async () => {
-      const createdTimeStrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
-      const objectName = await page.locator('.l-browse-bar__object-name').innerText();
-      expect(objectName).toBe(createdTimeStrip.name);
-
-      return createdTimeStrip;
-    });
-
-    plan = await test.step('Create a Plan and add it to the timestrip', async () => {
-      const createdPlan = await createPlanFromJSON(page, {
-        name: 'Test Plan',
-        json: testPlan
-      });
-
-      await page.goto(timestrip.url);
-      // Expand the tree to show the plan
-      await page.getByLabel('Show selected item in tree').click();
-      await page
-        .getByLabel(`Navigate to ${createdPlan.name}`)
-        .dragTo(page.getByLabel('Object View'));
-      await page.getByLabel('Save').click();
-      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
-      return createdPlan;
+    timeStrip = await createDomainObjectWithDefaults(page, { type: 'Time Strip' });
+    await createPlanFromJSON(page, {
+      json: testPlan,
+      parent: timeStrip.uuid
     });
   });
+
   test('Create two Time Strips, add a single Plan to both, and verify they can have separate Independent Time Contexts', async ({
     page
   }) => {
@@ -125,7 +107,7 @@ test.describe('Time Strip', () => {
       const endBound = testPlan.TEST_GROUP[testPlan.TEST_GROUP.length - 1].end;
 
       // Switch to fixed time mode with all plan events within the bounds
-      await navigateToObjectWithFixedTimeBounds(page, timestrip.url, startBound, endBound);
+      await navigateToObjectWithFixedTimeBounds(page, timeStrip.url, startBound, endBound);
 
       // Verify all events are displayed
       const eventCount = await page.locator('.activity-bounds').count();
@@ -150,19 +132,17 @@ test.describe('Time Strip', () => {
 
     await test.step('Can have multiple TimeStrips with the same plan linked and different Independent Time Contexts', async () => {
       // Create another Time Strip and verify that it has been created
-      const createdTimeStrip = await createDomainObjectWithDefaults(page, {
+      const secondTimeStrip = await createDomainObjectWithDefaults(page, {
         type: 'Time Strip',
         name: 'Another Time Strip'
       });
 
-      const objectName = await page.locator('.l-browse-bar__object-name').innerText();
-      expect(objectName).toBe(createdTimeStrip.name);
+      await createPlanFromJSON(page, {
+        json: testPlan,
+        parent: secondTimeStrip.uuid
+      });
 
-      // Drag the existing Plan onto the newly created Time Strip, and save.
-      await page.getByLabel(`Navigate to ${plan.name}`).dragTo(page.getByLabel('Object View'));
-      await page.getByLabel('Save').click();
-      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
-
+      await navigateToObjectWithFixedTimeBounds(page, secondTimeStrip.url);
       // All events should be displayed at this point because the
       // initial independent context bounds will match the global bounds
       expect(await activityBounds.count()).toEqual(5);
@@ -182,7 +162,7 @@ test.describe('Time Strip', () => {
       expect(await activityBounds.count()).toEqual(2);
 
       // Switch to the previous Time Strip and verify that only one event is displayed
-      await page.goto(timestrip.url);
+      await page.goto(timeStrip.url);
       expect(await activityBounds.count()).toEqual(1);
     });
   });
@@ -228,6 +208,49 @@ test.describe('Time Strip', () => {
       });
 
       await expect(page.getByLabel('Now Marker')).toBeHidden();
+    });
+  });
+
+  test('Time strip ahead/behind line', async ({ page }) => {
+    const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
+    await navigateToObjectWithRealTime(page, timeStrip.url);
+    await setEndOffset(page, {
+      endMins: '15',
+      endSecs: '00'
+    });
+
+    await test.step('set the ahead line', async () => {
+      // select the first plan in the timeStrip
+      await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
+      await page.getByRole('button', { name: 'Edit Object' }).click();
+      await page
+        .locator('select[aria-label="Plan Execution Monitoring Status"]')
+        .selectOption({ label: 'Ahead by' });
+      page.getByLabel('Plan Execution Monitoring Duration').fill('5');
+
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+      await expect(aheadBehindMarker).toBeVisible();
+      await expect(aheadBehindMarker).toContainClass('--ahead');
+      await expect(aheadBehindMarker).not.toContainClass('--behind');
+    });
+
+    await test.step('set the behind line', async () => {
+      // select the first plan in the timeStrip
+      await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
+      await page.getByRole('button', { name: 'Edit Object' }).click();
+      await page
+        .locator('select[aria-label="Plan Execution Monitoring Status"]')
+        .selectOption({ label: 'Behind by' });
+      page.getByLabel('Plan Execution Monitoring Duration').fill('5');
+
+      await page.getByLabel('Save').click();
+      await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+      await expect(aheadBehindMarker).toBeVisible();
+      await expect(aheadBehindMarker).not.toContainClass('--ahead');
+      await expect(aheadBehindMarker).toContainClass('--behind');
     });
   });
 });
