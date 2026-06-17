@@ -43,6 +43,7 @@ const config = {
     'vue/no-deprecated-events-api': 'warn',
     'vue/no-v-for-template-key': 'off',
     'vue/no-v-for-template-key-on-child': 'error',
+    'vue/require-default-prop': 'off',
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     'prettier/prettier': 'error',
     'you-dont-need-lodash-underscore/omit': 'off',
