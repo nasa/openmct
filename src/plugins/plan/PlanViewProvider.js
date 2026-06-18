@@ -27,10 +27,10 @@ import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
 import Plan from './components/PlanView.vue';
 
 export default function PlanViewProvider(openmct) {
-  function isCompactView(objectPath) {
-    let isChildOfTimeStrip = objectPath.find((object) => object.type === 'time-strip');
-
-    return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+  function getParentTimeStrip(objectPath) {
+    if (!openmct.router.isNavigatedObject(objectPath)) {
+      return objectPath.find((object) => object.type === 'time-strip');
+    }
   }
 
   return {
@@ -51,8 +51,7 @@ export default function PlanViewProvider(openmct) {
 
       return {
         show: function (element) {
-          let isCompact = isCompactView(objectPath);
-          viewElement = element;
+          const timeStrip = getParentTimeStrip(objectPath);
 
           const { destroy } = mount(
             {
@@ -67,13 +66,10 @@ export default function PlanViewProvider(openmct) {
               },
               data() {
                 return {
-                  options: {
-                    compact: isCompact,
-                    isChildObject: isCompact
-                  }
+                  timeStrip
                 };
               },
-              template: '<plan :options="options"></plan>'
+              template: '<plan :time-strip="timeStrip"></plan>'
             },
             {
               app: openmct.app,

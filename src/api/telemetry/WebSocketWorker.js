@@ -211,9 +211,6 @@ export default function installWorker() {
         case 'message':
           this.#websocket.enqueueMessage(message.data.message);
           break;
-        case 'readyForNextBatch':
-          this.#messageBatcher.readyForNextBatch();
-          break;
         case 'setMaxBufferSize':
           this.#messageBatcher.setMaxBufferSize(message.data.maxBufferSize);
           break;
@@ -228,8 +225,9 @@ export default function installWorker() {
       }
     }
     connect(message) {
-      const { url } = message.data;
+      const { url, throttleRate } = message.data;
       this.#websocket.connect(url);
+      this.#messageBatcher.setThrottleRate(throttleRate);
     }
     disconnect() {
       this.#websocket.disconnect();
@@ -244,15 +242,14 @@ export default function installWorker() {
     #currentBufferLength;
     #dropped;
     #maxBufferSize;
-    #readyForNextBatch;
     #worker;
     #throttledSendNextBatch;
     #throttleMessagePattern;
+    #interval;
 
     constructor(worker) {
       // No dropping telemetry unless we're explicitly told to.
       this.#maxBufferSize = Number.POSITIVE_INFINITY;
-      this.#readyForNextBatch = false;
       this.#worker = worker;
       this.#resetBatch();
       this.setThrottleRate(ONE_SECOND);
@@ -280,10 +277,6 @@ export default function installWorker() {
           this.#dropped = true;
         }
       }
-
-      if (this.#readyForNextBatch) {
-        this.#throttledSendNextBatch();
-      }
     }
 
     #shouldThrottle(message) {
@@ -296,70 +289,32 @@ export default function installWorker() {
       this.#maxBufferSize = maxBufferSize;
     }
     setThrottleRate(throttleRate) {
-      this.#throttledSendNextBatch = throttle(this.#sendNextBatch.bind(this), throttleRate);
+      clearInterval(this.#interval);
+      this.#interval = setInterval(() => {
+        this.#sendNextBatch();
+      }, throttleRate);
     }
-    /**
-     * Indicates that client code is ready to receive the next batch of
-     * messages. If a batch is available, it will be immediately sent.
-     * Otherwise a flag will be set to send the next batch as soon as
-     * any new data is available.
-     */
-    readyForNextBatch() {
-      if (this.#hasData()) {
-        this.#throttledSendNextBatch();
-      } else {
-        this.#readyForNextBatch = true;
+
+    #sendNextBatch() {
+      if (this.#currentBufferLength > 0) {
+        this.#worker.postMessage({
+          type: 'batch',
+          dropped: this.#dropped,
+          currentBufferLength: this.#currentBufferLength,
+          maxBufferSize: this.#maxBufferSize,
+          batch: this.#buffer
+        });
+        this.#resetBatch();
       }
     }
-    #sendNextBatch() {
-      const buffer = this.#buffer;
-      const dropped = this.#dropped;
-      const currentBufferLength = this.#currentBufferLength;
 
-      this.#resetBatch();
-      this.#worker.postMessage({
-        type: 'batch',
-        dropped,
-        currentBufferLength: currentBufferLength,
-        maxBufferSize: this.#maxBufferSize,
-        batch: buffer
-      });
-
-      this.#readyForNextBatch = false;
-    }
     #hasData() {
       return this.#currentBufferLength > 0;
     }
+
     setThrottleMessagePattern(priorityMessagePattern) {
       this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
     }
-  }
-
-  function throttle(callback, wait) {
-    let last = 0;
-    let throttling = false;
-
-    return function (...args) {
-      if (throttling) {
-        return;
-      }
-
-      const now = performance.now();
-      const timeSinceLast = now - last;
-
-      if (timeSinceLast >= wait) {
-        last = now;
-        callback(...args);
-      } else if (!throttling) {
-        throttling = true;
-
-        setTimeout(() => {
-          last = performance.now();
-          throttling = false;
-          callback(...args);
-        }, wait - timeSinceLast);
-      }
-    };
   }
 
   const websocket = new ResilientWebSocket(self);
