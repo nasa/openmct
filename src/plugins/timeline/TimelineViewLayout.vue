@@ -277,16 +277,14 @@ export default {
         this.plans.push(planIdentifier);
       }
     },
-    async checkRemovedForPlan(_domainObject) {
-      const planIdentifier = await this.getPlanIdentifier(_domainObject);
+    checkRemovedForPlan(identifier) {
+      const index = this.plans.findLastIndex((planIdentifier) =>
+        this.openmct.objects.areIdsEqual(planIdentifier, identifier)
+      );
 
-      if (planIdentifier) {
-        const index = this.plans.indexOf(planIdentifier);
-
-        if (index > -1) {
-          this.plans.splice(index, 1);
-          this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
-        }
+      if (index > -1) {
+        this.plans.splice(index, 1);
+        this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
       }
     },
     async getPlanIdentifier(_domainObject) {
