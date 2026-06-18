@@ -25,6 +25,8 @@
  *
  */
 
+import { createDomainObjectWithDefaults } from '../../appActions.js';
+import * as nbUtils from '../../helper/notebookUtils.js';
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('CouchDB Status Indicator with mocked responses @couchdb', () => {
@@ -114,5 +116,86 @@ test.describe('CouchDB initialization with mocked responses @couchdb', () => {
 
     // Wait for both requests to resolve.
     await Promise.all([putMineFolderRequest, getMineFolderRequest]);
+  });
+});
+
+test.describe('CouchDB changes feed @couchdb @network', () => {
+  let testNotebook;
+
+  test.beforeEach(async ({ page }) => {
+    // capture the changes-feed URL (since=now lives here) and the object changes
+    await page.addInitScript(() => {
+      window.__sw = { changesUrls: [], objectChanges: [] };
+      const NativeSharedWorker = window.SharedWorker;
+
+      window.SharedWorker = new Proxy(NativeSharedWorker, {
+        construct(Target, args) {
+          const worker = new Target(...args);
+          const port = worker.port;
+          // page -> worker : capture the changes-feed URL (since=now lives here)
+          const nativePost = port.postMessage.bind(port);
+
+          port.postMessage = (msg, ...rest) => {
+            if (msg?.request === 'changes' && msg.url) {
+              window.__sw.changesUrls.push(msg.url);
+            }
+
+            return nativePost(msg, ...rest);
+          };
+
+          // worker -> page : capture relayed object changes
+          port.addEventListener('message', (event) => {
+            if (event.data?.objectChanges) {
+              window.__sw.objectChanges.push(event.data.objectChanges);
+            }
+          });
+
+          return worker;
+        }
+      });
+    });
+
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+    testNotebook = await createDomainObjectWithDefaults(page, {
+      type: 'Notebook',
+      name: 'Test Notebook'
+    });
+
+    await page.goto(testNotebook.url);
+  });
+
+  test('Requests changes since "now" or a specific sequence number', async ({ page }) => {
+    // watch the request to the changes feed in the shared worker, confirm the since parameter is set to "now"
+    await expect.poll(() => page.evaluate(() => window.__sw.changesUrls[0] ?? null)).not.toBeNull();
+    const url = await page.evaluate(() => window.__sw.changesUrls[0]);
+    expect(new URL(url).searchParams.get('since')).toBe('now');
+
+    // add 2 entries and verify in the event stream that those changes were posted
+    // the way we create the entries, we create 2 changes for each entry, so we expect
+    // 4 changes from these entries
+    await nbUtils.enterTextEntry(page, 'First Entry');
+    await nbUtils.enterTextEntry(page, 'Second Entry');
+
+    // verify 5 changes were posted, the first one is the creation of the notebook, the other 4 are the entries
+    await expect
+      .poll(() =>
+        page.evaluate(
+          (id) => window.__sw.objectChanges.filter((c) => c.id === id).length,
+          testNotebook.uuid
+        )
+      )
+      .toEqual(5);
+
+    // refresh the page and verify the changes are not in the event stream because we request now
+    await page.reload();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          (id) => window.__sw.objectChanges.filter((c) => c.id === id).length,
+          testNotebook.uuid
+        )
+      )
+      .toEqual(0);
   });
 });
