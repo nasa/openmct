@@ -23,7 +23,7 @@
   <div role="dialog" aria-label="Preview Container" class="l-preview-window js-preview-window">
     <PreviewHeader
       ref="previewHeader"
-      :current-view="view"
+      :current-view="currentView"
       :domain-object="domainObject"
       :views="viewProviders"
     />
@@ -65,13 +65,19 @@ export default {
       domainObject: domainObject,
       viewKey: null,
       view: null,
-      viewProviders: [],
       currentViewProvider: {},
       existingViewIndex: 0
     };
   },
+  computed: {
+    viewProviders() {
+      return this.openmct.objectViews.get(this.domainObject, this.objectPath) || [];
+    },
+    currentView() {
+      return this.viewProviders?.find((provider) => provider.key === this.viewKey) || {};
+    }
+  },
   mounted() {
-    this.viewProviders = this.openmct.objectViews.get(this.domainObject, this.objectPath);
     this.viewProviders.forEach((provider, index) => {
       provider.onItemClicked = () => {
         if (this.existingView && provider.key === this.existingView.key) {
