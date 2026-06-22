@@ -36,8 +36,6 @@ class ExportAsJSONAction {
     // Bind public methods
     this.invoke = this.invoke.bind(this);
     this.appliesTo = this.appliesTo.bind(this);
-    // FIXME: This should be private but is used in tests
-    this.saveAs = this.saveAs.bind(this);
 
     this.name = 'Export as JSON';
     this.key = EXPORT_AS_JSON_ACTION_KEY;
@@ -379,7 +377,7 @@ class ExportAsJSONAction {
    * @private
    * @param {Object} completedTree
    */
-  saveAs(completedTree) {
+  #saveAs(completedTree) {
     this.JSONExportService.export(completedTree, { filename: this.root.name + '.json' });
   }
   /**
@@ -401,7 +399,7 @@ class ExportAsJSONAction {
       this.dialog.dismiss();
 
       this.#resetCounts();
-      this.saveAs(this.#wrapTree());
+      this.#saveAs(this.#wrapTree());
 
       this.dialog = null;
     }
