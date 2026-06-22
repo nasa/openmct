@@ -466,6 +466,8 @@ export default {
         const container = new Container(domainObject);
         addContainer(container);
       }
+
+      checkAddedForPlan(_domainObject);
     }
 
     function removeItem(identifier) {
@@ -477,6 +479,8 @@ export default {
       removeContainer(index);
 
       delete extendedLinesPerKey.value[openmct.objects.makeKeyString(identifier)];
+
+      checkRemovedForPlan(identifier);
     }
 
     function reorder(reorderPlan) {
@@ -532,9 +536,6 @@ export default {
     };
 
     onMounted(async () => {
-      compositionCollection.on('add', checkAddedForPlan);
-      compositionCollection.on('remove', checkRemovedForPlan);
-
       planExecutionMonitoringStatusObject = await openmct.objects.get(
         PLAN_EXECUTION_MONITORING_KEY
       );
@@ -547,9 +548,6 @@ export default {
     });
 
     onBeforeUnmount(() => {
-      compositionCollection.off('add', checkAddedForPlan);
-      compositionCollection.off('remove', checkRemovedForPlan);
-
       stopObservingPlanExecutionMonitoringStatusObject?.();
     });
 
@@ -585,15 +583,14 @@ export default {
       }
     }
 
-    async function checkRemovedForPlan(_domainObject) {
-      const planIdentifier = await getPlanIdentifier(_domainObject);
+    function checkRemovedForPlan(identifier) {
+      const index = plans.findLastIndex((planIdentifier) =>
+        openmct.objects.areIdsEqual(planIdentifier, identifier)
+      );
 
-      if (planIdentifier) {
-        const index = plans.indexOf(planIdentifier);
-
-        if (index > -1) {
-          plans.splice(index, 1);
-        }
+      if (index > -1) {
+        plans.splice(index, 1);
+        setPlanExecutionMonitoringStatus(planExecutionMonitoringStatusObject);
       }
     }
 
