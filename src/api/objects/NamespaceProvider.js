@@ -66,7 +66,7 @@ export default class NamespaceProvider {
     if (delegateFunction !== undefined && typeof delegateFunction === 'function') {
       return delegateFunction.apply(this.#wrappedProvider, delegateArguments);
     } else {
-      throw new Error(`Function is not implemented`);
+      throw new Error(`delegateIfImplemented in NamespaceProvider is not implemented`);
     }
   }
 }
