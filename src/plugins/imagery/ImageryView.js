@@ -29,7 +29,6 @@ export default class ImageryView extends EventTarget {
       alternateObjectPath = viewOptions.objectPath;
     }
 
-
     const { vNode, destroy } = mount(
       {
         el: element,
@@ -67,10 +66,15 @@ export default class ImageryView extends EventTarget {
   }
 
   getViewContext() {
-    this.viewContext.imageUrl = this.component?.$refs.ImageryContainer.imageUrl,
-    this.viewContext.viewImageHeading = this.component?.$refs.ImageryContainer.focusedImage?.heading,
-    this.viewContext.viewImageCameraPan = this.component?.$refs.ImageryContainer.focusedImage?.cameraPan,
-    this.viewContext.viewImageCameraTilt = this.component?.$refs.ImageryContainer.focusedImage?.cameraTilt
+    this.viewContext.imageUrl = this.component?.$refs.ImageryContainer.imageUrl;
+    this.viewContext.viewImageHeading =
+      this.component?.$refs.ImageryContainer.focusedImage?.heading;
+    this.viewContext.viewImageCameraPan =
+      this.component?.$refs.ImageryContainer.focusedImage?.cameraPan;
+    this.viewContext.viewImageCameraTilt =
+      this.component?.$refs.ImageryContainer.focusedImage?.cameraTilt;
+    this.viewContext.viewImageSpacecraftZ =
+      this.component?.$refs.ImageryContainer.focusedImage?.positionZ;
 
     return this.viewContext;
   }
