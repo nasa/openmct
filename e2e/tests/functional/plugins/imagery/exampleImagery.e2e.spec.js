@@ -405,7 +405,6 @@ test.describe('Example Imagery in Display Layout', () => {
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/3647'
     });
-
     // set realtime mode
     await setRealTimeMode(page);
 
