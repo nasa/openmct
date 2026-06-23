@@ -75,6 +75,10 @@ export default class ImageryView extends EventTarget {
       this.component?.$refs.ImageryContainer.focusedImage?.cameraTilt;
     this.viewContext.viewImageSpacecraftZ =
       this.component?.$refs.ImageryContainer.focusedImage?.positionZ;
+    this.viewContext.thumbnailClicked = this.component?.$refs.ImageryContainer.thumbnailClicked;
+    this.viewContext.paused = this.component?.$refs.ImageryContainer.paused;
+    this.viewContext.isPaused = this.component?.$refs.ImageryContainer.isPaused;
+    this.viewContext.thumbnailClicked = this.component?.$refs.ImageryContainer.thumbnailClicked;
 
     return this.viewContext;
   }
