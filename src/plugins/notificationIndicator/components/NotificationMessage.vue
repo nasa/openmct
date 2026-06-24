@@ -38,7 +38,7 @@
       <button
         :aria-label="'Dismiss notification of ' + notification.model.message"
         class="c-click-icon c-overlay__close-button icon-x"
-        @click="dismiss()"
+        @click="dismissNotification($event)"
       ></button>
       <div class="c-overlay__button-bar">
         <button
@@ -82,6 +82,7 @@ export default {
       required: true
     }
   },
+  emits: ['notification-dismissed'],
   data() {
     return {
       isProgressNotification: false,
@@ -107,6 +108,14 @@ export default {
     updateProgressBar(progressPerc, progressText) {
       this.progressPerc = progressPerc;
       this.progressText = progressText;
+    },
+    dismissNotification(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      this.notification.dismiss();
+      this.$emit('notification-dismissed');
     },
     dismiss() {
       this.notification.dismiss();
