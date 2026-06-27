@@ -22,6 +22,8 @@
 
 import mount from 'utils/mount';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import Plan from './components/PlanView.vue';
 
 export default function PlanViewProvider(openmct) {
@@ -45,6 +47,7 @@ export default function PlanViewProvider(openmct) {
 
     view: function (domainObject, objectPath) {
       let _destroy = null;
+      let viewElement = null;
 
       return {
         show: function (element) {
@@ -75,9 +78,17 @@ export default function PlanViewProvider(openmct) {
           );
           _destroy = destroy;
         },
+        getViewContext() {
+          if (!viewElement) {
+            return {};
+          }
+
+          return getImageExportViewContext(openmct, viewElement, domainObject, 'plan');
+        },
         destroy: function () {
           if (_destroy) {
             _destroy();
+            viewElement = null;
           }
         }
       };

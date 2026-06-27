@@ -22,6 +22,8 @@
 
 import mount from 'utils/mount';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import GaugeComponent from './components/GaugeComponent.vue';
 
 export default function GaugeViewProvider(openmct) {
@@ -39,9 +41,11 @@ export default function GaugeViewProvider(openmct) {
     },
     view: function (domainObject) {
       let _destroy = null;
+      let viewElement = null;
 
       return {
         show: function (element, isEditing, { renderWhenVisible }) {
+          viewElement = element;
           const { destroy } = mount(
             {
               el: element,
@@ -63,9 +67,17 @@ export default function GaugeViewProvider(openmct) {
           );
           _destroy = destroy;
         },
+        getViewContext() {
+          if (!viewElement) {
+            return {};
+          }
+
+          return getImageExportViewContext(openmct, viewElement, domainObject, 'gauge');
+        },
         destroy: function () {
           if (_destroy) {
             _destroy();
+            viewElement = null;
           }
         }
       };
