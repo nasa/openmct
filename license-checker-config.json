@@ -1,0 +1,44 @@
+{
+  "license": "license-header.txt",
+  "ignore": [
+    "**/.?*",
+    "**/*.yml",
+    "**/*.yaml",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.css",
+    "**/*.scss",
+    "**/*.html",
+    "**/*.md",
+    "**/*.svg",
+    "**/*.sh",
+    "**/*.frag",
+    ".webpack/**",
+    ".github/**",
+    "example/**",
+    "coverage/**",
+    ".nyc_output/**",
+    "html-test-results/**",
+    "e2e/test-results/**",
+    "e2e/.nyc_output/**",
+    "e2e/node_modules/**",
+    "lizenz_check.js"
+  ],
+  "licenseFormats": {
+    "js|ts": {
+      "prepend": "/*****************************************************************************",
+      "append": " *****************************************************************************/",
+      "eachLine": {
+        "prepend": " * "
+      }
+    },
+    "vue": {
+      "prepend": "<!--",
+      "append": "-->",
+      "eachLine": {
+        "prepend": " "
+      }
+    }
+  },
+  "trailingWhitespace": "TRIM"
+}
