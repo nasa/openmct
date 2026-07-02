@@ -226,7 +226,10 @@ export default {
     this.alarmSets = [];
     const yAxisId = this.config.yAxis.get('id');
     this.offset = {
-      [yAxisId]: {}
+      [yAxisId]: {
+        anchorX: null,
+        lastThresholdSpan: 0
+      }
     };
     this.listenTo(
       this.config.yAxis,
@@ -243,7 +246,10 @@ export default {
     if (this.config.additionalYAxes.length) {
       this.config.additionalYAxes.forEach((yAxis) => {
         const id = yAxis.get('id');
-        this.offset[id] = {};
+        this.offset[id] = {
+          anchorX: null,
+          lastThresholdSpan: 0
+        };
         this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
         this.listenTo(
           yAxis,
@@ -504,10 +510,28 @@ export default {
       pointSets.forEach(function (pointSet) {
         pointSet.reset();
       });
+      if (this.alarmSets) {
+        const alarmSets = this.alarmSets.filter(
+          this.matchByYAxisIdExcludingVisibility.bind(this, yAxisId)
+        );
+        alarmSets.forEach(function (alarmSet) {
+          alarmSet.reset();
+        });
+      }
     },
     setOffset(offsetPoint, index, series) {
       const mainYAxisId = this.config.yAxis.get('id');
       const yAxisId = series.get('yAxisId') || mainYAxisId;
+
+      if (!this.offset[yAxisId]) {
+        this.offset[yAxisId] = { anchorX: null, lastThresholdSpan: 0 };
+      } else {
+        if (this.offset[yAxisId].anchorX === undefined) {
+          this.offset[yAxisId].anchorX = null;
+          this.offset[yAxisId].lastThresholdSpan = 0;
+        }
+      }
+
       if (this.offset[yAxisId].x && this.offset[yAxisId].y) {
         return;
       }
@@ -518,7 +542,9 @@ export default {
       };
 
       this.offset[yAxisId].x = function (x) {
-        return x - offsets.x;
+        const anchor =
+          this.offset[yAxisId].anchorX !== null ? this.offset[yAxisId].anchorX : offsets.x;
+        return x - anchor;
       }.bind(this);
       this.offset[yAxisId].y = function (y) {
         return y - offsets.y;
@@ -757,6 +783,34 @@ export default {
         this.updateLimitLines();
       }
     },
+    checkAndApplyReanchor(yAxisId, viewportMinX, currentSpan) {
+      const axisOffset = this.offset[yAxisId];
+      if (!axisOffset) {
+        return;
+      }
+
+      if (axisOffset.anchorX === null || axisOffset.anchorX === undefined) {
+        axisOffset.anchorX = viewportMinX;
+        axisOffset.lastThresholdSpan = currentSpan;
+        return;
+      }
+
+      const drift = Math.abs(viewportMinX - axisOffset.anchorX);
+
+      // If panning drifts past 1 view width, or a zoom rescales things past a 50% variance margin:
+      // TODO: Maybe instead of a static 50% variance, look at the config for frozen === true
+      const thresholdBreached =
+        drift > currentSpan ||
+        Math.abs(currentSpan - axisOffset.lastThresholdSpan) > currentSpan * 0.5;
+
+      if (thresholdBreached) {
+        axisOffset.anchorX = viewportMinX;
+        axisOffset.lastThresholdSpan = currentSpan;
+
+        // Reset all elements of the series to recalculate buffers
+        this.resetResetChartElements(yAxisId);
+      }
+    },
     updateViewport(yAxisId) {
       if (!this.chartVisible) {
         return;
@@ -779,12 +833,17 @@ export default {
         return;
       }
 
-      const dimensions = [xRange.max - xRange.min, yRange.max - yRange.min];
+      const currentSpan = xRange.max - xRange.min;
+
+      const dimensions = [currentSpan, yRange.max - yRange.min];
 
       let origin;
       origin = [this.offset[yAxisId].x(xRange.min), this.offset[yAxisId].y(yRange.min)];
 
       this.drawAPI.setDimensions(dimensions, origin);
+
+      // Invoke the Fixed Baseline Strategy before building frame offsets
+      this.checkAndApplyReanchor(yAxisId, xRange.min, currentSpan);
     },
     // match items by their yAxisId, but don't care if the series is hidden or not.
     matchByYAxisIdExcludingVisibility() {

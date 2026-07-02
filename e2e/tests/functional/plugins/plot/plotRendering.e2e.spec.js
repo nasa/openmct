@@ -31,7 +31,8 @@ import {
   getCanvasPixels,
   setEndOffset,
   setRealTimeMode,
-  setStartOffset
+  setStartOffset,
+  setTimeConductorBounds
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -156,6 +157,116 @@ test.describe('Visual - Plot rendering with out of order data @clock', () => {
       });
     });
     expect(hasBackwardsLine).toBe(false);
+  });
+});
+
+test.describe('WebGL Precision and Dynamic Re-anchoring', () => {
+  let precisionSineWaveGenerator;
+
+  test.beforeEach(async ({ page }) => {
+    // Inject a hook into the WebGL context to catch native vertex buffer data arrays
+    await page.addInitScript(() => {
+      window.glBuffers = [];
+      const originalBufferData = WebGLRenderingContext.prototype.bufferData;
+
+      WebGLRenderingContext.prototype.bufferData = function (target, data, usage) {
+        // Capture Float32Arrays that contain vertex coordinates (X, Y pairs)
+        if (data instanceof Float32Array && data.length > 10) {
+          window.glBuffers.push(Array.from(data));
+        }
+        return originalBufferData.call(this, target, data, usage);
+      };
+    });
+
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+    precisionSineWaveGenerator = await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'Precision Test Sine Wave'
+    });
+  });
+
+  test('Verify sub-millisecond timeline coordinate precision under high-magnitude offsets (Micro-Zoom Mode)', async ({
+    page
+  }) => {
+    await page.goto(precisionSineWaveGenerator.url);
+
+    // Edit properties to set the data rate to 1000 Hz (1 point per millisecond)
+    await page.locator('[title="More actions"]').click();
+    await page.locator('[title="Edit properties of this object."]').click();
+
+    // Fill the existing frequency input field to match 1000Hz rendering load
+    const dataRateInput = page.getByRole('spinbutton', { name: 'Data Rate (hz)' });
+    await dataRateInput.clear();
+    await dataRateInput.fill('1000');
+
+    // Set period to 0.001 seconds (forcing a complete wave transformation every millisecond)
+    const periodInput = page.getByRole('spinbutton', { name: 'Period' });
+    await periodInput.clear();
+    await periodInput.fill('0.001');
+
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    // Navigate away and back to guarantee the object properties load cleanly
+    await page.goto('./#/browse/mine');
+    await page.goto(precisionSineWaveGenerator.url);
+
+    // Fixed timespan with a hyper-zoomed in 10-millisecond range.
+    const now = new Date();
+    function pad(n, m = 2) {
+      return String(n).padStart(m, '0');
+    }
+    const dateStr = `${now.getUTCFullYear()}-${pad(now.getUTCMonth() + 1)}-${pad(now.getUTCDate())}`;
+    const hours = pad(now.getUTCHours());
+    const minutes = pad(now.getUTCMinutes());
+
+    // Set start and end exactly 10 milliseconds apart
+    const startTimeStr = `${hours}:${minutes}:00.000`;
+    const endTimeStr = `${hours}:${minutes}:00.010`;
+
+    await setTimeConductorBounds(page, {
+      startDate: dateStr,
+      startTime: startTimeStr,
+      endDate: dateStr,
+      endTime: endTimeStr,
+      submitChanges: true
+    });
+
+    await page.evaluate(() => {
+      window.glBuffers = [];
+    });
+
+    // Allow the WebGL canvas pipeline to receive the new layout configurations
+    await page.getByLabel('Plot Canvas').waitFor({ state: 'visible' });
+
+    await page.waitForFunction(() => window.glBuffers.length > 0);
+
+    // Inspect the low-level graphics card vertex buffer allocations directly to see if stepping happens because x-axis points are getting truncated
+    const isStairSteppingDetected = await page.evaluate(() => {
+      if (!window.glBuffers || window.glBuffers.length === 0) {
+        return false;
+      }
+
+      return window.glBuffers.some((buffer) => {
+        let duplicateFound = false;
+
+        for (let i = 2; i < buffer.length; i += 2) {
+          const currentRelativeX = buffer[i];
+          const previousRelativeX = buffer[i - 2];
+
+          if (currentRelativeX === 0 && previousRelativeX === 0) {
+            continue;
+          }
+
+          if (currentRelativeX === previousRelativeX) {
+            duplicateFound = true;
+            break;
+          }
+        }
+        return duplicateFound;
+      });
+    });
+
+    expect(isStairSteppingDetected).toBe(false);
   });
 });
 
