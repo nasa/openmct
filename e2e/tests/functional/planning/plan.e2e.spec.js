@@ -35,6 +35,12 @@ const testPlan1 = JSON.parse(
   )
 );
 
+const testPlanWithActivityMetadata = JSON.parse(JSON.stringify(testPlan1));
+testPlanWithActivityMetadata['Group 1'][0].version = '1.2.3';
+testPlanWithActivityMetadata['Group 1'][0].displayProperties = {
+  version: 'Version'
+};
+
 const testPlanWithOrderedLanes = JSON.parse(
   fs.readFileSync(
     new URL('../../../test-data/examplePlans/ExamplePlanWithOrderedLanes.json', import.meta.url)
@@ -62,6 +68,29 @@ test.describe('Plan', () => {
       json: testPlanWithOrderedLanes
     });
     await assertPlanOrderedSwimLanes(page, testPlanWithOrderedLanes, planWithSwimLanes.url);
+  });
+
+  test('Displays activity metadata in the inspector when available', async ({ page }) => {
+    const planWithMetadata = await createPlanFromJSON(page, {
+      json: testPlanWithActivityMetadata
+    });
+    const activity = testPlanWithActivityMetadata['Group 1'][0];
+
+    await navigateToObjectWithFixedTimeBounds(
+      page,
+      planWithMetadata.url,
+      activity.start,
+      activity.end
+    );
+    await page.getByText(activity.name).click();
+    await page.getByRole('tab', { name: 'Activity' }).click();
+
+    const versionProperty = page
+      .locator('.c-inspect-properties__row')
+      .filter({ hasText: 'Version' });
+    await expect(versionProperty.locator('.c-inspect-properties__value')).toHaveText(
+      activity.version
+    );
   });
 
   test('Allows setting the state of an activity when selected.', async ({ page }) => {
