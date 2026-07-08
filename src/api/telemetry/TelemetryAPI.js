@@ -1020,6 +1020,9 @@ export default class TelemetryAPI {
  * A LimitEvaluator may be used to detect when telemetry values
  * have exceeded nominal conditions.
  *
+ * This is the object returned by a telemetry provider's
+ * `getLimitEvaluator(domainObject)` method.
+ *
  * @interface LimitEvaluator
  */
 
@@ -1027,24 +1030,26 @@ export default class TelemetryAPI {
  * Check for any limit violations associated with a telemetry datum.
  * @method evaluate
  * @param {*} datum the telemetry datum to evaluate
- * @param {TelemetryProperty} the property to check for limit violations
- * @returns {LimitViolation} metadata about
+ * @param {TelemetryProperty} valueMetadata the property to check for limit violations
+ * @returns {LimitViolation|undefined} metadata about
  *          the limit violation, or undefined if a value is within limits
  */
 
 /**
  * A violation of limits defined for a telemetry property.
  * @typedef LimitViolation
- * @property {string} cssClass the class (or space-separated classes) to
+ * @property {string} [cssClass] the class (or space-separated classes) to
  *           apply to display elements for values which violate this limit
- * @property {string} name the human-readable name for the limit violation
- * @property {number} low a lower limit for violation
- * @property {number} high a higher limit violation
+ * @property {string} [name] the human-readable name for the limit violation
+ * @property {number} [low] a lower limit for violation
+ * @property {number} [high] a higher limit violation
  */
 
 /**
- * @typedef {Object} LimitsResponseObject
- * @property {LimitDefinition} limitLevel the level name and it's limit definition
+ * Limit definitions keyed by limit level name. This is the object resolved by
+ * a telemetry provider's `getLimits(domainObject, options).limits()` method.
+ *
+ * @typedef {Object.<string, LimitDefinition>} LimitsResponseObject
  * @example {
  *  [limitLevel]: {
  *    low: {
@@ -1070,7 +1075,9 @@ export default class TelemetryAPI {
  * Limit definition for a Limit of a telemetry property.
  * @typedef LimitDefinitionValue
  * @property {string} color color to represent this limit
- * @property {number} value the limit value
+ * @property {number} [value] the limit value for single-value definitions
+ * Additional numeric properties may be keyed by telemetry value metadata keys
+ * for multi-value definitions.
  */
 
 /**

@@ -540,6 +540,7 @@ A telemetry provider is a javascript object with up to four methods:
 - `getMetadata(domainObject)` required if `supportsMetadata` is implemented.  Must return a valid telemetry metadata definition that includes at least one valueMetadata definition.
 - `supportsLimits(domainObject)` optional.  Implement and return `true` for domain objects that you want to provide a limit evaluator for.
 - `getLimitEvaluator(domainObject)` required if `supportsLimits` is implemented.  Must return a valid LimitEvaluator for a given domain object.
+- `getLimits(domainObject, options)` optional.  Return an object with a `limits()` method that resolves to limit definitions for display components that render limit lines or limit columns.
 
 Telemetry providers are registered by calling `openmct.telemetry.addProvider(provider)`, e.g.
 
@@ -782,9 +783,49 @@ section.
 Limit evaluators allow a telemetry integrator to define which limits exist for a
 telemetry endpoint and how limits should be applied to telemetry from a given domain object.
 
-A limit evaluator can implement the `evaluate` method which is used to define how limits
-should be applied to telemetry and the `getLimits` method which is used to specify
-what the limit values are for different limit levels.
+A limit evaluator is the object returned by `getLimitEvaluator(domainObject)`.
+It must provide an `evaluate(datum, valueMetadata)` method.  `datum` is the
+telemetry datum being displayed, and `valueMetadata` is the telemetry value
+metadata for the column or series being evaluated.  `evaluate` should return
+`undefined` when the value is nominal, or a limit result object when a value
+should be styled:
+
+```javascript
+{
+    cssClass: 'is-limit--upr is-limit--red',
+    name: 'Red High',
+    low: 0.9,
+    high: Number.POSITIVE_INFINITY
+}
+```
+
+The returned object should include the CSS class or classes to apply in
+`cssClass`, a human-readable `name`, and optional `low` and `high` bounds when
+the violation is threshold-based.
+
+To define the limit values for visualizations, a telemetry provider can also
+implement `getLimits(domainObject, options)`.  It should return an object with a
+`limits()` method.  `limits()` must return a promise that resolves to an object
+keyed by limit level:
+
+```javascript
+{
+    WARNING: {
+        low: {
+            color: 'yellow',
+            value: -0.5
+        },
+        high: {
+            color: 'yellow',
+            value: 0.5
+        }
+    }
+}
+```
+
+If a telemetry object has multiple range values, the `low` and `high` objects
+can include numeric properties keyed by telemetry value metadata keys instead of
+`value`, as shown in the sine wave example.
 
 Limit levels can be mapped to one of 5 colors for visualization:
 `purple`, `red`, `orange`, `yellow` and `cyan`.
