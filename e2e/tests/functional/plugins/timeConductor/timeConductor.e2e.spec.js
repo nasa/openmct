@@ -225,6 +225,27 @@ test.describe('Time conductor operations', () => {
     await expect(page.getByLabel('Start bounds')).toHaveText(`${DAY} ${ONE_O_CLOCK}.000Z`);
     await expect(page.getByLabel('End bounds')).toHaveText(`${DAY_AFTER} ${ONE_O_CLOCK}.000Z`);
   });
+
+  test('cancelling a mode change keeps the active time conductor mode', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/8258'
+    });
+
+    const globalTimeConductor = page.getByLabel('Global Time Conductor');
+    const activeMode = globalTimeConductor.getByLabel('Time Conductor Mode');
+
+    await expect(activeMode).toHaveText('Fixed Timespan');
+    await activeMode.click();
+    await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
+    await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+
+    await expect(page.getByLabel('Submit time offsets')).toBeVisible();
+    await page.getByLabel('Discard changes and close time popup').click();
+
+    await expect(activeMode).toHaveText('Fixed Timespan');
+    await expect(page).not.toHaveURL(/tc\.mode=local/);
+  });
 });
 
 test.describe('Global Time Conductor', () => {
