@@ -245,6 +245,18 @@ test.describe('Time conductor operations', () => {
 
     await expect(activeMode).toHaveText('Fixed Timespan');
     await expect(page).not.toHaveURL(/tc\.mode=local/);
+
+    await setRealTimeMode(page);
+    await expect(activeMode).toHaveText('Real-Time');
+    await activeMode.click();
+    await page.getByRole('button', { name: 'Time Conductor Mode Menu' }).click();
+    await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+
+    await expect(page.getByLabel('Submit time bounds')).toBeVisible();
+    await page.getByLabel('Discard changes and close time popup').click();
+
+    await expect(activeMode).toHaveText('Real-Time');
+    await expect(page).toHaveURL(/tc\.mode=local/);
   });
 });
 
