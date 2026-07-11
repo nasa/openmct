@@ -62,9 +62,6 @@ export default {
     headerIndex: {
       type: Number
     },
-    isHeaderTitle: {
-      type: Boolean
-    },
     sortOptions: {
       type: Object
     },
