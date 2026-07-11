@@ -58,6 +58,14 @@ test.describe('Plan', () => {
 
   test('Displays all plan events', async ({ page }) => {
     await assertPlanActivities(page, testPlan1, plan.url);
+
+    const planContents = page.locator('.c-plan__contents');
+    for (const [groupName, activities] of Object.entries(testPlan1)) {
+      await expect(planContents.getByText(groupName, { exact: true })).toBeVisible();
+      for (const activity of activities) {
+        await expect(planContents.getByText(activity.name, { exact: true })).toBeVisible();
+      }
+    }
   });
 
   test('Displays plans with ordered swim lanes configuration', async ({ page }) => {
