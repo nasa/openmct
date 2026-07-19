@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,61 +28,77 @@ import moment from 'moment';
  *
  * @implements {Format}
  * @constructor
- * @memberof platform/commonUI/formats
  */
 export default class UTCTimeFormat {
-    constructor() {
-        this.key = 'utc';
-        this.DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSS';
-        this.DATE_FORMATS = {
-            PRECISION_DEFAULT: this.DATE_FORMAT,
-            PRECISION_DEFAULT_WITH_ZULU: this.DATE_FORMAT + 'Z',
-            PRECISION_SECONDS: 'YYYY-MM-DD HH:mm:ss',
-            PRECISION_MINUTES: 'YYYY-MM-DD HH:mm',
-            PRECISION_DAYS: 'YYYY-MM-DD'
-        };
+  constructor() {
+    this.key = 'utc';
+    this.DATE_FORMAT = `YYYY-MM-DD HH:mm:ss.SSS`;
+    this.DATE_FORMATS = {
+      PRECISION_DEFAULT: this.DATE_FORMAT,
+      PRECISION_DEFAULT_WITH_ZULU: `${this.DATE_FORMAT}Z`,
+      PRECISION_DEFAULT_WITH_ZULU_MOMENT: `${this.DATE_FORMAT}[Z]`,
+      PRECISION_SECONDS: `YYYY-MM-DD HH:mm:ss`,
+      PRECISION_MINUTES: `YYYY-MM-DD HH:mm`,
+      PRECISION_DAYS: 'YYYY-MM-DD',
+      PRECISION_SECONDS_TIME_ONLY: 'HH:mm:ss',
+      PRECISION_MINUTES_TIME_ONLY: 'HH:mm'
+    };
+  }
+
+  /**
+   * @param {string} formatString
+   * @returns the value of formatString if the value is a string type and exists in the DATE_FORMATS array; otherwise the DATE_FORMAT value.
+   */
+  isValidFormatString(formatString) {
+    return Object.values(this.DATE_FORMATS).includes(formatString);
+  }
+
+  /**
+   * @param {number} value The value to format.
+   * @param {string} formatString The format string to use for formatting.
+   * @returns {string} the formatted date(s). If multiple values were requested, then an array of
+   * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
+   * in the array.
+   */
+  format(value, formatString) {
+    if (value !== undefined) {
+      const utc = moment.utc(value);
+
+      if (formatString !== undefined && !this.isValidFormatString(formatString)) {
+        throw 'Invalid format requested from UTC Time Formatter ';
+      }
+
+      const format = formatString || this.DATE_FORMATS.PRECISION_DEFAULT_WITH_ZULU_MOMENT;
+
+      return utc.format(format);
+    }
+  }
+
+  /**
+   * Optional formatting method that allows for splitting date and time into separate inputs
+   * Allows for easier manipulation of date or time
+   * @param {number} value The value to format.
+   * @returns {string} the formatted date.
+   */
+  formatDate(value) {
+    return this.format(value, this.DATE_FORMATS.PRECISION_DAYS);
+  }
+
+  /**
+   * @param {number|string} text The text to parse.
+   * @param {string} formatString The format string to use for parsing.
+   * @returns {number} the value parsed from the text.
+   * If the text is a number, it is returned as is.
+   */
+  parse(text, formatString) {
+    if (typeof text === 'number') {
+      return text;
     }
 
-    /**
-     * @param {string} formatString
-     * @returns the value of formatString if the value is a string type and exists in the DATE_FORMATS array; otherwise the DATE_FORMAT value.
-     */
-    isValidFormatString(formatString) {
-        return Object.values(this.DATE_FORMATS).includes(formatString);
-    }
+    return moment.utc(text, Object.values(this.DATE_FORMATS)).valueOf();
+  }
 
-    /**
-     * @param {number} value The value to format.
-     * @returns {string} the formatted date(s). If multiple values were requested, then an array of
-     * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
-     * in the array.
-     */
-    format(value, formatString) {
-        if (value !== undefined) {
-            const utc = moment.utc(value);
-
-            if (formatString !== undefined && !this.isValidFormatString(formatString)) {
-                throw "Invalid format requested from UTC Time Formatter ";
-            }
-
-            let format = formatString || this.DATE_FORMATS.PRECISION_DEFAULT;
-
-            return utc.format(format) + (formatString ? '' : 'Z');
-        } else {
-            return value;
-        }
-    }
-
-    parse(text) {
-        if (typeof text === 'number') {
-            return text;
-        }
-
-        return moment.utc(text, Object.values(this.DATE_FORMATS)).valueOf();
-    }
-
-    validate(text) {
-        return moment.utc(text, Object.values(this.DATE_FORMATS), true).isValid();
-    }
-
+  validate(text) {
+    return moment.utc(text, Object.values(this.DATE_FORMATS), true).isValid();
+  }
 }

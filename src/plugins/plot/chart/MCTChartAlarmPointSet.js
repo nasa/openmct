@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,48 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import eventHelpers from '../lib/eventHelpers';
+import eventHelpers from '../lib/eventHelpers.js';
 
 export default class MCTChartAlarmPointSet {
-    constructor(series, chart, offset) {
-        this.series = series;
-        this.chart = chart;
-        this.offset = offset;
-        this.points = [];
+  constructor(series, chart, offset) {
+    this.series = series;
+    this.chart = chart;
+    this.offset = offset;
+    this.points = [];
 
-        eventHelpers.extend(this);
+    eventHelpers.extend(this);
 
-        this.listenTo(series, 'add', this.append, this);
-        this.listenTo(series, 'remove', this.remove, this);
-        this.listenTo(series, 'reset', this.reset, this);
-        this.listenTo(series, 'destroy', this.destroy, this);
+    this.listenTo(series, 'add', this.append, this);
+    this.listenTo(series, 'remove', this.remove, this);
+    this.listenTo(series, 'reset', this.reset, this);
+    this.listenTo(series, 'destroy', this.destroy, this);
 
-        this.series.getSeriesData().forEach(function (point, index) {
-            this.append(point, index, series);
-        }, this);
+    this.series.getSeriesData().forEach(function (point, index) {
+      this.append(point, index, series);
+    }, this);
+  }
+
+  append(datum) {
+    if (datum.mctLimitState) {
+      this.points.push({
+        x: this.offset.xVal(datum, this.series),
+        y: this.offset.yVal(datum, this.series),
+        datum: datum
+      });
     }
+  }
 
-    append(datum) {
-        if (datum.mctLimitState) {
-            this.points.push({
-                x: this.offset.xVal(datum, this.series),
-                y: this.offset.yVal(datum, this.series),
-                datum: datum
-            });
-        }
-    }
+  remove(datum) {
+    this.points = this.points.filter(function (p) {
+      return p.datum !== datum;
+    });
+  }
 
-    remove(datum) {
-        this.points = this.points.filter(function (p) {
-            return p.datum !== datum;
-        });
-    }
+  reset() {
+    this.points = [];
+  }
 
-    reset() {
-        this.points = [];
-    }
-
-    destroy() {
-        this.stopListening();
-    }
+  destroy() {
+    this.stopListening();
+  }
 }

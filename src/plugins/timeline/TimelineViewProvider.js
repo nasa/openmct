@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,47 +20,72 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import TimelineViewLayout from './TimelineViewLayout.vue';
-import Vue from 'vue';
 
-export default function TimelineViewProvider(openmct) {
+export default function TimelineViewProvider(openmct, extendedLinesBus) {
+  return {
+    key: 'time-strip.view',
+    name: 'TimeStrip',
+    cssClass: 'icon-clock',
+    canView(domainObject) {
+      return domainObject.type === 'time-strip';
+    },
 
-    return {
-        key: 'time-strip.view',
-        name: 'TimeStrip',
-        cssClass: 'icon-clock',
-        canView(domainObject) {
-            return domainObject.type === 'time-strip';
+    canEdit(domainObject) {
+      return domainObject.type === 'time-strip';
+    },
+
+    view: function (domainObject, objectPath) {
+      let component = null;
+      let _destroy = null;
+
+      return {
+        show: function (element, isEditing) {
+          const { vNode, destroy } = mount(
+            {
+              el: element,
+              components: {
+                TimelineViewLayout
+              },
+              provide: {
+                openmct,
+                domainObject,
+                path: objectPath,
+                composition: openmct.composition.get(domainObject),
+                extendedLinesBus
+              },
+              data() {
+                return {
+                  isEditing
+                };
+              },
+              template:
+                '<timeline-view-layout ref="timeline" :is-editing="isEditing"></timeline-view-layout>'
+            },
+            {
+              app: openmct.app,
+              element
+            }
+          );
+          component = vNode.componentInstance;
+          _destroy = destroy;
         },
-
-        canEdit(domainObject) {
-            return domainObject.type === 'time-strip';
+        contextAction(action, ...args) {
+          if (component?.$refs?.timeline?.[action]) {
+            component.$refs.timeline[action](...args);
+          }
         },
-
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            TimelineViewLayout
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            composition: openmct.composition.get(domainObject),
-                            objectPath
-                        },
-                        template: '<timeline-view-layout></timeline-view-layout>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
+        onEditModeChange(isEditing) {
+          component.isEditing = isEditing;
+        },
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

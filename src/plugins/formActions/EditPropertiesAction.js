@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,85 +20,88 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PropertiesAction from './PropertiesAction';
-import CreateWizard from './CreateWizard';
-export default class EditPropertiesAction extends PropertiesAction {
-    constructor(openmct) {
-        super(openmct);
+import _ from 'lodash';
 
-        this.name = 'Edit Properties...';
-        this.key = 'properties';
-        this.description = 'Edit properties of this object.';
-        this.cssClass = 'major icon-pencil';
-        this.hideInDefaultMenu = true;
-        this.group = 'action';
-        this.priority = 10;
-        this.formProperties = {};
+import CreateWizard from './CreateWizard.js';
+import PropertiesAction from './PropertiesAction.js';
+const EDIT_PROPERTIES_ACTION_KEY = 'properties';
+
+class EditPropertiesAction extends PropertiesAction {
+  constructor(openmct) {
+    super(openmct);
+
+    this.name = 'Edit Properties...';
+    this.key = EDIT_PROPERTIES_ACTION_KEY;
+    this.description = 'Edit properties of this object.';
+    this.cssClass = 'major icon-pencil';
+    this.hideInDefaultMenu = true;
+    this.group = 'action';
+    this.priority = 10;
+    this.formProperties = {};
+  }
+
+  appliesTo(objectPath) {
+    const object = objectPath[0];
+    const definition = this._getTypeDefinition(object.type);
+    const persistable = this.openmct.objects.isPersistable(object.identifier);
+
+    return persistable && definition && definition.creatable && !object.locked;
+  }
+
+  invoke(objectPath) {
+    return this._showEditForm(objectPath);
+  }
+
+  /**
+   * @private
+   */
+  async _onSave(changes) {
+    if (!this.openmct.objects.isTransactionActive()) {
+      this.openmct.objects.startTransaction();
     }
 
-    appliesTo(objectPath) {
-        const object = objectPath[0];
-        const definition = this._getTypeDefinition(object.type);
-        const persistable = this.openmct.objects.isPersistable(object.identifier);
-
-        return persistable && definition && definition.creatable;
-    }
-
-    invoke(objectPath) {
-        this._showEditForm(objectPath);
-    }
-
-    /**
-     * @private
-     */
-    async _onSave(changes) {
-        Object.entries(changes).forEach(([key, value]) => {
-            const properties = key.split('.');
-            let object = this.domainObject;
-            const propertiesLength = properties.length;
-            properties.forEach((property, index) => {
-                const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
-                if (isComplexProperty && object[property] !== null) {
-                    object = object[property];
-                } else {
-                    object[property] = value;
-                }
-            });
-
-            object = value;
-        });
-
-        this.domainObject.modified = Date.now();
-
-        // Show saving progress dialog
-        let dialog = this.openmct.overlays.progressDialog({
-            progressPerc: 'unknown',
-            message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
-            iconClass: 'info',
-            title: 'Saving'
-        });
-
-        const success = await this.openmct.objects.save(this.domainObject);
-        if (success) {
-            this.openmct.notifications.info('Save successful');
-        } else {
-            this.openmct.notifications.error('Error saving objects');
+    try {
+      Object.entries(changes).forEach(([key, value]) => {
+        const existingValue = this.domainObject[key];
+        if (!Array.isArray(existingValue) && typeof existingValue === 'object') {
+          value = _.merge(existingValue, value);
         }
 
-        dialog.dismiss();
+        this.openmct.objects.mutate(this.domainObject, key, value);
+      });
+      const transaction = this.openmct.objects.getActiveTransaction();
+      await transaction.commit();
+      this.openmct.objects.endTransaction();
+    } catch (error) {
+      this.openmct.notifications.error('Error saving objects');
+      console.error(error);
     }
+  }
 
-    /**
-     * @private
-     */
-    _showEditForm(objectPath) {
-        this.domainObject = objectPath[0];
+  /**
+   * @private
+   */
+  _onCancel() {
+    //noop
+  }
 
-        const createWizard = new CreateWizard(this.openmct, this.domainObject, objectPath[1]);
-        const formStructure = createWizard.getFormStructure(false);
-        formStructure.title = 'Edit ' + this.domainObject.name;
+  /**
+   * @private
+   */
+  _showEditForm(objectPath) {
+    this.domainObject = objectPath[0];
 
-        this.openmct.forms.showForm(formStructure)
-            .then(this._onSave.bind(this));
-    }
+    const createWizard = new CreateWizard(this.openmct, this.domainObject, objectPath[1]);
+    const formStructure = createWizard.getFormStructure(false);
+    formStructure.title = 'Edit ' + this.domainObject.name;
+
+    return this.openmct.forms
+      .showForm(formStructure)
+      .then(this._onSave.bind(this))
+      .catch(this._onCancel.bind(this));
+  }
 }
+
+export { EDIT_PROPERTIES_ACTION_KEY };
+
+export default EditPropertiesAction;

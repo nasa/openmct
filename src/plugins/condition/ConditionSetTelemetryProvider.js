@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,69 +20,139 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionManager from './ConditionManager';
+import ConditionManager from './ConditionManager.js';
 
 export default class ConditionSetTelemetryProvider {
-    constructor(openmct) {
-        this.openmct = openmct;
-        this.conditionManagerPool = {};
+  constructor(openmct) {
+    this.openmct = openmct;
+    this.conditionManagerPool = {};
+    this.subscribers = {};
+    this.lastEmittedById = new Map();
+  }
+
+  isTelemetryObject(domainObject) {
+    return domainObject.type === 'conditionSet';
+  }
+
+  supportsRequest(domainObject) {
+    return domainObject.type === 'conditionSet';
+  }
+
+  supportsSubscribe(domainObject) {
+    return domainObject.type === 'conditionSet';
+  }
+
+  async request(domainObject, options) {
+    let conditionManager = this.getConditionManager(domainObject);
+    const formattedHistoricalData = await conditionManager.getHistoricalData(options);
+    let latestOutput = await conditionManager.requestLADConditionSetOutput(options);
+
+    // Avoid duplicate timestamps when historical data includes the latest point.
+    // Prefer LAD output when it overlaps, since it reflects the current evaluation path.
+    const timeKey = this.openmct.time.getTimeSystem().key;
+    const merged = [...formattedHistoricalData];
+
+    if (latestOutput?.length) {
+      const lad = latestOutput[0];
+      const ladTs = lad?.[timeKey];
+
+      if (ladTs !== undefined) {
+        const existingIndex = merged.findIndex((d) => d?.[timeKey] === ladTs);
+
+        if (existingIndex >= 0) {
+          merged[existingIndex] = lad;
+        } else {
+          merged.push(lad);
+        }
+      } else {
+        merged.push(lad);
+      }
     }
 
-    isTelemetryObject(domainObject) {
-        return domainObject.type === 'conditionSet';
+    // Seed subscribe-side dedupe with whatever we returned from request()
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    if (merged.length) {
+      this.lastEmittedById.set(id, merged[merged.length - 1]);
     }
 
-    supportsRequest(domainObject) {
-        return domainObject.type === 'conditionSet';
-    }
+    return merged;
+  }
 
-    supportsSubscribe(domainObject) {
-        return domainObject.type === 'conditionSet';
-    }
+  subscribe(domainObject, callback) {
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+    let subscription = this.subscribers[id];
 
-    request(domainObject, options) {
-        let conditionManager = this.getConditionManager(domainObject);
+    if (!subscription) {
+      const conditionManager = this.getConditionManager(domainObject);
+      subscription = {
+        callbacks: [],
+        conditionManager,
+        dedupingHandler: null
+      };
+      subscription.dedupingHandler = (data) => {
+        const timeKey = this.openmct.time.getTimeSystem().key;
+        const last = this.lastEmittedById.get(id);
+        const sameTime = last?.[timeKey] !== undefined && last?.[timeKey] === data?.[timeKey];
+        const sameValue =
+          last?.output === data?.output &&
+          last?.result === data?.result &&
+          last?.conditionId === data?.conditionId &&
+          last?.isDefault === data?.isDefault;
 
-        return conditionManager.requestLADConditionSetOutput(options)
-            .then(latestOutput => {
-                return latestOutput;
-            });
-    }
-
-    subscribe(domainObject, callback) {
-        let conditionManager = this.getConditionManager(domainObject);
-
-        conditionManager.on('conditionSetResultUpdated', (data) => {
-            callback(data);
-        });
-
-        return this.destroyConditionManager.bind(this, this.openmct.objects.makeKeyString(domainObject.identifier));
-    }
-
-    /**
-     * returns conditionManager instance for corresponding domain object
-     * creates the instance if it is not yet created
-     * @private
-     */
-    getConditionManager(domainObject) {
-        const id = this.openmct.objects.makeKeyString(domainObject.identifier);
-
-        if (!this.conditionManagerPool[id]) {
-            this.conditionManagerPool[id] = new ConditionManager(domainObject, this.openmct);
+        if (sameTime && sameValue) {
+          return;
         }
 
-        return this.conditionManagerPool[id];
+        this.lastEmittedById.set(id, data);
+        subscription.callbacks.forEach((cb) => cb(data));
+      };
+      this.subscribers[id] = subscription;
+      subscription.conditionManager.on('conditionSetResultUpdated', subscription.dedupingHandler);
     }
 
-    /**
-     * cleans up and destroys conditionManager instance for corresponding domain object id
-     * can be called manually for views that only request but do not subscribe to data
-     */
-    destroyConditionManager(id) {
-        if (this.conditionManagerPool[id]) {
-            this.conditionManagerPool[id].off('conditionSetResultUpdated');
-            this.conditionManagerPool[id].destroy();
-            delete this.conditionManagerPool[id];
-        }
+    subscription.callbacks.push(callback);
+
+    return () => {
+      subscription.callbacks = subscription.callbacks.filter((cb) => cb !== callback);
+      if (subscription.callbacks.length === 0) {
+        this.destroyConditionManager(id);
+      }
+    };
+  }
+
+  /**
+   * returns conditionManager instance for corresponding domain object
+   * creates the instance if it is not yet created
+   * @private
+   */
+  getConditionManager(domainObject) {
+    const id = this.openmct.objects.makeKeyString(domainObject.identifier);
+
+    if (!this.conditionManagerPool[id]) {
+      this.conditionManagerPool[id] = new ConditionManager(domainObject, this.openmct);
     }
+
+    return this.conditionManagerPool[id];
+  }
+
+  /**
+   * cleans up and destroys conditionManager instance for corresponding domain object id
+   * can be called manually for views that only request but do not subscribe to data
+   */
+  destroyConditionManager(id) {
+    const subscription = this.subscribers[id];
+
+    if (subscription) {
+      subscription.conditionManager.off('conditionSetResultUpdated', subscription.dedupingHandler);
+      delete this.subscribers[id];
+    }
+
+    if (this.conditionManagerPool[id]) {
+      this.conditionManagerPool[id].off('conditionSetResultUpdated');
+      this.conditionManagerPool[id].destroy();
+      delete this.conditionManagerPool[id];
+    }
+
+    this.lastEmittedById.delete(id);
+  }
 }

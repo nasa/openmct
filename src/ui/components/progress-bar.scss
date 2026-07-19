@@ -1,24 +1,31 @@
 /******************************************************** PROGRESS BAR */
 @keyframes progressIndeterminate {
-    0% { left: 0; width: 0; }
-    70% { left: 0; width: 100%; opacity: 1; }
-    100% { left: 100%; opacity: 0; }
+  0% {
+    transform:scaleX(0);
+  }
+  90% {
+    transform:scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .c-progress-bar {
-    background: $colorProgressBarHolder;
-    display: block;
-    min-height: $progressBarMinH;
-    overflow: hidden;
-    width: 100%;
+  background: $colorProgressBarHolder;
+  display: block;
+  min-height: $progressBarMinH;
+  overflow: hidden;
+  width: 100%;
 
-    &__bar {
-        background: $colorProgressBar;
-        height: 100%;
+  &__bar {
+    background: $colorProgressBar;
+    transform-origin: left;
 
-        &.--indeterminate {
-            position: absolute;
-            animation: progressIndeterminate 1.5s ease-in infinite;
-        }
+    &.--indeterminate {
+      @include abs();
+      animation: progressIndeterminate 1.5s ease-in infinite;
     }
+  }
 }

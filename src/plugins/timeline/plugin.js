@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,26 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from './TimelineViewProvider';
-import timelineInterceptor from "./timelineInterceptor";
+import getDefaultConfiguration from './configuration.js';
+import ExtendedLinesBus from './ExtendedLinesBus.js';
+import TimelineCompositionPolicy from './TimelineCompositionPolicy.js';
+import TimelineElementsViewProvider from './TimelineElementsViewProvider.js';
+import timelineInterceptor from './timelineInterceptor.js';
+import TimelineViewProvider from './TimelineViewProvider.js';
+const extendedLinesBus = new ExtendedLinesBus();
+
+export { extendedLinesBus };
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType('time-strip', {
-            name: 'Time Strip',
-            key: 'time-strip',
-            description: 'Compose and display time-based telemetry and other object types in a timeline-like view.',
-            creatable: true,
-            cssClass: 'icon-timeline',
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    useIndependentTime: false
-                };
-            }
-        });
-        timelineInterceptor(openmct);
-        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-    };
-}
+  function install(openmct) {
+    openmct.types.addType('time-strip', {
+      name: 'Time Strip',
+      key: 'time-strip',
+      description:
+        'Compose and display time-based telemetry and other object types in a timeline-like view.',
+      creatable: true,
+      cssClass: 'icon-timeline',
+      initialize: function (domainObject) {
+        domainObject.composition = [];
+        domainObject.configuration = getDefaultConfiguration();
+      }
+    });
+    timelineInterceptor(openmct);
+    openmct.composition.addPolicy(new TimelineCompositionPolicy(openmct).allow);
 
+    openmct.objectViews.addProvider(new TimelineViewProvider(openmct, extendedLinesBus));
+    openmct.inspectorViews.addProvider(new TimelineElementsViewProvider(openmct));
+  }
+
+  install.extendedLinesBus = extendedLinesBus;
+
+  return install;
+}

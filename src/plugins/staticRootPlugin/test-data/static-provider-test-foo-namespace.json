@@ -1,0 +1,120 @@
+{
+  "openmct": {
+    "foo:a6c9e745-89e5-4c3a-8f54-7a34711aaeb1": {
+      "identifier": { "key": "a6c9e745-89e5-4c3a-8f54-7a34711aaeb1", "namespace": "foo" },
+      "name": "Folder Foo",
+      "type": "folder",
+      "composition": [
+        { "key": "95729018-86ed-4484-867d-10c63c41c5a1", "namespace": "foo" },
+        { "key": "22c438f0-953b-42c5-8fb2-9d5dbeb88a0c", "namespace": "foo" },
+        { "key": "3545554b-53c8-467d-a70d-e90d1a120e4a", "namespace": "foo" }
+      ],
+      "modified": 1681164966705,
+      "location": "foo:mine",
+      "created": 1681164829371,
+      "persisted": 1681164966706
+    },
+    "foo:95729018-86ed-4484-867d-10c63c41c5a1": {
+      "identifier": { "key": "95729018-86ed-4484-867d-10c63c41c5a1", "namespace": "foo" },
+      "name": "Display Layout Bar",
+      "type": "layout",
+      "composition": [
+        { "key": "22c438f0-953b-42c5-8fb2-9d5dbeb88a0c", "namespace": "foo" },
+        { "key": "3545554b-53c8-467d-a70d-e90d1a120e4a", "namespace": "foo" }
+      ],
+      "configuration": {
+        "items": [
+          {
+            "fill": "#666666",
+            "stroke": "",
+            "x": 42,
+            "y": 42,
+            "width": 20,
+            "height": 4,
+            "type": "box-view",
+            "id": "14505a5d-b846-4504-961f-8c9bcdf19f39"
+          },
+          {
+            "identifier": { "key": "22c438f0-953b-42c5-8fb2-9d5dbeb88a0c", "namespace": "foo" },
+            "x": 0,
+            "y": 0,
+            "width": 40,
+            "height": 15,
+            "displayMode": "all",
+            "value": "sin",
+            "stroke": "",
+            "fill": "",
+            "color": "",
+            "fontSize": "default",
+            "font": "default",
+            "type": "telemetry-view",
+            "id": "05baa95f-2064-4cb0-ad9f-575758491220"
+          },
+          {
+            "width": 40,
+            "height": 15,
+            "x": 0,
+            "y": 15,
+            "identifier": { "key": "3545554b-53c8-467d-a70d-e90d1a120e4a", "namespace": "foo" },
+            "hasFrame": true,
+            "fontSize": "default",
+            "font": "default",
+            "type": "subobject-view",
+            "id": "70e1b8b7-cd59-4a52-b796-d68fb0c48fc5"
+          }
+        ],
+        "layoutGrid": [10, 10],
+        "objectStyles": {
+          "05baa95f-2064-4cb0-ad9f-575758491220": {
+            "staticStyle": {
+              "style": {
+                "border": "1px solid #00ff00",
+                "backgroundColor": "#0000ff",
+                "color": "#ff00ff"
+              }
+            }
+          }
+        }
+      },
+      "modified": 1681165037189,
+      "location": "foo:a6c9e745-89e5-4c3a-8f54-7a34711aaeb1",
+      "created": 1681164838178,
+      "persisted": 1681165037190
+    },
+    "foo:22c438f0-953b-42c5-8fb2-9d5dbeb88a0c": {
+      "identifier": { "key": "22c438f0-953b-42c5-8fb2-9d5dbeb88a0c", "namespace": "foo" },
+      "name": "SWG Baz",
+      "type": "generator",
+      "telemetry": {
+        "period": "20",
+        "amplitude": "2",
+        "offset": "5",
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": 0,
+        "loadDelay": 0,
+        "infinityValues": false,
+        "staleness": false
+      },
+      "modified": 1681164910719,
+      "location": "foo:a6c9e745-89e5-4c3a-8f54-7a34711aaeb1",
+      "created": 1681164903684,
+      "persisted": 1681164910719
+    },
+    "foo:3545554b-53c8-467d-a70d-e90d1a120e4a": {
+      "identifier": { "key": "3545554b-53c8-467d-a70d-e90d1a120e4a", "namespace": "foo" },
+      "name": "Clock Qux",
+      "type": "clock",
+      "configuration": {
+        "baseFormat": "YYYY/MM/DD hh:mm:ss",
+        "use24": "clock12",
+        "timezone": "UTC"
+      },
+      "modified": 1681164989837,
+      "location": "foo:a6c9e745-89e5-4c3a-8f54-7a34711aaeb1",
+      "created": 1681164966702,
+      "persisted": 1681164989837
+    }
+  },
+  "rootId": "foo:a6c9e745-89e5-4c3a-8f54-7a34711aaeb1"
+}

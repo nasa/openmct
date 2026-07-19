@@ -1,38 +1,55 @@
 export default function (folderName, couchPlugin, searchFilter) {
-    return function install(openmct) {
-        const couchProvider = couchPlugin.couchProvider;
+  const DEFAULT_NAME = 'CouchDB Documents';
 
-        openmct.objects.addRoot({
-            namespace: 'couch-search',
-            key: 'couch-search'
-        });
+  return function install(openmct) {
+    const couchProvider = couchPlugin.couchProvider;
+    //replace any non-letter/non-number with a hyphen
+    const couchSearchId = (folderName || DEFAULT_NAME).replace(/[^a-zA-Z0-9]/g, '-');
+    const couchSearchName = `couch-search-${couchSearchId}`;
 
-        openmct.objects.addProvider('couch-search', {
-            get(identifier) {
-                if (identifier.key !== 'couch-search') {
-                    return undefined;
-                } else {
-                    return Promise.resolve({
-                        identifier,
-                        type: 'folder',
-                        name: folderName || "CouchDB Documents",
-                        location: 'ROOT'
-                    });
-                }
-            }
-        });
+    openmct.objects.addRoot({
+      namespace: couchSearchName,
+      key: couchSearchName
+    });
 
-        openmct.composition.addProvider({
-            appliesTo(domainObject) {
-                return domainObject.identifier.namespace === 'couch-search'
-                    && domainObject.identifier.key === 'couch-search';
-            },
-            load() {
-                return couchProvider.getObjectsByFilter(searchFilter).then(objects => {
-                    return objects.map(object => object.identifier);
-                });
-            }
-        });
-    };
+    openmct.objects.addProvider(couchSearchName, {
+      get(identifier) {
+        if (identifier.key !== couchSearchName) {
+          return undefined;
+        } else {
+          return Promise.resolve({
+            identifier,
+            type: 'folder',
+            name: folderName || DEFAULT_NAME,
+            location: 'ROOT'
+          });
+        }
+      },
+      search() {
+        return Promise.resolve([]);
+      }
+    });
 
+    openmct.composition.addProvider({
+      appliesTo(domainObject) {
+        return (
+          domainObject.identifier.namespace === couchSearchName &&
+          domainObject.identifier.key === couchSearchName
+        );
+      },
+      load() {
+        let searchResults;
+
+        if (searchFilter.viewName !== undefined) {
+          // Use a view to search, instead of an _all_docs find
+          searchResults = couchProvider.getObjectsByView(searchFilter);
+        } else {
+          // Use the _find endpoint to search _all_docs
+          searchResults = couchProvider.getObjectsByFilter(searchFilter);
+        }
+
+        return searchResults;
+      }
+    });
+  };
 }

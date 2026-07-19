@@ -1,0 +1,19 @@
+{
+  "tags": {
+    "46a62ad1-bb86-4f88-9a17-2a029e12669d": {
+      "label": "Science",
+      "backgroundColor": "#cc0000",
+      "foregroundColor": "#ffffff"
+    },
+    "65f150ef-73b7-409a-b2e8-258cbd8b7323": {
+      "label": "Driving",
+      "backgroundColor": "#ffad32",
+      "foregroundColor": "#333333"
+    },
+    "f156b038-c605-46db-88a6-67cf2489a371": {
+      "label": "Drilling",
+      "backgroundColor": "#b0ac4e",
+      "foregroundColor": "#FFFFFF"
+    }
+  }
+}

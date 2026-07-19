@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,25 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PreviewAction from './PreviewAction';
+import PreviewAction from './PreviewAction.js';
 
-export default class ViewHistoricalDataAction extends PreviewAction {
-    constructor(openmct) {
-        super(openmct);
+const VIEW_HISTORICAL_DATA_ACTION_KEY = 'viewHistoricalData';
 
-        this.name = 'View Historical Data';
-        this.key = 'viewHistoricalData';
-        this.description = 'View Historical Data in a Table or Plot';
-        this.cssClass = 'icon-eye-open';
-        this.hideInDefaultMenu = true;
-    }
+class ViewHistoricalDataAction extends PreviewAction {
+  constructor(openmct) {
+    super(openmct);
 
-    appliesTo(objectPath, view = {}) {
-        let viewContext = view.getViewContext && view.getViewContext();
+    this.name = 'View Historical Data';
+    this.key = VIEW_HISTORICAL_DATA_ACTION_KEY;
+    this.description = 'View Historical Data in a Table or Plot';
+    this.cssClass = 'icon-eye-open';
+    this.hideInDefaultMenu = true;
+  }
 
-        return objectPath.length
-            && viewContext
-            && viewContext.row
-            && viewContext.row.viewHistoricalData;
-    }
+  appliesTo(objectPath, view = {}) {
+    let viewContext = view.getViewContext && view.getViewContext();
+
+    return (
+      objectPath.length && viewContext && viewContext.row && viewContext.row.viewHistoricalData
+    );
+  }
 }
+
+export { VIEW_HISTORICAL_DATA_ACTION_KEY };
+
+export default ViewHistoricalDataAction;

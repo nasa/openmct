@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,64 +20,110 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * Represents a transaction for managing changes to domain objects.
+ */
 export default class Transaction {
-    constructor(objectAPI) {
-        this.dirtyObjects = new Set();
-        this.objectAPI = objectAPI;
-    }
+  /**
+   * @param {import('./ObjectAPI').default} objectAPI - The object API instance.
+   */
+  constructor(objectAPI) {
+    /** @type {Record<string, DomainObject>} */
+    this.dirtyObjects = {};
+    /** @type {import('./ObjectAPI').default} */
+    this.objectAPI = objectAPI;
+  }
 
-    add(object) {
-        this.dirtyObjects.add(object);
-    }
+  /**
+   * Adds an object to the transaction.
+   * @param {DomainObject} object - The object to add.
+   */
+  add(object) {
+    const key = this.objectAPI.makeKeyString(object.identifier);
 
-    cancel() {
-        return this._clear();
-    }
+    this.dirtyObjects[key] = object;
+  }
 
-    commit() {
-        const promiseArray = [];
-        const save = this.objectAPI.save.bind(this.objectAPI);
-        this.dirtyObjects.forEach(object => {
-            promiseArray.push(this.createDirtyObjectPromise(object, save));
-        });
+  /**
+   * Cancels the transaction and reverts changes.
+   * @returns {Promise<void[]>}
+   */
+  cancel() {
+    return this._clear();
+  }
 
-        return Promise.all(promiseArray);
-    }
+  /**
+   * Commits the transaction and saves changes.
+   * @returns {Promise<void[]>}
+   */
+  commit() {
+    const promiseArray = [];
+    const save = this.objectAPI.save.bind(this.objectAPI);
 
-    createDirtyObjectPromise(object, action) {
-        return new Promise((resolve, reject) => {
-            action(object)
-                .then((success) => {
-                    this.dirtyObjects.delete(object);
-                    resolve(success);
-                })
-                .catch(reject);
-        });
-    }
+    Object.values(this.dirtyObjects).forEach((object) => {
+      promiseArray.push(this.createDirtyObjectPromise(object, save));
+    });
 
-    getDirtyObject(identifier) {
-        let dirtyObject;
-        this.dirtyObjects.forEach(object => {
-            const areIdsEqual = this.objectAPI.areIdsEqual(object.identifier, identifier);
-            if (areIdsEqual) {
-                dirtyObject = object;
-            }
-        });
+    return Promise.all(promiseArray);
+  }
 
-        return dirtyObject;
-    }
+  /**
+   * Creates a promise for handling a dirty object.
+   * @template T
+   * @param {DomainObject} object - The dirty object.
+   * @param {(object: DomainObject, ...args: any[]) => Promise<T>} action - The action to perform.
+   * @param {...any} args - Additional arguments for the action.
+   * @returns {Promise<T>}
+   */
+  createDirtyObjectPromise(object, action, ...args) {
+    return new Promise((resolve, reject) => {
+      action(object, ...args)
+        .then((success) => {
+          const key = this.objectAPI.makeKeyString(object.identifier);
 
-    start() {
-        this.dirtyObjects = new Set();
-    }
+          delete this.dirtyObjects[key];
+          resolve(success);
+        })
+        .catch(reject);
+    });
+  }
 
-    _clear() {
-        const promiseArray = [];
-        const refresh = this.objectAPI.refresh.bind(this.objectAPI);
-        this.dirtyObjects.forEach(object => {
-            promiseArray.push(this.createDirtyObjectPromise(object, refresh));
-        });
+  /**
+   * Retrieves a dirty object by its identifier.
+   * @param {Identifier} identifier - The object identifier.
+   * @returns {DomainObject | undefined}
+   */
+  getDirtyObject(identifier) {
+    let dirtyObject;
 
-        return Promise.all(promiseArray);
-    }
+    Object.values(this.dirtyObjects).forEach((object) => {
+      const areIdsEqual = this.objectAPI.areIdsEqual(object.identifier, identifier);
+      if (areIdsEqual) {
+        dirtyObject = object;
+      }
+    });
+
+    return dirtyObject;
+  }
+
+  /**
+   * Clears the transaction and refreshes objects.
+   * @returns {Promise<void[]>}
+   * @private
+   */
+  _clear() {
+    const promiseArray = [];
+    const action = (obj) => this.objectAPI.refresh(obj, true);
+
+    Object.values(this.dirtyObjects).forEach((object) => {
+      promiseArray.push(this.createDirtyObjectPromise(object, action));
+    });
+
+    return Promise.all(promiseArray);
+  }
 }
+
+/**
+ * @typedef {import('openmct').DomainObject} DomainObject
+ * @typedef {import('openmct').Identifier} Identifier
+ */

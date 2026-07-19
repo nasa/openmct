@@ -1,49 +1,58 @@
+import mount from 'utils/mount';
+
 import ProgressDialogComponent from './components/ProgressDialogComponent.vue';
-import Overlay from './Overlay';
-import Vue from 'vue';
+import Overlay from './Overlay.js';
 
 let component;
-
 class ProgressDialog extends Overlay {
-    constructor({progressPerc, progressText, iconClass, message, title, hint, timestamp, ...options}) {
-        component = new Vue({
-            components: {
-                ProgressDialogComponent: ProgressDialogComponent
-            },
-            provide: {
-                iconClass,
-                message,
-                title,
-                hint,
-                timestamp
-            },
-            data() {
-                return {
-                    model: {
-                        progressPerc: progressPerc || 0,
-                        progressText
-                    }
-                };
-            },
-            template: '<progress-dialog-component :model="model"></progress-dialog-component>'
-        }).$mount();
+  constructor({
+    progressPerc,
+    progressText,
+    iconClass,
+    message,
+    title,
+    hint,
+    timestamp,
+    ...options
+  }) {
+    const { vNode, destroy } = mount({
+      components: {
+        ProgressDialogComponent
+      },
+      provide: {
+        iconClass,
+        message,
+        title,
+        hint,
+        timestamp
+      },
+      data() {
+        return {
+          progressPerc,
+          progressText
+        };
+      },
+      template:
+        '<progress-dialog-component :progress-perc="progressPerc" :progress-text="progressText"></progress-dialog-component>'
+    });
 
-        super({
-            element: component.$el,
-            size: 'fit',
-            dismissable: false,
-            ...options
-        });
+    component = vNode.componentInstance;
+    super({
+      element: vNode.el,
+      size: 'fit',
+      dismissible: false,
+      ...options
+    });
 
-        this.once('destroy', () => {
-            component.$destroy();
-        });
-    }
+    this.once('destroy', () => {
+      destroy();
+    });
+  }
 
-    updateProgress(progressPerc, progressText) {
-        component.model.progressPerc = progressPerc;
-        component.model.progressText = progressText;
-    }
+  updateProgress(progressPerc, progressText) {
+    component.$data.progressPerc = progressPerc;
+    component.$data.progressText = progressText;
+  }
 }
 
 export default ProgressDialog;

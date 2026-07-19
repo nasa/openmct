@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 .c-timelist {
   & .nowMarker.hasCurrent {
     height: 2px;
@@ -30,19 +29,43 @@
   }
 
   .c-list-item {
-    /* Time Lists */
+    /* Compact Time Lists; is a <tr> element */
+
+    @mixin sSelected($bgColor, $fgColor) {
+      &[s-selected] {
+        background: $bgColor !important;
+        border: 1px solid $colorSelectedFg !important;
+        color: $fgColor !important;
+      }
+    }
+
+    td {
+      $p: $interiorMarginSm;
+      padding-top: $p;
+      padding-bottom: $p;
+    }
+
+    &.--is-past {
+      @include sSelected(transparent, $colorPastFgEm);
+    }
 
     &.--is-current {
+      @include sSelected($colorCurrentBg, $colorCurrentFgEm);
       background-color: $colorCurrentBg;
       border-top: 1px solid $colorCurrentBorder !important;
-      color: $colorCurrentFg;
-      font-weight: bold;
+      color: $colorCurrentFgEm;
     }
 
     &.--is-future {
+      @include sSelected($colorFutureBg, $colorFutureFgEm);
       background-color: $colorFutureBg;
       border-top-color: $colorFutureBorder !important;
-      color: $colorFutureFg;
+      color: $colorFutureFgEm;
+    }
+
+    &.--is-in-progress {
+      @include sSelected($colorInProgressBg, $colorInProgressFgEm);
+      background-color: $colorInProgressBg;
     }
 
     &__value {
@@ -51,5 +74,226 @@
       }
     }
   }
+}
 
+/**************************************************** LARGE TIME LIST */
+@mixin showTliGraphic {
+  .c-tli__graphic {
+    display: block;
+    &:before {
+      @content;
+    }
+  }
+}
+
+.c-timelist--large {
+  $textSm: 0.8em;
+  $textLg: 1.3em;
+
+  margin-right: $interiorMargin; // Fend off from scrollbar
+  padding: 1px 1px; // Provide room for selected Activities border
+
+  > * + * {
+    margin-top: $interiorMarginSm;
+  }
+
+  .c-tli {
+    $baseBg: $colorPastBg;
+    $baseFg: $colorPastFg;
+    $baseFgEm: $colorPastFgEm;
+    $opSubtle: $opacitySubtle;
+
+    border-radius: $basicCr;
+    border: 1px solid transparent;
+    display: flex;
+    gap: 1px;
+    overflow: hidden;
+
+    &[s-selected] {
+      box-shadow: rgba($colorSelectedFg, 0.8) 0 0 0 1px;
+    }
+
+    .--subtle {
+      opacity: $opSubtle;
+    }
+
+    &__activity-color {
+      flex: 0 0 auto;
+      width: 7px;
+    }
+
+    &__contents {
+      color: $baseFg;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      gap: $interiorMargin;
+      overflow: hidden;
+      padding: $interiorMargin;
+
+      &.--is-past {
+        background-color: $colorPastBg;
+        color: $colorPastFg;
+        font-style: italic;
+
+        .--subtle {
+          opacity: $opSubtle * 1.5;
+        }
+
+        > * {
+          opacity: $opSubtle * 0.9;
+        }
+
+        &.--is-in-progress {
+          > * {
+            opacity: $opSubtle;
+          }
+        }
+      }
+
+      &.--is-current {
+        background-color: $colorCurrentBg;
+        color: $colorCurrentFg;
+      }
+
+      &.--is-future {
+        background-color: $colorFutureBg;
+        color: $colorFutureFg;
+      }
+
+      &.--is-in-progress {
+        background-color: $colorInProgressBg;
+
+        @include showTliGraphic {
+          @include gearSpinner($color: $colorInProgressFg);
+        }
+      }
+
+      &.--is-completed {
+        @include showTliGraphic {
+          @include bgCheckMark($color: $colorActivityStatusGreen);
+        }
+      }
+
+      &.--is-aborted {
+        @include showTliGraphic {
+          @include bgCircleSlash($color: $colorActivityStatusOrange);
+        }
+      }
+
+      &.--is-skipped {
+        @include showTliGraphic {
+          @include bgSkip($color: $colorBodyFg);
+        }
+      }
+    }
+
+    /************************ TITLE AND STATUS + GRAPHIC ICON */
+    &__title-and-status {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: $interiorMargin;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    &__title {
+      @include ellipsize();
+      font-size: $textLg;
+      flex: 1 1 auto;
+      min-width: 100px;
+    }
+
+    &__status-and-icon-graphic {
+      align-items: center;
+      display: flex;
+      flex: 0 0 auto;
+      gap: $interiorMargin;
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    .c-tli__graphic {
+      $d: 20px;
+      width: $d;
+      height: $d;
+      display: none;
+
+      &:before {
+        content: '';
+        display: block;
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    /************************ COUNT +/- (TIME HERO) */
+    &__time-hero {
+      display: flex;
+      align-items: baseline;
+      gap: $interiorMargin;
+    }
+
+    &__time-hero-time {
+      display: flex;
+      align-items: center;
+      font-size: $textLg;
+      white-space: nowrap;
+
+      &:before {
+        display: block;
+        font-family: symbolsfont;
+        font-size: 0.7em;
+        margin-right: 3px;
+      }
+
+      &.--is-countdown {
+        &:before {
+          content: $glyph-icon-minus;
+        }
+      }
+
+      &.--is-countup {
+        &:before {
+          content: $glyph-icon-plus;
+        }
+      }
+    }
+
+    &__time-hero-context {
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /************************ BOUNDS AND DURATION */
+    &__bounds-and-duration {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: $interiorMarginSm;
+
+      > * {
+        white-space: nowrap;
+      }
+
+
+      &.--has-duration {
+        .c-tli__start-time {
+          display: flex;
+          align-items: start;
+
+          &:after {
+            content: $glyph-icon-play;
+            font-family: symbolsfont;
+            font-size: 0.6em;
+            display: block;
+            margin-left: $interiorMargin;
+            margin-top: 4px;
+            opacity: $opSubtle;
+          }
+        }
+      }
+    }
+  }
 }

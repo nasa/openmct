@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,30 +24,48 @@
  * Module defining url handling.
  */
 
-export function paramsToArray(openmct) {
-    // parse urlParams from an object to an array.
-    let urlParams = openmct.router.getParams();
-    let newTabParams = [];
-    for (let key in urlParams) {
-        if ({}.hasOwnProperty.call(urlParams, key)) {
-            let param = `${key}=${urlParams[key]}`;
-            newTabParams.push(param);
-        }
-    }
+/**
+ * Convert the current URL parameters to an array of strings.
+ * @param {import('../../openmct').OpenMCT} openmct
+ * @returns {Array<string>} newTabParams
+ */
+export function paramsToArray(openmct, customUrlParams = {}) {
+  let urlParams = openmct.router.getParams();
 
-    return newTabParams;
+  // Merge the custom URL parameters with the current URL parameters.
+  Object.entries(customUrlParams).forEach((param) => {
+    const [key, value] = param;
+    urlParams[key] = value;
+  });
+
+  if (urlParams['tc.mode'] === 'fixed') {
+    delete urlParams['tc.startDelta'];
+    delete urlParams['tc.endDelta'];
+  } else if (urlParams['tc.mode'] === 'local') {
+    delete urlParams['tc.startBound'];
+    delete urlParams['tc.endBound'];
+  }
+
+  return Object.entries(urlParams).map(([key, value]) => `${key}=${value}`);
 }
 
 export function identifierToString(openmct, objectPath) {
-    return '#/browse/' + openmct.objects.getRelativePath(objectPath);
+  return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
-export default function objectPathToUrl(openmct, objectPath) {
-    let url = identifierToString(openmct, objectPath);
-    let urlParams = paramsToArray(openmct);
-    if (urlParams.length) {
-        url += '?' + urlParams.join('&');
-    }
+/**
+ * @param {import('../../openmct').OpenMCT} openmct
+ * @param {Array<import('../api/objects/ObjectAPI').DomainObject>} objectPath
+ * @param {any} customUrlParams
+ * @returns {string} url
+ */
+export function objectPathToUrl(openmct, objectPath, customUrlParams = {}) {
+  let url = identifierToString(openmct, objectPath);
 
-    return url;
+  let urlParams = paramsToArray(openmct, customUrlParams);
+  if (urlParams.length) {
+    url += '?' + urlParams.join('&');
+  }
+
+  return url;
 }

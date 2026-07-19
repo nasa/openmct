@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,71 +19,81 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'eventemitter3';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
- * application based on values provided by a ticking clock,
- * with the periodicity specified (optionally).
- * @param {number} period The periodicity with which the clock should tick
+ * application based on values provided by a ticking clock.
  * @constructor
  */
-
 export default class DefaultClock extends EventEmitter {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.key = 'clock';
+    this.key = 'clock';
+    this.cssClass = 'icon-clock';
+    this.name = 'Clock';
+    this.description = 'A default clock for openmct.';
+  }
 
-        this.cssClass = 'icon-clock';
-        this.name = 'Clock';
-        this.description = "A default clock for openmct.";
+  tick(tickValue) {
+    this.emit('tick', tickValue);
+    this.lastTick = tickValue;
+  }
+
+  /**
+   * Register a listener for the clock. When it ticks, the
+   * clock will provide the time from the configured endpoint
+   *
+   * @override
+   * @param {string | symbol} event the event to listen for
+   * @param {Function} fn the function to call when the event is emitted
+   * @param {*} [context] the context to use for the function call
+   * @returns {this} a function for deregistering the provided listener
+   */
+  on(event, fn, context) {
+    super.on(event, fn, context);
+
+    if (this.listeners(event).length === 1) {
+      this.start();
     }
 
-    tick(tickValue) {
-        this.emit("tick", tickValue);
-        this.lastTick = tickValue;
+    return this;
+  }
+
+  /**
+   * Register a listener for the clock. When it ticks, the
+   * clock will provide the current local system time
+   *
+   * @override
+   * @param {string | symbol} event the event to listen for
+   * @param {Function} [fn] the function to call when the event is emitted
+   * @param {*} [context] the context to use for the function call
+   * @param {boolean} [once]
+   * @returns {this}
+   */
+  off(event, fn, context, once) {
+    super.off(event, fn, context, once);
+
+    if (this.listeners(event).length === 0) {
+      this.stop();
     }
 
-    /**
-     * Register a listener for the clock. When it ticks, the
-     * clock will provide the time from the configured endpoint
-     *
-     * @param listener
-     * @returns {function} a function for deregistering the provided listener
-     */
-    on(event) {
-        let result = super.on.apply(this, arguments);
+    return this;
+  }
 
-        if (this.listeners(event).length === 1) {
-            this.start();
-        }
+  stop() {
+    throw new Error("Method 'stop()' must be implemented.");
+  }
 
-        return result;
-    }
+  start() {
+    throw new Error("Method 'start()' must be implemented.");
+  }
 
-    /**
-     * Register a listener for the clock. When it ticks, the
-     * clock will provide the current local system time
-     *
-     * @param listener
-     * @returns {function} a function for deregistering the provided listener
-     */
-    off(event) {
-        let result = super.off.apply(this, arguments);
-
-        if (this.listeners(event).length === 0) {
-            this.stop();
-        }
-
-        return result;
-    }
-
-    /**
-     * @returns {number} The last value provided for a clock tick
-     */
-    currentValue() {
-        return this.lastTick;
-    }
-
+  /**
+   * @returns {number} The most recent value provided for a clock tick
+   */
+  currentValue() {
+    return this.lastTick;
+  }
 }

@@ -1,5 +1,7 @@
 # Security Policy
 
+Open MCT is an open source project and may contain externally provided code. External contributions must follow the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md).
+
 The Open MCT team secures our code base using a combination of code review, dependency review, and periodic security reviews. Static analysis performed during automated verification additionally safeguards against common coding errors which may result in vulnerabilities.
 
 ### Reporting a Vulnerability
@@ -15,8 +17,6 @@ See our [top-level security policy](https://github.com/nasa/openmct/security/pol
 The [CodeQL GitHub Actions workflow](https://github.com/nasa/openmct/blob/master/.github/workflows/codeql-analysis.yml) is available to the public. To review the results, fork the repository and run the CodeQL workflow. 
 
 CodeQL is run for every pull-request in GitHub Actions.
-
-The project is also monitored by [LGTM](https://lgtm.com/projects/g/nasa/openmct/) and is available to public.
 
 ### ESLint
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,51 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './actions/ActionsAPI',
-    './composition/CompositionAPI',
-    './Editor',
-    './forms/FormsAPI',
-    './indicators/IndicatorAPI',
-    './menu/MenuAPI',
-    './notifications/NotificationAPI',
-    './objects/ObjectAPI',
-    './priority/PriorityAPI',
-    './status/StatusAPI',
-    './telemetry/TelemetryAPI',
-    './time/TimeAPI',
-    './types/TypeRegistry',
-    './user/UserAPI'
-], function (
-    ActionsAPI,
-    CompositionAPI,
-    EditorAPI,
-    FormsAPI,
-    IndicatorAPI,
-    MenuAPI,
-    NotificationAPI,
-    ObjectAPI,
-    PriorityAPI,
-    StatusAPI,
-    TelemetryAPI,
-    TimeAPI,
-    TypeRegistry,
-    UserAPI
-) {
-    return {
-        ActionsAPI: ActionsAPI.default,
-        CompositionAPI: CompositionAPI,
-        EditorAPI: EditorAPI,
-        FormsAPI: FormsAPI,
-        IndicatorAPI: IndicatorAPI,
-        MenuAPI: MenuAPI.default,
-        NotificationAPI: NotificationAPI.default,
-        ObjectAPI: ObjectAPI,
-        PriorityAPI: PriorityAPI.default,
-        StatusAPI: StatusAPI.default,
-        TelemetryAPI: TelemetryAPI,
-        TimeAPI: TimeAPI.default,
-        TypeRegistry: TypeRegistry,
-        UserAPI: UserAPI.default
-    };
-});
+import ActionsAPI from './actions/ActionsAPI.js';
+import AnnotationAPI from './annotation/AnnotationAPI.js';
+import CompositionAPI from './composition/CompositionAPI.js';
+import EditorAPI from './Editor.js';
+import FaultManagementAPI from './faultmanagement/FaultManagementAPI.js';
+import FormsAPI from './forms/FormsAPI.js';
+import IndicatorAPI from './indicators/IndicatorAPI.js';
+import MenuAPI from './menu/MenuAPI.js';
+import NotificationAPI from './notifications/NotificationAPI.js';
+import ObjectAPI from './objects/ObjectAPI.js';
+import PriorityAPI from './priority/PriorityAPI.js';
+import StatusAPI from './status/StatusAPI.js';
+import TelemetryAPI from './telemetry/TelemetryAPI.js';
+import TimeAPI from './time/TimeAPI.js';
+import TypeRegistry from './types/TypeRegistry.js';
+import UserAPI from './user/UserAPI.js';
+
+export default {
+  ActionsAPI,
+  CompositionAPI,
+  EditorAPI,
+  FaultManagementAPI,
+  FormsAPI,
+  IndicatorAPI,
+  MenuAPI,
+  NotificationAPI,
+  ObjectAPI,
+  PriorityAPI,
+  StatusAPI,
+  TelemetryAPI,
+  TimeAPI,
+  TypeRegistry,
+  UserAPI,
+  AnnotationAPI
+};

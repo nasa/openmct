@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,15 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    /**
-     * Constant values used by the Autoflow Tabular View.
-     */
-    return {
-        ROW_HEIGHT: 16,
-        SLIDER_HEIGHT: 10,
-        INITIAL_COLUMN_WIDTH: 225,
-        MAX_COLUMN_WIDTH: 525,
-        COLUMN_WIDTH_STEP: 25
-    };
-});
+/**
+ * Constant values used by the Autoflow Tabular View.
+ */
+export default {
+  ROW_HEIGHT: 16,
+  SLIDER_HEIGHT: 10,
+  INITIAL_COLUMN_WIDTH: 225,
+  MAX_COLUMN_WIDTH: 525,
+  COLUMN_WIDTH_STEP: 25
+};

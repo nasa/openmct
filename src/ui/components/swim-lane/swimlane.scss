@@ -1,35 +1,115 @@
+/*****************************************************************************
+* Open MCT, Copyright (c) 2014-2024, United States Government
+* as represented by the Administrator of the National Aeronautics and Space
+* Administration. All rights reserved.
+*
+* Open MCT is licensed under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* http://www.apache.org/licenses/LICENSE-2.0.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations
+* under the License.
+*
+* Open MCT includes source code licensed under additional open source
+* licenses. See the Open Source Licenses file (LICENSES.md) included with
+* this source code distribution or the Licensing information page available
+* at runtime from the About dialog for additional information.
+*****************************************************************************/
+
+@use 'sass:math';
+
 .c-swimlane {
-    display: grid;
-    grid-template-columns: 100px 100px 1fr;
-    grid-column-gap: 1px;
-    grid-row-gap: 1px;
-    margin-bottom: 1px;
-    width: 100%;
+  $handleSize: 1px;
+  $handleMargin: 3px;
+  $handleHitSize: $handleMargin * 2 + $handleSize;
 
-    &.is-status--draft {
-        background: rgba($colorAlert, 0.2);
+  display: grid;
+  grid-template-columns: 100px 100px 1fr;
+  grid-column-gap: 1px;
+  grid-row-gap: 1px; // Used for grid within a swimlane for Plan views
+  min-height: max-content; // Plan and Gantt views: must use max-content to prevent swimlane from collapsing
+  width: 100%;
+
+  .is-object-type-time-strip & {
+    min-height: $btnStdH;
+
+  }
+
+  &__time-axis {
+    flex: 0 0 auto;
+    height: 32px;
+    overflow: visible;
+  }
+
+  &.is-status--draft {
+    background: $colorTimeStripDraftBg;
+  }
+
+  &__lane-label {
+    background: $colorTimeStripLabelBg;
+    color: $colorBodyFg;
+    overflow: visible;
+    padding: $interiorMarginSm $interiorMargin;
+  }
+
+  &__handle {
+    $size: $handleSize;
+    $margin: $handleMargin;
+    z-index: 2;
+
+    @include resizeHandleStyle($size, $margin);
+
+    @include abs();
+    display: none; // Set to display: block in .is-editing section below
+    //z-index: 1000;
+
+    &.vertical {
+      // Vertical resizing uses c-fl-frame__resize-handle
     }
 
-    [class*='__lane-label'] {
-        background: rgba($colorBodyFg, 0.2);
-        color: $colorBodyFg;
-        padding: $interiorMarginSm;
+    &.horizontal {
+      // Resizes in X dimension
+      left: auto;
+      right: math.floor($handleHitSize * -0.5);
+      width: $handleHitSize;
+    }
+  }
+
+  &__lane-object {
+    background: rgba(black, 0.1);
+    height: 100%;
+
+    .c-plan {
+      display: contents;
     }
 
-    [class*='--span-cols'] {
-        grid-column: span 2;
+    @include smallerControlButtons;
+  }
+
+  &__lane-label-button-h {
+    // Holds swimlane button(s)
+    flex: 1 1 auto;
+    text-align: right;
+  }
+
+  .--span-cols {
+    grid-column: span 2;
+  }
+
+  // Yet more brittle special case selecting...
+  .is-object-type-plan,
+  .is-object-type-gantt-chart {
+    display: contents;
+  }
+
+  .is-editing & {
+    //grid-column-gap: $handleHitSize;
+    .c-swimlane__handle {
+      display: block;
     }
-
-    &__lane-object {
-        background: rgba(black, 0.1);
-
-        .c-plan {
-            display: contents;
-        }
-
-        @include smallerControlButtons;
-    }
-
-    // Yet more brittle special case selecting...
-    .is-object-type-plan { display: contents; }
+  }
 }

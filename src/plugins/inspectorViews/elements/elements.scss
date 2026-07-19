@@ -1,0 +1,76 @@
+.c-elements-pool {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1 1 auto !important;
+  > * + * {
+    margin-top: $interiorMargin;
+  }
+
+  &.is-object-type-telemetry-plot-overlay {
+    .c-grippy {
+      display: none;
+    }
+    .c-object-label {
+      &:before {
+        // Grippy
+        content: '';
+        @include grippy($colorItemTreeVC, $dir: 'Y');
+        $d: 9px;
+        width: $d;
+        height: $d;
+        display: block;
+        margin-right: $interiorMargin;
+      }
+    }
+  }
+
+  &__item {
+    &.is-alias {
+      // Object is an alias to an original.
+      [class*='__type-icon'] {
+        @include isAlias();
+      }
+    }
+  }
+
+  &__search {
+    flex: 0 0 auto;
+  }
+
+  &__group {
+    flex: 1 1 auto;
+    margin-top: $interiorMarginLg;
+  }
+
+  &__elements {
+    flex: 1 1 auto;
+    overflow: auto;
+  }
+
+  &__instructions {
+    display: flex;
+    font-style: italic;
+  }
+
+  .c-grippy {
+    $d: 9px;
+    flex: 0 0 auto;
+    margin-right: $interiorMarginSm;
+    transform: translateY(-2px);
+    width: $d;
+    height: $d;
+  }
+
+  &.is-context-clicked {
+    box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
+  }
+
+  .hover {
+    background-color: $colorItemTreeSelectedBg;
+  }
+}
+
+.js-last-place {
+  height: 10px;
+}

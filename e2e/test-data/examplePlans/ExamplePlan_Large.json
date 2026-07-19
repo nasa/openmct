@@ -1,0 +1,1080 @@
+{
+  "Lorem": [
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829001",
+      "name": "Lorem ipsum dolor 2023-03-15 21:00",
+      "start": 1678914000000,
+      "end": 1678920203000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829002",
+      "name": "Nam vehicula magna 2023-03-15 23:08",
+      "start": 1678921680000,
+      "end": 1678927886000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829003",
+      "name": "Praesent pharetra risus 2023-03-15 23:28",
+      "start": 1678922880000,
+      "end": 1678927341000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829004",
+      "name": "Duis eget arcu 2023-03-16 01:30",
+      "start": 1678930200000,
+      "end": 1678933775000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829005",
+      "name": "Maecenas elementum purus 2023-03-16 02:00",
+      "start": 1678932000000,
+      "end": 1678936537000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829006",
+      "name": "Praesent in mauris 2023-03-16 03:27",
+      "start": 1678937220000,
+      "end": 1678943380000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829007",
+      "name": "Donec id nunc 2023-03-16 04:08",
+      "start": 1678939680000,
+      "end": 1678942180000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829008",
+      "name": "Donec quis nunc 2023-03-16 04:45",
+      "start": 1678941900000,
+      "end": 1678942146000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829009",
+      "name": "Maecenas in purus 2023-03-16 06:45",
+      "start": 1678949100000,
+      "end": 1678954538000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829010",
+      "name": "Proin vehicula elit 2023-03-16 07:01",
+      "start": 1678950060000,
+      "end": 1678955494000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829011",
+      "name": "Nunc ac lorem 2023-03-16 07:04",
+      "start": 1678950240000,
+      "end": 1678957383000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829012",
+      "name": "Aenean mollis lorem 2023-03-16 07:55",
+      "start": 1678953300000,
+      "end": 1678954984000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829013",
+      "name": "Nunc hendrerit ipsum 2023-03-16 08:53",
+      "start": 1678956780000,
+      "end": 1678962831000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829014",
+      "name": "Vestibulum placerat velit 2023-03-16 10:35",
+      "start": 1678962900000,
+      "end": 1678968570000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829015",
+      "name": "Praesent eu augue 2023-03-16 11:02",
+      "start": 1678964520000,
+      "end": 1678966583000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829016",
+      "name": "Quisque mattis ligula 2023-03-16 11:53",
+      "start": 1678967580000,
+      "end": 1678974730000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829017",
+      "name": "Quisque a lectus 2023-03-16 13:33",
+      "start": 1678973580000,
+      "end": 1678977996000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829018",
+      "name": "Nam mattis risus 2023-03-16 15:02",
+      "start": 1678978920000,
+      "end": 1678982935000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829019",
+      "name": "Aenean rutrum libero 2023-03-16 16:26",
+      "start": 1678983960000,
+      "end": 1678990712000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829020",
+      "name": "Fusce tincidunt lorem 2023-03-16 17:45",
+      "start": 1678988700000,
+      "end": 1678995915000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829021",
+      "name": "Donec et nibh 2023-03-16 19:09",
+      "start": 1678993740000,
+      "end": 1678995474000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    }
+  ],
+  "Ipsum": [
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829022",
+      "name": "Praesent blandit urna 2023-03-16 20:10",
+      "start": 1678997400000,
+      "end": 1679003749000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829023",
+      "name": "Nullam congue est 2023-03-16 21:57",
+      "start": 1679003820000,
+      "end": 1679008250000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829024",
+      "name": "Sed sed enim 2023-03-16 22:34",
+      "start": 1679006040000,
+      "end": 1679012412000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829025",
+      "name": "Donec tincidunt ante 2023-03-16 23:09",
+      "start": 1679008140000,
+      "end": 1679011218000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829026",
+      "name": "Morbi bibendum tellus 2023-03-17 00:17",
+      "start": 1679012220000,
+      "end": 1679014528000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829027",
+      "name": "Quisque id est 2023-03-17 01:59",
+      "start": 1679018340000,
+      "end": 1679025535000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829028",
+      "name": "Vivamus imperdiet tellus 2023-03-17 04:01",
+      "start": 1679025660000,
+      "end": 1679031500000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829029",
+      "name": "Pellentesque tempus augue 2023-03-17 04:10",
+      "start": 1679026200000,
+      "end": 1679029090000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829030",
+      "name": "Donec vel mauris 2023-03-17 05:21",
+      "start": 1679030460000,
+      "end": 1679033163000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829031",
+      "name": "Morbi ac ipsum 2023-03-17 06:54",
+      "start": 1679036040000,
+      "end": 1679043127000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829032",
+      "name": "Sed elementum nisi 2023-03-17 07:26",
+      "start": 1679037960000,
+      "end": 1679042424000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829033",
+      "name": "Proin at ipsum 2023-03-17 09:07",
+      "start": 1679044020000,
+      "end": 1679044445000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829034",
+      "name": "Sed cursus ipsum 2023-03-17 11:12",
+      "start": 1679051520000,
+      "end": 1679056773000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829035",
+      "name": "Nullam mollis purus 2023-03-17 11:42",
+      "start": 1679053320000,
+      "end": 1679057845000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829036",
+      "name": "Aliquam vitae erat 2023-03-17 13:02",
+      "start": 1679058120000,
+      "end": 1679059116000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829037",
+      "name": "Aenean congue orci 2023-03-17 13:48",
+      "start": 1679060880000,
+      "end": 1679066284000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829038",
+      "name": "Praesent vel orci 2023-03-17 15:58",
+      "start": 1679068680000,
+      "end": 1679070694000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829039",
+      "name": "In non diam 2023-03-17 16:19",
+      "start": 1679069940000,
+      "end": 1679072641000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829040",
+      "name": "Suspendisse sit amet 2023-03-17 17:51",
+      "start": 1679075460000,
+      "end": 1679078232000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829041",
+      "name": "Sed sit amet 2023-03-17 18:33",
+      "start": 1679077980000,
+      "end": 1679083509000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829042",
+      "name": "Donec dictum justo 2023-03-17 19:17",
+      "start": 1679080620000,
+      "end": 1679086107000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829043",
+      "name": "Etiam vestibulum justo 2023-03-17 19:39",
+      "start": 1679081940000,
+      "end": 1679086413000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829044",
+      "name": "Sed ullamcorper diam 2023-03-17 20:18",
+      "start": 1679084280000,
+      "end": 1679088693000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829045",
+      "name": "Cras aliquet dolor 2023-03-17 20:27",
+      "start": 1679084820000,
+      "end": 1679086883000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829046",
+      "name": "Duis et orci 2023-03-17 22:29",
+      "start": 1679092140000,
+      "end": 1679092436000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829047",
+      "name": "Pellentesque quis augue 2023-03-17 23:01",
+      "start": 1679094060000,
+      "end": 1679099511000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829048",
+      "name": "Mauris sed ligula 2023-03-17 23:46",
+      "start": 1679096760000,
+      "end": 1679100276000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829049",
+      "name": "Vestibulum non quam 2023-03-17 23:52",
+      "start": 1679097120000,
+      "end": 1679099465000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829050",
+      "name": "Nulla ut ante 2023-03-18 01:00",
+      "start": 1679101200000,
+      "end": 1679105368000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829051",
+      "name": "Vivamus scelerisque est 2023-03-18 02:26",
+      "start": 1679106360000,
+      "end": 1679107303000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829052",
+      "name": "Pellentesque viverra lectus 2023-03-18 04:28",
+      "start": 1679113680000,
+      "end": 1679120663000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829053",
+      "name": "Vivamus placerat metus 2023-03-18 05:54",
+      "start": 1679118840000,
+      "end": 1679120052000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829054",
+      "name": "Pellentesque nec quam 2023-03-18 06:20",
+      "start": 1679120400000,
+      "end": 1679124820000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829055",
+      "name": "Ut semper dui 2023-03-18 08:11",
+      "start": 1679127060000,
+      "end": 1679131793000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829056",
+      "name": "Praesent condimentum purus 2023-03-18 09:42",
+      "start": 1679132520000,
+      "end": 1679136293000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829057",
+      "name": "Morbi varius leo 2023-03-18 10:18",
+      "start": 1679134680000,
+      "end": 1679135462000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829058",
+      "name": "Etiam non nulla 2023-03-18 11:14",
+      "start": 1679138040000,
+      "end": 1679144793000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829059",
+      "name": "Integer vitae quam 2023-03-18 11:27",
+      "start": 1679138820000,
+      "end": 1679145512000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829060",
+      "name": "Ut bibendum sapien 2023-03-18 13:26",
+      "start": 1679145960000,
+      "end": 1679151196000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829061",
+      "name": "Praesent in nibh 2023-03-18 14:09",
+      "start": 1679148540000,
+      "end": 1679152592000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829062",
+      "name": "Mauris tempus risus 2023-03-18 15:53",
+      "start": 1679154780000,
+      "end": 1679157952000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829063",
+      "name": "Vivamus eu massa 2023-03-18 16:10",
+      "start": 1679155800000,
+      "end": 1679157039000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829064",
+      "name": "Aenean pharetra nulla 2023-03-18 17:08",
+      "start": 1679159280000,
+      "end": 1679163693000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829065",
+      "name": "Vivamus elementum mauris 2023-03-18 18:54",
+      "start": 1679165640000,
+      "end": 1679171765000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829066",
+      "name": "Curabitur vel nunc 2023-03-18 20:27",
+      "start": 1679171220000,
+      "end": 1679176508000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829067",
+      "name": "Donec condimentum quam 2023-03-18 22:06",
+      "start": 1679177160000,
+      "end": 1679179341000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829068",
+      "name": "Etiam tristique velit 2023-03-18 23:45",
+      "start": 1679183100000,
+      "end": 1679183457000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    }
+  ],
+  "Nonsectetur": [
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829069",
+      "name": "Praesent at purus 2023-03-19 00:32",
+      "start": 1679185920000,
+      "end": 1679188046000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829070",
+      "name": "Morbi convallis nunc 2023-03-19 01:34",
+      "start": 1679189640000,
+      "end": 1679194168000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829071",
+      "name": "Vestibulum at augue 2023-03-19 03:04",
+      "start": 1679195040000,
+      "end": 1679201691000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829072",
+      "name": "Morbi eget ante 2023-03-19 04:29",
+      "start": 1679200140000,
+      "end": 1679200843000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829073",
+      "name": "Aenean mattis ante 2023-03-19 04:40",
+      "start": 1679200800000,
+      "end": 1679203030000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829074",
+      "name": "Nam vitae ante 2023-03-19 04:43",
+      "start": 1679200980000,
+      "end": 1679201798000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829075",
+      "name": "Suspendisse accumsan lacus 2023-03-19 06:24",
+      "start": 1679207040000,
+      "end": 1679207797000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829076",
+      "name": "In rutrum mauris 2023-03-19 08:27",
+      "start": 1679214420000,
+      "end": 1679216767000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829077",
+      "name": "Vivamus posuere tellus 2023-03-19 10:20",
+      "start": 1679221200000,
+      "end": 1679226475000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829078",
+      "name": "Ut non turpis 2023-03-19 12:10",
+      "start": 1679227800000,
+      "end": 1679229012000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829079",
+      "name": "Nunc tincidunt leo 2023-03-19 12:12",
+      "start": 1679227920000,
+      "end": 1679229913000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829080",
+      "name": "Nunc egestas eros 2023-03-19 13:51",
+      "start": 1679233860000,
+      "end": 1679235101000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829081",
+      "name": "Sed feugiat tortor 2023-03-19 14:25",
+      "start": 1679235900000,
+      "end": 1679239630000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829082",
+      "name": "Pellentesque non dolor 2023-03-19 15:38",
+      "start": 1679240280000,
+      "end": 1679245396000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829083",
+      "name": "Nullam ut lorem 2023-03-19 15:50",
+      "start": 1679241000000,
+      "end": 1679244205000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829084",
+      "name": "Nam faucibus risus 2023-03-19 16:51",
+      "start": 1679244660000,
+      "end": 1679245213000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829085",
+      "name": "Proin euismod ligula 2023-03-19 17:14",
+      "start": 1679246040000,
+      "end": 1679249781000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829086",
+      "name": "Aenean congue orci 2023-03-19 17:23",
+      "start": 1679246580000,
+      "end": 1679248687000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829087",
+      "name": "Praesent vel orci 2023-03-19 18:55",
+      "start": 1679252100000,
+      "end": 1679256957000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829088",
+      "name": "In non diam 2023-03-19 19:06",
+      "start": 1679252760000,
+      "end": 1679252878000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829089",
+      "name": "Suspendisse sit amet 2023-03-19 20:42",
+      "start": 1679258520000,
+      "end": 1679259158000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829090",
+      "name": "Sed sit amet 2023-03-19 22:37",
+      "start": 1679265420000,
+      "end": 1679268745000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829091",
+      "name": "Donec dictum justo 2023-03-19 23:19",
+      "start": 1679267940000,
+      "end": 1679272128000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829092",
+      "name": "Etiam vestibulum justo 2023-03-19 23:53",
+      "start": 1679269980000,
+      "end": 1679273096000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829093",
+      "name": "Sed ullamcorper diam 2023-03-20 00:15",
+      "start": 1679271300000,
+      "end": 1679275297000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829094",
+      "name": "Cras aliquet dolor 2023-03-20 00:30",
+      "start": 1679272200000,
+      "end": 1679278448000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829095",
+      "name": "Duis et orci 2023-03-20 02:00",
+      "start": 1679277600000,
+      "end": 1679278981000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829096",
+      "name": "Pellentesque quis augue 2023-03-20 03:58",
+      "start": 1679284680000,
+      "end": 1679291126000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829097",
+      "name": "Mauris sed ligula 2023-03-20 04:35",
+      "start": 1679286900000,
+      "end": 1679294138000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829098",
+      "name": "Vestibulum non quam 2023-03-20 04:52",
+      "start": 1679287920000,
+      "end": 1679291835000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829099",
+      "name": "Nulla ut ante 2023-03-20 06:10",
+      "start": 1679292600000,
+      "end": 1679295800000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829100",
+      "name": "Vivamus scelerisque est 2023-03-20 07:38",
+      "start": 1679297880000,
+      "end": 1679304545000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829101",
+      "name": "Pellentesque viverra lectus 2023-03-20 08:14",
+      "start": 1679300040000,
+      "end": 1679305543000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829102",
+      "name": "Vivamus placerat metus 2023-03-20 09:58",
+      "start": 1679306280000,
+      "end": 1679313528000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829103",
+      "name": "Pellentesque nec quam 2023-03-20 11:08",
+      "start": 1679310480000,
+      "end": 1679311567000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829104",
+      "name": "Ut semper dui 2023-03-20 12:45",
+      "start": 1679316300000,
+      "end": 1679321703000,
+      "color": "#cc9900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829105",
+      "name": "Praesent condimentum purus 2023-03-20 14:32",
+      "start": 1679322720000,
+      "end": 1679326451000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829106",
+      "name": "Morbi varius leo 2023-03-20 14:42",
+      "start": 1679323320000,
+      "end": 1679329739000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829107",
+      "name": "Etiam non nulla 2023-03-20 16:10",
+      "start": 1679328600000,
+      "end": 1679330910000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829108",
+      "name": "Integer vitae quam 2023-03-20 17:22",
+      "start": 1679332920000,
+      "end": 1679333055000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829109",
+      "name": "Ut bibendum sapien 2023-03-20 17:28",
+      "start": 1679333280000,
+      "end": 1679334377000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829110",
+      "name": "Praesent in nibh 2023-03-20 18:09",
+      "start": 1679335740000,
+      "end": 1679339834000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829111",
+      "name": "Mauris tempus risus 2023-03-20 18:45",
+      "start": 1679337900000,
+      "end": 1679338054000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829112",
+      "name": "Vivamus eu massa 2023-03-20 19:07",
+      "start": 1679339220000,
+      "end": 1679344356000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829113",
+      "name": "Aenean pharetra nulla 2023-03-20 21:00",
+      "start": 1679346000000,
+      "end": 1679349652000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829114",
+      "name": "Vivamus elementum mauris 2023-03-20 22:48",
+      "start": 1679352480000,
+      "end": 1679358089000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829115",
+      "name": "Curabitur vel nunc 2023-03-21 00:54",
+      "start": 1679360040000,
+      "end": 1679361673000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829116",
+      "name": "Donec condimentum quam 2023-03-21 02:14",
+      "start": 1679364840000,
+      "end": 1679370470000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829117",
+      "name": "Etiam tristique velit 2023-03-21 03:12",
+      "start": 1679368320000,
+      "end": 1679373263000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829118",
+      "name": "Praesent at purus 2023-03-21 05:19",
+      "start": 1679375940000,
+      "end": 1679376500000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829119",
+      "name": "Morbi convallis nunc 2023-03-21 06:39",
+      "start": 1679380740000,
+      "end": 1679383240000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829120",
+      "name": "Vestibulum at augue 2023-03-21 07:12",
+      "start": 1679382720000,
+      "end": 1679383807000,
+      "color": "#009900",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829121",
+      "name": "Morbi eget ante 2023-03-21 08:52",
+      "start": 1679388720000,
+      "end": 1679394965000,
+      "color": "#1A6398",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829122",
+      "name": "Aenean mattis ante 2023-03-21 10:52",
+      "start": 1679395920000,
+      "end": 1679396480000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829123",
+      "name": "Nam vitae ante 2023-03-21 11:40",
+      "start": 1679398800000,
+      "end": 1679401571000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829124",
+      "name": "Suspendisse accumsan lacus 2023-03-21 12:08",
+      "start": 1679400480000,
+      "end": 1679402991000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829125",
+      "name": "In rutrum mauris 2023-03-21 12:44",
+      "start": 1679402640000,
+      "end": 1679405235000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829126",
+      "name": "Vivamus posuere tellus 2023-03-21 13:27",
+      "start": 1679405220000,
+      "end": 1679407622000,
+      "color": "#28172",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829127",
+      "name": "Ut non turpis 2023-03-21 14:16",
+      "start": 1679408160000,
+      "end": 1679415007000,
+      "color": "#807C19",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829128",
+      "name": "Nunc tincidunt leo 2023-03-21 15:44",
+      "start": 1679413440000,
+      "end": 1679418071000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829129",
+      "name": "Nunc egestas eros 2023-03-21 16:42",
+      "start": 1679416920000,
+      "end": 1679421025000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829130",
+      "name": "Sed feugiat tortor 2023-03-21 17:04",
+      "start": 1679418240000,
+      "end": 1679422217000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829131",
+      "name": "Pellentesque non dolor 2023-03-21 19:03",
+      "start": 1679425380000,
+      "end": 1679428591000,
+      "color": "#6700CD",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829132",
+      "name": "Nullam ut lorem 2023-03-21 20:25",
+      "start": 1679430300000,
+      "end": 1679434622000,
+      "color": "#CD6300",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829133",
+      "name": "Nam faucibus risus 2023-03-21 21:16",
+      "start": 1679433360000,
+      "end": 1679434647000,
+      "color": "#62640B",
+      "textColor": "#ffffff"
+    },
+    {
+      "uuid": "ef59547d-50ed-45c6-a5eb-a49629829134",
+      "name": "Proin euismod ligula 2023-03-21 23:00",
+      "start": 1679439600000,
+      "end": 1679443378000,
+      "color": "#398129A",
+      "textColor": "#ffffff"
+    }
+  ]
+}

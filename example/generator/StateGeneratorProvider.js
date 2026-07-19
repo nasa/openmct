@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2025, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,64 +20,87 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+export default class StateGeneratorProvider {
+  constructor(openmct) {
+    this.openmct = openmct;
+  }
 
-], function (
+  supportsRequest(domainObject, options) {
+    return domainObject.type === 'example.state-generator';
+  }
 
-) {
+  supportsSubscribe(domainObject) {
+    return domainObject.type === 'example.state-generator';
+  }
 
-    function StateGeneratorProvider() {
+  subscribe(domainObject, callback, options) {
+    const duration = domainObject.telemetry.duration * 1000;
+    let tick = 0;
+    const interval = setInterval(() => {
+      tick += 1;
+      let now = this.openmct.time.now() || Date.now();
+      let flip = false;
+      if (domainObject.telemetry.outOfOrder && tick % 2 === 0) {
+        now -= duration * 1.5;
+        flip = true;
+      }
+      const datum = this.#pointForTimestamp(now, duration, domainObject.name, flip);
 
+      if (!this.#shouldBeFiltered(datum, options)) {
+        datum.value = String(datum.value);
+        callback(datum);
+      }
+    }, duration);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }
+
+  request(domainObject, options) {
+    let start = options.start;
+    const now = this.openmct.time.now() || Date.now();
+    const end = Math.min(now, options.end); // no future values
+    const duration = domainObject.telemetry.duration * 1000;
+    if (options.strategy === 'latest' || options.size === 1) {
+      start = end;
     }
 
-    function pointForTimestamp(timestamp, duration, name) {
-        return {
-            name: name,
-            utc: Math.floor(timestamp / duration) * duration,
-            value: Math.floor(timestamp / duration) % 2
-        };
+    const data = [];
+    while (start <= end && data.length < 5000) {
+      const point = this.#pointForTimestamp(start, duration, domainObject.name);
+
+      if (!this.#shouldBeFiltered(point, options)) {
+        data.push(point);
+      }
+      start += duration;
     }
 
-    StateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
-        return domainObject.type === 'example.state-generator';
+    return Promise.resolve(data);
+  }
+
+  #pointForTimestamp(timestamp, duration, name, flip = false) {
+    const key = this.openmct.time.getTimeSystem()?.key || 'utc';
+    const point = {
+      name: name,
+      value: Math.floor(timestamp / duration) % 2
     };
+    if (flip) {
+      point.value = 99;
+    }
+    point[key] = Math.floor(timestamp / duration) * duration;
+    return point;
+  }
 
-    StateGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-        var duration = domainObject.telemetry.duration * 1000;
+  #shouldBeFiltered(point, options) {
+    const valueToFilter = options?.filters?.state?.equals?.[0];
 
-        var interval = setInterval(function () {
-            var now = Date.now();
-            var datum = pointForTimestamp(now, duration, domainObject.name);
-            datum.value = String(datum.value);
-            callback(datum);
-        }, duration);
+    if (!valueToFilter) {
+      return false;
+    }
 
-        return function () {
-            clearInterval(interval);
-        };
-    };
+    const { value } = point;
 
-    StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
-        return domainObject.type === 'example.state-generator';
-    };
-
-    StateGeneratorProvider.prototype.request = function (domainObject, options) {
-        var start = options.start;
-        var end = Math.min(Date.now(), options.end); // no future values
-        var duration = domainObject.telemetry.duration * 1000;
-        if (options.strategy === 'latest' || options.size === 1) {
-            start = end;
-        }
-
-        var data = [];
-        while (start <= end && data.length < 5000) {
-            data.push(pointForTimestamp(start, duration, domainObject.name));
-            start += duration;
-        }
-
-        return Promise.resolve(data);
-    };
-
-    return StateGeneratorProvider;
-
-});
+    return value !== Number(valueToFilter);
+  }
+}

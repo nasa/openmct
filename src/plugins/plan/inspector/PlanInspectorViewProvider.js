@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,50 +20,61 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanActivitiesView from "./PlanActivitiesView.vue";
-import Vue from 'vue';
+import mount from 'utils/mount';
+
+import PlanExecutionMonitoringView from './components/PlanExecutionMonitoringView.vue';
 
 export default function PlanInspectorViewProvider(openmct) {
-    return {
-        key: 'plan-inspector',
-        name: 'Plan Inspector View',
-        canView: function (selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
-                return false;
+  return {
+    key: 'plan-status-inspector',
+    name: 'Config',
+    canView: function (selection) {
+      if (selection.length === 0 || selection[0].length === 0) {
+        return false;
+      }
+
+      const domainObject = selection[0][0].context.item;
+
+      return domainObject?.type === 'plan';
+    },
+    view: function (selection) {
+      let _destroy = null;
+
+      return {
+        show: function (element) {
+          const { destroy } = mount(
+            {
+              el: element,
+              components: {
+                PlanExecutionMonitoringView
+              },
+              provide: {
+                openmct
+              },
+              data() {
+                return {
+                  planObject: selection[0][0].context.item
+                };
+              },
+              template:
+                '<plan-execution-monitoring-view :plan-object="planObject"></plan-execution-monitoring-view>'
+            },
+            {
+              app: openmct.app,
+              element
             }
-
-            let context = selection[0][0].context;
-
-            return context
-                && context.type === 'activity';
-        },
-        view: function (selection) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            PlanActivitiesView: PlanActivitiesView
-                        },
-                        provide: {
-                            openmct,
-                            selection: selection
-                        },
-                        template: '<plan-activities-view></plan-activities-view>'
-                    });
-                },
-                destroy: function () {
-                    if (component) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                }
-            };
+          );
+          _destroy = destroy;
         },
         priority: function () {
-            return 1;
+          return openmct.editor.isEditing() ? openmct.priority.HIGH : openmct.priority.DEFAULT;
+        },
+        destroy: function () {
+          if (_destroy) {
+            _destroy();
+          }
         }
-    };
+      };
+    }
+  };
 }

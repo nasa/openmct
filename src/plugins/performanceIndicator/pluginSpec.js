@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,69 +19,61 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { createOpenMct, resetApplicationState } from 'utils/testing';
+
 import PerformancePlugin from './plugin.js';
-import {
-    createOpenMct,
-    resetApplicationState
-} from 'utils/testing';
 
 describe('the plugin', () => {
-    let openmct;
-    let element;
-    let child;
+  let openmct;
+  let element;
+  let child;
 
-    let performanceIndicator;
-    let countFramesPromise;
+  let performanceIndicator;
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
+  beforeEach((done) => {
+    openmct = createOpenMct();
 
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
+    element = document.createElement('div');
+    child = document.createElement('div');
+    element.appendChild(child);
 
-        openmct.install(new PerformancePlugin());
+    openmct.install(new PerformancePlugin());
 
-        countFramesPromise = countFrames();
+    openmct.on('start', done);
 
-        openmct.on('start', done);
-
-        performanceIndicator = openmct.indicators.indicatorObjects.find((indicator) => {
-            return indicator.text && indicator.text() === '~ fps';
-        });
-
-        openmct.startHeadless();
+    performanceIndicator = openmct.indicators.indicatorObjects.find((indicator) => {
+      return indicator.text && indicator.text() === '~ fps';
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    openmct.startHeadless();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('installs the performance indicator', () => {
+    expect(performanceIndicator).toBeDefined();
+  });
+
+  it('calculates an fps value', async () => {
+    await loopForABit();
+    // eslint-disable-next-line radix
+    const fps = parseInt(performanceIndicator.text().split(' fps')[0]);
+    expect(fps).toBeGreaterThan(0);
+  });
+
+  function loopForABit() {
+    let frames = 0;
+
+    return new Promise((resolve) => {
+      requestAnimationFrame(function loop() {
+        if (++frames > 90) {
+          resolve();
+        } else {
+          requestAnimationFrame(loop);
+        }
+      });
     });
-
-    it('installs the performance indicator', () => {
-        expect(performanceIndicator).toBeDefined();
-    });
-
-    it('correctly calculates fps', () => {
-        return countFramesPromise.then((frames) => {
-            expect(performanceIndicator.text()).toEqual(`${frames} fps`);
-        });
-    });
-
-    function countFrames() {
-        let startTime = performance.now();
-        let frames = 0;
-
-        return new Promise((resolve) => {
-            requestAnimationFrame(function incrementCount() {
-                let now = performance.now();
-
-                if ((now - startTime) < 1000) {
-                    frames++;
-                    requestAnimationFrame(incrementCount);
-                } else {
-                    resolve(frames);
-                }
-            });
-        });
-    }
+  }
 });

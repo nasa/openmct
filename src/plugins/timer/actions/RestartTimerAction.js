@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,38 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class RestartTimerAction {
-    constructor(openmct) {
-        this.name = 'Restart at 0';
-        this.key = 'timer.restart';
-        this.description = 'Restart the currently displayed timer';
-        this.group = 'view';
-        this.cssClass = 'icon-refresh';
-        this.priority = 2;
+const RESTART_TIMER_ACTION_KEY = 'timer.restart';
 
-        this.openmct = openmct;
+class RestartTimerAction {
+  constructor(openmct) {
+    this.name = 'Restart at 0';
+    this.key = RESTART_TIMER_ACTION_KEY;
+    this.description = 'Restart the currently displayed timer';
+    this.group = 'view';
+    this.cssClass = 'icon-refresh';
+    this.priority = 2;
+
+    this.openmct = openmct;
+  }
+  invoke(objectPath) {
+    const domainObject = objectPath[0];
+    if (!domainObject || !domainObject.configuration) {
+      return new Error('Unable to run restart timer action. No domainObject provided.');
     }
-    invoke(objectPath) {
-        const domainObject = objectPath[0];
-        if (!domainObject || !domainObject.configuration) {
-            return new Error('Unable to run restart timer action. No domainObject provided.');
-        }
 
-        const newConfiguration = { ...domainObject.configuration };
-        newConfiguration.timerState = 'started';
-        newConfiguration.timestamp = new Date();
-        newConfiguration.pausedTime = undefined;
+    const newConfiguration = { ...domainObject.configuration };
+    newConfiguration.timerState = 'started';
+    newConfiguration.timestamp = new Date(this.openmct.time.now());
+    newConfiguration.pausedTime = undefined;
 
-        this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
+    this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
+  }
+  appliesTo(objectPath, view = {}) {
+    const domainObject = objectPath[0];
+    if (!domainObject || !domainObject.configuration) {
+      return;
     }
-    appliesTo(objectPath) {
-        const domainObject = objectPath[0];
-        if (!domainObject || !domainObject.configuration) {
-            return;
-        }
 
-        const { timerState } = domainObject.configuration;
+    // Use object configuration timerState for viewless context menus,
+    // otherwise manually show/hide based on the view's timerState
+    const viewKey = view.key;
+    const { timerState } = domainObject.configuration;
 
-        return domainObject.type === 'timer' && timerState !== 'stopped';
-    }
+    return viewKey
+      ? domainObject.type === 'timer'
+      : domainObject.type === 'timer' && timerState !== 'stopped';
+  }
 }
+
+export { RESTART_TIMER_ACTION_KEY };
+
+export default RestartTimerAction;

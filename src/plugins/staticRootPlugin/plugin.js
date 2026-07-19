@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,44 +20,44 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import StaticModelProvider from './StaticModelProvider';
+import StaticModelProvider from './StaticModelProvider.js';
 
 export default function StaticRootPlugin(options) {
-    const rootIdentifier = {
-        namespace: options.namespace,
-        key: 'root'
-    };
+  const rootIdentifier = {
+    namespace: options.namespace,
+    key: 'root'
+  };
 
-    let cachedProvider;
+  let cachedProvider;
 
-    function loadProvider() {
-        return fetch(options.exportUrl)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (importData) {
-                cachedProvider = new StaticModelProvider(importData, rootIdentifier);
+  function loadProvider() {
+    return fetch(options.exportUrl)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (importData) {
+        cachedProvider = new StaticModelProvider(importData, rootIdentifier);
 
-                return cachedProvider;
-            });
+        return cachedProvider;
+      });
+  }
+
+  function getProvider() {
+    if (!cachedProvider) {
+      cachedProvider = loadProvider();
     }
 
-    function getProvider() {
-        if (!cachedProvider) {
-            cachedProvider = loadProvider();
-        }
+    return Promise.resolve(cachedProvider);
+  }
 
-        return Promise.resolve(cachedProvider);
-    }
-
-    return function install(openmct) {
-        openmct.objects.addRoot(rootIdentifier);
-        openmct.objects.addProvider(options.namespace, {
-            get: function (identifier) {
-                return getProvider().then(function (provider) {
-                    return provider.get(identifier);
-                });
-            }
+  return function install(openmct) {
+    openmct.objects.addRoot(rootIdentifier);
+    openmct.objects.addProvider(options.namespace, {
+      get: function (identifier) {
+        return getProvider().then(function (provider) {
+          return provider.get(identifier);
         });
-    };
+      }
+    });
+  };
 }

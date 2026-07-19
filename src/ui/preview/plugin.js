@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import PreviewAction from './PreviewAction.js';
-import ViewHistoricalDataAction from './ViewHistoricalDataAction';
+import ViewHistoricalDataAction from './ViewHistoricalDataAction.js';
 
 export default function () {
-    return function (openmct) {
-        openmct.actions.register(new PreviewAction(openmct));
-        openmct.actions.register(new ViewHistoricalDataAction(openmct));
-    };
+  return function (openmct) {
+    openmct.actions.register(new PreviewAction(openmct));
+    openmct.actions.register(new ViewHistoricalDataAction(openmct));
+  };
 }

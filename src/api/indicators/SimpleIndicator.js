@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,82 +20,103 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto', './res/indicator-template.html'],
-    function ($, indicatorTemplate) {
-        const DEFAULT_ICON_CLASS = 'icon-info';
+import { EventEmitter } from 'eventemitter3';
 
-        function SimpleIndicator(openmct) {
-            this.openmct = openmct;
-            this.element = $(indicatorTemplate)[0];
-            this.priority = openmct.priority.DEFAULT;
+import { convertTemplateToHTML } from '@/utils/template/templateHelpers';
 
-            this.textElement = this.element.querySelector('.js-indicator-text');
+import indicatorTemplate from './res/indicator-template.html';
 
-            //Set defaults
-            this.text('New Indicator');
-            this.description('');
-            this.iconClass(DEFAULT_ICON_CLASS);
-            this.statusClass('');
-        }
+const DEFAULT_ICON_CLASS = 'icon-info';
 
-        SimpleIndicator.prototype.text = function (text) {
-            if (text !== undefined && text !== this.textValue) {
-                this.textValue = text;
-                this.textElement.innerText = text;
+class SimpleIndicator extends EventEmitter {
+  constructor(openmct) {
+    super();
 
-                if (!text) {
-                    this.element.classList.add('hidden');
-                } else {
-                    this.element.classList.remove('hidden');
-                }
-            }
+    this.openmct = openmct;
+    this.element = convertTemplateToHTML(indicatorTemplate)[0];
+    this.priority = openmct.priority.DEFAULT;
 
-            return this.textValue;
-        };
+    this.textElement = this.element.querySelector('.js-indicator-text');
 
-        SimpleIndicator.prototype.description = function (description) {
-            if (description !== undefined && description !== this.descriptionValue) {
-                this.descriptionValue = description;
-                this.element.title = description;
-            }
+    //Set defaults
+    this.text('New Indicator');
+    this.description('');
+    this.iconClass(DEFAULT_ICON_CLASS);
 
-            return this.descriptionValue;
-        };
+    this.click = this.click.bind(this);
 
-        SimpleIndicator.prototype.iconClass = function (iconClass) {
-            if (iconClass !== undefined && iconClass !== this.iconClassValue) {
-                // element.classList is precious and throws errors if you try and add
-                // or remove empty strings
-                if (this.iconClassValue) {
-                    this.element.classList.remove(this.iconClassValue);
-                }
+    this.element.addEventListener('click', this.click);
+    openmct.once('destroy', () => {
+      this.removeAllListeners();
+      this.element.removeEventListener('click', this.click);
+    });
+  }
 
-                if (iconClass) {
-                    this.element.classList.add(iconClass);
-                }
+  text(text) {
+    if (text !== undefined && text !== this.textValue) {
+      this.textValue = text;
+      this.textElement.innerText = text;
 
-                this.iconClassValue = iconClass;
-            }
-
-            return this.iconClassValue;
-        };
-
-        SimpleIndicator.prototype.statusClass = function (statusClass) {
-            if (statusClass !== undefined && statusClass !== this.statusClassValue) {
-                if (this.statusClassValue) {
-                    this.element.classList.remove(this.statusClassValue);
-                }
-
-                if (statusClass) {
-                    this.element.classList.add(statusClass);
-                }
-
-                this.statusClassValue = statusClass;
-            }
-
-            return this.statusClassValue;
-        };
-
-        return SimpleIndicator;
+      if (!text) {
+        this.element.classList.add('hidden');
+      } else {
+        this.element.classList.remove('hidden');
+      }
     }
-);
+
+    return this.textValue;
+  }
+
+  description(description) {
+    if (description !== undefined && description !== this.descriptionValue) {
+      this.descriptionValue = description;
+      this.element.title = description;
+    }
+
+    return this.descriptionValue;
+  }
+
+  iconClass(iconClass) {
+    if (iconClass !== undefined && iconClass !== this.iconClassValue) {
+      // element.classList is precious and throws errors if you try and add
+      // or remove empty strings
+      if (this.iconClassValue) {
+        this.element.classList.remove(this.iconClassValue);
+      }
+
+      if (iconClass) {
+        this.element.classList.add(iconClass);
+      }
+
+      this.iconClassValue = iconClass;
+    }
+
+    return this.iconClassValue;
+  }
+
+  statusClass(statusClass) {
+    if (arguments.length === 1 && statusClass !== this.statusClassValue) {
+      if (this.statusClassValue) {
+        this.element.classList.remove(this.statusClassValue);
+      }
+
+      if (statusClass !== undefined) {
+        this.element.classList.add(statusClass);
+      }
+
+      this.statusClassValue = statusClass;
+    }
+
+    return this.statusClassValue;
+  }
+
+  click(event) {
+    this.emit('click', event);
+  }
+
+  getElement() {
+    return this.element;
+  }
+}
+
+export default SimpleIndicator;

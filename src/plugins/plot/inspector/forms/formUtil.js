@@ -1,19 +1,19 @@
 export function coerce(value, coerceFunc) {
-    if (coerceFunc) {
-        return coerceFunc(value);
-    }
+  if (coerceFunc) {
+    return coerceFunc(value);
+  }
 
-    return value;
+  return value;
 }
 
 export function validate(value, model, validateFunc) {
-    if (validateFunc) {
-        return validateFunc(value, model);
-    }
+  if (validateFunc) {
+    return validateFunc(value, model);
+  }
 
-    return true;
+  return true;
 }
 
 export function objectPath(path) {
-    return path && typeof path !== 'function' ? () => path : path;
+  return path && typeof path !== 'function' ? () => path : path;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,48 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './EvaluatorPool'
-], function (
-    EvaluatorPool
-) {
+import EvaluatorPool from './EvaluatorPool.js';
 
-    function SummaryWidgetTelemetryProvider(openmct) {
-        this.pool = new EvaluatorPool(openmct);
-    }
+export default function SummaryWidgetTelemetryProvider(openmct) {
+  this.pool = new EvaluatorPool(openmct);
+}
 
-    SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (domainObject, options) {
-        return domainObject.type === 'summary-widget';
-    };
+SummaryWidgetTelemetryProvider.prototype.supportsRequest = function (domainObject, options) {
+  return domainObject.type === 'summary-widget';
+};
 
-    SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, options) {
-        if (options.strategy !== 'latest' && options.size !== 1) {
-            return Promise.resolve([]);
-        }
+SummaryWidgetTelemetryProvider.prototype.request = function (domainObject, options) {
+  if (options.strategy !== 'latest' && options.size !== 1) {
+    return Promise.resolve([]);
+  }
 
-        const evaluator = this.pool.get(domainObject);
+  const evaluator = this.pool.get(domainObject);
 
-        return evaluator.requestLatest(options)
-            .then(function (latestDatum) {
-                this.pool.release(evaluator);
+  return evaluator.requestLatest(options).then(
+    function (latestDatum) {
+      this.pool.release(evaluator);
 
-                return latestDatum ? [latestDatum] : [];
-            }.bind(this));
-    };
+      return latestDatum ? [latestDatum] : [];
+    }.bind(this)
+  );
+};
 
-    SummaryWidgetTelemetryProvider.prototype.supportsSubscribe = function (domainObject) {
-        return domainObject.type === 'summary-widget';
-    };
+SummaryWidgetTelemetryProvider.prototype.supportsSubscribe = function (domainObject) {
+  return domainObject.type === 'summary-widget';
+};
 
-    SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
-        const evaluator = this.pool.get(domainObject);
-        const unsubscribe = evaluator.subscribe(callback);
+SummaryWidgetTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
+  const evaluator = this.pool.get(domainObject);
+  const unsubscribe = evaluator.subscribe(callback);
 
-        return function () {
-            this.pool.release(evaluator);
-            unsubscribe();
-        }.bind(this);
-    };
-
-    return SummaryWidgetTelemetryProvider;
-});
+  return function () {
+    this.pool.release(evaluator);
+    unsubscribe();
+  }.bind(this);
+};

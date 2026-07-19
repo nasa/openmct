@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,49 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelistViewProvider from './TimelistViewProvider';
-import { TIMELIST_TYPE } from './constants';
-import TimeListInspectorViewProvider from "./inspector/TimeListInspectorViewProvider";
+import TimelistCompositionPolicy from '@/plugins/timelist/TimelistCompositionPolicy';
+
+import { TIMELIST_TYPE } from './constants.js';
+import TimeListInspectorViewProvider from './inspector/TimeListInspectorViewProvider.js';
+import TimelistViewProvider from './TimelistViewProvider.js';
 
 export default function () {
-    return function install(openmct) {
-        openmct.types.addType(TIMELIST_TYPE, {
-            name: 'Time List',
-            key: TIMELIST_TYPE,
-            description: 'A configurable, time-ordered list view of activities for a compatible mission plan file.',
-            creatable: true,
-            cssClass: 'icon-timelist',
-            form: [
-                {
-                    name: 'Upload Plan (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    required: true,
-                    text: 'Select File...',
-                    type: 'application/json',
-                    property: [
-                        "selectFile"
-                    ]
-                }
-            ],
-            initialize: function (domainObject) {
-                domainObject.configuration = {
-                    sortOrderIndex: 0,
-                    futureEventsIndex: 0,
-                    futureEventsDurationIndex: 0,
-                    futureEventsDuration: 20,
-                    currentEventsIndex: 1,
-                    currentEventsDurationIndex: 0,
-                    currentEventsDuration: 20,
-                    pastEventsIndex: 0,
-                    pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20,
-                    filter: ''
-                };
-            }
-        });
-        openmct.objectViews.addProvider(new TimelistViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new TimeListInspectorViewProvider(openmct));
-
-    };
+  return function install(openmct) {
+    openmct.types.addType(TIMELIST_TYPE, {
+      name: 'Time List',
+      key: TIMELIST_TYPE,
+      description:
+        'A configurable, time-ordered list view of activities for a compatible mission plan file.',
+      creatable: true,
+      cssClass: 'icon-timelist',
+      initialize: function (domainObject) {
+        domainObject.configuration = {
+          sortOrderIndex: 0,
+          currentEventsIndex: 1,
+          filter: '',
+          filterMetadata: '',
+          isCompact: false
+        };
+        domainObject.composition = [];
+      }
+    });
+    openmct.objectViews.addProvider(new TimelistViewProvider(openmct));
+    openmct.inspectorViews.addProvider(new TimeListInspectorViewProvider(openmct));
+    openmct.composition.addPolicy(new TimelistCompositionPolicy(openmct).allow);
+  };
 }

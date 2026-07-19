@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,19 +19,45 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module*/
 
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {
-    let src = document.currentScript.src;
-    if (src && matcher.test(src)) {
-        // eslint-disable-next-line no-undef
-        __webpack_public_path__ = src.replace(matcher, '') + '/';
-    }
+  // @ts-ignore
+  let src = document.currentScript.src;
+  if (src && matcher.test(src)) {
+    // @ts-ignore
+    __webpack_public_path__ = src.replace(matcher, '') + '/';
+  }
 }
 
-const MCT = require('./src/MCT');
+import { MCT } from './src/MCT.js';
 
 const openmct = new MCT();
 
-module.exports = openmct;
+export default openmct;
+
+/**
+ * @typedef {MCT} OpenMCT
+ * @typedef {import('./src/api/objects/ObjectAPI.js').DomainObject} DomainObject
+ * @typedef {import('./src/api/objects/ObjectAPI.js').Identifier} Identifier
+ * @typedef {import('./src/api/objects/Transaction.js').default} Transaction
+ * @typedef {import('./src/api/actions/ActionsAPI.js').Action} Action
+ * @typedef {import('./src/api/actions/ActionCollection.js').default} ActionCollection
+ * @typedef {import('./src/api/composition/CompositionCollection.js').default} CompositionCollection
+ * @typedef {import('./src/api/composition/CompositionProvider.js').default} CompositionProvider
+ * @typedef {import('./src/ui/registries/ViewRegistry.js').ViewProvider} ViewProvider
+ * @typedef {import('./src/ui/registries/ViewRegistry.js').View} View
+ *
+ * @typedef {DomainObject[]} ObjectPath
+ * @typedef {(...args: any[]) => (openmct: OpenMCT) => void} OpenMCTPlugin
+ * An OpenMCT Plugin returns a function that receives an instance of
+ * the OpenMCT API and uses it to install itself.
+ */
+
+/**
+ * @typedef {Object} BuildInfo
+ * @property {string} version
+ * @property {string} buildDate
+ * @property {string} revision
+ * @property {string} branch
+ */

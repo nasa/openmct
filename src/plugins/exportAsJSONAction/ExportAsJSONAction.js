@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,185 +19,399 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { v4 as uuid } from 'uuid';
+
 import JSONExporter from '/src/exporters/JSONExporter.js';
+const EXPORT_AS_JSON_ACTION_KEY = 'export.JSON';
 
-import _ from 'lodash';
-import uuid from "uuid";
+class ExportAsJSONAction {
+  #openmct;
 
-export default class ExportAsJSONAction {
-    constructor(openmct) {
-        this.openmct = openmct;
+  /**
+   * @param {import('../../../openmct').OpenMCT} openmct The Open MCT API
+   */
+  constructor(openmct) {
+    this.#openmct = openmct;
 
-        this.name = 'Export as JSON';
-        this.key = 'export.JSON';
-        this.description = '';
-        this.cssClass = "icon-export";
-        this.group = "json";
-        this.priority = 1;
+    // Bind public methods
+    this.invoke = this.invoke.bind(this);
+    this.appliesTo = this.appliesTo.bind(this);
+    // FIXME: This should be private but is used in tests
+    this.saveAs = this.saveAs.bind(this);
 
-        this.externalIdentifiers = [];
-        this.tree = {};
-        this.calls = 0;
-        this.idMap = {};
+    this.name = 'Export as JSON';
+    this.key = EXPORT_AS_JSON_ACTION_KEY;
+    this.description = '';
+    this.cssClass = 'icon-export';
+    this.group = 'export';
+    this.priority = 1;
 
-        this.JSONExportService = new JSONExporter();
-    }
+    this.tree = null;
+    this.calls = null;
+    this.idMap = null;
+    this.dialog = null;
+    this.progressPerc = 0;
+    this.exportedCount = 0;
+    this.totalToExport = 0;
 
-    // Public
-    /**
-     *
-     * @param {object} objectPath
-     * @returns {boolean}
-     */
-    appliesTo(objectPath) {
-        let domainObject = objectPath[0];
+    this.JSONExportService = new JSONExporter();
+  }
 
-        return this._isCreatableAndPersistable(domainObject);
-    }
-    /**
-     *
-     * @param {object} objectpath
-     */
-    invoke(objectpath) {
-        this.tree = {};
-        const root = objectpath[0];
-        this.root = JSON.parse(JSON.stringify(root));
-        const rootId = this._getId(this.root);
-        this.tree[rootId] = this.root;
+  // Public
+  /**
+   *
+   * @param {Object} objectPath
+   * @returns {boolean}
+   */
+  appliesTo(objectPath) {
+    let domainObject = objectPath[0];
 
-        this._write(this.root);
-    }
-    /**
-     * @private
-     * @param {object} domainObject
-     * @returns {string} A string representation of the given identifier, including namespace and key
-     */
-    _getId(domainObject) {
-        return this.openmct.objects.makeKeyString(domainObject.identifier);
-    }
-    /**
-     * @private
-     * @param {object} domainObject
-     * @returns {boolean}
-     */
-    _isCreatableAndPersistable(domainObject) {
-        const type = this.openmct.types.get(domainObject.type);
-        const isPersistable = this.openmct.objects.isPersistable(domainObject.identifier);
+    return this.#isCreatableAndPersistable(domainObject);
+  }
+  /**
+   *
+   * @param {import('../../api/objects/ObjectAPI').DomainObject[]} objectPath
+   */
+  invoke(objectPath) {
+    this.tree = {};
+    this.calls = 0;
+    this.idMap = {};
 
-        return type && type.definition.creatable && isPersistable;
-    }
-    /**
-     * @private
-     * @param {object} child
-     * @param {object} parent
-     * @returns {boolean}
-     */
-    _isLinkedObject(child, parent) {
-        if (child.location !== this._getId(parent)
-            && !Object.keys(this.tree).includes(child.location)
-            && this._getId(child) !== this._getId(this.root)
-            || this.externalIdentifiers.includes(this._getId(child))) {
+    const root = objectPath[0];
+    this.root = this.#copy(root);
 
-            return true;
-        }
+    const rootId = this.#getKeystring(this.root);
+    this.tree[rootId] = this.root;
 
-        return false;
-    }
-    /**
-     * @private
-     * @param {object} child
-     * @param {object} parent
-     * @returns {object}
-     */
-    _rewriteLink(child, parent) {
-        this.externalIdentifiers.push(this._getId(child));
-        const index = parent.composition.findIndex(id => {
-            return _.isEqual(child.identifier, id);
+    this.dialog = this.#openmct.overlays.progressDialog({
+      message:
+        'Do not navigate away from this page or close this browser tab while this message is displayed.',
+      iconClass: 'info',
+      title: 'Exporting'
+    });
+    this.dialog.show();
+    this.#write(this.root)
+      .then(() => {
+        this.exportedCount++;
+        this.#updateProgress();
+      })
+      .catch((error) => {
+        this.dialog.dismiss();
+        this.dialog = null;
+        this.#resetCounts();
+        this.#openmct.notifications.error({
+          title: 'Export as JSON failed',
+          message: error.message
         });
-        const copyOfChild = JSON.parse(JSON.stringify(child));
+      });
+  }
 
-        copyOfChild.identifier.key = uuid();
-        const newIdString = this._getId(copyOfChild);
-        const parentId = this._getId(parent);
+  /**
+   * @private
+   * @param {import('openmct').DomainObject} parent
+   */
+  async #write(parent) {
+    this.totalToExport++;
+    this.calls++;
 
-        this.idMap[this._getId(child)] = newIdString;
-        copyOfChild.location = parentId;
-        parent.composition[index] = copyOfChild.identifier;
-        this.tree[newIdString] = copyOfChild;
-        this.tree[parentId].composition[index] = copyOfChild.identifier;
+    //conditional object styles are not saved on the composition, so we need to check for them
+    const conditionSetIdentifier = this.#getConditionSetIdentifier(parent);
+    const hasItemConditionSetIdentifiers = this.#hasItemConditionSetIdentifiers(parent);
+    const composition = this.#openmct.composition.get(parent);
 
-        return copyOfChild;
+    if (composition) {
+      const children = await composition.load();
+      const exportPromises = children.map((child) => this.#exportObject(child, parent));
+
+      await Promise.all(exportPromises);
     }
-    /**
-     * @private
-     */
-    _rewriteReferences() {
-        let treeString = JSON.stringify(this.tree);
-        Object.keys(this.idMap).forEach(function (oldId) {
-            const newId = this.idMap[oldId];
-            treeString = treeString.split(oldId).join(newId);
-        }.bind(this));
-        this.tree = JSON.parse(treeString);
-    }
-    /**
-     * @private
-     * @param {object} completedTree
-     */
-    _saveAs(completedTree) {
-        this.JSONExportService.export(
-            completedTree,
-            { filename: this.root.name + '.json' }
+
+    if (!conditionSetIdentifier && !hasItemConditionSetIdentifiers) {
+      this.#decrementCallsAndSave();
+    } else {
+      let conditionSetObjects = [];
+
+      // conditionSetIdentifiers directly in objectStyles object
+      if (conditionSetIdentifier) {
+        const conditionSetObject = this.#openmct.objects.get(conditionSetIdentifier);
+        conditionSetObjects.push(conditionSetObject);
+      }
+
+      // conditionSetIdentifiers stored on item ids in the objectStyles object
+      if (hasItemConditionSetIdentifiers) {
+        const itemConditionSetIdentifiers = this.#getItemConditionSetIdentifiers(parent);
+        const itemConditionSetObjects = itemConditionSetIdentifiers.map((id) =>
+          this.#openmct.objects.get(id)
         );
-    }
-    /**
-     * @private
-     * @returns {object}
-     */
-    _wrapTree() {
-        return {
-            "openmct": this.tree,
-            "rootId": this._getId(this.root)
-        };
-    }
-    /**
-     * @private
-     * @param {object} parent
-     */
-    _write(parent) {
-        this.calls++;
-        const composition = this.openmct.composition.get(parent);
-        if (composition !== undefined) {
-            composition.load()
-                .then((children) => {
-                    children.forEach((child, index) => {
-                        // Only export if object is creatable
-                        if (this._isCreatableAndPersistable(child)) {
-                            // Prevents infinite export of self-contained objs
-                            if (!Object.prototype.hasOwnProperty.call(this.tree, this._getId(child))) {
-                                // If object is a link to something absent from
-                                // tree, generate new id and treat as new object
-                                if (this._isLinkedObject(child, parent)) {
-                                    child = this._rewriteLink(child, parent);
-                                } else {
-                                    this.tree[this._getId(child)] = child;
-                                }
+        conditionSetObjects = conditionSetObjects.concat(itemConditionSetObjects);
 
-                                this._write(child);
-                            }
-                        }
-                    });
-                    this.calls--;
-                    if (this.calls === 0) {
-                        this._rewriteReferences();
-                        this._saveAs(this._wrapTree());
-                    }
-                });
-        } else {
-            this.calls--;
-            if (this.calls === 0) {
-                this._rewriteReferences();
-                this._saveAs(this._wrapTree());
-            }
+        for (const itemConditionSetIdentifier of itemConditionSetIdentifiers) {
+          conditionSetObjects.push(this.#openmct.objects.get(itemConditionSetIdentifier));
         }
+      }
+
+      if (conditionSetObjects.length > 0) {
+        const resolvedConditionSetObjects = await Promise.all(conditionSetObjects);
+        const exportConditionSetPromises = resolvedConditionSetObjects.map((obj) =>
+          this.#exportObject(obj, parent)
+        );
+        await Promise.all(exportConditionSetPromises);
+      }
+
+      this.#decrementCallsAndSave();
     }
+  }
+
+  #updateProgress() {
+    this.progressPerc = Math.ceil((100 * this.exportedCount) / this.totalToExport);
+    this.dialog?.updateProgress(
+      this.progressPerc,
+      `Exporting ${this.exportedCount} / ${this.totalToExport} objects.`
+    );
+  }
+
+  #exportObject(child, parent) {
+    const originalKeyString = this.#getKeystring(child);
+    const createable = this.#isCreatableAndPersistable(child);
+    const isNotInfinite = !Object.prototype.hasOwnProperty.call(this.tree, originalKeyString);
+
+    if (createable && isNotInfinite) {
+      // for external or linked objects we generate new keys, if they don't exist already
+      if (this.#isLinkedObject(child, parent)) {
+        child = this.#rewriteLink(child, parent);
+      } else {
+        this.tree[originalKeyString] = child;
+      }
+
+      this.#write(child).then(() => {
+        this.exportedCount++;
+        this.#updateProgress();
+      });
+    }
+  }
+
+  /**
+   * @private
+   * @param {Object} child
+   * @param {Object} parent
+   * @returns {Object}
+   */
+  #rewriteLink(child, parent) {
+    const originalKeyString = this.#getKeystring(child);
+    const parentKeyString = this.#getKeystring(parent);
+    const conditionSetIdentifier = this.#getConditionSetIdentifier(parent);
+    const hasItemConditionSetIdentifiers = this.#hasItemConditionSetIdentifiers(parent);
+    const existingMappedKeyString = this.idMap[originalKeyString];
+    let copy;
+
+    if (!existingMappedKeyString) {
+      copy = this.#copy(child);
+      copy.identifier.key = uuid();
+
+      if (!conditionSetIdentifier && !hasItemConditionSetIdentifiers) {
+        copy.location = parentKeyString;
+      }
+
+      let newKeyString = this.#getKeystring(copy);
+      this.idMap[originalKeyString] = newKeyString;
+      this.tree[newKeyString] = copy;
+    } else {
+      copy = this.tree[existingMappedKeyString];
+    }
+
+    if (conditionSetIdentifier || hasItemConditionSetIdentifiers) {
+      // update objectStyle object
+      if (conditionSetIdentifier) {
+        const directObjectStylesIdentifier = this.#openmct.objects.areIdsEqual(
+          parent.configuration.objectStyles.conditionSetIdentifier,
+          child.identifier
+        );
+
+        if (directObjectStylesIdentifier) {
+          parent.configuration.objectStyles.conditionSetIdentifier = copy.identifier;
+          this.tree[parentKeyString].configuration.objectStyles.conditionSetIdentifier =
+            copy.identifier;
+        }
+      }
+
+      // update per item id on objectStyle object
+      if (hasItemConditionSetIdentifiers) {
+        for (const itemId in parent.configuration.objectStyles) {
+          if (parent.configuration.objectStyles[itemId]) {
+            const itemConditionSetIdentifier =
+              parent.configuration.objectStyles[itemId].conditionSetIdentifier;
+
+            if (
+              itemConditionSetIdentifier &&
+              this.#openmct.objects.areIdsEqual(itemConditionSetIdentifier, child.identifier)
+            ) {
+              parent.configuration.objectStyles[itemId].conditionSetIdentifier = copy.identifier;
+              this.tree[parentKeyString].configuration.objectStyles[itemId].conditionSetIdentifier =
+                copy.identifier;
+            }
+          }
+        }
+      }
+    } else {
+      // just update parent
+      const index = parent.composition.findIndex((identifier) => {
+        return this.#openmct.objects.areIdsEqual(child.identifier, identifier);
+      });
+
+      parent.composition[index] = copy.identifier;
+      this.tree[parentKeyString].composition[index] = copy.identifier;
+    }
+
+    return copy;
+  }
+
+  /**
+   * @private
+   * @param {Object} domainObject
+   * @returns {string} A string representation of the given identifier, including namespace and key
+   */
+  #getKeystring(domainObject) {
+    return this.#openmct.objects.makeKeyString(domainObject.identifier);
+  }
+
+  /**
+   * @private
+   * @param {Object} domainObject
+   * @returns {boolean}
+   */
+  #isCreatableAndPersistable(domainObject) {
+    const type = this.#openmct.types.get(domainObject.type);
+    const isPersistable = this.#openmct.objects.isPersistable(domainObject.identifier);
+
+    return type && type.definition.creatable && isPersistable;
+  }
+
+  /**
+   * @private
+   * @param {Object} child
+   * @param {Object} parent
+   * @returns {boolean}
+   */
+  #isLinkedObject(child, parent) {
+    const rootKeyString = this.#getKeystring(this.root);
+    const childKeyString = this.#getKeystring(child);
+    const parentKeyString = this.#getKeystring(parent);
+
+    return (
+      (child.location !== parentKeyString &&
+        !Object.keys(this.tree).includes(child.location) &&
+        childKeyString !== rootKeyString) ||
+      this.idMap[childKeyString] !== undefined
+    );
+  }
+
+  #getConditionSetIdentifier(object) {
+    return object.configuration?.objectStyles?.conditionSetIdentifier;
+  }
+
+  #hasItemConditionSetIdentifiers(parent) {
+    const objectStyles = parent.configuration?.objectStyles;
+
+    for (const itemId in objectStyles) {
+      if (Object.prototype.hasOwnProperty.call(objectStyles[itemId], 'conditionSetIdentifier')) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  #getItemConditionSetIdentifiers(parent) {
+    const objectStyles = parent.configuration?.objectStyles;
+    let identifiers = new Set();
+
+    if (objectStyles) {
+      Object.keys(objectStyles).forEach((itemId) => {
+        if (objectStyles[itemId].conditionSetIdentifier) {
+          identifiers.add(objectStyles[itemId].conditionSetIdentifier);
+        }
+      });
+    }
+
+    return Array.from(identifiers);
+  }
+
+  #resetCounts() {
+    this.totalToExport = 0;
+    this.exportedCount = 0;
+  }
+
+  /**
+   * @private
+   */
+  #rewriteReferences() {
+    const oldKeyStrings = Object.keys(this.idMap);
+    let treeString = JSON.stringify(this.tree);
+
+    oldKeyStrings.forEach((oldKeyString) => {
+      // this will cover keyStrings, identifiers and identifiers created
+      // by hand that may be structured differently from those created with 'makeKeyString'
+      const newKeyString = this.idMap[oldKeyString];
+      const newIdentifier = JSON.stringify(this.#openmct.objects.parseKeyString(newKeyString));
+      const oldIdentifier = this.#openmct.objects.parseKeyString(oldKeyString);
+      const oldIdentifierNamespaceFirst = JSON.stringify(oldIdentifier);
+      const oldIdentifierKeyFirst = JSON.stringify({
+        key: oldIdentifier.key,
+        namespace: oldIdentifier.namespace
+      });
+
+      // replace keyStrings
+      treeString = treeString.split(oldKeyString).join(newKeyString);
+
+      // check for namespace first identifiers, replace if necessary
+      if (treeString.includes(oldIdentifierNamespaceFirst)) {
+        treeString = treeString.split(oldIdentifierNamespaceFirst).join(newIdentifier);
+      }
+
+      // check for key first identifiers, replace if necessary
+      if (treeString.includes(oldIdentifierKeyFirst)) {
+        treeString = treeString.split(oldIdentifierKeyFirst).join(newIdentifier);
+      }
+    });
+    this.tree = JSON.parse(treeString);
+  }
+  /**
+   * @private
+   * @param {Object} completedTree
+   */
+  saveAs(completedTree) {
+    this.JSONExportService.export(completedTree, { filename: this.root.name + '.json' });
+  }
+  /**
+   * @private
+   * @returns {Object}
+   */
+  #wrapTree() {
+    return {
+      openmct: this.tree,
+      rootId: this.#getKeystring(this.root)
+    };
+  }
+
+  #decrementCallsAndSave() {
+    this.calls--;
+    this.#updateProgress();
+    if (this.calls === 0) {
+      this.#rewriteReferences();
+      this.dialog.dismiss();
+
+      this.#resetCounts();
+      this.saveAs(this.#wrapTree());
+
+      this.dialog = null;
+    }
+  }
+
+  #copy(object) {
+    return JSON.parse(JSON.stringify(object));
+  }
 }
+
+export { EXPORT_AS_JSON_ACTION_KEY };
+
+export default ExportAsJSONAction;

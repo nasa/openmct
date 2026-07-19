@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,36 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {
-    createOpenMct,
-    resetApplicationState
-} from '../../src/utils/testing';
-import ExampleUserProvider from './ExampleUserProvider';
+import { createOpenMct, resetApplicationState } from '../../src/utils/testing.js';
+import ExampleUserProvider from './ExampleUserProvider.js';
 
-xdescribe("The Example User Plugin", () => {
-    let openmct;
+describe('The Example User Plugin', () => {
+  let openmct;
 
-    beforeEach(() => {
-        openmct = createOpenMct();
+  beforeEach(() => {
+    openmct = createOpenMct();
+  });
+
+  afterEach(() => {
+    return resetApplicationState(openmct);
+  });
+
+  it('is not installed by default', () => {
+    expect(openmct.user.hasProvider()).toBeFalse();
+  });
+
+  it('can be installed', () => {
+    openmct.user.on('providerAdded', (provider) => {
+      expect(provider).toBeInstanceOf(ExampleUserProvider);
     });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
-
-    it('is not installed by default', () => {
-        expect(openmct.user.hasProvider()).toBeFalse();
-    });
-
-    it('can be installed', () => {
-        openmct.user.on('providerAdded', (provider) => {
-            expect(provider).toBeInstanceOf(ExampleUserProvider);
-        });
-        openmct.install(openmct.plugins.example.ExampleUser());
-    });
-
-    // The rest of the functionality of the ExampleUser Plugin is
-    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
-    // If that changes, those tests can be moved here.
-
+    openmct.install(openmct.plugins.example.ExampleUser());
+  });
 });

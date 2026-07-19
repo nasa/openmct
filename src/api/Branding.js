@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,6 @@ let brandingOptions = {};
 
 /**
  * @typedef {Object} BrandingOptions
- * @memberOf openmct/branding
  * @property {string} smallLogoImage URL to the image to use as the applications logo.
  * This logo will appear on every screen and when clicked will launch the about dialog.
  * @property {string} aboutHtml Custom content for the about screen. When defined the
@@ -38,9 +37,9 @@ let brandingOptions = {};
  * @param {BrandingOptions} options
  */
 export default function Branding(options) {
-    if (arguments.length === 1) {
-        brandingOptions = options;
-    }
+  if (arguments.length === 1) {
+    brandingOptions = options;
+  }
 
-    return brandingOptions;
+  return brandingOptions;
 }

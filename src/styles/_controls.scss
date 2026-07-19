@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,6 +21,117 @@
  *****************************************************************************/
 
 @use 'sass:math';
+
+/******************************************************** CONTROL-SPECIFIC MIXINS */
+@mixin menuOuter() {
+    border-radius: $basicCr;
+    box-shadow: $shdwMenu;
+    @if $shdwMenuInner != none {
+        box-shadow: $shdwMenuInner, $shdwMenu;
+    }
+    background: $colorMenuBg;
+    backdrop-filter: blur($formRowCtrlsH);
+    color: $colorMenuFg;
+    text-shadow: $shdwMenuText;
+    padding: $interiorMarginSm;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+
+    > * {
+        flex: 0 0 auto;
+    }
+}
+
+@mixin menuPositioning() {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+
+    > * {
+        flex: 0 0 auto;
+    }
+}
+
+@mixin menuInner() {
+    li {
+        @include cControl();
+        justify-content: start;
+        cursor: pointer;
+        display: flex;
+        padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
+        white-space: nowrap;
+
+        @include hover {
+            background: $colorMenuHovBg;
+            color: $colorMenuHovFg;
+            &:before {
+                color: $colorMenuHovIc !important;
+            }
+        }
+
+        &:not(.c-menu--no-icon &) {
+            &:before {
+                color: $colorMenuIc;
+                font-size: 1em;
+                margin-right: $interiorMargin;
+                min-width: 1em;
+            }
+
+            &:not([class*='icon']):before {
+                content: ''; // Enable :before so that menu items without an icon still indent properly
+            }
+        }
+    }
+}
+
+@mixin resizeHandleStyle($size: 1px, $margin: 3px) {
+  // Used by Flexible Layouts and Time Strip views
+  &:before {
+    // The visible resize line
+    background-color: $editUIColor;
+    content: '';
+    display: block;
+    @include abs();
+    min-height: $size;
+    min-width: $size;
+  }
+
+  &:hover {
+    &:before {
+      // The visible resize line
+      background-color: $editUIColorHov;
+    }
+  }
+
+  &.vertical {
+    // Resizes in Y dimension
+    padding: $margin $size;
+    &:before {
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+    &:hover {
+      cursor: row-resize;
+    }
+  }
+
+  &.horizontal {
+    // Resizes in X dimension
+    padding: $size $margin;
+    &:before {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
+    &:hover {
+      cursor: col-resize;
+    }
+  }
+}
 
 /******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
@@ -47,7 +158,8 @@ button {
         .c-swatch {
             $d: 12px;
             margin-left: $interiorMarginSm;
-            height: $d; width: $d;
+            height: $d;
+            width: $d;
         }
     }
 
@@ -88,6 +200,7 @@ button {
         color: inherit;
         display: block;
         transition: transform $transOutTime;
+
         &:before {
             content: $glyph-icon-arrow-down;
             font-family: symbolsfont;
@@ -128,7 +241,7 @@ button {
 
 .c-icon-button {
     [class*='label'] {
-        opacity: 0.8;
+        padding: 1px 0;
     }
 
     &--mixed {
@@ -156,6 +269,10 @@ button {
             font-size: 1.1em;
         }
     }
+
+    &--sm {
+        padding: $interiorMarginSm $interiorMargin;
+    }
 }
 
 .c-list-button {
@@ -178,6 +295,12 @@ button {
     }
 }
 
+.c-not-button {
+    // Use within a holder that's clickable; use to indicate interactability
+    @include cButtonLayout();
+    cursor: pointer;
+}
+
 /******************************************************** DISCLOSURE CONTROLS */
 /********* Disclosure Button */
 // Provides a downward arrow icon that when clicked displays additional options and/or info.
@@ -192,6 +315,7 @@ button {
         font-size: 0.7em;
     }
 }
+
 /********* Disclosure Triangle */
 // Provides an arrow icon that when clicked expands an element to reveal its contents.
 // Used in tree items, plot legends. Always placed BEFORE an element.
@@ -204,16 +328,18 @@ button {
     flex: 0 0 auto;
     width: $d;
     position: relative;
+    visibility: hidden;
 
     &.is-enabled {
         cursor: pointer;
+        visibility: visible;
 
         &:hover {
             color: $colorDisclosureCtrlHov;
         }
 
         &:before {
-            $s: .65;
+            $s: 0.65;
             content: $glyph-icon-arrow-right-equilateral;
             display: block;
             font-family: symbolsfont;
@@ -232,7 +358,8 @@ button {
 .c-grippy {
     $d: 10px;
     @include grippy($c: $colorItemTreeVC, $dir: 'y');
-    width: $d; height: $d;
+    width: $d;
+    height: $d;
 
     &--vertical-drag {
         cursor: ns-resize;
@@ -243,8 +370,9 @@ button {
 section {
     flex: 0 1 auto;
     overflow: hidden;
+
     + section {
-        margin-top: $interiorMargin;
+        //margin-top: $interiorMargin;
     }
 
     .c-section__header {
@@ -252,9 +380,7 @@ section {
         display: flex;
         flex: 0 0 auto;
         align-items: center;
-        margin-bottom: $interiorMargin;
-
-        > * + * { margin-left: $interiorMarginSm; }
+        gap: $interiorMargin;
     }
 
     > [class*='__label'] {
@@ -264,29 +390,32 @@ section {
 }
 
 /******************************************************** FORM ELEMENTS */
-input, textarea {
+input,
+textarea {
     font-family: inherit;
     font-weight: inherit;
     letter-spacing: inherit;
 }
 
-input[type=text],
-input[type=search],
-input[type=number],
-input[type=password],
-input[type=date],
+input[type='text'],
+input[type='search'],
+input[type='number'],
+input[type='password'],
+input[type='date'],
 textarea {
     @include reactive-input();
-    padding: $inputTextP;
+
     &.numeric {
         text-align: right;
     }
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-    margin-right: -5px !important;
-    margin-top: -1px !important;
+input[type='text'],
+input[type='search'],
+input[type='password'],
+input[type='date'],
+textarea {
+    padding: $inputTextP;
 }
 
 .c-input {
@@ -333,14 +462,66 @@ input[type=number]::-webkit-outer-spin-button {
         // Small inputs, like small numerics
         width: 40px;
     }
+
+    &--md {
+        // Smallish inputs, like numerics or short text
+        width: 80px;
+    }
+
+    &--autocomplete {
+        &__wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        &__input {
+            min-width: 100px;
+            width: 100%;
+
+            // Fend off from afford-arrow
+            padding-right: 2.5em !important;
+        }
+
+        &__options {
+            @include menuOuter();
+            @include menuInner();
+            display: flex;
+
+            ul {
+                flex: 1 1 auto;
+                overflow: auto;
+            }
+
+            li {
+                &:before {
+                    color: var(--optionIconColor) !important;
+                    font-size: 0.8em !important;
+                }
+            }
+        }
+
+        &__afford-arrow {
+            $p: 2px;
+            font-size: 0.8em;
+            padding-bottom: $p;
+            padding-top: $p;
+            position: absolute;
+            right: 2px;
+            z-index: 2;
+        }
+    }
 }
 
-input[type=number].c-input-number--no-spinners {
+input[type='number'].c-input-number--no-spinners {
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
+
     -moz-appearance: textfield;
 }
 
@@ -354,6 +535,15 @@ input[type=number].c-input-number--no-spinners {
     }
 }
 
+.c-scrollcontainer {
+    @include nice-input();
+    margin-top: $interiorMargin;
+    background: $scrollContainer;
+    border-radius: $controlCr;
+    overflow: auto;
+    padding: $interiorMarginSm;
+}
+
 // SELECTS
 select {
     @include appearanceNone();
@@ -362,7 +552,8 @@ select {
     color: $colorSelectFg;
     box-shadow: $shdwSelect;
     background-repeat: no-repeat, no-repeat;
-    background-position: right .4em top 80%, 0 0;
+    background-position: right 0.4em top 80%,
+    0 0;
     border: none;
     border-radius: $controlCr;
     padding: 2px 20px 2px $interiorMargin;
@@ -378,11 +569,19 @@ select {
 // __input followed by __label
 .c-checkbox-list {
     // Rows
-    &__row + &__row { margin-top: $interiorMarginSm; }
+    &__row + &__row {
+        margin-top: $interiorMarginSm;
+    }
 
     // input and label in each __row
     &__row {
-        > * + * { margin-left: $interiorMargin; }
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+    }
+
+    li {
+        white-space: nowrap;
     }
 }
 
@@ -401,7 +600,7 @@ select {
         display: block;
         height: 1px;
         width: 100%;
-        background: $colorBtnReverseBg;
+        background: $colorTabsBaseline;
         position: absolute;
         bottom: 0px;
         z-index: 1;
@@ -411,17 +610,16 @@ select {
 .c-tab {
     // Used in Tab View, generic tabs
     $notchSize: 7px;
-    $clipPath:
-        polygon(
-            0% 0%,
-            calc(100% - #{$notchSize}) 0%,
-            100% #{$notchSize},
-            100% calc(100% - #{$notchSize}),
-            100% 100%,
-            0% 100%
-        );
-    background: rgba($colorBtnBg, 0.7);
-    color: $colorBtnFg;
+    $clipPath: polygon(
+                    0% 0%,
+                    calc(100% - #{$notchSize}) 0%,
+                    100% #{$notchSize},
+                    100% calc(100% - #{$notchSize}),
+                    100% 100%,
+                    0% 100%
+    );
+    background: $colorTabBg;
+    color: $colorTabFg;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -437,13 +635,12 @@ select {
     }
 
     @include hover() {
-        filter: $filterHov;
+        box-shadow: $shdwBtnHov;
     }
 
     &.is-current {
-        background: $colorBtnReverseBg;
-        color: $colorBtnReverseFg;
-        pointer-events: none;
+        background: $colorTabCurrentBg;
+        color: $colorTabCurrentFg;
     }
 }
 
@@ -458,73 +655,23 @@ select {
 }
 
 .c-so-view--hyperlink.c-so-view--no-frame {
-  .c-hyperlink--button {
-    @include abs();
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
+    .c-hyperlink--button {
+        @include abs();
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
 
-  .c-so-view__frame-controls { display: none; }
+    .c-so-view__frame-controls {
+        display: none;
+    }
 }
 
 /******************************************************** MENUS */
-@mixin menuOuter() {
-    border-radius: $basicCr;
-    background: $colorMenuBg;
-    filter: $filterMenu;
-    text-shadow: $shdwMenuText;
-    padding: $interiorMarginSm;
-    box-shadow: $shdwMenu;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 100;
-
-    > * {
-        flex: 0 0 auto;
-    }
-}
-
-@mixin menuInner() {
-    li {
-        @include cControl();
-        justify-content: start;
-        color: $colorMenuFg;
-        cursor: pointer;
-        display: flex;
-        padding: nth($menuItemPad, 1) nth($menuItemPad, 2);
-        transition: $transIn;
-        white-space: nowrap;
-
-        @include hover {
-            background: $colorMenuHovBg;
-            color: $colorMenuHovFg;
-            &:before {
-                color: $colorMenuHovIc;
-            }
-        }
-
-        &:before {
-            color: $colorMenuIc;
-            font-size: 1em;
-            margin-right: $interiorMargin;
-            min-width: 1em;
-        }
-
-        &:not([class*='icon']):before {
-             content: ''; // Enable :before so that menu items without an icon still indent properly
-        }
-
-        .menus-no-icon & {
-            &:before { display: none; }
-        }
-    }
-}
-
 .c-menu {
     @include menuOuter();
+    @include menuPositioning();
     @include menuInner();
 
     &__section-hint {
@@ -547,26 +694,30 @@ select {
 
 .c-super-menu {
     // Two column layout, menu items on left with detail of hover element on right
+    $m: $interiorMarginLg;
     @include menuOuter();
+    @include menuPositioning();
     display: flex;
+    height: auto;
     padding: $interiorMarginLg;
     flex-direction: row;
 
-    > [class*="__"] {
-        $m: $interiorMarginLg;
-        flex: 1 1 50%;
-        &:first-child {
-            margin-right: $m;
-        }
+    > [class*='__'] {
+        //flex: 1 1 50%;
+        //&:first-child {
+        //  margin-right: $m;
+        //}
 
         &:last-child {
-            border-left: 1px solid $colorInteriorBorder;
-            padding-left: $m;
+            //border-left: 1px solid $colorInteriorBorder;
+            //padding-left: $m;
         }
     }
 
     &__menu {
         @include menuInner();
+        flex: 1 1 50%;
+        margin-right: $m;
         overflow: auto;
 
         ul {
@@ -579,16 +730,18 @@ select {
     }
 
     &__item-description {
+        border-left: 1px solid $colorInteriorBorder;
+        flex: 1 1 50%;
+        padding-left: $m;
         display: flex;
         flex-direction: column;
         justify-content: stretch;
 
-        .l-item-description {
-            &__name,
-            &__description {
-                margin-top: $interiorMarginLg;
-            }
+        > * + * {
+            margin-top: $interiorMarginLg;
+        }
 
+        .l-item-description {
             &__icon {
                 min-height: 20%;
                 margin: 10% 25%;
@@ -606,6 +759,33 @@ select {
         }
     }
 }
+
+.c-super-menu--sm {
+    // Small version of the super menu, used by the compact Time Conductor
+    height: 120px;
+    width: 500px;
+
+    .c-super-menu__menu {
+        flex: 1 1 30%;
+    }
+
+    .c-super-menu__item-description {
+        flex: 1 1 70%;
+
+        [class*='__icon'] {
+            display: none !important;
+        }
+
+        [class*='__name'] {
+            margin-top: 0 !important;
+        }
+
+        [class*='__item-description'] {
+            min-width: 200px;
+        }
+    }
+}
+
 /******************************************************** CONTROL BARS */
 .c-control-bar {
     display: flex;
@@ -648,11 +828,6 @@ select {
         width: $d;
         height: $d;
         text-align: center;
-        transition: $transOut;
-
-        &:hover {
-            transition: $transIn;
-        }
 
         &.is-selected {
             border-width: 1px;
@@ -808,6 +983,7 @@ select {
 
     .c-labeled-input {
         font-size: 0.9em;
+
         input[type='number'] {
             width: 40px; // Number input sucks and must have size set using this method
         }
@@ -832,7 +1008,7 @@ select {
         // Buttons are smashed together with minimal margin
         // c-buttons don't have border-radius between buttons, creates a tool-button-strip look
         // c-icon-buttons get grouped more closely together
-        [class^="c-button"] {
+        [class^='c-button'] {
             // Only apply the following to buttons that have background, eg. c-button
             border-radius: 0;
         }
@@ -845,7 +1021,7 @@ select {
             margin-left: $interiorMargin;
         }
 
-        [class^="c-button"] {
+        [class^='c-button'] {
             + * {
                 margin-left: 1px;
             }
@@ -875,7 +1051,9 @@ select {
         display: flex;
         flex: 1 0 auto;
 
-        > * + * { margin-left: $interiorMargin; }
+        > * + * {
+            margin-left: $interiorMargin;
+        }
     }
 
     &__button-save,
@@ -923,9 +1101,11 @@ select {
 /******************************************************** SLIDERS */
 .c-slider {
     @include cControl();
-    > * + * { margin-left: $interiorMargin; }
-}
 
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+}
 
 /******************************************************** SLIDERS AND RANGE */
 @mixin sliderKnobRound($h: 12px) {
@@ -945,10 +1125,10 @@ select {
     // For cross-browser compatibility, the track needs to be the same height as the knob.
     height: $knobH;
     // Gradient visually adds a horizontal line smaller than the knob
-    background: linear-gradient(0deg, rgba($bg,0) $bp1, $bg $bp1, $bg $bp2, rgba($bg,0) $bp2);
+    background: linear-gradient(0deg, rgba($bg, 0) $bp1, $bg $bp1, $bg $bp2, rgba($bg, 0) $bp2);
 }
 
-input[type="range"] {
+input[type='range'] {
     // HTML5 range inputs
     $knobH: 11px;
     $trackH: 3px;
@@ -964,10 +1144,12 @@ input[type="range"] {
         -webkit-appearance: none;
         @include sliderKnobRound($knobH);
     }
+
     &::-moz-range-thumb {
         border: none;
         @include sliderKnobRound($knobH);
     }
+
     &::-ms-thumb {
         border: none;
         @include sliderKnobRound($knobH);
@@ -993,15 +1175,23 @@ input[type="range"] {
         display: inline-flex;
         align-items: center;
     }
+
+    [class*='--menus-aligned'] {
+        // Contains top level elements that hold dropdown menus
+        // Top level elements use display: contents to allow their menus to compactly align
+        // 03-18-22: used in ImageControls.vue
+        display: flex;
+        flex-direction: row;
+    }
 }
 
 .c-local-controls {
     // Controls that are in close proximity to an element they effect
     &--show-on-hover {
         // Hidden by default; requires a hover 1 - 3 levels above to display
-        transition: $transOut;
+        @include transition(opacity, $transOutTime);
         opacity: 0;
-        pointer-events: none;
+        pointer-events: auto;
     }
 }
 
@@ -1009,14 +1199,14 @@ input[type="range"] {
     > .c-local-controls--show-on-hover,
     > * > .c-local-controls--show-on-hover,
     > * > * > .c-local-controls--show-on-hover,
-    > * > * > * > .c-local-controls--show-on-hover
-    {
-        transition: $transIn;
+    > * > * > * > .c-local-controls--show-on-hover {
+        @include transition(opacity);
         opacity: 1;
         pointer-events: inherit;
 
-        &[disabled] { opacity: $controlDisabledOpacity; }
-
+        &[disabled] {
+            opacity: $controlDisabledOpacity;
+        }
     }
 }
 
@@ -1024,6 +1214,7 @@ input[type="range"] {
 .c-drop-hint {
     // Used in Tabs View, Flexible Grid Layouts
     @include abs();
+    @include transition($prop: background-color, $dur: $transOutTime);
     background-color: $colorDropHintBg;
     color: $colorDropHintFg;
     border-radius: $basicCr;
@@ -1032,7 +1223,6 @@ input[type="range"] {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: $transOut;
     z-index: 50;
 
     &:not(.c-drop-hint--always-show) {
@@ -1050,22 +1240,49 @@ input[type="range"] {
         content: '';
         display: block;
         filter: $colorKeyFilterHov;
-        height: $h; width: $h;
-        max-height: $mh; max-width: $mh;
+        height: $h;
+        width: $h;
+        max-height: $mh;
+        max-width: $mh;
     }
 
     .is-dragging &,
     &.is-dragging {
         pointer-events: inherit;
-        transition: $transIn;
         opacity: 0.8;
     }
 
     .is-mouse-over &,
     &.is-mouse-over {
-        transition: $transIn;
         background-color: $colorDropHintBgHov;
         opacity: 0.9;
+    }
+}
+
+/***************************************************** DISCRETE ITEMS */
+// OUTPUT
+// Element that showcases an output value. Used in Condition Sets and Derived Telemetry
+
+.c-output-featured {
+    display: flex;
+    gap: $interiorMargin;
+    padding: $interiorMargin 0;
+
+    > * {
+        padding: $interiorMargin;
+    }
+
+    &__label {
+        flex: 0 0 auto;
+        text-transform: uppercase;
+    }
+
+    &__value {
+        $p: $interiorMargin * 2;
+        padding-left: $p;
+        padding-right: $p;
+        background: rgba(black, 0.2);
+        border-radius: $basicCr;
     }
 }
 

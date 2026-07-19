@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,88 +20,78 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+export default function MockTelemetryApi() {
+  this.createSpy('subscribe');
+  this.createSpy('getMetadata');
 
-    function MockTelemetryApi() {
-        this.createSpy('subscribe');
-        this.createSpy('getMetadata');
+  this.metadata = this.createMockMetadata();
+  this.setDefaultRangeTo('defaultRange');
+  this.unsubscribe = jasmine.createSpy('unsubscribe');
+  this.mockReceiveTelemetry = this.mockReceiveTelemetry.bind(this);
+}
 
-        this.metadata = this.createMockMetadata();
-        this.setDefaultRangeTo('defaultRange');
-        this.unsubscribe = jasmine.createSpy('unsubscribe');
-        this.mockReceiveTelemetry = this.mockReceiveTelemetry.bind(this);
-    }
+MockTelemetryApi.prototype.subscribe = function () {
+  return this.unsubscribe;
+};
 
-    MockTelemetryApi.prototype.subscribe = function () {
-        return this.unsubscribe;
+MockTelemetryApi.prototype.getMetadata = function (object) {
+  return this.metadata;
+};
+
+MockTelemetryApi.prototype.request = jasmine.createSpy('request');
+
+MockTelemetryApi.prototype.getValueFormatter = function (valueMetadata) {
+  const mockValueFormatter = jasmine.createSpyObj('valueFormatter', ['parse']);
+
+  mockValueFormatter.parse.and.callFake(function (value) {
+    return value[valueMetadata.key];
+  });
+
+  return mockValueFormatter;
+};
+
+MockTelemetryApi.prototype.mockReceiveTelemetry = function (newTelemetryDatum) {
+  const subscriptionCallback = this.subscribe.calls.mostRecent().args[1];
+  subscriptionCallback(newTelemetryDatum);
+};
+
+/**
+ * @private
+ */
+MockTelemetryApi.prototype.onRequestReturn = function (telemetryData) {
+  this.requestTelemetry = telemetryData;
+};
+
+/**
+ * @private
+ */
+MockTelemetryApi.prototype.setDefaultRangeTo = function (rangeKey) {
+  const mockMetadataValue = {
+    key: rangeKey
+  };
+  this.metadata.valuesForHints.and.returnValue([mockMetadataValue]);
+};
+
+/**
+ * @private
+ */
+MockTelemetryApi.prototype.createMockMetadata = function () {
+  const mockMetadata = jasmine.createSpyObj('metadata', ['value', 'valuesForHints']);
+
+  mockMetadata.value.and.callFake(function (key) {
+    return {
+      key: key
     };
+  });
 
-    MockTelemetryApi.prototype.getMetadata = function (object) {
-        return this.metadata;
-    };
+  return mockMetadata;
+};
 
-    MockTelemetryApi.prototype.request = jasmine.createSpy('request');
-
-    MockTelemetryApi.prototype.getValueFormatter = function (valueMetadata) {
-        const mockValueFormatter = jasmine.createSpyObj("valueFormatter", [
-            "parse"
-        ]);
-
-        mockValueFormatter.parse.and.callFake(function (value) {
-            return value[valueMetadata.key];
-        });
-
-        return mockValueFormatter;
-    };
-
-    MockTelemetryApi.prototype.mockReceiveTelemetry = function (newTelemetryDatum) {
-        const subscriptionCallback = this.subscribe.calls.mostRecent().args[1];
-        subscriptionCallback(newTelemetryDatum);
-    };
-
-    /**
-     * @private
-     */
-    MockTelemetryApi.prototype.onRequestReturn = function (telemetryData) {
-        this.requestTelemetry = telemetryData;
-    };
-
-    /**
-     * @private
-     */
-    MockTelemetryApi.prototype.setDefaultRangeTo = function (rangeKey) {
-        const mockMetadataValue = {
-            key: rangeKey
-        };
-        this.metadata.valuesForHints.and.returnValue([mockMetadataValue]);
-    };
-
-    /**
-     * @private
-     */
-    MockTelemetryApi.prototype.createMockMetadata = function () {
-        const mockMetadata = jasmine.createSpyObj("metadata", [
-            'value',
-            'valuesForHints'
-        ]);
-
-        mockMetadata.value.and.callFake(function (key) {
-            return {
-                key: key
-            };
-        });
-
-        return mockMetadata;
-    };
-
-    /**
-     * @private
-     */
-    MockTelemetryApi.prototype.createSpy = function (functionName) {
-        this[functionName] = this[functionName].bind(this);
-        spyOn(this, functionName);
-        this[functionName].and.callThrough();
-    };
-
-    return MockTelemetryApi;
-});
+/**
+ * @private
+ */
+MockTelemetryApi.prototype.createSpy = function (functionName) {
+  this[functionName] = this[functionName].bind(this);
+  spyOn(this, functionName);
+  this[functionName].and.callThrough();
+};

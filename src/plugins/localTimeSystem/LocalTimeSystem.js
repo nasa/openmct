@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2022, United States Government
+ * Open MCT Web, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,29 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-
+/**
+ * This time system supports UTC dates and provides a ticking clock source.
+ * @implements TimeSystem
+ * @constructor
+ */
+export default class LocalTimeSystem {
+  constructor() {
     /**
-     * This time system supports UTC dates and provides a ticking clock source.
-     * @implements TimeSystem
-     * @constructor
+     * Some metadata, which will be used to identify the time system in
+     * the UI
+     * @type {{key: string, name: string, glyph: string}}
      */
-    function LocalTimeSystem() {
+    this.key = 'local';
+    this.name = 'Local';
+    this.cssClass = 'icon-clock';
 
-        /**
-         * Some metadata, which will be used to identify the time system in
-         * the UI
-         * @type {{key: string, name: string, glyph: string}}
-         */
-        this.key = 'local';
-        this.name = 'Local';
-        this.cssClass = 'icon-clock';
+    this.timeFormat = 'local-format';
+    this.durationFormat = 'duration';
 
-        this.timeFormat = 'local-format';
-        this.durationFormat = 'duration';
-
-        this.isUTCBased = true;
-    }
-
-    return LocalTimeSystem;
-});
+    this.isUTCBased = true;
+  }
+}

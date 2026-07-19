@@ -1,0 +1,38 @@
+{
+  "Group 1": [
+    {
+      "name": "Group 1 event 1",
+      "start": 1650320408000,
+      "end": 1660343797000,
+      "type": "Group 1",
+      "color": "orange",
+      "textColor": "white"
+    },
+    {
+      "name": "Group 1 event 2",
+      "start": 1660005808000,
+      "end": 1660429160000,
+      "type": "Group 1",
+      "color": "yellow",
+      "textColor": "white"
+    }
+  ],
+  "Group 2": [
+    {
+      "name": "Group 2 event 1",
+      "start": 1660320408000,
+      "end": 1660420408000,
+      "type": "Group 2",
+      "color": "green",
+      "textColor": "white"
+    },
+    {
+      "name": "Group 2 event 2",
+      "start": 1660406808000,
+      "end": 1690429160000,
+      "type": "Group 2",
+      "color": "blue",
+      "textColor": "white"
+    }
+  ]
+}

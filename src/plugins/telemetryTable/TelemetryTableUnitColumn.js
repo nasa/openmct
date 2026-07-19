@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,42 +19,38 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    './TelemetryTableColumn.js'
-], function (
-    TelemetryTableColumn
-) {
-    class TelemetryTableUnitColumn extends TelemetryTableColumn {
-        constructor(openmct, metadatum) {
-            super(openmct, metadatum);
-            this.isUnit = true;
-            this.titleValue += ' Unit';
-            this.formatter = {
-                format: (datum) => {
-                    return this.metadatum.unit;
-                },
-                parse: (datum) => {
-                    return this.metadatum.unit;
-                }
-            };
-        }
+import TelemetryTableColumn from './TelemetryTableColumn.js';
 
-        getKey() {
-            return this.metadatum.key + '-unit';
-        }
+class TelemetryTableUnitColumn extends TelemetryTableColumn {
+  constructor(openmct, metadatum) {
+    super(openmct, metadatum);
+    this.isUnit = true;
+    this.titleValue += ' Unit';
+    this.formatter = {
+      format: (datum) => {
+        return this.metadatum.unit;
+      },
+      parse: (datum) => {
+        return this.metadatum.unit;
+      }
+    };
+  }
 
-        getTitle() {
-            return this.metadatum.name + ' Unit';
-        }
+  getKey() {
+    return this.metadatum.key + '-unit';
+  }
 
-        getRawValue(telemetryDatum) {
-            return this.metadatum.unit;
-        }
+  getTitle() {
+    return this.metadatum.name + ' Unit';
+  }
 
-        getFormattedValue(telemetryDatum) {
-            return this.formatter.format(telemetryDatum);
-        }
-    }
+  getRawValue(telemetryDatum) {
+    return this.metadatum.unit;
+  }
 
-    return TelemetryTableUnitColumn;
-});
+  getFormattedValue(telemetryDatum) {
+    return this.formatter.format(telemetryDatum);
+  }
+}
+
+export default TelemetryTableUnitColumn;

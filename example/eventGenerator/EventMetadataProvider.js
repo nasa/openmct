@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,44 +21,63 @@
  *****************************************************************************/
 
 class EventMetadataProvider {
-    constructor() {
-        this.METADATA_BY_TYPE = {
-            'eventGenerator': {
-                values: [
-                    {
-                        key: "name",
-                        name: "Name",
-                        format: "string"
-                    },
-                    {
-                        key: "utc",
-                        name: "Time",
-                        format: "utc",
-                        hints: {
-                            domain: 1
-                        }
-                    },
-                    {
-                        key: "message",
-                        name: "Message",
-                        format: "string"
-                    }
-                ]
+  constructor() {
+    this.METADATA_BY_TYPE = {
+      eventGenerator: {
+        values: [
+          {
+            key: 'name',
+            name: 'Name',
+            format: 'string'
+          },
+          {
+            key: 'utc',
+            name: 'Time',
+            format: 'utc',
+            hints: {
+              domain: 1
             }
-        };
-    }
+          },
+          {
+            key: 'message',
+            name: 'Message',
+            format: 'string',
+            hints: {
+              // this is used in the EventTimelineView to provide a title for the event
+              // label can be changed to other properties for the title (e.g., the `name` property)
+              label: 0
+            }
+          }
+        ]
+      }
+    };
 
-    supportsMetadata(domainObject) {
-        return Object.prototype.hasOwnProperty.call(this.METADATA_BY_TYPE, domainObject.type);
-    }
+    const inPlaceUpdateMetadataValue = {
+      key: 'messageId',
+      name: 'row identifier',
+      format: 'string',
+      useToUpdateInPlace: true
+    };
+    const eventAcknowledgeMetadataValue = {
+      key: 'acknowledge',
+      name: 'Acknowledge',
+      format: 'string'
+    };
 
-    getMetadata(domainObject) {
-        return Object.assign(
-            {},
-            domainObject.telemetry,
-            this.METADATA_BY_TYPE[domainObject.type]
-        );
-    }
+    const eventGeneratorWithAcknowledge = structuredClone(this.METADATA_BY_TYPE.eventGenerator);
+    eventGeneratorWithAcknowledge.values.push(inPlaceUpdateMetadataValue);
+    eventGeneratorWithAcknowledge.values.push(eventAcknowledgeMetadataValue);
+
+    this.METADATA_BY_TYPE.eventGeneratorWithAcknowledge = eventGeneratorWithAcknowledge;
+  }
+
+  supportsMetadata(domainObject) {
+    return Object.prototype.hasOwnProperty.call(this.METADATA_BY_TYPE, domainObject.type);
+  }
+
+  getMetadata(domainObject) {
+    return Object.assign({}, domainObject.telemetry, this.METADATA_BY_TYPE[domainObject.type]);
+  }
 }
 
 export default EventMetadataProvider;

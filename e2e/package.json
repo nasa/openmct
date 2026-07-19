@@ -1,0 +1,31 @@
+{
+  "name": "openmct-e2e",
+  "version": "4.1.0-next",
+  "description": "The Open MCT e2e framework",
+  "type": "module",
+  "module": "index.js",
+  "exports": {
+    ".": {
+      "import": "./index.js"
+    }
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "test:visual": "percy exec"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.8.5",
+    "@percy/cli": "1.27.4",
+    "@percy/playwright": "1.0.4",
+    "@playwright/test": "1.57.0",
+    "yaml": "2.8.3"
+  },
+  "optionalDependencies": {
+    "fsevents": "2.3.2"
+  },
+  "author": {
+    "name": "National Aeronautics and Space Administration",
+    "url": "https://www.nasa.gov"
+  },
+  "license": "Apache-2.0"
+}

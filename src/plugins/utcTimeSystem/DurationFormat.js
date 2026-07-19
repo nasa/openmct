@@ -1,10 +1,7 @@
-
 import moment from 'moment';
 
-const DATE_FORMAT = "HH:mm:ss";
-const DATE_FORMATS = [
-    DATE_FORMAT
-];
+const DATE_FORMAT = 'HH:mm:ss';
+const DATE_FORMATS = [DATE_FORMAT, `${DATE_FORMAT}.SSS`];
 
 /**
  * Formatter for duration. Uses moment to produce a date from a given
@@ -15,23 +12,22 @@ const DATE_FORMATS = [
  *
  * @implements {Format}
  * @constructor
- * @memberof platform/commonUI/formats
  */
 class DurationFormat {
-    constructor() {
-        this.key = "duration";
-    }
-    format(value) {
-        return moment.utc(value).format(DATE_FORMAT);
-    }
+  constructor() {
+    this.key = 'duration';
+  }
+  format(value, formatString) {
+    return moment.utc(value).format(formatString || DATE_FORMAT);
+  }
 
-    parse(text) {
-        return moment.duration(text).asMilliseconds();
-    }
+  parse(text) {
+    return moment.duration(text).asMilliseconds();
+  }
 
-    validate(text) {
-        return moment.utc(text, DATE_FORMATS, true).isValid();
-    }
+  validate(text) {
+    return moment.utc(text, DATE_FORMATS, true).isValid();
+  }
 }
 
 export default DurationFormat;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,24 +19,43 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import EventTelmetryProvider from './EventTelemetryProvider';
-import EventMetadataProvider from './EventMetadataProvider';
+import EventLimitProvider from './EventLimitProvider.js';
+import EventMetadataProvider from './EventMetadataProvider.js';
+import EventTelemetryProvider from './EventTelemetryProvider.js';
+import EventWithAcknowledgeTelemetryProvider from './EventWithAcknowledgeTelemetryProvider.js';
 
 export default function EventGeneratorPlugin(options) {
-    return function install(openmct) {
-        openmct.types.addType("eventGenerator", {
-            name: "Event Message Generator",
-            description: "For development use. Creates sample event message data that mimics a live data stream.",
-            cssClass: "icon-generator-events",
-            creatable: true,
-            initialize: function (object) {
-                object.telemetry = {
-                    duration: 5
-                };
-            }
-        });
-        openmct.telemetry.addProvider(new EventTelmetryProvider());
-        openmct.telemetry.addProvider(new EventMetadataProvider());
+  return function install(openmct) {
+    openmct.types.addType('eventGenerator', {
+      name: 'Event Message Generator',
+      description:
+        'For development use. Creates sample event message data that mimics a live data stream.',
+      cssClass: 'icon-generator-events',
+      creatable: true,
+      initialize: function (object) {
+        object.telemetry = {
+          duration: 5
+        };
+      }
+    });
+    openmct.telemetry.addProvider(new EventTelemetryProvider());
+    openmct.telemetry.addProvider(new EventMetadataProvider());
 
-    };
+    openmct.types.addType('eventGeneratorWithAcknowledge', {
+      name: 'Event Message Generator with Acknowledge',
+      description:
+        'For development use. Creates sample event message data stream and updates the event row with an acknowledgement.',
+      cssClass: 'icon-generator-events',
+      creatable: true,
+      initialize: function (object) {
+        object.telemetry = {
+          duration: 2.5
+        };
+      }
+    });
+
+    openmct.telemetry.addProvider(new EventWithAcknowledgeTelemetryProvider());
+
+    openmct.telemetry.addProvider(new EventLimitProvider(openmct));
+  };
 }

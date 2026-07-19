@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,81 +19,84 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*jscs:disable disallowDanglingUnderscores */
 
+/**
+ * @type {EventHelpers}
+ */
 const helperFunctions = {
-    listenTo: function (object, event, callback, context) {
-        if (!this._listeningTo) {
-            this._listeningTo = [];
-        }
-
-        const listener = {
-            object: object,
-            event: event,
-            callback: callback,
-            context: context,
-            _cb: context ? callback.bind(context) : callback
-        };
-        if (object.addEventListener) {
-            object.addEventListener(event, listener._cb);
-        } else {
-            object.on(event, listener._cb);
-        }
-
-        this._listeningTo.push(listener);
-    },
-
-    stopListening: function (object, event, callback, context) {
-        if (!this._listeningTo) {
-            this._listeningTo = [];
-        }
-
-        this._listeningTo.filter(function (listener) {
-            if (object && object !== listener.object) {
-                return false;
-            }
-
-            if (event && event !== listener.event) {
-                return false;
-            }
-
-            if (callback && callback !== listener.callback) {
-                return false;
-            }
-
-            if (context && context !== listener.context) {
-                return false;
-            }
-
-            return true;
-        })
-            .map(function (listener) {
-                if (listener.unlisten) {
-                    listener.unlisten();
-                } else if (listener.object.removeEventListener) {
-                    listener.object.removeEventListener(listener.event, listener._cb);
-                } else {
-                    listener.object.off(listener.event, listener._cb);
-                }
-
-                return listener;
-            })
-            .forEach(function (listener) {
-                this._listeningTo.splice(this._listeningTo.indexOf(listener), 1);
-            }, this);
-    },
-
-    extend: function (object) {
-        object.listenTo = helperFunctions.listenTo;
-        object.stopListening = helperFunctions.stopListening;
+  listenTo: function (object, event, callback, context) {
+    if (!this._listeningTo) {
+      this._listeningTo = [];
     }
+
+    const listener = {
+      object: object,
+      event: event,
+      callback: callback,
+      context: context,
+      _cb: context ? callback.bind(context) : callback
+    };
+    if (object.addEventListener) {
+      object.addEventListener(event, listener._cb);
+    } else {
+      object.on(event, listener._cb, listener.context);
+    }
+
+    this._listeningTo.push(listener);
+  },
+
+  stopListening: function (object, event, callback, context) {
+    if (!this._listeningTo) {
+      this._listeningTo = [];
+    }
+
+    this._listeningTo
+      .filter(function (listener) {
+        if (object && object !== listener.object) {
+          return false;
+        }
+
+        if (event && event !== listener.event) {
+          return false;
+        }
+
+        if (callback && callback !== listener.callback) {
+          return false;
+        }
+
+        if (context && context !== listener.context) {
+          return false;
+        }
+
+        return true;
+      })
+      .map(function (listener) {
+        if (listener.unlisten) {
+          listener.unlisten();
+        } else if (listener.object.removeEventListener) {
+          listener.object.removeEventListener(listener.event, listener._cb);
+        } else {
+          listener.object.off(listener.event, listener._cb, listener.context);
+        }
+
+        return listener;
+      })
+      .forEach(function (listener) {
+        this._listeningTo.splice(this._listeningTo.indexOf(listener), 1);
+      }, this);
+  },
+
+  extend: function (object) {
+    object.listenTo = helperFunctions.listenTo;
+    object.stopListening = helperFunctions.stopListening;
+  }
 };
 
 export default helperFunctions;
 
 /**
 @typedef {{
-    listenTo: (object: any, event: any, callback: any, context: any) => void
+    listenTo: (object: any, event: any, callback: any, context: any) => void,
     stopListening: (object: any, event: any, callback: any, context: any) => void
 }} EventHelpers
 */

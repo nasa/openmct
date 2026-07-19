@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,55 +20,65 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import mount from 'utils/mount';
+
 import MetadataListView from './components/MetadataList.vue';
-import Vue from 'vue';
 
-export default class ViewDatumAction {
-    constructor(openmct) {
-        this.name = 'View Full Datum';
-        this.key = 'viewDatumAction';
-        this.description = 'View full value of datum received';
-        this.cssClass = 'icon-object';
+const VIEW_DATUM_ACTION_KEY = 'viewDatumAction';
 
-        this._openmct = openmct;
+class ViewDatumAction {
+  constructor(openmct) {
+    this.name = 'View Full Datum';
+    this.key = VIEW_DATUM_ACTION_KEY;
+    this.description = 'View full value of datum received';
+    this.cssClass = 'icon-object';
+
+    this.openmct = openmct;
+  }
+  invoke(objectPath, view) {
+    let viewContext = view.getViewContext && view.getViewContext();
+    const row = viewContext.row;
+    let attributes = row.getDatum && row.getDatum();
+    const { vNode, destroy } = mount(
+      {
+        components: {
+          MetadataListView
+        },
+        provide: {
+          name: this.name,
+          attributes
+        },
+        template: '<MetadataListView />'
+      },
+      {
+        app: this.openmct.app
+      }
+    );
+
+    this.openmct.overlays.overlay({
+      element: vNode.el,
+      size: 'large',
+      dismissible: true,
+      onDestroy: destroy
+    });
+  }
+  appliesTo(objectPath, view = {}) {
+    let viewContext = (view.getViewContext && view.getViewContext()) || {};
+    const row = viewContext.row;
+    if (!row) {
+      return false;
     }
-    invoke(objectPath, view) {
-        let viewContext = view.getViewContext && view.getViewContext();
-        const row = viewContext.row;
-        let attributes = row.getDatum && row.getDatum();
-        let component = new Vue ({
-            components: {
-                MetadataListView
-            },
-            provide: {
-                name: this.name,
-                attributes
-            },
-            template: '<MetadataListView />'
-        });
 
-        this._openmct.overlays.overlay({
-            element: component.$mount().$el,
-            size: 'large',
-            dismissable: true,
-            onDestroy: () => {
-                component.$destroy();
-            }
-        });
+    let datum = row.getDatum;
+    let enabled = row.viewDatumAction;
+    if (enabled && datum) {
+      return true;
     }
-    appliesTo(objectPath, view = {}) {
-        let viewContext = (view.getViewContext && view.getViewContext()) || {};
-        const row = viewContext.row;
-        if (!row) {
-            return false;
-        }
 
-        let datum = row.getDatum;
-        let enabled = row.viewDatumAction;
-        if (enabled && datum) {
-            return true;
-        }
-
-        return false;
-    }
+    return false;
+  }
 }
+
+export { VIEW_DATUM_ACTION_KEY };
+
+export default ViewDatumAction;

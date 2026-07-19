@@ -1,269 +1,315 @@
-define(['../src/Rule', 'zepto'], function (Rule, $) {
-    describe('A Summary Widget Rule', function () {
-        let mockRuleConfig;
-        let mockDomainObject;
-        let mockOpenMCT;
-        let mockConditionManager;
-        let mockWidgetDnD;
-        let mockEvaluator;
-        let mockContainer;
-        let testRule;
-        let removeSpy;
-        let duplicateSpy;
-        let changeSpy;
-        let conditionChangeSpy;
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2024, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 
-        beforeEach(function () {
-            mockRuleConfig = {
-                name: 'Name',
-                id: 'mockRule',
-                icon: 'test-icon-name',
-                style: {
-                    'background-color': '',
-                    'border-color': '',
-                    'color': ''
-                },
-                expanded: true,
-                conditions: [{
-                    object: '',
-                    key: '',
-                    operation: '',
-                    values: []
-                }, {
-                    object: 'blah',
-                    key: 'blah',
-                    operation: 'blah',
-                    values: ['blah.', 'blah!', 'blah?']
-                }]
-            };
-            mockDomainObject = {
-                configuration: {
-                    ruleConfigById: {
-                        mockRule: mockRuleConfig,
-                        otherRule: {}
-                    },
-                    ruleOrder: ['default', 'mockRule', 'otherRule']
-                }
-            };
+import Rule from '../src/Rule.js';
 
-            mockOpenMCT = {};
-            mockOpenMCT.objects = {};
-            mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
+describe('A Summary Widget Rule', function () {
+  let mockRuleConfig;
+  let mockDomainObject;
+  let mockOpenMCT;
+  let mockConditionManager;
+  let mockWidgetDnD;
+  let mockEvaluator;
+  let mockContainer;
+  let testRule;
+  let removeSpy;
+  let duplicateSpy;
+  let changeSpy;
+  let conditionChangeSpy;
 
-            mockEvaluator = {};
-            mockEvaluator.getOperationDescription = jasmine.createSpy('evaluator')
-                .and.returnValue('Operation Description');
+  beforeEach(function () {
+    mockRuleConfig = {
+      name: 'Name',
+      id: 'mockRule',
+      icon: 'test-icon-name',
+      style: {
+        'background-color': '',
+        'border-color': '',
+        color: ''
+      },
+      expanded: true,
+      conditions: [
+        {
+          object: '',
+          key: '',
+          operation: '',
+          values: []
+        },
+        {
+          object: 'blah',
+          key: 'blah',
+          operation: 'blah',
+          values: ['blah.', 'blah!', 'blah?']
+        }
+      ]
+    };
+    mockDomainObject = {
+      configuration: {
+        ruleConfigById: {
+          mockRule: mockRuleConfig,
+          otherRule: {}
+        },
+        ruleOrder: ['default', 'mockRule', 'otherRule']
+      }
+    };
 
-            mockConditionManager = jasmine.createSpyObj('mockConditionManager', [
-                'on',
-                'getComposition',
-                'loadCompleted',
-                'getEvaluator',
-                'getTelemetryMetadata',
-                'metadataLoadCompleted',
-                'getObjectName',
-                'getTelemetryPropertyName'
-            ]);
-            mockConditionManager.loadCompleted.and.returnValue(false);
-            mockConditionManager.metadataLoadCompleted.and.returnValue(false);
-            mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
-            mockConditionManager.getComposition.and.returnValue({});
-            mockConditionManager.getTelemetryMetadata.and.returnValue({});
-            mockConditionManager.getObjectName.and.returnValue('Object Name');
-            mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
+    mockOpenMCT = {};
+    mockOpenMCT.objects = {};
+    mockOpenMCT.objects.mutate = jasmine.createSpy('mutate');
 
-            mockWidgetDnD = jasmine.createSpyObj('dnd', [
-                'on',
-                'setDragImage',
-                'dragStart'
-            ]);
+    mockEvaluator = {};
+    mockEvaluator.getOperationDescription = jasmine
+      .createSpy('evaluator')
+      .and.returnValue('Operation Description');
 
-            mockContainer = $(document.createElement('div'));
+    mockConditionManager = jasmine.createSpyObj('mockConditionManager', [
+      'on',
+      'getComposition',
+      'loadCompleted',
+      'getEvaluator',
+      'getTelemetryMetadata',
+      'metadataLoadCompleted',
+      'getObjectName',
+      'getTelemetryPropertyName'
+    ]);
+    mockConditionManager.loadCompleted.and.returnValue(false);
+    mockConditionManager.metadataLoadCompleted.and.returnValue(false);
+    mockConditionManager.getEvaluator.and.returnValue(mockEvaluator);
+    mockConditionManager.getComposition.and.returnValue({});
+    mockConditionManager.getTelemetryMetadata.and.returnValue({});
+    mockConditionManager.getObjectName.and.returnValue('Object Name');
+    mockConditionManager.getTelemetryPropertyName.and.returnValue('Property Name');
 
-            removeSpy = jasmine.createSpy('removeCallback');
-            duplicateSpy = jasmine.createSpy('duplicateCallback');
-            changeSpy = jasmine.createSpy('changeCallback');
-            conditionChangeSpy = jasmine.createSpy('conditionChangeCallback');
+    mockWidgetDnD = jasmine.createSpyObj('dnd', ['on', 'setDragImage', 'dragStart']);
 
-            testRule = new Rule(mockRuleConfig, mockDomainObject, mockOpenMCT, mockConditionManager,
-                mockWidgetDnD);
-            testRule.on('remove', removeSpy);
-            testRule.on('duplicate', duplicateSpy);
-            testRule.on('change', changeSpy);
-            testRule.on('conditionChange', conditionChangeSpy);
-        });
+    mockContainer = document.createElement('div');
 
-        it('closes its configuration panel on initial load', function () {
-            expect(testRule.getProperty('expanded')).toEqual(false);
-        });
+    removeSpy = jasmine.createSpy('removeCallback');
+    duplicateSpy = jasmine.createSpy('duplicateCallback');
+    changeSpy = jasmine.createSpy('changeCallback');
+    conditionChangeSpy = jasmine.createSpy('conditionChangeCallback');
 
-        it('gets its DOM element', function () {
-            mockContainer.append(testRule.getDOM());
-            expect($('.l-widget-rule', mockContainer).get().length).toBeGreaterThan(0);
-        });
+    testRule = new Rule(
+      mockRuleConfig,
+      mockDomainObject,
+      mockOpenMCT,
+      mockConditionManager,
+      mockWidgetDnD
+    );
+    testRule.on('remove', removeSpy);
+    testRule.on('duplicate', duplicateSpy);
+    testRule.on('change', changeSpy);
+    testRule.on('conditionChange', conditionChangeSpy);
+  });
 
-        it('gets its configuration properties', function () {
-            expect(testRule.getProperty('name')).toEqual('Name');
-            expect(testRule.getProperty('icon')).toEqual('test-icon-name');
-        });
+  it('closes its configuration panel on initial load', function () {
+    expect(testRule.getProperty('expanded')).toEqual(false);
+  });
 
-        it('can duplicate itself', function () {
-            testRule.duplicate();
-            mockRuleConfig.expanded = true;
-            expect(duplicateSpy).toHaveBeenCalledWith(mockRuleConfig);
-        });
+  it('gets its DOM element', function () {
+    mockContainer.append(testRule.getDOM());
+    expect(mockContainer.querySelectorAll('.l-widget-rule').length).toBeGreaterThan(0);
+  });
 
-        it('can remove itself from the configuration', function () {
-            testRule.remove();
-            expect(removeSpy).toHaveBeenCalled();
-            expect(mockDomainObject.configuration.ruleConfigById.mockRule).not.toBeDefined();
-            expect(mockDomainObject.configuration.ruleOrder).toEqual(['default', 'otherRule']);
-        });
+  it('gets its configuration properties', function () {
+    expect(testRule.getProperty('name')).toEqual('Name');
+    expect(testRule.getProperty('icon')).toEqual('test-icon-name');
+  });
 
-        it('updates its configuration on a condition change and invokes callbacks', function () {
-            testRule.onConditionChange({
-                value: 'newValue',
-                property: 'object',
-                index: 0
-            });
-            expect(testRule.getProperty('conditions')[0].object).toEqual('newValue');
-            expect(conditionChangeSpy).toHaveBeenCalled();
-        });
+  it('can duplicate itself', function () {
+    testRule.duplicate();
+    mockRuleConfig.expanded = true;
+    expect(duplicateSpy).toHaveBeenCalledWith(mockRuleConfig);
+  });
 
-        it('allows initializing a new condition with a default configuration', function () {
-            testRule.initCondition();
-            expect(mockRuleConfig.conditions).toEqual([{
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            }, {
-                object: 'blah',
-                key: 'blah',
-                operation: 'blah',
-                values: ['blah.', 'blah!', 'blah?']
-            }, {
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            }]);
-        });
+  it('can remove itself from the configuration', function () {
+    testRule.remove();
+    expect(removeSpy).toHaveBeenCalled();
+    expect(mockDomainObject.configuration.ruleConfigById.mockRule).not.toBeDefined();
+    expect(mockDomainObject.configuration.ruleOrder).toEqual(['default', 'otherRule']);
+  });
 
-        it('allows initializing a new condition from a given configuration', function () {
-            testRule.initCondition({
-                sourceCondition: {
-                    object: 'object1',
-                    key: 'key1',
-                    operation: 'operation1',
-                    values: [1, 2, 3]
-                },
-                index: 0
-            });
-            expect(mockRuleConfig.conditions).toEqual([{
-                object: '',
-                key: '',
-                operation: '',
-                values: []
-            }, {
-                object: 'object1',
-                key: 'key1',
-                operation: 'operation1',
-                values: [1, 2, 3]
-            }, {
-                object: 'blah',
-                key: 'blah',
-                operation: 'blah',
-                values: ['blah.', 'blah!', 'blah?']
-            }]);
-        });
-
-        it('invokes mutate when updating the domain object', function () {
-            testRule.updateDomainObject();
-            expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
-        });
-
-        it('builds condition view from condition configuration', function () {
-            mockContainer.append(testRule.getDOM());
-            expect($('.t-condition', mockContainer).get().length).toEqual(2);
-        });
-
-        it('responds to input of style properties, and updates the preview', function () {
-            testRule.colorInputs['background-color'].set('#434343');
-            expect(mockRuleConfig.style['background-color']).toEqual('#434343');
-            testRule.colorInputs['border-color'].set('#666666');
-            expect(mockRuleConfig.style['border-color']).toEqual('#666666');
-            testRule.colorInputs.color.set('#999999');
-            expect(mockRuleConfig.style.color).toEqual('#999999');
-
-            expect(testRule.thumbnail.css('background-color')).toEqual('rgb(67, 67, 67)');
-            expect(testRule.thumbnail.css('border-color')).toEqual('rgb(102, 102, 102)');
-            expect(testRule.thumbnail.css('color')).toEqual('rgb(153, 153, 153)');
-
-            expect(changeSpy).toHaveBeenCalled();
-        });
-
-        it('responds to input for the icon property', function () {
-            testRule.iconInput.set('icon-alert-rect');
-            expect(mockRuleConfig.icon).toEqual('icon-alert-rect');
-            expect(changeSpy).toHaveBeenCalled();
-        });
-
-        /*
-        test for js condition commented out for v1
-        */
-
-        // it('responds to input of text properties', function () {
-        //     var testInputs = ['name', 'label', 'message', 'jsCondition'],
-        //         input;
-
-        //     testInputs.forEach(function (key) {
-        //         input = testRule.textInputs[key];
-        //         input.prop('value', 'A new ' + key);
-        //         input.trigger('input');
-        //         expect(mockRuleConfig[key]).toEqual('A new ' + key);
-        //     });
-
-        //     expect(changeSpy).toHaveBeenCalled();
-        // });
-
-        it('allows input for when the rule triggers', function () {
-            testRule.trigger.prop('value', 'all');
-            testRule.trigger.trigger('change');
-            expect(testRule.config.trigger).toEqual('all');
-            expect(conditionChangeSpy).toHaveBeenCalled();
-        });
-
-        it('generates a human-readable description from its conditions', function () {
-            testRule.generateDescription();
-            expect(testRule.config.description).toContain(
-                'Object Name\'s Property Name Operation Description'
-            );
-            testRule.config.trigger = 'js';
-            testRule.generateDescription();
-            expect(testRule.config.description).toContain(
-                'when a custom JavaScript condition evaluates to true'
-            );
-        });
-
-        it('initiates a drag event when its grippy is clicked', function () {
-            testRule.grippy.trigger('mousedown');
-            expect(mockWidgetDnD.setDragImage).toHaveBeenCalled();
-            expect(mockWidgetDnD.dragStart).toHaveBeenCalledWith('mockRule');
-        });
-
-        /*
-        test for js condition commented out for v1
-        */
-
-        it('can remove a condition from its configuration', function () {
-            testRule.removeCondition(0);
-            expect(testRule.config.conditions).toEqual([{
-                object: 'blah',
-                key: 'blah',
-                operation: 'blah',
-                values: ['blah.', 'blah!', 'blah?']
-            }]);
-        });
+  it('updates its configuration on a condition change and invokes callbacks', function () {
+    testRule.onConditionChange({
+      value: 'newValue',
+      property: 'object',
+      index: 0
     });
+    expect(testRule.getProperty('conditions')[0].object).toEqual('newValue');
+    expect(conditionChangeSpy).toHaveBeenCalled();
+  });
+
+  it('allows initializing a new condition with a default configuration', function () {
+    testRule.initCondition();
+    expect(mockRuleConfig.conditions).toEqual([
+      {
+        object: '',
+        key: '',
+        operation: '',
+        values: []
+      },
+      {
+        object: 'blah',
+        key: 'blah',
+        operation: 'blah',
+        values: ['blah.', 'blah!', 'blah?']
+      },
+      {
+        object: '',
+        key: '',
+        operation: '',
+        values: []
+      }
+    ]);
+  });
+
+  it('allows initializing a new condition from a given configuration', function () {
+    testRule.initCondition({
+      sourceCondition: {
+        object: 'object1',
+        key: 'key1',
+        operation: 'operation1',
+        values: [1, 2, 3]
+      },
+      index: 0
+    });
+    expect(mockRuleConfig.conditions).toEqual([
+      {
+        object: '',
+        key: '',
+        operation: '',
+        values: []
+      },
+      {
+        object: 'object1',
+        key: 'key1',
+        operation: 'operation1',
+        values: [1, 2, 3]
+      },
+      {
+        object: 'blah',
+        key: 'blah',
+        operation: 'blah',
+        values: ['blah.', 'blah!', 'blah?']
+      }
+    ]);
+  });
+
+  it('invokes mutate when updating the domain object', function () {
+    testRule.updateDomainObject();
+    expect(mockOpenMCT.objects.mutate).toHaveBeenCalled();
+  });
+
+  it('builds condition view from condition configuration', function () {
+    mockContainer.append(testRule.getDOM());
+    expect(mockContainer.querySelectorAll('.t-condition').length).toEqual(2);
+  });
+
+  it('responds to input of style properties, and updates the preview', function () {
+    testRule.colorInputs['background-color'].set('#434343');
+    expect(mockRuleConfig.style['background-color']).toEqual('#434343');
+    testRule.colorInputs['border-color'].set('#666666');
+    expect(mockRuleConfig.style['border-color']).toEqual('#666666');
+    testRule.colorInputs.color.set('#999999');
+    expect(mockRuleConfig.style.color).toEqual('#999999');
+
+    expect(testRule.thumbnail.style['background-color']).toEqual('rgb(67, 67, 67)');
+    expect(testRule.thumbnail.style['border-color']).toEqual('rgb(102, 102, 102)');
+    expect(testRule.thumbnail.style.color).toEqual('rgb(153, 153, 153)');
+
+    expect(changeSpy).toHaveBeenCalled();
+  });
+
+  it('responds to input for the icon property', function () {
+    testRule.iconInput.set('icon-alert-rect');
+    expect(mockRuleConfig.icon).toEqual('icon-alert-rect');
+    expect(changeSpy).toHaveBeenCalled();
+  });
+
+  /*
+      test for js condition commented out for v1
+      */
+
+  // it('responds to input of text properties', function () {
+  //     var testInputs = ['name', 'label', 'message', 'jsCondition'],
+  //         input;
+
+  //     testInputs.forEach(function (key) {
+  //         input = testRule.textInputs[key];
+  //         input.prop('value', 'A new ' + key);
+  //         input.trigger('input');
+  //         expect(mockRuleConfig[key]).toEqual('A new ' + key);
+  //     });
+
+  //     expect(changeSpy).toHaveBeenCalled();
+  // });
+
+  it('allows input for when the rule triggers', function () {
+    testRule.trigger.value = 'all';
+    const event = new Event('change', {
+      bubbles: true,
+      cancelable: true
+    });
+    testRule.trigger.dispatchEvent(event);
+    expect(testRule.config.trigger).toEqual('all');
+    expect(conditionChangeSpy).toHaveBeenCalled();
+  });
+
+  it('generates a human-readable description from its conditions', function () {
+    testRule.generateDescription();
+    expect(testRule.config.description).toContain(
+      "Object Name's Property Name Operation Description"
+    );
+    testRule.config.trigger = 'js';
+    testRule.generateDescription();
+    expect(testRule.config.description).toContain(
+      'when a custom JavaScript condition evaluates to true'
+    );
+  });
+
+  it('initiates a drag event when its grippy is clicked', function () {
+    const event = new Event('mousedown', {
+      bubbles: true,
+      cancelable: true
+    });
+    testRule.grippy.dispatchEvent(event);
+
+    expect(mockWidgetDnD.setDragImage).toHaveBeenCalled();
+    expect(mockWidgetDnD.dragStart).toHaveBeenCalledWith('mockRule');
+  });
+
+  /*
+      test for js condition commented out for v1
+      */
+
+  it('can remove a condition from its configuration', function () {
+    testRule.removeCondition(0);
+    expect(testRule.config.conditions).toEqual([
+      {
+        object: 'blah',
+        key: 'blah',
+        operation: 'blah',
+        values: ['blah.', 'blah!', 'blah?']
+      }
+    ]);
+  });
 });

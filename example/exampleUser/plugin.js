@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,10 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ExampleUserProvider from './ExampleUserProvider';
+import ExampleUserProvider from './ExampleUserProvider.js';
+const AUTO_LOGIN_USER = 'mct-user';
+const STATUS_ROLES = ['flight', 'driver'];
 
-export default function ExampleUserPlugin() {
-    return function install(openmct) {
-        openmct.user.setProvider(new ExampleUserProvider(openmct));
-    };
+export default function ExampleUserPlugin(
+  { autoLoginUser, statusRoles, roles } = {
+    autoLoginUser: AUTO_LOGIN_USER,
+    statusRoles: STATUS_ROLES,
+    roles: ['observer']
+  }
+) {
+  return function install(openmct) {
+    const userProvider = new ExampleUserProvider(openmct, {
+      statusRoles,
+      roles
+    });
+
+    if (autoLoginUser !== undefined) {
+      userProvider.autoLogin(autoLoginUser);
+    }
+
+    openmct.user.setProvider(userProvider);
+  };
 }

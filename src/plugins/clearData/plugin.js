@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,43 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import ClearDataAction from './ClearDataAction.js';
+import GlobalClearIndicator from './components/GlobalClearIndicator.vue';
 
-define([
-    './components/globalClearIndicator.vue',
-    './ClearDataAction',
-    'vue'
-], function (
-    GlobaClearIndicator,
-    ClearDataAction,
-    Vue
-) {
-    return function plugin(appliesToObjects, options = {indicator: true}) {
-        let installIndicator = options.indicator;
+export default function plugin(appliesToObjects, options = { indicator: true }) {
+  let installIndicator = options.indicator;
 
-        appliesToObjects = appliesToObjects || [];
+  appliesToObjects = appliesToObjects || [];
 
-        return function install(openmct) {
-            if (installIndicator) {
-                let component = new Vue ({
-                    components: {
-                        GlobalClearIndicator: GlobaClearIndicator.default
-                    },
-                    provide: {
-                        openmct
-                    },
-                    template: '<GlobalClearIndicator></GlobalClearIndicator>'
-                });
+  return function install(openmct) {
+    if (installIndicator) {
+      let indicator = {
+        vueComponent: GlobalClearIndicator,
+        key: 'global-clear-indicator',
+        priority: openmct.priority.DEFAULT
+      };
 
-                let indicator = {
-                    element: component.$mount().$el,
-                    key: 'global-clear-indicator',
-                    priority: openmct.priority.DEFAULT
-                };
+      openmct.indicators.add(indicator);
+    }
 
-                openmct.indicators.add(indicator);
-            }
-
-            openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
-        };
-    };
-});
+    openmct.actions.register(new ClearDataAction(openmct, appliesToObjects));
+  };
+}

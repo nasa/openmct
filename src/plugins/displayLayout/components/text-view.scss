@@ -1,11 +1,11 @@
 .c-text-view {
-    display: flex;
-    align-items: center; // Vertically center text
-    overflow: hidden;
-    padding: $interiorMargin;
+  display: flex;
+  align-items: center; // Vertically center text
+  overflow: hidden;
+  padding: $interiorMargin;
 
-    .c-frame & {
-        @include abs();
-        border: 1px solid transparent;
-    }
+  .c-frame & {
+    @include abs();
+    border: 1px solid transparent;
+  }
 }
