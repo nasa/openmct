@@ -203,3 +203,4 @@ Issue severity is categorized as follows (in ascending order):
 The following check lists should be completed and attached to pull requests when they are filed (author checklist) and when they are merged (reviewer checklist).
 
 [Within PR Template](.github/PULL_REQUEST_TEMPLATE.md)
+Improving documentation for contribution.
