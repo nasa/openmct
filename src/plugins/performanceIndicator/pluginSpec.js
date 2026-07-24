@@ -57,18 +57,21 @@ describe('the plugin', () => {
   });
 
   it('calculates an fps value', async () => {
-    await loopForABit();
+    await loopUntilFpsCalculated();
     // eslint-disable-next-line radix
     const fps = parseInt(performanceIndicator.text().split(' fps')[0]);
     expect(fps).toBeGreaterThan(0);
   });
 
-  function loopForABit() {
-    let frames = 0;
-
+  // The indicator only replaces its initial '~ fps' text once a full second
+  // of animation frames has elapsed. Looping a fixed number of frames is racy:
+  // when requestAnimationFrame runs faster than realtime (e.g. headless CI),
+  // the frames finish in under a second and the fps value is never calculated.
+  // Wait on the real condition instead.
+  function loopUntilFpsCalculated() {
     return new Promise((resolve) => {
       requestAnimationFrame(function loop() {
-        if (++frames > 90) {
+        if (performanceIndicator.text() !== '~ fps') {
           resolve();
         } else {
           requestAnimationFrame(loop);

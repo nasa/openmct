@@ -59,6 +59,43 @@ function isNew(doc) {
   return newIcon.length !== 0;
 }
 
+const MAX_SETTLE_TICKS = 30;
+
+// Reactive updates can take more than a single tick to settle, so poll on
+// the actual condition across a bounded number of ticks rather than waiting
+// a fixed amount. Resolves as soon as the condition is met (or the cap hits).
+async function nextTickUntil(condition) {
+  for (let attempt = 0; attempt < MAX_SETTLE_TICKS; attempt++) {
+    if (condition()) {
+      return;
+    }
+
+    await nextTick();
+  }
+}
+
+// Poll until a value stops changing for a few consecutive ticks, indicating
+// asynchronous loading has settled. Useful when a view keeps re-rendering as
+// data streams in and interacting mid-stream would race with those updates.
+async function nextTickUntilStable(getValue, requiredStableTicks = 3) {
+  let previous = getValue();
+  let stableTicks = 0;
+  for (
+    let attempt = 0;
+    attempt < MAX_SETTLE_TICKS && stableTicks < requiredStableTicks;
+    attempt++
+  ) {
+    await nextTick();
+    const current = getValue();
+    if (current === previous) {
+      stableTicks += 1;
+    } else {
+      stableTicks = 0;
+      previous = current;
+    }
+  }
+}
+
 function generateTelemetry(start, count) {
   let telemetry = [];
   for (let i = 1, l = count + 1; i < l; i++) {
@@ -348,12 +385,18 @@ describe('The Imagery View Layouts', () => {
     });
 
     it('should show the clicked thumbnail as the main image', async () => {
-      //Looks like we need nextTick here so that computed properties settle down
-      await nextTick();
-      await nextTick();
       const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
-      parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
-      await nextTick();
+      // Imagery history loads asynchronously, and the view re-focuses the most
+      // recent image every time the history changes — a late history update can
+      // land right after a click and reset the selection. Wait for the history
+      // to finish loading, then select the thumbnail until the main image
+      // reflects it, so the assertion doesn't race those updates.
+      await nextTickUntilStable(() => parent.querySelectorAll(`img[src*='logo-nasa.svg']`).length);
+      await nextTickUntil(() => {
+        parent.querySelector(`img[src='${thumbnailUrl}']`)?.click();
+
+        return getImageInfo(parent).url.indexOf(imageTelemetry[5].timeId) !== -1;
+      });
       const imageInfo = getImageInfo(parent);
 
       expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
