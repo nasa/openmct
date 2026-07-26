@@ -63,11 +63,18 @@ describe('the plugin', () => {
     expect(fps).toBeGreaterThan(0);
   });
 
-  // The indicator only replaces its initial '~ fps' text once a full second
-  // of animation frames has elapsed. Looping a fixed number of frames is racy:
-  // when requestAnimationFrame runs faster than realtime (e.g. headless CI),
-  // the frames finish in under a second and the fps value is never calculated.
-  // Wait on the real condition instead.
+  /**
+   * Drive animation frames until the indicator reports a real fps value.
+   *
+   * The indicator only replaces its initial '~ fps' text once a full second of
+   * animation frames has elapsed. Looping a fixed number of frames is racy:
+   * when requestAnimationFrame runs faster than realtime (e.g. headless CI),
+   * the frames finish in under a second and the fps value is never calculated.
+   * Wait on the real condition instead.
+   *
+   * @returns {Promise<void>} resolves once the indicator text is no longer its
+   *          initial placeholder
+   */
   function loopUntilFpsCalculated() {
     return new Promise((resolve) => {
       requestAnimationFrame(function loop() {
