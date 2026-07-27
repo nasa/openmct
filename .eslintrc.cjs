@@ -1,6 +1,9 @@
 const LEGACY_FILES = ['example/**'];
 /** @type {import('eslint').Linter.Config} */
 const config = {
+  // eslint ignores dot-directories by default, which silently exempted the
+  // build and coverage tooling in .webpack/ from linting entirely.
+  ignorePatterns: ['!.webpack/'],
   env: {
     browser: true,
     es2024: true,

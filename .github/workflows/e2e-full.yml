@@ -38,7 +38,9 @@ jobs:
       - run: npx playwright install chrome-beta
       - run: npm ci --no-audit --progress=false
       - run: npm run test:e2e:full -- --max-failures=40
-      - run: npm run cov:e2e:report || true
+      # See pr.yml: this also strips SFC <template> line coverage, so a
+      # swallowed failure would publish an unstripped report.
+      - run: npm run cov:e2e:report
       - shell: bash
         env:
           SUPER_SECRET: ${{ secrets.CODECOV_TOKEN }}
