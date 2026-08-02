@@ -1,36 +1,56 @@
 Astonishing Sparkline plugin for Open MCT
 
-What it is
-- A small JavaScript plugin that provides an interactive, animated sparkline view for telemetry-capable domain objects.
-- Pure JS + CSS, minimal dependencies.
-- Best used for telemetry streams (numeric values).
+Contributor-focused README
 
-Where to put it (suggested)
+Purpose
+- This plugin provides an Open MCT view provider that renders an animated canvas-based sparkline for numeric telemetry streams.
+- The files added are intended for review and integration by maintainers.
+
+Repository placement
 - src/plugins/astonishing-sparkline/index.js
 - src/plugins/astonishing-sparkline/styles.css
 
-Install
-1) Copy files into your fork under the suggested folder.
-2) Import and install the plugin in your main application entry, e.g. src/main.js:
+Target Open MCT versions
+- Developed and lightly tested against Open MCT 1.x. Verify compatibility with the target upstream version before merging.
 
+Local testing (developer steps)
+1. Clone your fork and create a feature branch for changes:
+   git clone https://github.com/AMateos91/openmct.git
+   cd openmct
+   git checkout -b astonishing-sparkline
+
+2. Install dependencies and run the dev server:
+   npm install
+   npm run dev   # or the repo's documented dev command
+
+3. Wire the plugin into your local app entry (e.g., src/main.js):
    import astonishingSparkline from './plugins/astonishing-sparkline/index.js';
-   import './plugins/astonishing-sparkline/styles.css'; // or add to your global CSS bundle
+   import './plugins/astonishing-sparkline/styles.css';
+   openmct.install(astonishingSparkline());
 
-   // where you create/open openmct
-   openmct.install(astonishingSparkline({
-     // optional: customize visual parameters
-     maxSamples: 400,
-     lineColor: '#00e0a3',
-     bgColor: '#071025'
-   }));
+4. Launch the app and open a telemetry-enabled domain object. Select "Astonishing Sparkline" from the view menu.
 
-3) Rebuild your app (npm run build / npm start as appropriate).
+Testing checklist for PR submission
+- [ ] Build completes locally (npm run build).
+- [ ] Lint passes (run repository ESLint/format checks).
+- [ ] Basic functionality verified: sparkline appears and updates for a numeric telemetry stream.
+- [ ] No console errors or obvious memory leaks after several minutes of runtime.
+- [ ] Files are added only under src/plugins/astonishing-sparkline/ (no unrelated changes).
 
-Usage
-- Open a telemetry-capable object (e.g., a telemetry stream). The view provider should appear in the view menu as "Astonishing Sparkline".
-- Select it to open the animated view. If your Open MCT version hides the provider from the menu, you can add the view programmatically or register an object type.
+Coding standards and style
+- Follow the repository's ESLint and Prettier configuration. Fix lint errors before opening a PR.
+- Keep changes scoped and minimal; prefer adding tests for non-trivial logic where possible.
 
-Notes & Compatibility
-- The plugin calls openmct.telemetry.subscribe; different Open MCT versions have slightly differing telemetry APIs (some return an unsubscribe function directly; some return a subscription object). The plugin attempts to handle common variants, but you may need to adapt unsubscribing to your Open MCT version.
-- If you want this to be a selectable view type in the object-type configuration (so it shows as a layout card type), add a type/legacy extension pointing at this provider in your app's configuration.
-- For advanced features (tooltips, zoom, multi-trace), extend telemetryCallback parsing and drawing routines.
+Commit & PR guidance
+- Use a feature branch (do not commit directly to main of upstream).
+- Sign commits if upstream requires DCO: add Signed-off-by lines, or follow the project's contributor agreement.
+- PR title: "Add Astonishing Sparkline plugin (src/plugins/astonishing-sparkline)"
+- PR description: include summary, testing steps, compatibility notes, and the checklist above.
+
+CI and maintainer notes
+- This change is additive and should not alter existing behavior; CI failures related to unrelated areas must be investigated separately.
+- Maintainers: if you prefer this as a registry/type extension instead of an objectViews provider, request changes and I will update the branch.
+
+Contact
+- Author: AMateos91
+- For clarifications or requested changes, please comment on the PR with specific guidance (target Open MCT version, style rules, or additional tests required).
