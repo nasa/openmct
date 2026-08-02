@@ -34,7 +34,3 @@ Notes & Compatibility
 - The plugin calls openmct.telemetry.subscribe; different Open MCT versions have slightly differing telemetry APIs (some return an unsubscribe function directly; some return a subscription object). The plugin attempts to handle common variants, but you may need to adapt unsubscribing to your Open MCT version.
 - If you want this to be a selectable view type in the object-type configuration (so it shows as a layout card type), add a type/legacy extension pointing at this provider in your app's configuration.
 - For advanced features (tooltips, zoom, multi-trace), extend telemetryCallback parsing and drawing routines.
-
-If you want, I can:
-- Create a Git patch that adds this plugin into your repo (I will need repo/branch confirmation and permission to create a commit).
-- Expand the view to support multiple traces, selectable telemetry keys, or a small toolbar for pause/clear/scale.
