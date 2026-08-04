@@ -34,7 +34,7 @@
       @dragenter="dragenter"
       @dragleave="dragleave"
     ></div>
-    <div v-if="items.length === 0" class="c-lad-table__empty-message">
+    <div v-if="items.length === 0 && !domainObject.locked" class="c-lad-table__empty-message">
       Drag telemetry objects here to add them to this table.
     </div>
     <table class="c-table c-lad-table" :class="applyLayoutClass">
