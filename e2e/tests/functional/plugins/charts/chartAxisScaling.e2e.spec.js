@@ -27,6 +27,8 @@
  * values per axis, configurable in edit mode only.
  */
 
+import { v4 as uuid } from 'uuid';
+
 import {
   createDomainObjectWithDefaults,
   createExampleTelemetryObject,
@@ -118,6 +120,83 @@ test.describe('Chart axis scaling', () => {
     await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
   });
 
+  test('A fixed range applies to a Scatter Plot with no data yet', async ({ page }) => {
+    // Same empty-layout branch as the Bar Graph, in the Scatter Plot's code
+    const scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });
+    await page.goto(scatterPlot.url);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '-5', '5');
+
+    await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
+  });
+
+  test('Re-enabling auto scale returns the axis to automatic ranging', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '-5', '5');
+    await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
+
+    await page.getByRole('checkbox', { name: 'Y Axis Auto scale' }).check();
+
+    await expect.poll(() => getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+    await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).not.toEqual([-5, 5]);
+  });
+
+  test('Charts saved before axis scaling existed default to auto scale', async ({ page }) => {
+    // Objects created by earlier versions have a configuration but no
+    // xAxis/yAxis keys. This fallback stands in for a data migration.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await page.evaluate(async (objectUuid) => {
+      const domainObject = await window.openmct.objects.get(objectUuid);
+      const configuration = { ...domainObject.configuration };
+      delete configuration.xAxis;
+      delete configuration.yAxis;
+      window.openmct.objects.mutate(domainObject, 'configuration', configuration);
+    }, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await expect.poll(() => getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+    await expect.poll(() => getPlotlyAutorange(page, '.c-bar-chart', 'xaxis')).toBe(true);
+
+    // The inspector reports auto scale for the missing configuration too
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await expect(page.getByLabel('Y Axis Auto scale')).toHaveText('Enabled');
+    await expect(page.getByLabel('X Axis Auto scale')).toHaveText('Enabled');
+  });
+
+  test('A fixed range takes precedence over Scatter Plot underlay ranges', async ({ page }) => {
+    // Underlay ranges are an existing feature configured at create time. They
+    // must keep working while auto scale is on, and defer to a fixed range.
+    const scatterPlot = await createScatterPlotWithUnderlay(page, {
+      domainMin: '0',
+      domainMax: '100',
+      rangeMin: '-50',
+      rangeMax: '50'
+    });
+    await createExampleTelemetryObject(page, scatterPlot.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
+
+    // Auto scale is on, so the underlay ranges drive the axes
+    await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-50, 50]);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '-5', '5');
+
+    await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
+  });
+
   test('An invalid range is reported and not persisted', async ({ page }) => {
     const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
     await createExampleTelemetryObject(page, barGraph.uuid);
@@ -184,4 +263,61 @@ function getPlotlyRange(page, chartSelector, axis) {
   return page.locator(chartSelector).evaluate((el, axisName) => {
     return el._fullLayout?.[axisName]?.range;
   }, axis);
+}
+
+/**
+ * Read whether Plotly is auto ranging an axis.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {'xaxis' | 'yaxis'} axis
+ * @returns {Promise<boolean>}
+ */
+function getPlotlyAutorange(page, chartSelector, axis) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  return page.locator(chartSelector).evaluate((el, axisName) => {
+    return el._fullLayout?.[axisName]?.autorange;
+  }, axis);
+}
+
+/**
+ * Create a Scatter Plot with an underlay file and underlay ranges. These are
+ * only settable from the create form, so this cannot use
+ * createDomainObjectWithDefaults.
+ * @param {import('@playwright/test').Page} page
+ * @param {{domainMin: string, domainMax: string, rangeMin: string, rangeMax: string}} ranges
+ * @returns {Promise<{name: string, uuid: string, url: string}>}
+ */
+async function createScatterPlotWithUnderlay(page, ranges) {
+  const name = `Scatter Plot:${uuid()}`;
+
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Create' }).click();
+  await page.getByRole('menuitem', { name: 'Scatter Plot' }).click();
+  await page.getByLabel('Title', { exact: true }).fill(name);
+
+  // A shape with x/y arrays is the minimum an underlay file needs to render
+  await page.getByLabel('Select File...').setInputFiles({
+    name: 'underlay.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify([{ x: [0, 100], y: [-50, 50] }]))
+  });
+
+  for (const [field, value] of Object.entries(ranges)) {
+    // eslint-disable-next-line playwright/no-raw-locators
+    await page.locator(`[data-field-name="${field}"]`).fill(value);
+  }
+
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.waitForURL('**/mine/*');
+
+  const objectUuid = page.url().split('?')[0].split('/').pop();
+
+  // Leave edit mode, otherwise the Create button stays disabled
+  const isEditing = await page.evaluate(() => window.openmct.editor.isEditing());
+  if (isEditing) {
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+  }
+
+  return { name, uuid: objectUuid, url: `./#/browse/mine/${objectUuid}` };
 }
