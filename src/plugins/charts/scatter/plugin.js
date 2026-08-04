@@ -21,6 +21,7 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
+import { DEFAULT_AXIS_CONFIG } from '../axisConfig.js';
 import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider.js';
 import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy.js';
 import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
@@ -45,7 +46,9 @@ export default function () {
         domainObject.configuration = {
           styles: {},
           axes: {},
-          ranges: {}
+          ranges: {},
+          xAxis: { ...DEFAULT_AXIS_CONFIG },
+          yAxis: { ...DEFAULT_AXIS_CONFIG }
         };
       },
       form: [
