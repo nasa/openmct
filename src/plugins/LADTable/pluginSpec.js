@@ -289,6 +289,41 @@ describe('The LAD Table', () => {
       expect(actualRangeValue).toBe(rangeValue);
       expect(actualDomainValue).toBe(domainValue);
     });
+
+    it('should include an accessible drop hint that appears for composable drags', async () => {
+      const dropHint = parent.querySelector('.c-drop-hint');
+      expect(dropHint).not.toBeNull();
+      expect(dropHint.getAttribute('aria-hidden')).toBe('true');
+      expect(parent.querySelector('.c-lad-table__empty-message')).toBeNull();
+      expect(parent.querySelector('#lad-table-drop-area').classList.contains('is-dragging')).toBe(
+        false
+      );
+
+      const event = new Event('dragstart', { bubbles: true });
+      Object.defineProperty(event, 'dataTransfer', {
+        value: {
+          types: ['openmct/composable-domain-object'],
+          getData: () => '',
+          setData: () => {}
+        }
+      });
+      document.dispatchEvent(event);
+      await nextTick();
+
+      expect(parent.querySelector('#lad-table-drop-area').classList.contains('is-dragging')).toBe(
+        true
+      );
+      expect(dropHint.getAttribute('role')).toBe('region');
+      expect(dropHint.getAttribute('aria-label')).toContain('LAD table');
+      expect(dropHint.getAttribute('aria-hidden')).toBeNull();
+
+      document.dispatchEvent(new Event('dragend'));
+      await nextTick();
+      expect(parent.querySelector('#lad-table-drop-area').classList.contains('is-dragging')).toBe(
+        false
+      );
+      expect(dropHint.getAttribute('aria-hidden')).toBe('true');
+    });
   });
 });
 
@@ -436,6 +471,37 @@ describe('The LAD Table Set', () => {
 
         expect(rowCount).toBe(mockObj.ladTableSet.composition.length);
       });
+    });
+
+    it('should include an accessible drop hint for composable LAD table drags', async () => {
+      const dropHint = parent.querySelector('.c-drop-hint');
+      expect(dropHint).not.toBeNull();
+      expect(dropHint.getAttribute('aria-hidden')).toBe('true');
+
+      const event = new Event('dragstart', { bubbles: true });
+      Object.defineProperty(event, 'dataTransfer', {
+        value: {
+          types: ['openmct/composable-domain-object'],
+          getData: () => '',
+          setData: () => {}
+        }
+      });
+      document.dispatchEvent(event);
+      await nextTick();
+
+      expect(
+        parent.querySelector('#lad-table-set-drop-area').classList.contains('is-dragging')
+      ).toBe(true);
+      expect(dropHint.getAttribute('role')).toBe('region');
+      expect(dropHint.getAttribute('aria-label')).toContain('LAD table set');
+      expect(dropHint.getAttribute('aria-hidden')).toBeNull();
+
+      document.dispatchEvent(new Event('dragend'));
+      await nextTick();
+      expect(
+        parent.querySelector('#lad-table-set-drop-area').classList.contains('is-dragging')
+      ).toBe(false);
+      expect(dropHint.getAttribute('aria-hidden')).toBe('true');
     });
   });
 });

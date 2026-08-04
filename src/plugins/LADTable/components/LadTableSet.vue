@@ -21,7 +21,22 @@
 -->
 
 <template>
-  <div class="c-lad-table-wrapper u-style-receiver js-style-receiver" :class="staleClass">
+  <div
+    id="lad-table-set-drop-area"
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    :class="[staleClass, { 'is-dragging': isDragging, 'is-mouse-over': isMouseOver }]"
+  >
+    <div
+      class="c-drop-hint"
+      :role="isDragging ? 'region' : null"
+      :aria-label="isDragging ? 'Drop a LAD table here to add it to this LAD table set' : null"
+      :aria-hidden="isDragging ? null : 'true'"
+      @dragenter="dragenter"
+      @dragleave="dragleave"
+    ></div>
+    <div v-if="ladTableObjects.length === 0" class="c-lad-table__empty-message">
+      Drag LAD tables here to add them to this set.
+    </div>
     <table class="c-table c-lad-table">
       <thead>
         <tr>
@@ -80,7 +95,9 @@ export default {
       ladTelemetryObjects: {},
       viewContext: {},
       configuration: this.ladTableConfiguration.getConfiguration(),
-      subscribedObjects: {}
+      subscribedObjects: {},
+      isDragging: false,
+      isMouseOver: false
     };
   },
   computed: {
@@ -128,6 +145,10 @@ export default {
       this.triggerUnsubscribeFromStaleness(domainObject);
       this.subscribeToStaleness(domainObject);
     });
+
+    document.addEventListener('dragstart', this.dragstart);
+    document.addEventListener('dragend', this.dragend);
+    document.addEventListener('drop', this.dragend);
   },
   unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
@@ -138,8 +159,32 @@ export default {
       c.composition.off('add', c.addCallback);
       c.composition.off('remove', c.removeCallback);
     });
+
+    document.removeEventListener('dragstart', this.dragstart);
+    document.removeEventListener('dragend', this.dragend);
+    document.removeEventListener('drop', this.dragend);
   },
   methods: {
+    allowDrop(event) {
+      if (this.domainObject.locked) {
+        return false;
+      }
+
+      return event.dataTransfer.types.includes('openmct/composable-domain-object');
+    },
+    dragstart(event) {
+      this.isDragging = this.allowDrop(event);
+    },
+    dragend() {
+      this.isDragging = false;
+      this.isMouseOver = false;
+    },
+    dragenter() {
+      this.isMouseOver = true;
+    },
+    dragleave() {
+      this.isMouseOver = false;
+    },
     addLadTable(domainObject) {
       let ladTable = {};
       ladTable.domainObject = domainObject;

@@ -24,8 +24,19 @@
   <div
     id="lad-table-drop-area"
     class="c-lad-table-wrapper u-style-receiver js-style-receiver"
-    :class="staleClass"
+    :class="[staleClass, { 'is-dragging': isDragging, 'is-mouse-over': isMouseOver }]"
   >
+    <div
+      class="c-drop-hint"
+      :role="isDragging ? 'region' : null"
+      :aria-label="isDragging ? 'Drop telemetry here to add it to this LAD table' : null"
+      :aria-hidden="isDragging ? null : 'true'"
+      @dragenter="dragenter"
+      @dragleave="dragleave"
+    ></div>
+    <div v-if="items.length === 0" class="c-lad-table__empty-message">
+      Drag telemetry objects here to add them to this table.
+    </div>
     <table class="c-table c-lad-table" :class="applyLayoutClass">
       <thead>
         <tr>
@@ -84,7 +95,9 @@ export default {
     return {
       items: [],
       viewContext: {},
-      configuration: this.ladTableConfiguration.getConfiguration()
+      configuration: this.ladTableConfiguration.getConfiguration(),
+      isDragging: false,
+      isMouseOver: false
     };
   },
   computed: {
@@ -166,6 +179,10 @@ export default {
     });
 
     this.initializeViewActions();
+
+    document.addEventListener('dragstart', this.dragstart);
+    document.addEventListener('dragend', this.dragend);
+    document.addEventListener('drop', this.dragend);
   },
   unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
@@ -173,8 +190,32 @@ export default {
     this.composition.off('add', this.addItem);
     this.composition.off('remove', this.removeItem);
     this.composition.off('reorder', this.reorder);
+
+    document.removeEventListener('dragstart', this.dragstart);
+    document.removeEventListener('dragend', this.dragend);
+    document.removeEventListener('drop', this.dragend);
   },
   methods: {
+    allowDrop(event) {
+      if (this.domainObject.locked) {
+        return false;
+      }
+
+      return event.dataTransfer.types.includes('openmct/composable-domain-object');
+    },
+    dragstart(event) {
+      this.isDragging = this.allowDrop(event);
+    },
+    dragend() {
+      this.isDragging = false;
+      this.isMouseOver = false;
+    },
+    dragenter() {
+      this.isMouseOver = true;
+    },
+    dragleave() {
+      this.isMouseOver = false;
+    },
     async addItem(domainObject) {
       let item = {};
       item.domainObject = domainObject;
