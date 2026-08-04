@@ -22,8 +22,7 @@
 
 <template>
   <div
-    id="lad-table-drop-area"
-    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver js-lad-table"
     :class="[staleClass, { 'is-dragging': isDragging, 'is-mouse-over': isMouseOver }]"
   >
     <div

@@ -22,8 +22,7 @@
 
 <template>
   <div
-    id="lad-table-set-drop-area"
-    class="c-lad-table-wrapper u-style-receiver js-style-receiver"
+    class="c-lad-table-wrapper u-style-receiver js-style-receiver js-lad-table-set"
     :class="[staleClass, { 'is-dragging': isDragging, 'is-mouse-over': isMouseOver }]"
   >
     <div
@@ -34,7 +33,10 @@
       @dragenter="dragenter"
       @dragleave="dragleave"
     ></div>
-    <div v-if="ladTableObjects.length === 0" class="c-lad-table__empty-message">
+    <div
+      v-if="ladTableObjects.length === 0 && !domainObject.locked"
+      class="c-lad-table__empty-message"
+    >
       Drag LAD tables here to add them to this set.
     </div>
     <table class="c-table c-lad-table">

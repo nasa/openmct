@@ -295,9 +295,7 @@ describe('The LAD Table', () => {
       expect(dropHint).not.toBeNull();
       expect(dropHint.getAttribute('aria-hidden')).toBe('true');
       expect(parent.querySelector('.c-lad-table__empty-message')).toBeNull();
-      expect(parent.querySelector('#lad-table-drop-area').classList.contains('is-dragging')).toBe(
-        false
-      );
+      expect(parent.querySelector('.js-lad-table').classList.contains('is-dragging')).toBe(false);
 
       const event = new Event('dragstart', { bubbles: true });
       Object.defineProperty(event, 'dataTransfer', {
@@ -310,18 +308,14 @@ describe('The LAD Table', () => {
       document.dispatchEvent(event);
       await nextTick();
 
-      expect(parent.querySelector('#lad-table-drop-area').classList.contains('is-dragging')).toBe(
-        true
-      );
+      expect(parent.querySelector('.js-lad-table').classList.contains('is-dragging')).toBe(true);
       expect(dropHint.getAttribute('role')).toBe('region');
       expect(dropHint.getAttribute('aria-label')).toContain('LAD table');
       expect(dropHint.getAttribute('aria-hidden')).toBeNull();
 
       document.dispatchEvent(new Event('dragend'));
       await nextTick();
-      expect(parent.querySelector('#lad-table-drop-area').classList.contains('is-dragging')).toBe(
-        false
-      );
+      expect(parent.querySelector('.js-lad-table').classList.contains('is-dragging')).toBe(false);
       expect(dropHint.getAttribute('aria-hidden')).toBe('true');
     });
   });
@@ -489,18 +483,18 @@ describe('The LAD Table Set', () => {
       document.dispatchEvent(event);
       await nextTick();
 
-      expect(
-        parent.querySelector('#lad-table-set-drop-area').classList.contains('is-dragging')
-      ).toBe(true);
+      expect(parent.querySelector('.js-lad-table-set').classList.contains('is-dragging')).toBe(
+        true
+      );
       expect(dropHint.getAttribute('role')).toBe('region');
       expect(dropHint.getAttribute('aria-label')).toContain('LAD table set');
       expect(dropHint.getAttribute('aria-hidden')).toBeNull();
 
       document.dispatchEvent(new Event('dragend'));
       await nextTick();
-      expect(
-        parent.querySelector('#lad-table-set-drop-area').classList.contains('is-dragging')
-      ).toBe(false);
+      expect(parent.querySelector('.js-lad-table-set').classList.contains('is-dragging')).toBe(
+        false
+      );
       expect(dropHint.getAttribute('aria-hidden')).toBe('true');
     });
   });
