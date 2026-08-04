@@ -68,6 +68,8 @@
           <div v-else class="grid-cell value">{{ yKeyLabel }}</div>
         </li>
       </ul>
+      <AxisScalingForm axis-key="xAxis" axis-label="X Axis" :read-only="!isEditing" />
+      <AxisScalingForm axis-key="yAxis" axis-label="Y Axis" :read-only="!isEditing" />
     </div>
     <div class="grid-properties">
       <ul class="l-inspector-part">
@@ -132,10 +134,12 @@
 <script>
 import ColorPalette from '@/ui/color/ColorPalette';
 
+import AxisScalingForm from '../../inspector/AxisScalingForm.vue';
 import SeriesOptions from './SeriesOptions.vue';
 
 export default {
   components: {
+    AxisScalingForm,
     SeriesOptions
   },
   inject: ['openmct', 'domainObject'],

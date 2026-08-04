@@ -26,6 +26,7 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
 import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants.js';
+import BarGraphPlot from './BarGraphPlot.vue';
 import BarGraphPlugin from './plugin.js';
 
 describe('the plugin', function () {
@@ -327,6 +328,81 @@ describe('the plugin', function () {
     it('is creatable', () => {
       const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
       expect(objectDef.creatable).toEqual(mockObject.creatable);
+    });
+  });
+
+  describe('the bar graph axis scaling', () => {
+    const getAxisRangeLayout = BarGraphPlot.methods.getAxisRangeLayout;
+
+    it('auto ranges by default', () => {
+      const domainObject = { configuration: { yAxis: { autoscale: true } } };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis')).toEqual({ autorange: true });
+    });
+
+    it('auto ranges for objects saved before axis scaling existed', () => {
+      const domainObject = { configuration: { axes: {} } };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'xAxis')).toEqual({ autorange: true });
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis')).toEqual({ autorange: true });
+    });
+
+    it('applies a fixed range when auto scale is off', () => {
+      const domainObject = {
+        configuration: {
+          yAxis: { autoscale: false, range: { min: -5, max: 5 } }
+        }
+      };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis')).toEqual({
+        autorange: false,
+        range: [-5, 5]
+      });
+    });
+
+    it('falls back to auto range when auto scale is off but no range is set', () => {
+      const domainObject = { configuration: { yAxis: { autoscale: false } } };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis')).toEqual({ autorange: true });
+    });
+
+    // yAxisMeta is derived from the traces, so it is undefined until data
+    // arrives. A fixed range must still apply to an empty plot.
+    it('applies a fixed Y range before any data has arrived', () => {
+      const domainObject = {
+        configuration: {
+          yAxis: { autoscale: false, range: { min: -5, max: 5 } }
+        }
+      };
+      const context = { domainObject, getAxisRangeLayout };
+
+      expect(BarGraphPlot.methods.getYaxisLayout.call(context, undefined)).toEqual({
+        autorange: false,
+        range: [-5, 5]
+      });
+    });
+
+    it('includes the configured range in the plot layout', () => {
+      const domainObject = {
+        configuration: {
+          xAxis: { autoscale: false, range: { min: 0, max: 100 } },
+          yAxis: { autoscale: false, range: { min: -5, max: 5 } }
+        }
+      };
+      const context = {
+        domainObject,
+        data: [],
+        plotAxisTitle: {},
+        getAxisRangeLayout,
+        getYAxisMeta: BarGraphPlot.methods.getYAxisMeta,
+        getXAxisDomain: BarGraphPlot.methods.getXAxisDomain,
+        getYaxisLayout: BarGraphPlot.methods.getYaxisLayout
+      };
+
+      const layout = BarGraphPlot.methods.getLayout.call(context);
+
+      expect(layout.xaxis.range).toEqual([0, 100]);
+      expect(layout.xaxis.autorange).toBe(false);
     });
   });
 

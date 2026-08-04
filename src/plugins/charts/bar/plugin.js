@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { DEFAULT_AXIS_CONFIG } from '../axisConfig.js';
 import BarGraphCompositionPolicy from './BarGraphCompositionPolicy.js';
 import { BAR_GRAPH_KEY } from './BarGraphConstants.js';
 import BarGraphViewProvider from './BarGraphViewProvider.js';
@@ -37,6 +38,8 @@ export default function () {
         domainObject.configuration = {
           barStyles: { series: {} },
           axes: {},
+          xAxis: { ...DEFAULT_AXIS_CONFIG },
+          yAxis: { ...DEFAULT_AXIS_CONFIG },
           useInterpolation: 'linear',
           useBar: true
         };

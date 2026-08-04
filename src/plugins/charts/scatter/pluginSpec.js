@@ -26,6 +26,7 @@ import { nextTick } from 'vue';
 
 import ScatterPlotPlugin from './plugin.js';
 import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './scatterPlotConstants.js';
+import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
 
 describe('the plugin', function () {
   let element;
@@ -210,6 +211,78 @@ describe('the plugin', function () {
     it('is creatable', () => {
       const objectDef = openmct.types.get(SCATTER_PLOT_KEY).definition;
       expect(objectDef.creatable).toEqual(mockObject.creatable);
+    });
+  });
+
+  describe('the scatter plot axis scaling', () => {
+    const getAxisRangeLayout = ScatterPlotWithUnderlay.methods.getAxisRangeLayout;
+    const NO_UNDERLAY = { min: '', max: '' };
+
+    it('auto ranges by default', () => {
+      const domainObject = { configuration: { yAxis: { autoscale: true } } };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis', NO_UNDERLAY)).toEqual({
+        autorange: true
+      });
+    });
+
+    it('auto ranges for objects saved before axis scaling existed', () => {
+      const domainObject = { configuration: { axes: {}, ranges: {} } };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'xAxis', NO_UNDERLAY)).toEqual({
+        autorange: true
+      });
+    });
+
+    it('applies a fixed range when auto scale is off', () => {
+      const domainObject = {
+        configuration: {
+          yAxis: { autoscale: false, range: { min: -5, max: 5 } }
+        }
+      };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis', NO_UNDERLAY)).toEqual({
+        autorange: false,
+        range: [-5, 5]
+      });
+    });
+
+    it('still honors underlay ranges while auto scale is on', () => {
+      const domainObject = { configuration: { yAxis: { autoscale: true } } };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis', { min: 1, max: 9 })).toEqual({
+        autorange: false,
+        range: [1, 9]
+      });
+    });
+
+    // yAxisMeta is derived from the traces, so it is undefined until data
+    // arrives. A fixed range must still apply to an empty plot.
+    it('applies a fixed Y range before any data has arrived', () => {
+      const domainObject = {
+        configuration: {
+          yAxis: { autoscale: false, range: { min: -5, max: 5 } }
+        }
+      };
+      const context = { domainObject, getAxisRangeLayout, yAxisRange: NO_UNDERLAY };
+
+      expect(ScatterPlotWithUnderlay.methods.getYaxisLayout.call(context, undefined)).toEqual({
+        autorange: false,
+        range: [-5, 5]
+      });
+    });
+
+    it('prefers a configured fixed range over the underlay range', () => {
+      const domainObject = {
+        configuration: {
+          yAxis: { autoscale: false, range: { min: -5, max: 5 } }
+        }
+      };
+
+      expect(getAxisRangeLayout.call({ domainObject }, 'yAxis', { min: 1, max: 9 })).toEqual({
+        autorange: false,
+        range: [-5, 5]
+      });
     });
   });
 

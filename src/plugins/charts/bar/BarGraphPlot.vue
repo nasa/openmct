@@ -46,6 +46,8 @@
 <script>
 import Plotly from 'plotly-basic';
 
+import { getAxisConfig } from '../axisConfig.js';
+
 const MULTI_AXES_X_PADDING_PERCENT = {
   LEFT: 8,
   RIGHT: 94
@@ -70,15 +72,7 @@ export default {
   emits: ['subscribe', 'unsubscribe'],
   data() {
     return {
-      isZoomed: false,
-      primaryYAxisRange: {
-        min: '',
-        max: ''
-      },
-      xAxisRange: {
-        min: '',
-        max: ''
-      }
+      isZoomed: false
     };
   },
   watch: {
@@ -108,16 +102,31 @@ export default {
       this.removeBarColorListener();
     }
 
+    if (this.removeXAxisListener) {
+      this.removeXAxisListener();
+    }
+
+    if (this.removeYAxisListener) {
+      this.removeYAxisListener();
+    }
+
     Plotly.purge(this.$refs.plot);
   },
   methods: {
-    getAxisMinMax(axis) {
-      const min = axis.autoSize ? '' : axis.min;
-      const max = axis.autoSize ? '' : axis.max;
+    /**
+     * Build the Plotly range portion of an axis layout from the persisted
+     * scaling configuration. `autorange` and `range` are mutually exclusive -
+     * Plotly ignores `range` when `autorange` is true.
+     */
+    getAxisRangeLayout(axisKey) {
+      const axis = getAxisConfig(this.domainObject, axisKey);
+      if (axis.autoscale !== false || !axis.range) {
+        return { autorange: true };
+      }
 
       return {
-        min,
-        max
+        autorange: false,
+        range: [axis.range.min, axis.range.max]
       };
     },
     getLayout() {
@@ -136,7 +145,7 @@ export default {
         },
         xaxis: {
           domain: xAxisDomain,
-          range: [this.xAxisRange.min, this.xAxisRange.max],
+          ...this.getAxisRangeLayout('xAxis'),
           title: this.plotAxisTitle.xAxisTitle,
           automargin: true,
           fixedrange: true
@@ -191,7 +200,10 @@ export default {
     },
     getYaxisLayout(yAxisMeta) {
       if (!yAxisMeta) {
-        return {};
+        // yAxisMeta is derived from the traces, so it is empty until data
+        // arrives. Still apply the configured scaling, otherwise a fixed
+        // range would not take effect on an empty plot.
+        return this.getAxisRangeLayout('yAxis');
       }
 
       const { name, range, side = 'left', unit } = yAxisMeta;
@@ -199,17 +211,14 @@ export default {
       const yaxis = {
         automargin: true,
         fixedrange: true,
-        title
+        title,
+        ...this.getAxisRangeLayout('yAxis')
       };
 
-      let yAxistype = this.primaryYAxisRange;
       if (range === '1') {
-        yaxis.range = [yAxistype.min, yAxistype.max];
-
         return yaxis;
       }
 
-      yaxis.range = [yAxistype.min, yAxistype.max];
       yaxis.anchor = side.toLowerCase() === 'left' ? 'free' : 'x';
       yaxis.showline = side.toLowerCase() === 'left';
       yaxis.side = side.toLowerCase();
@@ -223,6 +232,16 @@ export default {
         this.domainObject,
         'configuration.barStyles',
         this.barColorChanged
+      );
+      this.removeXAxisListener = this.openmct.objects.observe(
+        this.domainObject,
+        'configuration.xAxis',
+        this.onAxisScalingChanged
+      );
+      this.removeYAxisListener = this.openmct.objects.observe(
+        this.domainObject,
+        'configuration.yAxis',
+        this.onAxisScalingChanged
       );
       this.resizeTimer = false;
       if (window.ResizeObserver) {
@@ -262,6 +281,9 @@ export default {
       Plotly.restyle(this.$refs.plot, plotUpdate, indices);
     },
     updateData() {
+      this.updatePlot();
+    },
+    onAxisScalingChanged() {
       this.updatePlot();
     },
     updateLocalControlPosition() {
