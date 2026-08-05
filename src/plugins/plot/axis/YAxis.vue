@@ -172,6 +172,7 @@ export default {
         }
 
         this.config = config;
+        this.listenTo(this.yAxis, 'change:label', this.updateYAxisLabel, this);
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
         this.listenTo(this.config.series, 'reorder', this.addOrRemoveSeries, this);
@@ -244,6 +245,11 @@ export default {
       if (this.yAxisLabel === 'none') {
         this.yAxisLabel = this.yAxis.get('label');
       }
+    },
+    //  the label may be edited from the inspector, or derived from series
+    //  metadata, so mirror the model instead of reading it only once
+    updateYAxisLabel(label) {
+      this.yAxisLabel = label;
     },
     toggleYAxisLabel() {
       let yAxisObject = this.yKeyOptions.filter((o) => o.name === this.yAxisLabel)[0];
