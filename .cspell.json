@@ -488,7 +488,8 @@
     "annotatable",
     "requestfinished",
     "LOCF",
-    "Unack"
+    "Unack",
+    "Tabnabbing"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [

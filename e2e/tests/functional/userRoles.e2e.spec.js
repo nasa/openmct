@@ -27,7 +27,9 @@ import { expect, test } from '../../pluginFixtures.js';
 test.describe('User Roles', () => {
   test('Role prompting', async ({ page }) => {
     await page.addInitScript({
-      path: fileURLToPath(new URL('../../helper/addInitExampleUser.js', import.meta.url))
+      path: fileURLToPath(
+        new URL('../../helper/addInitExampleUserMultipleRoles.js', import.meta.url)
+      )
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
 

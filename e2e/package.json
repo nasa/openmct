@@ -17,7 +17,11 @@
     "@axe-core/playwright": "4.8.5",
     "@percy/cli": "1.27.4",
     "@percy/playwright": "1.0.4",
-    "@playwright/test": "1.57.0"
+    "@playwright/test": "1.57.0",
+    "yaml": "2.8.3"
+  },
+  "optionalDependencies": {
+    "fsevents": "2.3.2"
   },
   "author": {
     "name": "National Aeronautics and Space Administration",

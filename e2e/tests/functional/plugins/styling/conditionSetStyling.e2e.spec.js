@@ -87,9 +87,7 @@ test.describe('Conditionally Styling, using a Condition Set', () => {
 
     // Add the state generator to the first criterion such that there is a condition named 'OFF' when the state generator is off
     await page.getByLabel('Add Condition').click();
-    await page
-      .getByLabel('Criterion Telemetry Selection')
-      .selectOption({ label: stateGenerator.name });
+    await page.getByLabel('Criterion Telemetry Selection').selectOption({ value: 'all' });
     await page.getByLabel('Criterion Metadata Selection').selectOption({ label: 'State' });
     await page.getByLabel('Criterion Comparison Selection').selectOption({ label: 'is' });
     await page.getByLabel('Condition Name Input').first().fill('OFF');

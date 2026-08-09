@@ -28,7 +28,9 @@ test.describe('Mission Status Visual Tests @a11y', () => {
   const GO = '1';
   test.beforeEach(async ({ page }) => {
     await page.addInitScript({
-      path: fileURLToPath(new URL('../../helper/addInitExampleUser.js', import.meta.url))
+      path: fileURLToPath(
+        new URL('../../helper/addInitExampleUserMultipleRoles.js', import.meta.url)
+      )
     });
     await page.goto('./', { waitUntil: 'domcontentloaded' });
     await expect(page.getByText('Select Role')).toBeVisible();

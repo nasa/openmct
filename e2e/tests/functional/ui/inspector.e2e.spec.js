@@ -39,7 +39,7 @@ const viewsTabsMatrix = {
   },
   'Condition Set': {
     Browse: ['Properties', 'Elements', 'Annotations'],
-    Edit: ['Elements', 'Properties']
+    Edit: ['Config', 'Elements', 'Properties']
   },
   'Condition Widget': {
     Browse: ['Properties', 'Styles'],

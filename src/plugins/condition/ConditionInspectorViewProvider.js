@@ -22,51 +22,38 @@
 
 import mount from 'utils/mount';
 
-import Plan from './components/PlanView.vue';
+import ConditionConfigView from './components/ConditionInspectorConfigView.vue';
 
-export default function PlanViewProvider(openmct) {
-  function getParentTimeStrip(objectPath) {
-    if (!openmct.router.isNavigatedObject(objectPath)) {
-      return objectPath.find((object) => object.type === 'time-strip');
-    }
-  }
-
+export default function ConditionInspectorView(openmct) {
   return {
-    key: 'plan.view',
-    name: 'Plan',
-    cssClass: 'icon-plan',
-    canView(domainObject) {
-      return domainObject.type === 'plan' || domainObject.type === 'gantt-chart';
-    },
+    key: 'condition-config',
+    name: 'Config',
+    canView: function (selection) {
+      if (selection.length === 0 || selection[0].length === 0) {
+        return false;
+      }
 
-    canEdit(domainObject) {
-      return domainObject.type === 'gantt-chart';
-    },
+      let object = selection[0][0].context.item;
 
-    view: function (domainObject, objectPath) {
+      return object && object.type === 'conditionSet';
+    },
+    view: function (selection) {
       let _destroy = null;
+      const domainObject = selection[0][0].context.item;
 
       return {
         show: function (element) {
-          const timeStrip = getParentTimeStrip(objectPath);
-
           const { destroy } = mount(
             {
               el: element,
               components: {
-                Plan
+                ConditionConfigView: ConditionConfigView
               },
               provide: {
                 openmct,
-                domainObject,
-                path: objectPath
+                domainObject
               },
-              data() {
-                return {
-                  timeStrip
-                };
-              },
-              template: '<plan :time-strip="timeStrip"></plan>'
+              template: '<condition-config-view></condition-config-view>'
             },
             {
               app: openmct.app,
@@ -74,6 +61,12 @@ export default function PlanViewProvider(openmct) {
             }
           );
           _destroy = destroy;
+        },
+        showTab: function (isEditing) {
+          return isEditing;
+        },
+        priority: function () {
+          return openmct.priority.HIGH;
         },
         destroy: function () {
           if (_destroy) {

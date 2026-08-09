@@ -1,4 +1,3 @@
-import http from 'http';
 import nano from 'nano';
 import { parseArgs } from 'util';
 
@@ -41,24 +40,13 @@ const {
 });
 
 const BATCH_SIZE = 100;
-const SOCKET_POOL_SIZE = 100;
 
 const locked = lock === true;
 console.info(`Connecting to ${couchUrl}/${database}`);
 console.info(`${locked ? 'Locking' : 'Unlocking'} all children of ${startObjectKeystring}`);
 
-const poolingAgent = new http.Agent({
-  keepAlive: true,
-  maxSockets: SOCKET_POOL_SIZE
-});
-
-const db = nano({
-  url: couchUrl,
-  requestDefaults: {
-    agent: poolingAgent
-  }
-}).use(database);
-db.auth(user, pass);
+const url = user && pass ? couchUrl.replace('://', `://${user}:${pass}@`) : couchUrl;
+const db = nano(url).use(database);
 
 if (!unlock && !lock) {
   throw new Error('Either -l or -u option is required');

@@ -243,6 +243,7 @@ export default {
           domainObject: {
             ...this.childObject,
             configuration: {
+              ...this.childObject.configuration,
               series: [
                 {
                   identifier: this.childObject.identifier,

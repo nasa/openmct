@@ -43,7 +43,7 @@
 </template>
 
 <script>
-const DEFAULT_POLL_QUESTION = 'NO POLL QUESTION';
+const DEFAULT_POLL_QUESTION = 'NO POLL';
 export default {
   inject: ['openmct', 'indicator', 'configuration'],
   props: {
@@ -84,7 +84,6 @@ export default {
   },
   async mounted() {
     this.unsubscribe = [];
-    await this.fetchUser();
     this.fetchPossibleStatusesForUser();
     this.fetchCurrentPoll();
     await this.fetchMyStatus();
@@ -93,23 +92,23 @@ export default {
     this.subscribeToRoleChange();
   },
   methods: {
-    async fetchUser() {
-      this.user = await this.openmct.user.getCurrentUser();
-    },
     async fetchCurrentPoll() {
       const pollQuestion = await this.openmct.user.status.getPollQuestion();
       if (pollQuestion !== undefined) {
-        this.setPollQuestion(pollQuestion);
+        await this.setPollQuestion(pollQuestion);
       }
     },
     async fetchPossibleStatusesForUser() {
       this.allStatuses = await this.openmct.user.status.getPossibleStatuses();
     },
-    setPollQuestion(pollQuestion) {
+    async setPollQuestion(pollQuestion) {
       this.currentPollQuestion = pollQuestion.question;
       this.pollQuestionUpdated = new Date(pollQuestion.timestamp).toISOString();
 
-      this.indicator.text(pollQuestion?.question || '');
+      const isStatusCapable = await this.openmct.user.canProvideStatusForRole();
+      if (isStatusCapable) {
+        this.indicator.text(pollQuestion?.question || '');
+      }
     },
     async fetchMyStatus() {
       // hide indicator for observer

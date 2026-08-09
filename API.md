@@ -93,6 +93,7 @@ If you have `git`, and `node` installed, you can build Open MCT with the command
 git clone https://github.com/nasa/openmct.git
 cd openmct
 npm install
+npm run build
 ```
 
 These commands will fetch the Open MCT source from our GitHub repository, and
