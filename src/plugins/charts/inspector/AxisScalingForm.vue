@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import { getAxisConfig } from '../axisConfig.js';
+import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
 
 /**
  * Manual (fixed) axis scaling for the Bar Graph and Scatter Plot views.
@@ -131,7 +131,7 @@ export default {
     this.initFormValues();
     this.unobserve = this.openmct.objects.observe(
       this.domainObject,
-      `configuration.${this.axisKey}`,
+      `configuration.${AXIS_SCALING_KEY}.${this.axisKey}`,
       this.initFormValues
     );
   },
@@ -213,7 +213,7 @@ export default {
     persist(property, value) {
       this.openmct.objects.mutate(
         this.domainObject,
-        `configuration.${this.axisKey}.${property}`,
+        `configuration.${AXIS_SCALING_KEY}.${this.axisKey}.${property}`,
         value
       );
     }

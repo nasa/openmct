@@ -46,7 +46,7 @@
 <script>
 import Plotly from 'plotly-basic';
 
-import { getAxisConfig } from '../axisConfig.js';
+import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
   LEFT: 8,
@@ -102,12 +102,8 @@ export default {
       this.removeBarColorListener();
     }
 
-    if (this.removeXAxisListener) {
-      this.removeXAxisListener();
-    }
-
-    if (this.removeYAxisListener) {
-      this.removeYAxisListener();
+    if (this.removeAxisScalingListener) {
+      this.removeAxisScalingListener();
     }
 
     Plotly.purge(this.$refs.plot);
@@ -233,14 +229,9 @@ export default {
         'configuration.barStyles',
         this.barColorChanged
       );
-      this.removeXAxisListener = this.openmct.objects.observe(
+      this.removeAxisScalingListener = this.openmct.objects.observe(
         this.domainObject,
-        'configuration.xAxis',
-        this.onAxisScalingChanged
-      );
-      this.removeYAxisListener = this.openmct.objects.observe(
-        this.domainObject,
-        'configuration.yAxis',
+        `configuration.${AXIS_SCALING_KEY}`,
         this.onAxisScalingChanged
       );
       this.resizeTimer = false;
