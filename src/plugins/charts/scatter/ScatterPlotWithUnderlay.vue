@@ -52,7 +52,7 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 
 import { getValidatedData } from '@/plugins/plan/util';
 
-import { getAxisConfig } from '../axisConfig.js';
+import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
 
 const PATH_COLORS = ['blue', 'red', 'green'];
 const MARKER_COLOR = 'white';
@@ -130,12 +130,8 @@ export default {
       this.unlistenUnderlayRanges();
     }
 
-    if (this.unlistenXAxis) {
-      this.unlistenXAxis();
-    }
-
-    if (this.unlistenYAxis) {
-      this.unlistenYAxis();
+    if (this.unlistenAxisScaling) {
+      this.unlistenAxisScaling();
     }
 
     if (this.unobserveColorChanges) {
@@ -339,14 +335,9 @@ export default {
         'configuration.ranges',
         this.updateData
       );
-      this.unlistenXAxis = this.openmct.objects.observe(
+      this.unlistenAxisScaling = this.openmct.objects.observe(
         this.domainObject,
-        'configuration.xAxis',
-        this.onAxisScalingChanged
-      );
-      this.unlistenYAxis = this.openmct.objects.observe(
-        this.domainObject,
-        'configuration.yAxis',
+        `configuration.${AXIS_SCALING_KEY}`,
         this.onAxisScalingChanged
       );
       this.resizeTimer = false;

@@ -23,23 +23,57 @@
 /**
  * Axis scaling configuration shared by the Bar Graph and Scatter Plot views.
  *
- * Both types persist their axis scaling under `configuration.xAxis` and
- * `configuration.yAxis`, mirroring the shape used by time-domain plots:
+ * Both types persist axis scaling under `configuration.axisScaling`:
  *
- *     { autoscale: <boolean>, range: { min: <number>, max: <number> } }
+ *     axisScaling: {
+ *       xAxis: { autoscale: <boolean>, range: { min: <number>, max: <number> } },
+ *       yAxis: { ...same... }
+ *     }
  *
- * `range` is only meaningful when `autoscale` is `false`.
+ * `range` is only meaningful when `autoscale` is `false`. The inner objects
+ * deliberately mirror the shape time-domain plots use for their own
+ * `configuration.yAxis` (see src/plugins/plot/configuration/YAxisModel.js).
+ *
+ * These charts have two neighbouring configuration keys that sound similar but
+ * are unrelated concerns. Do not confuse them:
+ *
+ *   configuration.axes         { xKey, yKey } - WHICH telemetry field is
+ *                              plotted on each axis.
+ *   configuration.axisScaling  HOW each axis is scaled. This file.
+ *   configuration.ranges       { domainMin, domainMax, rangeMin, rangeMax } -
+ *                              Scatter Plot only. Bounds for the optional
+ *                              underlay drawing, set from the create form.
+ *                              Applies only when an underlay file is loaded,
+ *                              and defers to a fixed range from axisScaling.
  */
 
 /**
- * The default axis configuration. Objects created before axis scaling was
- * introduced have neither key, and must read as auto scaled.
+ * The persisted configuration key holding all axis scaling.
+ */
+export const AXIS_SCALING_KEY = 'axisScaling';
+
+/**
+ * The default configuration for a single axis. Objects created before axis
+ * scaling was introduced have no `axisScaling` key at all, and must read as
+ * auto scaled.
  *
  * Frozen because `getAxisConfig` hands this exact object back to callers when
  * the domain object has no stored configuration - mutating it in place would
  * poison the default for every other chart in the application.
  */
 export const DEFAULT_AXIS_CONFIG = Object.freeze({ autoscale: true });
+
+/**
+ * The default `configuration.axisScaling` for a newly created chart.
+ *
+ * @returns {{xAxis: Object, yAxis: Object}}
+ */
+export function getDefaultAxisScaling() {
+  return {
+    xAxis: { ...DEFAULT_AXIS_CONFIG },
+    yAxis: { ...DEFAULT_AXIS_CONFIG }
+  };
+}
 
 /**
  * Read the scaling configuration for a single axis, falling back to the
@@ -50,5 +84,5 @@ export const DEFAULT_AXIS_CONFIG = Object.freeze({ autoscale: true });
  * @returns {{autoscale: boolean, range?: {min: number, max: number}}}
  */
 export function getAxisConfig(domainObject, axisKey) {
-  return domainObject?.configuration?.[axisKey] ?? DEFAULT_AXIS_CONFIG;
+  return domainObject?.configuration?.[AXIS_SCALING_KEY]?.[axisKey] ?? DEFAULT_AXIS_CONFIG;
 }

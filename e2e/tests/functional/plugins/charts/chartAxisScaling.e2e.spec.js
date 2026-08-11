@@ -63,8 +63,8 @@ test.describe('Chart axis scaling', () => {
     await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
 
     const persisted = await getDomainObject(page, barGraph.uuid);
-    expect(persisted.configuration.yAxis.autoscale).toBe(false);
-    expect(persisted.configuration.yAxis.range).toEqual({ min: -5, max: 5 });
+    expect(persisted.configuration.axisScaling.yAxis.autoscale).toBe(false);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: -5, max: 5 });
   });
 
   test('Scatter Plot can be given fixed X and Y axis ranges', async ({ page }) => {
@@ -84,8 +84,8 @@ test.describe('Chart axis scaling', () => {
     await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
 
     const persisted = await getDomainObject(page, scatterPlot.uuid);
-    expect(persisted.configuration.xAxis.range).toEqual({ min: 0, max: 20 });
-    expect(persisted.configuration.yAxis.range).toEqual({ min: -5, max: 5 });
+    expect(persisted.configuration.axisScaling.xAxis.range).toEqual({ min: 0, max: 20 });
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: -5, max: 5 });
   });
 
   test('Fixed scaling is read-only outside of edit mode', async ({ page }) => {
@@ -151,15 +151,14 @@ test.describe('Chart axis scaling', () => {
 
   test('Charts saved before axis scaling existed default to auto scale', async ({ page }) => {
     // Objects created by earlier versions have a configuration but no
-    // xAxis/yAxis keys. This fallback stands in for a data migration.
+    // axisScaling key. This fallback stands in for a data migration.
     const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
     await createExampleTelemetryObject(page, barGraph.uuid);
 
     await page.evaluate(async (objectUuid) => {
       const domainObject = await window.openmct.objects.get(objectUuid);
       const configuration = { ...domainObject.configuration };
-      delete configuration.xAxis;
-      delete configuration.yAxis;
+      delete configuration.axisScaling;
       window.openmct.objects.mutate(domainObject, 'configuration', configuration);
     }, barGraph.uuid);
 
@@ -212,7 +211,7 @@ test.describe('Chart axis scaling', () => {
     await expect(page.getByText('Minimum must be less than Maximum.')).toBeVisible();
 
     const persisted = await getDomainObject(page, barGraph.uuid);
-    expect(persisted.configuration.yAxis.range).toBeUndefined();
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
   });
 });
 
