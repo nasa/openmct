@@ -58,7 +58,7 @@ const config = {
   },
   output: {
     globalObject: 'this',
-    filename: '[name].js',
+    filename: 'js/[name].js',
     path: path.resolve(projectRootDir, 'dist'),
     library: {
       name: 'openmct',
