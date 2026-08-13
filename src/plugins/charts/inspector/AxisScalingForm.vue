@@ -33,7 +33,12 @@
         {{ autoscale ? 'Enabled' : 'Disabled' }}
       </div>
       <div v-else class="grid-cell value">
-        <input :id="autoscaleInputId" v-model="autoscale" type="checkbox" @change="updateAutoscale" />
+        <input
+          :id="autoscaleInputId"
+          v-model="autoscale"
+          type="checkbox"
+          @change="updateAutoscale"
+        />
         <label :for="autoscaleInputId" class="visually-hidden">{{ axisLabel }} Auto scale</label>
       </div>
     </li>
@@ -46,9 +51,7 @@
         {{ rangeMin }}
       </div>
       <div v-else class="grid-cell value">
-        <label :for="rangeMinInputId" class="visually-hidden"
-          >{{ axisLabel }} Minimum value</label
-        >
+        <label :for="rangeMinInputId" class="visually-hidden">{{ axisLabel }} Minimum value</label>
         <input
           :id="rangeMinInputId"
           v-model="rangeMin"
@@ -64,9 +67,7 @@
         {{ rangeMax }}
       </div>
       <div v-else class="grid-cell value">
-        <label :for="rangeMaxInputId" class="visually-hidden"
-          >{{ axisLabel }} Maximum value</label
-        >
+        <label :for="rangeMaxInputId" class="visually-hidden">{{ axisLabel }} Maximum value</label>
         <input
           :id="rangeMaxInputId"
           v-model="rangeMax"
