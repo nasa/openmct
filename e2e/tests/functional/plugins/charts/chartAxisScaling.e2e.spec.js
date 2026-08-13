@@ -60,7 +60,7 @@ test.describe('Chart axis scaling', () => {
     await setFixedRange(page, 'Y Axis', '-5', '5');
     await saveAndFinishEditing(page);
 
-    await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
 
     const persisted = await getDomainObject(page, barGraph.uuid);
     expect(persisted.configuration.axisScaling.yAxis.autoscale).toBe(false);
@@ -80,8 +80,8 @@ test.describe('Chart axis scaling', () => {
     await setFixedRange(page, 'Y Axis', '-5', '5');
     await saveAndFinishEditing(page);
 
-    await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'xaxis')).toEqual([0, 20]);
-    await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
+    expect(await getPlotlyRange(page, '.c-scatter-chart', 'xaxis')).toEqual([0, 20]);
+    expect(await getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
 
     const persisted = await getDomainObject(page, scatterPlot.uuid);
     expect(persisted.configuration.axisScaling.xAxis.range).toEqual({ min: 0, max: 20 });
@@ -117,7 +117,7 @@ test.describe('Chart axis scaling', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
     await setFixedRange(page, 'Y Axis', '-5', '5');
 
-    await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
   });
 
   test('A fixed range applies to a Scatter Plot with no data yet', async ({ page }) => {
@@ -129,7 +129,7 @@ test.describe('Chart axis scaling', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
     await setFixedRange(page, 'Y Axis', '-5', '5');
 
-    await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
+    expect(await getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
   });
 
   test('Re-enabling auto scale returns the axis to automatic ranging', async ({ page }) => {
@@ -141,12 +141,12 @@ test.describe('Chart axis scaling', () => {
     await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Config' }).click();
     await setFixedRange(page, 'Y Axis', '-5', '5');
-    await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-5, 5]);
 
     await page.getByRole('checkbox', { name: 'Y Axis Auto scale' }).check();
 
-    await expect.poll(() => getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
-    await expect.poll(() => getPlotlyRange(page, '.c-bar-chart', 'yaxis')).not.toEqual([-5, 5]);
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).not.toEqual([-5, 5]);
   });
 
   test('Charts saved before axis scaling existed default to auto scale', async ({ page }) => {
@@ -156,16 +156,17 @@ test.describe('Chart axis scaling', () => {
     await createExampleTelemetryObject(page, barGraph.uuid);
 
     await page.evaluate(async (objectUuid) => {
-      const domainObject = await window.openmct.objects.get(objectUuid);
+      const openmct = window.openmct;
+      const domainObject = await openmct.objects.get(objectUuid);
       const configuration = { ...domainObject.configuration };
       delete configuration.axisScaling;
-      window.openmct.objects.mutate(domainObject, 'configuration', configuration);
+      openmct.objects.mutate(domainObject, 'configuration', configuration);
     }, barGraph.uuid);
 
     await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
 
-    await expect.poll(() => getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
-    await expect.poll(() => getPlotlyAutorange(page, '.c-bar-chart', 'xaxis')).toBe(true);
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'xaxis')).toBe(true);
 
     // The inspector reports auto scale for the missing configuration too
     await page.getByRole('tab', { name: 'Config' }).click();
@@ -186,14 +187,17 @@ test.describe('Chart axis scaling', () => {
 
     await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
 
-    // Auto scale is on, so the underlay ranges drive the axes
+    // Auto scale is on, so the underlay ranges drive the axes. This is the one
+    // assertion here that has to wait: underlay ranges only reach the layout
+    // once the telemetry request resolves and a trace exists. The assertions
+    // that follow a config change do not, since that path is synchronous.
     await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-50, 50]);
 
     await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Config' }).click();
     await setFixedRange(page, 'Y Axis', '-5', '5');
 
-    await expect.poll(() => getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
+    expect(await getPlotlyRange(page, '.c-scatter-chart', 'yaxis')).toEqual([-5, 5]);
   });
 
   test('An invalid range is reported and not persisted', async ({ page }) => {
@@ -249,9 +253,23 @@ async function saveAndFinishEditing(page) {
 }
 
 /**
- * Read the range Plotly actually resolved for an axis. This is the most direct
- * assertion available for these views - they are Plotly, not the WebGL plot
- * stack, so `waitForPlotsToRender`/`getCanvasPixels` do not apply.
+ * Read the range Plotly resolved for an axis, from `gd.layout` - Plotly's
+ * documented public view of current graph state. When auto ranging, Plotly
+ * writes the computed range back into it, so this reports the effective range
+ * either way. Deliberately not `gd._fullLayout`, which is private.
+ *
+ * This is the most direct assertion available for these views: they are Plotly,
+ * not the WebGL plot stack, so `waitForPlotsToRender`/`getCanvasPixels` do not
+ * apply. Do not assert on rendered tick labels instead - Plotly picks its own
+ * "nice" tick values inside a range, so a range of [-5, 5] renders ticks
+ * -4, -2, 0, 2, 4 and never shows the bounds themselves.
+ *
+ * Callers can generally assert on this directly rather than polling. Applying a
+ * config change is synchronous end to end: the mutation emits synchronously,
+ * the observer redraws synchronously, and Plotly merges the new layout into
+ * `gd.layout` during that call - none of it waits on a render. Polling is only
+ * needed when the value depends on telemetry arriving.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
  * @param {'xaxis' | 'yaxis'} axis
@@ -260,12 +278,12 @@ async function saveAndFinishEditing(page) {
 function getPlotlyRange(page, chartSelector, axis) {
   // eslint-disable-next-line playwright/no-raw-locators
   return page.locator(chartSelector).evaluate((el, axisName) => {
-    return el._fullLayout?.[axisName]?.range;
+    return el.layout?.[axisName]?.range;
   }, axis);
 }
 
 /**
- * Read whether Plotly is auto ranging an axis.
+ * Read whether Plotly is auto ranging an axis, from the public `gd.layout`.
  * @param {import('@playwright/test').Page} page
  * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
  * @param {'xaxis' | 'yaxis'} axis
@@ -274,7 +292,7 @@ function getPlotlyRange(page, chartSelector, axis) {
 function getPlotlyAutorange(page, chartSelector, axis) {
   // eslint-disable-next-line playwright/no-raw-locators
   return page.locator(chartSelector).evaluate((el, axisName) => {
-    return el._fullLayout?.[axisName]?.autorange;
+    return el.layout?.[axisName]?.autorange;
   }, axis);
 }
 
@@ -312,7 +330,10 @@ async function createScatterPlotWithUnderlay(page, ranges) {
   const objectUuid = page.url().split('?')[0].split('/').pop();
 
   // Leave edit mode, otherwise the Create button stays disabled
-  const isEditing = await page.evaluate(() => window.openmct.editor.isEditing());
+  const isEditing = await page.evaluate(() => {
+    const openmct = window.openmct;
+    return openmct.editor.isEditing();
+  });
   if (isEditing) {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
