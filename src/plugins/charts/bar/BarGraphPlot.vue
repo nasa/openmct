@@ -232,7 +232,7 @@ export default {
       this.removeAxisScalingListener = this.openmct.objects.observe(
         this.domainObject,
         `configuration.${AXIS_SCALING_KEY}`,
-        this.onAxisScalingChanged
+        this.updatePlot
       );
       this.resizeTimer = false;
       if (window.ResizeObserver) {
@@ -272,9 +272,6 @@ export default {
       Plotly.restyle(this.$refs.plot, plotUpdate, indices);
     },
     updateData() {
-      this.updatePlot();
-    },
-    onAxisScalingChanged() {
       this.updatePlot();
     },
     updateLocalControlPosition() {
