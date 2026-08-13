@@ -338,7 +338,7 @@ export default {
       this.unlistenAxisScaling = this.openmct.objects.observe(
         this.domainObject,
         `configuration.${AXIS_SCALING_KEY}`,
-        this.onAxisScalingChanged
+        this.applyAxisScaling
       );
       this.resizeTimer = false;
       if (window.ResizeObserver) {
@@ -377,12 +377,17 @@ export default {
       this.$emit('subscribe');
     },
     updateData() {
+      // New data must not be drawn while a zoom has frozen the plot - see zoom().
+      if (this.isZoomed) {
+        return;
+      }
+
       this.updatePlot();
     },
-    onAxisScalingChanged() {
-      // An explicit scale change from the inspector supersedes an interactive
-      // zoom, which would otherwise cause updatePlot() to bail out early.
-      this.isZoomed = false;
+    applyAxisScaling() {
+      // Changing the scale is not new data, so this redraws even while frozen.
+      // It deliberately leaves isZoomed alone: the plot stays frozen and
+      // unsubscribed so the trace under inspection survives the rescale.
       this.updatePlot();
     },
     updateLocalControlPosition() {
@@ -403,7 +408,7 @@ export default {
       localControl.style.display = 'block';
     },
     updatePlot() {
-      if (!this.$refs || !this.$refs.plot || this.isZoomed) {
+      if (!this.$refs || !this.$refs.plot) {
         return;
       }
 
@@ -413,6 +418,13 @@ export default {
         this.getLayout()
       );
     },
+    /**
+     * Zooming deliberately freezes the plot: it unsubscribes, and `isZoomed`
+     * then suppresses redraws from new data. Unlike a time-domain plot, where
+     * telemetry accumulates, an incoming frame replaces this trace entirely -
+     * so without the freeze, zooming in on a feature of interest would lose
+     * that feature the moment the next frame arrived. `reset()` thaws it.
+     */
     zoom(eventData) {
       const autorange = eventData['xaxis.autorange'];
       const { autosize } = eventData;
