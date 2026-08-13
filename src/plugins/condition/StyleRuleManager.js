@@ -62,8 +62,8 @@ export default class StyleRuleManager extends EventEmitter {
       }
     } else if (this.conditionSetIdentifier) {
       //reset the selected style and let the condition set output determine what it should be
-      this.selectedConditionId = undefined;
-      this.currentStyle = undefined;
+      this.selectedConditionId = this.defaultConditionId;
+      this.applySelectedConditionStyle();
       this.updateDomainObjectStyle();
       this.subscribeToConditionSet();
     }
