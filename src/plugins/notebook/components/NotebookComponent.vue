@@ -639,7 +639,7 @@ export default {
       const localImageDropped = dataTransferFiles.some((file) => file.type.includes('image'));
       const snapshotId = dropEvent.dataTransfer.getData('openmct/snapshot/id');
       const domainObjectData = dropEvent.dataTransfer.getData('openmct/domain-object-path');
-      const imageUrl = dropEvent.dataTransfer.getData('URL');
+      const imageUrl = snapshotId.length ? '' : dropEvent.dataTransfer.getData('URL');
       if (localImageDropped) {
         // local image(s) dropped from disk (file)
         const embeds = [];
