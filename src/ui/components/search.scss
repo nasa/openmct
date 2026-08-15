@@ -56,6 +56,18 @@
 
   }
 
+  &.is-invalid {
+    // Set by the consumer when the value cannot be used, such as a regex
+    // filter that will not compile. Deliberately quiet: a pattern spends most
+    // of the time it is being typed in an incomplete state.
+    box-shadow: inset 0 0 0 1px $colorFormInvalid;
+
+    input[type='text'],
+    input[type='search'] {
+      color: $colorFormInvalid;
+    }
+  }
+
   &.is-active {
     body.mobile & { // In mobile, persist the expanded search bar instead of collapsing upon clicking away
       background-color: rgba($colorHeadFg, 0.2) !important; 
