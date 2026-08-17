@@ -193,6 +193,39 @@ test.describe('Grand Search', () => {
     await expect(searchResults).toContainText(folderName);
   });
 
+  test('Removed objects are evicted from cached search results', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/340'
+    });
+
+    const folderName = uuid();
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: folderName
+    });
+
+    await grandSearchInput.fill(folderName);
+    await waitForSearchCompletion(page);
+
+    const matchingResult = page.getByLabel('Object Search Result').filter({
+      hasText: folderName
+    });
+    await expect(matchingResult).toHaveCount(1);
+
+    await page.getByLabel('OpenMCT Search').getByText(folderName).click();
+    await page.waitForURL(`**/${folder.uuid}?*`);
+
+    await page.getByRole('button', { name: 'More actions' }).click();
+    await page.getByRole('menuitem', { name: 'Remove' }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    await page.waitForURL((url) => !url.href.includes(folder.uuid));
+
+    await grandSearchInput.click();
+    await expect(matchingResult).toHaveCount(0);
+    await expect(page.getByText('No results found')).toBeVisible();
+  });
+
   test.describe('Search will test for the presence of the object_names index, and', () => {
     test('use index if available @couchdb @network', async ({ page }) => {
       await createObjectsForSearch(page);
