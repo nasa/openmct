@@ -288,7 +288,7 @@ export default {
       }
     }
   },
-  emits: ['update:focused-image-timestamp'],
+  emits: ['update:focused-image-timestamp', 'related-telemetry-is-available'],
   data() {
     let timeSystem = this.openmct.time.getTimeSystem();
     this.metadata = {};
@@ -480,6 +480,12 @@ export default {
 
       return display;
     },
+    relatedTelemetryIsAvailable() {
+      const hasHeading = this.focusedImage?.heading !== undefined;
+      const hasCameraAngleOfView = this.focusedImage?.transformations?.cameraAngleOfView > 0;
+
+      return hasHeading && hasCameraAngleOfView;
+    },
     shouldDisplayCompass() {
       const imageHeightAndWidth = this.sizedImageHeight !== 0 && this.sizedImageWidth !== 0;
       const display =
@@ -490,10 +496,8 @@ export default {
         imageHeightAndWidth &&
         this.zoomFactor === 1 &&
         this.imagePanned !== true;
-      const hasHeading = this.focusedImage?.heading !== undefined;
-      const hasCameraAngleOfView = this.focusedImage?.transformations?.cameraAngleOfView > 0;
 
-      return display && hasCameraAngleOfView && hasHeading;
+      return display && this.relatedTelemetryIsAvailable;
     },
     isSpacecraftPositionFresh() {
       let isFresh = undefined;
@@ -599,6 +603,11 @@ export default {
     }
   },
   watch: {
+    relatedTelemetryIsAvailable: {
+      handler(newValue, oldValue) {
+        this.$emit('related-telemetry-is-available', newValue, oldValue);
+      }
+    },
     imageHistory: {
       async handler(newHistory, oldHistory) {
         const newSize = newHistory.length;

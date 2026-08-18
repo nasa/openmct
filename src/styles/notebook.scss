@@ -629,10 +629,7 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-
-  > * + * {
-    margin-top: $interiorMargin;
-  }
+  gap: $interiorMargin;
 
   &__header {
     flex: 0 0 auto;
