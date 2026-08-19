@@ -120,17 +120,21 @@ async function testRegularTicks(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function testLogTicks(page) {
+  // Log mode ticks are chosen as round numbers in data space, so they read as
+  // powers of ten (or 1-3 / 1-2-5 steps for narrower ranges) rather than as the
+  // result of transforming an evenly spaced tick back out of symlog space.
   const yTicks = page.locator('.gl-plot-y-tick-label');
-  await expect(yTicks).toHaveCount(9);
-  await expect(yTicks.nth(0)).toHaveText('-2.98');
-  await expect(yTicks.nth(1)).toHaveText('-1.51');
-  await expect(yTicks.nth(2)).toHaveText('-0.58');
-  await expect(yTicks.nth(3)).toHaveText('-0.00');
-  await expect(yTicks.nth(4)).toHaveText('0.58');
-  await expect(yTicks.nth(5)).toHaveText('1.51');
-  await expect(yTicks.nth(6)).toHaveText('2.98');
-  await expect(yTicks.nth(7)).toHaveText('5.31');
-  await expect(yTicks.nth(8)).toHaveText('9.00');
+  await expect(yTicks).toHaveCount(6);
+  await expect(yTicks.nth(0)).toHaveText('-3');
+  await expect(yTicks.nth(1)).toHaveText('-1');
+  await expect(yTicks.nth(2)).toHaveText('0');
+  await expect(yTicks.nth(3)).toHaveText('1');
+  await expect(yTicks.nth(4)).toHaveText('3');
+  await expect(yTicks.nth(5)).toHaveText('10');
+
+  // Unlabelled gridlines fill in the decades between the labelled ticks.
+  const minorGridlines = page.locator('.gl-plot-hash--minor');
+  expect(await minorGridlines.count()).toBeGreaterThan(await yTicks.count());
 }
 
 /**

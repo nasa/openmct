@@ -24,7 +24,7 @@
   <div ref="tickContainer" class="u-contents js-ticks">
     <div v-if="position === 'left'" class="gl-plot-tick-wrapper">
       <div
-        v-for="(tick, i) in ticks"
+        v-for="(tick, i) in labelledTicks"
         :key="'tick-left' + i"
         class="gl-plot-tick gl-plot-x-tick-label"
         :style="{
@@ -38,7 +38,7 @@
     </div>
     <div v-if="position === 'top'" class="gl-plot-tick-wrapper">
       <div
-        v-for="(tick, i) in ticks"
+        v-for="(tick, i) in labelledTicks"
         :key="'tick-top' + i"
         class="gl-plot-tick gl-plot-y-tick-label"
         :style="{ top: (100 * (max - tick.value)) / interval + '%' }"
@@ -55,6 +55,7 @@
         v-for="(tick, i) in ticks"
         :key="'tick-right' + i"
         class="gl-plot-hash hash-v"
+        :class="{ 'gl-plot-hash--minor': tick.minor }"
         :style="{
           right: (100 * (max - tick.value)) / interval + '%',
           height: '100%'
@@ -66,6 +67,7 @@
         v-for="(tick, i) in ticks"
         :key="'tick-bottom' + i"
         class="gl-plot-hash hash-h"
+        :class="{ 'gl-plot-hash--minor': tick.minor }"
         :style="{ bottom: (100 * (tick.value - min)) / interval + '%', width: '100%' }"
       ></div>
     </template>
@@ -78,6 +80,7 @@ import { inject } from 'vue';
 import { useAlignment } from '../../ui/composables/alignmentContext.js';
 import configStore from './configuration/ConfigStore.js';
 import eventHelpers from './lib/eventHelpers.js';
+import { symlog } from './mathUtils.js';
 import {
   getFormattedTicks,
   getLogTicks,
@@ -85,8 +88,6 @@ import {
   measureTextWidth,
   ticks
 } from './tickUtils.js';
-
-const SECONDARY_TICK_NUMBER = 2;
 
 export default {
   inject: ['openmct', 'domainObject', 'objectPath'],
@@ -144,6 +145,14 @@ export default {
       interval: undefined,
       min: undefined
     };
+  },
+  computed: {
+    /**
+     * Minor ticks are gridlines only, so they are not given a label.
+     */
+    labelledTicks() {
+      return this.ticks.filter((tick) => !tick.minor);
+    }
   },
   mounted() {
     eventHelpers.extend(this);
@@ -237,10 +246,18 @@ export default {
       const number = this.tickCount;
       const clampRange = this.axis.get('values');
       const range = this.axis.get('displayRange');
+      const logMode = this.axisType === 'yAxis' && this.axis.get('logMode');
+
       if (clampRange) {
-        return clampRange.filter(function (value) {
-          return value <= range.max && value >= range.min;
-        }, this);
+        // The clamp values are in data space, but the display range is in symlog
+        // space when log mode is on, so they have to be compared as positions.
+        return clampRange
+          .map((dataValue) => ({
+            value: logMode ? symlog(dataValue, 10) : dataValue,
+            dataValue,
+            minor: false
+          }))
+          .filter((tick) => tick.value <= range.max && tick.value >= range.min);
       }
 
       let tickCount = number;
@@ -249,8 +266,8 @@ export default {
         tickCount = this.getDynamicTickCount(range);
       }
 
-      if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
-        return getLogTicks(range.min, range.max, number, SECONDARY_TICK_NUMBER);
+      if (logMode) {
+        return getLogTicks(range.min, range.max, number);
       } else if (this.isUtc) {
         return getTimeTicks(range.min, range.max, tickCount);
       } else {
@@ -285,14 +302,16 @@ export default {
       this.max = range.max;
       this.interval = Math.abs(range.min - range.max);
       if (this.shouldRegenerateTicks(range, forceRegeneration)) {
-        let newTicks = this.getTicks();
-        this.tickRange = {
-          min: Math.min(...newTicks),
-          max: Math.max(...newTicks),
-          step: newTicks[1] - newTicks[0]
-        };
+        const newTicks = getFormattedTicks(this.getTicks(), format);
+        // Minor ticks are excluded so that the step stays a labelled tick apart,
+        // otherwise regeneration would be triggered by the smallest range change.
+        const positions = newTicks.filter((tick) => !tick.minor).map((tick) => tick.value);
 
-        newTicks = getFormattedTicks(newTicks, format);
+        this.tickRange = {
+          min: Math.min(...positions),
+          max: Math.max(...positions),
+          step: positions[1] - positions[0]
+        };
 
         this.ticks = newTicks;
         this.shouldCheckWidth = true;
