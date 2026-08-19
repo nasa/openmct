@@ -59,6 +59,14 @@ export default class MCTChartAlarmPointSet {
 
   reset() {
     this.points = [];
+    // Points are stored relative to the chart's cached offset, so when that
+    // offset is rebuilt they have to be recalculated from the series data.
+    // During a series reset the data is empty at this point, so this is a no-op.
+    if (this.offset.xVal) {
+      this.series.getSeriesData().forEach(function (point, index) {
+        this.append(point, index, this.series);
+      }, this);
+    }
   }
 
   destroy() {

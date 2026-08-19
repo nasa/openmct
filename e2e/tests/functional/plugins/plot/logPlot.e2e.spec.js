@@ -83,6 +83,52 @@ test.describe('Log plot tests', () => {
     await testLogTicks(page);
   });
 
+  test('Enabling log mode on a large-amplitude series keeps the trace rendered', async ({
+    page
+  }) => {
+    // The chart caches a per-axis offset and stores vertices relative to it in a
+    // Float32Array. Log mode changes the space those values live in, so the offset
+    // has to be rebuilt - otherwise a large stale offset consumes the float32
+    // mantissa and the whole trace collapses onto a single row at the canvas edge.
+    // A large vertical offset keeps the first sample large, which is what sets the
+    // magnitude of the cached offset. Deliberately does not save or reload.
+    const largePlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Large Amplitude Overlay Plot'
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'Large Amplitude Sine Wave Generator',
+      parent: largePlot.uuid
+    });
+
+    // Creating the child leaves us on the generator, so its properties are editable here.
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+    await page.getByLabel('Amplitude', { exact: true }).fill('1000000000000');
+    await page.getByLabel('Offset', { exact: true }).fill('1000000000000');
+    await page.getByLabel('Save').click();
+
+    await page.goto(largePlot.url);
+
+    await expect
+      .poll(async () => (await measurePlotCanvases(page)).trace.rowSpan)
+      .toBeGreaterThan(100);
+
+    await enableEditMode(page);
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await enableLogMode(page);
+
+    // Without the offset rebuild the trace collapses to a rowSpan of 0.
+    await expect
+      .poll(async () => (await measurePlotCanvases(page)).trace.rowSpan)
+      .toBeGreaterThan(100);
+    // Alarm markers are drawn from the same offset, on a separate 2d canvas.
+    await expect
+      .poll(async () => (await measurePlotCanvases(page)).alarmMarkers.painted)
+      .toBeGreaterThan(0);
+  });
+
   // Leaving test as 'TODO' for now.
   // NOTE: Not eligible for community contributions.
   test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
@@ -135,6 +181,51 @@ async function testLogTicks(page) {
   // Unlabelled gridlines fill in the decades between the labelled ticks.
   const minorGridlines = page.locator('.gl-plot-hash--minor');
   expect(await minorGridlines.count()).toBeGreaterThan(await yTicks.count());
+}
+
+/**
+ * Measure what each of the plot's two canvases actually painted. The series line
+ * and markers are drawn with WebGL on the main canvas; alarm markers are drawn
+ * separately in 2d on the overlay canvas. `rowSpan` is the vertical extent of the
+ * painted pixels, which is what distinguishes a real trace from one that has
+ * collapsed to a single row.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @returns {Promise<{trace: {painted: number, rowSpan: number}, alarmMarkers: {painted: number, rowSpan: number}}>}
+ */
+async function measurePlotCanvases(page) {
+  await expect(page.locator('.gl-plot-y-tick-label').first()).toBeVisible();
+
+  return page.evaluate(() => {
+    function measure(selector) {
+      const source = document.querySelector(selector);
+      const copy = document.createElement('canvas');
+      copy.width = source.width;
+      copy.height = source.height;
+      const context = copy.getContext('2d');
+      context.drawImage(source, 0, 0);
+
+      const { data } = context.getImageData(0, 0, copy.width, copy.height);
+      let painted = 0;
+      let minRow = Infinity;
+      let maxRow = -Infinity;
+      for (let alpha = 3, pixel = 0; alpha < data.length; alpha += 4, pixel++) {
+        if (data[alpha] !== 0) {
+          painted++;
+          const row = Math.floor(pixel / copy.width);
+          minRow = Math.min(minRow, row);
+          maxRow = Math.max(maxRow, row);
+        }
+      }
+
+      return { painted, rowSpan: painted ? maxRow - minRow : 0 };
+    }
+
+    return {
+      trace: measure('.gl-plot-chart-area .js-main-canvas'),
+      alarmMarkers: measure('.gl-plot-chart-area .js-overlay-canvas')
+    };
+  });
 }
 
 /**
