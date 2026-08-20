@@ -86,7 +86,8 @@ import {
   getLogTicks,
   getTimeTicks,
   measureTextWidth,
-  ticks
+  ticks,
+  toTick
 } from './tickUtils.js';
 
 export default {
@@ -251,13 +252,15 @@ export default {
       if (clampRange) {
         // The clamp values are in data space, but the display range is in symlog
         // space when log mode is on, so they have to be compared as positions.
-        return clampRange
-          .map((dataValue) => ({
-            value: logMode ? symlog(dataValue, 10) : dataValue,
-            dataValue,
-            minor: false
-          }))
-          .filter((tick) => tick.value <= range.max && tick.value >= range.min);
+        const visibleTicks = [];
+        for (const dataValue of clampRange) {
+          const value = logMode ? symlog(dataValue, 10) : dataValue;
+          if (value <= range.max && value >= range.min) {
+            visibleTicks.push({ value, dataValue, minor: false });
+          }
+        }
+
+        return visibleTicks;
       }
 
       let tickCount = number;
@@ -269,9 +272,9 @@ export default {
       if (logMode) {
         return getLogTicks(range.min, range.max, number);
       } else if (this.isUtc) {
-        return getTimeTicks(range.min, range.max, tickCount);
+        return getTimeTicks(range.min, range.max, tickCount).map(toTick);
       } else {
-        return ticks(range.min, range.max, tickCount);
+        return ticks(range.min, range.max, tickCount).map(toTick);
       }
     },
 
@@ -305,7 +308,12 @@ export default {
         const newTicks = getFormattedTicks(this.getTicks(), format);
         // Minor ticks are excluded so that the step stays a labelled tick apart,
         // otherwise regeneration would be triggered by the smallest range change.
-        const positions = newTicks.filter((tick) => !tick.minor).map((tick) => tick.value);
+        const positions = [];
+        for (const tick of newTicks) {
+          if (!tick.minor) {
+            positions.push(tick.value);
+          }
+        }
 
         this.tickRange = {
           min: Math.min(...positions),
@@ -388,7 +396,7 @@ export default {
       } else {
         midValue = max;
       }
-      const formattedLabels = getFormattedTicks([min, midValue, max], format).map(
+      const formattedLabels = getFormattedTicks([min, midValue, max].map(toTick), format).map(
         (tick) => tick.text
       );
 

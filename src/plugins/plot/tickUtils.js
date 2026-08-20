@@ -464,33 +464,40 @@ export function commonSuffix(a, b) {
 }
 
 /**
+ * Build a tick from a value that is already in data space, i.e. one whose
+ * position and label are the same number. Log ticks are the exception - they
+ * are positioned in symlog space but labelled with the untransformed value -
+ * and so build their own ticks.
+ * @param {number} value
+ * @returns {{value: number, dataValue: number, minor: boolean}}
+ */
+export function toTick(value) {
+  return { value, dataValue: value, minor: false };
+}
+
+/**
  * Format a set of ticks for display, trimming any prefix and suffix they all
- * share. Accepts either plain values or the `{value, dataValue, minor}` ticks
- * produced by getLogTicks, where the value positioning the tick differs from
- * the value labelling it. Minor ticks are gridlines only, so they are left
- * unlabelled and excluded from the prefix/suffix comparison.
+ * share. Each tick carries the value that positions it and the value that
+ * labels it separately, since log mode positions in symlog space but labels
+ * with the untransformed number. Minor ticks are gridlines only, so they are
+ * left unlabelled and excluded from the prefix/suffix comparison.
+ *
+ * Ticks are augmented in place, and returned for convenience.
  */
 export function getFormattedTicks(newTicks, format) {
-  newTicks = newTicks.map(function (tick) {
-    const isValueOnly = typeof tick !== 'object' || tick === null;
-    const value = isValueOnly ? tick : tick.value;
-    const dataValue = isValueOnly ? tick : tick.dataValue;
-    const minor = isValueOnly ? false : Boolean(tick.minor);
+  const majorTicks = [];
+  const tickText = [];
 
-    return {
-      value,
-      dataValue,
-      minor,
-      text: minor ? '' : format(dataValue)
-    };
-  });
+  for (const tick of newTicks) {
+    tick.text = tick.minor ? '' : format(tick.dataValue);
 
-  const majorTicks = newTicks.filter((t) => !t.minor);
+    if (!tick.minor) {
+      majorTicks.push(tick);
+      tickText.push(tick.text);
+    }
+  }
 
   if (majorTicks.length && typeof majorTicks[0].text === 'string') {
-    const tickText = majorTicks.map(function (t) {
-      return t.text;
-    });
     const prefix = tickText.reduce(commonPrefix);
     const suffix = tickText.reduce(commonSuffix);
     majorTicks.forEach(function (t) {
