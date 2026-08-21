@@ -269,7 +269,7 @@ export default class NotificationAPI extends EventEmitter {
     let activeNotification = this.activeNotification;
 
     notificationModel.severity = notificationModel.severity || 'info';
-    notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
+    notificationModel.timestamp = moment.utc().format('YYYY-MM-DD HH:mm:ss.SSS');
 
     notification = this._createNotification(notificationModel);
 
