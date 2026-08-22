@@ -143,7 +143,9 @@ export default class FaultManagementAPI {
       return;
     }
 
-    return this.provider.getShelveDurations?.() ?? DEFAULT_SHELVE_DURATIONS;
+    const shelveDurations = this.provider.getShelveDurations?.();
+
+    return shelveDurations?.length ? shelveDurations : DEFAULT_SHELVE_DURATIONS;
   }
 }
 
