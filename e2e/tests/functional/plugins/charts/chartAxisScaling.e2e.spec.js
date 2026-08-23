@@ -217,6 +217,294 @@ test.describe('Chart axis scaling', () => {
     const persisted = await getDomainObject(page, barGraph.uuid);
     expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
   });
+
+  test('Bar Graph Y axis can be drawn on a log scale', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await expect(page.getByRole('checkbox', { name: 'Y Axis Log mode' })).not.toBeChecked();
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await saveAndFinishEditing(page);
+
+    expect(await getPlotlyAxisType(page, '.c-bar-chart', 'yaxis')).toBe('log');
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.logMode).toBe(true);
+  });
+
+  test('Scatter Plot Y axis can be drawn on a log scale', async ({ page }) => {
+    const scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });
+    await createExampleTelemetryObject(page, scatterPlot.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    // This data contains non-positive values, so enabling log mode raises the
+    // warning banner. Let it self-dismiss before saving - two banners at once
+    // would stack and leave saveAndFinishEditing waiting on the wrong one.
+    await expect(page.getByText(/cannot be shown on a logarithmic Y axis/)).toBeHidden();
+    await saveAndFinishEditing(page);
+
+    expect(await getPlotlyAxisType(page, '.c-scatter-chart', 'yaxis')).toBe('log');
+    // The X axis is unaffected - log scaling is offered on Y only. Plotly
+    // resolves every axis type, so a linear axis reads as 'linear', not absent.
+    expect(await getPlotlyAxisType(page, '.c-scatter-chart', 'xaxis')).toBe('linear');
+  });
+
+  test('A fixed range is given to Plotly in log units', async ({ page }) => {
+    // Plotly takes `range` as exponents when the axis type is log, so a range
+    // of 1 to 1000 must reach it as [0, 3]. Passing the raw numbers would draw
+    // an axis running from 10^1 to 10^1000.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '1', '1000');
+    await saveAndFinishEditing(page);
+
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([0, 3]);
+
+    // The configuration still stores the values the user typed, in data units
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 1, max: 1000 });
+  });
+
+  test('Log mode is offered on the Y axis only', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Bar Graph X values are metadata names, so a log scale is meaningless there
+    await expect(page.getByRole('checkbox', { name: 'Y Axis Log mode' })).toBeVisible();
+    await expect(page.getByRole('checkbox', { name: 'X Axis Log mode' })).toBeHidden();
+    // Fixed range controls remain on both axes
+    await expect(page.getByRole('checkbox', { name: 'X Axis Auto scale' })).toBeVisible();
+  });
+
+  test('A Bar Graph does not warn when no value is negative', async ({ page }) => {
+    // Bar Graphs are used for histograms and channel counts, where zero is
+    // ordinary, so only negative values are reported there - unlike a Scatter
+    // Plot, which reports everything a log axis drops. The example generator
+    // feeds a Bar Graph its array fields (Wavelength / Intensities), all of
+    // which are positive, so no warning is expected.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    await expect(page.getByRole('checkbox', { name: 'Y Axis Log mode' })).toBeChecked();
+    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeHidden();
+  });
+
+  test('A Bar Graph warns when a value is negative', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    // Offset only shifts the generator's scalar fields (Sine / Cosine), not its
+    // array values, so this must be paired with the axis change below.
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+    await page.getByLabel('Offset', { exact: true }).fill('-10');
+    await page.getByLabel('Save').click();
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // A Bar Graph defaults to the generator's array values, which are always
+    // positive. Every scalar range value is collapsed into a single X axis
+    // option ("Sine, Cosine"), and choosing it switches the chart to plotting
+    // those fields as bars - which the negative offset above then makes
+    // negative. See setupOptions in BarGraphOptions.vue.
+    await page
+      .getByRole('combobox')
+      .filter({ has: page.getByRole('option', { name: 'Sine, Cosine' }) })
+      .selectOption({ label: 'Sine, Cosine' });
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeVisible();
+  });
+
+  test('A Scatter Plot reports values a logarithmic Y axis cannot draw', async ({ page }) => {
+    const scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });
+    await createExampleTelemetryObject(page, scatterPlot.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeHidden();
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeVisible();
+  });
+
+  test('A log axis can be anchored and labelled at zero', async ({ page }) => {
+    // A log axis cannot draw a value of zero, but the axis is still anchored
+    // and labelled at 0 so the viewport stays locked and reads naturally when
+    // comparing spectra.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '0', '1000');
+
+    // The bottom of the axis reads 0, with decades above it
+    expect(await getPlotlyTickText(page, '.c-bar-chart', 'yaxis')).toEqual([
+      '0',
+      '1',
+      '10',
+      '100',
+      '1000'
+    ]);
+    // Fixed, not autoranged - this is the whole point of the locked viewport
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(false);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: 1000 });
+  });
+
+  test('A log axis rejects a negative minimum', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '-5', '1000');
+
+    await expect(page.getByText('Minimum cannot be negative in log mode.')).toBeVisible();
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
+  });
+  test('A log axis can fix only the maximum, leaving the minimum to autoscale', async ({
+    page
+  }) => {
+    // The reported scenario: channels commonly read zero, so an operator wants
+    // to cap the top without inventing a tiny minimum that would spend half the
+    // plot height on values nobody cares about.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '', '1000');
+
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+    // Log units - 1000 is 10^3
+    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
+      maxallowed: 3
+    });
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: null, max: 1000 });
+  });
+
+  test('A linear axis can fix only the maximum', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '', '500');
+
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
+      maxallowed: 500
+    });
+  });
+
+  test('Zero is a literal minimum on a linear axis, not an instruction to autoscale', async ({
+    page
+  }) => {
+    // Blank means "scale this end to the data". Zero means zero - anchoring a
+    // linear chart at zero is an ordinary request.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '0', '');
+
+    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
+      minallowed: 0
+    });
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: null });
+  });
+
+  test('Clearing both bounds is reported rather than persisted', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '', '');
+
+    await expect(page.getByText('Specify a Minimum, a Maximum, or both.')).toBeVisible();
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
+  });
+
+  test('A partially fixed range survives a save and reload', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '', '750');
+    await saveAndFinishEditing(page);
+
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
+      maxallowed: 750
+    });
+    // The blank bound reads back as Auto rather than as an empty cell
+    await expect(page.getByLabel('Y Axis Minimum value')).toHaveText('Auto');
+  });
 });
 
 /**
@@ -279,6 +567,59 @@ function getPlotlyRange(page, chartSelector, axis) {
   // eslint-disable-next-line playwright/no-raw-locators
   return page.locator(chartSelector).evaluate((el, axisName) => {
     return el.layout?.[axisName]?.range;
+  }, axis);
+}
+
+/**
+ * Read the axis `type` Plotly resolved, from the public `gd.layout`. Undefined
+ * for a linear axis, since the views only set `type` when log mode is on.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {'xaxis' | 'yaxis'} axis
+ * @returns {Promise<string | undefined>}
+ */
+function getPlotlyAxisType(page, chartSelector, axis) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  return page.locator(chartSelector).evaluate((el, axisName) => {
+    return el.layout?.[axisName]?.type;
+  }, axis);
+}
+
+/**
+ * Read the tick labels Plotly rendered for an axis, from the public `gd.layout`.
+ * Only meaningful where the ticks are given explicitly - a zero-anchored log
+ * axis overrides them so the floor can read "0".
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {'xaxis' | 'yaxis'} axis
+ * @returns {Promise<Array<string> | undefined>}
+ */
+function getPlotlyTickText(page, chartSelector, axis) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  return page.locator(chartSelector).evaluate((el, axisName) => {
+    return el.layout?.[axisName]?.ticktext;
+  }, axis);
+}
+
+/**
+ * Read the `autorangeoptions` Plotly resolved for an axis, from the public
+ * `gd.layout`. This is how a partially-fixed range is expressed: one end is
+ * held by minallowed/maxallowed while the other autoranges.
+ *
+ * Note these bounds are in LOG units on a log axis, exactly as `range` is, so a
+ * maximum of 1000 arrives as 3.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {'xaxis' | 'yaxis'} axis
+ * @returns {Promise<Object | undefined>}
+ */
+function getPlotlyAutorangeOptions(page, chartSelector, axis) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  return page.locator(chartSelector).evaluate((el, axisName) => {
+    return el.layout?.[axisName]?.autorangeoptions;
   }, axis);
 }
 

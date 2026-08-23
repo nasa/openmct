@@ -22,6 +22,27 @@
 <template>
   <ul class="l-inspector-part" :aria-label="`${axisLabel} Scaling`">
     <h2>{{ axisLabel }} Scaling</h2>
+    <li v-if="showLogMode" class="grid-row">
+      <div
+        class="grid-cell label"
+        :title="`Draw the ${axisLabel} on a logarithmic scale. Values of zero or less cannot be shown on a log axis and will be omitted.`"
+      >
+        Log mode
+      </div>
+      <div v-if="readOnly" class="grid-cell value" :aria-label="`${axisLabel} Log mode`">
+        {{ logMode ? 'Enabled' : 'Disabled' }}
+      </div>
+      <div v-else class="grid-cell value">
+        <input
+          :id="logModeInputId"
+          v-model="logMode"
+          class="js-log-mode-input"
+          type="checkbox"
+          @change="updateLogMode"
+        />
+        <label :for="logModeInputId" class="visually-hidden">{{ axisLabel }} Log mode</label>
+      </div>
+    </li>
     <li class="grid-row">
       <div
         class="grid-cell label"
@@ -46,9 +67,14 @@
       {{ validationErrors.range }}
     </div>
     <li v-show="!autoscale" class="grid-row">
-      <div class="grid-cell label" :title="`Minimum ${axisLabel} value.`">Minimum Value</div>
+      <div
+        class="grid-cell label"
+        :title="`Minimum ${axisLabel} value. Leave blank to scale this end to the data.`"
+      >
+        Minimum Value
+      </div>
       <div v-if="readOnly" class="grid-cell value" :aria-label="`${axisLabel} Minimum value`">
-        {{ rangeMin }}
+        {{ rangeMin === '' ? 'Auto' : rangeMin }}
       </div>
       <div v-else class="grid-cell value">
         <label :for="rangeMinInputId" class="visually-hidden">{{ axisLabel }} Minimum value</label>
@@ -57,14 +83,20 @@
           v-model="rangeMin"
           class="c-input--flex"
           type="number"
+          placeholder="Auto"
           @change="updateRange"
         />
       </div>
     </li>
     <li v-show="!autoscale" class="grid-row">
-      <div class="grid-cell label" :title="`Maximum ${axisLabel} value.`">Maximum Value</div>
+      <div
+        class="grid-cell label"
+        :title="`Maximum ${axisLabel} value. Leave blank to scale this end to the data.`"
+      >
+        Maximum Value
+      </div>
       <div v-if="readOnly" class="grid-cell value" :aria-label="`${axisLabel} Maximum value`">
-        {{ rangeMax }}
+        {{ rangeMax === '' ? 'Auto' : rangeMax }}
       </div>
       <div v-else class="grid-cell value">
         <label :for="rangeMaxInputId" class="visually-hidden">{{ axisLabel }} Maximum value</label>
@@ -73,6 +105,7 @@
           v-model="rangeMax"
           class="c-input--flex"
           type="number"
+          placeholder="Auto"
           @change="updateRange"
         />
       </div>
@@ -112,12 +145,22 @@ export default {
   data() {
     return {
       autoscale: true,
+      logMode: false,
       rangeMin: '',
       rangeMax: '',
       validationErrors: {}
     };
   },
   computed: {
+    /**
+     * Log scaling is offered on the Y axis only - see `isLogModeEnabled`.
+     */
+    showLogMode() {
+      return this.axisKey === 'yAxis';
+    },
+    logModeInputId() {
+      return `${this.axisKey}-log-mode-input`;
+    },
     autoscaleInputId() {
       return `${this.axisKey}-autoscale-input`;
     },
@@ -151,35 +194,71 @@ export default {
     initFormValues() {
       const axis = getAxisConfig(this.domainObject, this.axisKey);
       this.autoscale = axis.autoscale !== false;
+      this.logMode = axis.logMode === true;
 
-      if (axis.range?.min !== undefined && axis.range?.max !== undefined) {
-        this.rangeMin = axis.range.min;
-        this.rangeMax = axis.range.max;
+      // Each bound is read independently - one may be set while the other is
+      // deliberately blank. A persisted null means "autorange this end".
+      if (axis.range) {
+        this.rangeMin = axis.range.min ?? '';
+        this.rangeMax = axis.range.max ?? '';
       }
     },
+    /**
+     * A blank bound means "scale this end to the data", so either may be
+     * omitted - but not both, which would just be auto scaling.
+     */
     validateRange(range) {
       if (!range) {
         return 'Need range';
       }
 
-      if (range.min === '' || range.min === null || typeof range.min === 'undefined') {
-        return 'Must specify Minimum';
+      const hasMin = this.isEntered(range.min);
+      const hasMax = this.isEntered(range.max);
+
+      if (!hasMin && !hasMax) {
+        return 'Specify a Minimum, a Maximum, or both.';
       }
 
-      if (range.max === '' || range.max === null || typeof range.max === 'undefined') {
-        return 'Must specify Maximum';
-      }
-
-      if (Number.isNaN(Number(range.min))) {
+      if (hasMin && Number.isNaN(Number(range.min))) {
         return 'Minimum must be a number.';
       }
 
-      if (Number.isNaN(Number(range.max))) {
+      if (hasMax && Number.isNaN(Number(range.max))) {
         return 'Maximum must be a number.';
       }
 
-      if (Number(range.min) > Number(range.max)) {
+      if (hasMin && hasMax && Number(range.min) > Number(range.max)) {
         return 'Minimum must be less than Maximum.';
+      }
+
+      // Zero is allowed as a log minimum: the axis is anchored and labelled at
+      // 0 even though no value of zero can be drawn there. Negatives have no
+      // such reading, and a maximum of zero would leave nothing to draw at all.
+      if (this.logMode && hasMin && Number(range.min) < 0) {
+        return 'Minimum cannot be negative in log mode.';
+      }
+
+      if (this.logMode && hasMax && Number(range.max) <= 0) {
+        return 'Maximum must be greater than 0 in log mode.';
+      }
+    },
+    /**
+     * Whether the user actually put a value in the field. Zero counts - it is a
+     * real bound - so this tests for the absence of input, not falsiness.
+     */
+    isEntered(value) {
+      return value !== '' && value !== null && typeof value !== 'undefined';
+    },
+    updateLogMode() {
+      this.persist('logMode', this.logMode);
+
+      // Turning log mode on can invalidate a fixed range that was previously
+      // acceptable, and turning it off can make one valid again.
+      if (this.autoscale === false) {
+        this.validationErrors.range = this.validateRange({
+          min: this.rangeMin,
+          max: this.rangeMax
+        });
       }
     },
     updateAutoscale() {
@@ -206,9 +285,11 @@ export default {
         return;
       }
 
+      // An omitted bound persists as null so it survives JSON round-tripping
+      // and reads unambiguously as "autorange this end".
       this.persist('range', {
-        min: Number(range.min),
-        max: Number(range.max)
+        min: this.isEntered(range.min) ? Number(range.min) : null,
+        max: this.isEntered(range.max) ? Number(range.max) : null
       });
     },
     persist(property, value) {

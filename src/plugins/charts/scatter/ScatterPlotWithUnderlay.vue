@@ -21,10 +21,17 @@
 -->
 <template>
   <div ref="plotWrapper" class="has-local-controls" :class="{ 's-unsynced': isZoomed }">
-    <div v-if="isZoomed" class="l-state-indicators">
+    <div v-if="isZoomed || hasValuesHiddenByLogScale" class="l-state-indicators">
       <span
+        v-if="isZoomed"
         class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
         title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."
+      ></span>
+      <span
+        v-if="hasValuesHiddenByLogScale"
+        class="l-state-indicators__alert-no-lad t-object-alert icon-alert-triangle js-log-scale-alert"
+        :title="logScaleWarning"
+        :aria-label="logScaleWarning"
       ></span>
     </div>
     <div ref="plot" class="c-scatter-chart"></div>
@@ -52,7 +59,22 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 
 import { getValidatedData } from '@/plugins/plan/util';
 
-import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
+import {
+  AXIS_SCALING_KEY,
+  getAxisBoundsLayout,
+  getAxisConfig,
+  getLogAxisTickLayout,
+  hasNonPositiveValues,
+  isLogModeEnabled
+} from '../axisConfig.js';
+
+const LOG_SCALE_WARNING =
+  'Points with a Y value of zero or less cannot be shown on a logarithmic Y axis and have been omitted.';
+
+// `alert` notifications persist until dismissed - only `info` sets the model's
+// autoDismiss flag, and it cannot be set through options. Matches Open MCT's
+// own DEFAULT_AUTO_DISMISS_TIMEOUT.
+const LOG_SCALE_WARNING_DISMISS_MS = 3000;
 
 const PATH_COLORS = ['blue', 'red', 'green'];
 const MARKER_COLOR = 'white';
@@ -77,6 +99,7 @@ export default {
   data() {
     return {
       isZoomed: false,
+      hasValuesHiddenByLogScale: false,
       yAxisRange: {
         min: '',
         max: ''
@@ -86,6 +109,11 @@ export default {
         max: ''
       }
     };
+  },
+  computed: {
+    logScaleWarning() {
+      return LOG_SCALE_WARNING;
+    }
   },
   watch: {
     data: {
@@ -138,6 +166,8 @@ export default {
       this.unobserveColorChanges();
     }
 
+    clearTimeout(this.logScaleNotificationTimer);
+
     Plotly.purge(this.$refs.plot);
   },
   methods: {
@@ -167,29 +197,36 @@ export default {
       }
     },
     /**
-     * Build the Plotly range portion of an axis layout. A manually configured
-     * fixed range takes precedence; otherwise fall back to the underlay ranges
+     * Build the range portion of an axis layout. A manually configured range
+     * takes precedence; otherwise fall back to the underlay ranges
      * (`configuration.ranges`, set from the create form) so existing Scatter
-     * Plots keep their current behavior. `autorange` and `range` are mutually
-     * exclusive - Plotly ignores `range` when `autorange` is true.
+     * Plots keep their current behavior.
+     *
+     * A range may fix either end, both, or neither - see `getAxisBoundsLayout`,
+     * which also converts bounds to the log units Plotly expects on a
+     * logarithmic axis.
      */
     getAxisRangeLayout(axisKey, underlayRange) {
       const axis = getAxisConfig(this.domainObject, axisKey);
+      const logMode = isLogModeEnabled(this.domainObject, axisKey);
+      const axisType = logMode ? { type: 'log', ...getLogAxisTickLayout() } : {};
+
       if (axis.autoscale === false && axis.range) {
-        return {
-          autorange: false,
-          range: [axis.range.min, axis.range.max]
-        };
+        return { ...axisType, ...getAxisBoundsLayout(axis.range, logMode) };
       }
 
       if (underlayRange && underlayRange.min !== '' && underlayRange.max !== '') {
+        // The underlay bounds come from the create form and may be strings.
         return {
-          autorange: false,
-          range: [underlayRange.min, underlayRange.max]
+          ...axisType,
+          ...getAxisBoundsLayout(
+            { min: Number(underlayRange.min), max: Number(underlayRange.max) },
+            logMode
+          )
         };
       }
 
-      return { autorange: true };
+      return { ...axisType, autorange: true };
     },
     getLayout() {
       this.getAxisMinMax();
@@ -412,11 +449,51 @@ export default {
         return;
       }
 
+      this.updateLogScaleWarning();
       Plotly.react(
         this.$refs.plot,
         Array.from(this.data.concat(this.getShapes(this.shapesData))),
         this.getLayout()
       );
+    },
+    /**
+     * Decide whether a logarithmic Y axis will silently discard points, and
+     * warn the first time it will.
+     *
+     * Everything a log axis discards is reported here, zero included - unlike
+     * the Bar Graph, a Scatter Plot point at zero is a real sample the operator
+     * would otherwise not notice going missing. Each trace carries its own
+     * `yMin`, tracked by ScatterPlotView while the values are assembled, so
+     * this is one comparison per trace rather than a walk over every point.
+     * Underlay shapes are not considered - they are drawing annotations rather
+     * than telemetry.
+     *
+     * The notification is edge triggered: this runs on every telemetry update,
+     * so alerting whenever the condition holds would fire continuously.
+     */
+    updateLogScaleWarning() {
+      const previous = this.hasValuesHiddenByLogScale;
+
+      this.hasValuesHiddenByLogScale =
+        isLogModeEnabled(this.domainObject, 'yAxis') &&
+        this.data.some((trace) => hasNonPositiveValues(trace.yMin));
+
+      if (this.hasValuesHiddenByLogScale && !previous) {
+        this.showLogScaleNotification();
+      }
+    },
+    /**
+     * Raise the log scale warning as a self-dismissing alert, so the banner
+     * does not stack up with others and leave the operator clearing it by hand.
+     * The chart's own indicator stays for as long as the condition holds.
+     */
+    showLogScaleNotification() {
+      const notification = this.openmct.notifications.alert(LOG_SCALE_WARNING);
+
+      clearTimeout(this.logScaleNotificationTimer);
+      this.logScaleNotificationTimer = setTimeout(() => {
+        notification.dismiss();
+      }, LOG_SCALE_WARNING_DISMISS_MS);
     },
     /**
      * Zooming deliberately freezes the plot: it unsubscribes, and `isZoomed`

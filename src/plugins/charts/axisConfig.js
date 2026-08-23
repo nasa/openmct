@@ -27,12 +27,19 @@
  *
  *     axisScaling: {
  *       xAxis: { autoscale: <boolean>, range: { min: <number>, max: <number> } },
- *       yAxis: { ...same... }
+ *       yAxis: { ...same..., logMode: <boolean> }
  *     }
  *
- * `range` is only meaningful when `autoscale` is `false`. The inner objects
- * deliberately mirror the shape time-domain plots use for their own
- * `configuration.yAxis` (see src/plugins/plot/configuration/YAxisModel.js).
+ * `range` is only meaningful when `autoscale` is `false`. `logMode` applies to
+ * the Y axis only - see `isLogModeEnabled`. The inner objects deliberately
+ * mirror the shape time-domain plots use for their own `configuration.yAxis`
+ * (see src/plugins/plot/configuration/YAxisModel.js).
+ *
+ * Note that log mode here does NOT behave the way it does on a time-domain
+ * plot. Plots transform values with `symlog`, which is defined for zero and
+ * negatives, so no data is ever hidden. Plotly has no symlog (verified against
+ * plotly.js-basic-dist-min@2.29.1) so these charts use its native log10 axis,
+ * which silently discards every value <= 0. The views warn when that happens.
  *
  * These charts have two neighbouring configuration keys that sound similar but
  * are unrelated concerns. Do not confuse them:
@@ -61,7 +68,7 @@ export const AXIS_SCALING_KEY = 'axisScaling';
  * the domain object has no stored configuration - mutating it in place would
  * poison the default for every other chart in the application.
  */
-export const DEFAULT_AXIS_CONFIG = Object.freeze({ autoscale: true });
+export const DEFAULT_AXIS_CONFIG = Object.freeze({ autoscale: true, logMode: false });
 
 /**
  * The default `configuration.axisScaling` for a newly created chart.
@@ -85,4 +92,317 @@ export function getDefaultAxisScaling() {
  */
 export function getAxisConfig(domainObject, axisKey) {
   return domainObject?.configuration?.[AXIS_SCALING_KEY]?.[axisKey] ?? DEFAULT_AXIS_CONFIG;
+}
+
+/**
+ * Whether an axis should be drawn on a logarithmic scale.
+ *
+ * Log scaling is offered on the Y axis only. Bar Graph X values are metadata
+ * names rather than numbers, so a log scale there is meaningless, and Scatter
+ * Plot X is left linear for consistency between the two chart types. This is
+ * the single place that rule is enforced, so the views and the inspector form
+ * cannot disagree about it.
+ *
+ * @param {import('openmct').DomainObject} domainObject a Bar Graph or Scatter Plot
+ * @param {'xAxis' | 'yAxis'} axisKey which axis to read
+ * @returns {boolean}
+ */
+export function isLogModeEnabled(domainObject, axisKey) {
+  if (axisKey !== 'yAxis') {
+    return false;
+  }
+
+  return getAxisConfig(domainObject, axisKey).logMode === true;
+}
+
+/**
+ * Whether a value is usable as a bound on a log10 axis. Zero is excluded
+ * because log10(0) is -Infinity, so an axis bounded there has no lower end.
+ *
+ * This is about axis *bounds*, not about which samples get drawn. Plotly does
+ * also discard data values of exactly zero, but that is common and expected in
+ * telemetry, so it is not treated as a condition worth warning about - see
+ * `hasNegativeValues`.
+ *
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export function isPlottableOnLogAxis(value) {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0;
+}
+
+/*
+ * A log axis drops every value <= 0, but the two chart types disagree about
+ * which of those omissions is worth reporting. Keep them distinct - this is a
+ * deliberate difference, not an inconsistency to tidy up.
+ *
+ *   Bar Graph     `hasNegativeValues`    zero is routine. Bar Graphs are used
+ *                                        for histograms and channel counts,
+ *                                        where an empty bucket reads zero, so
+ *                                        warning about it would be constant
+ *                                        noise.
+ *
+ *   Scatter Plot  `hasNonPositiveValues`  zero is a real sample that the
+ *                                        operator would otherwise not notice
+ *                                        going missing from the plot.
+ */
+
+/**
+ * Whether a series contains values below zero.
+ *
+ * @param {number | null} seriesMinimum from `getSeriesMinimum`
+ * @returns {boolean}
+ */
+export function hasNegativeValues(seriesMinimum) {
+  return typeof seriesMinimum === 'number' && seriesMinimum < 0;
+}
+
+/**
+ * Whether a series contains values at or below zero - everything a log axis
+ * will discard.
+ *
+ * @param {number | null} seriesMinimum from `getSeriesMinimum`
+ * @returns {boolean}
+ */
+export function hasNonPositiveValues(seriesMinimum) {
+  return typeof seriesMinimum === 'number' && seriesMinimum <= 0;
+}
+
+/**
+ * The smallest value in a series, or `null` if it has none.
+ *
+ * `null` entries are skipped - in a Plotly trace they mean "no sample here",
+ * which is a gap rather than a value that could not be drawn.
+ *
+ * Views track this while assembling a trace so that log-axis warnings can be
+ * decided from a single number per trace, rather than by re-walking every
+ * point on each redraw.
+ *
+ * @param {Array<number | null>} values
+ * @returns {number | null}
+ */
+export function getSeriesMinimum(values) {
+  let minimum = null;
+
+  for (const value of values) {
+    if (typeof value !== 'number' || Number.isNaN(value)) {
+      continue;
+    }
+
+    if (minimum === null || value < minimum) {
+      minimum = value;
+    }
+  }
+
+  return minimum;
+}
+
+/**
+ * Tick configuration for a logarithmic axis.
+ *
+ * Left to itself Plotly labels every minor tick on a log axis: a three-decade
+ * range renders 28 labels - 0.1, 2, 3 ... 9, 1, 2 ... 9, 10, 2 ... 9, 100 -
+ * which is unreadable.
+ *
+ * `nticks` caps the label density and adapts as the range widens, dropping to
+ * every second or third decade rather than crowding. 4 is the highest value
+ * that still yields one label per decade from three decades up; 5 falls back to
+ * a 1-2-5 pattern and puts 10 labels on a three-decade axis again. Within a
+ * single decade Plotly labels the digits regardless, which is legible because
+ * there is only one decade on screen.
+ *
+ * The `minor` block keeps the fine gridlines that capping the labels would
+ * otherwise remove, unlabelled, so they read as reference lines rather than
+ * clutter. Returned fresh each call because Plotly normalises the layout object
+ * it is given.
+ *
+ * @returns {Object} the tick portion of a Plotly log axis layout
+ */
+export function getLogAxisTickLayout() {
+  return {
+    tickmode: 'auto',
+    nticks: 4,
+    minor: { dtick: 'D1', ticks: '', showgrid: true }
+  };
+}
+
+/**
+ * Whether an axis bound is set.
+ *
+ * A blank field is persisted as `null` and means "autorange this end". Zero is
+ * a real bound - anchoring a linear chart at zero is an ordinary request - so
+ * only the absence of a number counts as unset.
+ *
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export function isBoundSet(value) {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+/**
+ * Build the Plotly layout describing an axis's bounds.
+ *
+ * A range may fix neither end, one end, or both, which do not share a shape:
+ *
+ *   neither -> plain autorange
+ *   one     -> autorange, held on that side by `autorangeoptions`
+ *   both    -> an explicit `range`
+ *
+ * Every one of these bounds is given to Plotly in LOG units when the axis type
+ * is `log`, `autorangeoptions` included. Verified against
+ * plotly.js-basic-dist-min@2.29.1: `{maxallowed: 100}` on a log axis produced a
+ * range topping out at 10^100, while `{maxallowed: 2}` correctly capped it at
+ * 100. `range` behaves identically - [1, 1000] draws an axis from 10^1 to
+ * 10^1000 - so neither may be passed in data units.
+ *
+ * @param {{min: ?number, max: ?number}} range the configured range, in data units
+ * @param {boolean} logMode whether the axis is logarithmic
+ * @returns {Object} the bounds portion of a Plotly axis layout
+ */
+export function getAxisBoundsLayout(range, logMode) {
+  const hasMin = isUsableBound(range?.min, logMode);
+  const hasMax = isUsableBound(range?.max, logMode);
+
+  // A log axis cannot draw a value of zero, but an operator comparing spectra
+  // still wants the axis anchored and labelled at 0 - it keeps the viewport
+  // locked and reads naturally. Honour that: floor the drawable area just below
+  // the first decade and label the floor "0". Values of zero remain unplottable,
+  // which the chart already reports separately.
+  if (logMode && range?.min === 0 && isBoundSet(range?.max) && range.max > 0) {
+    return getZeroAnchoredLogLayout(range.max);
+  }
+
+  if (hasMin && hasMax) {
+    return {
+      autorange: false,
+      range: [toAxisUnits(range.min, logMode), toAxisUnits(range.max, logMode)]
+    };
+  }
+
+  if (hasMin) {
+    return {
+      autorange: true,
+      autorangeoptions: { minallowed: toAxisUnits(range.min, logMode) }
+    };
+  }
+
+  if (hasMax) {
+    return {
+      autorange: true,
+      autorangeoptions: { maxallowed: toAxisUnits(range.max, logMode) }
+    };
+  }
+
+  return { autorange: true };
+}
+
+/**
+ * How far below the first decade the "0" anchor sits, in decades. Small enough
+ * that it does not waste plot height, large enough that the label clears the
+ * one above it.
+ */
+const ZERO_ANCHOR_DECADES = 0.4;
+
+/**
+ * A log axis running from a labelled "0" up to `max`.
+ *
+ * The axis floor is a fraction of a decade below 1, tick-labelled "0". Above it
+ * the ticks are chosen to suit how many decades are on screen: a narrow axis
+ * gets 1-2-5 steps within each decade, a wide one only decades, and a very wide
+ * one every second or third decade. Labelling decades alone leaves a short axis
+ * almost empty - a 0 to 10 axis would carry three labels for its whole height.
+ *
+ * Ticks have to be given explicitly here, and the units differ from `range`:
+ * Plotly takes `tickvals` in DATA units on a log axis while `range` is in log
+ * units. Verified against plotly.js-basic-dist-min@2.29.1 - tickvals passed in
+ * log units are silently dropped.
+ *
+ * @param {number} max the configured maximum, in data units
+ * @returns {Object} a Plotly axis layout
+ */
+function getZeroAnchoredLogLayout(max) {
+  const floor = Math.pow(10, -ZERO_ANCHOR_DECADES);
+  const decades = Math.log10(max) + ZERO_ANCHOR_DECADES;
+  const mantissas = decades <= 3 ? [1, 2, 5] : [1];
+  const stride = decades <= 6 ? 1 : Math.ceil(decades / 6);
+
+  const tickvals = [floor];
+  const ticktext = ['0'];
+
+  // Anchor the stride to a multiple of itself so 1 is always a labelled tick.
+  // Starting from the floor's own exponent would offset the whole sequence and
+  // produce runs like 10, 1000, 100k that skip it.
+  const rawFirst = Math.floor(Math.log10(floor));
+  const firstExponent = Math.floor(rawFirst / stride) * stride;
+
+  for (let exponent = firstExponent; exponent <= Math.floor(Math.log10(max)); exponent += stride) {
+    for (const mantissa of mantissas) {
+      const value = Number((mantissa * Math.pow(10, exponent)).toPrecision(12));
+      if (value < floor || value > max) {
+        continue;
+      }
+
+      tickvals.push(value);
+      ticktext.push(formatTick(value));
+    }
+  }
+
+  // Always label the configured maximum. A fixed axis whose top edge carries no
+  // label reads as unfinished, and a strided sequence will not land on it - a
+  // 0 to 1e9 axis steps 1, 100, 10k, 1M, 100M and stops short.
+  if (tickvals[tickvals.length - 1] !== max) {
+    tickvals.push(max);
+    ticktext.push(formatTick(max));
+  }
+
+  return {
+    autorange: false,
+    range: [-ZERO_ANCHOR_DECADES, Math.log10(max)],
+    tickmode: 'array',
+    tickvals,
+    ticktext
+  };
+}
+
+/**
+ * Label a tick the way Plotly would have, so overriding the ticks does not
+ * change how numbers read. Plotly prints plainly up to 1000 and switches to SI
+ * suffixes above that - 10k, 1M - so match it.
+ */
+function formatTick(value) {
+  const suffixes = [
+    [1e12, 'T'],
+    [1e9, 'G'],
+    [1e6, 'M'],
+    [1e3, 'k']
+  ];
+
+  if (value >= 1e4) {
+    for (const [factor, suffix] of suffixes) {
+      if (value >= factor) {
+        return `${value / factor}${suffix}`;
+      }
+    }
+  }
+
+  return String(value);
+}
+
+/**
+ * Express a bound in the units the axis is drawn in.
+ */
+function toAxisUnits(value, logMode) {
+  return logMode ? Math.log10(value) : value;
+}
+
+/**
+ * Whether a bound can actually be drawn.
+ *
+ * A bound of zero or less has no logarithmic representation. The inspector
+ * rejects those, but a hand-edited or imported configuration could still carry
+ * one - autorange that end rather than hand Plotly an infinite bound.
+ */
+function isUsableBound(value, logMode) {
+  return isBoundSet(value) && (!logMode || isPlottableOnLogAxis(value));
 }
