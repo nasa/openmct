@@ -792,6 +792,8 @@ export default {
       if (axisOffset.anchorX === null || axisOffset.anchorX === undefined) {
         axisOffset.anchorX = viewportMinX;
         axisOffset.lastThresholdSpan = currentSpan;
+
+        this.resetResetChartElements(yAxisId);
         return;
       }
 
@@ -835,15 +837,13 @@ export default {
 
       const currentSpan = xRange.max - xRange.min;
 
-      const dimensions = [currentSpan, yRange.max - yRange.min];
-
-      let origin;
-      origin = [this.offset[yAxisId].x(xRange.min), this.offset[yAxisId].y(yRange.min)];
-
-      this.drawAPI.setDimensions(dimensions, origin);
-
       // Invoke the Fixed Baseline Strategy before building frame offsets
       this.checkAndApplyReanchor(yAxisId, xRange.min, currentSpan);
+
+      const dimensions = [currentSpan, yRange.max - yRange.min];
+      const origin = [this.offset[yAxisId].x(xRange.min), this.offset[yAxisId].y(yRange.min)];
+
+      this.drawAPI.setDimensions(dimensions, origin);
     },
     // match items by their yAxisId, but don't care if the series is hidden or not.
     matchByYAxisIdExcludingVisibility() {
