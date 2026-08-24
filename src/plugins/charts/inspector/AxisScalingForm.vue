@@ -117,7 +117,7 @@
 import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
 
 const LOG_MODE_NOTICE =
-  'A logarithmic axis cannot show values of zero or less. Any such values will be omitted from the plot.';
+  'A logarithmic axis can only show positive values in graphs and charts. Zero or negative values will be omitted from the plot.';
 
 /**
  * Manual (fixed) axis scaling for the Bar Graph and Scatter Plot views.
@@ -186,12 +186,6 @@ export default {
     if (this.unobserve) {
       this.unobserve();
     }
-
-    // Never leave the chart with auto scale off and an unusable range.
-    if (this.autoscale === false && this.validationErrors.range) {
-      this.autoscale = true;
-      this.persist('autoscale', true);
-    }
   },
   methods: {
     initFormValues() {
@@ -247,7 +241,8 @@ export default {
     },
     /**
      * Whether the user actually put a value in the field. Zero counts - it is a
-     * real bound - so this tests for the absence of input, not falsiness.
+     * real bound - so this tests for the absence of input rather than
+     * treating zero as empty.
      */
     isEntered(value) {
       return value !== '' && value !== null && typeof value !== 'undefined';

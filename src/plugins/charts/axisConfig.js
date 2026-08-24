@@ -201,8 +201,8 @@ export function getAxisBoundsLayout(range, logMode) {
   // A log axis cannot draw a value of zero, but an operator comparing spectra
   // still wants the axis anchored and labelled at 0 - it keeps the viewport
   // locked and reads naturally. Honour that: floor the drawable area just below
-  // the first decade and label the floor "0". Values of zero remain unplottable,
-  // which the chart already reports separately.
+  // the first decade and label the floor "0". Values of zero still cannot be
+  // drawn there, which the inspector says when log mode is switched on.
   if (logMode && range?.min === 0 && isBoundSet(range?.max) && range.max > 0) {
     return getZeroAnchoredLogLayout(range.max);
   }
@@ -283,7 +283,7 @@ function getZeroAnchoredLogLayout(max) {
   }
 
   // Always label the configured maximum. A fixed axis whose top edge carries no
-  // label reads as unfinished, and a strided sequence will not land on it - a
+  // label reads as unfinished, and a stride will not always land on it - a
   // 0 to 1e9 axis steps 1, 100, 10k, 1M, 100M and stops short.
   if (tickvals[tickvals.length - 1] !== max) {
     tickvals.push(max);

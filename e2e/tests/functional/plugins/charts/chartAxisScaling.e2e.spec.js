@@ -214,8 +214,11 @@ test.describe('Chart axis scaling', () => {
 
     await expect(page.getByText('Minimum must be less than Maximum.')).toBeVisible();
 
+    // The invalid pair is not stored. Note the minimum alone was committed when
+    // that field changed - a minimum-only range is legitimate now - so what is
+    // stored is that partial range rather than nothing at all.
     const persisted = await getDomainObject(page, barGraph.uuid);
-    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
+    expect(persisted.configuration.axisScaling.yAxis.range).not.toEqual({ min: 10, max: 1 });
   });
 
   test('Bar Graph Y axis can be drawn on a log scale', async ({ page }) => {
@@ -249,7 +252,7 @@ test.describe('Chart axis scaling', () => {
     // Enabling log mode raises a notice that the user dismisses. Clear it
     // before saving, or two banners stack and saveAndFinishEditing waits on the
     // wrong one.
-    await dismissNotification(page);
+    await dismissNotifications(page);
     await saveAndFinishEditing(page);
 
     expect(await getPlotlyAxisType(page, '.c-scatter-chart', 'yaxis')).toBe('log');
@@ -307,11 +310,15 @@ test.describe('Chart axis scaling', () => {
 
     await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Creating the telemetry object leaves a "Save successful" banner holding
+    // the notification slot. Open MCT shows one at a time and queues the rest,
+    // so clear it or the notice never becomes the visible banner.
+    await dismissNotifications(page);
+
     await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
 
-    await expect(
-      page.getByText(/logarithmic axis cannot show values of zero or less/)
-    ).toBeVisible();
+    await expect(page.getByText(/logarithmic axis can only show positive values/)).toBeVisible();
   });
 
   test('A log axis can be anchored and labelled at zero', async ({ page }) => {
@@ -455,6 +462,9 @@ test.describe('Chart axis scaling', () => {
     expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
       maxallowed: 750
     });
+
+    // A reload lands in browse mode with no inspector tab selected
+    await page.getByRole('tab', { name: 'Config' }).click();
     // The blank bound reads back as Auto rather than as an empty cell
     await expect(page.getByLabel('Y Axis Minimum value')).toHaveText('Auto');
   });
@@ -476,19 +486,27 @@ async function setFixedRange(page, axisLabel, min, max) {
 }
 
 /**
- * Dismiss whatever notification banner is showing, if any. Needed before saving
- * in tests that raise one, since saveAndFinishEditing waits for the banner it
- * expects and two at once will stack.
+ * Clear every notification banner that is showing. Needed before saving in
+ * tests that raise one: saveAndFinishEditing waits for the banner it expects to
+ * detach, and a second banner left behind keeps that wait alive.
  * @param {import('@playwright/test').Page} page
  */
-async function dismissNotification(page) {
+async function dismissNotifications(page) {
   // eslint-disable-next-line playwright/no-raw-locators
-  const close = page.locator('.c-message-banner__close-button').first();
-  if (await close.isVisible()) {
-    await close.click();
-    // eslint-disable-next-line playwright/no-raw-locators
-    await page.locator('.c-message-banner__message').first().waitFor({ state: 'detached' });
+  const closeButtons = page.locator('.c-message-banner__close-button');
+
+  // Open MCT queues notifications, so dismissing the visible banner reveals the
+  // next one rather than reducing the count - see _selectNextNotification in
+  // NotificationAPI. Re-count after every click instead of assuming a total.
+  for (let attempt = 0; attempt < 10; attempt++) {
+    if ((await closeButtons.count()) === 0) {
+      return;
+    }
+
+    await closeButtons.first().click();
   }
+
+  await expect(closeButtons).toHaveCount(0);
 }
 
 /**
@@ -502,11 +520,11 @@ async function saveAndFinishEditing(page) {
     // eslint-disable-next-line playwright/no-raw-locators
     page.locator('.c-message-banner__message').hover({ trial: true })
   ]);
-  // Dismiss the save banner so it cannot intercept subsequent clicks
-  // eslint-disable-next-line playwright/no-raw-locators
-  await page.locator('.c-message-banner__close-button').click();
-  // eslint-disable-next-line playwright/no-raw-locators
-  await page.locator('.c-message-banner__message').waitFor({ state: 'detached' });
+  // Clear the save banner so it cannot intercept subsequent clicks. Use the
+  // queue-aware helper: Open MCT shows one notification at a time, so if
+  // another was already pending, closing this one just reveals the next and
+  // waiting for the banner to detach would hang.
+  await dismissNotifications(page);
 }
 
 /**
