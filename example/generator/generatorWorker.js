@@ -295,11 +295,7 @@
   function intensities() {
     let values = [];
     while (values.length < 5) {
-      const negativize = Math.random();
-      let randomValue = Math.random() * 10;
-      if (negativize > 0.5) {
-        randomValue = -randomValue;
-      }
+      const randomValue = Math.random() * 10;
       if (!values.includes(randomValue)) {
         values.push(String(randomValue));
       }
