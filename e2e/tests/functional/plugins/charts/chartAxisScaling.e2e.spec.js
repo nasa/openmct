@@ -246,10 +246,10 @@ test.describe('Chart axis scaling', () => {
     await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Config' }).click();
     await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
-    // This data contains non-positive values, so enabling log mode raises the
-    // warning banner. Let it self-dismiss before saving - two banners at once
-    // would stack and leave saveAndFinishEditing waiting on the wrong one.
-    await expect(page.getByText(/cannot be shown on a logarithmic Y axis/)).toBeHidden();
+    // Enabling log mode raises a notice that the user dismisses. Clear it
+    // before saving, or two banners stack and saveAndFinishEditing waits on the
+    // wrong one.
+    await dismissNotification(page);
     await saveAndFinishEditing(page);
 
     expect(await getPlotlyAxisType(page, '.c-scatter-chart', 'yaxis')).toBe('log');
@@ -296,12 +296,10 @@ test.describe('Chart axis scaling', () => {
     await expect(page.getByRole('checkbox', { name: 'X Axis Auto scale' })).toBeVisible();
   });
 
-  test('A Bar Graph does not warn when no value is negative', async ({ page }) => {
-    // Bar Graphs are used for histograms and channel counts, where zero is
-    // ordinary, so only negative values are reported there - unlike a Scatter
-    // Plot, which reports everything a log axis drops. The example generator
-    // feeds a Bar Graph its array fields (Wavelength / Intensities), all of
-    // which are positive, so no warning is expected.
+  test('Enabling log mode says what a log axis cannot show', async ({ page }) => {
+    // The limitation belongs to the axis, not to whatever data is on screen, so
+    // it is stated once to whoever configures the chart rather than detected
+    // while plotting. It stays until dismissed.
     const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
     await createExampleTelemetryObject(page, barGraph.uuid);
 
@@ -311,54 +309,9 @@ test.describe('Chart axis scaling', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
     await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
 
-    await expect(page.getByRole('checkbox', { name: 'Y Axis Log mode' })).toBeChecked();
-    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeHidden();
-  });
-
-  test('A Bar Graph warns when a value is negative', async ({ page }) => {
-    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
-    await createExampleTelemetryObject(page, barGraph.uuid);
-
-    // Offset only shifts the generator's scalar fields (Sine / Cosine), not its
-    // array values, so this must be paired with the axis change below.
-    await page.getByLabel('More actions').click();
-    await page.getByLabel('Edit Properties...').click();
-    await page.getByLabel('Offset', { exact: true }).fill('-10');
-    await page.getByLabel('Save').click();
-
-    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
-
-    await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { name: 'Config' }).click();
-
-    // A Bar Graph defaults to the generator's array values, which are always
-    // positive. Every scalar range value is collapsed into a single X axis
-    // option ("Sine, Cosine"), and choosing it switches the chart to plotting
-    // those fields as bars - which the negative offset above then makes
-    // negative. See setupOptions in BarGraphOptions.vue.
-    await page
-      .getByRole('combobox')
-      .filter({ has: page.getByRole('option', { name: 'Sine, Cosine' }) })
-      .selectOption({ label: 'Sine, Cosine' });
-
-    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
-
-    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeVisible();
-  });
-
-  test('A Scatter Plot reports values a logarithmic Y axis cannot draw', async ({ page }) => {
-    const scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });
-    await createExampleTelemetryObject(page, scatterPlot.uuid);
-
-    await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
-
-    await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { name: 'Config' }).click();
-
-    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeHidden();
-
-    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
-    await expect(page.getByLabel(/cannot be shown on a logarithmic Y axis/)).toBeVisible();
+    await expect(
+      page.getByText(/logarithmic axis cannot show values of zero or less/)
+    ).toBeVisible();
   });
 
   test('A log axis can be anchored and labelled at zero', async ({ page }) => {
@@ -520,6 +473,22 @@ async function setFixedRange(page, axisLabel, min, max) {
   await page.getByLabel(`${axisLabel} Maximum value`).fill(max);
   // Blur so the final @change handler fires before we assert or save
   await page.getByLabel(`${axisLabel} Maximum value`).blur();
+}
+
+/**
+ * Dismiss whatever notification banner is showing, if any. Needed before saving
+ * in tests that raise one, since saveAndFinishEditing waits for the banner it
+ * expects and two at once will stack.
+ * @param {import('@playwright/test').Page} page
+ */
+async function dismissNotification(page) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  const close = page.locator('.c-message-banner__close-button').first();
+  if (await close.isVisible()) {
+    await close.click();
+    // eslint-disable-next-line playwright/no-raw-locators
+    await page.locator('.c-message-banner__message').first().waitFor({ state: 'detached' });
+  }
 }
 
 /**

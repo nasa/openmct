@@ -34,7 +34,6 @@
 <script>
 import _ from 'lodash';
 
-import { getSeriesMinimum } from '../axisConfig.js';
 import BarGraph from './BarGraphPlot.vue';
 
 export default {
@@ -194,16 +193,12 @@ export default {
       this.requestDataFor(telemetryObject);
       this.subscribeToObject(telemetryObject);
     },
-    setTrace(key, name, axisMetadata, xValues, yValues, yMin = null) {
+    setTrace(key, name, axisMetadata, xValues, yValues) {
       let trace = {
         key,
         name: name,
         x: xValues,
         y: yValues,
-        // Smallest Y value in this trace, tracked while the values are
-        // assembled so that BarGraphPlot can decide whether a logarithmic axis
-        // will drop anything without re-walking every point on each redraw.
-        yMin,
         xAxisMetadata: {},
         yAxisMetadata: axisMetadata.yAxisMetadata,
         type: this.domainObject.configuration.useBar ? 'bar' : 'scatter',
@@ -346,8 +341,6 @@ export default {
 
       let xValues = [];
       let yValues = [];
-      // Tracked alongside yValues rather than computed afterwards - see setTrace
-      let yMin = null;
       let xAxisMetadata = axisMetadata.xAxisMetadata.find(
         (metadata) => metadata.key === this.domainObject.configuration.axes.xKey
       );
@@ -361,9 +354,6 @@ export default {
         metadataKey = this.domainObject.configuration.axes.yKey;
         if (data[metadataKey] !== undefined) {
           yValues = this.parse(key, metadataKey, data);
-          // This branch assigns the array wholesale, so there is no existing
-          // pass to fold the minimum into.
-          yMin = getSeriesMinimum(yValues);
         }
       } else {
         //populate X and Y values for plotly
@@ -382,20 +372,13 @@ export default {
             if (data[metadata.key] !== undefined) {
               const parsedValue = this.parse(key, metadata.key, data);
               yValues.push(parsedValue);
-              if (
-                typeof parsedValue === 'number' &&
-                !Number.isNaN(parsedValue) &&
-                (yMin === null || parsedValue < yMin)
-              ) {
-                yMin = parsedValue;
-              }
             } else {
               yValues.push(null);
             }
           });
       }
 
-      this.setTrace(key, telemetryObject.name, axisMetadata, xValues, yValues, yMin);
+      this.setTrace(key, telemetryObject.name, axisMetadata, xValues, yValues);
     },
     isDataInTimeRange(datum, key, telemetryObject) {
       const timeSystemKey = this.timeContext.getTimeSystem().key;

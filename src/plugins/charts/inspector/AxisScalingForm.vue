@@ -116,6 +116,9 @@
 <script>
 import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
 
+const LOG_MODE_NOTICE =
+  'A logarithmic axis cannot show values of zero or less. Any such values will be omitted from the plot.';
+
 /**
  * Manual (fixed) axis scaling for the Bar Graph and Scatter Plot views.
  *
@@ -251,6 +254,15 @@ export default {
     },
     updateLogMode() {
       this.persist('logMode', this.logMode);
+
+      // State the limitation once, to the person configuring the chart. It is a
+      // property of a log axis rather than of whatever data happens to be on
+      // screen, so it is said here rather than detected while plotting - and
+      // whoever builds the plot is the one who can act on it. Left for the user
+      // to dismiss, so it cannot be missed.
+      if (this.logMode) {
+        this.openmct.notifications.alert(LOG_MODE_NOTICE);
+      }
 
       // Turning log mode on can invalidate a fixed range that was previously
       // acceptable, and turning it off can make one valid again.

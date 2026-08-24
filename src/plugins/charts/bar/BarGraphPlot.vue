@@ -21,17 +21,10 @@
 -->
 <template>
   <div ref="plotWrapper" class="has-local-controls" :class="{ 's-unsynced': isZoomed }">
-    <div v-if="isZoomed || hasValuesHiddenByLogScale" class="l-state-indicators">
+    <div v-if="isZoomed" class="l-state-indicators">
       <span
-        v-if="isZoomed"
         class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
         title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."
-      ></span>
-      <span
-        v-if="hasValuesHiddenByLogScale"
-        class="l-state-indicators__alert-no-lad t-object-alert icon-alert-triangle js-log-scale-alert"
-        :title="logScaleWarning"
-        :aria-label="logScaleWarning"
       ></span>
     </div>
     <div ref="plot" class="c-bar-chart" @plotly_relayout="zoom"></div>
@@ -58,17 +51,8 @@ import {
   getAxisBoundsLayout,
   getAxisConfig,
   getLogAxisTickLayout,
-  hasNegativeValues,
   isLogModeEnabled
 } from '../axisConfig.js';
-
-const LOG_SCALE_WARNING =
-  'Negative values cannot be shown on a logarithmic Y axis and have been omitted.';
-
-// `alert` notifications persist until dismissed - only `info` sets the model's
-// autoDismiss flag, and it cannot be set through options. Matches Open MCT's
-// own DEFAULT_AUTO_DISMISS_TIMEOUT.
-const LOG_SCALE_WARNING_DISMISS_MS = 3000;
 
 const MULTI_AXES_X_PADDING_PERCENT = {
   LEFT: 8,
@@ -95,13 +79,8 @@ export default {
   data() {
     return {
       isZoomed: false,
-      hasValuesHiddenByLogScale: false
+      hasWarnedAboutLogScale: false
     };
-  },
-  computed: {
-    logScaleWarning() {
-      return LOG_SCALE_WARNING;
-    }
   },
   watch: {
     data: {
@@ -133,8 +112,6 @@ export default {
     if (this.removeAxisScalingListener) {
       this.removeAxisScalingListener();
     }
-
-    clearTimeout(this.logScaleNotificationTimer);
 
     Plotly.purge(this.$refs.plot);
   },
@@ -327,45 +304,7 @@ export default {
         return;
       }
 
-      this.updateLogScaleWarning();
       Plotly.react(this.$refs.plot, Array.from(this.data), this.getLayout());
-    },
-    /**
-     * Decide whether a logarithmic Y axis will silently discard values, and
-     * warn the first time it will.
-     *
-     * Only negative values are reported. Plotly also drops values of exactly
-     * zero, but a channel reading zero is ordinary and warning about it would
-     * be noise. Each trace carries its own `yMin`, tracked by BarGraphView
-     * while the values are assembled, so this is one comparison per trace
-     * rather than a walk over every point.
-     *
-     * The notification is edge triggered: this runs on every telemetry update,
-     * so alerting whenever the condition holds would fire continuously.
-     */
-    updateLogScaleWarning() {
-      const previous = this.hasValuesHiddenByLogScale;
-
-      this.hasValuesHiddenByLogScale =
-        isLogModeEnabled(this.domainObject, 'yAxis') &&
-        this.data.some((trace) => hasNegativeValues(trace.yMin));
-
-      if (this.hasValuesHiddenByLogScale && !previous) {
-        this.showLogScaleNotification();
-      }
-    },
-    /**
-     * Raise the log scale warning as a self-dismissing alert, so the banner
-     * does not stack up with others and leave the operator clearing it by hand.
-     * The chart's own indicator stays for as long as the condition holds.
-     */
-    showLogScaleNotification() {
-      const notification = this.openmct.notifications.alert(LOG_SCALE_WARNING);
-
-      clearTimeout(this.logScaleNotificationTimer);
-      this.logScaleNotificationTimer = setTimeout(() => {
-        notification.dismiss();
-      }, LOG_SCALE_WARNING_DISMISS_MS);
     },
     zoom(eventData) {
       const autorange = eventData['xaxis.autorange'];

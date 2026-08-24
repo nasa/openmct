@@ -246,32 +246,18 @@ export default {
       metadataKey = this.domainObject.configuration.axes.yKey;
       if (data[metadataKey] !== undefined) {
         valueForTimestamp.y = this.format(key, metadataKey, data);
-        // `format` can return a string when the telemetry defines a format
-        // string, so keep the parsed number too - `yMin` needs to compare
-        // values, not their presentation.
-        valueForTimestamp.yValue = this.parse(key, metadataKey, data);
       }
 
       this.valuesByTimestamp[timestamp] = valueForTimestamp;
     },
     updateTrace(telemetryObject) {
       const xAndyValues = Object.values(this.valuesByTimestamp);
-      // Built in a single pass rather than two maps, which also gives us the
-      // smallest Y value for free - see `yMin` on the trace below.
+      // Built in a single pass rather than two maps
       const xValues = [];
       const yValues = [];
-      let yMin = null;
       for (const value of xAndyValues) {
         xValues.push(value.x);
         yValues.push(value.y);
-
-        if (
-          typeof value.yValue === 'number' &&
-          !Number.isNaN(value.yValue) &&
-          (yMin === null || value.yValue < yMin)
-        ) {
-          yMin = value.yValue;
-        }
       }
 
       const axisMetadata = this.getAxisMetadata(telemetryObject);
@@ -290,10 +276,6 @@ export default {
         name: this.domainObject.name,
         x: xValues,
         y: yValues,
-        // Smallest Y value in this trace, tracked while the values are
-        // assembled so that ScatterPlotWithUnderlay can decide whether a
-        // logarithmic axis will drop anything without re-walking every point.
-        yMin,
         text: yValues.map(String),
         xAxisMetadata: xAxisMetadata,
         yAxisMetadata: yAxisMetadata,

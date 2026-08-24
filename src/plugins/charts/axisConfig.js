@@ -39,7 +39,9 @@
  * plot. Plots transform values with `symlog`, which is defined for zero and
  * negatives, so no data is ever hidden. Plotly has no symlog (verified against
  * plotly.js-basic-dist-min@2.29.1) so these charts use its native log10 axis,
- * which silently discards every value <= 0. The views warn when that happens.
+ * which silently discards every value <= 0. The inspector says so when log
+ * mode is switched on, since that is a property of the axis rather than of
+ * whatever data happens to be on screen.
  *
  * These charts have two neighbouring configuration keys that sound similar but
  * are unrelated concerns. Do not confuse them:
@@ -119,82 +121,14 @@ export function isLogModeEnabled(domainObject, axisKey) {
  * Whether a value is usable as a bound on a log10 axis. Zero is excluded
  * because log10(0) is -Infinity, so an axis bounded there has no lower end.
  *
- * This is about axis *bounds*, not about which samples get drawn. Plotly does
- * also discard data values of exactly zero, but that is common and expected in
- * telemetry, so it is not treated as a condition worth warning about - see
- * `hasNegativeValues`.
+ * This is about axis *bounds*, not about which samples get drawn - Plotly
+ * discards any data value <= 0 on a log axis regardless of the bounds.
  *
  * @param {unknown} value
  * @returns {boolean}
  */
 export function isPlottableOnLogAxis(value) {
   return typeof value === 'number' && Number.isFinite(value) && value > 0;
-}
-
-/*
- * A log axis drops every value <= 0, but the two chart types disagree about
- * which of those omissions is worth reporting. Keep them distinct - this is a
- * deliberate difference, not an inconsistency to tidy up.
- *
- *   Bar Graph     `hasNegativeValues`    zero is routine. Bar Graphs are used
- *                                        for histograms and channel counts,
- *                                        where an empty bucket reads zero, so
- *                                        warning about it would be constant
- *                                        noise.
- *
- *   Scatter Plot  `hasNonPositiveValues`  zero is a real sample that the
- *                                        operator would otherwise not notice
- *                                        going missing from the plot.
- */
-
-/**
- * Whether a series contains values below zero.
- *
- * @param {number | null} seriesMinimum from `getSeriesMinimum`
- * @returns {boolean}
- */
-export function hasNegativeValues(seriesMinimum) {
-  return typeof seriesMinimum === 'number' && seriesMinimum < 0;
-}
-
-/**
- * Whether a series contains values at or below zero - everything a log axis
- * will discard.
- *
- * @param {number | null} seriesMinimum from `getSeriesMinimum`
- * @returns {boolean}
- */
-export function hasNonPositiveValues(seriesMinimum) {
-  return typeof seriesMinimum === 'number' && seriesMinimum <= 0;
-}
-
-/**
- * The smallest value in a series, or `null` if it has none.
- *
- * `null` entries are skipped - in a Plotly trace they mean "no sample here",
- * which is a gap rather than a value that could not be drawn.
- *
- * Views track this while assembling a trace so that log-axis warnings can be
- * decided from a single number per trace, rather than by re-walking every
- * point on each redraw.
- *
- * @param {Array<number | null>} values
- * @returns {number | null}
- */
-export function getSeriesMinimum(values) {
-  let minimum = null;
-
-  for (const value of values) {
-    if (typeof value !== 'number' || Number.isNaN(value)) {
-      continue;
-    }
-
-    if (minimum === null || value < minimum) {
-      minimum = value;
-    }
-  }
-
-  return minimum;
 }
 
 /**
