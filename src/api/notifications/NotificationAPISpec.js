@@ -126,6 +126,27 @@ describe('The Notification API', () => {
     });
   });
 
+  describe('the notification timestamp', () => {
+    let timestampNotificationAPIInstance;
+
+    beforeEach(() => {
+      jasmine.clock().install();
+      jasmine.clock().mockDate(new Date(Date.UTC(2026, 7, 19, 13, 34, 56, 789)));
+      timestampNotificationAPIInstance = new NotificationAPI();
+    });
+
+    afterEach(() => {
+      timestampNotificationAPIInstance.dismissAllNotifications();
+      jasmine.clock().uninstall();
+    });
+
+    it('uses 24-hour time with millisecond precision', () => {
+      const timestamp = timestampNotificationAPIInstance.alert('Timestamp test').model.timestamp;
+
+      expect(timestamp).toMatch(/^\d{4}-\d{2}-\d{2} 13:\d{2}:\d{2}\.\d{3}$/);
+    });
+  });
+
   describe('the progress method', () => {
     let title = 'This is a progress notification';
     let message1 = 'Example progress message 1';
