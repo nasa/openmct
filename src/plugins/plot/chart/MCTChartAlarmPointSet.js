@@ -59,6 +59,10 @@ export default class MCTChartAlarmPointSet {
 
   reset() {
     this.points = [];
+    // We weren't appending points after resetting.
+    this.series.getSeriesData().forEach(function (point, index) {
+      this.append(point, index, this.series);
+    }, this);
   }
 
   destroy() {
