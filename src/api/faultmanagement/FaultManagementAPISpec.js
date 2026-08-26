@@ -145,11 +145,47 @@ describe('The Fault Management API', () => {
     expect(openmct.faults.getShelveDurations()).toEqual(DEFAULT_SHELVE_DURATIONS);
   });
 
+  it('returns the default shelve durations when there is no provider', () => {
+    openmct.faults.addProvider(undefined);
+
+    expect(openmct.faults.getShelveDurations()).toEqual(DEFAULT_SHELVE_DURATIONS);
+  });
+
   it('returns the default shelve durations when the provider returns an empty array', () => {
     openmct.faults.addProvider({
       ...faultManagementProvider,
       getShelveDurations: () => []
     });
+
+    expect(openmct.faults.getShelveDurations()).toEqual(DEFAULT_SHELVE_DURATIONS);
+  });
+
+  [
+    'not an array',
+    {
+      0: {
+        name: '1 Minute',
+        value: 60000
+      },
+      length: 1
+    },
+    new Array(1),
+    [{}]
+  ].forEach((invalidShelveDurations) => {
+    it('returns the default shelve durations for a malformed provider response', () => {
+      openmct.faults.addProvider({
+        ...faultManagementProvider,
+        getShelveDurations: () => invalidShelveDurations
+      });
+
+      expect(openmct.faults.getShelveDurations()).toEqual(DEFAULT_SHELVE_DURATIONS);
+    });
+  });
+
+  it('does not expose the shared default durations array to consumers', () => {
+    const shelveDurations = openmct.faults.getShelveDurations();
+
+    shelveDurations.pop();
 
     expect(openmct.faults.getShelveDurations()).toEqual(DEFAULT_SHELVE_DURATIONS);
   });
@@ -166,6 +202,6 @@ describe('The Fault Management API', () => {
       getShelveDurations: () => customShelveDurations
     });
 
-    expect(openmct.faults.getShelveDurations()).toEqual(customShelveDurations);
+    expect(openmct.faults.getShelveDurations()).toBe(customShelveDurations);
   });
 });
