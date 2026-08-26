@@ -140,10 +140,12 @@ describe('The Notification API', () => {
       jasmine.clock().uninstall();
     });
 
-    it('uses 24-hour time with millisecond precision', () => {
+    it('formats the creation time as YYYY-MM-DD HH:mm:ss.SSS', () => {
       const timestamp = timestampNotificationAPIInstance.alert('Timestamp test').model.timestamp;
 
-      expect(timestamp).toMatch(/^\d{4}-\d{2}-\d{2} 13:\d{2}:\d{2}\.\d{3}$/);
+      // The mocked instant has pairwise-distinct components, so an exact
+      // match also catches transposed format tokens (e.g. MM for mm).
+      expect(timestamp).toBe('2026-08-19 13:34:56.789');
     });
   });
 
