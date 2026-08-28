@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const DEFAULT_INTERCEPTOR_PRIORITY = 0;
 export default class TelemetryRequestInterceptorRegistry {
   /**
    * A TelemetryRequestInterceptorRegistry maintains the definitions for different interceptors that may be invoked on telemetry
@@ -44,7 +45,6 @@ export default class TelemetryRequestInterceptorRegistry {
    * @method addInterceptor
    */
   addInterceptor(interceptorDef) {
-    //TODO: sort by priority
     this.interceptors.push(interceptorDef);
   }
 
@@ -54,10 +54,19 @@ export default class TelemetryRequestInterceptorRegistry {
    * @returns [module:openmct.RequestInterceptorDef] the registered interceptors for this identifier/request
    */
   getInterceptors(identifier, request) {
-    return this.interceptors.filter((interceptor) => {
-      return (
-        typeof interceptor.appliesTo === 'function' && interceptor.appliesTo(identifier, request)
-      );
-    });
+    function byPriority(interceptorA, interceptorB) {
+      const priorityA = interceptorA.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
+      const priorityB = interceptorB.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
+
+      return priorityB - priorityA;
+    }
+
+    return this.interceptors
+      .filter((interceptor) => {
+        return (
+          typeof interceptor.appliesTo === 'function' && interceptor.appliesTo(identifier, request)
+        );
+      })
+      .sort(byPriority);
   }
 }
