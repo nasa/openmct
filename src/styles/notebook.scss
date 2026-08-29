@@ -650,7 +650,9 @@
 .c-snapshots-h {
   // Is hidden when the parent div l-shell__drawer is collapsed, so no worries about padding, etc.
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
   padding: $interiorMargin $interiorMarginLg;
 

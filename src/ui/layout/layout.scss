@@ -44,6 +44,12 @@
     &.is-expanded {
       min-height: 100px;
     }
+
+    &-content {
+      display: flex;
+      flex: 1 1 0;
+      min-height: 0;
+    }
   }
 
   &__pane-tree {
