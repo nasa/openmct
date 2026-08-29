@@ -61,6 +61,7 @@
     "karma-sourcemap-loader": "0.4.0",
     "karma-spec-reporter": "0.0.36",
     "karma-webpack": "5.0.1",
+    "license-check-and-add": "^4.0.5",
     "location-bar": "3.0.1",
     "lodash": "4.18.1",
     "marked": "15.0.7",
@@ -132,6 +133,8 @@
     "test:perf:memory": "npm test --workspace e2e -- --config=playwright-performance-prod.config.js --project=chrome-memory",
     "update-about-dialog-copyright": "perl -pi -e 's/20\\d\\d\\-202\\d/2014\\-2024/gm' ./src/ui/layout/AboutDialog.vue",
     "update-copyright-date": "npm run update-about-dialog-copyright && grep -lr --null --include=*.{js,scss,vue,ts,sh,html,md,frag} 'Copyright (c) 20' . | xargs -r0 perl -pi -e 's/Copyright\\s\\(c\\)\\s20\\d\\d\\-20\\d\\d/Copyright \\(c\\)\\ 2014\\-2024/gm'",
+    "license:check": "license-check-and-add check -f license-checker-config.json",
+    "license:add": "license-check-and-add add -f license-checker-config.json",
     "cov:e2e:report": "nyc report --reporter=lcovonly --report-dir=./coverage/e2e"
   },
   "homepage": "https://nasa.github.io/openmct",
