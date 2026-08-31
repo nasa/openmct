@@ -132,3 +132,11 @@ body.phone.portrait {
     display: none;
   }
 }
+
+/* Allow text selection for clock indicator */
+.c-indicator.t-indicator-clock {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
