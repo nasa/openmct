@@ -120,9 +120,13 @@ export default {
         valid = regex.test(data.value);
       }
 
-      const validate = data.model.validate;
-      if (valid && validate) {
-        valid = validate(data);
+      if (data.isValid !== undefined && data.isValid !== null && !data.isValid) {
+        return false;
+      } else {
+        const validate = data.model.validate;
+        if (valid && validate) {
+          valid = validate(data);
+        }
       }
 
       return Boolean(valid);
