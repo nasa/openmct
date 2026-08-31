@@ -174,30 +174,15 @@ export default class CompositionCollection {
    * A call to [load]{@link module:openmct.CompositionCollection#load}
    * must have resolved before using this method.
    *
-   * **TODO:** Remove `skipMutate` parameter.
-   *
    * @param {DomainObject} child the domain object to add
-   * @param {boolean} skipMutate
-   * **Intended for internal use ONLY.**
-   * true if the underlying provider should not be updated.
+   * @param {Number} [index] optional parameter that determines insert location.
    */
-  add(child, skipMutate) {
-    if (!skipMutate) {
-      if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
-        throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
-      }
-
-      this.#provider.add(this.domainObject, child.identifier);
-    } else {
-      if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
-        let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
-
-        child = this.#publicAPI.objects.toMutable(child);
-        this.#mutables[keyString] = child;
-      }
-
-      this.#emit('add', child);
+  add(child, index) {
+    if (!this.#publicAPI.composition.checkPolicy(this.domainObject, child)) {
+      throw `Object of type ${child.type} cannot be added to object of type ${this.domainObject.type}`;
     }
+
+    this.#provider.add(this.domainObject, child.identifier, index);
   }
   /**
    * Load the domain objects in this composition.
@@ -219,7 +204,7 @@ export default class CompositionCollection {
         }
       })
     );
-    childObjects.forEach((child) => this.add(child, true));
+    childObjects.forEach(this.onProviderAdd);
     this.#emit('load');
 
     return childObjects;
@@ -230,28 +215,11 @@ export default class CompositionCollection {
    * A call to [load]{@link module:openmct.CompositionCollection#load}
    * must have resolved before using this method.
    *
-   * **TODO:** Remove `skipMutate` parameter.
-   *
    * @param {DomainObject} child the domain object to remove
-   * @param {boolean} skipMutate
-   * **Intended for internal use ONLY.**
-   * true if the underlying provider should not be updated.
    * @name remove
    */
-  remove(child, skipMutate) {
-    if (!skipMutate) {
-      this.#provider.remove(this.domainObject, child.identifier);
-    } else {
-      if (this.returnMutables) {
-        let keyString = this.#publicAPI.objects.makeKeyString(child);
-        if (this.#mutables[keyString] !== undefined && this.#mutables[keyString].isMutable) {
-          this.#publicAPI.objects.destroyMutable(this.#mutables[keyString]);
-          delete this.#mutables[keyString];
-        }
-      }
-
-      this.#emit('remove', child);
-    }
+  remove(child) {
+    this.#provider.remove(this.domainObject, child.identifier);
   }
   /**
    * Reorder the domain objects in this composition.
@@ -263,7 +231,7 @@ export default class CompositionCollection {
    * @param {number} newIndex
    * @name remove
    */
-  reorder(oldIndex, newIndex, _skipMutate) {
+  reorder(oldIndex, newIndex) {
     this.#provider.reorder(this.domainObject, oldIndex, newIndex);
   }
   /**
@@ -290,14 +258,26 @@ export default class CompositionCollection {
    * @param {import('openmct').Identifier} childId
    * @returns {DomainObject}
    */
-  #onProviderAdd(childId) {
-    return this.#publicAPI.objects.get(childId).then(
-      function (child) {
-        this.add(child, true);
+  async #onProviderAdd(childOrId, index) {
+    let childPromise;
+    if (isIdentifier(childOrId)) {
+      childPromise = this.#publicAPI.objects.get(childOrId);
+    } else {
+      childPromise = Promise.resolve(childOrId);
+    }
 
-        return child;
-      }.bind(this)
-    );
+    let child = await childPromise;
+
+    if (this.returnMutables && this.#publicAPI.objects.supportsMutation(child.identifier)) {
+      let keyString = this.#publicAPI.objects.makeKeyString(child.identifier);
+
+      child = this.#publicAPI.objects.toMutable(child);
+      this.#mutables[keyString] = child;
+    }
+
+    this.#emit('add', child, index);
+
+    return child;
   }
 
   /**
@@ -305,7 +285,14 @@ export default class CompositionCollection {
    * @param {DomainObject} child
    */
   #onProviderRemove(child) {
-    this.remove(child, true);
+    if (this.returnMutables) {
+      let keyString = this.#publicAPI.objects.makeKeyString(child);
+      if (this.#mutables[keyString] !== undefined && this.#mutables[keyString].isMutable) {
+        this.#publicAPI.objects.destroyMutable(this.#mutables[keyString]);
+        delete this.#mutables[keyString];
+      }
+    }
+    this.#emit('remove', child);
   }
 
   /**
