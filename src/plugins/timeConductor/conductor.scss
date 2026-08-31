@@ -454,11 +454,13 @@
                 color: $colorTimeRealtimeFg;
             }
         }
-        .c-ctrl-wrapper--menus-up{ // A bit hacky, but we are rewriting the CSS class here for ITC such that the calendar opens at the bottom to avoid cutoff
-            .c-menu {
-                top: auto;
-                bottom: revert !important;
-              };
+        body.desktop & {
+            .c-ctrl-wrapper--menus-up{ // A bit hacky, but we are rewriting the CSS class here for ITC such that the calendar opens at the bottom to avoid cutoff. This is for DESKTOP-ONLY
+                .c-menu {
+                    top: auto;
+                    bottom: revert !important;
+                }
+            }
         }
     }
 }
