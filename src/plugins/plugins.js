@@ -28,6 +28,7 @@ import ExampleUser from '../../example/exampleUser/plugin.js';
 import ExampleFaultSource from '../../example/faultManagement/exampleFaultSource.js';
 import GeneratorPlugin from '../../example/generator/plugin.js';
 import ExampleImagery from '../../example/imagery/plugin.js';
+import VerificationTelemetryPlugin from '../../example/verificationTelemetry/plugin.js';
 import AutoflowPlugin from './autoflow/AutoflowTabularPlugin.js';
 import BarChartPlugin from './charts/bar/plugin.js';
 import ScatterPlotPlugin from './charts/scatter/plugin.js';
@@ -105,6 +106,7 @@ plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationS
 plugins.example.ExampleTags = ExampleTags;
 plugins.example.Generator = () => GeneratorPlugin;
 plugins.example.ExampleStaleness = ExampleStaleness;
+plugins.example.VerificationTelemetryPlugin = VerificationTelemetryPlugin;
 
 plugins.UTCTimeSystem = UTCTimeSystem;
 plugins.LocalTimeSystem = LocalTimeSystem;
