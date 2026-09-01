@@ -69,8 +69,12 @@ import { FIXED_MODE_KEY, MODES, REALTIME_MODE_KEY, TIME_CONTEXT_EVENTS } from '.
  * @extends EventEmitter
  */
 class TimeContext extends EventEmitter {
+  #listenerWrappers;
+
   constructor() {
     super();
+
+    this.#listenerWrappers = new Map();
 
     /**
      * The time systems available to the TimeAPI.
@@ -109,6 +113,128 @@ class TimeContext extends EventEmitter {
     this.warnCounts = {};
 
     this.tick = this.tick.bind(this);
+  }
+
+  /**
+   * Register an event listener without allowing a listener failure to prevent
+   * the remaining Time API listeners from running.
+   * @param {string | symbol} event The event name
+   * @param {Function} listener The event listener
+   * @param {object} [context] The listener context
+   * @returns {TimeContext} this time context
+   */
+  on(event, listener, context) {
+    return this.#addListener(event, listener, context, false);
+  }
+
+  /**
+   * Alias for {@link TimeContext#on}.
+   * @param {string | symbol} event The event name
+   * @param {Function} listener The event listener
+   * @param {object} [context] The listener context
+   * @returns {TimeContext} this time context
+   */
+  addListener(event, listener, context) {
+    return this.on(event, listener, context);
+  }
+
+  /**
+   * Register an event listener that is removed after its first invocation.
+   * @param {string | symbol} event The event name
+   * @param {Function} listener The event listener
+   * @param {object} [context] The listener context
+   * @returns {TimeContext} this time context
+   */
+  once(event, listener, context) {
+    return this.#addListener(event, listener, context, true);
+  }
+
+  /**
+   * Remove a previously registered event listener.
+   * @param {string | symbol} event The event name
+   * @param {Function} listener The event listener
+   * @param {object} [context] The listener context
+   * @param {boolean} [once] Only remove one-time listeners
+   * @returns {TimeContext} this time context
+   */
+  removeListener(event, listener, context, once) {
+    const registeredListeners = this.#listenerWrappers.get(event) ?? [];
+    const matchingListeners = registeredListeners.filter((registeredListener) => {
+      const listenerMatches =
+        registeredListener.listener === listener || registeredListener.wrapper === listener;
+      const contextMatches = context === undefined || registeredListener.context === context;
+      const onceMatches = !once || registeredListener.once;
+
+      return listenerMatches && contextMatches && onceMatches;
+    });
+
+    matchingListeners.forEach((registeredListener) => {
+      super.removeListener(event, registeredListener.wrapper, context, once);
+    });
+
+    if (matchingListeners.length > 0) {
+      const remainingListeners = registeredListeners.filter(
+        (registeredListener) => !matchingListeners.includes(registeredListener)
+      );
+
+      if (remainingListeners.length > 0) {
+        this.#listenerWrappers.set(event, remainingListeners);
+      } else {
+        this.#listenerWrappers.delete(event);
+      }
+
+      return this;
+    }
+
+    super.removeListener(event, listener, context, once);
+
+    return this;
+  }
+
+  /**
+   * Alias for {@link TimeContext#removeListener}.
+   * @param {string | symbol} event The event name
+   * @param {Function} listener The event listener
+   * @param {object} [context] The listener context
+   * @param {boolean} [once] Only remove one-time listeners
+   * @returns {TimeContext} this time context
+   */
+  off(event, listener, context, once) {
+    return this.removeListener(event, listener, context, once);
+  }
+
+  /**
+   * Remove all listeners, or all listeners for one event.
+   * @param {string | symbol} [event] The event name
+   * @returns {TimeContext} this time context
+   */
+  removeAllListeners(event) {
+    if (event === undefined) {
+      this.#listenerWrappers.clear();
+    } else {
+      this.#listenerWrappers.delete(event);
+    }
+
+    super.removeAllListeners(event);
+
+    return this;
+  }
+
+  /**
+   * Return the original listeners registered for an event.
+   * @param {string | symbol} event The event name
+   * @returns {Function[]} the registered listeners
+   */
+  listeners(event) {
+    const registeredListeners = this.#listenerWrappers.get(event) ?? [];
+
+    return super.listeners(event).map((listener) => {
+      const registeredListener = registeredListeners.find(
+        (candidate) => candidate.wrapper === listener
+      );
+
+      return registeredListener?.listener ?? listener;
+    });
   }
 
   /**
@@ -647,6 +773,39 @@ class TimeContext extends EventEmitter {
      * offsets.
      */
     this.emit(TIME_CONTEXT_EVENTS.clockOffsetsChanged, this.#copy(offsets));
+  }
+
+  #addListener(event, listener, context, once) {
+    if (typeof listener !== 'function') {
+      throw new TypeError('The listener must be a function');
+    }
+
+    const listenerContext = context || this;
+    const registeredListeners = this.#listenerWrappers.get(event) ?? [];
+
+    function wrapper(...args) {
+      try {
+        listener.apply(listenerContext, args);
+      } catch (error) {
+        console.error(`Error in Time API listener for "${String(event)}"`, error);
+      }
+    }
+
+    registeredListeners.push({
+      listener,
+      wrapper,
+      context,
+      once
+    });
+    this.#listenerWrappers.set(event, registeredListeners);
+
+    if (once) {
+      super.once(event, wrapper, context);
+    } else {
+      super.on(event, wrapper, context);
+    }
+
+    return this;
   }
 
   /**

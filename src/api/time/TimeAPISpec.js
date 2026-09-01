@@ -211,6 +211,48 @@ describe('The Time API', function () {
     expect(eventListener).toHaveBeenCalledWith(bounds, false);
   });
 
+  it('continues notifying bounds listeners when one listener throws', function () {
+    const error = new Error('listener failed');
+    const failingListener = jasmine.createSpy('failingListener').and.throwError(error);
+    const followingListener = jasmine.createSpy('followingListener');
+    spyOn(console, 'error');
+
+    api.on('boundsChanged', failingListener);
+    api.on('boundsChanged', followingListener);
+
+    expect(() => api.setBounds(bounds)).not.toThrow();
+    expect(failingListener).toHaveBeenCalledWith(bounds, false);
+    expect(followingListener).toHaveBeenCalledWith(bounds, false);
+    expect(console.error).toHaveBeenCalledWith(
+      'Error in Time API listener for "boundsChanged"',
+      error
+    );
+  });
+
+  it('removes a wrapped listener using its original function and context', function () {
+    const context = {};
+    const listener = jasmine.createSpy('listener');
+
+    api.on('boundsChanged', listener, context);
+    api.off('boundsChanged', listener, context);
+    api.setBounds(bounds);
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('removes a failing one-time listener after its first invocation', function () {
+    const failingListener = jasmine
+      .createSpy('failingListener')
+      .and.throwError(new Error('listener failed'));
+    spyOn(console, 'error');
+
+    api.once('boundsChanged', failingListener);
+    api.setBounds(bounds);
+    api.setBounds({ start: 1, end: 2 });
+
+    expect(failingListener).toHaveBeenCalledTimes(1);
+  });
+
   it('If bounds are set and TOI lies inside them, do not change TOI', function () {
     api.timeOfInterest(6);
     api.bounds({
