@@ -120,11 +120,108 @@ test.describe('Progressive Web App', () => {
     expect(cachedUrls).toContain(`${expectedScope}openmct.js`);
     expect(cachedUrls).toContain(`${expectedScope}index.html`);
     expect(cachedUrls).toContain(`${expectedScope}manifest.json`);
+  });
 
-    // Clean up so the service worker does not outlive this test's browser context.
-    await page.evaluate(async () => {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((item) => item.unregister()));
+  test.describe('while offline', () => {
+    // Going offline makes the development server's live-reload client log
+    // connection errors that have nothing to do with Open MCT, so the fixture's
+    // blanket console check is replaced with one that ignores them.
+    test.use({ failOnConsoleError: false });
+
+    test('The application loads and works once the build has been cached', async ({
+      page,
+      context
+    }) => {
+      const applicationErrors = [];
+      page.on('console', (message) => {
+        const isDevServerNoise =
+          message.text().includes('webpack-dev-server') ||
+          /WebSocket connection to '.*\/ws' failed/.test(message.text());
+        if (message.type() === 'error' && !isDevServerNoise) {
+          applicationErrors.push(message.text());
+        }
+      });
+
+      await page.goto('./dist/', { waitUntil: 'domcontentloaded' });
+      await waitForPrecache(page);
+
+      await context.setOffline(true);
+
+      // Reloading the controlled page must be served entirely from the cache.
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await expect(page.getByRole('button', { name: 'Create' })).toBeVisible();
+      await page.getByRole('button', { name: 'Create' }).click();
+      await expect(page.getByRole('menuitem', { name: /Folder/ })).toBeVisible();
+      await page.keyboard.press('Escape');
+
+      // A fresh navigation to a route (not a reload) must work offline too.
+      await page.goto('./dist/index.html#/browse/mine', { waitUntil: 'domcontentloaded' });
+      await expect(page.getByRole('button', { name: 'Create' })).toBeVisible();
+      await expect(page.getByRole('main')).toContainText('My Items');
+
+      await context.setOffline(false);
+      expect(applicationErrors).toEqual([]);
     });
   });
+
+  test('A new build is announced with a reload link and activated only after reloading', async ({
+    page
+  }) => {
+    await page.goto('./dist/', { waitUntil: 'domcontentloaded' });
+    await waitForPrecache(page);
+    await expect(page.getByRole('button', { name: 'Create' })).toBeVisible();
+
+    // Registering a different script URL for the same scope is how the browser
+    // sees a changed service worker: the plugin's registration gains an
+    // installing worker, which must end up waiting rather than taking over.
+    await page.evaluate(() => navigator.serviceWorker.register('serviceWorker.js?build=2'));
+
+    const banner = page.getByText('A new version of Open MCT is available.');
+    await expect(banner).toBeVisible();
+    const workerStateBeforeReload = await page.evaluate(async () => {
+      const registration = await navigator.serviceWorker.ready;
+
+      return {
+        waitingScript: registration.waiting?.scriptURL ?? null,
+        activeScript: registration.active?.scriptURL ?? null,
+        controllerScript: navigator.serviceWorker.controller?.scriptURL ?? null
+      };
+    });
+    expect(workerStateBeforeReload.waitingScript).toContain('serviceWorker.js?build=2');
+    expect(workerStateBeforeReload.activeScript).not.toContain('build=2');
+    expect(workerStateBeforeReload.controllerScript).not.toContain('build=2');
+
+    await page.getByText('Reload to update').click();
+    await expect(page.getByRole('button', { name: 'Create' })).toBeVisible();
+
+    const workerStateAfterReload = await page.evaluate(async () => {
+      const registration = await navigator.serviceWorker.ready;
+
+      return {
+        waiting: registration.waiting !== null,
+        controllerScript: navigator.serviceWorker.controller?.scriptURL ?? null
+      };
+    });
+    expect(workerStateAfterReload.waiting).toBe(false);
+    expect(workerStateAfterReload.controllerScript).toContain('serviceWorker.js?build=2');
+    await expect(page.getByText('A new version of Open MCT is available.')).toBeHidden();
+  });
 });
+
+/**
+ * Waits until the service worker has activated and taken control of the page, at
+ * which point every asset of the build has been precached.
+ * @param {import('@playwright/test').Page} page
+ */
+async function waitForPrecache(page) {
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+    if (navigator.serviceWorker.controller) {
+      return;
+    }
+
+    await new Promise((resolve) => {
+      navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+    });
+  });
+}
