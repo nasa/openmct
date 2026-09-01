@@ -488,7 +488,14 @@
     "annotatable",
     "requestfinished",
     "LOCF",
-    "Unack"
+    "Unack",
+    "maskable",
+    "precache",
+    "precached",
+    "precaches",
+    "precaching",
+    "installability",
+    "serviceworker"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [

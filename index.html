@@ -26,7 +26,17 @@
     <!-- Modified viewport meta tag to improve accessibility -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Open MCT" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#2c2c2c" />
     <title>Open MCT</title>
+    <link rel="manifest" href="dist/manifest.json" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="dist/favicons/apple-touch-icon-180x180.png"
+    />
     <script src="dist/openmct.js"></script>
     <link
       rel="icon"
@@ -236,6 +246,7 @@
       openmct.install(openmct.plugins.BarChart());
       openmct.install(openmct.plugins.ScatterPlot());
       openmct.install(openmct.plugins.EventTimestripPlugin(timeLinePlugin.extendedLinesBus));
+      openmct.install(openmct.plugins.PWA());
       document.addEventListener('DOMContentLoaded', function () {
         openmct.start();
       });

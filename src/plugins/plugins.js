@@ -69,6 +69,7 @@ import PerformanceIndicator from './performanceIndicator/plugin.js';
 import CouchDBPlugin from './persistence/couch/plugin.js';
 import PlanLayout from './plan/plugin.js';
 import PlotPlugin from './plot/plugin.js';
+import PWAPlugin from './pwa/plugin.js';
 import ReloadAction from './reloadAction/plugin.js';
 import RemoteClock from './remoteClock/plugin.js';
 import StaticRootPlugin from './staticRootPlugin/plugin.js';
@@ -184,5 +185,6 @@ plugins.InspectorDataVisualization = InspectorDataVisualization;
 plugins.CorrelationTelemetry = CorrelationTelemetryPlugin;
 plugins.DerivedTelemetry = DerivedTelemetryPlugin;
 plugins.EventTimestripPlugin = EventTimestripPlugin;
+plugins.PWA = PWAPlugin;
 
 export default plugins;
