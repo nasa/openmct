@@ -408,18 +408,30 @@ export function getLogTicks(start, stop, tickCount = 6) {
 function getLogMinorTicks(bounds, majorTicks, span) {
   const minSpacing = LOG_MINOR_SPACING * span;
   const majorValues = new Set(majorTicks);
+  // Candidates and major ticks are both ascending, so the labelled tick ahead of
+  // the current candidate can be tracked with a cursor that only moves forwards.
+  const majorPositions = majorTicks.map((dataValue) => symlog(dataValue, 10));
   const minorTicks = [];
   let previousPosition = -Infinity;
+  let nextMajor = 0;
 
   for (const dataValue of logCandidates(bounds, LOG_MANTISSA_SETS.at(-1), 1)) {
     const position = symlog(dataValue, 10);
+
+    while (nextMajor < majorPositions.length && majorPositions[nextMajor] <= position) {
+      nextMajor++;
+    }
 
     if (majorValues.has(dataValue)) {
       previousPosition = position;
       continue;
     }
 
-    if (position - previousPosition < minSpacing) {
+    // A gridline has to clear the labelled tick ahead of it as well as whatever
+    // was drawn behind it. Looking only backwards lets the last gridline in a
+    // decade sit on top of the major tick that closes it.
+    const followingPosition = majorPositions[nextMajor] ?? Infinity;
+    if (position - previousPosition < minSpacing || followingPosition - position < minSpacing) {
       continue;
     }
 

@@ -124,9 +124,11 @@ test.describe('Log plot tests', () => {
       .poll(async () => (await measurePlotCanvases(page)).trace.rowSpan)
       .toBeGreaterThan(100);
     // Alarm markers are drawn from the same offset, on a separate 2d canvas.
+    // Measured by extent rather than pixel count, since markers collapsed onto a
+    // single row by a stale offset still paint.
     await expect
-      .poll(async () => (await measurePlotCanvases(page)).alarmMarkers.painted)
-      .toBeGreaterThan(0);
+      .poll(async () => (await measurePlotCanvases(page)).alarmMarkers.rowSpan)
+      .toBeGreaterThan(100);
   });
 
   // Leaving test as 'TODO' for now.
@@ -181,6 +183,41 @@ async function testLogTicks(page) {
   // Unlabelled gridlines fill in the decades between the labelled ticks.
   const minorGridlines = page.locator('.gl-plot-hash--minor');
   expect(await minorGridlines.count()).toBeGreaterThan(await yTicks.count());
+
+  await testLogGridlineSpacing(page);
+}
+
+/**
+ * Assert that no two horizontal gridlines are drawn close enough together to read
+ * as a single thick line. Gridline selection has to clear the labelled tick ahead
+ * of a candidate as well as whatever was drawn behind it, and checking only
+ * backwards lets the last gridline in a decade land on the major that closes it -
+ * 9 and 10 on a 1..1e6 range sit 0.7% of the span apart against a 1.2% threshold.
+ *
+ * This holds for any range, so it does not depend on the autoscale padding that
+ * fixes the labelled ticks above.
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+async function testLogGridlineSpacing(page) {
+  // LOG_MINOR_SPACING in tickUtils.js, as a percentage of the axis, less a
+  // tolerance for the rounding that goes through the style attribute.
+  const minimumSeparation = 1.15;
+
+  const positions = await page.locator('.gl-plot-hash.hash-h').evaluateAll((gridlines) =>
+    gridlines
+      .map((gridline) => Number.parseFloat(gridline.style.bottom))
+      .filter((position) => Number.isFinite(position))
+      .sort((a, b) => a - b)
+  );
+
+  expect(positions.length).toBeGreaterThan(1);
+
+  const tooClose = positions
+    .map((position, i) => (i === 0 ? null : { gap: position - positions[i - 1], position }))
+    .filter((pair) => pair && pair.gap < minimumSeparation);
+
+  expect(tooClose).toEqual([]);
 }
 
 /**
