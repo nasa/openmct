@@ -41,14 +41,23 @@ export default class MCTChartAlarmPointSet {
     }, this);
   }
 
-  append(datum) {
-    if (datum.mctLimitState) {
-      this.points.push({
-        x: this.offset.xVal(datum, this.series),
-        y: this.offset.yVal(datum, this.series),
-        datum: datum
-      });
+  append(datum, index, series = this.series) {
+    if (!datum.mctLimitState) {
+      return;
     }
+
+    // The offset is cleared whenever the space the series values live in changes,
+    // and this set may be the only element on its y axis - a series with no line,
+    // no markers and no limit lines has nothing else to re-establish it.
+    if (!this.offset.xVal) {
+      this.chart.setOffset(datum, undefined, series);
+    }
+
+    this.points.push({
+      x: this.offset.xVal(datum, this.series),
+      y: this.offset.yVal(datum, this.series),
+      datum: datum
+    });
   }
 
   remove(datum) {
@@ -59,7 +68,9 @@ export default class MCTChartAlarmPointSet {
 
   reset() {
     this.points = [];
-    // We weren't appending points after resetting.
+    // Points are stored relative to the chart's cached offset, so when that
+    // offset is rebuilt they have to be recalculated from the series data.
+    // During a series reset the data is empty at this point, so this is a no-op.
     this.series.getSeriesData().forEach(function (point, index) {
       this.append(point, index, this.series);
     }, this);

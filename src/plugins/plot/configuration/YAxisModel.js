@@ -344,11 +344,9 @@ export default class YAxisModel extends Model {
     const yMetadata = sampleSeries.metadata.value(yKey);
     const yFormat = sampleSeries.formats[yKey];
 
-    if (this.get('logMode')) {
-      this.set('format', (n) => yFormat.format(antisymlog(n, 10)));
-    } else {
-      this.set('format', (n) => yFormat.format(n));
-    }
+    // Ticks carry their own untransformed value, so the format always receives a
+    // value in data space, even in log mode.
+    this.set('format', (n) => yFormat.format(n));
 
     this.set('values', yMetadata.values);
 
