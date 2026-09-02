@@ -224,8 +224,10 @@ function getPrecision(step) {
 }
 
 /**
- * Round away the floating point noise introduced by moving values in and out of
- * symlog space, so that a tick lands on the round number it is meant to be.
+ * Round away the floating point noise left behind by `mantissa * 10^exponent`,
+ * so that a tick reads as the round number it is meant to be. Only labelled
+ * ticks need this - minor gridlines are never formatted, and rounding every
+ * candidate magnitude would mean paying for the ones that are discarded.
  */
 function roundToSignificantDigits(value) {
   return Number(value.toPrecision(12));
@@ -254,8 +256,14 @@ function decadeValues(loMagnitude, hiMagnitude, mantissas, exponentStride) {
     exponent += exponentStride
   ) {
     for (const mantissa of mantissas) {
-      const value = roundToSignificantDigits(mantissa * Math.pow(10, exponent));
-      if (value >= loMagnitude * (1 - 1e-9) && value <= hiMagnitude * (1 + 1e-9)) {
+      const value = mantissa * Math.pow(10, exponent);
+      // The tolerance applied to hiMagnitude can itself overflow, so a value has
+      // to be checked for being representable before it is compared.
+      if (
+        Number.isFinite(value) &&
+        value >= loMagnitude * (1 - 1e-9) &&
+        value <= hiMagnitude * (1 + 1e-9)
+      ) {
         values.push(value);
       }
     }
@@ -313,8 +321,11 @@ export function getLogTicks(start, stop, tickCount = 6) {
   }
 
   const span = stop - start;
-  const minValue = antisymlog(start, 10);
-  const maxValue = antisymlog(stop, 10);
+  // Padding can push a display range past the point where antisymlog overflows
+  // to Infinity, which would leave the decade loop below without an upper bound.
+  // No tick can sit beyond the largest representable value in any case.
+  const minValue = Math.max(antisymlog(start, 10), -Number.MAX_VALUE);
+  const maxValue = Math.min(antisymlog(stop, 10), Number.MAX_VALUE);
   const minSpacing = (LOG_MAJOR_SPACING / tickCount) * span;
   const crossesZero = minValue <= 0 && maxValue >= 0;
 
@@ -382,7 +393,11 @@ export function getLogTicks(start, stop, tickCount = 6) {
   }
 
   return [
-    ...majorTicks.map((dataValue) => ({ value: symlog(dataValue, 10), dataValue, minor: false })),
+    ...majorTicks.map((magnitude) => {
+      const dataValue = roundToSignificantDigits(magnitude);
+
+      return { value: symlog(dataValue, 10), dataValue, minor: false };
+    }),
     ...getLogMinorTicks(bounds, majorTicks, span)
   ].sort((a, b) => a.value - b.value);
 }
