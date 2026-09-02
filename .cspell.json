@@ -353,6 +353,7 @@
     "docstrings",
     "webglcontextlost",
     "gridlines",
+    "gridline",
     "Xaxis",
     "Crosshairs",
     "telemetrylimit",

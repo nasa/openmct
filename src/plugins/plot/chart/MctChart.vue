@@ -90,7 +90,6 @@ const IMPLICIT_HANDLED_ATTRIBUTES = {
   frozen: 'frozen',
   autoscale: 'autoscale',
   autoscalePadding: 'autoscalePadding',
-  logMode: 'logMode',
   yKey: 'yKey'
 };
 // Attribute changes that we are specifically handling with listeners
@@ -98,6 +97,9 @@ const HANDLED_ATTRIBUTES = {
   //X and Y Axis attributes
   key: 'key',
   displayRange: 'displayRange',
+  // Log mode changes the space series values live in, so the cached per-axis
+  // offset has to be rebuilt - a redraw on its own is not enough.
+  logMode: 'logMode',
   //series attributes
   xKey: 'xKey',
   interpolate: 'interpolate',
@@ -239,6 +241,12 @@ export default {
       this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId),
       this
     );
+    this.listenTo(
+      this.config.yAxis,
+      `change:${HANDLED_ATTRIBUTES.logMode}`,
+      this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId),
+      this
+    );
     this.listenTo(this.config.yAxis, 'change', this.redrawIfNotAlreadyHandled);
     if (this.config.additionalYAxes.length) {
       this.config.additionalYAxes.forEach((yAxis) => {
@@ -248,6 +256,12 @@ export default {
         this.listenTo(
           yAxis,
           `change:${HANDLED_ATTRIBUTES.key}`,
+          this.resetYOffsetAndSeriesDataForYAxis.bind(this, id),
+          this
+        );
+        this.listenTo(
+          yAxis,
+          `change:${HANDLED_ATTRIBUTES.logMode}`,
           this.resetYOffsetAndSeriesDataForYAxis.bind(this, id),
           this
         );
@@ -504,6 +518,15 @@ export default {
       pointSets.forEach(function (pointSet) {
         pointSet.reset();
       });
+      // Alarm points are offset-relative too, so they have to be rebuilt as well.
+      if (this.alarmSets) {
+        const alarmSets = this.alarmSets.filter(
+          this.matchByYAxisIdExcludingVisibility.bind(this, yAxisId)
+        );
+        alarmSets.forEach(function (alarmSet) {
+          alarmSet.reset();
+        });
+      }
     },
     setOffset(offsetPoint, index, series) {
       const mainYAxisId = this.config.yAxis.get('id');
