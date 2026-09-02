@@ -136,7 +136,7 @@ export default function astonishingSparkline(options = {}) {
         }
 
         return {
-          show(el) 
+          show(el) {
             destroyed = false;
 
             containerEl = document.createElement('div');
