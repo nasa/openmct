@@ -245,12 +245,19 @@ describe('The Time API', function () {
       .createSpy('failingListener')
       .and.throwError(new Error('listener failed'));
     spyOn(console, 'error');
+    spyOn(api, 'removeListener').and.callThrough();
 
     api.once('boundsChanged', failingListener);
     api.setBounds(bounds);
     api.setBounds({ start: 1, end: 2 });
 
     expect(failingListener).toHaveBeenCalledTimes(1);
+    expect(api.removeListener).toHaveBeenCalledWith(
+      'boundsChanged',
+      jasmine.any(Function),
+      undefined,
+      true
+    );
   });
 
   it('If bounds are set and TOI lies inside them, do not change TOI', function () {

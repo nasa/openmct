@@ -782,12 +782,17 @@ class TimeContext extends EventEmitter {
 
     const listenerContext = context || this;
     const registeredListeners = this.#listenerWrappers.get(event) ?? [];
+    const timeContext = this;
 
     function wrapper(...args) {
       try {
         listener.apply(listenerContext, args);
       } catch (error) {
         console.error(`Error in Time API listener for "${String(event)}"`, error);
+      } finally {
+        if (once) {
+          timeContext.removeListener(event, wrapper, context, true);
+        }
       }
     }
 
