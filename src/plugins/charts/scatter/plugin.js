@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2026, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,6 +21,7 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
+import { getDefaultAxisScaling } from '../axisConfig.js';
 import ScatterPlotInspectorViewProvider from './inspector/ScatterPlotInspectorViewProvider.js';
 import ScatterPlotCompositionPolicy from './ScatterPlotCompositionPolicy.js';
 import { SCATTER_PLOT_KEY } from './scatterPlotConstants.js';
@@ -45,7 +46,8 @@ export default function () {
         domainObject.configuration = {
           styles: {},
           axes: {},
-          ranges: {}
+          ranges: {},
+          axisScaling: getDefaultAxisScaling()
         };
       },
       form: [
