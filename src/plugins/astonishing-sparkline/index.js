@@ -27,6 +27,7 @@ export default function astonishingSparkline(options = {}) {
         let buffer = [];
         let raf = null;
         let unsubscribe = null;
+        let destroyed = false;
         let dpr = 1;
 
         function resizeCanvas() {
@@ -135,7 +136,9 @@ export default function astonishingSparkline(options = {}) {
         }
 
         return {
-          show(el) {
+          show(el) 
+            destroyed = false;
+
             containerEl = document.createElement('div');
             containerEl.className = 'astonishing-sparkline-container';
             // content container
@@ -156,34 +159,50 @@ export default function astonishingSparkline(options = {}) {
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
 
-            // subscribe to telemetry
+            // subscribe to telemetry 
             try {
-              const sub = openmct.telemetry.subscribe(domainObject, telemetryCallback);
-              // API differences: some versions return unsubscribe function, some return subscription object with unsubscribe()
-              if (typeof sub === 'function') {
-                unsubscribe = sub;
-              } else if (sub && typeof sub.unsubscribe === 'function') {
-                unsubscribe = () => sub.unsubscribe();
-              } else {
-                // best-effort: no-op
-                unsubscribe = null;
-              }
+                  const sub = openmct.telemetry.subscribe(
+                        domainObject,
+                        telemetryCallback
+                );
+
+                Promise.resolve(sub)
+                    .then((subscription) => {
+                    // The subscription may resolve after the view has been destroyed.
+                        if (destroyed) {
+                           if (typeof subscription === 'function') {
+                               subscription();
+                           } else if (
+                               subscription &&
+                               typeof subscription.unsubscribe === 'function'
+                           ) {
+                               subscription.unsubscribe();
+                           }
+                           return;
+                        }
+
+                        if (typeof subscription === 'function') {
+                           unsubscribe = subscription;
+                        } else if (
+                           subscription &&
+                           typeof subscription.unsubscribe === 'function'
+                        ) {
+                           unsubscribe = () => subscription.unsubscribe();
+                        }
+                    })
+                    .catch(() => {
+                    // Ignore subscription errors.
+                    });
             } catch (err) {
-              // Some Open MCT versions require a promise; try both styles gracefully
-              try {
-                Promise.resolve(openmct.telemetry.subscribe(domainObject, telemetryCallback))
-                  .then((sub) => {
-                    if (typeof sub === 'function') unsubscribe = sub;
-                    else if (sub && typeof sub.unsubscribe === 'function') unsubscribe = () => sub.unsubscribe();
-                  })
-                  .catch(() => {});
-              } catch (e) {}
+                    // Ignore synchronous subscription errors.
             }
+
 
             // kick off render
             loop();
           },
           destroy() {
+            destroyed = true;
             if (raf) {
               window.cancelAnimationFrame(raf);
               raf = null;
