@@ -1,0 +1,32 @@
+/* styles.css for Astonishing Sparkline
+   Drop under: src/plugins/astonishing-sparkline/styles.css
+   Import as needed (see README).
+*/
+.astonishing-sparkline-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #e6f7ef;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(6,10,20,0.6), rgba(2,6,12,0.4));
+  padding: 8px;
+}
+
+.astonishing-sparkline-header {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #c9ffee;
+  letter-spacing: 0.2px;
+}
+
+.astonishing-sparkline-canvas {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.02);
+  background: linear-gradient(180deg, rgba(11,16,32,0.25), rgba(2,6,12,0.12));
+}
