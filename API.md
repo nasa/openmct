@@ -184,7 +184,7 @@ In order to use Open MCT's provided types in your own application, create a
       "checkJs": true,
       "moduleResolution": "node",
       "paths": {
-        "openmct": ["node_modules/openmct/dist/openmct.d.ts"]
+        "openmct": ["node_modules/openmct/dist/types/index.d.ts"]
       }
   }
 }
