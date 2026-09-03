@@ -54,11 +54,14 @@ export default class TelemetryRequestInterceptorRegistry {
    * @returns [module:openmct.RequestInterceptorDef] the registered interceptors for this identifier/request
    */
   getInterceptors(identifier, request) {
-    function byPriority(interceptorA, interceptorB) {
-      const priorityA = interceptorA.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
-      const priorityB = interceptorB.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
+    function getPriority(interceptor) {
+      const priority = interceptor.priority ?? DEFAULT_INTERCEPTOR_PRIORITY;
 
-      return priorityB - priorityA;
+      return typeof priority === 'function' ? priority(identifier, request) : priority;
+    }
+
+    function byPriority(interceptorA, interceptorB) {
+      return getPriority(interceptorB) - getPriority(interceptorA);
     }
 
     return this.interceptors
