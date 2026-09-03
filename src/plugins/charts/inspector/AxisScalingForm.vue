@@ -107,6 +107,9 @@ import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
 const LOG_MODE_NOTICE =
   'A logarithmic axis can only show positive values in graphs and charts. Zero or negative values will be omitted from the plot.';
 
+const AUTOSCALE_RESTORED_NOTICE =
+  'The fixed range was entirely below zero, which a logarithmic axis cannot draw, so auto scale has been turned back on.';
+
 /**
  * Manual (fixed) axis scaling for the Bar Graph and Scatter Plot views.
  *
@@ -241,24 +244,29 @@ export default {
     },
     updateLogMode() {
       const changes = { logMode: this.logMode };
+      let autoscaleRestored = false;
 
-      // A range that was valid on a linear axis is not always drawable on a
-      // log one - a negative minimum, or a maximum of zero, has no logarithmic
-      // representation. Clear whichever bound the new mode cannot take, so
-      // that what is persisted is what the chart will actually draw.
-      if (this.logMode && getAxisConfig(this.domainObject, this.axisKey).range) {
-        if (this.isEntered(this.rangeMin) && Number(this.rangeMin) < 0) {
-          this.rangeMin = '';
+      // A range that was valid on a linear axis is not always drawable on a log
+      // one. A negative minimum does have a natural equivalent - zero, which
+      // this axis anchors and labels - so clamp it rather than discarding what
+      // the user set, and the range stays complete.
+      //
+      // A maximum of zero or less has no such equivalent. Since a valid range
+      // has its minimum below its maximum, that puts the whole range where a
+      // log axis cannot draw, leaving nothing to clamp to. Fall back to auto
+      // scaling rather than keeping fixed scaling that cannot be honoured.
+      if (this.logMode && this.autoscale === false) {
+        const hasMin = this.isEntered(this.rangeMin);
+        const hasDrawableMax = this.isEntered(this.rangeMax) && Number(this.rangeMax) > 0;
+
+        if (hasMin && hasDrawableMax) {
+          this.rangeMin = Math.max(Number(this.rangeMin), 0);
+          changes.range = { min: Number(this.rangeMin), max: Number(this.rangeMax) };
+        } else {
+          this.autoscale = true;
+          changes.autoscale = true;
+          autoscaleRestored = true;
         }
-
-        if (this.isEntered(this.rangeMax) && Number(this.rangeMax) <= 0) {
-          this.rangeMax = '';
-        }
-
-        changes.range = {
-          min: this.isEntered(this.rangeMin) ? Number(this.rangeMin) : null,
-          max: this.isEntered(this.rangeMax) ? Number(this.rangeMax) : null
-        };
       }
 
       this.revalidate();
@@ -270,7 +278,9 @@ export default {
       // whoever builds the plot is the one who can act on it. Left for the user
       // to dismiss, so it cannot be missed.
       if (this.logMode) {
-        this.openmct.notifications.alert(LOG_MODE_NOTICE);
+        this.openmct.notifications.alert(
+          autoscaleRestored ? `${LOG_MODE_NOTICE} ${AUTOSCALE_RESTORED_NOTICE}` : LOG_MODE_NOTICE
+        );
       }
     },
     updateAutoscale() {

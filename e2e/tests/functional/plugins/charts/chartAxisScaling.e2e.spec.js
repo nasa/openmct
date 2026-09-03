@@ -472,10 +472,10 @@ test.describe('Chart axis scaling', () => {
     }
   });
 
-  test('Enabling log mode clears a bound the log axis cannot draw', async ({ page }) => {
+  test('Enabling log mode clamps a negative minimum to zero', async ({ page }) => {
     // A negative minimum is a legitimate linear bound with no logarithmic
-    // reading. Persisting it beside logMode would leave the inspector showing a
-    // bound the chart silently ignores.
+    // reading, but zero is one this axis draws - anchored and labelled. Clamp
+    // to it, so the range stays complete instead of losing a bound.
     const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
     await createExampleTelemetryObject(page, barGraph.uuid);
 
@@ -489,15 +489,56 @@ test.describe('Chart axis scaling', () => {
 
     await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
 
-    await expect(page.getByText('Specify both a Minimum and a Maximum.')).toBeVisible();
-    await expect(page.getByLabel('Y Axis Minimum value')).toHaveValue('');
+    await expect(page.getByLabel('Y Axis Minimum value')).toHaveValue('0');
 
-    // The chart autoranges rather than honouring half a range, and what is on
-    // disk says the same thing.
+    // Still a fixed range, now zero-anchored - not an autorange, and not a
+    // half-specified range.
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(false);
+    expect(await getPlotlyTickText(page, '.c-bar-chart', 'yaxis')).toEqual([
+      '0',
+      '1',
+      '2',
+      '5',
+      '10',
+      '20',
+      '50',
+      '100'
+    ]);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: 100 });
+    expect(persisted.configuration.axisScaling.yAxis.logMode).toBe(true);
+  });
+
+  test('Enabling log mode re-enables auto scale for a range entirely below zero', async ({
+    page
+  }) => {
+    // Clamping the minimum cannot rescue this one - a maximum of zero or less
+    // has no logarithmic reading either, so there is nothing to clamp to and
+    // fixed scaling cannot be honoured at all.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '-100', '-10');
+
+    // Clear the banners queued by object creation, so the notice raised below
+    // is the one on screen rather than a predecessor.
+    await dismissNotifications(page);
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    // Auto scale is turned back on, and says so rather than flipping silently
+    await expect(page.getByRole('checkbox', { name: 'Y Axis Auto scale' })).toBeChecked();
+    await expect(page.getByText(/auto scale has been turned back on/)).toBeVisible();
+
     expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
 
     const persisted = await getDomainObject(page, barGraph.uuid);
-    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: null, max: 100 });
+    expect(persisted.configuration.axisScaling.yAxis.autoscale).toBe(true);
     expect(persisted.configuration.axisScaling.yAxis.logMode).toBe(true);
   });
 
