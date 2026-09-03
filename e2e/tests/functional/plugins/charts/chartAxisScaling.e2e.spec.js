@@ -214,11 +214,24 @@ test.describe('Chart axis scaling', () => {
 
     await expect(page.getByText('Minimum must be less than Maximum.')).toBeVisible();
 
-    // The invalid pair is not stored. Note the minimum alone was committed when
-    // that field changed - a minimum-only range is legitimate now - so what is
-    // stored is that partial range rather than nothing at all.
     const persisted = await getDomainObject(page, barGraph.uuid);
-    expect(persisted.configuration.axisScaling.yAxis.range).not.toEqual({ min: 10, max: 1 });
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
+  });
+
+  test('Equal bounds are rejected, not silently widened by Plotly', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '5', '5');
+
+    await expect(page.getByText('Minimum must be less than Maximum.')).toBeVisible();
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
   });
 
   test('Bar Graph Y axis can be drawn on a log scale', async ({ page }) => {
@@ -366,33 +379,9 @@ test.describe('Chart axis scaling', () => {
     const persisted = await getDomainObject(page, barGraph.uuid);
     expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
   });
-  test('A log axis can fix only the maximum, leaving the minimum to autoscale', async ({
-    page
-  }) => {
-    // The reported scenario: channels commonly read zero, so an operator wants
-    // to cap the top without inventing a tiny minimum that would spend half the
-    // plot height on values nobody cares about.
-    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
-    await createExampleTelemetryObject(page, barGraph.uuid);
-
-    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
-
-    await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { name: 'Config' }).click();
-    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
-    await setFixedRange(page, 'Y Axis', '', '1000');
-
-    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
-    // Log units - 1000 is 10^3
-    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
-      maxallowed: 3
-    });
-
-    const persisted = await getDomainObject(page, barGraph.uuid);
-    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: null, max: 1000 });
-  });
-
-  test('A linear axis can fix only the maximum', async ({ page }) => {
+  test('Fixed scaling requires both bounds', async ({ page }) => {
+    // One bound alone leaves Plotly to choose the other, which reads as auto
+    // scaling while the inspector claims the axis is fixed.
     const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
     await createExampleTelemetryObject(page, barGraph.uuid);
 
@@ -402,51 +391,21 @@ test.describe('Chart axis scaling', () => {
     await page.getByRole('tab', { name: 'Config' }).click();
     await setFixedRange(page, 'Y Axis', '', '500');
 
+    await expect(page.getByText('Specify both a Minimum and a Maximum.')).toBeVisible();
+
+    // Nothing usable was entered, so the axis keeps auto ranging - the form and
+    // the chart agree that no fixed range is in effect.
     expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
-    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
-      maxallowed: 500
-    });
-  });
-
-  test('Zero is a literal minimum on a linear axis, not an instruction to autoscale', async ({
-    page
-  }) => {
-    // Blank means "scale this end to the data". Zero means zero - anchoring a
-    // linear chart at zero is an ordinary request.
-    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
-    await createExampleTelemetryObject(page, barGraph.uuid);
-
-    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
-
-    await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { name: 'Config' }).click();
-    await setFixedRange(page, 'Y Axis', '0', '');
-
-    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
-      minallowed: 0
-    });
-
-    const persisted = await getDomainObject(page, barGraph.uuid);
-    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: null });
-  });
-
-  test('Clearing both bounds is reported rather than persisted', async ({ page }) => {
-    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
-    await createExampleTelemetryObject(page, barGraph.uuid);
-
-    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
-
-    await page.getByLabel('Edit Object').click();
-    await page.getByRole('tab', { name: 'Config' }).click();
-    await setFixedRange(page, 'Y Axis', '', '');
-
-    await expect(page.getByText('Specify a Minimum, a Maximum, or both.')).toBeVisible();
 
     const persisted = await getDomainObject(page, barGraph.uuid);
     expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
   });
 
-  test('A partially fixed range survives a save and reload', async ({ page }) => {
+  test('Zero is a literal minimum on a linear axis, not an instruction to autoscale', async ({
+    page
+  }) => {
+    // Anchoring a linear chart at zero is an ordinary request, and must not be
+    // mistaken for an empty field.
     const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
     await createExampleTelemetryObject(page, barGraph.uuid);
 
@@ -454,19 +413,118 @@ test.describe('Chart axis scaling', () => {
 
     await page.getByLabel('Edit Object').click();
     await page.getByRole('tab', { name: 'Config' }).click();
-    await setFixedRange(page, 'Y Axis', '', '750');
+    await setFixedRange(page, 'Y Axis', '0', '500');
+
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([0, 500]);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: 500 });
+  });
+
+  test('A fixed range survives a save and reload', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '25', '750');
     await saveAndFinishEditing(page);
 
     await page.reload({ waitUntil: 'domcontentloaded' });
 
-    expect(await getPlotlyAutorangeOptions(page, '.c-bar-chart', 'yaxis')).toEqual({
-      maxallowed: 750
-    });
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([25, 750]);
 
     // A reload lands in browse mode with no inspector tab selected
     await page.getByRole('tab', { name: 'Config' }).click();
-    // The blank bound reads back as Auto rather than as an empty cell
-    await expect(page.getByLabel('Y Axis Minimum value')).toHaveText('Auto');
+    await expect(page.getByLabel('Y Axis Minimum value')).toHaveText('25');
+    await expect(page.getByLabel('Y Axis Maximum value')).toHaveText('750');
+  });
+
+  test('The zero anchor sits below the data at every order of magnitude', async ({ page }) => {
+    // The anchor floor is derived from the configured maximum. A fixed floor
+    // would sit above any maximum below it, and Plotly reads a descending range
+    // as an instruction to draw the axis upside-down.
+    const cases = [
+      { max: '0.05', ticks: ['0', '0.001', '0.002', '0.005', '0.01', '0.02', '0.05'] },
+      { max: '0.5', ticks: ['0', '0.01', '0.02', '0.05', '0.1', '0.2', '0.5'] },
+      { max: '10', ticks: ['0', '1', '2', '5', '10'] },
+      { max: '1000000', ticks: ['0', '1', '100', '10k', '1M'] },
+      { max: '1000000000', ticks: ['0', '1', '100', '10k', '1M', '100M', '1G'] }
+    ];
+
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    for (const { max, ticks } of cases) {
+      await setFixedRange(page, 'Y Axis', '0', max);
+
+      const range = await getPlotlyRange(page, '.c-bar-chart', 'yaxis');
+      expect(range[0], `axis is not inverted at max ${max}`).toBeLessThan(range[1]);
+      expect(await getPlotlyTickText(page, '.c-bar-chart', 'yaxis')).toEqual(ticks);
+    }
+  });
+
+  test('Enabling log mode clears a bound the log axis cannot draw', async ({ page }) => {
+    // A negative minimum is a legitimate linear bound with no logarithmic
+    // reading. Persisting it beside logMode would leave the inspector showing a
+    // bound the chart silently ignores.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '-50', '100');
+
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-50, 100]);
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    await expect(page.getByText('Specify both a Minimum and a Maximum.')).toBeVisible();
+    await expect(page.getByLabel('Y Axis Minimum value')).toHaveValue('');
+
+    // The chart autoranges rather than honouring half a range, and what is on
+    // disk says the same thing.
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: null, max: 100 });
+    expect(persisted.configuration.axisScaling.yAxis.logMode).toBe(true);
+  });
+
+  test('A zoomed log Scatter Plot keeps its Y tick labels', async ({ page }) => {
+    // A zero-anchored axis lists its ticks explicitly, chosen for the whole
+    // configured range. Zooming between two of them would otherwise leave the
+    // axis with no labels at all.
+    const scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });
+    await createExampleTelemetryObject(page, scatterPlot.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '0', '1000000');
+    await dismissNotifications(page);
+    await saveAndFinishEditing(page);
+
+    expect(await getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('array');
+
+    // Zoom into a window between the 100 and 10k ticks, where the explicit tick
+    // array has nothing to show.
+    await zoomPlotlyYAxis(page, '.c-scatter-chart', [Math.log10(200), Math.log10(5000)]);
+
+    expect(await getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('auto');
+    await expect(page.getByLabel('Reset pan/zoom')).toBeEnabled();
   });
 });
 
@@ -591,23 +649,44 @@ function getPlotlyTickText(page, chartSelector, axis) {
 }
 
 /**
- * Read the `autorangeoptions` Plotly resolved for an axis, from the public
- * `gd.layout`. This is how a partially-fixed range is expressed: one end is
- * held by minallowed/maxallowed while the other autoranges.
- *
- * Note these bounds are in LOG units on a log axis, exactly as `range` is, so a
- * maximum of 1000 arrives as 3.
+ * Read how Plotly is choosing tick positions for an axis, from the public
+ * `gd.layout`. A zero-anchored log axis lists them explicitly ('array'); every
+ * other case leaves them to Plotly ('auto').
  *
  * @param {import('@playwright/test').Page} page
  * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
  * @param {'xaxis' | 'yaxis'} axis
- * @returns {Promise<Object | undefined>}
+ * @returns {Promise<string | undefined>}
  */
-function getPlotlyAutorangeOptions(page, chartSelector, axis) {
+function getPlotlyTickMode(page, chartSelector, axis) {
   // eslint-disable-next-line playwright/no-raw-locators
   return page.locator(chartSelector).evaluate((el, axisName) => {
-    return el.layout?.[axisName]?.autorangeoptions;
+    return el.layout?.[axisName]?.tickmode;
   }, axis);
+}
+
+/**
+ * Zoom the Y axis to an explicit range, the way a drag-select does.
+ *
+ * A synthetic drag cannot be aimed at a data range with any precision, and what
+ * is under test is the view's `plotly_relayout` handler rather than Plotly's own
+ * hit testing. A Plotly graph element is an event emitter, so raise exactly the
+ * event a drag raises. Plotly itself is bundled as a module and has no window
+ * global, so it cannot be called from here - the view's handler does the
+ * relayout.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {Array<number>} range in LOG units on a log axis
+ */
+async function zoomPlotlyYAxis(page, chartSelector, range) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  await page.locator(chartSelector).evaluate((el, yRange) => {
+    el.emit('plotly_relayout', {
+      'yaxis.range[0]': yRange[0],
+      'yaxis.range[1]': yRange[1]
+    });
+  }, range);
 }
 
 /**

@@ -67,14 +67,9 @@
       {{ validationErrors.range }}
     </div>
     <li v-show="!autoscale" class="grid-row">
-      <div
-        class="grid-cell label"
-        :title="`Minimum ${axisLabel} value. Leave blank to scale this end to the data.`"
-      >
-        Minimum Value
-      </div>
+      <div class="grid-cell label" :title="`Minimum ${axisLabel} value.`">Minimum Value</div>
       <div v-if="readOnly" class="grid-cell value" :aria-label="`${axisLabel} Minimum value`">
-        {{ rangeMin === '' ? 'Auto' : rangeMin }}
+        {{ rangeMin === '' ? 'Not set' : rangeMin }}
       </div>
       <div v-else class="grid-cell value">
         <label :for="rangeMinInputId" class="visually-hidden">{{ axisLabel }} Minimum value</label>
@@ -83,20 +78,14 @@
           v-model="rangeMin"
           class="c-input--flex"
           type="number"
-          placeholder="Auto"
           @change="updateRange"
         />
       </div>
     </li>
     <li v-show="!autoscale" class="grid-row">
-      <div
-        class="grid-cell label"
-        :title="`Maximum ${axisLabel} value. Leave blank to scale this end to the data.`"
-      >
-        Maximum Value
-      </div>
+      <div class="grid-cell label" :title="`Maximum ${axisLabel} value.`">Maximum Value</div>
       <div v-if="readOnly" class="grid-cell value" :aria-label="`${axisLabel} Maximum value`">
-        {{ rangeMax === '' ? 'Auto' : rangeMax }}
+        {{ rangeMax === '' ? 'Not set' : rangeMax }}
       </div>
       <div v-else class="grid-cell value">
         <label :for="rangeMaxInputId" class="visually-hidden">{{ axisLabel }} Maximum value</label>
@@ -105,7 +94,6 @@
           v-model="rangeMax"
           class="c-input--flex"
           type="number"
-          placeholder="Auto"
           @change="updateRange"
         />
       </div>
@@ -193,62 +181,88 @@ export default {
       this.autoscale = axis.autoscale !== false;
       this.logMode = axis.logMode === true;
 
-      // Each bound is read independently - one may be set while the other is
-      // deliberately blank. A persisted null means "autorange this end".
-      if (axis.range) {
-        this.rangeMin = axis.range.min ?? '';
-        this.rangeMax = axis.range.max ?? '';
-      }
+      // A bound may be persisted as null by `updateLogMode` when the new mode
+      // cannot draw it. Read each independently, and reset both when there is
+      // no persisted range at all, so the form never shows a stale bound that
+      // a later save could write back.
+      this.rangeMin = axis.range?.min ?? '';
+      this.rangeMax = axis.range?.max ?? '';
     },
     /**
-     * A blank bound means "scale this end to the data", so either may be
-     * omitted - but not both, which would just be auto scaling.
+     * Fixed scaling needs both bounds. One bound alone leaves Plotly to pick
+     * the other, which reads as auto scaling while claiming to be fixed.
      */
     validateRange(range) {
-      if (!range) {
-        return 'Need range';
+      if (!this.isEntered(range?.min) || !this.isEntered(range?.max)) {
+        return 'Specify both a Minimum and a Maximum.';
       }
 
-      const hasMin = this.isEntered(range.min);
-      const hasMax = this.isEntered(range.max);
+      const min = Number(range.min);
+      const max = Number(range.max);
 
-      if (!hasMin && !hasMax) {
-        return 'Specify a Minimum, a Maximum, or both.';
-      }
-
-      if (hasMin && Number.isNaN(Number(range.min))) {
+      if (!Number.isFinite(min)) {
         return 'Minimum must be a number.';
       }
 
-      if (hasMax && Number.isNaN(Number(range.max))) {
+      if (!Number.isFinite(max)) {
         return 'Maximum must be a number.';
       }
 
-      if (hasMin && hasMax && Number(range.min) > Number(range.max)) {
+      // Equal bounds are rejected along with inverted ones: Plotly cannot draw
+      // a zero-width axis and quietly widens it, so the saved range and the
+      // drawn one would differ.
+      if (min >= max) {
         return 'Minimum must be less than Maximum.';
       }
 
       // Zero is allowed as a log minimum: the axis is anchored and labelled at
       // 0 even though no value of zero can be drawn there. Negatives have no
       // such reading, and a maximum of zero would leave nothing to draw at all.
-      if (this.logMode && hasMin && Number(range.min) < 0) {
+      if (this.logMode && min < 0) {
         return 'Minimum cannot be negative in log mode.';
       }
 
-      if (this.logMode && hasMax && Number(range.max) <= 0) {
+      if (this.logMode && max <= 0) {
         return 'Maximum must be greater than 0 in log mode.';
       }
     },
     /**
      * Whether the user actually put a value in the field. Zero counts - it is a
-     * real bound - so this tests for the absence of input rather than
-     * treating zero as empty.
+     * real bound - so this tests for the absence of input rather than treating
+     * zero as empty. Whitespace is absence: `Number(' ')` is 0, which would
+     * otherwise read as a deliberate bound of zero.
      */
     isEntered(value) {
-      return value !== '' && value !== null && typeof value !== 'undefined';
+      if (value === null || typeof value === 'undefined') {
+        return false;
+      }
+
+      return String(value).trim() !== '';
     },
     updateLogMode() {
-      this.persist('logMode', this.logMode);
+      const changes = { logMode: this.logMode };
+
+      // A range that was valid on a linear axis is not always drawable on a
+      // log one - a negative minimum, or a maximum of zero, has no logarithmic
+      // representation. Clear whichever bound the new mode cannot take, so
+      // that what is persisted is what the chart will actually draw.
+      if (this.logMode && getAxisConfig(this.domainObject, this.axisKey).range) {
+        if (this.isEntered(this.rangeMin) && Number(this.rangeMin) < 0) {
+          this.rangeMin = '';
+        }
+
+        if (this.isEntered(this.rangeMax) && Number(this.rangeMax) <= 0) {
+          this.rangeMax = '';
+        }
+
+        changes.range = {
+          min: this.isEntered(this.rangeMin) ? Number(this.rangeMin) : null,
+          max: this.isEntered(this.rangeMax) ? Number(this.rangeMax) : null
+        };
+      }
+
+      this.revalidate();
+      this.persistAxis(changes);
 
       // State the limitation once, to the person configuring the chart. It is a
       // property of a log axis rather than of whatever data happens to be on
@@ -258,52 +272,37 @@ export default {
       if (this.logMode) {
         this.openmct.notifications.alert(LOG_MODE_NOTICE);
       }
-
-      // Turning log mode on can invalidate a fixed range that was previously
-      // acceptable, and turning it off can make one valid again.
-      if (this.autoscale === false) {
-        this.validationErrors.range = this.validateRange({
-          min: this.rangeMin,
-          max: this.rangeMax
-        });
-      }
     },
     updateAutoscale() {
-      this.persist('autoscale', this.autoscale);
-
-      // If auto scale is turned off, we must know what the user defined min and max ranges are
-      if (this.autoscale === false) {
-        this.validationErrors.range = this.validateRange({
-          min: this.rangeMin,
-          max: this.rangeMax
-        });
-      } else {
-        this.validationErrors.range = undefined;
-      }
+      // Validate before persisting, so switching to fixed scaling without a
+      // usable range reports the problem in the same beat rather than after it.
+      this.revalidate();
+      this.persistAxis({ autoscale: this.autoscale });
     },
     updateRange() {
-      const range = {
-        min: this.rangeMin,
-        max: this.rangeMax
-      };
-
-      this.validationErrors.range = this.validateRange(range);
+      this.revalidate();
       if (this.validationErrors.range) {
+        // An invalid pair is never persisted - handing Plotly an inverted or
+        // zero-width range would draw something the form does not describe.
         return;
       }
 
-      // An omitted bound persists as null so it survives JSON round-tripping
-      // and reads unambiguously as "autorange this end".
-      this.persist('range', {
-        min: this.isEntered(range.min) ? Number(range.min) : null,
-        max: this.isEntered(range.max) ? Number(range.max) : null
-      });
+      this.persistAxis({ range: { min: Number(this.rangeMin), max: Number(this.rangeMax) } });
     },
-    persist(property, value) {
+    revalidate() {
+      this.validationErrors.range = this.autoscale
+        ? undefined
+        : this.validateRange({ min: this.rangeMin, max: this.rangeMax });
+    },
+    /**
+     * Persist the axis as a whole, so log mode, auto scaling and the range they
+     * constrain are never written apart from one another.
+     */
+    persistAxis(changes) {
       this.openmct.objects.mutate(
         this.domainObject,
-        `configuration.${AXIS_SCALING_KEY}.${this.axisKey}.${property}`,
-        value
+        `configuration.${AXIS_SCALING_KEY}.${this.axisKey}`,
+        { ...getAxisConfig(this.domainObject, this.axisKey), ...changes }
       );
     }
   }

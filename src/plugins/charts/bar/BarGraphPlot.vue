@@ -46,13 +46,7 @@
 <script>
 import Plotly from 'plotly-basic';
 
-import {
-  AXIS_SCALING_KEY,
-  getAxisBoundsLayout,
-  getAxisConfig,
-  getLogAxisTickLayout,
-  isLogModeEnabled
-} from '../axisConfig.js';
+import { AXIS_SCALING_KEY, getAxisRangeLayout } from '../axisConfig.js';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
   LEFT: 8,
@@ -78,8 +72,7 @@ export default {
   emits: ['subscribe', 'unsubscribe'],
   data() {
     return {
-      isZoomed: false,
-      hasWarnedAboutLogScale: false
+      isZoomed: false
     };
   },
   watch: {
@@ -116,23 +109,6 @@ export default {
     Plotly.purge(this.$refs.plot);
   },
   methods: {
-    /**
-     * Build the range portion of an axis layout from the persisted scaling
-     * configuration. A range may fix either end, both, or neither - see
-     * `getAxisBoundsLayout`, which also handles converting bounds to the log
-     * units Plotly expects on a logarithmic axis.
-     */
-    getAxisRangeLayout(axisKey) {
-      const axis = getAxisConfig(this.domainObject, axisKey);
-      const logMode = isLogModeEnabled(this.domainObject, axisKey);
-      const axisType = logMode ? { type: 'log', ...getLogAxisTickLayout() } : {};
-
-      if (axis.autoscale !== false || !axis.range) {
-        return { ...axisType, autorange: true };
-      }
-
-      return { ...axisType, ...getAxisBoundsLayout(axis.range, logMode) };
-    },
     getLayout() {
       const yAxesMeta = this.getYAxisMeta();
       const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
@@ -149,7 +125,7 @@ export default {
         },
         xaxis: {
           domain: xAxisDomain,
-          ...this.getAxisRangeLayout('xAxis'),
+          ...getAxisRangeLayout(this.domainObject, 'xAxis'),
           title: this.plotAxisTitle.xAxisTitle,
           automargin: true,
           fixedrange: true
@@ -207,7 +183,7 @@ export default {
         // yAxisMeta is derived from the traces, so it is empty until data
         // arrives. Still apply the configured scaling, otherwise a fixed
         // range would not take effect on an empty plot.
-        return this.getAxisRangeLayout('yAxis');
+        return getAxisRangeLayout(this.domainObject, 'yAxis');
       }
 
       const { name, range, side = 'left', unit } = yAxisMeta;
@@ -216,7 +192,7 @@ export default {
         automargin: true,
         fixedrange: true,
         title,
-        ...this.getAxisRangeLayout('yAxis')
+        ...getAxisRangeLayout(this.domainObject, 'yAxis')
       };
 
       if (range === '1') {

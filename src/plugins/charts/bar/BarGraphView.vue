@@ -366,9 +366,6 @@ export default {
             }
 
             xValues.push(metadata.name);
-            // Presence check, not a truthiness check - a reading of 0 is a real
-            // value. Matches the array-value branch above, which already uses
-            // `!== undefined`.
             if (data[metadata.key] !== undefined) {
               const parsedValue = this.parse(key, metadata.key, data);
               yValues.push(parsedValue);
