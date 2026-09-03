@@ -59,6 +59,68 @@ function isNew(doc) {
   return newIcon.length !== 0;
 }
 
+/**
+ * Upper bound on ticks any polling helper below will wait, so a condition that
+ * never becomes true fails the assertion it guards instead of hanging the suite.
+ */
+const MAX_SETTLE_TICKS = 30;
+
+/**
+ * Await ticks until a condition holds.
+ *
+ * Reactive updates can take more than a single tick to settle, so poll on the
+ * actual condition across a bounded number of ticks rather than waiting a fixed
+ * amount. Resolves as soon as the condition is met, or once the cap is hit.
+ *
+ * @param {() => boolean} condition evaluated before each tick; polling stops
+ *        as soon as it returns true
+ * @returns {Promise<void>} resolves when the condition holds or the tick cap
+ *          is reached
+ */
+async function nextTickUntil(condition) {
+  for (let attempt = 0; attempt < MAX_SETTLE_TICKS; attempt++) {
+    if (condition()) {
+      return;
+    }
+
+    await nextTick();
+  }
+}
+
+/**
+ * Await ticks until a value stops changing, indicating asynchronous loading has
+ * settled.
+ *
+ * Useful when a view keeps re-rendering as data streams in and interacting
+ * mid-stream would race with those updates. Gives up after {@link MAX_SETTLE_TICKS}
+ * ticks whether or not the value ever stabilizes.
+ *
+ * @param {() => *} getValue sampled once per tick; compared with `===`, so it
+ *        should return a primitive such as a length or a timestamp
+ * @param {number} [requiredStableTicks] consecutive unchanged samples needed
+ *        before the value is considered settled
+ * @returns {Promise<void>} resolves when the value settles or the tick cap is
+ *          reached
+ */
+async function nextTickUntilStable(getValue, requiredStableTicks = 3) {
+  let previous = getValue();
+  let stableTicks = 0;
+  for (
+    let attempt = 0;
+    attempt < MAX_SETTLE_TICKS && stableTicks < requiredStableTicks;
+    attempt++
+  ) {
+    await nextTick();
+    const current = getValue();
+    if (current === previous) {
+      stableTicks += 1;
+    } else {
+      stableTicks = 0;
+      previous = current;
+    }
+  }
+}
+
 function generateTelemetry(start, count) {
   let telemetry = [];
   for (let i = 1, l = count + 1; i < l; i++) {
@@ -348,12 +410,18 @@ describe('The Imagery View Layouts', () => {
     });
 
     it('should show the clicked thumbnail as the main image', async () => {
-      //Looks like we need nextTick here so that computed properties settle down
-      await nextTick();
-      await nextTick();
       const thumbnailUrl = formatThumbnail(imageTelemetry[5].url);
-      parent.querySelectorAll(`img[src='${thumbnailUrl}']`)[0].click();
-      await nextTick();
+      // Imagery history loads asynchronously, and the view re-focuses the most
+      // recent image every time the history changes — a late history update can
+      // land right after a click and reset the selection. Wait for the history
+      // to finish loading, then select the thumbnail until the main image
+      // reflects it, so the assertion doesn't race those updates.
+      await nextTickUntilStable(() => parent.querySelectorAll(`img[src*='logo-nasa.svg']`).length);
+      await nextTickUntil(() => {
+        parent.querySelector(`img[src='${thumbnailUrl}']`)?.click();
+
+        return getImageInfo(parent).url.indexOf(imageTelemetry[5].timeId) !== -1;
+      });
       const imageInfo = getImageInfo(parent);
 
       expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
