@@ -176,6 +176,10 @@ export default {
   },
   methods: {
     async addItem(domainObject) {
+      if (!this.openmct.telemetry.isTelemetryObject(domainObject)) {
+        return;
+      }
+
       let item = {};
       item.domainObject = domainObject;
       item.key = this.openmct.objects.makeKeyString(domainObject.identifier);
