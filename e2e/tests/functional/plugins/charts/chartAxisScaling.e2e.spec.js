@@ -517,14 +517,19 @@ test.describe('Chart axis scaling', () => {
     await dismissNotifications(page);
     await saveAndFinishEditing(page);
 
-    expect(await getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('array');
+    await expect.poll(() => getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('array');
 
     // Zoom into a window between the 100 and 10k ticks, where the explicit tick
     // array has nothing to show.
     await zoomPlotlyYAxis(page, '.c-scatter-chart', [Math.log10(200), Math.log10(5000)]);
 
-    expect(await getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('auto');
-    await expect(page.getByLabel('Reset pan/zoom')).toBeEnabled();
+    // Polled rather than read directly: unlike a config change, this one is not
+    // synchronous end to end. The view hands tick generation back with
+    // `Plotly.relayout`, whose promise nothing here can await.
+    await expect.poll(() => getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('auto');
+    // The control carries a `title` and no accessible label. Match it exactly:
+    // the unsynced indicator's own title contains this string too.
+    await expect(page.getByTitle('Reset pan/zoom', { exact: true })).toBeEnabled();
   });
 });
 
