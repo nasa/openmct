@@ -235,6 +235,38 @@ describe('GrandSearch', () => {
     expect(searchResults[0].innerText).toContain('Rabbit');
   });
 
+  it('should remove an object search result when its location is cleared', async () => {
+    await grandSearchComponent.$refs.root.searchEverything('foo');
+    await nextTick();
+
+    openmct.objects.mutate(mockDomainObject, 'location', null);
+    await nextTick();
+
+    const searchResults = document.querySelectorAll(
+      '[aria-label="fooRabbitNotebook notebook result"]'
+    );
+    expect(searchResults.length).toBe(0);
+    expect(document.body.innerText).toContain('No results found');
+  });
+
+  it('should stop observing old object search results when a new search starts', async () => {
+    const originalObserve = openmct.objects.observe.bind(openmct.objects);
+    const locationUnobserve = jasmine.createSpy('locationUnobserve');
+    spyOn(openmct.objects, 'observe').and.callFake((domainObject, path, callback) => {
+      if (path === 'location') {
+        return locationUnobserve;
+      }
+
+      return originalObserve(domainObject, path, callback);
+    });
+
+    await grandSearchComponent.$refs.root.searchEverything('foo');
+    await nextTick();
+    await grandSearchComponent.$refs.root.searchEverything('Qbert');
+
+    expect(locationUnobserve).toHaveBeenCalled();
+  });
+
   it('should render an object search result if new object added', async () => {
     delete mockObjectProvider.supportsSearchType;
     delete mockObjectProvider.search;

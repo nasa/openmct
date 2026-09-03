@@ -58,10 +58,12 @@ export default {
     };
   },
   mounted() {
+    this.searchResultLocationObservers = {};
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
   },
   unmounted() {
     document.body.removeEventListener('click', this.handleOutsideClick);
+    this.clearSearchResultLocationObservers();
   },
   methods: {
     async searchEverything(value) {
@@ -73,6 +75,7 @@ export default {
       }
 
       this.searchValue = value;
+      this.clearSearchResultLocationObservers();
       // clear any previous search results
       this.annotationSearchResults = [];
       this.objectSearchResults = [];
@@ -158,18 +161,51 @@ export default {
       const objectSearchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
       for await (const objectSearchResult of objectSearchPromises) {
         const objectsWithPaths = await this.getPathsForObjects(objectSearchResult, abortSignal);
-        this.objectSearchResults.push(
-          ...objectsWithPaths.filter((result) => {
-            // Check if the result is NOT an annotation and has a reachable path
-            return (
-              !this.openmct.annotation.isAnnotation(result) &&
-              this.openmct.objects.isReachable(result?.objectPath)
-            );
-          })
-        );
+        const reachableObjectResults = objectsWithPaths.filter((result) => {
+          // Check if the result is NOT an annotation and has a reachable path
+          return (
+            !this.openmct.annotation.isAnnotation(result) &&
+            this.openmct.objects.isReachable(result?.objectPath)
+          );
+        });
+
+        this.observeSearchResultLocations(reachableObjectResults);
+        this.objectSearchResults.push(...reachableObjectResults);
         // Display the available results so far for objects
         this.showSearchResults();
       }
+    },
+    observeSearchResultLocations(searchResults) {
+      searchResults.forEach((searchResult) => {
+        const keyString = this.openmct.objects.makeKeyString(searchResult.identifier);
+        if (!this.searchResultLocationObservers[keyString]) {
+          this.searchResultLocationObservers[keyString] = this.openmct.objects.observe(
+            searchResult,
+            'location',
+            this.onSearchResultLocationChanged.bind(this, searchResult.identifier)
+          );
+        }
+      });
+    },
+    onSearchResultLocationChanged(identifier, location) {
+      if (location !== null) {
+        return;
+      }
+
+      for (let index = this.objectSearchResults.length - 1; index >= 0; index--) {
+        const searchResult = this.objectSearchResults[index];
+        if (this.openmct.objects.areIdsEqual(searchResult.identifier, identifier)) {
+          this.objectSearchResults.splice(index, 1);
+        }
+      }
+
+      const keyString = this.openmct.objects.makeKeyString(identifier);
+      this.searchResultLocationObservers[keyString]?.();
+      delete this.searchResultLocationObservers[keyString];
+    },
+    clearSearchResultLocationObservers() {
+      Object.values(this.searchResultLocationObservers ?? {}).forEach((unobserve) => unobserve());
+      this.searchResultLocationObservers = {};
     },
     async searchAnnotations(abortSignal) {
       const annotationSearchResults = await this.openmct.annotation.searchForTags(
