@@ -487,6 +487,7 @@ export default {
       this.scheduleDraw(true);
     },
     destroy() {
+      this.stopListening();
       this.destroyCanvas();
       this.isDestroyed = true;
       this.lines.forEach((line) => line.destroy());
