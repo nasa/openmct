@@ -1,5 +1,7 @@
 import * as urlSanitizeLib from '@braintree/sanitize-url';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
 
 class SummaryWidgetView {
@@ -113,6 +115,19 @@ class SummaryWidgetView {
   onMutation(domainObject) {
     this.domainObject = domainObject;
     this.render();
+  }
+
+  getViewContext() {
+    if (!this.container) {
+      return {};
+    }
+
+    return getImageExportViewContext(
+      this.openmct,
+      this.container,
+      this.domainObject,
+      'summary-widget'
+    );
   }
 
   destroy() {

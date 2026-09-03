@@ -22,6 +22,8 @@
 
 import mount from 'utils/mount';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import FlexibleLayoutComponent from './components/FlexibleLayout.vue';
 
 const FLEXIBLE_LAYOUT_KEY = 'flexible-layout';
@@ -46,9 +48,11 @@ export default class FlexibleLayoutViewProvider {
     let openmct = this.openmct;
     let _destroy = null;
     let component = null;
+    let viewElement = null;
 
     return {
       show(element, isEditing) {
+        viewElement = element;
         const { vNode, destroy } = mount(
           {
             components: {
@@ -81,6 +85,13 @@ export default class FlexibleLayoutViewProvider {
           type: 'flexible-layout'
         };
       },
+      getViewContext() {
+        if (!viewElement) {
+          return {};
+        }
+
+        return getImageExportViewContext(openmct, viewElement, domainObject, 'flexible-layout');
+      },
       contextAction(action, ...args) {
         if (component?.$refs?.flexibleLayout?.[action]) {
           component.$refs.flexibleLayout[action](...args);
@@ -93,6 +104,7 @@ export default class FlexibleLayoutViewProvider {
         if (_destroy) {
           _destroy();
           component = null;
+          viewElement = null;
         }
       }
     };

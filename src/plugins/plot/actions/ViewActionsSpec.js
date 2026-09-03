@@ -19,36 +19,38 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { isExportableView } from '@/plugins/plot/actions/utils';
 
-const exportPNG = {
-  name: 'Export as PNG',
-  key: 'export-as-png',
-  description: "Export This View's Data as PNG",
-  cssClass: 'icon-download',
-  group: 'view',
-  invoke(objectPath, view, filename) {
-    view.getViewContext().exportPNG(filename);
-  }
-};
+import { EXPORTABLE_VIEW_KEYS } from './utils.js';
+import viewActions from './ViewActions.js';
 
-const exportJPG = {
-  name: 'Export as JPG',
-  key: 'export-as-jpg',
-  description: "Export This View's Data as JPG",
-  cssClass: 'icon-download',
-  group: 'view',
-  invoke(objectPath, view, filename) {
-    view.getViewContext().exportJPG(filename);
-  }
-};
+describe('Plot view actions', () => {
+  let exportPNG;
+  let exportJPG;
 
-const viewActions = [exportPNG, exportJPG];
+  beforeEach(() => {
+    exportPNG = viewActions.find((action) => action.key === 'export-as-png');
+    exportJPG = viewActions.find((action) => action.key === 'export-as-jpg');
+  });
 
-viewActions.forEach((action) => {
-  action.appliesTo = (objectPath, view = {}) => {
-    return isExportableView(view);
-  };
+  it('applies export image actions to exportable visual views', () => {
+    EXPORTABLE_VIEW_KEYS.forEach((viewKey) => {
+      const view = {
+        key: viewKey
+      };
+
+      expect(exportPNG.appliesTo([], view)).toBeTrue();
+      expect(exportJPG.appliesTo([], view)).toBeTrue();
+    });
+  });
+
+  it('does not apply export image actions to non-visual views', () => {
+    ['table', 'notebook-vue'].forEach((viewKey) => {
+      const view = {
+        key: viewKey
+      };
+
+      expect(exportPNG.appliesTo([], view)).toBeFalse();
+      expect(exportJPG.appliesTo([], view)).toBeFalse();
+    });
+  });
 });
-
-export default viewActions;
