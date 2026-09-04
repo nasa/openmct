@@ -44,7 +44,13 @@ export function getValidatedData(domainObject) {
     sourceMap.groupId !== undefined
   ) {
     let mappedJson = {};
-    json[sourceMap.activities].forEach((activity) => {
+    const activities = json[sourceMap.activities];
+    if (!Array.isArray(activities)) {
+      // The mapping points at data that isn't there (stale/typo'd key):
+      // show an empty plan instead of crashing the view (#8428).
+      return mappedJson;
+    }
+    activities.forEach((activity) => {
       if (activity[sourceMap.groupId]) {
         const groupIdKey = activity[sourceMap.groupId];
         let groupActivity = {
@@ -113,7 +119,9 @@ export function getValidatedGroups(domainObject, planData) {
   const json = getObjectJson(domainObject);
   if (sourceMap?.orderedGroups) {
     const groups = json[sourceMap.orderedGroups];
-    if (groups.length && typeof groups[0] === 'object') {
+    if (!Array.isArray(groups)) {
+      // Mapping points at missing data: fall through to plan-data keys (#8428).
+    } else if (groups.length && typeof groups[0] === 'object') {
       //if groups is a list of objects, then get the name property from each group object.
       const groupsWithNames = groups.filter(
         (groupObj) => groupObj.name !== undefined && groupObj.name !== ''
