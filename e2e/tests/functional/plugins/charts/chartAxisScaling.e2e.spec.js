@@ -217,6 +217,361 @@ test.describe('Chart axis scaling', () => {
     const persisted = await getDomainObject(page, barGraph.uuid);
     expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
   });
+
+  test('Equal bounds are rejected, not silently widened by Plotly', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '5', '5');
+
+    await expect(page.getByText('Minimum must be less than Maximum.')).toBeVisible();
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
+  });
+
+  test('Bar Graph Y axis can be drawn on a log scale', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await expect(page.getByRole('checkbox', { name: 'Y Axis Log mode' })).not.toBeChecked();
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await saveAndFinishEditing(page);
+
+    expect(await getPlotlyAxisType(page, '.c-bar-chart', 'yaxis')).toBe('log');
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.logMode).toBe(true);
+  });
+
+  test('Scatter Plot Y axis can be drawn on a log scale', async ({ page }) => {
+    const scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });
+    await createExampleTelemetryObject(page, scatterPlot.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    // Enabling log mode raises a notice that the user dismisses. Clear it
+    // before saving, or two banners stack and saveAndFinishEditing waits on the
+    // wrong one.
+    await dismissNotifications(page);
+    await saveAndFinishEditing(page);
+
+    expect(await getPlotlyAxisType(page, '.c-scatter-chart', 'yaxis')).toBe('log');
+    // The X axis is unaffected - log scaling is offered on Y only. Plotly
+    // resolves every axis type, so a linear axis reads as 'linear', not absent.
+    expect(await getPlotlyAxisType(page, '.c-scatter-chart', 'xaxis')).toBe('linear');
+  });
+
+  test('A fixed range is given to Plotly in log units', async ({ page }) => {
+    // Plotly takes `range` as exponents when the axis type is log, so a range
+    // of 1 to 1000 must reach it as [0, 3]. Passing the raw numbers would draw
+    // an axis running from 10^1 to 10^1000.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '1', '1000');
+    await saveAndFinishEditing(page);
+
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([0, 3]);
+
+    // The configuration still stores the values the user typed, in data units
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 1, max: 1000 });
+  });
+
+  test('Log mode is offered on the Y axis only', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Bar Graph X values are metadata names, so a log scale is meaningless there
+    await expect(page.getByRole('checkbox', { name: 'Y Axis Log mode' })).toBeVisible();
+    await expect(page.getByRole('checkbox', { name: 'X Axis Log mode' })).toBeHidden();
+    // Fixed range controls remain on both axes
+    await expect(page.getByRole('checkbox', { name: 'X Axis Auto scale' })).toBeVisible();
+  });
+
+  test('Enabling log mode says what a log axis cannot show', async ({ page }) => {
+    // The limitation belongs to the axis, not to whatever data is on screen, so
+    // it is stated once to whoever configures the chart rather than detected
+    // while plotting. It stays until dismissed.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Creating the telemetry object leaves a "Save successful" banner holding
+    // the notification slot. Open MCT shows one at a time and queues the rest,
+    // so clear it or the notice never becomes the visible banner.
+    await dismissNotifications(page);
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    await expect(page.getByText(/logarithmic axis can only show positive values/)).toBeVisible();
+  });
+
+  test('A log axis can be anchored and labelled at zero', async ({ page }) => {
+    // A log axis cannot draw a value of zero, but the axis is still anchored
+    // and labelled at 0 so the viewport stays locked and reads naturally when
+    // comparing spectra.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '0', '1000');
+
+    // The bottom of the axis reads 0, with decades above it
+    expect(await getPlotlyTickText(page, '.c-bar-chart', 'yaxis')).toEqual([
+      '0',
+      '1',
+      '10',
+      '100',
+      '1000'
+    ]);
+    // Fixed, not autoranged - this is the whole point of the locked viewport
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(false);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: 1000 });
+  });
+
+  test('A log axis rejects a negative minimum', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '-5', '1000');
+
+    await expect(page.getByText('Minimum cannot be negative in log mode.')).toBeVisible();
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
+  });
+  test('Fixed scaling requires both bounds', async ({ page }) => {
+    // One bound alone leaves Plotly to choose the other, which reads as auto
+    // scaling while the inspector claims the axis is fixed.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '', '500');
+
+    await expect(page.getByText('Specify both a Minimum and a Maximum.')).toBeVisible();
+
+    // Nothing usable was entered, so the axis keeps auto ranging - the form and
+    // the chart agree that no fixed range is in effect.
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toBeUndefined();
+  });
+
+  test('Zero is a literal minimum on a linear axis, not an instruction to autoscale', async ({
+    page
+  }) => {
+    // Anchoring a linear chart at zero is an ordinary request, and must not be
+    // mistaken for an empty field.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '0', '500');
+
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([0, 500]);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: 500 });
+  });
+
+  test('A fixed range survives a save and reload', async ({ page }) => {
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '25', '750');
+    await saveAndFinishEditing(page);
+
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([25, 750]);
+
+    // A reload lands in browse mode with no inspector tab selected
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await expect(page.getByLabel('Y Axis Minimum value')).toHaveText('25');
+    await expect(page.getByLabel('Y Axis Maximum value')).toHaveText('750');
+  });
+
+  test('The zero anchor sits below the data at every order of magnitude', async ({ page }) => {
+    // The anchor floor is derived from the configured maximum. A fixed floor
+    // would sit above any maximum below it, and Plotly reads a descending range
+    // as an instruction to draw the axis upside-down.
+    const cases = [
+      { max: '0.05', ticks: ['0', '0.001', '0.002', '0.005', '0.01', '0.02', '0.05'] },
+      { max: '0.5', ticks: ['0', '0.01', '0.02', '0.05', '0.1', '0.2', '0.5'] },
+      { max: '10', ticks: ['0', '1', '2', '5', '10'] },
+      { max: '1000000', ticks: ['0', '1', '100', '10k', '1M'] },
+      { max: '1000000000', ticks: ['0', '1', '100', '10k', '1M', '100M', '1G'] }
+    ];
+
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    for (const { max, ticks } of cases) {
+      await setFixedRange(page, 'Y Axis', '0', max);
+
+      const range = await getPlotlyRange(page, '.c-bar-chart', 'yaxis');
+      expect(range[0], `axis is not inverted at max ${max}`).toBeLessThan(range[1]);
+      expect(await getPlotlyTickText(page, '.c-bar-chart', 'yaxis')).toEqual(ticks);
+    }
+  });
+
+  test('Enabling log mode clamps a negative minimum to zero', async ({ page }) => {
+    // A negative minimum is a legitimate linear bound with no logarithmic
+    // reading, but zero is one this axis draws - anchored and labelled. Clamp
+    // to it, so the range stays complete instead of losing a bound.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '-50', '100');
+
+    expect(await getPlotlyRange(page, '.c-bar-chart', 'yaxis')).toEqual([-50, 100]);
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    await expect(page.getByLabel('Y Axis Minimum value')).toHaveValue('0');
+
+    // Still a fixed range, now zero-anchored - not an autorange, and not a
+    // half-specified range.
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(false);
+    expect(await getPlotlyTickText(page, '.c-bar-chart', 'yaxis')).toEqual([
+      '0',
+      '1',
+      '2',
+      '5',
+      '10',
+      '20',
+      '50',
+      '100'
+    ]);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.range).toEqual({ min: 0, max: 100 });
+    expect(persisted.configuration.axisScaling.yAxis.logMode).toBe(true);
+  });
+
+  test('Enabling log mode re-enables auto scale for a range entirely below zero', async ({
+    page
+  }) => {
+    // Clamping the minimum cannot rescue this one - a maximum of zero or less
+    // has no logarithmic reading either, so there is nothing to clamp to and
+    // fixed scaling cannot be honoured at all.
+    const barGraph = await createDomainObjectWithDefaults(page, { type: 'Graph' });
+    await createExampleTelemetryObject(page, barGraph.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, barGraph.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await setFixedRange(page, 'Y Axis', '-100', '-10');
+
+    // Clear the banners queued by object creation, so the notice raised below
+    // is the one on screen rather than a predecessor.
+    await dismissNotifications(page);
+
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+
+    // Auto scale is turned back on, and says so rather than flipping silently
+    await expect(page.getByRole('checkbox', { name: 'Y Axis Auto scale' })).toBeChecked();
+    await expect(page.getByText(/auto scale has been turned back on/)).toBeVisible();
+
+    expect(await getPlotlyAutorange(page, '.c-bar-chart', 'yaxis')).toBe(true);
+
+    const persisted = await getDomainObject(page, barGraph.uuid);
+    expect(persisted.configuration.axisScaling.yAxis.autoscale).toBe(true);
+    expect(persisted.configuration.axisScaling.yAxis.logMode).toBe(true);
+  });
+
+  test('A zoomed log Scatter Plot keeps its Y tick labels', async ({ page }) => {
+    // A zero-anchored axis lists its ticks explicitly, chosen for the whole
+    // configured range. Zooming between two of them would otherwise leave the
+    // axis with no labels at all.
+    const scatterPlot = await createDomainObjectWithDefaults(page, { type: 'Scatter Plot' });
+    await createExampleTelemetryObject(page, scatterPlot.uuid);
+
+    await navigateToObjectWithFixedTimeBounds(page, scatterPlot.url, START_BOUND, END_BOUND);
+
+    await page.getByLabel('Edit Object').click();
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await page.getByRole('checkbox', { name: 'Y Axis Log mode' }).check();
+    await setFixedRange(page, 'Y Axis', '0', '1000000');
+    await dismissNotifications(page);
+    await saveAndFinishEditing(page);
+
+    await expect.poll(() => getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('array');
+
+    // Zoom into a window between the 100 and 10k ticks, where the explicit tick
+    // array has nothing to show.
+    await zoomPlotlyYAxis(page, '.c-scatter-chart', [Math.log10(200), Math.log10(5000)]);
+
+    // Polled rather than read directly: unlike a config change, this one is not
+    // synchronous end to end. The view hands tick generation back with
+    // `Plotly.relayout`, whose promise nothing here can await.
+    await expect.poll(() => getPlotlyTickMode(page, '.c-scatter-chart', 'yaxis')).toBe('auto');
+    // The control carries a `title` and no accessible label. Match it exactly:
+    // the unsynced indicator's own title contains this string too.
+    await expect(page.getByTitle('Reset pan/zoom', { exact: true })).toBeEnabled();
+  });
 });
 
 /**
@@ -235,6 +590,30 @@ async function setFixedRange(page, axisLabel, min, max) {
 }
 
 /**
+ * Clear every notification banner that is showing. Needed before saving in
+ * tests that raise one: saveAndFinishEditing waits for the banner it expects to
+ * detach, and a second banner left behind keeps that wait alive.
+ * @param {import('@playwright/test').Page} page
+ */
+async function dismissNotifications(page) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  const closeButtons = page.locator('.c-message-banner__close-button');
+
+  // Open MCT queues notifications, so dismissing the visible banner reveals the
+  // next one rather than reducing the count - see _selectNextNotification in
+  // NotificationAPI. Re-count after every click instead of assuming a total.
+  for (let attempt = 0; attempt < 10; attempt++) {
+    if ((await closeButtons.count()) === 0) {
+      return;
+    }
+
+    await closeButtons.first().click();
+  }
+
+  await expect(closeButtons).toHaveCount(0);
+}
+
+/**
  * Save the object and dismiss the resulting banner.
  * @param {import('@playwright/test').Page} page
  */
@@ -245,11 +624,11 @@ async function saveAndFinishEditing(page) {
     // eslint-disable-next-line playwright/no-raw-locators
     page.locator('.c-message-banner__message').hover({ trial: true })
   ]);
-  // Dismiss the save banner so it cannot intercept subsequent clicks
-  // eslint-disable-next-line playwright/no-raw-locators
-  await page.locator('.c-message-banner__close-button').click();
-  // eslint-disable-next-line playwright/no-raw-locators
-  await page.locator('.c-message-banner__message').waitFor({ state: 'detached' });
+  // Clear the save banner so it cannot intercept subsequent clicks. Use the
+  // queue-aware helper: Open MCT shows one notification at a time, so if
+  // another was already pending, closing this one just reveals the next and
+  // waiting for the banner to detach would hang.
+  await dismissNotifications(page);
 }
 
 /**
@@ -280,6 +659,80 @@ function getPlotlyRange(page, chartSelector, axis) {
   return page.locator(chartSelector).evaluate((el, axisName) => {
     return el.layout?.[axisName]?.range;
   }, axis);
+}
+
+/**
+ * Read the axis `type` Plotly resolved, from the public `gd.layout`. Undefined
+ * for a linear axis, since the views only set `type` when log mode is on.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {'xaxis' | 'yaxis'} axis
+ * @returns {Promise<string | undefined>}
+ */
+function getPlotlyAxisType(page, chartSelector, axis) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  return page.locator(chartSelector).evaluate((el, axisName) => {
+    return el.layout?.[axisName]?.type;
+  }, axis);
+}
+
+/**
+ * Read the tick labels Plotly rendered for an axis, from the public `gd.layout`.
+ * Only meaningful where the ticks are given explicitly - a zero-anchored log
+ * axis overrides them so the floor can read "0".
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {'xaxis' | 'yaxis'} axis
+ * @returns {Promise<Array<string> | undefined>}
+ */
+function getPlotlyTickText(page, chartSelector, axis) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  return page.locator(chartSelector).evaluate((el, axisName) => {
+    return el.layout?.[axisName]?.ticktext;
+  }, axis);
+}
+
+/**
+ * Read how Plotly is choosing tick positions for an axis, from the public
+ * `gd.layout`. A zero-anchored log axis lists them explicitly ('array'); every
+ * other case leaves them to Plotly ('auto').
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {'xaxis' | 'yaxis'} axis
+ * @returns {Promise<string | undefined>}
+ */
+function getPlotlyTickMode(page, chartSelector, axis) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  return page.locator(chartSelector).evaluate((el, axisName) => {
+    return el.layout?.[axisName]?.tickmode;
+  }, axis);
+}
+
+/**
+ * Zoom the Y axis to an explicit range, the way a drag-select does.
+ *
+ * A synthetic drag cannot be aimed at a data range with any precision, and what
+ * is under test is the view's `plotly_relayout` handler rather than Plotly's own
+ * hit testing. A Plotly graph element is an event emitter, so raise exactly the
+ * event a drag raises. Plotly itself is bundled as a module and has no window
+ * global, so it cannot be called from here - the view's handler does the
+ * relayout.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} chartSelector '.c-bar-chart' or '.c-scatter-chart'
+ * @param {Array<number>} range in LOG units on a log axis
+ */
+async function zoomPlotlyYAxis(page, chartSelector, range) {
+  // eslint-disable-next-line playwright/no-raw-locators
+  await page.locator(chartSelector).evaluate((el, yRange) => {
+    el.emit('plotly_relayout', {
+      'yaxis.range[0]': yRange[0],
+      'yaxis.range[1]': yRange[1]
+    });
+  }, range);
 }
 
 /**
