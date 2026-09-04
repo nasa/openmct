@@ -48,11 +48,11 @@ export default {
     highlightedText() {
       const highlight = this.highlight;
 
-      const normalCharsRegex = /^[^A-Za-z0-9]+$/g;
+      // The highlight is free-typed search text: escape regex syntax so
+      // arbitrary input (e.g. `(a`, `[unclosed`) can never throw (#8432).
+      const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-      const newHighLight = normalCharsRegex.test(highlight) ? `\\${highlight}` : highlight;
-
-      const highlightRegex = new RegExp(`(?<!<[^>]*)(${newHighLight})`, 'gi');
+      const highlightRegex = new RegExp(`(?<!<[^>]*)(${escapedHighlight})`, 'gi');
 
       const replacement = `<span class="${this.highlightClass}">${highlight}</span>`;
 
