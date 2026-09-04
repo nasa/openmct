@@ -214,7 +214,14 @@ export default {
     let element;
 
     const storedHeadProps = localStorage.getItem(SHELL_HEAD_LOCAL_STORAGE_KEY);
-    const storedHeadPropsObject = JSON.parse(storedHeadProps);
+    let storedHeadPropsObject = null;
+    try {
+      storedHeadPropsObject = JSON.parse(storedHeadProps);
+    } catch {
+      // Corrupt stored value (shared-origin writer, devtools edit, truncated
+      // write): fall back to defaults. The fresh value is persisted below,
+      // so this self-heals instead of bricking the shell on every boot (#8430).
+    }
     const storedHeadExpanded = storedHeadPropsObject?.expanded;
     const storedIndicatorsMultiline = storedHeadPropsObject?.multiline;
 
