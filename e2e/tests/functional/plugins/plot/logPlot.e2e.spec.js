@@ -83,6 +83,54 @@ test.describe('Log plot tests', () => {
     await testLogTicks(page);
   });
 
+  test('Enabling log mode on a large-amplitude series keeps the trace rendered', async ({
+    page
+  }) => {
+    // The chart caches a per-axis offset and stores vertices relative to it in a
+    // Float32Array. Log mode changes the space those values live in, so the offset
+    // has to be rebuilt - otherwise a large stale offset consumes the float32
+    // mantissa and the whole trace collapses onto a single row at the canvas edge.
+    // A large vertical offset keeps the first sample large, which is what sets the
+    // magnitude of the cached offset. Deliberately does not save or reload.
+    const largePlot = await createDomainObjectWithDefaults(page, {
+      type: 'Overlay Plot',
+      name: 'Large Amplitude Overlay Plot'
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'Sine Wave Generator',
+      name: 'Large Amplitude Sine Wave Generator',
+      parent: largePlot.uuid
+    });
+
+    // Creating the child leaves us on the generator, so its properties are editable here.
+    await page.getByLabel('More actions').click();
+    await page.getByLabel('Edit Properties...').click();
+    await page.getByLabel('Amplitude', { exact: true }).fill('1000000000000');
+    await page.getByLabel('Offset', { exact: true }).fill('1000000000000');
+    await page.getByLabel('Save').click();
+
+    await page.goto(largePlot.url);
+
+    await expect
+      .poll(async () => (await measurePlotCanvases(page)).trace.rowSpan)
+      .toBeGreaterThan(100);
+
+    await enableEditMode(page);
+    await page.getByRole('tab', { name: 'Config' }).click();
+    await enableLogMode(page);
+
+    // Without the offset rebuild the trace collapses to a rowSpan of 0.
+    await expect
+      .poll(async () => (await measurePlotCanvases(page)).trace.rowSpan)
+      .toBeGreaterThan(100);
+    // Alarm markers are drawn from the same offset, on a separate 2d canvas.
+    // Measured by extent rather than pixel count, since markers collapsed onto a
+    // single row by a stale offset still paint.
+    await expect
+      .poll(async () => (await measurePlotCanvases(page)).alarmMarkers.rowSpan)
+      .toBeGreaterThan(100);
+  });
+
   // Leaving test as 'TODO' for now.
   // NOTE: Not eligible for community contributions.
   test.fixme('Verify that log mode option is reflected in import/export JSON', async ({ page }) => {
@@ -120,17 +168,101 @@ async function testRegularTicks(page) {
  * @param {import('@playwright/test').Page} page
  */
 async function testLogTicks(page) {
+  // Log mode ticks are chosen as round numbers in data space, so they read as
+  // powers of ten (or 1-3 / 1-2-5 steps for narrower ranges) rather than as the
+  // result of transforming an evenly spaced tick back out of symlog space.
   const yTicks = page.locator('.gl-plot-y-tick-label');
-  await expect(yTicks).toHaveCount(9);
-  await expect(yTicks.nth(0)).toHaveText('-2.98');
-  await expect(yTicks.nth(1)).toHaveText('-1.51');
-  await expect(yTicks.nth(2)).toHaveText('-0.58');
-  await expect(yTicks.nth(3)).toHaveText('-0.00');
-  await expect(yTicks.nth(4)).toHaveText('0.58');
-  await expect(yTicks.nth(5)).toHaveText('1.51');
-  await expect(yTicks.nth(6)).toHaveText('2.98');
-  await expect(yTicks.nth(7)).toHaveText('5.31');
-  await expect(yTicks.nth(8)).toHaveText('9.00');
+  await expect(yTicks).toHaveCount(6);
+  await expect(yTicks.nth(0)).toHaveText('-3');
+  await expect(yTicks.nth(1)).toHaveText('-1');
+  await expect(yTicks.nth(2)).toHaveText('0');
+  await expect(yTicks.nth(3)).toHaveText('1');
+  await expect(yTicks.nth(4)).toHaveText('3');
+  await expect(yTicks.nth(5)).toHaveText('10');
+
+  // Unlabelled gridlines fill in the decades between the labelled ticks.
+  const minorGridlines = page.locator('.gl-plot-hash--minor');
+  expect(await minorGridlines.count()).toBeGreaterThan(await yTicks.count());
+
+  await testLogGridlineSpacing(page);
+}
+
+/**
+ * Assert that no two horizontal gridlines are drawn close enough together to read
+ * as a single thick line. Gridline selection has to clear the labelled tick ahead
+ * of a candidate as well as whatever was drawn behind it, and checking only
+ * backwards lets the last gridline in a decade land on the major that closes it -
+ * 9 and 10 on a 1..1e6 range sit 0.7% of the span apart against a 1.2% threshold.
+ *
+ * This holds for any range, so it does not depend on the autoscale padding that
+ * fixes the labelled ticks above.
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+async function testLogGridlineSpacing(page) {
+  // LOG_MINOR_SPACING in tickUtils.js, as a percentage of the axis, less a
+  // tolerance for the rounding that goes through the style attribute.
+  const minimumSeparation = 1.15;
+
+  const positions = await page.locator('.gl-plot-hash.hash-h').evaluateAll((gridlines) =>
+    gridlines
+      .map((gridline) => Number.parseFloat(gridline.style.bottom))
+      .filter((position) => Number.isFinite(position))
+      .sort((a, b) => a - b)
+  );
+
+  expect(positions.length).toBeGreaterThan(1);
+
+  const tooClose = positions
+    .map((position, i) => (i === 0 ? null : { gap: position - positions[i - 1], position }))
+    .filter((pair) => pair && pair.gap < minimumSeparation);
+
+  expect(tooClose).toEqual([]);
+}
+
+/**
+ * Measure what each of the plot's two canvases actually painted. The series line
+ * and markers are drawn with WebGL on the main canvas; alarm markers are drawn
+ * separately in 2d on the overlay canvas. `rowSpan` is the vertical extent of the
+ * painted pixels, which is what distinguishes a real trace from one that has
+ * collapsed to a single row.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @returns {Promise<{trace: {painted: number, rowSpan: number}, alarmMarkers: {painted: number, rowSpan: number}}>}
+ */
+async function measurePlotCanvases(page) {
+  await expect(page.locator('.gl-plot-y-tick-label').first()).toBeVisible();
+
+  return page.evaluate(() => {
+    function measure(selector) {
+      const source = document.querySelector(selector);
+      const copy = document.createElement('canvas');
+      copy.width = source.width;
+      copy.height = source.height;
+      const context = copy.getContext('2d');
+      context.drawImage(source, 0, 0);
+
+      const { data } = context.getImageData(0, 0, copy.width, copy.height);
+      let painted = 0;
+      let minRow = Infinity;
+      let maxRow = -Infinity;
+      for (let alpha = 3, pixel = 0; alpha < data.length; alpha += 4, pixel++) {
+        if (data[alpha] !== 0) {
+          painted++;
+          const row = Math.floor(pixel / copy.width);
+          minRow = Math.min(minRow, row);
+          maxRow = Math.max(maxRow, row);
+        }
+      }
+
+      return { painted, rowSpan: painted ? maxRow - minRow : 0 };
+    }
+
+    return {
+      trace: measure('.gl-plot-chart-area .js-main-canvas'),
+      alarmMarkers: measure('.gl-plot-chart-area .js-overlay-canvas')
+    };
+  });
 }
 
 /**

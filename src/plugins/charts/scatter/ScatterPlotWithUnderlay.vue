@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2024, United States Government
+ Open MCT, Copyright (c) 2014-2026, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -51,6 +51,8 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 };
 
 import { getValidatedData } from '@/plugins/plan/util';
+
+import { AXIS_SCALING_KEY, getAxisRangeLayout, getLogAxisTickLayout } from '../axisConfig.js';
 
 const PATH_COLORS = ['blue', 'red', 'green'];
 const MARKER_COLOR = 'white';
@@ -126,6 +128,10 @@ export default {
 
     if (this.unlistenUnderlayRanges) {
       this.unlistenUnderlayRanges();
+    }
+
+    if (this.unlistenAxisScaling) {
+      this.unlistenAxisScaling();
     }
 
     if (this.unobserveColorChanges) {
@@ -206,7 +212,7 @@ export default {
         },
         xaxis: {
           domain: xAxisDomain,
-          range: [this.xAxisRange.min, this.xAxisRange.max],
+          ...getAxisRangeLayout(this.domainObject, 'xAxis', this.xAxisRange),
           title: this.plotAxisTitle.xAxisTitle,
           automargin: true
         },
@@ -262,24 +268,24 @@ export default {
     },
     getYaxisLayout(yAxisMeta) {
       if (!yAxisMeta) {
-        return {};
+        // yAxisMeta is derived from the traces, so it is empty until data
+        // arrives. Still apply the configured scaling, otherwise a fixed
+        // range would not take effect on an empty plot.
+        return getAxisRangeLayout(this.domainObject, 'yAxis', this.yAxisRange);
       }
 
       const { name, range, side = 'left', unit } = yAxisMeta;
       const title = `${name} ${unit ? '(' + unit + ')' : ''}`;
       const yaxis = {
         automargin: true,
-        title
+        title,
+        ...getAxisRangeLayout(this.domainObject, 'yAxis', this.yAxisRange)
       };
 
-      let yRange = this.yAxisRange;
       if (range === '1') {
-        yaxis.range = [yRange.min, yRange.max];
-
         return yaxis;
       }
 
-      yaxis.range = [yRange.min, yRange.max];
       yaxis.anchor = side.toLowerCase() === 'left' ? 'free' : 'x';
       yaxis.showline = side.toLowerCase() === 'left';
       yaxis.side = side.toLowerCase();
@@ -303,6 +309,11 @@ export default {
         this.domainObject,
         'configuration.ranges',
         this.updateData
+      );
+      this.unlistenAxisScaling = this.openmct.objects.observe(
+        this.domainObject,
+        `configuration.${AXIS_SCALING_KEY}`,
+        this.applyAxisScaling
       );
       this.resizeTimer = false;
       if (window.ResizeObserver) {
@@ -341,6 +352,17 @@ export default {
       this.$emit('subscribe');
     },
     updateData() {
+      // New data must not be drawn while a zoom has frozen the plot - see zoom().
+      if (this.isZoomed) {
+        return;
+      }
+
+      this.updatePlot();
+    },
+    applyAxisScaling() {
+      // Changing the scale is not new data, so this redraws even while frozen.
+      // It deliberately leaves isZoomed alone: the plot stays frozen and
+      // unsubscribed so the trace under inspection survives the rescale.
       this.updatePlot();
     },
     updateLocalControlPosition() {
@@ -361,7 +383,7 @@ export default {
       localControl.style.display = 'block';
     },
     updatePlot() {
-      if (!this.$refs || !this.$refs.plot || this.isZoomed) {
+      if (!this.$refs || !this.$refs.plot) {
         return;
       }
 
@@ -371,6 +393,13 @@ export default {
         this.getLayout()
       );
     },
+    /**
+     * Zooming deliberately freezes the plot: it unsubscribes, and `isZoomed`
+     * then suppresses redraws from new data. Unlike a time-domain plot, where
+     * telemetry accumulates, an incoming frame replaces this trace entirely -
+     * so without the freeze, zooming in on a feature of interest would lose
+     * that feature the moment the next frame arrived. `reset()` thaws it.
+     */
     zoom(eventData) {
       const autorange = eventData['xaxis.autorange'];
       const { autosize } = eventData;
@@ -380,7 +409,33 @@ export default {
       }
 
       this.isZoomed = true;
+      this.restoreAutomaticLogTicks();
       this.$emit('unsubscribe');
+    },
+    /**
+     * A zero-anchored log axis lists its ticks explicitly, and those ticks are
+     * chosen for the whole configured range. Zooming into a window between two
+     * of them would leave the axis with no labels at all, so hand tick
+     * generation back to Plotly for the duration of the zoom. The "0" anchor is
+     * not in the zoomed window anyway. `reset()` rebuilds the full layout.
+     */
+    restoreAutomaticLogTicks() {
+      // Read the live layout rather than the configuration. `Plotly.relayout`
+      // emits `plotly_relayout` in its turn, so this runs again immediately -
+      // and by then tickmode is already 'auto', which ends it.
+      if (this.$refs.plot?.layout?.yaxis?.tickmode !== 'array') {
+        return;
+      }
+
+      const { tickmode, nticks, minor } = getLogAxisTickLayout();
+
+      Plotly.relayout(this.$refs.plot, {
+        'yaxis.tickvals': null,
+        'yaxis.ticktext': null,
+        'yaxis.tickmode': tickmode,
+        'yaxis.nticks': nticks,
+        'yaxis.minor': minor
+      });
     },
     getShapes() {
       let markerData = {
