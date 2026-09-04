@@ -29,8 +29,7 @@ export default {
   inject: ['openmct'],
   props: {
     selectedTab: {
-      type: Object,
-      default: undefined
+      type: Object
     }
   },
   watch: {

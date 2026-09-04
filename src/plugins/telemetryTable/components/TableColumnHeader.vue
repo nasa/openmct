@@ -57,24 +57,16 @@ export default {
   inject: ['openmct'],
   props: {
     headerKey: {
-      type: String,
-      default: undefined
+      type: String
     },
     headerIndex: {
-      type: Number,
-      default: undefined
-    },
-    isHeaderTitle: {
-      type: Boolean,
-      default: undefined
+      type: Number
     },
     sortOptions: {
-      type: Object,
-      default: undefined
+      type: Object
     },
     columnWidth: {
-      type: Number,
-      default: undefined
+      type: Number
     },
     hotzone: Boolean,
     isEditing: Boolean
