@@ -24,8 +24,14 @@
     v-if="shouldUseSplitDateTimeInputs && !readOnly"
     @focus="$event.target.select()"
     @dismiss="dismiss"
+    @submit="submit"
   />
-  <TimePopupFixed v-else-if="!readOnly" @focus="$event.target.select()" @dismiss="dismiss" />
+  <TimePopupFixed
+    v-else-if="!readOnly"
+    @focus="$event.target.select()"
+    @dismiss="dismiss"
+    @submit="submit"
+  />
   <div v-else class="c-compact-tc__setting-wrapper">
     <div
       class="c-compact-tc__setting-value u-fade-truncate--lg --no-sep"
@@ -69,7 +75,7 @@ export default {
       }
     }
   },
-  emits: ['dismiss-inputs-fixed'],
+  emits: ['dismiss-inputs-fixed', 'submit'],
   computed: {
     shouldUseSplitDateTimeInputs() {
       return Boolean(this.timeSystemFormatter.formatDate);
@@ -82,6 +88,9 @@ export default {
     }
   },
   methods: {
+    submit() {
+      this.$emit('submit');
+    },
     dismiss() {
       this.$emit('dismiss-inputs-fixed');
     }
