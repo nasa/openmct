@@ -100,10 +100,20 @@ export default {
     let persistedSortOrder = window.localStorage.getItem('openmct-listview-sort-order');
 
     if (persistedSortOrder) {
-      let parsed = JSON.parse(persistedSortOrder);
-
-      sortBy = parsed.sortBy;
-      ascending = parsed.ascending;
+      try {
+        const parsed = JSON.parse(persistedSortOrder);
+        // Only accept well-shaped values; anything else (corrupt text,
+        // null, wrong types) falls back to the defaults (#8434).
+        if (parsed && typeof parsed.sortBy === 'string') {
+          sortBy = parsed.sortBy;
+        }
+        if (parsed && typeof parsed.ascending === 'boolean') {
+          ascending = parsed.ascending;
+        }
+      } catch {
+        // Corrupt stored value: keep the defaults instead of
+        // breaking the view on init.
+      }
     }
 
     return {
