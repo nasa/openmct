@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { fileURLToPath } from 'url';
+
 import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
@@ -251,6 +253,78 @@ test.describe('Time Strip', () => {
       await expect(aheadBehindMarker).toBeVisible();
       await expect(aheadBehindMarker).not.toContainClass('--ahead');
       await expect(aheadBehindMarker).toContainClass('--behind');
+    });
+  });
+
+  test.describe('with an execution monitoring provider', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript({
+        path: fileURLToPath(
+          new URL('../../../helper/addInitExecutionMonitoringProvider.js', import.meta.url)
+        )
+      });
+
+      // Go to baseURL
+      await page.goto('./', { waitUntil: 'domcontentloaded' });
+
+      timeStrip = await createDomainObjectWithDefaults(page, { name: 'TimeStrip_ExecutionMon', type: 'Time Strip' });
+      await createPlanFromJSON(page, {
+        json: testPlan,
+        parent: timeStrip.uuid
+      });
+    });
+
+    test('displays provider-driven status as read-only and reflects live updates', async ({
+      page
+    }) => {
+      await navigateToObjectWithRealTime(page, timeStrip.url);
+      await setEndOffset(page, {
+        endMins: '15',
+        endSecs: '00'
+      });
+
+      await test.step('shows the provider status read-only and hides manual controls in the inspector', async () => {
+        await page.evaluate((timeStrip) => {
+          window.setMockExecutionMonitoringStatus({ status: 'ahead', duration: 5 }, timeStrip.uuid);
+        }, timeStrip);
+
+        // select the first plan in the timeStrip
+        await (page.locator('div').filter({ hasText: /^No activities within timeframe$/ }).nth(1)).click();
+        await page.getByRole('tab', { name: 'Config' }).click();
+
+        await expect(page.locator('#plan_execution_monitoring_duration')).toBeHidden();
+
+        await expect(page.getByLabel("Plan Execution Monitoring Status")).toContainText('Ahead by');
+        await expect(page.getByLabel("Plan Execution Monitoring Duration")).toContainText('5');
+      });
+
+      await test.step('reflects the provider status on the timeline ahead/behind marker', async () => {
+        const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
+        await expect(aheadBehindMarker).toBeVisible();
+        await expect(aheadBehindMarker).toContainClass('--ahead');
+        await expect(aheadBehindMarker).not.toContainClass('--behind');
+      });
+
+      await test.step('reflects a live status update from the provider without reloading', async () => {
+        await page.evaluate((timeStrip) => {
+          window.setMockExecutionMonitoringStatus({ status: 'behind', duration: 3 }, timeStrip.uuid);
+        }, timeStrip);
+        const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
+
+        await expect(aheadBehindMarker).toBeVisible();
+        await expect(aheadBehindMarker).not.toContainClass('--ahead');
+        await expect(aheadBehindMarker).toContainClass('--behind');
+
+        // select the first plan in the timeStrip
+        await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
+        await page.getByRole('button', { name: 'Edit Object' }).click();
+
+        await expect(page.getByLabel("Plan Execution Monitoring Status")).toContainText('Behind by');
+        await expect(page.getByLabel("Plan Execution Monitoring Duration")).toContainText('3');
+
+        await page.getByLabel('Save').click();
+        await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+      });
     });
   });
 });
