@@ -1105,7 +1105,7 @@ export default class TelemetryAPI {
         function (value) {
           subscriber.callbacks.forEach(function (cb) {
             const status = {
-                execution_monitoring: {
+              execution_monitoring: {
                 [keyString]: value
               }
             };

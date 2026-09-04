@@ -79,13 +79,14 @@ const DEFAULT_AHEAD_BEHIND_STATUS = {
   duration: 0,
   status: ''
 };
-const formattedStatus = (status, planIdentifier) => {
+
+function formattedStatus(status, planIdentifier) {
   return {
     execution_monitoring: {
       [planIdentifier]: status ?? DEFAULT_AHEAD_BEHIND_STATUS
     }
-  }
-};
+  };
+}
 
 export default {
   components: {
@@ -232,7 +233,7 @@ export default {
           });
         return;
       } else {
-        this.aheadBehind = {...{status: 'ahead', duration: 15}};
+        this.aheadBehind = { ...{ status: 'ahead', duration: 15 } };
       }
 
       this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
@@ -254,7 +255,9 @@ export default {
       ) {
         this.aheadBehind = { ...newStatusObject.execution_monitoring[planIdentifier] };
       } else {
-        this.aheadBehind = { ...formattedStatus(null, planIdentifier).execution_monitoring[planIdentifier] };
+        this.aheadBehind = {
+          ...formattedStatus(null, planIdentifier).execution_monitoring[planIdentifier]
+        };
       }
     },
     setPlanData(domainObject) {

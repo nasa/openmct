@@ -267,7 +267,10 @@ test.describe('Time Strip', () => {
       // Go to baseURL
       await page.goto('./', { waitUntil: 'domcontentloaded' });
 
-      timeStrip = await createDomainObjectWithDefaults(page, { name: 'TimeStrip_ExecutionMon', type: 'Time Strip' });
+      timeStrip = await createDomainObjectWithDefaults(page, {
+        name: 'TimeStrip_ExecutionMon',
+        type: 'Time Strip'
+      });
       await createPlanFromJSON(page, {
         json: testPlan,
         parent: timeStrip.uuid
@@ -284,18 +287,22 @@ test.describe('Time Strip', () => {
       });
 
       await test.step('shows the provider status read-only and hides manual controls in the inspector', async () => {
-        await page.evaluate((timeStrip) => {
-          window.setMockExecutionMonitoringStatus({ status: 'ahead', duration: 5 }, timeStrip.uuid);
+        await page.evaluate((obj) => {
+          window.setMockExecutionMonitoringStatus({ status: 'ahead', duration: 5 }, obj.uuid);
         }, timeStrip);
 
         // select the first plan in the timeStrip
-        await (page.locator('div').filter({ hasText: /^No activities within timeframe$/ }).nth(1)).click();
+        await page
+          .locator('div')
+          .filter({ hasText: /^No activities within timeframe$/ })
+          .nth(1)
+          .click();
         await page.getByRole('tab', { name: 'Config' }).click();
 
         await expect(page.locator('#plan_execution_monitoring_duration')).toBeHidden();
 
-        await expect(page.getByLabel("Plan Execution Monitoring Status")).toContainText('Ahead by');
-        await expect(page.getByLabel("Plan Execution Monitoring Duration")).toContainText('5');
+        await expect(page.getByLabel('Plan Execution Monitoring Status')).toContainText('Ahead by');
+        await expect(page.getByLabel('Plan Execution Monitoring Duration')).toContainText('5');
       });
 
       await test.step('reflects the provider status on the timeline ahead/behind marker', async () => {
@@ -306,8 +313,8 @@ test.describe('Time Strip', () => {
       });
 
       await test.step('reflects a live status update from the provider without reloading', async () => {
-        await page.evaluate((timeStrip) => {
-          window.setMockExecutionMonitoringStatus({ status: 'behind', duration: 3 }, timeStrip.uuid);
+        await page.evaluate((planObj) => {
+          window.setMockExecutionMonitoringStatus({ status: 'behind', duration: 3 }, planObj.uuid);
         }, timeStrip);
         const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
 
@@ -319,8 +326,10 @@ test.describe('Time Strip', () => {
         await page.locator('.c-swimlane__lane-label.c-object-label').nth(1).click();
         await page.getByRole('button', { name: 'Edit Object' }).click();
 
-        await expect(page.getByLabel("Plan Execution Monitoring Status")).toContainText('Behind by');
-        await expect(page.getByLabel("Plan Execution Monitoring Duration")).toContainText('3');
+        await expect(page.getByLabel('Plan Execution Monitoring Status')).toContainText(
+          'Behind by'
+        );
+        await expect(page.getByLabel('Plan Execution Monitoring Duration')).toContainText('3');
 
         await page.getByLabel('Save').click();
         await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
