@@ -46,7 +46,7 @@
 <script>
 import Plotly from 'plotly-basic';
 
-import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
+import { AXIS_SCALING_KEY, getAxisRangeLayout } from '../axisConfig.js';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
   LEFT: 8,
@@ -109,22 +109,6 @@ export default {
     Plotly.purge(this.$refs.plot);
   },
   methods: {
-    /**
-     * Build the Plotly range portion of an axis layout from the persisted
-     * scaling configuration. `autorange` and `range` are mutually exclusive -
-     * Plotly ignores `range` when `autorange` is true.
-     */
-    getAxisRangeLayout(axisKey) {
-      const axis = getAxisConfig(this.domainObject, axisKey);
-      if (axis.autoscale !== false || !axis.range) {
-        return { autorange: true };
-      }
-
-      return {
-        autorange: false,
-        range: [axis.range.min, axis.range.max]
-      };
-    },
     getLayout() {
       const yAxesMeta = this.getYAxisMeta();
       const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
@@ -141,7 +125,7 @@ export default {
         },
         xaxis: {
           domain: xAxisDomain,
-          ...this.getAxisRangeLayout('xAxis'),
+          ...getAxisRangeLayout(this.domainObject, 'xAxis'),
           title: this.plotAxisTitle.xAxisTitle,
           automargin: true,
           fixedrange: true
@@ -199,7 +183,7 @@ export default {
         // yAxisMeta is derived from the traces, so it is empty until data
         // arrives. Still apply the configured scaling, otherwise a fixed
         // range would not take effect on an empty plot.
-        return this.getAxisRangeLayout('yAxis');
+        return getAxisRangeLayout(this.domainObject, 'yAxis');
       }
 
       const { name, range, side = 'left', unit } = yAxisMeta;
@@ -208,7 +192,7 @@ export default {
         automargin: true,
         fixedrange: true,
         title,
-        ...this.getAxisRangeLayout('yAxis')
+        ...getAxisRangeLayout(this.domainObject, 'yAxis')
       };
 
       if (range === '1') {

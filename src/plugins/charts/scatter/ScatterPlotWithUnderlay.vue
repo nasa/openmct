@@ -52,7 +52,7 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 
 import { getValidatedData } from '@/plugins/plan/util';
 
-import { AXIS_SCALING_KEY, getAxisConfig } from '../axisConfig.js';
+import { AXIS_SCALING_KEY, getAxisRangeLayout, getLogAxisTickLayout } from '../axisConfig.js';
 
 const PATH_COLORS = ['blue', 'red', 'green'];
 const MARKER_COLOR = 'white';
@@ -166,31 +166,6 @@ export default {
         this.yAxisRange = this.data[0].yaxis;
       }
     },
-    /**
-     * Build the Plotly range portion of an axis layout. A manually configured
-     * fixed range takes precedence; otherwise fall back to the underlay ranges
-     * (`configuration.ranges`, set from the create form) so existing Scatter
-     * Plots keep their current behavior. `autorange` and `range` are mutually
-     * exclusive - Plotly ignores `range` when `autorange` is true.
-     */
-    getAxisRangeLayout(axisKey, underlayRange) {
-      const axis = getAxisConfig(this.domainObject, axisKey);
-      if (axis.autoscale === false && axis.range) {
-        return {
-          autorange: false,
-          range: [axis.range.min, axis.range.max]
-        };
-      }
-
-      if (underlayRange && underlayRange.min !== '' && underlayRange.max !== '') {
-        return {
-          autorange: false,
-          range: [underlayRange.min, underlayRange.max]
-        };
-      }
-
-      return { autorange: true };
-    },
     getLayout() {
       this.getAxisMinMax();
 
@@ -237,7 +212,7 @@ export default {
         },
         xaxis: {
           domain: xAxisDomain,
-          ...this.getAxisRangeLayout('xAxis', this.xAxisRange),
+          ...getAxisRangeLayout(this.domainObject, 'xAxis', this.xAxisRange),
           title: this.plotAxisTitle.xAxisTitle,
           automargin: true
         },
@@ -296,7 +271,7 @@ export default {
         // yAxisMeta is derived from the traces, so it is empty until data
         // arrives. Still apply the configured scaling, otherwise a fixed
         // range would not take effect on an empty plot.
-        return this.getAxisRangeLayout('yAxis', this.yAxisRange);
+        return getAxisRangeLayout(this.domainObject, 'yAxis', this.yAxisRange);
       }
 
       const { name, range, side = 'left', unit } = yAxisMeta;
@@ -304,7 +279,7 @@ export default {
       const yaxis = {
         automargin: true,
         title,
-        ...this.getAxisRangeLayout('yAxis', this.yAxisRange)
+        ...getAxisRangeLayout(this.domainObject, 'yAxis', this.yAxisRange)
       };
 
       if (range === '1') {
@@ -434,7 +409,33 @@ export default {
       }
 
       this.isZoomed = true;
+      this.restoreAutomaticLogTicks();
       this.$emit('unsubscribe');
+    },
+    /**
+     * A zero-anchored log axis lists its ticks explicitly, and those ticks are
+     * chosen for the whole configured range. Zooming into a window between two
+     * of them would leave the axis with no labels at all, so hand tick
+     * generation back to Plotly for the duration of the zoom. The "0" anchor is
+     * not in the zoomed window anyway. `reset()` rebuilds the full layout.
+     */
+    restoreAutomaticLogTicks() {
+      // Read the live layout rather than the configuration. `Plotly.relayout`
+      // emits `plotly_relayout` in its turn, so this runs again immediately -
+      // and by then tickmode is already 'auto', which ends it.
+      if (this.$refs.plot?.layout?.yaxis?.tickmode !== 'array') {
+        return;
+      }
+
+      const { tickmode, nticks, minor } = getLogAxisTickLayout();
+
+      Plotly.relayout(this.$refs.plot, {
+        'yaxis.tickvals': null,
+        'yaxis.ticktext': null,
+        'yaxis.tickmode': tickmode,
+        'yaxis.nticks': nticks,
+        'yaxis.minor': minor
+      });
     },
     getShapes() {
       let markerData = {
