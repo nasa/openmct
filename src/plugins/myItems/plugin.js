@@ -31,6 +31,8 @@ export default function MyItemsPlugin(
   priority = undefined
 ) {
   return function install(openmct) {
+    // Always use empty namespace for backward compatibility with URLs
+    // The namespacedStorage will handle namespace isolation at the localStorage level
     const identifierObject = createMyItemsIdentifier(namespace);
 
     if (priority === undefined) {

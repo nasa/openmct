@@ -43,6 +43,10 @@ class UserAPI extends EventEmitter {
 
     this.User = User;
     this.status = new StatusAPI(this, openmct);
+
+    // Initialize StoragePersistence with namespaced localStorage
+    const namespacedStorage = openmct.getNamespacedLocalStorage();
+    this.storagePersistence = new StoragePersistence(namespacedStorage);
   }
 
   /**
@@ -111,7 +115,7 @@ class UserAPI extends EventEmitter {
     }
 
     // get from session storage
-    const sessionStorageValue = StoragePersistence.getActiveRole();
+    const sessionStorageValue = this.storagePersistence.getActiveRole();
 
     return sessionStorageValue;
   }
@@ -121,9 +125,9 @@ class UserAPI extends EventEmitter {
    */
   setActiveRole(role) {
     if (!role) {
-      StoragePersistence.clearActiveRole();
+      this.storagePersistence.clearActiveRole();
     } else {
-      StoragePersistence.setActiveRole(role);
+      this.storagePersistence.setActiveRole(role);
     }
     this.emit('roleChanged', role);
   }
