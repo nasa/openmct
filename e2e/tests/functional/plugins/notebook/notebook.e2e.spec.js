@@ -352,6 +352,31 @@ test.describe('Notebook entry tests', () => {
     expect(embedName).toBe(overlayPlot.name);
   });
   test.fixme('new entries persist through navigation events without save', async ({ page }) => {});
+  test('An embed actions menu is dismissed by a click anywhere outside of it', async ({ page }) => {
+    await nbUtils.dragAndDropEmbed(page, notebookObject);
+    await nbUtils.enterTextEntry(page, 'Second Entry');
+
+    const menu = page.locator('.c-menu');
+    const embedActionsButton = page.getByLabel('Notebook Entry').first().getByLabel('More actions');
+
+    // Clicking the entry which holds the embed should dismiss the menu
+    await embedActionsButton.click();
+    await expect(menu).toBeVisible();
+    await page.getByLabel('Notebook Entry').first().click();
+    await expect(menu).toBeHidden();
+
+    // So should clicking a different entry
+    await embedActionsButton.click();
+    await expect(menu).toBeVisible();
+    await page.getByLabel('Notebook Entry').last().click();
+    await expect(menu).toBeHidden();
+
+    // Menu items must still be invoked when clicked
+    await embedActionsButton.click();
+    await expect(menu).toBeVisible();
+    await menu.getByRole('menuitem', { name: 'Remove This Embed' }).click();
+    await expect(page.getByText('This action will permanently remove this embed')).toBeVisible();
+  });
   test('previous and new entries can be deleted', async ({ page }) => {
     // Navigate to the notebook object
     await page.goto(notebookObject.url);
