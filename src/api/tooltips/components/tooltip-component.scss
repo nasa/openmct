@@ -13,3 +13,10 @@
 .c-tooltip {
   font-style: italic;
 }
+.c-tl__bounds {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 4px;
+    align-items: center;
+    width: 100%;
+}
