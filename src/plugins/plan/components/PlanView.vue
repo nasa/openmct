@@ -80,6 +80,14 @@ const DEFAULT_AHEAD_BEHIND_STATUS = {
   status: ''
 };
 
+function formattedStatus(status, planIdentifier) {
+  return {
+    execution_monitoring: {
+      [planIdentifier]: status ?? DEFAULT_AHEAD_BEHIND_STATUS
+    }
+  };
+}
+
 export default {
   components: {
     TimelineAxis,
@@ -108,7 +116,7 @@ export default {
       clipActivityNames: false,
       height: 0,
       rowHeight: ROW_HEIGHT,
-      aheadBehind: DEFAULT_AHEAD_BEHIND_STATUS
+      aheadBehind: undefined
     };
   },
   computed: {
@@ -209,6 +217,23 @@ export default {
       this.getPlanExecutionMonitoringStatus();
     },
     async getPlanExecutionMonitoringStatus() {
+      const planIdentifier = this.openmct.objects.makeKeyString(this.planObject.identifier);
+      this.stopObservingPlanExecutionMonitoringStatusObject?.();
+
+      const executionMonitoringProvider = this.openmct.plan.getExecutionMonitoring(this.planObject);
+
+      if (executionMonitoringProvider) {
+        const status = await executionMonitoringProvider.status();
+        this.setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
+        this.stopObservingPlanExecutionMonitoringStatusObject =
+          this.openmct.plan.subscribeToExecutionMonitoring(this.planObject, (newStatus) => {
+            this.setPlanExecutionMonitoringStatus(newStatus);
+          });
+        return;
+      } else {
+        this.aheadBehind = { ...{ status: 'ahead', duration: 15 } };
+      }
+
       this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
         PLAN_EXECUTION_MONITORING_KEY
       );
@@ -226,9 +251,11 @@ export default {
         newStatusObject.execution_monitoring &&
         newStatusObject.execution_monitoring[planIdentifier]
       ) {
-        this.aheadBehind = newStatusObject.execution_monitoring[planIdentifier];
+        this.aheadBehind = { ...newStatusObject.execution_monitoring[planIdentifier] };
       } else {
-        this.aheadBehind = DEFAULT_AHEAD_BEHIND_STATUS;
+        this.aheadBehind = {
+          ...formattedStatus(null, planIdentifier).execution_monitoring[planIdentifier]
+        };
       }
     },
     setPlanData(domainObject) {

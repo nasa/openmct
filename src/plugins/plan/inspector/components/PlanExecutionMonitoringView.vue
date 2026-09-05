@@ -24,7 +24,19 @@
   <div class="c-inspector__properties c-inspect-properties">
     <div class="u-contents">
       <div class="c-inspect-properties__header">Plan Execution Status</div>
-      <div class="c-inspect-properties__row">
+      <div v-if="hasExecutionMonitoringProvider" class="c-inspect-properties__row">
+        <div class="c-inspect-properties__label" aria-label="Plan Execution Monitoring Status">
+          {{ currentStatusLabel }}
+        </div>
+        <div
+          v-if="planExecutionMonitoringStatus !== executionMonitorStates[0].key"
+          class="c-inspect-properties__value"
+          aria-label="Plan Execution Monitoring Duration"
+        >
+          {{ duration }} <span class="hint">minutes</span>
+        </div>
+      </div>
+      <div v-else class="c-inspect-properties__row">
         <div
           class="c-inspect-properties__label"
           aria-label="Plan Execution Monitoring Status Label"
@@ -94,8 +106,17 @@ export default {
     return {
       executionMonitorStates: executionMonitorStates,
       planExecutionMonitoringStatus: executionMonitorStates[0].key,
-      duration: 0
+      duration: 0,
+      hasExecutionMonitoringProvider: false
     };
+  },
+  computed: {
+    currentStatusLabel() {
+      const state = executionMonitorStates.find(
+        (status) => status.key === this.planExecutionMonitoringStatus
+      );
+      return state ? state.label : executionMonitorStates[0].label;
+    }
   },
   watch: {
     planObject() {
@@ -116,6 +137,9 @@ export default {
       this.getPlanExecutionMonitoringStatus();
     },
     toggleDuration() {
+      if (this.hasExecutionMonitoringProvider) {
+        return;
+      }
       if (this.duration === undefined || this.duration < 0) {
         return;
       }
@@ -125,6 +149,9 @@ export default {
       this.persistExecutionMonitoringStatus();
     },
     changePlanExecutionMonitoring() {
+      if (this.hasExecutionMonitoringProvider) {
+        return;
+      }
       if (this.planExecutionMonitoringStatus === '') {
         return;
       }
@@ -139,6 +166,23 @@ export default {
       this.duration = duration ?? 0;
     },
     async getPlanExecutionMonitoringStatus() {
+      this.stopObservingPlanExecutionMonitoringStatusObject?.();
+
+      const executionMonitoringProvider = this.openmct.plan.getExecutionMonitoring(this.planObject);
+
+      if (executionMonitoringProvider) {
+        this.hasExecutionMonitoringProvider = true;
+        const status = await executionMonitoringProvider.status();
+        this.applyExecutionMonitoringStatus(status);
+        this.stopObservingPlanExecutionMonitoringStatusObject =
+          this.openmct.plan.subscribeToExecutionMonitoring(
+            this.planObject,
+            this.applyExecutionMonitoringStatus.bind(this)
+          );
+        return;
+      }
+
+      this.hasExecutionMonitoringProvider = false;
       this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
         PLAN_EXECUTION_MONITORING_KEY
       );
@@ -148,6 +192,13 @@ export default {
         '*',
         this.setPlanExecutionMonitoringStatus
       );
+    },
+    applyExecutionMonitoringStatus(status) {
+      if (!status) {
+        this.setPlanExecutionMonitoring();
+        return;
+      }
+      this.setPlanExecutionMonitoring(status.status, status.duration);
     },
     setPlanExecutionMonitoringStatus(newStatusObject) {
       const statusObj = newStatusObject?.execution_monitoring?.[this.planIdentifier];
