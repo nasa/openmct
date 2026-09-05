@@ -168,16 +168,14 @@ export default {
     async getPlanExecutionMonitoringStatus() {
       this.stopObservingPlanExecutionMonitoringStatusObject?.();
 
-      const executionMonitoringProvider = this.openmct.telemetry.getExecutionMonitoring(
-        this.planObject
-      );
+      const executionMonitoringProvider = this.openmct.plan.getExecutionMonitoring(this.planObject);
 
       if (executionMonitoringProvider) {
         this.hasExecutionMonitoringProvider = true;
         const status = await executionMonitoringProvider.status();
         this.applyExecutionMonitoringStatus(status);
         this.stopObservingPlanExecutionMonitoringStatusObject =
-          this.openmct.telemetry.subscribeToExecutionMonitoring(
+          this.openmct.plan.subscribeToExecutionMonitoring(
             this.planObject,
             this.applyExecutionMonitoringStatus.bind(this)
           );

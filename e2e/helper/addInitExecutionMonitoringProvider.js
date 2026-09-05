@@ -51,5 +51,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  openmct.telemetry.addProvider(mockExecutionMonitoringProvider);
+  openmct.plan.addProvider(mockExecutionMonitoringProvider);
 });

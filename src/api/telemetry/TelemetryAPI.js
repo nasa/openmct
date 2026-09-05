@@ -99,7 +99,6 @@ export default class TelemetryAPI {
     this.formatters = new Map();
     this.limitProviders = [];
     this.stalenessProviders = [];
-    this.executionMonitoringProviders = [];
     this.metadataCache = new WeakMap();
     this.metadataProviders = [new DefaultMetadataProvider(this.openmct)];
     this.noRequestProviderForAllObjects = false;
@@ -185,10 +184,6 @@ export default class TelemetryAPI {
     if (provider.supportsStaleness) {
       this.stalenessProviders.unshift(provider);
     }
-
-    if (provider.supportsExecutionMonitoring) {
-      this.executionMonitoringProviders.unshift(provider);
-    }
   }
 
   /**
@@ -232,15 +227,6 @@ export default class TelemetryAPI {
   #findLimitEvaluator(domainObject) {
     return this.limitProviders.find((provider) => {
       return provider.supportsLimits(domainObject);
-    });
-  }
-
-  /**
-   * @private
-   */
-  #findExecutionMonitoringEvaluator(domainObject) {
-    return this.executionMonitoringProviders.find((provider) => {
-      return provider.supportsExecutionMonitoring(domainObject);
     });
   }
 
@@ -1027,105 +1013,6 @@ export default class TelemetryAPI {
     } finally {
       this.requestAbortControllers.delete(abortController);
     }
-  }
-
-  /**
-   * Get an execution monitoring status source for this domain object.
-   * Execution monitoring providers supply a live status (e.g. ahead/behind
-   * schedule for a plan) without requiring a user to set it manually.
-   *
-   * This method is optional. If no provider supports execution monitoring
-   * for this domain object, `undefined` is returned so that callers can
-   * fall back to their own persistence mechanism.
-   *
-   * @param {import('openmct').DomainObject} domainObject the domain
-   *        object for which to get execution monitoring status
-   * @returns {{status: () => Promise<{status: string, duration: number}|undefined>} | undefined}
-   * @method getExecutionMonitoring
-   */
-  getExecutionMonitoring(domainObject) {
-    const provider = this.#findExecutionMonitoringEvaluator(domainObject);
-
-    if (!provider || !provider.getExecutionMonitoring) {
-      return undefined;
-    }
-
-    const abortController = new AbortController();
-    const options = { signal: abortController.signal };
-    this.requestAbortControllers.add(abortController);
-
-    try {
-      return provider.getExecutionMonitoring(domainObject, options);
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        this.openmct.notifications.error(
-          'Error requesting execution monitoring data, see console for details'
-        );
-      }
-
-      throw new Error(error);
-    } finally {
-      this.requestAbortControllers.delete(abortController);
-    }
-  }
-
-  /**
-   * Subscribe to run-time changes in execution monitoring status for a
-   * specific domain object. The callback will be called whenever new data
-   * is received from an execution monitoring provider.
-   *
-   * @method subscribeToExecutionMonitoring
-   * @param {import('openmct').DomainObject} domainObject the object
-   *        which has associated execution monitoring status
-   * @param {Function} callback the callback to invoke with new data, as
-   *        it becomes available
-   * @returns {Function} a function which may be called to terminate
-   *          the subscription
-   */
-  subscribeToExecutionMonitoring(domainObject, callback) {
-    const provider = this.#findExecutionMonitoringEvaluator(domainObject);
-
-    if (!provider || !provider.subscribeToExecutionMonitoring) {
-      return () => {};
-    }
-
-    if (!this.executionMonitoringSubscribeCache) {
-      this.executionMonitoringSubscribeCache = {};
-    }
-
-    const keyString = makeKeyString(domainObject.identifier);
-    let subscriber = this.executionMonitoringSubscribeCache[keyString];
-
-    if (!subscriber) {
-      subscriber = this.executionMonitoringSubscribeCache[keyString] = {
-        callbacks: [callback]
-      };
-      subscriber.unsubscribe = provider.subscribeToExecutionMonitoring(
-        domainObject,
-        function (value) {
-          subscriber.callbacks.forEach(function (cb) {
-            const status = {
-              execution_monitoring: {
-                [keyString]: value
-              }
-            };
-            cb(status);
-          });
-        }
-      );
-    } else {
-      subscriber.callbacks.push(callback);
-    }
-
-    return function unsubscribe() {
-      subscriber.callbacks = subscriber.callbacks.filter(function (cb) {
-        return cb !== callback;
-      });
-      if (subscriber.callbacks.length === 0) {
-        subscriber.unsubscribe();
-        delete this.executionMonitoringSubscribeCache[keyString];
-      }
-    }.bind(this);
   }
 }
 

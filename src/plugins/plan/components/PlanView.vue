@@ -220,15 +220,13 @@ export default {
       const planIdentifier = this.openmct.objects.makeKeyString(this.planObject.identifier);
       this.stopObservingPlanExecutionMonitoringStatusObject?.();
 
-      const executionMonitoringProvider = this.openmct.telemetry.getExecutionMonitoring(
-        this.planObject
-      );
+      const executionMonitoringProvider = this.openmct.plan.getExecutionMonitoring(this.planObject);
 
       if (executionMonitoringProvider) {
         const status = await executionMonitoringProvider.status();
         this.setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
         this.stopObservingPlanExecutionMonitoringStatusObject =
-          this.openmct.telemetry.subscribeToExecutionMonitoring(this.planObject, (newStatus) => {
+          this.openmct.plan.subscribeToExecutionMonitoring(this.planObject, (newStatus) => {
             this.setPlanExecutionMonitoringStatus(newStatus);
           });
         return;
