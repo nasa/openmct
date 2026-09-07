@@ -80,6 +80,22 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     await page.locator('button.c-notebook__toggle-nav-button').click();
   });
 
+  test('Notebook can be renamed after committing a page @addInit', async ({ page }) => {
+    const notebookName = page.locator('.l-browse-bar__object-name');
+    const renamedNotebook = 'Renamed Shift Log';
+
+    await expect(notebookName).toBeEditable();
+    await notebookName.fill(renamedNotebook);
+    await notebookName.press('Enter');
+    await expect(notebookName).toHaveText(renamedNotebook);
+
+    await expect(
+      page.getByText('This page has been committed and cannot be modified or removed', {
+        exact: true
+      })
+    ).toBeVisible();
+  });
+
   test('Locked page should now be in a locked state @addInit', async ({ page }, testInfo) => {
     // eslint-disable-next-line playwright/no-skipped-test
     test.skip(testInfo.project === 'chrome-beta', 'Test is unreliable on chrome-beta');
