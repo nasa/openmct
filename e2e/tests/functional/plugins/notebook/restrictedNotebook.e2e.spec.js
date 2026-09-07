@@ -83,7 +83,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     const notebookName = page.locator('.l-browse-bar__object-name');
     const renamedNotebook = 'Renamed Shift Log';
 
-    await expect(page.getByLabel('Browse bar', { exact: true }).locator('.icon-lock')).toHaveCount(0);
+    await expect(page.getByLabel('Browse bar', { exact: true }).locator('.icon-lock')).toHaveCount(
+      0
+    );
     await expect(notebookName).toBeEditable();
     await notebookName.fill(renamedNotebook);
     await notebookName.press('Enter');
@@ -110,7 +112,9 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     await expect(pageLockIcon).toHaveCount(1);
 
     // Committing protects the page, without applying an object-level notebook lock.
-    await expect(page.locator('ul.c-notebook__pages').getByTitle('Open context menu')).toHaveCount(0);
+    await expect(page.locator('ul.c-notebook__pages').getByTitle('Open context menu')).toHaveCount(
+      0
+    );
   });
 
   test('Can still: add page, rename, add entry, delete unlocked pages @addInit', async ({
