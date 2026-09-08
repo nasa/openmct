@@ -399,16 +399,16 @@ export default class TelemetryCollection extends EventEmitter {
    * @private
    */
   _bounds(bounds, isTick) {
+    let startChanged = this.lastBounds.start !== bounds.start;
+    let endChanged = this.lastBounds.end !== bounds.end;
+
+    this.lastBounds = bounds;
+
     if (this.modeChanged) {
       this.modeChanged = false;
       this._reset();
       return;
     }
-
-    let startChanged = this.lastBounds.start !== bounds.start;
-    let endChanged = this.lastBounds.end !== bounds.end;
-
-    this.lastBounds = bounds;
 
     if (isTick) {
       if (this.timeKey === undefined) {

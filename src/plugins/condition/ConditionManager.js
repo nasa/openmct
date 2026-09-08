@@ -24,6 +24,7 @@ import { EventEmitter } from 'eventemitter3';
 import { isEqual } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
+import { TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
 import Condition from './Condition.js';
 import HistoricalTelemetryProvider from './HistoricalTelemetryProvider.js';
 import { TELEMETRY_VALUE } from './utils/constants.js';
@@ -31,6 +32,12 @@ import { getLatestTimestamp } from './utils/time.js';
 
 export default class ConditionManager extends EventEmitter {
   #latestDataTable = new Map();
+  /**
+   * The most recent time seen across all of this condition set's telemetry, for the current time
+   * system. Maintained as a running maximum so that it costs a single comparison per datum.
+   * @type {number | undefined}
+   */
+  #latestTelemetryTime;
 
   /**
    * @param {import('openmct.js').DomainObject} conditionSetDomainObject
@@ -44,6 +51,13 @@ export default class ConditionManager extends EventEmitter {
     this.composition = this.openmct.composition.get(conditionSetDomainObject);
     this.composition.on('add', this.subscribeToTelemetry, this);
     this.composition.on('remove', this.unsubscribeFromTelemetry, this);
+
+    // The running maximum only ever moves forward, so it has to be discarded whenever the data it
+    // summarizes is replaced: on a time system change, and on a bounds change that is not a tick.
+    this.resetLatestTelemetryTime = this.resetLatestTelemetryTime.bind(this);
+    this.handleBoundsChanged = this.handleBoundsChanged.bind(this);
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.timeSystemChanged, this.resetLatestTelemetryTime);
+    this.openmct.time.on(TIME_CONTEXT_EVENTS.boundsChanged, this.handleBoundsChanged);
 
     this.shouldEvaluateNewTelemetry = this.shouldEvaluateNewTelemetry.bind(this);
 
@@ -461,7 +475,15 @@ export default class ConditionManager extends EventEmitter {
     const currentTimestamp = normalizedDatum[timeSystemKey];
     const timestamp = {};
 
-    timestamp[timeSystemKey] = currentTimestamp;
+    // A result is evaluated against every input, not only the one that triggered it, so it is stamped
+    // with the most recent time across all of them. Inputs are each ordered independently, so stamping
+    // a result with only the triggering input's time lets the times of successive results move
+    // backwards, and consumers that track the latest value then discard results they should show.
+    if (this.#latestTelemetryTime === undefined || currentTimestamp > this.#latestTelemetryTime) {
+      this.#latestTelemetryTime = currentTimestamp;
+    }
+
+    timestamp[timeSystemKey] = this.#latestTelemetryTime;
     this.#latestDataTable.set(normalizedDatum.id, normalizedDatum);
 
     if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
@@ -470,6 +492,16 @@ export default class ConditionManager extends EventEmitter {
       this.updateConditionResults(normalizedDatum.id);
       this.updateCurrentCondition(timestamp, endpoint, datum);
     }
+  }
+
+  handleBoundsChanged(bounds, isTick) {
+    if (!isTick) {
+      this.resetLatestTelemetryTime();
+    }
+  }
+
+  resetLatestTelemetryTime() {
+    this.#latestTelemetryTime = undefined;
   }
 
   updateConditionResults(keyStringForUpdatedTelemetryObject) {
@@ -754,6 +786,8 @@ export default class ConditionManager extends EventEmitter {
   destroy() {
     this.composition.off('add', this.subscribeToTelemetry, this);
     this.composition.off('remove', this.unsubscribeFromTelemetry, this);
+    this.openmct.time.off(TIME_CONTEXT_EVENTS.timeSystemChanged, this.resetLatestTelemetryTime);
+    this.openmct.time.off(TIME_CONTEXT_EVENTS.boundsChanged, this.handleBoundsChanged);
     Object.values(this.telemetryCollections).forEach((telemetryCollection) =>
       telemetryCollection.destroy()
     );
