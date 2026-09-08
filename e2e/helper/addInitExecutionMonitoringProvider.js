@@ -27,17 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const openmct = window.openmct;
   const subscriberCallbacks = [];
 
-  window.setMockExecutionStatus = { status: 'nominal', duration: 0 };
+  window.mockExecutionStatus = { status: 'nominal', duration: 0 };
   window.setMockExecutionStatus = (status) => {
-    window.setMockExecutionStatus = status;
-    console.log('Sending status', status);
+    window.mockExecutionStatus = status;
     subscriberCallbacks.forEach((callback) => callback(status));
   };
 
-  const mockExecutionMonitoringProvider = {
+  const mockExecutionStatusProvider = {
     supportsExecutionStatus: (domainObject) => domainObject.type === 'plan',
     getExecutionStatus: () => ({
-      status: () => Promise.resolve(window.setMockExecutionStatus)
+      status: () => Promise.resolve(window.mockExecutionStatus)
     }),
     subscribeForExecutionStatus: (_domainObject, callback) => {
       subscriberCallbacks.push(callback);
@@ -51,5 +50,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  openmct.plan.addProvider(mockExecutionMonitoringProvider);
+  openmct.plan.addProvider(mockExecutionStatusProvider);
 });
