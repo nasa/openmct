@@ -288,7 +288,7 @@ test.describe('Time Strip', () => {
 
       await test.step('shows the provider status read-only and hides manual controls in the inspector', async () => {
         await page.evaluate((obj) => {
-          window.setMockExecutionMonitoringStatus({ status: 'ahead', duration: 5 }, obj.uuid);
+          window.setMockExecutionStatus({ status: 'ahead', duration: 5 }, obj.uuid);
         }, timeStrip);
 
         // select the first plan in the timeStrip
@@ -314,7 +314,7 @@ test.describe('Time Strip', () => {
 
       await test.step('reflects a live status update from the provider without reloading', async () => {
         await page.evaluate((planObj) => {
-          window.setMockExecutionMonitoringStatus({ status: 'behind', duration: 3 }, planObj.uuid);
+          window.setMockExecutionStatus({ status: 'behind', duration: 3 }, planObj.uuid);
         }, timeStrip);
         const aheadBehindMarker = page.getByLabel('Ahead Behind Marker');
 

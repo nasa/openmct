@@ -45,8 +45,8 @@ export default class PlanAPI {
     this.requestAbortControllers = new Set();
 
     this.addProvider = this.addProvider.bind(this);
-    this.getExecutionMonitoring = this.getExecutionMonitoring.bind(this);
-    this.subscribeToExecutionMonitoring = this.subscribeToExecutionMonitoring.bind(this);
+    this.getExecutionStatus = this.getExecutionStatus.bind(this);
+    this.subscribeForExecutionStatus = this.subscribeForExecutionStatus.bind(this);
   }
 
   abortAllRequests() {
@@ -62,7 +62,7 @@ export default class PlanAPI {
    * @param {module:openmct.PlanAPI~PlanProvider} provider the new plan provider
    */
   addProvider(provider) {
-    if (provider.supportsExecutionMonitoring) {
+    if (provider.supportsExecutionStatus) {
       this.executionMonitoringProviders.unshift(provider);
     }
   }
@@ -70,9 +70,9 @@ export default class PlanAPI {
   /**
    * @private
    */
-  #findExecutionMonitoringEvaluator(domainObject) {
+  #findExecutionStatusEvaluator(domainObject) {
     return this.executionMonitoringProviders.find((provider) => {
-      return provider.supportsExecutionMonitoring(domainObject);
+      return provider.supportsExecutionStatus(domainObject);
     });
   }
 
@@ -86,14 +86,14 @@ export default class PlanAPI {
    * fall back to their own persistence mechanism.
    *
    * @param {DomainObject} domainObject the domain
-   *        object for which to get execution monitoring status
+   *        object for which to get execution status
    * @returns {{status: () => Promise<{status: string, duration: number}|undefined>} | undefined}
-   * @method getExecutionMonitoring
+   * @method getExecutionStatus
    */
-  getExecutionMonitoring(domainObject) {
-    const provider = this.#findExecutionMonitoringEvaluator(domainObject);
+  getExecutionStatus(domainObject) {
+    const provider = this.#findExecutionStatusEvaluator(domainObject);
 
-    if (!provider || !provider.getExecutionMonitoring) {
+    if (!provider || !provider.getExecutionStatus) {
       return undefined;
     }
 
@@ -102,7 +102,7 @@ export default class PlanAPI {
     this.requestAbortControllers.add(abortController);
 
     try {
-      return provider.getExecutionMonitoring(domainObject, options);
+      return provider.getExecutionStatus(domainObject, options);
     } catch (error) {
       if (error.name !== 'AbortError') {
         this._openmct.notifications.error(
@@ -117,11 +117,11 @@ export default class PlanAPI {
   }
 
   /**
-   * Subscribe to run-time changes in execution monitoring status for a
+   * Subscribe to run-time changes in execution status for a
    * specific domain object. The callback will be called whenever new data
    * is received from an execution monitoring provider.
    *
-   * @method subscribeToExecutionMonitoring
+   * @method subscribeForExecutionStatus
    * @param {DomainObject} domainObject the object
    *        which has associated execution monitoring status
    * @param {Function} callback the callback to invoke with new data, as
@@ -129,10 +129,10 @@ export default class PlanAPI {
    * @returns {Function} a function which may be called to terminate
    *          the subscription
    */
-  subscribeToExecutionMonitoring(domainObject, callback) {
-    const provider = this.#findExecutionMonitoringEvaluator(domainObject);
+  subscribeForExecutionStatus(domainObject, callback) {
+    const provider = this.#findExecutionStatusEvaluator(domainObject);
 
-    if (!provider || !provider.subscribeToExecutionMonitoring) {
+    if (!provider || !provider.subscribeForExecutionStatus) {
       return () => {};
     }
 
@@ -147,7 +147,7 @@ export default class PlanAPI {
       subscriber = this.executionMonitoringSubscribeCache[keyString] = {
         callbacks: [callback]
       };
-      subscriber.unsubscribe = provider.subscribeToExecutionMonitoring(
+      subscriber.unsubscribe = provider.subscribeForExecutionStatus(
         domainObject,
         function (value) {
           subscriber.callbacks.forEach(function (cb) {
@@ -182,15 +182,15 @@ export default class PlanAPI {
  * [registered]{@link module:openmct.PlanAPI#addProvider}.
  *
  * @interface PlanProvider
- * @property {function} supportsExecutionMonitoring receives a domainObject and
+ * @property {function} supportsExecutionStatus receives a domainObject and
  *           returns a boolean to indicate it will provide execution monitoring
  *           status
- * @property {function} getExecutionMonitoring receives a domainObject and an
+ * @property {function} getExecutionStatus receives a domainObject and an
  *           options object (currently has an abort signal, ex.
  *           { signal: <AbortController.signal> }) and returns an object with
  *           a `status` method, an asynchronous function returning the current
  *           execution monitoring status
- * @property {function} subscribeToExecutionMonitoring receives a domainObject
+ * @property {function} subscribeForExecutionStatus receives a domainObject
  *           to be subscribed to and a callback to invoke with new execution
  *           monitoring status as it becomes available
  */

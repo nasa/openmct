@@ -21,25 +21,25 @@
  *****************************************************************************/
 
 // Installs a mock execution monitoring telemetry provider for 'plan' domain
-// objects. Tests can drive it via `window.setMockExecutionMonitoringStatus`
+// objects. Tests can drive it via `window.setMockExecutionStatus`
 // to simulate a live feed without reloading the page.
 document.addEventListener('DOMContentLoaded', () => {
   const openmct = window.openmct;
   const subscriberCallbacks = [];
 
-  window.mockExecutionMonitoringStatus = { status: 'nominal', duration: 0 };
-  window.setMockExecutionMonitoringStatus = (status) => {
-    window.mockExecutionMonitoringStatus = status;
+  window.setMockExecutionStatus = { status: 'nominal', duration: 0 };
+  window.setMockExecutionStatus = (status) => {
+    window.setMockExecutionStatus = status;
     console.log('Sending status', status);
     subscriberCallbacks.forEach((callback) => callback(status));
   };
 
   const mockExecutionMonitoringProvider = {
-    supportsExecutionMonitoring: (domainObject) => domainObject.type === 'plan',
-    getExecutionMonitoring: () => ({
-      status: () => Promise.resolve(window.mockExecutionMonitoringStatus)
+    supportsExecutionStatus: (domainObject) => domainObject.type === 'plan',
+    getExecutionStatus: () => ({
+      status: () => Promise.resolve(window.setMockExecutionStatus)
     }),
-    subscribeToExecutionMonitoring: (_domainObject, callback) => {
+    subscribeForExecutionStatus: (_domainObject, callback) => {
       subscriberCallbacks.push(callback);
 
       return () => {
