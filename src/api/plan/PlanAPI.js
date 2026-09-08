@@ -151,12 +151,7 @@ export default class PlanAPI {
         domainObject,
         function (value) {
           subscriber.callbacks.forEach(function (cb) {
-            const status = {
-              execution_monitoring: {
-                [keyString]: value
-              }
-            };
-            cb(status);
+            cb(value);
           });
         }
       );

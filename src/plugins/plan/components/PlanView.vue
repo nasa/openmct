@@ -227,7 +227,7 @@ export default {
         this.setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
         this.stopObservingPlanExecutionMonitoringStatusObject =
           this.openmct.plan.subscribeForExecutionStatus(this.planObject, (newStatus) => {
-            this.setPlanExecutionMonitoringStatus(newStatus);
+            this.setPlanExecutionMonitoringStatus(formattedStatus(planIdentifier, newStatus));
           });
         return;
       }
