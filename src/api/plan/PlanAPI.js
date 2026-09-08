@@ -147,14 +147,11 @@ export default class PlanAPI {
       subscriber = this.executionMonitoringSubscribeCache[keyString] = {
         callbacks: [callback]
       };
-      subscriber.unsubscribe = provider.subscribeForExecutionStatus(
-        domainObject,
-        function (value) {
-          subscriber.callbacks.forEach(function (cb) {
-            cb(value);
-          });
-        }
-      );
+      subscriber.unsubscribe = provider.subscribeForExecutionStatus(domainObject, function (value) {
+        subscriber.callbacks.forEach(function (cb) {
+          cb(value);
+        });
+      });
     } else {
       subscriber.callbacks.push(callback);
     }

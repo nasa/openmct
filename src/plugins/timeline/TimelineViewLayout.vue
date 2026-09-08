@@ -577,10 +577,11 @@ export default {
       if (executionMonitoringProvider) {
         const status = await executionMonitoringProvider.status();
         setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
-        stopObservingPlanExecutionMonitoringStatusObject =
-          openmct.plan.subscribeForExecutionStatus(planObject, (newStatus) =>
+        stopObservingPlanExecutionMonitoringStatusObject = openmct.plan.subscribeForExecutionStatus(
+          planObject,
+          (newStatus) =>
             setPlanExecutionMonitoringStatus(formattedStatus(newStatus, planIdentifier))
-          );
+        );
         return;
       }
 
