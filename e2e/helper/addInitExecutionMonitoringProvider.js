@@ -35,9 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const mockExecutionStatusProvider = {
     supportsExecutionStatus: (domainObject) => domainObject.type === 'plan',
-    getExecutionStatus: () => ({
-      status: () => Promise.resolve(window.mockExecutionStatus)
-    }),
+    getExecutionStatus: () => Promise.resolve(window.mockExecutionStatus),
     subscribeForExecutionStatus: (_domainObject, callback) => {
       subscriberCallbacks.push(callback);
 

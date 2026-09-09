@@ -46,6 +46,7 @@ export default class PlanAPI {
 
     this.addProvider = this.addProvider.bind(this);
     this.getExecutionStatus = this.getExecutionStatus.bind(this);
+    this.hasExecutionStatusProvider = this.hasExecutionStatusProvider.bind(this);
     this.subscribeForExecutionStatus = this.subscribeForExecutionStatus.bind(this);
   }
 
@@ -77,17 +78,32 @@ export default class PlanAPI {
   }
 
   /**
+   * Determine whether any registered provider supplies execution monitoring
+   * status for this domain object. Callers should use this to decide
+   * whether to use {@link module:openmct.PlanAPI#getExecutionStatus} or
+   * fall back to their own persistence mechanism.
+   *
+   * @param {DomainObject} domainObject the domain
+   *        object for which to check for an execution status provider
+   * @returns {boolean} true if a provider supports execution status for
+   *          this domain object
+   * @method hasExecutionStatusProvider
+   */
+  hasExecutionStatusProvider(domainObject) {
+    return Boolean(this.#findExecutionStatusEvaluator(domainObject));
+  }
+
+  /**
    * Get an execution monitoring status source for this domain object.
    * Execution monitoring providers supply a live status (e.g. ahead/behind
    * schedule for a plan) without requiring a user to set it manually.
    *
-   * This method is optional. If no provider supports execution monitoring
-   * for this domain object, `undefined` is returned so that callers can
-   * fall back to their own persistence mechanism.
+   * Callers should first check {@link module:openmct.PlanAPI#hasExecutionStatusProvider}
+   * to determine whether a provider is registered for this domain object.
    *
    * @param {DomainObject} domainObject the domain
    *        object for which to get execution status
-   * @returns {{status: () => Promise<{status: string, duration: number}|undefined>} | undefined}
+   * @returns {Promise<{status: string, duration: number}|undefined> | undefined}
    * @method getExecutionStatus
    */
   getExecutionStatus(domainObject) {
@@ -179,9 +195,8 @@ export default class PlanAPI {
  *           status
  * @property {function} getExecutionStatus receives a domainObject and an
  *           options object (currently has an abort signal, ex.
- *           { signal: <AbortController.signal> }) and returns an object with
- *           a `status` method, an asynchronous function returning the current
- *           execution monitoring status
+ *           { signal: <AbortController.signal> }) and returns a Promise
+ *           resolving to the current execution monitoring status
  * @property {function} subscribeForExecutionStatus receives a domainObject
  *           to be subscribed to and a callback to invoke with new execution
  *           monitoring status as it becomes available
