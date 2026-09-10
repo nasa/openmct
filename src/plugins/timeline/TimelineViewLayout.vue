@@ -72,6 +72,14 @@ const DEFAULT_AHEAD_BEHIND_STATUS = {
   status: ''
 };
 
+function formattedStatus(status, planIdentifier) {
+  return {
+    execution_monitoring: {
+      [planIdentifier]: status ?? DEFAULT_AHEAD_BEHIND_STATUS
+    }
+  };
+}
+
 export default {
   components: {
     TimelineObjectView,
@@ -127,15 +135,7 @@ export default {
     this.contentResizeObserver = new ResizeObserver(this.handleContentResize);
     this.contentResizeObserver.observe(this.$refs.timelineHolder);
 
-    this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
-      PLAN_EXECUTION_MONITORING_KEY
-    );
-    this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
-    this.stopObservingPlanExecutionMonitoringStatusObject = this.openmct.objects.observe(
-      this.planExecutionMonitoringStatusObject,
-      '*',
-      this.setPlanExecutionMonitoringStatus
-    );
+    this.getPlanExecutionMonitoringStatus();
   },
   methods: {
     addItem(domainObject) {
@@ -247,15 +247,50 @@ export default {
         this.timeContext.off('clockChanged', this.updateViewBounds);
       }
     },
-    setPlanExecutionMonitoringStatus(newStatusObject) {
-      let planIdentifier;
-
-      planIdentifier = this.plans.filter(
+    getCurrentPlanIdentifier() {
+      let planIdentifier = this.plans.filter(
         (identifier) => this.openmct.status.get(identifier) === 'current'
       )?.[0];
       if (planIdentifier === undefined) {
         planIdentifier = this.plans?.[0];
       }
+
+      return planIdentifier;
+    },
+    async getPlanExecutionMonitoringStatus() {
+      this.stopObservingPlanExecutionMonitoringStatusObject?.();
+
+      const planIdentifier = this.getCurrentPlanIdentifier();
+      if (planIdentifier === undefined) {
+        this.aheadBehind = DEFAULT_AHEAD_BEHIND_STATUS;
+
+        return;
+      }
+
+      const planObject = await this.openmct.objects.get(planIdentifier);
+      if (this.openmct.plan.hasExecutionStatusProvider(planObject)) {
+        const status = await this.openmct.plan.getExecutionStatus(planObject);
+        this.setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
+        this.stopObservingPlanExecutionMonitoringStatusObject =
+          this.openmct.plan.subscribeForExecutionStatus(planObject, (newStatus) =>
+            this.setPlanExecutionMonitoringStatus(formattedStatus(newStatus, planIdentifier))
+          );
+
+        return;
+      }
+
+      this.planExecutionMonitoringStatusObject = await this.openmct.objects.get(
+        PLAN_EXECUTION_MONITORING_KEY
+      );
+      this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
+      this.stopObservingPlanExecutionMonitoringStatusObject = this.openmct.objects.observe(
+        this.planExecutionMonitoringStatusObject,
+        '*',
+        this.setPlanExecutionMonitoringStatus
+      );
+    },
+    setPlanExecutionMonitoringStatus(newStatusObject) {
+      const planIdentifier = this.getCurrentPlanIdentifier();
 
       if (
         newStatusObject &&
@@ -275,6 +310,7 @@ export default {
 
       if (planIdentifier) {
         this.plans.push(planIdentifier);
+        this.getPlanExecutionMonitoringStatus();
       }
     },
     checkRemovedForPlan(identifier) {
@@ -284,7 +320,7 @@ export default {
 
       if (index > -1) {
         this.plans.splice(index, 1);
-        this.setPlanExecutionMonitoringStatus(this.planExecutionMonitoringStatusObject);
+        this.getPlanExecutionMonitoringStatus();
       }
     },
     async getPlanIdentifier(_domainObject) {
