@@ -181,6 +181,7 @@ test.describe('Time List display style', () => {
   async function expectStyle(page, style, activityCount) {
     const view = page.locator('.c-timelist');
     const isExpanded = style === 'Expanded';
+    await expect(view).toBeVisible();
     await expect(view.locator('table')).toHaveCount(isExpanded ? 0 : 1);
     await expect(view.getByRole('row')).toHaveCount(activityCount + (isExpanded ? 0 : 1));
   }
@@ -195,17 +196,16 @@ test.describe('Time List display style', () => {
   }
 
   async function previewStyles(page, styles, timelist, originalConfiguration) {
+    const rows = page.locator('.c-timelist').getByRole('row');
     for (const style of styles) {
       await page.getByLabel('Display Style').selectOption({ label: style });
       await expectStyle(page, style, activities.length);
-      await expect(page.getByRole('row').filter({ hasText: 'Past event' }).first()).toContainText(
-        'Past event 5'
-      );
+      await expect(rows.filter({ hasText: 'Past event' }).first()).toContainText('Past event 5');
 
       await expect(page.getByLabel('Display Style')).toHaveValue(String(style === 'Expanded'));
     }
     // Activity selection must still work after replacing the row layout.
-    await page.getByRole('row').filter({ hasText: 'Past event 2' }).click();
+    await rows.filter({ hasText: 'Past event 2' }).click();
     await page.getByRole('tab', { name: 'Activity', exact: true }).click();
     await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
       'Not started'
@@ -264,7 +264,9 @@ test.describe('Time List display style', () => {
         await page.reload();
 
         await expectStyle(page, changedStyle, 1);
-        await expect(page.getByRole('row').filter({ hasText: 'Past event 2' })).toBeVisible();
+        await expect(
+          page.locator('.c-timelist').getByRole('row').filter({ hasText: 'Past event 2' })
+        ).toBeVisible();
         expect((await getDomainObject(page, timelist.uuid)).configuration).toEqual({
           ...originalConfiguration,
           isExpanded: changedStyle === 'Expanded'
