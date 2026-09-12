@@ -301,6 +301,72 @@ describe('GrandSearch', () => {
     expect(search.$refs.searchResultsDropDown.objectResults).toEqual([]);
   });
 
+  it('should evict a soft-deleted annotation without changing the query', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Dri');
+    expect(search.annotationSearchResults.length).toBe(1);
+    openmct.objects.mutate(mockAnnotationObject, '_deleted', true);
+    await nextTick();
+    expect(search.annotationSearchResults).toEqual([]);
+    expect(document.querySelector('[aria-label="Annotation Search Result"]')).toBeNull();
+  });
+
+  it('should evict annotations when their target or its ancestor is removed', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Dri');
+    expect(search.annotationSearchResults.length).toBe(1);
+    openmct.objects.mutate(mockTopObject, 'location', null);
+    await nextTick();
+    expect(search.annotationSearchResults).toEqual([]);
+    expect(search.$refs.searchResultsDropDown.annotationResults).toEqual([]);
+  });
+
+  it('should preserve other annotations combined into the same result', async () => {
+    const secondAnnotation = {
+      ...mockAnnotationObject,
+      identifier: { namespace: 'fooNameSpace', key: 'secondAnnotation' }
+    };
+    spyOn(openmct.objects, 'search').and.returnValue([
+      Promise.resolve([mockAnnotationObject, secondAnnotation])
+    ]);
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Dri');
+    expect(search.annotationSearchResults.length).toBe(1);
+    expect(search.annotationSearchResults[0].annotationSources.length).toBe(2);
+    openmct.objects.mutate(mockAnnotationObject, '_deleted', true);
+    await nextTick();
+    expect(search.annotationSearchResults.length).toBe(1);
+    expect(search.annotationSearchResults[0].fullTagModels.length).toBeGreaterThan(0);
+    openmct.objects.mutate(secondAnnotation, '_deleted', true);
+    expect(search.annotationSearchResults).toEqual([]);
+  });
+
+  it('should evict an object after a wildcard refresh', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('foo');
+    const mutable = openmct.objects.toMutable(mockDomainObject);
+    mutable.$refresh({ ...mockDomainObject, location: null });
+    openmct.objects.destroyMutable(mutable);
+    expect(search.objectSearchResults).toEqual([]);
+  });
+
+  it('should fetch remote changes only for current results and ancestors', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Folder');
+    spyOn(openmct.objects, 'get').and.resolveTo({ ...mockAnotherFolderObject, location: null });
+    await search.onRemoteSearchObjectChange(mockAnnotationObject.identifier);
+    expect(openmct.objects.get).not.toHaveBeenCalled();
+    await search.onRemoteSearchObjectChange(mockAnotherFolderObject.identifier);
+    expect(openmct.objects.get).toHaveBeenCalledWith(
+      mockAnotherFolderObject.identifier,
+      search.resultController.signal,
+      true
+    );
+    expect(
+      search.objectSearchResults.some((result) => result.name === mockFolderObject.name)
+    ).toBeFalse();
+  });
+
   describe('canceled searches', () => {
     let search;
 
@@ -409,6 +475,12 @@ describe('GrandSearch', () => {
       expect(openmct.objects.eventEmitter.listeners('mutation')).not.toContain(
         search.onSearchObjectMutation
       );
+      expect(openmct.objects.eventEmitter.listeners('refresh')).not.toContain(
+        search.onSearchObjectRefresh
+      );
+      expect(openmct.objects.eventEmitter.listeners('remoteChange')).not.toContain(
+        search.onRemoteSearchObjectChange
+      );
     });
 
     it('should remove the global mutation listener on unmount', async () => {
@@ -419,6 +491,35 @@ describe('GrandSearch', () => {
       expect(openmct.objects.eventEmitter.listeners('mutation')).not.toContain(
         search.onSearchObjectMutation
       );
+      expect(openmct.objects.eventEmitter.listeners('refresh')).not.toContain(
+        search.onSearchObjectRefresh
+      );
+      expect(openmct.objects.eventEmitter.listeners('remoteChange')).not.toContain(
+        search.onRemoteSearchObjectChange
+      );
+    });
+
+    it('should ignore annotations soft-deleted while tag search is pending', async () => {
+      const annotations = deferred();
+      openmct.annotation.searchForTags.and.returnValue(annotations.promise);
+      const pendingSearch = search.searchEverything('Dri');
+      openmct.objects.mutate(mockAnnotationObject, '_deleted', true);
+      annotations.resolve([{ ...mockAnnotationObject, _deleted: false }]);
+      await pendingSearch;
+      expect(search.annotationSearchResults).toEqual([]);
+    });
+
+    it('should cancel a remote lookup when the query is replaced', async () => {
+      await search.searchEverything('foo');
+      const remote = deferred();
+      spyOn(openmct.objects, 'get').and.returnValue(remote.promise);
+      const pendingRemote = search.onRemoteSearchObjectChange(mockDomainObject.identifier);
+      const signal = search.resultController.signal;
+      await search.searchEverything('');
+      remote.resolve({ ...mockDomainObject, location: null });
+      await pendingRemote;
+      expect(signal.aborted).toBeTrue();
+      expect(search.deletedSearchObjectKeys.size).toBe(0);
     });
 
     it('should reject a descendant whose ancestor was deleted during path lookup', async () => {

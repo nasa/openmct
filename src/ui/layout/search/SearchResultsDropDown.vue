@@ -125,12 +125,15 @@ export default {
       this.annotationResults = [];
       this.objectResults = [];
     },
+    updateAnnotationResults(results) {
+      this.annotationResults = results;
+    },
     updateObjectResults(results) {
       this.objectResults = results;
     },
     showResults({ searchLoading, searchValue, annotationSearchResults, objectSearchResults }) {
       this.searchLoading = searchLoading;
-      this.annotationResults = annotationSearchResults;
+      this.updateAnnotationResults(annotationSearchResults);
       this.updateObjectResults(objectSearchResults);
       if (searchValue?.length) {
         this.resultsShown = true;
