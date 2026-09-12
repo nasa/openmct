@@ -62,6 +62,8 @@ export default {
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
   },
   unmounted() {
+    clearTimeout(this.debouncedSearchTimeoutID);
+    this.abortSearchController?.abort();
     document.body.removeEventListener('click', this.handleOutsideClick);
     this.clearSearchResultLocationObservers();
   },
@@ -84,6 +86,7 @@ export default {
         await this.getSearchResults();
       } else {
         clearTimeout(this.debouncedSearchTimeoutID);
+        this.searchLoading = false;
         const dropdownOptions = {
           searchLoading: this.searchLoading,
           searchValue: this.searchValue,
@@ -132,18 +135,27 @@ export default {
       // to cancel an active searches if necessary
       this.searchLoading = true;
       this.$refs.searchResultsDropDown.showSearchStarted();
-      this.abortSearchController = new AbortController();
+      const controller = new AbortController();
+      this.abortSearchController = controller;
 
       try {
-        const searchObjectsPromise = this.searchObjects(this.abortSearchController.signal);
-        const searchAnnotationsPromise = this.searchAnnotations(this.abortSearchController.signal);
+        const searchObjectsPromise = this.searchObjects(controller.signal);
+        const searchAnnotationsPromise = this.searchAnnotations(controller.signal);
 
         // Wait for all promises, but they process their results as they complete
         await Promise.allSettled([searchObjectsPromise, searchAnnotationsPromise]);
 
+        if (controller.signal.aborted) {
+          return;
+        }
+
         this.searchLoading = false;
         this.showSearchResults();
       } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
         this.searchLoading = false;
 
         // Is this coming from the AbortController?
@@ -152,7 +164,7 @@ export default {
           console.error(`😞 Error searching`, error);
         }
       } finally {
-        if (this.abortSearchController) {
+        if (this.abortSearchController === controller) {
           delete this.abortSearchController;
         }
       }
@@ -160,7 +172,16 @@ export default {
     async searchObjects(abortSignal) {
       const objectSearchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
       for await (const objectSearchResult of objectSearchPromises) {
+        if (abortSignal.aborted) {
+          return;
+        }
+
         const objectsWithPaths = await this.getPathsForObjects(objectSearchResult, abortSignal);
+        // Cached object lookups can resolve even after the search is aborted.
+        if (abortSignal.aborted) {
+          return;
+        }
+
         const reachableObjectResults = objectsWithPaths.filter((result) => {
           // Check if the result is NOT an annotation and has a reachable path
           return (
@@ -212,6 +233,10 @@ export default {
         this.searchValue,
         abortSignal
       );
+      if (abortSignal.aborted) {
+        return;
+      }
+
       this.annotationSearchResults = annotationSearchResults;
       // Display the available results so far for annotations
       this.showSearchResults();

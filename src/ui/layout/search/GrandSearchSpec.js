@@ -267,6 +267,147 @@ describe('GrandSearch', () => {
     expect(locationUnobserve).toHaveBeenCalled();
   });
 
+  describe('canceled searches', () => {
+    let search;
+
+    function deferred() {
+      let resolve;
+      const promise = new Promise((resolvePromise) => {
+        resolve = resolvePromise;
+      });
+
+      return { promise, resolve };
+    }
+
+    beforeEach(() => {
+      search = grandSearchComponent.$refs.root;
+      // Control completion explicitly instead of waiting for the input debounce.
+      search.getSearchResults = GrandSearch.methods.getSearchResults.bind(search);
+      spyOn(openmct.annotation, 'searchForTags').and.resolveTo([]);
+      spyOn(search, 'showSearchResults');
+    });
+
+    it('should ignore stale paths and annotations without finishing the current search', async () => {
+      const oldPaths = deferred();
+      const pathsStarted = deferred();
+      const oldAnnotations = deferred();
+      const newBatch = deferred();
+      spyOn(openmct.objects, 'search').and.returnValues(
+        [Promise.resolve([mockDomainObject])],
+        [newBatch.promise]
+      );
+      openmct.annotation.searchForTags.and.returnValues(
+        oldAnnotations.promise,
+        Promise.resolve([])
+      );
+      const getPaths = search.getPathsForObjects.bind(search);
+      spyOn(search, 'getPathsForObjects').and.callFake((objects, signal) => {
+        if (objects[0] === mockDomainObject) {
+          pathsStarted.resolve();
+
+          return oldPaths.promise;
+        }
+
+        return getPaths(objects, signal);
+      });
+      spyOn(search, 'observeSearchResultLocations').and.callThrough();
+      const oldSearch = search.searchEverything('foo');
+      await pathsStarted.promise;
+      const oldController = search.abortSearchController;
+      const newSearch = search.searchEverything('apple');
+      const newController = search.abortSearchController;
+      expect(oldController.signal.aborted).toBeTrue();
+
+      oldPaths.resolve([{ ...mockDomainObject, objectPath: [mockDomainObject, mockTopObject] }]);
+      oldAnnotations.resolve([mockAnnotationObject]);
+      await oldSearch;
+
+      expect(search.objectSearchResults).toEqual([]);
+      expect(search.annotationSearchResults).toEqual([]);
+      expect(search.observeSearchResultLocations).not.toHaveBeenCalled();
+      expect(search.abortSearchController).toBe(newController);
+      expect(search.searchLoading).toBeTrue();
+
+      newBatch.resolve([mockNewObject]);
+      await newSearch;
+      expect(search.objectSearchResults.map((result) => result.name)).toEqual([mockNewObject.name]);
+      expect(search.searchLoading).toBeFalse();
+    });
+
+    it('should ignore a provider batch that arrives after the query is cleared', async () => {
+      const batch = deferred();
+      spyOn(openmct.objects, 'search').and.returnValue([batch.promise]);
+      spyOn(search, 'getPathsForObjects').and.callThrough();
+      const pendingSearch = search.searchEverything('foo');
+      await search.searchEverything('');
+      batch.resolve([mockDomainObject]);
+      await pendingSearch;
+
+      expect(search.getPathsForObjects).not.toHaveBeenCalled();
+      expect(search.objectSearchResults).toEqual([]);
+      expect(search.searchLoading).toBeFalse();
+      expect(search.$refs.searchResultsDropDown.resultsShown).toBeFalse();
+    });
+
+    it('should abort on unmount and ignore paths and annotations that resolve afterward', async () => {
+      const paths = deferred();
+      const pathsStarted = deferred();
+      const annotations = deferred();
+      spyOn(openmct.objects, 'search').and.returnValue([Promise.resolve([mockDomainObject])]);
+      spyOn(search, 'getPathsForObjects').and.callFake(() => {
+        pathsStarted.resolve();
+
+        return paths.promise;
+      });
+      openmct.annotation.searchForTags.and.returnValue(annotations.promise);
+      spyOn(search, 'observeSearchResultLocations').and.callThrough();
+      const pendingSearch = search.searchEverything('foo');
+      await pathsStarted.promise;
+      const controller = search.abortSearchController;
+      _destroy();
+      _destroy = () => {};
+      expect(controller.signal.aborted).toBeTrue();
+
+      paths.resolve([{ ...mockDomainObject, objectPath: [mockDomainObject, mockTopObject] }]);
+      annotations.resolve([mockAnnotationObject]);
+      await pendingSearch;
+
+      expect(search.observeSearchResultLocations).not.toHaveBeenCalled();
+      expect(search.showSearchResults).not.toHaveBeenCalled();
+      expect(search.objectSearchResults).toEqual([]);
+      expect(search.annotationSearchResults).toEqual([]);
+      expect(search.searchResultLocationObservers).toEqual({});
+    });
+
+    it('should release existing result observers on unmount', async () => {
+      await search.searchEverything('foo');
+      const key = openmct.objects.makeKeyString(mockDomainObject.identifier);
+      const unobserve = spyOn(search.searchResultLocationObservers, key).and.callThrough();
+      _destroy();
+      _destroy = () => {};
+
+      expect(unobserve).toHaveBeenCalledTimes(1);
+      expect(search.searchResultLocationObservers).toEqual({});
+    });
+  });
+
+  it('should cancel a debounced search when unmounted', () => {
+    jasmine.clock().install();
+    try {
+      const search = grandSearchComponent.$refs.root;
+      const getSearchResults = jasmine.createSpy('getSearchResults').and.resolveTo();
+      search.getSearchResults = search.debounceAsyncFunction(getSearchResults, 200);
+      search.searchEverything('foo');
+      _destroy();
+      _destroy = () => {};
+      jasmine.clock().tick(201);
+
+      expect(getSearchResults).not.toHaveBeenCalled();
+    } finally {
+      jasmine.clock().uninstall();
+    }
+  });
+
   it('should render an object search result if new object added', async () => {
     delete mockObjectProvider.supportsSearchType;
     delete mockObjectProvider.search;

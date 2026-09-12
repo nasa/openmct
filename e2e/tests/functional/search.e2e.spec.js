@@ -226,6 +226,39 @@ test.describe('Grand Search', () => {
     await expect(page.getByText('No results found')).toBeVisible();
   });
 
+  test('Removed objects disappear while search results remain visible', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/340'
+    });
+
+    const folderName = uuid();
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: folderName
+    });
+    await grandSearchInput.fill(folderName);
+    await waitForSearchCompletion(page);
+    const dropdown = page.getByRole('dialog', { name: 'Search Results Dropdown' });
+    const matchingResult = page.getByLabel('Object Search Result').filter({ hasText: folderName });
+    await expect(dropdown).toBeVisible();
+    await expect(matchingResult).toBeVisible();
+
+    // Use the removal action without an outside click that would dismiss search.
+    await page.evaluate(async (key) => {
+      const object = window.openmct.router.path.find((item) => item.identifier.key === key);
+      const objectPath = await window.openmct.objects.getOriginalPath(object);
+      await window.openmct.actions
+        .getAction('remove')
+        .removeFromComposition(objectPath[1], object, objectPath);
+    }, folder.uuid);
+
+    await expect(dropdown).toBeVisible();
+    await expect(grandSearchInput).toHaveValue(folderName);
+    await expect(matchingResult).toHaveCount(0);
+    await expect(dropdown.getByText('No results found')).toBeVisible();
+  });
+
   test.describe('Search will test for the presence of the object_names index, and', () => {
     test('use index if available @couchdb @network', async ({ page }) => {
       await createObjectsForSearch(page);
