@@ -249,22 +249,56 @@ describe('GrandSearch', () => {
     expect(document.body.innerText).toContain('No results found');
   });
 
-  it('should stop observing old object search results when a new search starts', async () => {
-    const originalObserve = openmct.objects.observe.bind(openmct.objects);
-    const locationUnobserve = jasmine.createSpy('locationUnobserve');
-    spyOn(openmct.objects, 'observe').and.callFake((domainObject, path, callback) => {
-      if (path === 'location') {
-        return locationUnobserve;
-      }
-
-      return originalObserve(domainObject, path, callback);
-    });
-
-    await grandSearchComponent.$refs.root.searchEverything('foo');
+  it('should evict descendants but keep unrelated results when a parent is removed', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Folder');
     await nextTick();
-    await grandSearchComponent.$refs.root.searchEverything('Qbert');
+    expect(
+      search.objectSearchResults.some((result) => result.name === mockFolderObject.name)
+    ).toBeTrue();
 
-    expect(locationUnobserve).toHaveBeenCalled();
+    openmct.objects.mutate(mockAnotherFolderObject, 'location', null);
+    await nextTick();
+
+    expect(mockFolderObject.location).toBe('fooNameSpace:someParent');
+    expect(
+      search.objectSearchResults.some((result) => result.name === mockFolderObject.name)
+    ).toBeFalse();
+    expect(
+      search.objectSearchResults.some((result) => result.name === mockTopObject.name)
+    ).toBeTrue();
+    expect(document.querySelector('[name="Test Folder"]')).toBeNull();
+  });
+
+  it('should not add per-result location observers or duplicate mutation listeners', async () => {
+    const search = grandSearchComponent.$refs.root;
+    const emitter = openmct.objects.eventEmitter;
+    const listenerCount = emitter
+      .listeners('mutation')
+      .filter((listener) => listener === search.onSearchObjectMutation).length;
+    spyOn(openmct.objects, 'observe').and.callThrough();
+    await search.searchEverything('Folder');
+    await search.searchEverything('foo');
+
+    expect(listenerCount).toBe(1);
+    expect(
+      emitter.listeners('mutation').filter((listener) => listener === search.onSearchObjectMutation)
+        .length
+    ).toBe(1);
+    expect(
+      openmct.objects.observe.calls.allArgs().some((args) => args[1] === 'location')
+    ).toBeFalse();
+  });
+
+  it('should not reopen dismissed search results when an object is removed', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('foo');
+    search.$refs.searchResultsDropDown.resultsShown = false;
+    openmct.objects.mutate(mockDomainObject, 'location', null);
+    await nextTick();
+
+    expect(search.$refs.searchResultsDropDown.resultsShown).toBeFalse();
+    expect(search.$refs.searchResultsDropDown.objectResults).toEqual([]);
   });
 
   describe('canceled searches', () => {
@@ -310,7 +344,6 @@ describe('GrandSearch', () => {
 
         return getPaths(objects, signal);
       });
-      spyOn(search, 'observeSearchResultLocations').and.callThrough();
       const oldSearch = search.searchEverything('foo');
       await pathsStarted.promise;
       const oldController = search.abortSearchController;
@@ -324,7 +357,6 @@ describe('GrandSearch', () => {
 
       expect(search.objectSearchResults).toEqual([]);
       expect(search.annotationSearchResults).toEqual([]);
-      expect(search.observeSearchResultLocations).not.toHaveBeenCalled();
       expect(search.abortSearchController).toBe(newController);
       expect(search.searchLoading).toBeTrue();
 
@@ -360,7 +392,6 @@ describe('GrandSearch', () => {
         return paths.promise;
       });
       openmct.annotation.searchForTags.and.returnValue(annotations.promise);
-      spyOn(search, 'observeSearchResultLocations').and.callThrough();
       const pendingSearch = search.searchEverything('foo');
       await pathsStarted.promise;
       const controller = search.abortSearchController;
@@ -372,22 +403,43 @@ describe('GrandSearch', () => {
       annotations.resolve([mockAnnotationObject]);
       await pendingSearch;
 
-      expect(search.observeSearchResultLocations).not.toHaveBeenCalled();
       expect(search.showSearchResults).not.toHaveBeenCalled();
       expect(search.objectSearchResults).toEqual([]);
       expect(search.annotationSearchResults).toEqual([]);
-      expect(search.searchResultLocationObservers).toEqual({});
+      expect(openmct.objects.eventEmitter.listeners('mutation')).not.toContain(
+        search.onSearchObjectMutation
+      );
     });
 
-    it('should release existing result observers on unmount', async () => {
+    it('should remove the global mutation listener on unmount', async () => {
       await search.searchEverything('foo');
-      const key = openmct.objects.makeKeyString(mockDomainObject.identifier);
-      const unobserve = spyOn(search.searchResultLocationObservers, key).and.callThrough();
       _destroy();
       _destroy = () => {};
 
-      expect(unobserve).toHaveBeenCalledTimes(1);
-      expect(search.searchResultLocationObservers).toEqual({});
+      expect(openmct.objects.eventEmitter.listeners('mutation')).not.toContain(
+        search.onSearchObjectMutation
+      );
+    });
+
+    it('should reject a descendant whose ancestor was deleted during path lookup', async () => {
+      const paths = deferred();
+      const started = deferred();
+      spyOn(openmct.objects, 'search').and.returnValue([Promise.resolve([mockFolderObject])]);
+      spyOn(search, 'getPathsForObjects').and.callFake(() => {
+        started.resolve();
+
+        return paths.promise;
+      });
+      const pendingSearch = search.searchEverything('Folder');
+      await started.promise;
+      const oldParent = { ...mockAnotherFolderObject };
+      openmct.objects.mutate(mockAnotherFolderObject, 'location', null);
+      paths.resolve([
+        { ...mockFolderObject, objectPath: [mockFolderObject, oldParent, mockTopObject] }
+      ]);
+      await pendingSearch;
+
+      expect(search.objectSearchResults).toEqual([]);
     });
   });
 

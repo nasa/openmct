@@ -259,6 +259,45 @@ test.describe('Grand Search', () => {
     await expect(dropdown.getByText('No results found')).toBeVisible();
   });
 
+  test('Removing a parent evicts visible descendants and preserves unrelated results', async ({
+    page
+  }) => {
+    const prefix = uuid();
+    const parent = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: `Parent ${uuid()}`
+    });
+    const child = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: `${prefix} child`,
+      parent: parent.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: `${prefix} grandchild`,
+      parent: child.uuid
+    });
+    await createDomainObjectWithDefaults(page, { type: 'folder', name: `${prefix} unrelated` });
+    await grandSearchInput.fill(prefix);
+    const results = page.getByLabel('Object Search Result');
+    await expect(results).toHaveCount(3);
+    const dropdown = page.getByRole('dialog', { name: 'Search Results Dropdown' });
+    await expect(dropdown).toBeVisible();
+
+    await page.evaluate(async (identifier) => {
+      const object = await window.openmct.objects.get(identifier);
+      const objectPath = await window.openmct.objects.getOriginalPath(object);
+      await window.openmct.actions
+        .getAction('remove')
+        .removeFromComposition(objectPath[1], object, objectPath);
+    }, parent.uuid);
+
+    await expect(dropdown).toBeVisible();
+    await expect(grandSearchInput).toHaveValue(prefix);
+    await expect(results).toHaveCount(1);
+    await expect(results).toContainText(`${prefix} unrelated`);
+  });
+
   test.describe('Search will test for the presence of the object_names index, and', () => {
     test('use index if available @couchdb @network', async ({ page }) => {
       await createObjectsForSearch(page);

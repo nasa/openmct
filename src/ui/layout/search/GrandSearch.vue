@@ -58,14 +58,15 @@ export default {
     };
   },
   mounted() {
-    this.searchResultLocationObservers = {};
+    this.deletedSearchObjectKeys = new Set();
+    this.openmct.objects.eventEmitter.on('mutation', this.onSearchObjectMutation);
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
   },
   unmounted() {
     clearTimeout(this.debouncedSearchTimeoutID);
     this.abortSearchController?.abort();
     document.body.removeEventListener('click', this.handleOutsideClick);
-    this.clearSearchResultLocationObservers();
+    this.openmct.objects.eventEmitter.off('mutation', this.onSearchObjectMutation);
   },
   methods: {
     async searchEverything(value) {
@@ -77,7 +78,7 @@ export default {
       }
 
       this.searchValue = value;
-      this.clearSearchResultLocationObservers();
+      this.deletedSearchObjectKeys.clear();
       // clear any previous search results
       this.annotationSearchResults = [];
       this.objectSearchResults = [];
@@ -186,47 +187,45 @@ export default {
           // Check if the result is NOT an annotation and has a reachable path
           return (
             !this.openmct.annotation.isAnnotation(result) &&
-            this.openmct.objects.isReachable(result?.objectPath)
+            this.openmct.objects.isReachable(result?.objectPath) &&
+            !this.hasDeletedSearchAncestor(result)
           );
         });
 
-        this.observeSearchResultLocations(reachableObjectResults);
         this.objectSearchResults.push(...reachableObjectResults);
         // Display the available results so far for objects
         this.showSearchResults();
       }
     },
-    observeSearchResultLocations(searchResults) {
-      searchResults.forEach((searchResult) => {
-        const keyString = this.openmct.objects.makeKeyString(searchResult.identifier);
-        if (!this.searchResultLocationObservers[keyString]) {
-          this.searchResultLocationObservers[keyString] = this.openmct.objects.observe(
-            searchResult,
-            'location',
-            this.onSearchResultLocationChanged.bind(this, searchResult.identifier)
-          );
-        }
-      });
+    hasDeletedSearchAncestor(result) {
+      return result.objectPath.some((object) =>
+        this.deletedSearchObjectKeys.has(this.openmct.objects.makeKeyString(object.identifier))
+      );
     },
-    onSearchResultLocationChanged(identifier, location) {
-      if (location !== null) {
+    onSearchObjectMutation(object, oldObject) {
+      if (!this.searchValue || object.location === oldObject.location) {
         return;
       }
 
-      for (let index = this.objectSearchResults.length - 1; index >= 0; index--) {
-        const searchResult = this.objectSearchResults[index];
-        if (this.openmct.objects.areIdsEqual(searchResult.identifier, identifier)) {
-          this.objectSearchResults.splice(index, 1);
-        }
+      const key = this.openmct.objects.makeKeyString(object.identifier);
+      if (object.location !== null) {
+        this.deletedSearchObjectKeys.delete(key);
+
+        return;
       }
 
-      const keyString = this.openmct.objects.makeKeyString(identifier);
-      this.searchResultLocationObservers[keyString]?.();
-      delete this.searchResultLocationObservers[keyString];
-    },
-    clearSearchResultLocationObservers() {
-      Object.values(this.searchResultLocationObservers ?? {}).forEach((unobserve) => unobserve());
-      this.searchResultLocationObservers = {};
+      // Also remember deletions while a provider or path lookup is still pending.
+      this.deletedSearchObjectKeys.add(key);
+      const results = this.objectSearchResults.filter(
+        (result) => !this.hasDeletedSearchAncestor(result)
+      );
+      if (results.length === this.objectSearchResults.length) {
+        return;
+      }
+
+      this.objectSearchResults = results;
+      // Update the dropdown explicitly without reopening a dismissed search.
+      this.$refs.searchResultsDropDown.updateObjectResults(results);
     },
     async searchAnnotations(abortSignal) {
       const annotationSearchResults = await this.openmct.annotation.searchForTags(
