@@ -72,16 +72,17 @@ test.describe('Telemetry WebSocket worker', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const closed = Promise.all(Array.from(server.clients, (socket) => once(socket, 'close')));
     try {
       await page.evaluate(() => window.batchingSocketTest?.socket.disconnect());
-      await closed;
+      await expect.poll(() => server.clients.size).toBe(0);
     } finally {
+      const closed = Promise.all(Array.from(server.clients, (socket) => once(socket, 'close')));
       for (const socket of server.clients) {
         socket.terminate();
       }
 
       await new Promise((resolve) => server.close(resolve));
+      await closed;
     }
 
     expect(pageErrors).toEqual([]);
