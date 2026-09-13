@@ -76,6 +76,19 @@ Our code coverage implementation has some known limitations:
 - [Accuracy](https://github.com/nasa/openmct/issues/7015)
 - [Vue instrumentation gaps](https://github.com/nasa/openmct/issues/4973)
 
+`src/api/telemetry/WebSocketWorker.js` is excluded from Istanbul instrumentation.
+`BatchingWebSocket` copies its exported function into a Blob worker, where the
+coverage helpers added outside that function are unavailable. Instrumenting it
+prevents the worker from starting. The worker's statements are therefore absent
+from the coverage report; the `BatchingWebSocket.js` wrapper remains instrumented.
+
+`e2e/tests/functional/telemetryWorker.e2e.spec.js` tests the real worker through
+the public `BatchingWebSocket` API using a local WebSocket server. It checks queued
+messages, repeated reconnection and control message preservation during buffer
+overflow. Measuring statements inside this worker would also require collecting
+coverage from its separate execution context; these tests do not provide those
+counters.
+
 ## Troubleshooting CI
 The following is an evolving guide to troubleshoot CI and PR issues.
 
