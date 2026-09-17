@@ -353,6 +353,11 @@ mct-plot {
       border-bottom: 1px $colorPlotHash $stylePlotHash;
       width: 100%;
     }
+
+    &--minor {
+      // Unlabelled gridlines between labelled ticks, as used by log mode
+      opacity: $opacityPlotHash * 0.5;
+    }
   }
 
   &__local-controls {
@@ -504,6 +509,10 @@ mct-plot {
     .gl-plot-hash {
       opacity: 0.1;
       border-color: $fg;
+
+      &--minor {
+        opacity: 0.05;
+      }
     }
   }
 

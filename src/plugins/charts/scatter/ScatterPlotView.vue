@@ -252,8 +252,14 @@ export default {
     },
     updateTrace(telemetryObject) {
       const xAndyValues = Object.values(this.valuesByTimestamp);
-      const xValues = xAndyValues.map((value) => value.x);
-      const yValues = xAndyValues.map((value) => value.y);
+      // Built in a single pass rather than two maps
+      const xValues = [];
+      const yValues = [];
+      for (const value of xAndyValues) {
+        xValues.push(value.x);
+        yValues.push(value.y);
+      }
+
       const axisMetadata = this.getAxisMetadata(telemetryObject);
       const xAxisMetadata = axisMetadata.find(
         (metadata) => metadata.source === this.domainObject.configuration.axes.xKey
