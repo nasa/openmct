@@ -216,6 +216,7 @@ export default class NotificationAPI extends EventEmitter {
     this._setActiveNotification(this._selectNextNotification());
     this._setHighestSeverity();
     notification.emit('destroy');
+    this.emit('dismiss');
   }
 
   /**
@@ -296,6 +297,8 @@ export default class NotificationAPI extends EventEmitter {
         this._dismissOrMinimize(activeNotification);
       }, DEFAULT_AUTO_DISMISS_TIMEOUT);
     }
+
+    this.emit('add');
 
     return notification;
   }
