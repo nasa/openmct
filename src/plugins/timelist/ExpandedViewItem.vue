@@ -185,6 +185,10 @@ export default {
     this.setTimeContext();
     this.timestamp = this.timeContext.now();
   },
+  beforeUnmount() {
+    this.stopFollowingTimeContext();
+    this.updateTimestamp.cancel();
+  },
   methods: {
     setTimeContext() {
       this.stopFollowingTimeContext();

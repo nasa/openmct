@@ -24,7 +24,8 @@ import { EventEmitter } from 'eventemitter3';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import { nextTick } from 'vue';
 
-import { FIXED_MODE_KEY } from '../../api/time/constants.js';
+import { FIXED_MODE_KEY, TIME_CONTEXT_EVENTS } from '../../api/time/constants.js';
+import PlanPlugin from '../plan/plugin.js';
 import { TIMELIST_TYPE } from './constants.js';
 import TimelistPlugin from './plugin.js';
 
@@ -108,6 +109,7 @@ describe('the plugin', function () {
       start: twoHoursFuture,
       end: threeHoursFuture
     });
+    openmct.install(PlanPlugin());
     openmct.install(new TimelistPlugin());
 
     timelistDefinition = openmct.types.get(TIMELIST_TYPE).definition;
@@ -166,6 +168,64 @@ describe('the plugin', function () {
         (viewProvider) => viewProvider.key === 'timelist.view'
       );
       expect(timelistView).toBeDefined();
+    });
+
+    it('previews display style changes independently for each Time List', async () => {
+      const objects = [false, true].map((isExpanded, index) => {
+        const domainObject = {
+          identifier: { key: `display-style-${index}`, namespace: '' },
+          type: TIMELIST_TYPE,
+          selectFile: planObject.selectFile
+        };
+        timelistDefinition.initialize(domainObject);
+        domainObject.configuration.isExpanded = isExpanded;
+        return domainObject;
+      });
+      const containers = objects.map(() => document.createElement('div'));
+      const timeContexts = objects.map((domainObject) =>
+        openmct.time.getContextForView([domainObject])
+      );
+      const initialListenerCounts = timeContexts.map((context) =>
+        context.listenerCount(TIME_CONTEXT_EVENTS.tick)
+      );
+      const views = objects.map((domainObject, index) => {
+        const provider = openmct.objectViews
+          .get(domainObject, [domainObject])
+          .find((candidate) => candidate.key === 'timelist.view');
+        const view = provider.view(domainObject, [domainObject]);
+        element.appendChild(containers[index]);
+        view.show(containers[index]);
+        return view;
+      });
+
+      try {
+        await Promise.all(objects.map((domainObject) => openmct.objects.save(domainObject)));
+        await nextTick();
+        openmct.editor.edit();
+        await nextTick();
+        const compactListenerCount = timeContexts[0].listenerCount(TIME_CONTEXT_EVENTS.tick);
+        const otherListenerCount = timeContexts[1].listenerCount(TIME_CONTEXT_EVENTS.tick);
+        openmct.objects.mutate(objects[0], 'configuration.isExpanded', true);
+        await nextTick();
+
+        expect(containers[0].querySelector('.c-timelist--large')).not.toBeNull();
+        expect(containers[1].querySelector('.c-timelist--large')).not.toBeNull();
+
+        openmct.objects.mutate(objects[0], 'configuration.isExpanded', false);
+        await nextTick();
+
+        expect(containers[0].querySelector('table')).not.toBeNull();
+        expect(containers[1].querySelector('.c-timelist--large')).not.toBeNull();
+        expect(objects[1].configuration.isExpanded).toBeTrue();
+        expect(timeContexts[0].listenerCount(TIME_CONTEXT_EVENTS.tick)).toBe(compactListenerCount);
+        expect(timeContexts[1].listenerCount(TIME_CONTEXT_EVENTS.tick)).toBe(otherListenerCount);
+      } finally {
+        await openmct.editor.cancel();
+        views.forEach((view) => view.destroy());
+      }
+      timeContexts.forEach((context, index) => {
+        expect(context.listenerCount(TIME_CONTEXT_EVENTS.tick)).toBe(initialListenerCounts[index]);
+      });
     });
   });
 
