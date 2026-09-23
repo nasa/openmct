@@ -158,6 +158,9 @@ export default {
     this.loaded = true;
     this.setUpYAxisOptions();
   },
+  beforeUnmount() {
+    this.stopListening();
+  },
   methods: {
     initAxisAndSeriesConfig() {
       const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -173,7 +176,7 @@ export default {
 
         this.config = config;
         this.listenTo(this.config.series, 'add', this.addSeries, this);
-        this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+        this.listenTo(this.config.series, 'remove', this.seriesRemovedFromPlot, this);
         this.listenTo(this.config.series, 'reorder', this.addOrRemoveSeries, this);
 
         this.config.series.models.forEach(this.addSeries, this);
@@ -201,6 +204,16 @@ export default {
 
       this.listenTo(series, 'change:yAxisId', this.addOrRemoveSeries.bind(this, series), this);
       this.listenTo(series, 'change:color', this.updateSeriesColors.bind(this, series), this);
+    },
+    /**
+     * The series is gone from the plot for good, so release the per-series
+     * listeners registered in addSeries. Distinct from removeSeries, which also
+     * runs when a series merely moves to another y-axis and must keep listening
+     * for it moving back.
+     */
+    seriesRemovedFromPlot(plotSeries) {
+      this.removeSeries(plotSeries);
+      this.stopListening(plotSeries);
     },
     removeSeries(plotSeries) {
       const seriesIndex = this.seriesModels.findIndex((model) =>

@@ -79,6 +79,7 @@ export default {
   },
   beforeUnmount() {
     this.openmct.time.off('timeSystemChanged', this.syncXAxisToTimeSystem);
+    this.stopListening();
   },
   methods: {
     isEnabledXKeyToggle() {
