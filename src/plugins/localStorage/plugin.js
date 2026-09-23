@@ -25,5 +25,21 @@ import LocalStorageObjectProvider from './LocalStorageObjectProvider.js';
 export default function (namespace = '', storageSpace = 'mct') {
   return function (openmct) {
     openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
+    function onStorage(event) {
+      if (event.storageArea !== window.localStorage || event.key !== storageSpace) {
+        return;
+      }
+
+      const oldSpace = JSON.parse(event.oldValue || '{}');
+      const newSpace = JSON.parse(event.newValue || '{}');
+      const keys = new Set([...Object.keys(oldSpace), ...Object.keys(newSpace)]);
+      keys.forEach((key) => {
+        if (JSON.stringify(oldSpace[key]) !== JSON.stringify(newSpace[key])) {
+          openmct.objects.eventEmitter.emit('remoteChange', { namespace, key });
+        }
+      });
+    }
+    window.addEventListener('storage', onStorage);
+    openmct.on('destroy', () => window.removeEventListener('storage', onStorage));
   };
 }
