@@ -262,7 +262,7 @@ test.describe('Testing LAD table', () => {
     // Expand the 'My Items' folder in the left tree
     await page.getByLabel('Expand My Items').click();
     // Add the Sine Wave Generator to the LAD table and save changes
-    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('#lad-table-drop-area'));
+    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('.js-lad-table'));
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
@@ -290,7 +290,7 @@ test.describe('Testing LAD table', () => {
     // Expand the 'My Items' folder in the left tree
     await page.getByLabel('Expand My Items').click();
     // Add the Sine Wave Generator to the LAD table and save changes
-    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('#lad-table-drop-area'));
+    await page.getByLabel('Preview Test Sine Wave').dragTo(page.locator('.js-lad-table'));
     await page.getByRole('button', { name: 'Save' }).click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 

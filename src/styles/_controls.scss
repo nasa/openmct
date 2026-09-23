@@ -1212,7 +1212,7 @@ input[type='range'] {
 
 /***************************************************** DRAG AND DROP */
 .c-drop-hint {
-    // Used in Tabs View, Flexible Grid Layouts
+    // Used in Tabs View, Flexible Layouts, and LAD Tables
     @include abs();
     @include transition($prop: background-color, $dur: $transOutTime);
     background-color: $colorDropHintBg;
