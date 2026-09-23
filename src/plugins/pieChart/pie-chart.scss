@@ -1,0 +1,54 @@
+$pieChartWedgeCount: 8;
+
+.is-object-type-pie-chart {
+  overflow: hidden;
+}
+
+.c-pie-chart {
+  max-height: 100%;
+  max-width: 100%;
+  display: block;
+  margin: auto; // Centers SVG in container while allowing scaling
+
+  &__wrapper {
+    @include abs();
+    overflow: hidden;
+
+    &.is-stale {
+      @include isStaleHolder();
+    }
+  }
+
+  &__bg {
+    stroke: $colorGaugeBg;
+  }
+
+  &__wedge {
+    transition: stroke-dasharray 250ms ease-in-out, stroke-dashoffset 250ms ease-in-out;
+
+    @for $i from 0 through ($pieChartWedgeCount - 1) {
+      &:nth-of-type(#{$i + 2}) {
+        stroke: hsl(calc(#{$i} * 360 / #{$pieChartWedgeCount}), 60%, 55%);
+      }
+    }
+
+    &:last-of-type {
+      stroke: rgba(255, 255, 255, 0.3);
+    }
+
+    &.is-highlighted {
+      stroke: hsl(calc(2 * 360 / 8), 60%, 55%);
+      filter: brightness(1.3);
+    }
+  }
+
+  &__value-oor-indicator {
+    fill: $colorGaugeRange;
+    opacity: 0.5;
+  }
+
+  &__wedge-label {
+    fill: $colorBodyFg;
+    pointer-events: none;
+  }
+}
