@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2024, United States Government
+ Open MCT, Copyright (c) 2014-2026, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -46,6 +46,8 @@
 <script>
 import Plotly from 'plotly-basic';
 
+import { AXIS_SCALING_KEY, getAxisRangeLayout } from '../axisConfig.js';
+
 const MULTI_AXES_X_PADDING_PERCENT = {
   LEFT: 8,
   RIGHT: 94
@@ -70,15 +72,7 @@ export default {
   emits: ['subscribe', 'unsubscribe'],
   data() {
     return {
-      isZoomed: false,
-      primaryYAxisRange: {
-        min: '',
-        max: ''
-      },
-      xAxisRange: {
-        min: '',
-        max: ''
-      }
+      isZoomed: false
     };
   },
   watch: {
@@ -108,18 +102,13 @@ export default {
       this.removeBarColorListener();
     }
 
+    if (this.removeAxisScalingListener) {
+      this.removeAxisScalingListener();
+    }
+
     Plotly.purge(this.$refs.plot);
   },
   methods: {
-    getAxisMinMax(axis) {
-      const min = axis.autoSize ? '' : axis.min;
-      const max = axis.autoSize ? '' : axis.max;
-
-      return {
-        min,
-        max
-      };
-    },
     getLayout() {
       const yAxesMeta = this.getYAxisMeta();
       const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
@@ -136,7 +125,7 @@ export default {
         },
         xaxis: {
           domain: xAxisDomain,
-          range: [this.xAxisRange.min, this.xAxisRange.max],
+          ...getAxisRangeLayout(this.domainObject, 'xAxis'),
           title: this.plotAxisTitle.xAxisTitle,
           automargin: true,
           fixedrange: true
@@ -191,7 +180,10 @@ export default {
     },
     getYaxisLayout(yAxisMeta) {
       if (!yAxisMeta) {
-        return {};
+        // yAxisMeta is derived from the traces, so it is empty until data
+        // arrives. Still apply the configured scaling, otherwise a fixed
+        // range would not take effect on an empty plot.
+        return getAxisRangeLayout(this.domainObject, 'yAxis');
       }
 
       const { name, range, side = 'left', unit } = yAxisMeta;
@@ -199,17 +191,14 @@ export default {
       const yaxis = {
         automargin: true,
         fixedrange: true,
-        title
+        title,
+        ...getAxisRangeLayout(this.domainObject, 'yAxis')
       };
 
-      let yAxistype = this.primaryYAxisRange;
       if (range === '1') {
-        yaxis.range = [yAxistype.min, yAxistype.max];
-
         return yaxis;
       }
 
-      yaxis.range = [yAxistype.min, yAxistype.max];
       yaxis.anchor = side.toLowerCase() === 'left' ? 'free' : 'x';
       yaxis.showline = side.toLowerCase() === 'left';
       yaxis.side = side.toLowerCase();
@@ -223,6 +212,11 @@ export default {
         this.domainObject,
         'configuration.barStyles',
         this.barColorChanged
+      );
+      this.removeAxisScalingListener = this.openmct.objects.observe(
+        this.domainObject,
+        `configuration.${AXIS_SCALING_KEY}`,
+        this.updatePlot
       );
       this.resizeTimer = false;
       if (window.ResizeObserver) {

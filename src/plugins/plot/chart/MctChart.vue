@@ -90,7 +90,6 @@ const IMPLICIT_HANDLED_ATTRIBUTES = {
   frozen: 'frozen',
   autoscale: 'autoscale',
   autoscalePadding: 'autoscalePadding',
-  logMode: 'logMode',
   yKey: 'yKey'
 };
 // Attribute changes that we are specifically handling with listeners
@@ -98,6 +97,9 @@ const HANDLED_ATTRIBUTES = {
   //X and Y Axis attributes
   key: 'key',
   displayRange: 'displayRange',
+  // Log mode changes the space series values live in, so the cached per-axis
+  // offset has to be rebuilt - a redraw on its own is not enough.
+  logMode: 'logMode',
   //series attributes
   xKey: 'xKey',
   interpolate: 'interpolate',
@@ -226,7 +228,10 @@ export default {
     this.alarmSets = [];
     const yAxisId = this.config.yAxis.get('id');
     this.offset = {
-      [yAxisId]: {}
+      [yAxisId]: {
+        anchorX: null,
+        lastThresholdSpan: 0
+      }
     };
     this.listenTo(
       this.config.yAxis,
@@ -239,15 +244,30 @@ export default {
       this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId),
       this
     );
+    this.listenTo(
+      this.config.yAxis,
+      `change:${HANDLED_ATTRIBUTES.logMode}`,
+      this.resetYOffsetAndSeriesDataForYAxis.bind(this, yAxisId),
+      this
+    );
     this.listenTo(this.config.yAxis, 'change', this.redrawIfNotAlreadyHandled);
     if (this.config.additionalYAxes.length) {
       this.config.additionalYAxes.forEach((yAxis) => {
         const id = yAxis.get('id');
-        this.offset[id] = {};
+        this.offset[id] = {
+          anchorX: null,
+          lastThresholdSpan: 0
+        };
         this.listenTo(yAxis, `change:${HANDLED_ATTRIBUTES.displayRange}`, this.scheduleDraw);
         this.listenTo(
           yAxis,
           `change:${HANDLED_ATTRIBUTES.key}`,
+          this.resetYOffsetAndSeriesDataForYAxis.bind(this, id),
+          this
+        );
+        this.listenTo(
+          yAxis,
+          `change:${HANDLED_ATTRIBUTES.logMode}`,
           this.resetYOffsetAndSeriesDataForYAxis.bind(this, id),
           this
         );
@@ -504,10 +524,29 @@ export default {
       pointSets.forEach(function (pointSet) {
         pointSet.reset();
       });
+      // Alarm points are offset-relative too, so they have to be rebuilt as well.
+      if (this.alarmSets) {
+        const alarmSets = this.alarmSets.filter(
+          this.matchByYAxisIdExcludingVisibility.bind(this, yAxisId)
+        );
+        alarmSets.forEach(function (alarmSet) {
+          alarmSet.reset();
+        });
+      }
     },
     setOffset(offsetPoint, index, series) {
       const mainYAxisId = this.config.yAxis.get('id');
       const yAxisId = series.get('yAxisId') || mainYAxisId;
+
+      if (!this.offset[yAxisId]) {
+        this.offset[yAxisId] = { anchorX: null, lastThresholdSpan: 0 };
+      } else {
+        if (this.offset[yAxisId].anchorX === undefined) {
+          this.offset[yAxisId].anchorX = null;
+          this.offset[yAxisId].lastThresholdSpan = 0;
+        }
+      }
+
       if (this.offset[yAxisId].x && this.offset[yAxisId].y) {
         return;
       }
@@ -518,7 +557,9 @@ export default {
       };
 
       this.offset[yAxisId].x = function (x) {
-        return x - offsets.x;
+        const anchor =
+          this.offset[yAxisId].anchorX !== null ? this.offset[yAxisId].anchorX : offsets.x;
+        return x - anchor;
       }.bind(this);
       this.offset[yAxisId].y = function (y) {
         return y - offsets.y;
@@ -757,6 +798,36 @@ export default {
         this.updateLimitLines();
       }
     },
+    checkAndApplyReanchor(yAxisId, viewportMinX, currentSpan) {
+      const axisOffset = this.offset[yAxisId];
+      if (!axisOffset) {
+        return;
+      }
+
+      if (axisOffset.anchorX === null || axisOffset.anchorX === undefined) {
+        axisOffset.anchorX = viewportMinX;
+        axisOffset.lastThresholdSpan = currentSpan;
+
+        this.resetResetChartElements(yAxisId);
+        return;
+      }
+
+      const drift = Math.abs(viewportMinX - axisOffset.anchorX);
+
+      // If panning drifts past 1 view width, or a zoom rescales things past a 50% variance margin:
+      // TODO: Maybe instead of a static 50% variance, look at the config for frozen === true
+      const thresholdBreached =
+        drift > currentSpan ||
+        Math.abs(currentSpan - axisOffset.lastThresholdSpan) > currentSpan * 0.5;
+
+      if (thresholdBreached) {
+        axisOffset.anchorX = viewportMinX;
+        axisOffset.lastThresholdSpan = currentSpan;
+
+        // Reset all elements of the series to recalculate buffers
+        this.resetResetChartElements(yAxisId);
+      }
+    },
     updateViewport(yAxisId) {
       if (!this.chartVisible) {
         return;
@@ -779,10 +850,13 @@ export default {
         return;
       }
 
-      const dimensions = [xRange.max - xRange.min, yRange.max - yRange.min];
+      const currentSpan = xRange.max - xRange.min;
 
-      let origin;
-      origin = [this.offset[yAxisId].x(xRange.min), this.offset[yAxisId].y(yRange.min)];
+      // Invoke the Fixed Baseline Strategy before building frame offsets
+      this.checkAndApplyReanchor(yAxisId, xRange.min, currentSpan);
+
+      const dimensions = [currentSpan, yRange.max - yRange.min];
+      const origin = [this.offset[yAxisId].x(xRange.min), this.offset[yAxisId].y(yRange.min)];
 
       this.drawAPI.setDimensions(dimensions, origin);
     },

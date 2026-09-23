@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2026, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { getDefaultAxisScaling } from '../axisConfig.js';
 import BarGraphCompositionPolicy from './BarGraphCompositionPolicy.js';
 import { BAR_GRAPH_KEY } from './BarGraphConstants.js';
 import BarGraphViewProvider from './BarGraphViewProvider.js';
@@ -37,6 +38,7 @@ export default function () {
         domainObject.configuration = {
           barStyles: { series: {} },
           axes: {},
+          axisScaling: getDefaultAxisScaling(),
           useInterpolation: 'linear',
           useBar: true
         };
