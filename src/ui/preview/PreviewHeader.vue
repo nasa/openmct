@@ -30,12 +30,12 @@
       </div>
     </div>
     <div class="l-browse-bar__end">
-      <ViewSwitcher :v-if="!hideViewSwitcher" :views="views" :current-view="currentView" />
+      <ViewSwitcher v-if="!hideViewSwitcher" :views="views" :current-view="currentViewProvider" />
       <NotebookMenuSwitcher
         :domain-object="domainObject"
         :object-path="objectPath"
         :is-preview="true"
-        :current-view="currentView"
+        :current-view="currentViewProvider"
         class="c-notebook-snapshot-menubutton"
       />
       <div class="l-browse-bar__actions">
@@ -78,6 +78,12 @@ export default {
   inject: ['openmct', 'objectPath'],
   props: {
     currentView: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    },
+    currentViewProvider: {
       type: Object,
       default: () => {
         return {};
