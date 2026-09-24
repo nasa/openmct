@@ -9,3 +9,5 @@ documents:
   Open MCT (both semantics and process.)
 * The [Test Plan](testing/plan.md) summarizes the approaches used
   to test Open MCT.
+* [Common Coding Pitfalls](common-coding-pitfalls.md) lists the
+  mistakes that come up most often in code review.
