@@ -138,9 +138,15 @@ export default class TableRowCollection extends EventEmitter {
    * @param {number} index of the existing row in the collection to update
    */
   updateRowInPlace(incomingRow, index) {
-    // Update the incoming row, not the existing row
     const existingRow = this.rows[index];
-    incomingRow.updateWithDatum(existingRow);
+    incomingRow.datum = {
+      ...existingRow.datum,
+      ...incomingRow.datum
+    };
+    incomingRow.fullDatum = {
+      ...existingRow.fullDatum,
+      ...incomingRow.fullDatum
+    };
 
     // Replacing the existing row with the updated, incoming row will trigger Vue reactivity
     // because the reference to the row has changed
