@@ -194,5 +194,14 @@ describe('The Notification API', () => {
 
       expect(notificationAPI.emit).toHaveBeenCalledWith('dismiss');
     });
+
+    it('resets highest severity when all notifications are dismissed', () => {
+      notificationAPI.error('Example error');
+      expect(notificationAPI.highest.severity).toEqual('error');
+
+      notificationAPI.dismissAllNotifications();
+
+      expect(notificationAPI.highest.severity).toEqual('info');
+    });
   });
 });

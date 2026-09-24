@@ -133,6 +133,7 @@ export default class NotificationAPI extends EventEmitter {
    */
   dismissAllNotifications() {
     this.notifications = [];
+    this._setHighestSeverity();
     this.emit('dismiss-all');
   }
 
