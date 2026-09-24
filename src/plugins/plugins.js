@@ -90,6 +90,7 @@ import UTCTimeSystem from './utcTimeSystem/plugin.js';
 import ViewDatumAction from './viewDatumAction/plugin.js';
 import ViewLargeAction from './viewLargeAction/plugin.js';
 import WebPagePlugin from './webPage/plugin.js';
+import ExampleCompositionPlugin from '../../example/composition/plugin.js';
 
 /**
  * @type {Object}
@@ -105,6 +106,7 @@ plugins.example.ExampleDataVisualizationSourcePlugin = ExampleDataVisualizationS
 plugins.example.ExampleTags = ExampleTags;
 plugins.example.Generator = () => GeneratorPlugin;
 plugins.example.ExampleStaleness = ExampleStaleness;
+plugins.example.CompositionPlugin = ExampleCompositionPlugin;
 
 plugins.UTCTimeSystem = UTCTimeSystem;
 plugins.LocalTimeSystem = LocalTimeSystem;

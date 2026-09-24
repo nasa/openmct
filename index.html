@@ -236,6 +236,7 @@
       openmct.install(openmct.plugins.BarChart());
       openmct.install(openmct.plugins.ScatterPlot());
       openmct.install(openmct.plugins.EventTimestripPlugin(timeLinePlugin.extendedLinesBus));
+      openmct.install(openmct.plugins.example.CompositionPlugin());
       document.addEventListener('DOMContentLoaded', function () {
         openmct.start();
       });
