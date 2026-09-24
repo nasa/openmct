@@ -305,6 +305,33 @@ test.describe('Flexible Layout Toolbar Actions @localStorage', () => {
     await page.getByRole('button', { name: 'Ok', exact: true }).click();
     expect(await page.getByRole('group', { name: 'Frame' }).count()).toEqual(1);
   });
+  test('Remove Container button is not available when only one container exists', async ({
+    page
+  }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/7274'
+    });
+
+    const containerHandles = page.getByRole('columnheader', { name: 'Handle' });
+    expect(await containerHandles.count()).toEqual(2);
+
+    // remove one container so we're left with just one
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    await page.getByTitle('Remove Container').click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    expect(await containerHandles.count()).toEqual(1);
+
+    // select the remaining container and check that remove btn is gone
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    await expect(page.getByTitle('Remove Container')).toBeHidden();
+
+    // add a new container and verify the btn comes back
+    await page.getByTitle('Add Container').click();
+    expect(await containerHandles.count()).toEqual(2);
+    await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
+    await expect(page.getByTitle('Remove Container')).toBeVisible();
+  });
   test('Columns/Rows Layout Toggle', async ({ page }) => {
     await page.getByRole('columnheader', { name: 'Container Handle 1' }).click();
     const flexRows = page.getByLabel('Flexible Layout Row');
