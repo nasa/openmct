@@ -353,6 +353,40 @@ test.describe('Stacked Plot', () => {
     await expect(page.getByLabel('Plot Legend Collapsed')).toHaveCount(4);
     await expect(page.getByLabel('Plot Legend Item')).toHaveCount(5);
   });
+
+  test('Limit lines can be configured and rendered for a stacked plot child series', async ({
+    page
+  }) => {
+    await page.goto(stackedPlot.url);
+
+    // Assert that no limit lines are shown by default
+    await page.locator('.js-limit-area').first().waitFor({ state: 'attached' });
+    await expect(page.locator('.c-plot-limit-line')).toHaveCount(0);
+
+    // Go into edit mode
+    await page.getByLabel('Edit Object').click();
+
+    // Click on canvas for the 1st plot
+    await page.getByLabel(`Stacked Plot Item ${swgA.name}`).click();
+
+    await page.getByRole('tab', { name: 'Config' }).click();
+
+    // Expand config for the series and enable limit lines
+    await page.getByLabel('Expand Sine Wave Generator A Plot Series Options').click();
+    await page.getByLabel('Limit lines').check();
+
+    await assertLimitLinesExistAndAreVisible(page);
+
+    // Save (exit edit mode)
+    await page.locator('button[title="Save"]').click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
+
+    await assertLimitLinesExistAndAreVisible(page);
+
+    await page.reload();
+
+    await assertLimitLinesExistAndAreVisible(page);
+  });
 });
 
 /**
@@ -368,4 +402,21 @@ async function assertAggregateLegendIsVisible(page) {
   await expect(
     page.locator('.js-stacked-plot-legend .c-plot-legend__wrapper div.plot-legend-item')
   ).toHaveCount(3);
+}
+
+/**
+ * Asserts that limit lines exist and are visible
+ * @param {import('@playwright/test').Page} page
+ */
+async function assertLimitLinesExistAndAreVisible(page) {
+  // Wait for plot series data to load
+  await waitForPlotsToRender(page);
+  // Wait for limit lines to be created
+  await page.locator('.js-limit-area').first().waitFor({ state: 'attached' });
+  // There should be 10 limit lines created by default
+  await expect(page.locator('.c-plot-limit-line')).toHaveCount(10);
+  const limitLineCount = await page.locator('.c-plot-limit-line').count();
+  for (let i = 0; i < limitLineCount; i++) {
+    await expect(page.locator('.c-plot-limit-line').nth(i)).toBeVisible();
+  }
 }
