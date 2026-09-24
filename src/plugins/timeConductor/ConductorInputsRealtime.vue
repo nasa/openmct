@@ -25,6 +25,7 @@
     :offsets="formattedOffsets"
     @focus="$event.target.select()"
     @dismiss="dismiss"
+    @submit="submit"
   />
   <div v-else class="c-compact-tc__setting-wrapper">
     <div
@@ -86,7 +87,7 @@ export default {
       }
     }
   },
-  emits: ['dismiss-inputs-realtime'],
+  emits: ['dismiss-inputs-realtime', 'submit'],
   computed: {
     formattedOffsets() {
       return {
@@ -99,6 +100,9 @@ export default {
     }
   },
   methods: {
+    submit() {
+      this.$emit('submit');
+    },
     dismiss() {
       this.$emit('dismiss-inputs-realtime');
     }

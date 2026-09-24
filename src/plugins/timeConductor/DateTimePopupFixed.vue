@@ -142,7 +142,7 @@ export default {
     'timeSystemDurationFormatter',
     'bounds'
   ],
-  emits: ['update', 'dismiss'],
+  emits: ['update', 'dismiss', 'submit'],
   data() {
     return {
       formattedBounds: {},
@@ -298,6 +298,7 @@ export default {
         return;
       }
 
+      this.$emit('submit');
       this.setBoundsFromView(shouldDismiss);
     },
     validateInput(refNames) {

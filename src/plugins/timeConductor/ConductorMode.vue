@@ -51,8 +51,15 @@ export default {
       default() {
         return false;
       }
+    },
+    deferChanges: {
+      type: Boolean,
+      default() {
+        return false;
+      }
     }
   },
+  emits: ['mode-selected'],
   data() {
     return {
       selectedMode: this.getModeMetadata(this.timeMode)
@@ -67,6 +74,12 @@ export default {
   },
   mounted() {
     this.modes = this.getAllModeMetadata();
+    if (this.deferChanges) {
+      this.modes = this.modes.map((mode) => ({
+        ...mode,
+        onItemClicked: () => this.selectMode(mode)
+      }));
+    }
   },
   methods: {
     showModesMenu() {
@@ -80,6 +93,10 @@ export default {
       };
 
       this.dismiss = this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
+    },
+    selectMode(mode) {
+      this.selectedMode = mode;
+      this.$emit('mode-selected', mode.key);
     },
     setView() {
       this.selectedMode = this.getModeMetadata(this.timeMode);

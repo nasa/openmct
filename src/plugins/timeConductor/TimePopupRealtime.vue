@@ -174,7 +174,7 @@ export default {
       required: true
     }
   },
-  emits: ['dismiss'],
+  emits: ['dismiss', 'submit'],
   data() {
     return {
       startInputHrs: '00',
@@ -231,6 +231,8 @@ export default {
       this.isDisabled = disabled;
     },
     submit() {
+      this.$emit('submit');
+
       const formattedStartOffset = [
         this.startInputHrs,
         this.startInputMins,
