@@ -70,8 +70,7 @@ export default {
       required: true
     },
     navigateToPath: {
-      type: String,
-      default: undefined
+      type: String
     },
     readOnly: {
       type: Boolean,

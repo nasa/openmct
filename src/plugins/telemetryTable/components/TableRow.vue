@@ -67,8 +67,7 @@ export default {
     },
     rowIndex: {
       type: Number,
-      required: false,
-      default: undefined
+      required: false
     },
     rowOffset: {
       type: Number,

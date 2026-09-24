@@ -103,13 +103,11 @@ export default {
     },
     itemIndex: {
       type: Number,
-      required: false,
-      default: undefined
+      required: false
     },
     itemOffset: {
       type: Number,
-      required: false,
-      default: undefined
+      required: false
     },
     itemHeight: {
       type: Number,
