@@ -73,7 +73,7 @@ test.describe('Correlation Telemetry', () => {
 
     await setRealTimeMode(page);
 
-    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel(/Open the View Switcher Menu/).click();
     await page.getByLabel('Telemetry Table').click();
 
     const getSWG1ValuePromise = getNextSineValueFromSWG(page, sineWaveGenerator1.uuid, false);
