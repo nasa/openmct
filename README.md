@@ -89,6 +89,13 @@ written as plugins.
 
 For information on writing plugins, please see [our API documentation](./API.md#plugins).
 
+## Progressive Web App
+
+Open MCT can be installed from the browser as a standalone application and used offline. The build
+includes a web app manifest and a service worker; the bundled `index.html` shows how to reference the
+manifest and install the `PWA` plugin. See [Progressive Web App Support](./API.md#progressive-web-app-support)
+for details and configuration options.
+
 ## Tests
 
 Our automated test coverage comes in the form of unit, e2e, visual, performance, and security tests.
