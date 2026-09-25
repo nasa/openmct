@@ -158,7 +158,7 @@ $colorFaultItemBg: pullForward($colorBodyBg, 5%);
   &.is-unacknowledged {
     color: $colorFaultItemFgEmphasis;
     .c-fault-mgmt__list-severity {
-      @include pulse($animName: severityAnim, $dur: 200ms);
+      @include pulse($animName: severityAnim, $dur: 500ms);
     }
   }
 
