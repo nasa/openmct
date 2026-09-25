@@ -70,6 +70,108 @@ The e2e line coverage is a bit more complex than the karma implementation. This 
 1. The rest of our coverage only appears when run against persistent datastore (couchdb), non-ubuntu machines, and non-chrome browsers with the `npm run cov:e2e:full:publish` flag. Since this happens about once a day, we have leveraged codecov.io's carryforward flag to report on lines covered outside of each commit on an individual PR.
 
 
+### Vue single-file component templates
+
+The `<script>` block of a Vue single-file component is instrumented like any other
+JavaScript. The `<template>` block is handled separately, because a compiled Vue
+render function is effectively one large statement (the returned virtual-DOM tree):
+
+- Template **branch** coverage (`v-if`, `v-for`, ternaries in bindings, etc.) is
+  captured. `.webpack/coverage/istanbulTemplateLoader.cjs` instruments the compiled render
+  function under a distinct coverage key so it does not collide with the
+  component's `<script>` coverage (both share the same file path), and the source
+  map maps it back to the original template lines.
+- Template **line**, **statement**, and **function** coverage is intentionally
+  discarded by `.webpack/coverage/stripTemplateCoverage.cjs`. Line coverage of a
+  single-statement render function is not meaningful, and its one covered
+  statement is unreliably placed by source-map remapping, so templates
+  contribute branch coverage only.
+
+`stripTemplateCoverage.cjs` operates on `coverage-final.json` — the
+`istanbul-lib-coverage` `CoverageMap`, already remapped and merged by the karma
+or nyc reporter — rather than on the emitted `lcov.info` text. Statements and
+functions are keyed by istanbul's own numeric ids there, so "drop the
+template's entries" means deleting the (id → location) and (id → hit count)
+pairs directly; there is no need to parse lcov records back out or match
+functions by name. `.webpack/coverage/stripTemplateCoverageSpec.cjs` covers this,
+including a regression test for exactly the bug an earlier, lcov-text version
+of this script had: istanbul names anonymous functions per block, so a
+template's and a script's function can be assigned the same generated name
+(`(anonymous_1)`) once merged, and matching by name silently deleted the
+script's hit count along with the template's.
+
+Both karma's `coverageIstanbulReporter.reports` (`karma.conf.cjs`) and
+`cov:e2e:report`'s `nyc report` invocation request the `json` reporter
+alongside `lcovonly` so `coverage-final.json` is available for
+`stripTemplateCoverage.cjs` to filter, which then regenerates `lcov.info` from
+the filtered map via `istanbul-lib-report` — so `LF`/`LH`/`BRF`/`BRH`/`FNF`/`FNH`
+are recomputed by istanbul itself, not hand-rolled.
+
+**karma's `json` report and nyc's are not the same shape.** nyc's entries are
+the raw `FileCoverage` data directly (`{path, statementMap, ...}`). karma's are
+double-wrapped as `{data: {path, statementMap, ...}}`, because
+`karma-coverage-istanbul-reporter` bundles its own `istanbul-lib-source-maps`,
+which in turn bundles a third, older, physically distinct copy of
+`istanbul-lib-coverage` whose `FileCoverage` class does not implement the
+`toJSON()` unwrap that later versions do. `stripTemplateCoverage.cjs` detects
+and unwraps this by the presence/absence of a top-level `.path` rather than by
+which tool produced the file, so it stays correct if either tool's behavior
+changes.
+
+Because [nyc](https://github.com/istanbuljs/nyc) does not process `.vue` files by
+default, `cov:e2e:report` passes `--extension=.vue` so that component coverage is
+included in the e2e report.
+
+#### Checking coverage numbers locally
+
+`stripTemplateCoverage.cjs` prints a `text-summary` on every run, so `npm test`
+and `npm run cov:e2e:report` both report the totals codecov will show. istanbul
+truncates percentages to two decimals (`Math.floor`), which is the same as this
+repo's `codecov.yml` (`precision: 2`, `round: down`), so the printed number
+matches codecov's displayed number rather than being merely close.
+
+For a browsable, per-file, per-line report — the local equivalent of clicking
+through a codecov file view — run either of:
+
+```sh
+npm run cov:unit:html   # -> coverage/unit/index.html
+npm run cov:e2e:html    # -> coverage/e2e/index.html
+```
+
+Both re-render from the existing `coverage-final.json`, so they are fast and do
+not require re-running the suite. They also do not rewrite `lcov.info`.
+
+**Do not read coverage totals straight out of `coverage-final.json`** (e.g. by
+running a bare `nyc report` against it). That file is the *unfiltered* map: it
+still contains the `<template>` statements and functions that
+`stripTemplateCoverage.cjs` removes, so its totals disagree with the uploaded
+lcov — measured at ~0.6 points on lines and ~1.9 points on functions. Anything
+that reports coverage locally must render from the filtered map, which is what
+the scripts above do.
+
+The coverage build also sets `cacheHandlers: false` on vue-loader
+(`.webpack/webpack.coverage.mjs`); production builds keep the optimization. With
+it enabled, every `@click`-style binding and `v-model` compiles to
+`_cache[n] || (_cache[n] = handler)`, which istanbul records as a two-leg branch.
+Both legs are taken on the component's first render, so the branch only reports
+whether the component was ever instantiated — something `<script>` line coverage
+already tells us — and no test can move it. These accounted for 77% of all
+template branch legs before being disabled. If template branch counts ever jump
+sharply, check whether this option has been re-enabled.
+
+The tooling is covered by `npm run test:coverage-tooling` (node-side tests, run in
+CI's lint job). `stripTemplateCoverage.cjs` verifies the filtered `CoverageMap`
+before writing anything and will fail loudly rather than emit a report with
+phantom `?query` source paths or surviving template statements/functions.
+`istanbulTemplateLoader.cjs` likewise throws on a template module it does not
+recognise, instead of silently collecting no coverage.
+
+**This mechanism is coupled to vue-loader and `@vue/compiler-sfc` internals.** If
+Open MCT migrates to vitest, delete `.webpack/coverage/istanbulTemplateLoader.cjs` and
+`.webpack/coverage/stripTemplateCoverage.cjs` and re-evaluate from scratch rather than
+porting them — the webpack loader has no vitest equivalent, and coverage providers
+based on V8 do not have the key-collision problem this works around.
+
 ### Limitations in our code coverage reporting
 Our code coverage implementation has some known limitations:
 - [Variability](https://github.com/nasa/openmct/issues/5811)
