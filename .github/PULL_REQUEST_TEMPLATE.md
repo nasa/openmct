@@ -4,20 +4,33 @@ Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will op
 ### Describe your changes:
 <!--- Describe your changes and add any comments about your approach either here or inline if code comments aren't added -->
 
-### All Submissions:
-
-* [ ] Have you followed the guidelines in our [Contributing document](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md)?
-* [ ] Have you checked to ensure there aren't other open [Pull Requests](https://github.com/nasa/openmct/pulls) for the same update/change?
-* [ ] Is this a [notable change](../docs/src/process/release.md) that will require a special callout in the release notes? For example, will this break compatibility with existing APIs or projects that consume these plugins?
-
 ### Author Checklist
 
-* [ ] Changes address original issue?
-* [ ] Tests included and/or updated with changes?
-* [ ] Has this been smoke tested?
-* [ ] Have you associated this PR with a `type:` label? Note: this is not necessarily the same as the original issue.
-* [ ] Have you associated a milestone with this PR? Note: leave blank if unsure.
-* [ ] Testing instructions included in associated issue OR is this a dependency/testcase change?
+* [ ] Changes address the original issue
+* [ ] Automated tests are included or updated with these changes
+* [ ] Changes have been smoke tested
+* [ ] The linked issue includes testing instructions, or I have added them in a comment on it
+* [ ] The guidelines in our [Contributing document](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md) have been followed
+* [ ] No other open [Pull Request](https://github.com/nasa/openmct/pulls) addresses the same issue
+
+### Notable change?
+<!--- Optional. Will this break compatibility with existing APIs, or with projects that consume
+      these plugins? If so, describe it here so it can be called out in the release notes.
+      See ../docs/src/process/release.md -->
+
+### What happens next
+
+A bot takes this from here, and will post a single comment that it keeps up to date:
+
+1. It checks this pull request against the rules above and tells you anything that is missing.
+2. Once those are met, it waits for the automated checks to pass.
+3. It then asks for an AI code review, and you reply to each comment saying how you addressed it, or
+   why you disagree. A short reply is fine, and the bot resolves the thread for you.
+4. Only then are the maintainers asked to review. That keeps their time for the things a human is
+   needed for, and gets your work in front of them ready to read.
+
+A pull request that stays incomplete is closed after a week, with a reminder first. Nothing is lost:
+fix it up, comment `/recheck`, and it reopens. Converting to a draft gives you 30 days instead.
 
 ### Reviewer Checklist
 

@@ -1,11 +1,19 @@
 name: PR
 
 on:
+  # Pull requests are covered by the pull_request trigger below, including those
+  # from forks, so pushes only need to cover the branches we merge into.
   push:
+    branches:
+      - master
+      - 'release/*'
   pull_request:
     types:
       - opened
       - labeled
+      - reopened
+      - synchronize
+      - ready_for_review
 
 env:
   NODE_ENV: development

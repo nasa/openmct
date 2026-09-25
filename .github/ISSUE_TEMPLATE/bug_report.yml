@@ -1,0 +1,95 @@
+name: Bug report
+description: File a Bug !
+labels:
+  - 'type:bug'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Focus on user impact in the title. Use the Summary field to describe the problem technically.
+
+        Every field marked with an asterisk is needed before this issue can be worked on. An issue
+        that stays incomplete is closed automatically after a week, with a reminder first.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong, and what does it stop you doing?
+    validations:
+      required: true
+  - type: textarea
+    id: expected-vs-current-behavior
+    attributes:
+      label: Expected vs Current Behavior
+      description: What should have happened, and what happens instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: An unambiguous set of steps, or a link to a live example.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: testing-instructions
+    attributes:
+      label: Testing Instructions
+      description: >-
+        How should a reviewer confirm this is fixed? List the areas of code affected and the minimal
+        steps to verify. This is what a reviewer follows, so a pull request cannot be merged without it.
+      placeholder: |
+        1. Open a plot with telemetry
+        2. Zoom in
+        3. Confirm the axis stays anchored
+    validations:
+      required: true
+  - type: input
+    id: openmct-version
+    attributes:
+      label: Open MCT Version
+      description: Date of build, version, or SHA.
+    validations:
+      required: true
+  - type: input
+    id: deployment-type
+    attributes:
+      label: Deployment Type
+      description: npm dev? VIPER Dev? openmct-yamcs?
+    validations:
+      required: false
+  - type: input
+    id: operating-system
+    attributes:
+      label: OS
+    validations:
+      required: false
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+    validations:
+      required: false
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact Check List
+      options:
+        - label: Data loss or misrepresented data?
+        - label: Regression? Did this used to work or has it always been broken?
+        - label: Is there a workaround available?
+        - label: Does this impact a critical component?
+        - label: Is this just a visual bug with no functional impact?
+        - label: Does this block the execution of e2e tests?
+        - label: Does this have an impact on Performance?
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional Information
+      description: Screenshots, gifs or logs which will expedite triage.
+    validations:
+      required: false

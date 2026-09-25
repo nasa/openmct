@@ -1,0 +1,38 @@
+name: Contribution Gate Listener
+
+# Replying to a review comment is how a contributor tells us an AI review comment
+# has been addressed, so the gate needs to know as soon as it happens. These
+# events hand a fork's pull request a read-only token, so this workflow does the
+# one thing it can: write the pull request number down where the gate can read
+# it. The Contribution Gate workflow then picks it up through workflow_run, with
+# the permissions it needs.
+#
+# It has no permissions and checks nothing out. Keep it that way.
+
+on:
+  pull_request_review_comment:
+    types:
+      - created
+  pull_request_review:
+    types:
+      - submitted
+
+permissions: {}
+
+jobs:
+  record-pull-request-number:
+    name: record-pull-request-number
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write the pull request number down
+        env:
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          mkdir -p gate-target
+          echo "$PULL_REQUEST_NUMBER" > gate-target/number.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gate-pr-number
+          path: gate-target/number.txt
+          retention-days: 1
