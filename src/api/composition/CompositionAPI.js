@@ -24,7 +24,12 @@ import CompositionCollection from './CompositionCollection.js';
 import DefaultCompositionProvider from './DefaultCompositionProvider.js';
 
 /**
- * @typedef {import('./CompositionProvider').default} CompositionProvider
+ * @typedef {Object} CompositionProvider
+ * @property {function(DomainObject): boolean} appliesTo Check if this provider applies to the given domain object.
+ * @property {function(DomainObject): Promise<import('../../../openmct').Identifier[]>} load Load child identifiers for the given domain object.
+ * @property {function(DomainObject, import('../../../openmct').Identifier): void} [add] Add a child identifier to the domain object composition.
+ * @property {function(DomainObject, import('../../../openmct').Identifier[]): void} [reorder] Reorder child identifiers in composition.
+ * @property {function(DomainObject, import('../../../openmct').Identifier): void} [remove] Remove a child identifier from composition.
  */
 
 /**
