@@ -35,13 +35,15 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     if (styleConfiguration) {
-      // We don't set the selectedConditionId here because we want condition set computation to happen before we apply any selected style
+      // set selectedConditionId to undefined initially
+      // so that the default style is applied prior to condition calculations
       const styleConfigurationWithNoSelection = Object.assign(styleConfiguration, {
-        selectedConditionId: ''
+        selectedConditionId: undefined
       });
       this.initialize(styleConfigurationWithNoSelection);
       if (styleConfiguration.conditionSetIdentifier) {
         this.openmct.time.on('boundsChanged', this.refreshData);
+        this.applySelectedConditionStyle();
         this.subscribeToConditionSet();
       } else {
         this.applyStaticStyle();
@@ -61,19 +63,19 @@ export default class StyleRuleManager extends EventEmitter {
         this.applySelectedConditionStyle();
       }
     } else if (this.conditionSetIdentifier) {
-      //reset the selected style and let the condition set output determine what it should be
-      this.selectedConditionId = undefined;
-      this.currentStyle = undefined;
+      // reset the selected style to the default style
+      this.selectedConditionId = this.defaultConditionId;
+      this.applySelectedConditionStyle();
       this.updateDomainObjectStyle();
       this.subscribeToConditionSet();
     }
   }
 
   initialize(styleConfiguration) {
-    this.conditionSetIdentifier = styleConfiguration.conditionSetIdentifier;
-    this.selectedConditionId = styleConfiguration.selectedConditionId;
-    this.staticStyle = styleConfiguration.staticStyle;
     this.defaultConditionId = styleConfiguration.defaultConditionId;
+    this.conditionSetIdentifier = styleConfiguration.conditionSetIdentifier;
+    this.selectedConditionId = styleConfiguration.selectedConditionId ?? this.defaultConditionId;
+    this.staticStyle = styleConfiguration.staticStyle;
     this.updateConditionStylesMap(styleConfiguration.styles || []);
   }
 
@@ -186,7 +188,7 @@ export default class StyleRuleManager extends EventEmitter {
   }
 
   applySelectedConditionStyle() {
-    const conditionId = this.selectedConditionId || this.defaultConditionId;
+    const conditionId = this.selectedConditionId ?? this.defaultConditionId;
     if (!conditionId) {
       this.applyStaticStyle();
     } else if (this.conditionalStyleMap[conditionId]) {
