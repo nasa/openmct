@@ -59,8 +59,7 @@ export default class NotificationAPI extends EventEmitter {
   }
 
   /**
-   * Info notifications are low priority informational messages for the user. They will be auto-destroy after a brief
-   * period of time.
+   * Info notifications are low priority informational messages for the user. By default they will be auto-destroyed after a brief period of time.
    * @param {string} message The message to display to the user
    * @param {NotificationOptions} [options] The notification options
    * @returns {Notification}
@@ -69,7 +68,7 @@ export default class NotificationAPI extends EventEmitter {
     /** @type {NotificationModel} */
     const notificationModel = {
       message: message,
-      autoDismiss: true,
+      autoDismiss: options.autoDismiss ?? true,
       severity: 'info',
       options
     };
@@ -86,6 +85,7 @@ export default class NotificationAPI extends EventEmitter {
   alert(message, options = {}) {
     const notificationModel = {
       message: message,
+      autoDismiss: options.autoDismiss,
       severity: 'alert',
       options
     };
@@ -102,6 +102,7 @@ export default class NotificationAPI extends EventEmitter {
   error(message, options = {}) {
     let notificationModel = {
       message: message,
+      autoDismiss: options.autoDismiss,
       severity: 'error',
       options
     };
@@ -114,15 +115,17 @@ export default class NotificationAPI extends EventEmitter {
    * @param {string} message The message to display
    * @param {number | null} progressPerc A value between 0 and 100, or null.
    * @param {string} [progressText] Text description of progress (eg. "10 of 20 objects copied").
+   * @param {NotificationOptions} [options] The notification options
    * @returns {Notification}
    */
-  progress(message, progressPerc, progressText) {
+  progress(message, progressPerc, progressText, options = {}) {
     let notificationModel = {
       message: message,
+      autoDismiss: options.autoDismiss ?? false,
       progressPerc: progressPerc,
       progressText: progressText,
       severity: 'info',
-      options: {}
+      options
     };
 
     return this._notify(notificationModel);
@@ -281,13 +284,13 @@ export default class NotificationAPI extends EventEmitter {
      */
     if (!this.activeNotification && !notification?.model?.options?.minimized) {
       this._setActiveNotification(notification);
-    } else if (!this.activeTimeout) {
+    } else if (!this.activeTimeout && activeNotification?.model?.autoDismiss !== false) {
       /*
        * If there is already an active notification, time it out. If it's
        * already got a timeout in progress (either because it has had
        * timeout forced because of a queue of messages, or it had an
        * autodismiss specified), leave it to run. Otherwise force a
-       * timeout.
+       * timeout unless auto-dismiss was explicitly disabled.
        *
        * This notification has been added to queue and will be
        * serviced as soon as possible.
@@ -341,7 +344,12 @@ export default class NotificationAPI extends EventEmitter {
 
     this.emit('notification', notification);
 
-    if (notification.model.autoDismiss || this._selectNextNotification()) {
+    const hasQueuedNotification = Boolean(this._selectNextNotification());
+    const shouldAutoDismiss =
+      notification.model.autoDismiss === true ||
+      (notification.model.autoDismiss === undefined && hasQueuedNotification);
+
+    if (shouldAutoDismiss) {
       const autoDismissTimeout =
         notification.model.options.autoDismissTimeout || DEFAULT_AUTO_DISMISS_TIMEOUT;
       this.activeTimeout = setTimeout(() => {
@@ -398,6 +406,7 @@ export default class NotificationAPI extends EventEmitter {
 
 /**
  * @typedef {Object} NotificationOptions
+ * @property {boolean} [autoDismiss] Whether the notification should automatically dismiss
  * @property {number} [autoDismissTimeout] Milliseconds to wait before automatically dismissing the notification
  * @property {boolean} [minimized] Allows for a notification to be minimized into the indicator by default
  * @property {NotificationLink} [link] A link for the notification

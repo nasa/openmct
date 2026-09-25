@@ -169,4 +169,51 @@ describe('The Notification API', () => {
       expect(notificationAPIInstance.notifications.length).toEqual(0);
     });
   });
+
+  describe('the autoDismiss option', () => {
+    let autoDismissAPI;
+
+    beforeEach(() => {
+      jasmine.clock().install();
+      autoDismissAPI = new NotificationAPI();
+    });
+
+    afterEach(() => {
+      autoDismissAPI.dismissAllNotifications();
+      jasmine.clock().uninstall();
+    });
+
+    it('keeps an info notification active when autoDismiss is false', () => {
+      const notification = autoDismissAPI.info('Persistent info', {
+        autoDismiss: false
+      });
+
+      jasmine.clock().tick(defaultTimeout);
+
+      expect(autoDismissAPI.activeNotification).toBe(notification);
+      expect(autoDismissAPI.notifications).toEqual([notification]);
+    });
+
+    it('does not force an explicitly persistent alert out when another notification is queued', () => {
+      const persistentAlert = autoDismissAPI.alert('Persistent alert', {
+        autoDismiss: false
+      });
+      const queuedNotification = autoDismissAPI.info('Queued info');
+
+      jasmine.clock().tick(defaultTimeout);
+
+      expect(autoDismissAPI.activeNotification).toBe(persistentAlert);
+      expect(autoDismissAPI.notifications).toEqual([persistentAlert, queuedNotification]);
+    });
+
+    it('keeps progress notifications active while another notification is queued', () => {
+      const progressNotification = autoDismissAPI.progress('Working', 50, 'Halfway');
+      const queuedNotification = autoDismissAPI.alert('Queued alert');
+
+      jasmine.clock().tick(defaultTimeout);
+
+      expect(autoDismissAPI.activeNotification).toBe(progressNotification);
+      expect(autoDismissAPI.notifications).toEqual([progressNotification, queuedNotification]);
+    });
+  });
 });
