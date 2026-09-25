@@ -15,7 +15,7 @@
 
 ## Sections
 
-* The [API](api/) uses inline documentation.
+* The [API](../../src/api/) uses inline documentation.
  using [TypeScript](https://www.typescriptlang.org) and some legacy [JSDoc](https://jsdoc.app/). It describes the JavaScript objects and
  functions that make up the software platform.
 
