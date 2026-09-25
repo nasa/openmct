@@ -88,12 +88,27 @@ describe('Gauge plugin', () => {
     let gaugeViewObject;
     let mutablegaugeObject;
     let randomValue;
+    let subscriptionCallback;
+    let currentBounds;
+    let testRenderWhenVisible;
 
     const minValue = -1;
     const maxValue = 1;
 
     beforeEach(() => {
       randomValue = Math.random();
+
+      currentBounds = {
+        start: 1000,
+        end: 5000
+      };
+
+      testRenderWhenVisible = (callback) => {
+        window.requestAnimationFrame(callback);
+
+        return true;
+      };
+
       gaugeViewObject = {
         ...gaugeDomainObject,
         configuration: {
@@ -150,29 +165,44 @@ describe('Gauge plugin', () => {
         },
         value: () => 1
       });
+
       spyOn(openmct.telemetry, 'getValueFormatter').and.returnValue({
-        parse: () => {
-          return 2000;
-        }
+        parse: (datum) => datum.timestamp
       });
+
       spyOn(openmct.telemetry, 'getFormatMap').and.returnValue({
         sin: {
-          format: (datum) => {
-            return randomValue;
-          }
+          format: (datum) => datum.sin
         }
       });
-      spyOn(openmct.telemetry, 'getLimits').and.returnValue({ limits: () => Promise.resolve() });
-      spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([randomValue]));
-      spyOn(openmct.time, 'getBounds').and.returnValue({
-        start: 1000,
-        end: 5000
+
+      spyOn(openmct.telemetry, 'getLimits').and.returnValue({
+        limits: () => Promise.resolve()
       });
+
+      spyOn(openmct.telemetry, 'request').and.returnValue(
+        Promise.resolve([
+          {
+            timestamp: 2000,
+            sin: randomValue
+          }
+        ])
+      );
+
+      spyOn(openmct.telemetry, 'subscribe').and.callFake((domainObject, callback) => {
+        subscriptionCallback = callback;
+
+        return () => {};
+      });
+
+      spyOn(openmct.time, 'getBounds').and.callFake(() => currentBounds);
 
       return openmct.objects.getMutable(gaugeViewObject.identifier).then((mutableObject) => {
         mutablegaugeObject = mutableObject;
         gaugeView = gaugeViewProvider.view(mutablegaugeObject, [mutablegaugeObject]);
-        gaugeView.show(child, false, { renderWhenVisible });
+        gaugeView.show(child, false, {
+          renderWhenVisible: testRenderWhenVisible
+        });
 
         return nextTick();
       });
@@ -222,6 +252,80 @@ describe('Gauge plugin', () => {
 
       const debouncedWatchUpdate = debounce(WatchUpdateValue, 200);
       nextTick(debouncedWatchUpdate);
+    });
+
+    it('renders a future subscription datum once realtime bounds catch up', async () => {
+      const futureValue = 0.42;
+
+      function waitForRender() {
+        return new Promise((resolve) => {
+          setTimeout(resolve, 250);
+        });
+      }
+
+      expect(subscriptionCallback).toBeDefined();
+
+      await waitForRender();
+
+      const initialTextElement = gaugeHolder.querySelector('.js-dial-current-value');
+      const initialValue = Number(initialTextElement.textContent);
+
+      subscriptionCallback({
+        timestamp: 5500,
+        sin: futureValue
+      });
+
+      await waitForRender();
+
+      let textElement = gaugeHolder.querySelector('.js-dial-current-value');
+
+      expect(Number(textElement.textContent)).toBe(initialValue);
+
+      currentBounds = {
+        start: 1500,
+        end: 6000
+      };
+
+      openmct.time.emit('boundsChanged', currentBounds, true);
+
+      await waitForRender();
+
+      textElement = gaugeHolder.querySelector('.js-dial-current-value');
+
+      expect(Number(textElement.textContent)).toBe(futureValue);
+    });
+
+    it('renders the latest eligible future datum when multiple future data are buffered', async () => {
+      function waitForRender() {
+        return new Promise((resolve) => {
+          setTimeout(resolve, 250);
+        });
+      }
+
+      await waitForRender();
+
+      subscriptionCallback({
+        timestamp: 5500,
+        sin: 0.42
+      });
+
+      subscriptionCallback({
+        timestamp: 6500,
+        sin: 0.84
+      });
+
+      currentBounds = {
+        start: 1500,
+        end: 6000
+      };
+
+      openmct.time.emit('boundsChanged', currentBounds, true);
+
+      await waitForRender();
+
+      const textElement = gaugeHolder.querySelector('.js-dial-current-value');
+
+      expect(Number(textElement.textContent)).toBe(0.42);
     });
   });
 
