@@ -32,6 +32,8 @@ export default class LADTableConfiguration extends EventEmitter {
     // it cannot access any private methods (like #mutate()).
     this.openmct = markRaw(openmct);
 
+    this.notPersistable = !openmct.objects.isPersistable(domainObject.identifier);
+
     this.objectMutated = this.objectMutated.bind(this);
     this.unlistenFromMutation = openmct.objects.observe(
       domainObject,
@@ -50,6 +52,14 @@ export default class LADTableConfiguration extends EventEmitter {
   }
 
   updateConfiguration(configuration) {
+    if (this.notPersistable) {
+      // Read only objects, such as telemetry from a dictionary, cannot store view
+      // configuration, so the change lives for as long as the view does.
+      this.emit('change', configuration);
+
+      return;
+    }
+
     this.openmct.objects.mutate(this.domainObject, 'configuration', configuration);
   }
 
