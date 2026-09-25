@@ -14,7 +14,7 @@ All vulnerability reports must include a reproduction in the form of either:
 1. Steps for manually exploiting the vulnerability in Open MCT OR
 2. An e2e test that reproduces the vulnerability using a real-world workflow.
 
-Recommendations for code hardening that do not result in exploitable real-world vulnerabilities are welcome, and should be reported as bugs.
+Recommendations for code hardening that do not constitute exploitable real-world vulnerabilities are welcome, and should be reported as bugs.
 
 See our [top-level security policy](https://github.com/nasa/openmct/security/policy) for additional information.
 
