@@ -522,8 +522,9 @@ export default {
     // COMPOSABLE - ahead behind
     const aheadBehind = ref();
     let plans = [];
-    let planExecutionMonitoringStatusObject;
     let stopObservingPlanExecutionMonitoringStatusObject;
+    let executionStatusRequest = 0;
+    let isExecutionMonitoringDestroyed = false;
 
     const DEFAULT_AHEAD_BEHIND_STATUS = {
       duration: 0,
@@ -548,7 +549,10 @@ export default {
     });
 
     onBeforeUnmount(() => {
+      isExecutionMonitoringDestroyed = true;
+      executionStatusRequest++;
       stopObservingPlanExecutionMonitoringStatusObject?.();
+      stopObservingPlanExecutionMonitoringStatusObject = undefined;
     });
 
     function getCurrentPlanIdentifier() {
@@ -563,7 +567,16 @@ export default {
     }
 
     async function getPlanExecutionMonitoringStatus() {
+      if (isExecutionMonitoringDestroyed) {
+        return;
+      }
+
+      const request = ++executionStatusRequest;
+      function isCurrentRequest() {
+        return request === executionStatusRequest;
+      }
       stopObservingPlanExecutionMonitoringStatusObject?.();
+      stopObservingPlanExecutionMonitoringStatusObject = undefined;
 
       const planIdentifier = getCurrentPlanIdentifier();
       if (planIdentifier === undefined) {
@@ -571,27 +584,51 @@ export default {
         return;
       }
 
-      const planObject = await openmct.objects.get(planIdentifier);
-      if (openmct.plan.hasExecutionStatusProvider(planObject)) {
-        const status = await openmct.plan.getExecutionStatus(planObject);
-        setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
-        stopObservingPlanExecutionMonitoringStatusObject = openmct.plan.subscribeForExecutionStatus(
-          planObject,
-          (newStatus) =>
-            setPlanExecutionMonitoringStatus(formattedStatus(newStatus, planIdentifier))
-        );
-        return;
-      }
+      try {
+        const planObject = await openmct.objects.get(planIdentifier);
+        if (!isCurrentRequest()) {
+          return;
+        }
 
-      planExecutionMonitoringStatusObject = await openmct.objects.get(
-        PLAN_EXECUTION_MONITORING_KEY
-      );
-      setPlanExecutionMonitoringStatus(planExecutionMonitoringStatusObject);
-      stopObservingPlanExecutionMonitoringStatusObject = openmct.objects.observe(
-        planExecutionMonitoringStatusObject,
-        '*',
-        setPlanExecutionMonitoringStatus
-      );
+        if (openmct.plan.hasExecutionStatusProvider(planObject)) {
+          const status = await openmct.plan.getExecutionStatus(planObject);
+          if (!isCurrentRequest()) {
+            return;
+          }
+
+          setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
+          stopObservingPlanExecutionMonitoringStatusObject =
+            openmct.plan.subscribeForExecutionStatus(planObject, (newStatus) => {
+              if (isCurrentRequest()) {
+                setPlanExecutionMonitoringStatus(formattedStatus(newStatus, planIdentifier));
+              }
+            });
+          return;
+        }
+
+        const statusObject = await openmct.objects.get(PLAN_EXECUTION_MONITORING_KEY);
+        if (!isCurrentRequest()) {
+          return;
+        }
+
+        setPlanExecutionMonitoringStatus(statusObject);
+        stopObservingPlanExecutionMonitoringStatusObject = openmct.objects.observe(
+          statusObject,
+          '*',
+          (newStatus) => {
+            if (isCurrentRequest()) {
+              setPlanExecutionMonitoringStatus(newStatus);
+            }
+          }
+        );
+      } catch (error) {
+        if (isCurrentRequest()) {
+          aheadBehind.value = DEFAULT_AHEAD_BEHIND_STATUS;
+          if (error.name !== 'AbortError') {
+            console.error(error);
+          }
+        }
+      }
     }
 
     function setPlanExecutionMonitoringStatus(newStatusObject) {
@@ -614,7 +651,13 @@ export default {
     async function checkAddedForPlan(_domainObject) {
       const planIdentifier = await getPlanIdentifier(_domainObject);
 
-      if (planIdentifier) {
+      if (
+        planIdentifier &&
+        !isExecutionMonitoringDestroyed &&
+        items.value.some((item) =>
+          openmct.objects.areIdsEqual(item.domainObject.identifier, _domainObject.identifier)
+        )
+      ) {
         plans.push(planIdentifier);
         getPlanExecutionMonitoringStatus();
       }
