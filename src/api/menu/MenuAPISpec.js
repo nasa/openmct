@@ -136,6 +136,22 @@ describe('The Menu API', () => {
         expect(menuElement).toBeNull();
       });
 
+      it('dismisses the menu when a click outside of it stops propagation', (done) => {
+        menuOptions.onDestroy = done;
+
+        const clickBlocker = document.createElement('div');
+        clickBlocker.addEventListener('click', (event) => event.stopPropagation());
+        document.body.appendChild(clickBlocker);
+
+        menuAPI.showMenu(x, y, actionsArray, menuOptions);
+
+        clickBlocker.click();
+
+        expect(document.querySelector('.c-menu')).toBeNull();
+
+        clickBlocker.remove();
+      });
+
       it('invokes the destroy method when menu is dismissed', (done) => {
         menuOptions.onDestroy = done;
 
