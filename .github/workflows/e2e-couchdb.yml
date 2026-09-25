@@ -33,6 +33,9 @@ jobs:
 
       - run: npm exec --workspace e2e -- playwright install --with-deps
 
+      - name: Test CouchDB Setup Script
+        run: bash src/plugins/persistence/couch/setup-couchdb.test.sh
+
       - name: Start CouchDB Docker Container and Init with Setup Scripts
         run: |
           export $(cat src/plugins/persistence/couch/.env.ci | xargs)
