@@ -22,6 +22,7 @@
 import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
+import { createSafeRegExp } from '../../../utils/safeRegExp.js';
 import { ORDER } from '../constants.js';
 
 /**
@@ -326,11 +327,30 @@ export default class TableRowCollection extends EventEmitter {
     }
   }
 
+  /**
+   * Filters a column by a regular expression typed by the user.
+   *
+   * The pattern is tested against every row of the column, on the main thread,
+   * so a pattern that will not compile or that could backtrack catastrophically
+   * is refused rather than applied. Any filter already on the column stays in
+   * place, which is how a half typed pattern is treated too.
+   *
+   * @param {string} columnKey
+   * @param {string} filter a regular expression source, without delimiters
+   * @returns {boolean} whether the filter was applied
+   */
   setColumnRegexFilter(columnKey, filter) {
-    filter = filter.trim();
-    this.columnFilters[columnKey] = new RegExp(filter);
+    const columnFilter = createSafeRegExp(filter.trim());
+
+    if (columnFilter === undefined) {
+      return false;
+    }
+
+    this.columnFilters[columnKey] = columnFilter;
 
     this.emit('resetRowsFromAllData');
+
+    return true;
   }
 
   getColumnMapForObject(objectKeyString) {

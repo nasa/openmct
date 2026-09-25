@@ -191,7 +191,9 @@
                 <Search
                   :value="filters[key]"
                   class="c-table__search"
+                  :class="{ 'is-invalid': rejectedRegexFilters[key] }"
                   :aria-label="`${key} filter input`"
+                  :title="regexFilterTitle(key)"
                   @input="filterChanged(key, $event)"
                   @clear="clearFilter(key)"
                 >
@@ -305,6 +307,8 @@ import TelemetryTableRow from './TableRow.vue';
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
 const AUTO_SCROLL_TRIGGER_HEIGHT = ROW_HEIGHT * 3;
+const REJECTED_REGEX_MESSAGE =
+  'This regular expression cannot be used. It is either malformed, or it is one that could take minutes to evaluate against a single value.';
 
 export default {
   components: {
@@ -394,6 +398,7 @@ export default {
       markedRows: [],
       isShowingMarkedRowsOnly: false,
       enableRegexSearch: {},
+      rejectedRegexFilters: {},
       hideHeaders: configuration.hideHeaders,
       totalNumberOfRows: 0,
       rowContext: {},
@@ -775,12 +780,21 @@ export default {
     },
     filterTelemetry(columnKey) {
       if (this.enableRegexSearch[columnKey]) {
-        if (this.isCompleteRegex(this.filters[columnKey])) {
-          this.table.tableRows.setColumnRegexFilter(
-            columnKey,
-            this.filters[columnKey].slice(1, -1)
-          );
-        } else {
+        if (!this.isCompleteRegex(this.filters[columnKey])) {
+          return;
+        }
+
+        const applied = this.table.tableRows.setColumnRegexFilter(
+          columnKey,
+          this.filters[columnKey].slice(1, -1)
+        );
+
+        // A pattern is rejected if it will not compile, or if running it could
+        // hang the tab. Mark the input so that the filter is not just quietly
+        // ignored, and leave whatever was filtering the column before.
+        this.rejectedRegexFilters[columnKey] = !applied;
+
+        if (!applied) {
           return;
         }
       } else {
@@ -795,6 +809,7 @@ export default {
     },
     clearFilter(columnKey) {
       this.filters[columnKey] = '';
+      this.rejectedRegexFilters[columnKey] = false;
       this.table.tableRows.setColumnFilter(columnKey, '');
       this.setHeight();
     },
@@ -1166,6 +1181,7 @@ export default {
     },
     toggleRegex(key) {
       this.filters[key] = '';
+      this.rejectedRegexFilters[key] = false;
 
       if (this.enableRegexSearch[key] === undefined) {
         this.enableRegexSearch[key] = true;
@@ -1175,6 +1191,9 @@ export default {
     },
     isCompleteRegex(string) {
       return string.length > 2 && string[0] === '/' && string[string.length - 1] === '/';
+    },
+    regexFilterTitle(key) {
+      return this.rejectedRegexFilters[key] ? REJECTED_REGEX_MESSAGE : undefined;
     },
     getViewContext() {
       return {
