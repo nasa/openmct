@@ -1,0 +1,317 @@
+[
+  {
+    "timestamp": 1780000000000,
+    "event_id": "evt_000001",
+    "event_type": "capsule_loaded",
+    "layer": "capsule",
+    "status": "valid",
+    "artifact": "earth-001.phm",
+    "artifact_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "capsule_id": "phm_earth_001",
+    "branch_id": null,
+    "replay_fingerprint": null,
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Memory capsule loaded and canonical digest matched.",
+    "details": {
+      "schema": "verification/memory-capsule/v1",
+      "local_only": true
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000001000,
+    "event_id": "evt_000002",
+    "event_type": "core_verified",
+    "layer": "core",
+    "status": "valid",
+    "artifact": "earth-001.phm",
+    "artifact_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_core",
+    "replay_fingerprint": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Core verification report completed with deterministic proof identity intact.",
+    "details": {
+      "expanded_table_allocated": false,
+      "verification_profile": "deterministic-conformance-replay"
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000002000,
+    "event_id": "evt_000003",
+    "event_type": "branch_created",
+    "layer": "lineage",
+    "status": "valid",
+    "artifact": "earth-001.lineage.json",
+    "artifact_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_ai_trace",
+    "replay_fingerprint": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "AI trace branch entered the provenance graph.",
+    "details": {
+      "operation": "create",
+      "parents": []
+    },
+    "severity": "info"
+  },
+  {
+    "timestamp": 1780000003000,
+    "event_id": "evt_000004",
+    "event_type": "branch_forked",
+    "layer": "lineage",
+    "status": "valid",
+    "artifact": "earth-001.lineage.json",
+    "artifact_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_science_pipeline",
+    "replay_fingerprint": "sha256:5555555555555555555555555555555555555555555555555555555555555555",
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Scientific pipeline branch forked from the verified core branch.",
+    "details": {
+      "operation": "fork",
+      "parents": ["branch_core"]
+    },
+    "severity": "info"
+  },
+  {
+    "timestamp": 1780000004000,
+    "event_id": "evt_000005",
+    "event_type": "branch_merged",
+    "layer": "lineage",
+    "status": "valid",
+    "artifact": "earth-001.lineage.json",
+    "artifact_digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Lineage branches merged into the final memory state.",
+    "details": {
+      "operation": "merge",
+      "parents": ["branch_ai_trace", "branch_science_pipeline", "branch_build", "branch_audit"]
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000005000,
+    "event_id": "evt_000006",
+    "event_type": "lineage_replayed",
+    "layer": "replay",
+    "status": "valid",
+    "artifact": "earth-001.replay.report.json",
+    "artifact_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Replay reconstructed the expected final state fingerprint.",
+    "details": {
+      "network_required": false,
+      "deterministic": true
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000006000,
+    "event_id": "evt_000007",
+    "event_type": "semantic_packet_bound",
+    "layer": "semantic",
+    "status": "valid",
+    "artifact": "earth-001.semantic.packet.json",
+    "artifact_digest": "sha256:8888888888888888888888888888888888888888888888888888888888888888",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Semantic packet bound to the verified replay fingerprint.",
+    "details": {
+      "semantic_changes_affect_core": false,
+      "authoritative_layer": "core"
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000007000,
+    "event_id": "evt_000008",
+    "event_type": "sidecar_validated",
+    "layer": "sidecar",
+    "status": "valid",
+    "artifact": "earth-001.sidecar.json",
+    "artifact_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Sidecar binding matched branch, packet digest, and replay fingerprint.",
+    "details": {
+      "binding_count": 1
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000008000,
+    "event_id": "evt_000009",
+    "event_type": "witness_observed",
+    "layer": "witness",
+    "status": "valid",
+    "artifact": "earth-001.witness.json",
+    "artifact_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": null,
+    "witness_id": "witness_local_browser",
+    "mutation_id": null,
+    "summary": "Local witness receipt observed matching capsule and core digests.",
+    "details": {
+      "witness_kind": "browser",
+      "trust_policy": "informational"
+    },
+    "severity": "info"
+  },
+  {
+    "timestamp": 1780000009000,
+    "event_id": "evt_000010",
+    "event_type": "challenge_started",
+    "layer": "challenge",
+    "status": "valid",
+    "artifact": "earth-001.challenge.report.json",
+    "artifact_digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Mutation challenge suite started against copied artifacts.",
+    "details": {
+      "mutation_count": 42
+    },
+    "severity": "info"
+  },
+  {
+    "timestamp": 1780000010000,
+    "event_id": "evt_000011",
+    "event_type": "mutation_applied",
+    "layer": "challenge",
+    "status": "warning",
+    "artifact": "earth-001-mut-semantic.phm",
+    "artifact_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+    "witness_id": null,
+    "mutation_id": "mut_semantic_note_001",
+    "summary": "Semantic note tamper was applied to a throwaway challenge copy.",
+    "details": {
+      "target_layer": "semantic",
+      "core_source_mutated": false
+    },
+    "severity": "caution"
+  },
+  {
+    "timestamp": 1780000011000,
+    "event_id": "evt_000012",
+    "event_type": "mutation_rejected",
+    "layer": "challenge",
+    "status": "expected_failure",
+    "artifact": "earth-001-mut-semantic.phm",
+    "artifact_digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": "sha256:9999999999999999999999999999999999999999999999999999999999999999",
+    "witness_id": null,
+    "mutation_id": "mut_semantic_note_001",
+    "summary": "Tampered semantic packet rejected; core verification remained unchanged.",
+    "details": {
+      "expected_layer": "semantic",
+      "actual_layer": "semantic",
+      "core_unchanged": true,
+      "rejection_code": "PACKET_DIGEST_MISMATCH"
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000012000,
+    "event_id": "evt_000013",
+    "event_type": "mutation_rejected",
+    "layer": "challenge",
+    "status": "expected_failure",
+    "artifact": "earth-001-mut-core.phm",
+    "artifact_digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "capsule_id": "phm_earth_001",
+    "branch_id": "branch_final_merge",
+    "replay_fingerprint": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": "mut_core_byte_001",
+    "summary": "Tampered core proof byte rejected at the core layer.",
+    "details": {
+      "expected_layer": "core",
+      "actual_layer": "core",
+      "core_unchanged": false,
+      "rejection_code": "CORE_DIGEST_MISMATCH"
+    },
+    "severity": "nominal"
+  },
+  {
+    "timestamp": 1780000013000,
+    "event_id": "evt_000014",
+    "event_type": "scope_warning",
+    "layer": "display",
+    "status": "warning",
+    "artifact": "earth-001.summary.md",
+    "artifact_digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "capsule_id": "phm_earth_001",
+    "branch_id": null,
+    "replay_fingerprint": null,
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Displayed explanations are not proof claims unless backed by a verified core event.",
+    "details": {
+      "truth_boundary": "display_is_not_verification"
+    },
+    "severity": "caution"
+  },
+  {
+    "timestamp": 1780000014000,
+    "event_id": "evt_000015",
+    "event_type": "report_exported",
+    "layer": "display",
+    "status": "valid",
+    "artifact": "earth-001.verify.report.json",
+    "artifact_digest": "sha256:7777777777777777777777777777777777777777777777777777777777777777",
+    "capsule_id": "phm_earth_001",
+    "branch_id": null,
+    "replay_fingerprint": null,
+    "packet_digest": null,
+    "witness_id": null,
+    "mutation_id": null,
+    "summary": "Verification report exported for offline review.",
+    "details": {
+      "format": "json"
+    },
+    "severity": "info"
+  }
+]
