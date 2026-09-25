@@ -160,7 +160,9 @@ export default {
       cssClass,
       widthClass: '',
       complexContent,
-      notebookEnabled: this.openmct.types.get('notebook'),
+      notebookEnabled:
+        this.openmct.types.listKeys().includes('notebook') ||
+        this.openmct.types.listKeys().includes('restricted-notebook'),
       statusBarItems: [],
       status: '',
       supportsIndependentTime: false

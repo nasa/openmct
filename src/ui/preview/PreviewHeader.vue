@@ -32,6 +32,7 @@
     <div class="l-browse-bar__end">
       <ViewSwitcher :v-if="!hideViewSwitcher" :views="views" :current-view="currentView" />
       <NotebookMenuSwitcher
+        v-if="notebookEnabled"
         :domain-object="domainObject"
         :object-path="objectPath"
         :is-preview="true"
@@ -106,6 +107,9 @@ export default {
   data() {
     return {
       type: this.openmct.types.get(this.domainObject.type),
+      notebookEnabled:
+        this.openmct.types.listKeys().includes('notebook') ||
+        this.openmct.types.listKeys().includes('restricted-notebook'),
       statusBarItems: [],
       menuActionItems: []
     };
