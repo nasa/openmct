@@ -649,6 +649,49 @@ async function addAndRemoveDrawingObjectAndAssert(page, layoutObject, DISPLAY_LA
   await expect(page.getByLabel(layoutObject, { exact: true })).toHaveCount(0);
 }
 
+test.describe('Display Layout Create while missing location', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('./', { waitUntil: 'domcontentloaded' });
+  });
+
+  test('Create locator remains usable when the layout has no location', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/8324'
+    });
+
+    const layout = await createDomainObjectWithDefaults(page, {
+      type: 'Display Layout',
+      name: 'Layout Missing Location'
+    });
+
+    // Reproduce objects that are composed under My Items but have a null location
+    // (as in the issue's exported Example Display Layout.json).
+    await page.evaluate(async (layoutKey) => {
+      const domainObject = await window.openmct.objects.get(layoutKey);
+      window.openmct.objects.mutate(domainObject, 'location', null);
+      await window.openmct.objects.save(domainObject);
+    }, layout.uuid);
+
+    await page.goto(`./#/browse/mine/${layout.uuid}`, { waitUntil: 'domcontentloaded' });
+
+    const pageErrors = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+
+    await page.getByRole('button', { name: 'Create', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Condition Widget' }).click();
+
+    const createTree = page.getByRole('tree', { name: 'Create Modal Tree' });
+    await expect(createTree.getByText('My Items')).toBeVisible();
+    await expect(createTree.getByText('No items')).toBeHidden();
+    await expect(createTree.getByText('Layout Missing Location')).toBeVisible();
+    expect(pageErrors.filter((message) => message.includes('objectPath'))).toEqual([]);
+
+    await page.getByLabel('Save').click();
+    await expect(page.getByRole('dialog', { name: 'Modal Overlay' })).toBeHidden();
+  });
+});
+
 /**
  * Remove the first matching layout object from the layout
  * @param {import('@playwright/test').Page} page

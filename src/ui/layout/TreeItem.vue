@@ -87,7 +87,10 @@ export default {
     },
     selectedItem: {
       type: Object,
-      required: true
+      required: false,
+      default() {
+        return {};
+      }
     },
     activeSearch: {
       type: Boolean,
@@ -153,7 +156,7 @@ export default {
       return parentKeyString !== this.node.object.location;
     },
     isSelectedItem() {
-      return this.selectedItem.objectPath === this.node.objectPath;
+      return this.selectedItem?.objectPath === this.node.objectPath;
     },
     isTargetedItem() {
       return this.targetedPath === this.navigationPath;
