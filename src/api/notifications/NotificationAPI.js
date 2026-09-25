@@ -269,7 +269,7 @@ export default class NotificationAPI extends EventEmitter {
     let activeNotification = this.activeNotification;
 
     notificationModel.severity = notificationModel.severity || 'info';
-    notificationModel.timestamp = moment.utc().format('YYYY-MM-DD hh:mm:ss.ms');
+    notificationModel.timestamp = moment.utc().format('YYYY-MM-DD HH:mm:ss.SSS');
 
     notification = this._createNotification(notificationModel);
 
@@ -410,7 +410,7 @@ export default class NotificationAPI extends EventEmitter {
  * @property {number | 'unknown'} [progress] The progress of some ongoing task. Should be a number between 0 and 100, or 'unknown'.
  * @property {string} [progressText] A message conveying progress of some ongoing task.
  * @property {'info' | 'alert' | 'error'} [severity] The severity of the notification.
- * @property {string} [timestamp] The time at which the notification was created. Should be a string in ISO 8601 format.
+ * @property {string} timestamp An API-generated UTC timestamp formatted as YYYY-MM-DD HH:mm:ss.SSS.
  * @property {boolean} [minimized] Whether or not the notification has been minimized
  * @property {boolean} [autoDismiss] Whether the notification should be automatically dismissed after a short period of time.
  * @property {NotificationOptions} options The notification options
