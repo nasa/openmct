@@ -107,8 +107,9 @@ jobs:
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: npm run lint
     unit-test:
-        needs: 
+        needs:
             - build_and_cache_dependencies_if_needed
+            - lint
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4

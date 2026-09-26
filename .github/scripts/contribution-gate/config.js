@@ -44,6 +44,14 @@ const REQUIRED_CHECK_NAMES = [
   'visual-a11y-ci'
 ];
 
+/**
+ * Checks that must pass if they run at all, but whose absence is not held
+ * against a contribution. CodeQL skips pull requests that only touch specs,
+ * documentation and configuration, so requiring it outright would leave those
+ * waiting for a check that is never coming.
+ */
+const CHECKS_REQUIRED_WHEN_REPORTED = ['Analyze'];
+
 /** A pull request satisfies the automated-test rule by touching one of these. */
 const TEST_FILE_PATTERNS = ['**/*Spec.js', '**/*.e2e.spec.js', 'e2e/**/*.spec.js'];
 
@@ -61,14 +69,27 @@ const TEST_EXEMPT_FILE_PATTERNS = [
 /** The reviewer we ask for on a pull request. */
 const COPILOT_REVIEWER_LOGIN = 'copilot-pull-request-reviewer[bot]';
 
-/** Copilot has posted under several logins; treat all of them as the AI reviewer. */
-const COPILOT_AUTHOR_LOGINS = [
+/**
+ * Copilot has posted under several logins. Only these count as the AI review we
+ * paid for and are waiting on.
+ */
+const AI_REVIEWER_LOGINS = [
   'copilot-pull-request-reviewer[bot]',
   'copilot-pull-request-reviewer',
   'github-copilot[bot]',
   'copilot[bot]',
   'copilot'
 ];
+
+/** CodeQL reviews on its own, and is never requested by the gate. */
+const SECURITY_REVIEWER_LOGINS = ['github-advanced-security[bot]'];
+
+/**
+ * Every reviewer whose comments a contributor must answer before a maintainer is
+ * asked to read the pull request. A security finding nobody has explained should
+ * never reach a human as a surprise.
+ */
+const AUTOMATED_REVIEWER_LOGINS = [...AI_REVIEWER_LOGINS, ...SECURITY_REVIEWER_LOGINS];
 
 /** The team asked to review once a pull request reaches stage 6. */
 const REVIEWER_TEAM_SLUG = 'openmct-maintainers';
@@ -118,7 +139,9 @@ const TESTING_INSTRUCTION_HEADINGS = [
 
 module.exports = {
   AI_REVIEW_AGAIN_LABEL,
-  COPILOT_AUTHOR_LOGINS,
+  AI_REVIEWER_LOGINS,
+  AUTOMATED_REVIEWER_LOGINS,
+  CHECKS_REQUIRED_WHEN_REPORTED,
   COPILOT_REVIEWER_LOGIN,
   DEADLINE_DAYS,
   GATE_EXEMPT_LABEL,
@@ -129,6 +152,7 @@ module.exports = {
   REQUIRED_CHECK_NAMES,
   REQUIRED_ISSUE_SECTIONS,
   REVIEWER_TEAM_SLUG,
+  SECURITY_REVIEWER_LOGINS,
   STAGE_LABELS,
   TEAM_ALLOWLIST,
   TEAM_AUTHOR_ASSOCIATIONS,
