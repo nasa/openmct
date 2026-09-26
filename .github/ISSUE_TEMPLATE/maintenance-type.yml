@@ -1,0 +1,21 @@
+name: Maintenance
+description: Add, update or remove documentation, tests, or dependencies.
+labels:
+  - 'type:maintenance'
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Generally describe the purpose of the change.
+    validations:
+      required: true
+  - type: textarea
+    id: testing-instructions
+    attributes:
+      label: Testing Instructions
+      description: >-
+        How should a reviewer confirm this worked? These can be added later, and are not needed for
+        a dependency bump or a test-only change.
+    validations:
+      required: false

@@ -1,11 +1,19 @@
 name: PR
 
 on:
+  # Pull requests are covered by the pull_request trigger below, including those
+  # from forks, so pushes only need to cover the branches we merge into.
   push:
+    branches:
+      - master
+      - 'release/*'
   pull_request:
     types:
       - opened
       - labeled
+      - reopened
+      - synchronize
+      - ready_for_review
 
 env:
   NODE_ENV: development
@@ -99,8 +107,9 @@ jobs:
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: npm run lint
     unit-test:
-        needs: 
+        needs:
             - build_and_cache_dependencies_if_needed
+            - lint
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
@@ -150,13 +159,16 @@ jobs:
     e2e-test:
       name: e2e-ci (shard ${{ matrix.shard }}/4)
       runs-on: ubuntu-latest
-      container: mcr.microsoft.com/playwright:v1.57.0-jammy 
+      container: mcr.microsoft.com/playwright:v1.57.0-jammy
       strategy:
         fail-fast: false
         matrix:
           shard: [1, 2, 3, 4]
-      needs: 
+      # Lint first: it is cheap, and there is no sense burning browser minutes on
+      # code we already know needs another push.
+      needs:
         - build_and_cache_dependencies_if_needed
+        - lint
       steps:
         - uses: actions/checkout@v4
         - uses: actions/setup-node@v4
@@ -216,9 +228,10 @@ jobs:
     visual-a11y:
       name: visual-a11y-ci
       runs-on: ubuntu-latest
-      container: mcr.microsoft.com/playwright:v1.57.0-jammy 
-      needs: 
+      container: mcr.microsoft.com/playwright:v1.57.0-jammy
+      needs:
           - build_and_cache_dependencies_if_needed
+          - lint
       strategy:
         fail-fast: false
         matrix:
@@ -265,10 +278,10 @@ jobs:
             if-no-files-found: warn
     perf-test:
       runs-on: ubuntu-latest
-      container: mcr.microsoft.com/playwright:v1.57.0-jammy 
-      needs: 
+      container: mcr.microsoft.com/playwright:v1.57.0-jammy
+      needs:
           - build_and_cache_dependencies_if_needed
-      if: ${{ always() }}
+          - lint
       steps:
         - uses: actions/checkout@v4
         - uses: actions/setup-node@v4
@@ -312,10 +325,10 @@ jobs:
             if-no-files-found: warn
     mem-test:
       runs-on: ubuntu-latest
-      container: mcr.microsoft.com/playwright:v1.57.0-jammy 
-      needs: 
+      container: mcr.microsoft.com/playwright:v1.57.0-jammy
+      needs:
           - build_and_cache_dependencies_if_needed
-      if: ${{ always() }}
+          - lint
       steps:
         - uses: actions/checkout@v4
         - uses: actions/setup-node@v4
@@ -356,3 +369,68 @@ jobs:
             name: mem-test-artifacts
             path: /tmp/artifacts
             if-no-files-found: warn
+    e2e-couchdb:
+      name: e2e-couchdb
+      runs-on: ubuntu-latest
+      timeout-minutes: 60
+      # The CouchDB suite covers the same application as e2e-ci against a real
+      # database, so there is nothing to learn from running it while e2e-ci is
+      # still failing. Standing up CouchDB is the most expensive job we have.
+      needs:
+          - build_and_cache_dependencies_if_needed
+          - e2e-test
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+        - name: Cache NPM dependencies
+          uses: actions/cache@v3
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+        - run: npm ci --no-audit --progress=false
+        - name: Login to DockerHub
+          uses: docker/login-action@v3
+          continue-on-error: true
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+        - run: npm exec --workspace e2e -- playwright install --with-deps
+        - name: Start CouchDB Docker Container and Init with Setup Scripts
+          run: |
+            export $(cat src/plugins/persistence/couch/.env.ci | xargs)
+            docker compose -f src/plugins/persistence/couch/couchdb-compose.yaml up --detach
+            sleep 3
+            bash src/plugins/persistence/couch/setup-couchdb.sh
+            bash src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh
+        - name: Run CouchDB Tests
+          env:
+            COMMIT_INFO_SHA: ${{ github.event.pull_request.head.sha }}
+          run: npm run test:e2e:couchdb
+        - name: Generate Code Coverage Report
+          run: npm run cov:e2e:report
+        - name: Publish Results to Codecov.io
+          uses: codecov/codecov-action@v5
+          with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            files: ./coverage/e2e/lcov.info
+            flags: e2e-couchdb
+            fail_ci_if_error: false
+            verbose: true
+        - name: Archive test results
+          if: success() || failure()
+          uses: actions/upload-artifact@v4
+          with:
+            name: e2e-couchdb-test-results
+            path: test-results
+            overwrite: true
+        - name: Archive html test results
+          if: success() || failure()
+          uses: actions/upload-artifact@v4
+          with:
+            name: e2e-couchdb-html-test-results
+            path: html-test-results
+            overwrite: true

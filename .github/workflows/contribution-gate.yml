@@ -1,0 +1,104 @@
+name: Contribution Gate
+
+# Moves issues and pull requests through the contribution process, so that a
+# maintainer is asked to look at a pull request only once it is compliant, its
+# checks pass, and every AI review comment has been answered.
+#
+# This workflow runs in the context of the base branch and never checks out or
+# runs contributed code. That is what makes it safe for it to hold a write token
+# on a pull request opened from a fork. Do not add a checkout of the pull
+# request's head to this file.
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+      - converted_to_draft
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+  issue_comment:
+    types:
+      - created
+  workflow_run:
+    workflows:
+      - PR
+      - Contribution Gate Listener
+    types:
+      - completed
+  schedule:
+    # Catches review threads resolved without a reply, which GitHub Actions is
+    # never told about, and anything the events miss.
+    - cron: '*/30 * * * *'
+    # Sends reminders, closes contributions that have run out of time, and
+    # introduces a bounded number of new ones to the gate.
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+    inputs:
+      contribution:
+        description: 'Issue or pull request number to evaluate. Leave blank to sweep everything open.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  checks: read
+  actions: read
+
+concurrency:
+  group: >-
+    contribution-gate-${{
+      github.event.pull_request.number ||
+      github.event.issue.number ||
+      github.event.inputs.contribution ||
+      github.event.workflow_run.id ||
+      github.run_id
+    }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: gate
+    runs-on: ubuntu-latest
+    steps:
+      # Checks out the base branch, which is where the gate's own scripts live.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # A review comment on a fork's pull request reaches Actions with a
+      # read-only token, so the listener workflow passes the pull request number
+      # along in an artifact instead.
+      - name: Read the pull request number recorded by the listener
+        id: listener
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Contribution Gate Listener'
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: gate-pr-number
+          path: gate-target
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pass the recorded number to the gate
+        if: steps.listener.outcome == 'success'
+        run: echo "GATE_TARGET_NUMBER=$(cat gate-target/number.txt)" >> "$GITHUB_ENV"
+
+      - name: Run the contribution gate
+        uses: actions/github-script@v7
+        env:
+          # Nothing is changed until this is explicitly set to false in the
+          # repository's variables, so a misconfigured gate stays harmless.
+          GATE_DRY_RUN: ${{ vars.CONTRIBUTION_GATE_DRY_RUN || 'true' }}
+        with:
+          script: |
+            const { run } = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/contribution-gate/evaluate.js`);
+            await run({ github, context, core });
