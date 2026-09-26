@@ -6,7 +6,7 @@
  * request opened from a fork.
  */
 
-const { COPILOT_AUTHOR_LOGINS, REQUIRED_CHECK_NAMES } = require('./config');
+const { AI_REVIEWER_LOGINS, CHECKS_REQUIRED_WHEN_REPORTED, REQUIRED_CHECK_NAMES } = require('./config');
 const { MARKER_PREFIX } = require('./stateMarker');
 
 const MAXIMUM_LINKED_ISSUES = 10;
@@ -229,10 +229,11 @@ async function fetchCheckConclusions(reader, headSha) {
     ref: headSha,
     per_page: 100
   });
+  const checksWeCareAbout = [...REQUIRED_CHECK_NAMES, ...CHECKS_REQUIRED_WHEN_REPORTED];
   const conclusions = new Map();
 
   checkRuns
-    .filter((checkRun) => REQUIRED_CHECK_NAMES.includes(checkRun.name))
+    .filter((checkRun) => checksWeCareAbout.includes(checkRun.name))
     .forEach((checkRun) => conclusions.set(checkRun.name, checkRun.conclusion));
 
   return conclusions;
@@ -284,12 +285,17 @@ function summarize(comment) {
   return `${firstLine.slice(0, THREAD_SUMMARY_LENGTH)}…`;
 }
 
+/**
+ * Only Copilot counts here. CodeQL also submits reviews, and treating one of
+ * those as the AI review would send a pull request on to a human before the
+ * review we paid for had arrived.
+ */
 function isAiReviewer(review) {
   if (review.author === null) {
     return false;
   }
 
-  return COPILOT_AUTHOR_LOGINS.includes(review.author.login.toLowerCase());
+  return AI_REVIEWER_LOGINS.includes(review.author.login.toLowerCase());
 }
 
 function readAuthorLogin(pullRequest) {

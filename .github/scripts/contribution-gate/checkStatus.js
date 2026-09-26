@@ -3,14 +3,16 @@
  * money on an AI review.
  */
 
-const { REQUIRED_CHECK_NAMES } = require('./config');
+const { CHECKS_REQUIRED_WHEN_REPORTED, REQUIRED_CHECK_NAMES } = require('./config');
 
 /** Conclusions that do not mean the check found a problem. */
 const ACCEPTABLE_CONCLUSIONS = ['success', 'skipped', 'neutral'];
 
 function summarizeRequiredChecks(checkConclusions) {
   const pending = REQUIRED_CHECK_NAMES.filter((name) => isPending(checkConclusions, name));
-  const failing = REQUIRED_CHECK_NAMES.filter((name) => isFailing(checkConclusions, name));
+  const failing = [...REQUIRED_CHECK_NAMES, ...CHECKS_REQUIRED_WHEN_REPORTED].filter((name) =>
+    isFailing(checkConclusions, name)
+  );
 
   return {
     pending,

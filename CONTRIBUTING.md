@@ -91,11 +91,13 @@ A pull request moves through these stages, and can move back if something change
    that genuinely cannot carry a test should say so in the description and ask a maintainer for the
    `pr:daveit` label.
 2. __The automated checks__: lint, unit tests, end-to-end tests and the visual and accessibility
-   tests must pass.
-3. __An AI code review__, requested once, against the standards in this document. Reply to each
-   comment saying how you addressed it (for example "fixed in abc1234") or why you disagree. The bot
-   resolves each thread once you have replied; resolving one without a reply is not enough, because
-   the reply is what a human reviewer reads first.
+   tests must pass, as must CodeQL where it runs. Lint runs first, and nothing else starts until it
+   passes, so a style error costs you one short run rather than an hour of browser time.
+3. __The automated reviews__. An AI code review is requested once, against the standards in this
+   document, and CodeQL comments on its own if it finds a security problem. Reply to each comment
+   saying how you addressed it (for example "fixed in abc1234") or why you disagree. The bot resolves
+   each thread once you have replied; resolving one without a reply is not enough, because the reply
+   is what a human reviewer reads first.
 4. __Team review__: only now are the maintainers asked to look, and one approval merges it.
 
 Testing instructions belong on the issue. If you did not open that issue and cannot edit it, comment

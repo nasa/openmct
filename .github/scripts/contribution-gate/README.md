@@ -18,12 +18,22 @@ pass, and every AI review comment has been answered.
 | `gateActions.js` | Every write the gate makes, and the one place dry-run mode stops. |
 | `prCompliance.js`, `issueCompliance.js` | The rules, as pure functions returning what is missing. |
 | `markdownSections.js`, `globMatch.js` | Reading Issue Form answers, and matching file paths. |
-| `reviewThreads.js`, `checkStatus.js` | Which AI comments are answered, and whether CI has passed. |
+| `reviewThreads.js`, `checkStatus.js` | Which automated-reviewer comments are answered, and whether CI has passed. |
 | `deadlines.js` | The clock: when a contribution runs out of time, and who is exempt. |
 | `feedbackComment.js`, `stateMarker.js` | The single sticky comment, and the state hidden inside it. |
 
 State lives in that sticky comment, in an HTML comment marker, so the gate needs no database. The
 `gate:*` labels show the current stage.
+
+Two reviewers comment without a person asking, and the gate treats them differently:
+
+- __Copilot__ is the review the gate requests and pays for. Only a Copilot review satisfies the wait
+  at stage 5, which is why `AI_REVIEWER_LOGINS` is a narrower list than `AUTOMATED_REVIEWER_LOGINS`.
+- __CodeQL__ (`github-advanced-security[bot]`) posts its own security findings. The gate never requests
+  it, but a contributor must still reply to each finding, and its `Analyze` check must pass whenever it
+  runs. CodeQL skips pull requests that only touch specs, documentation or configuration, so it is in
+  `CHECKS_REQUIRED_WHEN_REPORTED` rather than `REQUIRED_CHECK_NAMES`: a check that never reports would
+  otherwise leave those pull requests waiting forever.
 
 Two workflows drive it:
 

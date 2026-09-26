@@ -101,6 +101,27 @@ test('the AI reviewer talking to itself is not a reply', () => {
   assert.deepEqual(findThreadsAwaitingReply(threads).map((thread) => thread.id), ['a']);
 });
 
+test('a CodeQL security finding also needs an explanation', () => {
+  const securityComment = { author: { login: 'github-advanced-security[bot]' }, body: 'Incomplete URL sanitization.', url: 'https://example.test/3' };
+  const threads = [
+    { id: 'unanswered', isResolved: true, comments: [securityComment] },
+    { id: 'answered', isResolved: false, comments: [securityComment, AUTHOR_REPLY] }
+  ];
+
+  assert.deepEqual(findThreadsAwaitingReply(threads).map((thread) => thread.id), ['unanswered']);
+  assert.deepEqual(findRepliedOpenThreads(threads).map((thread) => thread.id), ['answered']);
+});
+
+test('CodeQL fails a pull request when it runs, and is ignored when it does not', () => {
+  const allGreen = new Map(REQUIRED_CHECK_NAMES.map((name) => [name, 'success']));
+  const codeqlFailed = new Map(allGreen);
+
+  codeqlFailed.set('Analyze', 'failure');
+
+  assert.equal(summarizeRequiredChecks(allGreen).allPassed, true, 'CodeQL skips doc-only changes, which must not stall');
+  assert.deepEqual(summarizeRequiredChecks(codeqlFailed).failing, ['Analyze']);
+});
+
 test('checks must all report before the gate pays for a review', () => {
   const allGreen = new Map(REQUIRED_CHECK_NAMES.map((name) => [name, 'success']));
   const oneMissing = new Map(allGreen);
@@ -186,7 +207,7 @@ test('an unanswered AI comment is spelled out, with a link', () => {
     state: {}
   });
 
-  assert.match(body, /AI review comments still needing a reply/);
+  assert.match(body, /Automated review comments still needing a reply/);
   assert.match(body, /src\/plugins\/plot\/Plot\.js:42/);
   assert.match(body, /resolved, but no reply yet/);
   assert.match(body, /no need to un-resolve/);

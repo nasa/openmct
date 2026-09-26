@@ -24,8 +24,9 @@ A bot takes this from here, and will post a single comment that it keeps up to d
 
 1. It checks this pull request against the rules above and tells you anything that is missing.
 2. Once those are met, it waits for the automated checks to pass.
-3. It then asks for an AI code review, and you reply to each comment saying how you addressed it, or
-   why you disagree. A short reply is fine, and the bot resolves the thread for you.
+3. It then asks for an AI code review. Reply to each comment from it, and to any security finding
+   CodeQL raises, saying how you addressed it or why you disagree. A short reply is fine, and the bot
+   resolves the thread for you.
 4. Only then are the maintainers asked to review. That keeps their time for the things a human is
    needed for, and gets your work in front of them ready to read.
 
