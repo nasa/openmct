@@ -103,10 +103,10 @@ export default class PlanAPI {
    *
    * @param {DomainObject} domainObject the domain
    *        object for which to get execution status
-   * @returns {Promise<{status: string, duration: number}|undefined> | undefined}
+   * @returns {Promise<{status: string, duration: number}|undefined>}
    * @method getExecutionStatus
    */
-  getExecutionStatus(domainObject) {
+  async getExecutionStatus(domainObject) {
     const provider = this.#findExecutionStatusEvaluator(domainObject);
 
     if (!provider || !provider.getExecutionStatus) {
@@ -118,7 +118,7 @@ export default class PlanAPI {
     this.requestAbortControllers.add(abortController);
 
     try {
-      return provider.getExecutionStatus(domainObject, options);
+      return await provider.getExecutionStatus(domainObject, options);
     } catch (error) {
       if (error.name !== 'AbortError') {
         this._openmct.notifications.error(
@@ -126,7 +126,7 @@ export default class PlanAPI {
         );
       }
 
-      throw new Error(error);
+      throw error;
     } finally {
       this.requestAbortControllers.delete(abortController);
     }
