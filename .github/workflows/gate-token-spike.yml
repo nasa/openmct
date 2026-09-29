@@ -7,10 +7,13 @@ name: Gate Token Spike (throwaway)
 #   2. Can it request an organization team as a reviewer?
 #   3. Can it resolve a review thread through the GraphQL API?
 #
-# Each probe is attempted independently and the exact failure is reported, so one
-# refusal does not hide the others. By default the workflow puts the pull request
-# back as it found it: both review requests are withdrawn and any thread it
-# resolved is unresolved again.
+# Every probe is verified by READING BACK the result, never by trusting the HTTP
+# status. The review-request endpoint returns 200 and silently discards reviewers
+# it will not accept, so a status code proves nothing. That silent drop is exactly
+# what we are hunting for, and it gets its own answer: "Accepted but ignored".
+#
+# By default the workflow puts the pull request back as it found it: anything it
+# actually managed to change is undone.
 #
 # DELETE THIS FILE once the answers are recorded in
 # .github/scripts/contribution-gate/README.md. It exists only to de-risk the
@@ -46,8 +49,20 @@ jobs:
           LEAVE_CHANGES_IN_PLACE: ${{ inputs.leave_changes_in_place }}
         with:
           script: |
-            const COPILOT_REVIEWER_LOGIN = 'copilot-pull-request-reviewer[bot]';
+            // Copilot has two identities. This is the one you REQUEST. The review
+            // it posts is authored by 'copilot-pull-request-reviewer[bot]', which
+            // is what to look for when detecting that a review has arrived.
+            const COPILOT_REVIEWER_LOGIN = 'Copilot';
+            const COPILOT_AUTHOR_LOGIN = 'copilot-pull-request-reviewer[bot]';
             const REVIEWER_TEAM_SLUG = 'openmct-maintainers';
+
+            const ANSWERS = {
+              worked: 'Worked',
+              refused: 'Refused',
+              ignored: 'Accepted but ignored',
+              notAttempted: 'Not attempted'
+            };
+
             const pullNumber = Number.parseInt(process.env.PULL_REQUEST_NUMBER, 10);
             const undoChanges = process.env.LEAVE_CHANGES_IN_PLACE !== 'true';
             const { owner, repo } = context.repo;
@@ -59,7 +74,8 @@ jobs:
             await reportResults();
 
             async function probeCopilotReviewRequest() {
-              const outcome = await attempt('Request Copilot as a reviewer', () =>
+              const probe = `Request "${COPILOT_REVIEWER_LOGIN}" as a reviewer`;
+              const outcome = await call(() =>
                 github.rest.pulls.requestReviewers({
                   owner,
                   repo,
@@ -68,8 +84,29 @@ jobs:
                 })
               );
 
-              if (outcome.succeeded && undoChanges) {
-                await attempt('Withdraw the Copilot request', () =>
+              if (outcome.ok === false) {
+                record(probe, ANSWERS.refused, outcome.detail);
+
+                return;
+              }
+
+              const requested = await readRequestedReviewers();
+
+              if (includesCopilot(requested.users) === false) {
+                record(
+                  probe,
+                  ANSWERS.ignored,
+                  `The API returned success, but Copilot is not on the reviewer list afterwards (it holds: ${describeList(requested.users)}). ` +
+                    'That means Copilot code review is not available to this repository, which is an organization policy or billing question, not a token one.'
+                );
+
+                return;
+              }
+
+              record(probe, ANSWERS.worked, 'Copilot is on the reviewer list.');
+
+              if (undoChanges) {
+                await undo('Withdraw the Copilot request', () =>
                   github.rest.pulls.removeRequestedReviewers({
                     owner,
                     repo,
@@ -81,7 +118,8 @@ jobs:
             }
 
             async function probeTeamReviewRequest() {
-              const outcome = await attempt(`Request review from @${owner}/${REVIEWER_TEAM_SLUG}`, () =>
+              const probe = `Request review from @${owner}/${REVIEWER_TEAM_SLUG}`;
+              const outcome = await call(() =>
                 github.rest.pulls.requestReviewers({
                   owner,
                   repo,
@@ -90,8 +128,29 @@ jobs:
                 })
               );
 
-              if (outcome.succeeded && undoChanges) {
-                await attempt('Withdraw the team request', () =>
+              if (outcome.ok === false) {
+                record(probe, ANSWERS.refused, outcome.detail);
+
+                return;
+              }
+
+              const requested = await readRequestedReviewers();
+
+              if (requested.teams.includes(REVIEWER_TEAM_SLUG) === false) {
+                record(
+                  probe,
+                  ANSWERS.ignored,
+                  `The API returned success, but the team is not on the reviewer list afterwards (it holds: ${describeList(requested.teams)}). ` +
+                    'Check that the team exists and has access to this repository.'
+                );
+
+                return;
+              }
+
+              record(probe, ANSWERS.worked, 'The team is on the reviewer list.');
+
+              if (undoChanges) {
+                await undo('Withdraw the team request', () =>
                   github.rest.pulls.removeRequestedReviewers({
                     owner,
                     repo,
@@ -106,30 +165,69 @@ jobs:
               const thread = await findAThreadToResolve();
 
               if (thread === undefined) {
-                results.push({
-                  probe: 'Resolve a review thread',
-                  answer: 'Not attempted',
-                  detail: 'This pull request has no review threads to practise on.'
-                });
+                record(
+                  'Resolve a review thread',
+                  ANSWERS.notAttempted,
+                  'This pull request has no review threads to practise on.'
+                );
 
                 return;
               }
 
-              const outcome = await attempt(`Resolve review thread ${thread.id}`, () =>
+              const probe = `Resolve review thread on ${thread.path}`;
+              const outcome = await call(() =>
                 github.graphql(
                   `mutation($threadId: ID!) { resolveReviewThread(input: { threadId: $threadId }) { thread { id isResolved } } }`,
                   { threadId: thread.id }
                 )
               );
 
-              if (outcome.succeeded && undoChanges && thread.isResolved === false) {
-                await attempt('Unresolve it again', () =>
+              if (outcome.ok === false) {
+                record(probe, ANSWERS.refused, outcome.detail);
+
+                return;
+              }
+
+              const isResolvedNow = await readThreadResolution(thread.id);
+
+              if (isResolvedNow === false) {
+                record(probe, ANSWERS.ignored, 'The mutation succeeded, but the thread is still unresolved.');
+
+                return;
+              }
+
+              record(probe, ANSWERS.worked, 'The thread is resolved.');
+
+              if (undoChanges && thread.isResolved === false) {
+                await undo('Unresolve it again', () =>
                   github.graphql(
                     `mutation($threadId: ID!) { unresolveReviewThread(input: { threadId: $threadId }) { thread { id isResolved } } }`,
                     { threadId: thread.id }
                   )
                 );
               }
+            }
+
+            async function readRequestedReviewers() {
+              const { data } = await github.rest.pulls.listRequestedReviewers({
+                owner,
+                repo,
+                pull_number: pullNumber
+              });
+
+              return {
+                users: data.users.map((user) => user.login),
+                teams: data.teams.map((team) => team.slug)
+              };
+            }
+
+            async function readThreadResolution(threadId) {
+              const response = await github.graphql(
+                `query($threadId: ID!) { node(id: $threadId) { ... on PullRequestReviewThread { isResolved } } }`,
+                { threadId }
+              );
+
+              return response.node.isResolved;
             }
 
             async function findAThreadToResolve() {
@@ -165,21 +263,53 @@ jobs:
               return firstComment.author.login;
             }
 
-            async function attempt(description, call) {
-              try {
-                await call();
-                core.info(`WORKED: ${description}`);
-                results.push({ probe: description, answer: 'Worked', detail: '' });
+            /** Copilot may appear under either of its two identities. */
+            function includesCopilot(logins) {
+              const wanted = [COPILOT_REVIEWER_LOGIN.toLowerCase(), COPILOT_AUTHOR_LOGIN.toLowerCase()];
 
-                return { succeeded: true };
-              } catch (error) {
-                const detail = `${error.status ?? ''} ${error.message}`.trim();
+              return logins.some((login) => wanted.includes(login.toLowerCase()));
+            }
 
-                core.warning(`REFUSED: ${description} — ${detail}`);
-                results.push({ probe: description, answer: 'Refused', detail });
-
-                return { succeeded: false };
+            function describeList(values) {
+              if (values.length === 0) {
+                return 'nothing';
               }
+
+              return values.join(', ');
+            }
+
+            async function call(apiCall) {
+              try {
+                await apiCall();
+
+                return { ok: true };
+              } catch (error) {
+                return { ok: false, detail: `${error.status ?? ''} ${error.message}`.trim() };
+              }
+            }
+
+            async function undo(description, apiCall) {
+              const outcome = await call(apiCall);
+
+              if (outcome.ok) {
+                core.info(`Undone: ${description}`);
+
+                return;
+              }
+
+              core.warning(`Could not undo (${description}): ${outcome.detail}`);
+            }
+
+            function record(probe, answer, detail) {
+              const logLine = `${answer}: ${probe} — ${detail}`;
+
+              if (answer === ANSWERS.worked) {
+                core.info(logLine);
+              } else {
+                core.warning(logLine);
+              }
+
+              results.push({ probe, answer, detail });
             }
 
             async function reportResults() {
@@ -191,13 +321,13 @@ jobs:
                   [
                     { data: 'Probe', header: true },
                     { data: 'Answer', header: true },
-                    { data: 'Detail', header: true }
+                    { data: 'What it means', header: true }
                   ],
                   ...rows
                 ])
                 .addRaw(
                   undoChanges
-                    ? 'The pull request was put back as it was found.'
+                    ? 'Anything that actually changed was put back.'
                     : 'Changes were left in place, as requested.'
                 )
                 .write();
