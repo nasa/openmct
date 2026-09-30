@@ -111,6 +111,19 @@ describe('The local storage plugin', () => {
     expect(listener).not.toHaveBeenCalled();
   });
 
+  it('does not parse remote storage changes without an interested consumer', () => {
+    spyOn(JSON, 'parse').and.callThrough();
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        storageArea: window.localStorage,
+        key: space,
+        oldValue: '{}',
+        newValue: '{"changed":{"location":null}}'
+      })
+    );
+    expect(JSON.parse).not.toHaveBeenCalled();
+  });
+
   afterEach(() => {
     resetApplicationState(openmct);
     resetLocalStorage();

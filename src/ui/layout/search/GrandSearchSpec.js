@@ -350,6 +350,24 @@ describe('GrandSearch', () => {
     expect(search.objectSearchResults).toEqual([]);
   });
 
+  it('should listen for remote changes only while a query is present', async () => {
+    const search = grandSearchComponent.$refs.root;
+    function listeners() {
+      return openmct.objects.eventEmitter.listeners('remoteChange');
+    }
+    expect(listeners()).not.toContain(search.onRemoteSearchObjectChange);
+    await search.searchEverything('foo');
+    expect(
+      listeners().filter((listener) => listener === search.onRemoteSearchObjectChange).length
+    ).toBe(1);
+    await search.searchEverything('Folder');
+    expect(
+      listeners().filter((listener) => listener === search.onRemoteSearchObjectChange).length
+    ).toBe(1);
+    await search.searchEverything('');
+    expect(listeners()).not.toContain(search.onRemoteSearchObjectChange);
+  });
+
   it('should fetch remote changes only for current results and ancestors', async () => {
     const search = grandSearchComponent.$refs.root;
     await search.searchEverything('Folder');

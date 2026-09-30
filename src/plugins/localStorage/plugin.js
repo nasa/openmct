@@ -30,6 +30,11 @@ export default function (namespace = '', storageSpace = 'mct') {
         return;
       }
 
+      // Avoid parsing the entire store when no consumer needs remote changes.
+      if (!openmct.objects.eventEmitter.listenerCount('remoteChange')) {
+        return;
+      }
+
       const oldSpace = JSON.parse(event.oldValue || '{}');
       const newSpace = JSON.parse(event.newValue || '{}');
       const keys = new Set([...Object.keys(oldSpace), ...Object.keys(newSpace)]);

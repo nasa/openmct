@@ -61,7 +61,6 @@ export default {
     this.deletedSearchObjectKeys = new Set();
     this.openmct.objects.eventEmitter.on('mutation', this.onSearchObjectMutation);
     this.openmct.objects.eventEmitter.on('refresh', this.onSearchObjectRefresh);
-    this.openmct.objects.eventEmitter.on('remoteChange', this.onRemoteSearchObjectChange);
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
   },
   unmounted() {
@@ -86,6 +85,10 @@ export default {
       this.resultController = new AbortController();
       this.pendingRemoteChanges = new Map();
       this.searchValue = value;
+      this.openmct.objects.eventEmitter.off('remoteChange', this.onRemoteSearchObjectChange);
+      if (value) {
+        this.openmct.objects.eventEmitter.on('remoteChange', this.onRemoteSearchObjectChange);
+      }
       this.deletedSearchObjectKeys.clear();
       // clear any previous search results
       this.annotationSearchResults = [];
