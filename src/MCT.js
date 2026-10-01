@@ -34,6 +34,7 @@ import MenuAPI from './api/menu/MenuAPI.js';
 import NotificationAPI from './api/notifications/NotificationAPI.js';
 import ObjectAPI from './api/objects/ObjectAPI.js';
 import OverlayAPI from './api/overlays/OverlayAPI.js';
+import PlanAPI from './api/plan/PlanAPI.js';
 import PriorityAPI from './api/priority/PriorityAPI.js';
 import StatusAPI from './api/status/StatusAPI.js';
 import TelemetryAPI from './api/telemetry/TelemetryAPI.js';
@@ -236,6 +237,12 @@ export class MCT extends EventEmitter {
      * @type {StatusAPI}
      */
     this.status = new StatusAPI(this);
+
+    /**
+     * An interface for planning-related concerns.
+     * @type {PlanAPI}
+     */
+    this.plan = new PlanAPI(this);
 
     /**
      * An object defining constants for priority levels.

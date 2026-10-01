@@ -35,6 +35,7 @@
           - [**Number Format (default):**](#number-format-default)
           - [**String Format**](#string-format)
           - [**Enum Format**](#enum-format)
+        - [Time Formats](#time-formats)
         - [Registering Formats](#registering-formats)
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
@@ -48,7 +49,7 @@
     - [Clocks](#clocks)
       - [Defining and registering clocks](#defining-and-registering-clocks)
       - [Getting and setting active clock](#getting-and-setting-active-clock)
-      - [⚠️ \[DEPRECATED\] Stopping an active clock](#️-deprecated-stopping-an-active-clock)
+      - [⚠️ [DEPRECATED] Stopping an active clock](#-deprecated-stopping-an-active-clock)
       - [Clock Offsets](#clock-offsets)
     - [Time Modes](#time-modes)
       - [Time Mode Helper Methods](#time-mode-helper-methods)
@@ -65,10 +66,12 @@
     - [Priority Types](#priority-types)
   - [User API](#user-api)
     - [Example](#example)
+  - [Plan API](#plan-api)
+    - [Example](#example-1)
   - [Visibility-Based Rendering in View Providers](#visibility-based-rendering-in-view-providers)
     - [Overview](#overview)
     - [Implementing Visibility-Based Rendering](#implementing-visibility-based-rendering)
-    - [Example](#example-1)
+    - [Example](#example-2)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1364,6 +1367,66 @@ can be used to manage user information and roles.
 
 Open MCT provides an example [user](example/exampleUser/exampleUserCreator.js) and [user provider](example/exampleUser/ExampleUserProvider.js) which
 can be used as a starting point for creating a custom user provider.
+
+## Plan API
+
+Open MCT provides a Plan API for planning-related concerns, such as execution
+monitoring status for a plan (e.g. whether execution is ahead of or behind
+schedule and the duration in minutes). By default, this status is set manually and persisted as a database document. To connect an external source of execution
+status instead, register a plan provider via `openmct.plan.addProvider`.
+
+A plan provider is an object implementing:
+
+- `supportsExecutionStatus(domainObject)` — returns a boolean indicating
+  whether this provider supplies execution status for the given domain
+  object.
+- `getExecutionStatus(domainObject, options)` — returns a `Promise` resolving
+  to the current status, e.g. `{ status: '[ahead|behind|nominal]', duration: 60 }`,
+  or `undefined`. The `options` object provides an abort signal
+  (`options.signal`) for in-flight requests that should be cancelled.
+- `subscribeForExecutionStatus(domainObject, callback)` — subscribes to
+  realtime status changes for a domain object, invoking `callback` with new
+  status values as they arrive. Returns an unsubscribe function.
+
+Before calling `openmct.plan.getExecutionStatus`, callers should first check
+`openmct.plan.hasExecutionStatusProvider(domainObject)` to determine whether
+a provider is registered for that domain object, and fall back to their own
+persistence mechanism if not.
+
+### Example
+
+```js
+// Register an execution status provider
+openmct.plan.addProvider({
+  supportsExecutionStatus: (domainObject) => domainObject.type === 'plan',
+  getExecutionStatus: (domainObject, options) => {
+    return fetch(`/execution-status`, {
+      signal: options.signal
+    }).then((response) => response.json());
+  },
+  subscribeForExecutionStatus: (domainObject, callback) => {
+    const eventSource = new EventSource(
+      `/execution-status/realtime`
+    );
+    eventSource.onmessage = (event) => callback(JSON.parse(event.data));
+
+    return () => eventSource.close();
+  }
+});
+
+// Consume execution status for a plan domain object
+async function getPlanExecutionStatus(planObject) {
+  if (openmct.plan.hasExecutionStatusProvider(planObject)) {
+    const status = await openmct.plan.getExecutionStatus(planObject);
+    openmct.plan.subscribeForExecutionStatus(planObject, (newStatus) => {
+      // handle realtime status updates
+    });
+    return status;
+  }
+
+  // No provider registered — fall back to the persisted status on the object
+}
+```
 
 ## Visibility-Based Rendering in View Providers
 

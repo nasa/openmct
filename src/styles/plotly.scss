@@ -40,6 +40,21 @@
       }
     }
 
+    // Minor gridlines, as used between the decades of a log axis. Plotly puts
+    // these in a layer that is a SIBLING of .gridlayer rather than a child, so
+    // they miss the rule above and would otherwise keep Plotly's near-white
+    // default. Half the opacity of the major lines, so they read as reference
+    // marks - matching how time-domain plots treat their minor gridlines.
+    .minor-gridlayer {
+      .x,
+      .y {
+        path {
+          opacity: $opacityPlotHash * 0.5;
+          stroke: $colorPlotHash !important;
+        }
+      }
+    }
+
     path.xy2-y {
       stroke: $colorPlotHash !important; // Using this instead of $colorPlotAreaBorder because that is an rgba
       opacity: $opacityPlotHash !important;

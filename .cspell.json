@@ -231,6 +231,14 @@
     "showline",
     "bglayer",
     "autorange",
+    "autoranged",
+    "autoranges",
+    "dtick",
+    "nticks",
+    "showgrid",
+    "tickmode",
+    "ticktext",
+    "tickvals",
     "hoverinfo",
     "dotful",
     "Dotful",
@@ -353,6 +361,7 @@
     "docstrings",
     "webglcontextlost",
     "gridlines",
+    "gridline",
     "Xaxis",
     "Crosshairs",
     "telemetrylimit",
@@ -489,7 +498,8 @@
     "requestfinished",
     "LOCF",
     "Unack",
-    "Tabnabbing"
+    "Tabnabbing",
+    "reanchor"
   ],
   "dictionaries": ["npm", "softwareTerms", "node", "html", "css", "bash", "en_US", "en-gb", "misc"],
   "ignorePaths": [

@@ -366,7 +366,7 @@ export default {
             }
 
             xValues.push(metadata.name);
-            if (data[metadata.key]) {
+            if (data[metadata.key] !== undefined) {
               const parsedValue = this.parse(key, metadata.key, data);
               yValues.push(parsedValue);
             } else {

@@ -530,12 +530,59 @@ export default {
       status: ''
     };
 
+    function formattedStatus(status, planIdentifier) {
+      return {
+        execution_monitoring: {
+          [planIdentifier]: status ?? DEFAULT_AHEAD_BEHIND_STATUS
+        }
+      };
+    }
+
     // groups composable properties to return in setup() return
     const setupAheadBehind = {
       aheadBehind
     };
 
-    onMounted(async () => {
+    onMounted(() => {
+      getPlanExecutionMonitoringStatus();
+    });
+
+    onBeforeUnmount(() => {
+      stopObservingPlanExecutionMonitoringStatusObject?.();
+    });
+
+    function getCurrentPlanIdentifier() {
+      let planIdentifier = plans.filter(
+        (identifier) => openmct.status.get(identifier) === 'current'
+      )?.[0];
+      if (planIdentifier === undefined) {
+        planIdentifier = plans?.[0];
+      }
+
+      return planIdentifier;
+    }
+
+    async function getPlanExecutionMonitoringStatus() {
+      stopObservingPlanExecutionMonitoringStatusObject?.();
+
+      const planIdentifier = getCurrentPlanIdentifier();
+      if (planIdentifier === undefined) {
+        aheadBehind.value = DEFAULT_AHEAD_BEHIND_STATUS;
+        return;
+      }
+
+      const planObject = await openmct.objects.get(planIdentifier);
+      if (openmct.plan.hasExecutionStatusProvider(planObject)) {
+        const status = await openmct.plan.getExecutionStatus(planObject);
+        setPlanExecutionMonitoringStatus(formattedStatus(status, planIdentifier));
+        stopObservingPlanExecutionMonitoringStatusObject = openmct.plan.subscribeForExecutionStatus(
+          planObject,
+          (newStatus) =>
+            setPlanExecutionMonitoringStatus(formattedStatus(newStatus, planIdentifier))
+        );
+        return;
+      }
+
       planExecutionMonitoringStatusObject = await openmct.objects.get(
         PLAN_EXECUTION_MONITORING_KEY
       );
@@ -545,21 +592,10 @@ export default {
         '*',
         setPlanExecutionMonitoringStatus
       );
-    });
-
-    onBeforeUnmount(() => {
-      stopObservingPlanExecutionMonitoringStatusObject?.();
-    });
+    }
 
     function setPlanExecutionMonitoringStatus(newStatusObject) {
-      let planIdentifier;
-
-      planIdentifier = plans.filter(
-        (identifier) => openmct.status.get(identifier) === 'current'
-      )?.[0];
-      if (planIdentifier === undefined) {
-        planIdentifier = plans?.[0];
-      }
+      const planIdentifier = getCurrentPlanIdentifier();
 
       if (
         newStatusObject &&
@@ -580,6 +616,7 @@ export default {
 
       if (planIdentifier) {
         plans.push(planIdentifier);
+        getPlanExecutionMonitoringStatus();
       }
     }
 
@@ -590,7 +627,7 @@ export default {
 
       if (index > -1) {
         plans.splice(index, 1);
-        setPlanExecutionMonitoringStatus(planExecutionMonitoringStatusObject);
+        getPlanExecutionMonitoringStatus();
       }
     }
 

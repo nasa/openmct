@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2024, United States Government
+ Open MCT, Copyright (c) 2014-2026, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -38,6 +38,8 @@
         short-label="Color"
       />
     </ul>
+    <AxisScalingForm axis-key="xAxis" axis-label="X Axis" read-only />
+    <AxisScalingForm axis-key="yAxis" axis-label="Y Axis" read-only />
   </div>
 </template>
 
@@ -45,9 +47,10 @@
 import Color from '../../../../ui/color/Color.js';
 import ColorPalette from '../../../../ui/color/ColorPalette.js';
 import ColorSwatch from '../../../../ui/color/ColorSwatch.vue';
+import AxisScalingForm from '../../inspector/AxisScalingForm.vue';
 
 export default {
-  components: { ColorSwatch },
+  components: { AxisScalingForm, ColorSwatch },
   inject: ['openmct', 'domainObject'],
   data() {
     return {
