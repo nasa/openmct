@@ -114,6 +114,7 @@
     "info": "npx envinfo --system --browsers --npmPackages --binaries --languages --markdown",
     "test": "karma start karma.conf.cjs",
     "test:debug": "KARMA_DEBUG=true karma start karma.conf.cjs",
+    "test:contribution-gate": "node --test \".github/scripts/contribution-gate/*.test.js\"",
     "test:e2e": "npm test --workspace e2e",
     "test:e2e:a11y": "npm test --workspace e2e -- --config=playwright-visual-a11y.config.js --project=chrome --grep @a11y",
     "test:e2e:mobile": "npm test --workspace e2e -- --config=playwright-mobile.config.js",

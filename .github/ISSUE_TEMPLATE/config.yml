@@ -1,4 +1,6 @@
-blank_issues_enabled: true
+# Blank issues are disabled because every issue has to carry the information a
+# contributor needs in order to work on it. Questions belong in Discussions.
+blank_issues_enabled: false
 contact_links:
   - name: Discussions
     url: https://github.com/nasa/openmct/discussions

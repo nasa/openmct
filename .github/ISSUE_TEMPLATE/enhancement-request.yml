@@ -1,0 +1,46 @@
+name: Enhancement request
+description: Suggest an enhancement or new improvement for this project
+labels:
+  - 'type:enhancement'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every field marked with an asterisk is needed before this issue can be worked on. An issue
+        that stays incomplete is closed automatically after a week, with a reminder first.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What problem does this solve? For example, "I am always frustrated when…".
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+    validations:
+      required: false
+  - type: textarea
+    id: testing-instructions
+    attributes:
+      label: Testing Instructions
+      description: >-
+        How should a reviewer confirm this works? These can be added later, but a pull request
+        cannot be merged until the issue it closes has them.
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Any other context or screenshots about the request.
+    validations:
+      required: false
