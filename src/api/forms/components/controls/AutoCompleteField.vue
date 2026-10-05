@@ -23,6 +23,7 @@
   <div ref="autoCompleteForm" class="form-control c-input--autocomplete js-autocomplete">
     <div class="c-input--autocomplete__wrapper">
       <input
+        :id="`form-${model.key}`"
         ref="autoCompleteInput"
         v-model="field"
         class="c-input--autocomplete__input js-autocomplete__input"
