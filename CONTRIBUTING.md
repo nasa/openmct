@@ -1,5 +1,6 @@
 # Contributing to Open MCT
 
+
 This document describes the process of contributing to Open MCT as well as the standards that will be applied when evaluating contributions.
 
 In order for external contributions to be merged, contributors must have on record a signed [Contributor License Agreement (CLA)](https://nasa.github.io/openmct/static/files/ind-cla-open-mct.pdf). More information on this process can be found [in this discussion](https://github.com/nasa/openmct/discussions/3821).
@@ -9,18 +10,26 @@ In order for external contributions to be merged, contributors must have on reco
 The short version:
 
 1. Write your contribution or describe your idea in the form of a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [start a GitHub discussion](https://github.com/nasa/openmct/discussions).
-2. Make sure your contribution meets code, test, and commit message standards as described below.
-3. Submit a pull request from a topic branch back to `master`. Include a check list, as described below. (Optionally, assign this to a specific member for review.)
-4. Respond to any discussion. When the reviewer decides it's ready, they will merge back `master` and fill out their own check list.
-5. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.
+2. If your contribution is a bug fix go ahead and create a PR to fix it, following the guidelines in this document.
+3. If your contribution is an enhancement to existing functionality, or it is new functionality, please wait for approval on the corresponding issue from an Open MCT maintainer BEFORE contributing a pull request. 
+4. Make sure your contribution meets code, test, and commit message standards as described below.
+5. Submit a pull request from a topic branch back to `master`. Include a check list, as described below. (Optionally, assign this to a specific member for review.)
+6. Respond to any discussion. When the reviewer decides it's ready, they will merge back `master` and fill out their own check list.
+7. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.
 
 We are piloting a bot that automates most of the steps between opening a pull request and a maintainer
 reading it, on pull requests a maintainer has opted in. See
 [The Contribution Gate (pilot)](#the-contribution-gate-pilot).
 
-## Contribution Process
+## Should my contribution be a Pull Request or an external plugin?
 
-Open MCT uses git for software version control, and for branching and merging. The central repository is at <https://github.com/nasa/openmct.git>.
+If approved and merged, your code will be used by NASA spacecraft flight controllers. As such, enhancements and new functionality must be assessed for alignment with project priorities, as well as code quality. Our aim is to keep core Open MCT as lightweight as is feasible, with optional functionality provided via external plugins.
+
+As such, any new functionality or enhancements to existing functionality that you wish to have merged into the core Open MCT codebase must be approved by an Open MCT maintainer before you start working on them.
+
+Alternatively, we encourage you to enhance and upgrade Open MCT's capabilities with new plugins provided via your own repository. Please tell us about your plugins and we will link to them from our website.
+
+## Contribution Process
 
 ### Roles
 
