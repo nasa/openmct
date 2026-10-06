@@ -42,6 +42,7 @@ function renderIssueComment(report) {
   return joinSections([
     'Thanks for raising this! This comment is kept up to date automatically and shows what is left to do.',
     renderFailures(report.failures),
+    renderWaitingNote(report.waitingNote),
     renderDeadlineNote(report.deadline),
     renderMarker(report.state)
   ]);

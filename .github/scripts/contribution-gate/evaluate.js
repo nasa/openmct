@@ -55,6 +55,8 @@ const { TRIGGER_KINDS, findTrigger } = require('./trigger');
 const OPEN_STATE = 'OPEN';
 const DRAFT_WAITING_NOTE =
   'This is a draft, so the AI review has not been requested yet. Mark it ready for review when you would like that to happen.';
+const CLOSED_NOTE =
+  'This is closed because the points above were not addressed in time. Fix them, push any commits you need, then comment `/recheck` and it reopens automatically.';
 const AI_REVIEW_REQUESTED_NOTE =
   'An AI code review has been requested. Its comments usually arrive within a few minutes.';
 
@@ -218,14 +220,14 @@ async function handleNonCompliantPullRequest(report) {
   const { contribution, evaluator, failures } = report;
   const clockedState = startClock(report.state, evaluator.now);
   const deadline = findDeadlineFor(contribution, clockedState);
-  const state = await closeOrRemind(report, clockedState, deadline);
+  const { state, isClosed } = await closeOrRemind(report, clockedState, deadline);
 
   await publishMilestoneCheck(evaluator, contribution, { isDecided: hasMilestoneDecision(contribution) });
   await evaluator.gate.setStage(contribution.number, STAGE_LABELS.needsCompliance, contribution.labels);
   await writeStickyComment(report, renderPullRequestComment({
     stageStatuses: {},
     failures,
-    deadline,
+    ...describeDeadline(deadline, isClosed),
     state
   }));
 }
@@ -234,10 +236,10 @@ async function handleNonCompliantIssue(report) {
   const { contribution, evaluator, failures } = report;
   const clockedState = startClock(report.state, evaluator.now);
   const deadline = findDeadlineFor(contribution, clockedState);
-  const state = await closeOrRemind(report, clockedState, deadline);
+  const { state, isClosed } = await closeOrRemind(report, clockedState, deadline);
 
   await evaluator.gate.setStage(contribution.number, STAGE_LABELS.needsCompliance, contribution.labels);
-  await writeStickyComment(report, renderIssueComment({ failures, deadline, state }));
+  await writeStickyComment(report, renderIssueComment({ failures, ...describeDeadline(deadline, isClosed), state }));
 }
 
 async function handleCompliantIssue(report) {
@@ -422,14 +424,19 @@ function needsAiReviewRequest(contribution, state) {
  * Closes a contribution that has run out of time, or sends the single reminder
  * that goes out before that happens.
  *
- * @returns {object} the state to store, which records a sent reminder so that
- * only one is ever sent
+ * @returns {{state: object, isClosed: boolean}} the state to store, which
+ * records a sent reminder so that only one is ever sent, and whether the
+ * contribution is now closed
  */
 async function closeOrRemind(report, state, deadline) {
   const { contribution, evaluator, failures } = report;
 
-  if (deadline === undefined || contribution.state !== OPEN_STATE) {
-    return state;
+  if (contribution.state !== OPEN_STATE) {
+    return { state, isClosed: true };
+  }
+
+  if (deadline === undefined) {
+    return { state, isClosed: false };
   }
 
   const contributionKind = findContributionKind(contribution);
@@ -437,16 +444,25 @@ async function closeOrRemind(report, state, deadline) {
   if (isPastDeadline(state.noncompliantSince, contributionKind, evaluator.now)) {
     await evaluator.gate.closeContribution(contribution.number, renderClosingComment({ failures }));
 
-    return state;
+    return { state, isClosed: true };
   }
 
   if (shouldRemind(state, contributionKind, evaluator.now) === false) {
-    return state;
+    return { state, isClosed: false };
   }
 
   await evaluator.gate.postComment(contribution.number, renderReminderComment({ failures, deadline }));
 
-  return { ...state, reminderPostedAt: evaluator.now.toISOString() };
+  return { state: { ...state, reminderPostedAt: evaluator.now.toISOString() }, isClosed: false };
+}
+
+/** A closed contribution is told how to reopen, not shown a deadline that has passed. */
+function describeDeadline(deadline, isClosed) {
+  if (isClosed) {
+    return { waitingNote: CLOSED_NOTE };
+  }
+
+  return { deadline };
 }
 
 function shouldRemind(state, contributionKind, now) {

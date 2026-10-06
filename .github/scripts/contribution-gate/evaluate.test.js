@@ -279,19 +279,77 @@ test('a pull request with a milestone already set passes the milestone check eve
   assert.deepEqual(world.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
 });
 
+test('a closed pull request reopens on /recheck once a fix pushed after closing is on its branch', async () => {
+  const world = createWorld({
+    state: 'CLOSED',
+    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' },
+    changedFiles: ['src/plugins/plot/Plot.js'],
+    branchTipFiles: ['src/plugins/plot/Plot.js', 'src/plugins/plot/PlotSpec.js']
+  });
+
+  await runGate(world, { recheck: true });
+
+  assert.deepEqual(world.reopened, [7], 'the test pushed after closing counts');
+  assert.deepEqual(world.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
+});
+
+test('/recheck leaves a closed pull request closed while something is still missing, and says how to reopen it', async () => {
+  const world = createWorld({
+    state: 'CLOSED',
+    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' },
+    changedFiles: ['src/plugins/plot/Plot.js'],
+    branchTipFiles: ['src/plugins/plot/Plot.js']
+  });
+
+  await runGate(world, { recheck: true });
+
+  const comment = world.updatedComments[0].body;
+
+  assert.deepEqual(world.reopened, []);
+  assert.deepEqual(world.closed, [], 'it is not closed a second time');
+  assert.equal(world.postedComments.length, 0, 'and gets no second closing comment');
+  assert.match(comment, /comment `\/recheck` and it reopens/);
+  assert.doesNotMatch(comment, /will be closed automatically/, 'no deadline for something already closed');
+});
+
+test('the comment left on a pull request as it is closed does not promise a deadline that has passed', async () => {
+  const world = createWorld({
+    body: '### Describe your changes:\n\n\n',
+    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.closed, [7]);
+  assert.doesNotMatch(world.updatedComments[0].body, /will be closed automatically/);
+  assert.match(world.updatedComments[0].body, /This is closed/);
+});
+
 function runGate(world, options = {}) {
   process.env.GATE_DRY_RUN = options.dryRun === true ? 'true' : 'false';
   process.env.GATE_AI_REVIEW = options.aiReview === true ? 'true' : 'false';
 
   return run({
     github: world.github,
-    context: {
-      eventName: 'pull_request_target',
-      repo: { owner: 'nasa', repo: 'openmct' },
-      payload: { pull_request: { number: world.pullRequestNumber } }
-    },
+    context: options.recheck === true ? recheckContext(world) : pullRequestContext(world),
     core: { info() {}, debug() {}, warning() {} }
   });
+}
+
+function pullRequestContext(world) {
+  return {
+    eventName: 'pull_request_target',
+    repo: { owner: 'nasa', repo: 'openmct' },
+    payload: { pull_request: { number: world.pullRequestNumber } }
+  };
+}
+
+function recheckContext(world) {
+  return {
+    eventName: 'issue_comment',
+    repo: { owner: 'nasa', repo: 'openmct' },
+    payload: { issue: { number: world.pullRequestNumber, pull_request: {} }, comment: { body: '/recheck' } }
+  };
 }
 
 /**
@@ -342,6 +400,7 @@ function createWorld(scenario) {
         }
       },
       pulls: {
+        // A closed pull request's files are frozen at the commit it was closed on.
         listFiles: async () => buildFiles(scenario),
         list: async () => ({ data: [] }),
         requestReviewers: async ({ pull_number, reviewers, team_reviewers }) => {
@@ -360,6 +419,14 @@ function createWorld(scenario) {
           data: {
             users: world.usersOnReviewList.map((login) => ({ login })),
             teams: world.teamsOnReviewList.map((slug) => ({ slug }))
+          }
+        })
+      },
+      repos: {
+        compareCommitsWithBasehead: async () => ({
+          data: {
+            commits: [{ sha: 'branch-tip-sha' }],
+            files: (scenario.branchTipFiles ?? []).map((filename) => ({ filename }))
           }
         })
       },
@@ -397,7 +464,10 @@ function buildPullRequest(scenario, number) {
     number,
     body: scenario.body ?? COMPLIANT_BODY,
     isDraft: scenario.isDraft === true,
-    state: 'OPEN',
+    state: scenario.state ?? 'OPEN',
+    headRefName: 'fix-branch',
+    baseRefName: 'master',
+    headRepositoryOwner: { login: 'contributor' },
     authorAssociation: scenario.authorAssociation ?? 'CONTRIBUTOR',
     headRefOid: HEAD_SHA,
     author: CONTRIBUTOR,
@@ -421,7 +491,7 @@ function buildIssueResponse(scenario) {
   return {
     number: 7,
     body: scenario.body ?? COMPLIANT_BODY,
-    state: 'open',
+    state: (scenario.state ?? 'OPEN').toLowerCase(),
     user: CONTRIBUTOR,
     author_association: scenario.authorAssociation ?? 'CONTRIBUTOR',
     labels: (scenario.labels ?? []).map((name) => ({ name })),
