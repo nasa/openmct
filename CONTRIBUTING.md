@@ -14,6 +14,10 @@ The short version:
 4. Respond to any discussion. When the reviewer decides it's ready, they will merge back `master` and fill out their own check list.
 5. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.
 
+We are piloting a bot that automates most of the steps between opening a pull request and a maintainer
+reading it, on pull requests a maintainer has opted in. See
+[The Contribution Gate (pilot)](#the-contribution-gate-pilot).
+
 ## Contribution Process
 
 Open MCT uses git for software version control, and for branching and merging. The central repository is at <https://github.com/nasa/openmct.git>.
@@ -71,6 +75,43 @@ Additionally:
 * Every PR must have two reviewers assigned, though only one approval is necessary for merge.
 * Changes to API require approval by a senior developer.
 * When creating a PR, it is the author's responsibility to apply any priority label from the issue to the PR as well. This helps with prioritization.
+
+### The Contribution Gate (pilot)
+
+We are piloting a bot that automates most of the steps between a pull request being opened and a
+maintainer reading it. It applies only to pull requests a maintainer has labelled
+`new-workflow-candidate`. Every other pull request follows the process above, unchanged.
+
+On a candidate pull request, the bot posts a single comment and keeps it up to date, so there is always
+one place that says what is left to do. It never asks you to do something you do not have permission to
+do: it copies the `type:` label from the linked issue and records the milestone decision itself.
+
+A candidate pull request moves through these stages, and can move back if something changes:
+
+1. __The contribution rules__, all of which the bot checks: the description says what you changed,
+   every item in the author checklist is ticked, the pull request closes an issue, that issue is
+   complete, it carries testing instructions, and an automated test is included or updated. A change
+   that genuinely cannot carry a test should say so in the description and ask a maintainer for the
+   `pr:daveit` label.
+2. __The automated checks__: lint, unit tests, end-to-end tests and the visual and accessibility
+   tests must pass, as must CodeQL where it runs.
+3. __The automated reviews__. CodeQL comments on its own if it finds a security problem. Reply to
+   each comment saying how you addressed it (for example "fixed in abc1234") or why you disagree. The
+   bot resolves each thread once you have replied; resolving one without a reply is not enough,
+   because the reply is what a human reviewer reads first.
+4. __Team review__: only now are the maintainers asked to look, and one approval merges it.
+
+Testing instructions belong on the issue. If you did not open that issue and cannot edit it, comment
+on it with a `### Testing Instructions` heading instead, and that counts.
+
+A candidate pull request that stays incomplete is closed automatically: after a week if it is ready for
+review, or after a month if it is a draft. A reminder goes out two days beforehand. Nothing is lost when
+it is closed this way: address the points in the bot's comment, push any commits you need, and comment
+`/recheck`, and it reopens. Pull requests from the team are held to the same rules, but are never closed
+automatically.
+
+The gate lives in [.github/scripts/contribution-gate](.github/scripts/contribution-gate), and the
+rules it enforces are all in one file, `config.js`.
 
 ## Standards
 
