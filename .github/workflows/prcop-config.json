@@ -1,0 +1,19 @@
+{
+  "linters": [
+    {
+      "name": "descriptionRegexp",
+      "config": {
+        "regexp": "[x|X]] Testing instructions",
+        "errorMessage": ":police_officer: PR Description does not confirm that associated issue(s) contain Testing instructions"
+      }
+    },
+    {
+      "name": "descriptionMinWords",
+      "config": {
+        "minWordsCount": 160,
+        "errorMessage": ":police_officer: Please, be sure to use existing PR template."
+      }
+    }
+  ],
+  "disableWord": "pr:daveit"
+}
