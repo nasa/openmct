@@ -453,6 +453,129 @@ describe('Telemetry API', () => {
         expect(telemetryProvider.subscribe.calls.mostRecent().args[2].strategy).toBe('latest');
       });
     });
+
+    describe('subscription observers', () => {
+      let providerCallbacks;
+      let observeDatum;
+      let observeSubscription;
+
+      function emitTelemetry(data) {
+        providerCallbacks.forEach((providerCallback) => {
+          providerCallback(data);
+        });
+      }
+
+      beforeEach(() => {
+        providerCallbacks = [];
+        telemetryProvider.supportsSubscribe.and.returnValue(true);
+        telemetryProvider.subscribe.and.callFake((obj, providerCallback) => {
+          providerCallbacks.push(providerCallback);
+
+          return jasmine.createSpy('unsubscribe');
+        });
+        telemetryAPI.addProvider(telemetryProvider);
+
+        observeDatum = jasmine.createSpy('observeDatum');
+        observeSubscription = jasmine
+          .createSpy('observeSubscription')
+          .and.returnValue(observeDatum);
+      });
+
+      it('invokes the observer once with the domain object, when a subscription is created', () => {
+        telemetryAPI.addSubscriptionObserver(observeSubscription);
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callback'));
+
+        expect(observeSubscription).toHaveBeenCalledOnceWith(domainObject);
+      });
+
+      it('invokes the observer for subscriptions that already exist', () => {
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callback'));
+        telemetryAPI.addSubscriptionObserver(observeSubscription);
+
+        expect(observeSubscription).toHaveBeenCalledOnceWith(domainObject);
+
+        emitTelemetry({ value: 1 });
+
+        expect(observeDatum).toHaveBeenCalledWith({ value: 1 });
+      });
+
+      it('does not invoke the observer again when a second callback joins a subscription', () => {
+        telemetryAPI.addSubscriptionObserver(observeSubscription);
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callbackOne'));
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callbackTwo'));
+
+        expect(observeSubscription).toHaveBeenCalledTimes(1);
+      });
+
+      it('invokes the datum observer with each datum received', () => {
+        telemetryAPI.addSubscriptionObserver(observeSubscription);
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callback'));
+
+        emitTelemetry({ value: 1 });
+        emitTelemetry({ value: 2 });
+
+        expect(observeDatum).toHaveBeenCalledTimes(2);
+        expect(observeDatum).toHaveBeenCalledWith({ value: 2 });
+      });
+
+      it('invokes the datum observer with only the last element of a batch', () => {
+        telemetryAPI.addSubscriptionObserver(observeSubscription);
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callback'));
+
+        emitTelemetry([{ value: 1 }, { value: 2 }, { value: 3 }]);
+
+        expect(observeDatum).toHaveBeenCalledOnceWith({ value: 3 });
+      });
+
+      it('never invokes an observer that declined the subscription', () => {
+        const decliningObserver = jasmine.createSpy('decliningObserver').and.returnValue(undefined);
+
+        telemetryAPI.addSubscriptionObserver(decliningObserver);
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callback'));
+
+        emitTelemetry({ value: 1 });
+
+        expect(decliningObserver).toHaveBeenCalledTimes(1);
+      });
+
+      it('stops delivering to a removed observer, leaving others intact', () => {
+        const otherObserveDatum = jasmine.createSpy('otherObserveDatum');
+        const viewCallback = jasmine.createSpy('viewCallback');
+
+        const removeObserver = telemetryAPI.addSubscriptionObserver(observeSubscription);
+        telemetryAPI.addSubscriptionObserver(() => otherObserveDatum);
+        telemetryAPI.subscribe(domainObject, viewCallback);
+
+        removeObserver();
+        emitTelemetry({ value: 1 });
+
+        expect(observeDatum).not.toHaveBeenCalled();
+        expect(otherObserveDatum).toHaveBeenCalledWith({ value: 1 });
+        expect(viewCallback).toHaveBeenCalledWith({ value: 1 });
+      });
+
+      it('delivers to view callbacks normally when no observers are registered', () => {
+        const latestCallback = jasmine.createSpy('latestCallback');
+
+        telemetryAPI.subscribe(domainObject, latestCallback);
+
+        emitTelemetry([{ value: 1 }, { value: 2 }]);
+
+        expect(latestCallback).toHaveBeenCalledOnceWith({ value: 2 });
+      });
+
+      it('throws when telemetry is received with no datum', () => {
+        telemetryAPI.addSubscriptionObserver(observeSubscription);
+        telemetryAPI.subscribe(domainObject, jasmine.createSpy('callback'));
+
+        expect(() => emitTelemetry(undefined)).toThrowError(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+        expect(() => emitTelemetry([])).toThrowError(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      });
+    });
   });
 
   describe('metadata', () => {

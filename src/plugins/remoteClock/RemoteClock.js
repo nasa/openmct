@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import clockReadyRequestInterceptor from '../../utils/clock/clockReadyRequestInterceptor.js';
 import DefaultClock from '../../utils/clock/DefaultClock.js';
-import remoteClockRequestInterceptor from './requestInterceptor.js';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
@@ -49,11 +49,11 @@ export default class RemoteClock extends DefaultClock {
     this.formatTime = undefined;
     this.metadata = undefined;
 
+    // A value of zero means "has not ticked yet". The request interceptor
+    // relies on this to know when the clock has a real time to report.
     this.lastTick = 0;
 
-    this.openmct.telemetry.addRequestInterceptor(
-      remoteClockRequestInterceptor(this.openmct, this.identifier, this.#waitForReady.bind(this))
-    );
+    this.openmct.telemetry.addRequestInterceptor(clockReadyRequestInterceptor(this.openmct, this));
 
     this._processDatum = this._processDatum.bind(this);
   }
@@ -145,27 +145,5 @@ export default class RemoteClock extends DefaultClock {
     this.formatTime = (datum) => {
       return timeFormatter.format(datum);
     };
-  }
-
-  /**
-   * Waits for the clock to have a non-default tick value.
-   */
-  #waitForReady() {
-    const waitForInitialTick = (resolve) => {
-      const tickListener = () => {
-        if (this.lastTick > 0) {
-          const offsets = this.openmct.time.getClockOffsets();
-          this.openmct.time.off('tick', tickListener); // Unregister the tick listener
-          resolve({
-            start: this.lastTick + offsets.start,
-            end: this.lastTick + offsets.end
-          });
-        }
-      };
-
-      this.openmct.time.on('tick', tickListener);
-    };
-
-    return new Promise(waitForInitialTick);
   }
 }

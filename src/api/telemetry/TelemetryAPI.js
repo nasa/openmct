@@ -82,6 +82,7 @@ const SUBSCRIBE_STRATEGY = {
 export default class TelemetryAPI {
   #isGreedyLAD;
   #subscribeCache;
+  #subscriptionObservers;
   #hasReturnedFirstData;
 
   get SUBSCRIBE_STRATEGY() {
@@ -110,6 +111,7 @@ export default class TelemetryAPI {
     this.#isGreedyLAD = true;
     this.BatchingWebSocket = BatchingWebSocket;
     this.#subscribeCache = {};
+    this.#subscriptionObservers = new Set();
     this.#hasReturnedFirstData = false;
   }
 
@@ -386,6 +388,68 @@ export default class TelemetryAPI {
   }
 
   /**
+   * Observe every telemetry subscription in the application as it is created.
+   *
+   * The observer is invoked once per subscription, and NOT once per datum. This
+   * allows an observer to resolve whatever it needs from the domain object
+   * (metadata, value formatters) a single time and close over the result,
+   * instead of resolving it again for every sample that arrives.
+   *
+   * Observers are invoked for subscriptions that already exist at the time of
+   * registration, as well as for any created subsequently. An observer declines
+   * a subscription by returning undefined.
+   *
+   * Only telemetry delivered via subscriptions is observed. The results of
+   * historical requests are not.
+   *
+   * @param {function(import('openmct').DomainObject): (function(object): void | undefined)} observeSubscription
+   *        invoked with each subscribed domain object. Returns a function to be
+   *        called with each datum received for that object, or undefined to
+   *        ignore the subscription.
+   * @returns {Function} a function which removes this observer from all
+   *          subscriptions, both current and future
+   * @method addSubscriptionObserver
+   */
+  addSubscriptionObserver(observeSubscription) {
+    this.#subscriptionObservers.add(observeSubscription);
+
+    Object.values(this.#subscribeCache).forEach((subscriber) => {
+      this.#attachObserverToSubscriber(observeSubscription, subscriber);
+    });
+
+    return () => this.#removeSubscriptionObserver(observeSubscription);
+  }
+
+  /**
+   * Offer a single subscription to a single observer, recording the datum
+   * handler it returns. The registration function is recorded alongside the
+   * handler so that the observer can later be removed without a second lookup
+   * structure.
+   *
+   * @private
+   */
+  #attachObserverToSubscriber(observeSubscription, subscriber) {
+    const observeDatum = observeSubscription(subscriber.domainObject);
+
+    if (observeDatum !== undefined) {
+      subscriber.datumObservers.push({ observeSubscription, observeDatum });
+    }
+  }
+
+  /**
+   * @private
+   */
+  #removeSubscriptionObserver(observeSubscription) {
+    this.#subscriptionObservers.delete(observeSubscription);
+
+    Object.values(this.#subscribeCache).forEach((subscriber) => {
+      subscriber.datumObservers = subscriber.datumObservers.filter(
+        (datumObserver) => datumObserver.observeSubscription !== observeSubscription
+      );
+    });
+  }
+
+  /**
    * Retrieve the request interceptors for a given domain object.
    * @private
    */
@@ -554,8 +618,19 @@ export default class TelemetryAPI {
     if (!subscriber) {
       subscriber = this.#subscribeCache[cacheKey] = {
         latestCallbacks: [],
-        batchCallbacks: []
+        batchCallbacks: [],
+        datumObservers: [],
+        // Retained so that observers registered after this subscription was
+        // created can still be offered it. Where several callers share a cache
+        // key, this is the first caller's instance. That is harmless: metadata
+        // is cached per instance in a WeakMap and does not change at runtime.
+        domainObject
       };
+
+      this.#subscriptionObservers.forEach((observeSubscription) => {
+        this.#attachObserverToSubscriber(observeSubscription, subscriber);
+      });
+
       if (provider) {
         subscriber.unsubscribe = provider.subscribe(
           domainObject,
@@ -574,9 +649,40 @@ export default class TelemetryAPI {
     }
 
     // Guarantees that view receive telemetry in the expected form
+    //
+    // Subscription observers are notified BEFORE the view callbacks. A
+    // telemetry driven clock ticks from an observer, and a tick moves the time
+    // bounds that TelemetryCollection filters incoming data against. Notifying
+    // views first would mean the very first datum of every stream is discarded
+    // as out of bounds, because a tick trims data rather than re-requesting it.
     function invokeCallbackWithRequestedStrategy(data) {
+      const latestDatum = getLatestDatum(data);
+
+      notifySubscriptionObservers(latestDatum, subscriber.datumObservers);
       invokeCallbacksWithArray(data, subscriber.batchCallbacks);
-      invokeCallbacksWithSingleValue(data, subscriber.latestCallbacks);
+      invokeCallbacksWithSingleValue(latestDatum, subscriber.latestCallbacks);
+    }
+
+    function getLatestDatum(data) {
+      const latestDatum = Array.isArray(data) ? data[data.length - 1] : data;
+
+      if (latestDatum === undefined || latestDatum === null) {
+        throw new Error(
+          'Attempt to invoke telemetry subscription callback with no telemetry datum'
+        );
+      }
+
+      return latestDatum;
+    }
+
+    function notifySubscriptionObservers(latestDatum, datumObservers) {
+      if (datumObservers.length === 0) {
+        return;
+      }
+
+      datumObservers.forEach((datumObserver) => {
+        datumObserver.observeDatum(latestDatum);
+      });
     }
 
     function invokeCallbacksWithArray(data, batchCallbacks) {
@@ -596,19 +702,9 @@ export default class TelemetryAPI {
       });
     }
 
-    function invokeCallbacksWithSingleValue(data, latestCallbacks) {
-      if (Array.isArray(data)) {
-        data = data[data.length - 1];
-      }
-
-      if (data === undefined || data === null) {
-        throw new Error(
-          'Attempt to invoke telemetry subscription callback with no telemetry datum'
-        );
-      }
-
+    function invokeCallbacksWithSingleValue(latestDatum, latestCallbacks) {
       latestCallbacks.forEach((cb) => {
-        cb(data);
+        cb(latestDatum);
       });
     }
 
