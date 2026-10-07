@@ -48,6 +48,19 @@ export default merge(common, {
       directory: fileURLToPath(new URL('../e2e/test-data', import.meta.url)),
       publicPath: '/test-data',
       watch: false
+    }, {
+      // Serves a page guarded by `Cache-Control: no-store, private` within the
+      // service worker's scope, for the PWA e2e suite. It simulates a route
+      // that returns authenticated or user-specific content: such a page must
+      // be served while online but never written to the offline cache.
+      directory: fileURLToPath(new URL('../e2e/test-data/mock-private-route', import.meta.url)),
+      publicPath: '/dist/mock-private-route',
+      watch: false,
+      staticOptions: {
+        setHeaders: (res) => {
+          res.setHeader('Cache-Control', 'no-store, private');
+        }
+      }
     }]
   }
 });

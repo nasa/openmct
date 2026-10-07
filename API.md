@@ -68,6 +68,11 @@
     - [Example](#example)
   - [Plan API](#plan-api)
     - [Example](#example-1)
+  - [Progressive Web App Support](#progressive-web-app-support)
+    - [Making Open MCT Installable](#making-open-mct-installable)
+    - [Working Offline With the PWA Plugin](#working-offline-with-the-pwa-plugin)
+    - [Offline Security and Cache Behavior](#offline-security-and-cache-behavior)
+    - [Application Updates](#application-updates)
   - [Visibility-Based Rendering in View Providers](#visibility-based-rendering-in-view-providers)
     - [Overview](#overview)
     - [Implementing Visibility-Based Rendering](#implementing-visibility-based-rendering)
@@ -1427,6 +1432,126 @@ async function getPlanExecutionStatus(planObject) {
   // No provider registered — fall back to the persisted status on the object
 }
 ```
+
+## Progressive Web App Support
+
+Open MCT can run as a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+(PWA): it can be installed from the browser as a standalone application and, once
+installed, it loads and runs without a network connection. PWA support has two
+parts: a web app manifest, which makes the application installable, and a
+service worker, registered by the `PWA` plugin, which caches the Open MCT build
+for offline use. Both are optional and independent of the rest of Open MCT.
+
+Browsers only allow service workers on secure origins, so the application must
+be served over HTTPS (or from `localhost` during development).
+
+### Making Open MCT Installable
+
+The Open MCT build ships a web app manifest, `manifest.json`, and a set of icons
+in `favicons/` alongside `openmct.js`. Reference them from the `<head>` of your
+`index.html`, together with the metadata that mobile browsers use for installed
+applications:
+
+```html
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Open MCT" />
+<meta name="theme-color" content="#2c2c2c" />
+<link rel="manifest" href="dist/manifest.json" />
+<link rel="apple-touch-icon" sizes="180x180" href="dist/favicons/apple-touch-icon-180x180.png" />
+```
+
+The `start_url` and `scope` of the shipped manifest are relative to the manifest
+itself, so the installed application opens the directory containing the Open MCT
+build. To use a different name, icons or start page, copy the manifest, edit it,
+and reference your copy instead.
+
+### Working Offline With the PWA Plugin
+
+The `PWA` plugin registers the service worker that ships with the build,
+`serviceWorker.js`:
+
+```javascript
+openmct.install(openmct.plugins.PWA());
+```
+
+On first load the service worker downloads and caches every asset of the Open
+MCT build (`openmct.js`, workers, themes, fonts, images and `index.html`) under a
+cache named after the build. Source maps, license files and hot-update chunks
+are excluded, so the cache contains exactly what the application needs to start
+offline. Subsequent loads serve those assets from the cache,
+so the application starts even while offline. Page loads are always attempted
+from the network first, and the last page that was safe to cache is kept as an
+offline fallback.
+
+The service worker never caches anything else: requests to telemetry or
+persistence backends, cross-origin requests, and non-`GET` requests all go
+straight to the network. Making telemetry or domain objects available offline is
+the responsibility of the plugins that provide them.
+
+By default the service worker is expected at
+`openmct.getAssetPath()` followed by `serviceWorker.js`, the same location as
+Open MCT's other workers, and it controls pages within that directory. If the
+page that installs the plugin is outside that directory, nothing is registered;
+this is the case when running `npm start`, where `index.html` is served from `/`
+and the build from `/dist/`. The plugin accepts the following options:
+
+| Option                | Default                                   | Description                                                                                                 |
+| --------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `serviceWorkerUrl`    | `<asset path>/serviceWorker.js`           | URL of the service worker script.                                                                           |
+| `scope`               | The directory containing the script       | Registration scope. Widening it beyond the script's directory requires a `Service-Worker-Allowed` header.   |
+| `updateCheckInterval` | One hour (in milliseconds)                | How often to check for a new build while the application stays open. `0` checks only on page load.          |
+| `notifyOnUpdate`      | `true`                                    | Whether to show a notification with a reload link when a new build is ready.                                 |
+
+The options can be combined as needed:
+
+```javascript
+openmct.install(
+  openmct.plugins.PWA({
+    // Serve the service worker from a custom location, for example when the
+    // Open MCT build assets are mirrored somewhere else:
+    serviceWorkerUrl: '/assets/openmct/serviceWorker.js',
+    // Control a path broader than the directory containing the script. The
+    // server must send a matching `Service-Worker-Allowed` header:
+    scope: '/',
+    // Check for a new build every fifteen minutes while the application is
+    // open:
+    updateCheckInterval: 15 * 60 * 1000,
+    // Stay silent about updates and let page reloads pick them up:
+    notifyOnUpdate: false
+  })
+);
+```
+
+### Offline Security and Cache Behavior
+
+The service worker is deliberately conservative about what it stores, so that
+the offline cache never becomes a place where private data outlives its
+intended audience:
+
+- Only build assets are precached: source maps, license files and hot-update
+  chunks are excluded.
+- Page loads are served network-first, and a page is only cached when the
+  response is a complete `200 OK` that was not the result of a redirect and is
+  not guarded by `Cache-Control` directives — `no-store`, `private` or
+  `no-cache` — that forbid storage. Deployments that serve authenticated or
+  personalized pages mark them with exactly these directives, so such pages are
+  never written to the offline cache, in line with the semantics of
+  [RFC 9111](https://www.rfc-editor.org/rfc/rfc9111).
+- While offline, a navigation to a page that was never cached falls back to
+  the precached application shell. Pages withheld from the cache can therefore
+  never be served from it.
+
+### Application Updates
+
+Every build produces a new service worker manifest, `serviceWorkerManifest.js`,
+listing the assets to cache and a version derived from the build. When a
+browser that already has Open MCT installed finds a new manifest, the new build
+is downloaded into a separate cache while the current build keeps running; a
+build is never swapped underneath an open page. Once the download completes the
+plugin shows a notification offering to reload. Reloading, or closing every Open
+MCT tab and opening the application again, activates the new build and deletes
+the caches of previous builds.
 
 ## Visibility-Based Rendering in View Providers
 
