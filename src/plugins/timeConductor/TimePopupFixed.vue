@@ -104,7 +104,7 @@ export default {
     'timeSystemDurationFormatter',
     'bounds'
   ],
-  emits: ['update', 'dismiss'],
+  emits: ['update', 'dismiss', 'submit'],
   data() {
     return {
       formattedBounds: {},
@@ -214,6 +214,7 @@ export default {
       this.reportValidity('bounds');
 
       if (this.isValid) {
+        this.$emit('submit');
         this.setBoundsFromView(shouldDismiss);
       }
     },

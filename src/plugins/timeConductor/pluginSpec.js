@@ -129,6 +129,10 @@ describe('time conductor', () => {
       const clickEvent2 = createMouseEvent('click');
       clockItem.dispatchEvent(clickEvent2);
       await nextTick();
+      const submitButton = appHolder.querySelector('[aria-label="Submit time offsets"]');
+      const clickEvent3 = createMouseEvent('click');
+      submitButton.dispatchEvent(clickEvent3);
+      await nextTick();
       await nextTick();
     });
 

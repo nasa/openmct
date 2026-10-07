@@ -452,13 +452,13 @@ async function _setTimeConductorMode(page, isFixedTimespan = true) {
   // Switch time conductor mode. Note, need to wait here for URL to update as the router is debounced.
   if (isFixedTimespan) {
     await page.getByRole('menuitem', { name: /Fixed Timespan/ }).click();
+    await page.getByLabel('Submit time bounds').click();
     await page.waitForURL(/tc\.mode=fixed/);
   } else {
     await page.getByRole('menuitem', { name: /Real-Time/ }).click();
+    await page.getByLabel('Submit time offsets').click();
     await page.waitForURL(/tc\.mode=local/);
   }
-  //dismiss the time conductor popup
-  await page.getByLabel('Discard changes and close time popup').click();
 }
 
 /**
