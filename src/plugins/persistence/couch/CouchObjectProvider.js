@@ -104,6 +104,7 @@ class CouchObjectProvider {
         namespace: this.namespace,
         key: objectChanges.id
       };
+      this.openmct.objects.eventEmitter.emit('remoteChange', objectIdentifier);
       let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
       //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
       let observersForObject = this.observers[keyString];
@@ -666,6 +667,7 @@ class CouchObjectProvider {
       namespace: this.namespace,
       key: eventData.id
     };
+    this.openmct.objects.eventEmitter.emit('remoteChange', identifier);
     const keyString = this.openmct.objects.makeKeyString(identifier);
     this.#updateIndicatorStatus(readyState);
     let observersForObject = this.observers[keyString];

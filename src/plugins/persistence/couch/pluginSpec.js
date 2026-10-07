@@ -82,6 +82,19 @@ describe('the plugin', () => {
     return resetApplicationState(openmct);
   });
 
+  it('publishes remote identifiers even without per-object observers', () => {
+    const listener = jasmine.createSpy('remoteChange');
+    openmct.objects.eventEmitter.on('remoteChange', listener);
+    provider.onSharedWorkerMessage({ data: { objectChanges: { id: 'removed-folder' } } });
+    expect(listener).toHaveBeenCalledWith({ namespace: '', key: 'removed-folder' });
+    provider.onEventMessage({
+      target: { readyState: EventSource.OPEN },
+      data: JSON.stringify({ id: 'removed-annotation' })
+    });
+    expect(listener).toHaveBeenCalledWith({ namespace: '', key: 'removed-annotation' });
+    expect(provider.get).not.toHaveBeenCalled();
+  });
+
   describe('the provider', () => {
     let mockPromise;
     beforeEach(() => {

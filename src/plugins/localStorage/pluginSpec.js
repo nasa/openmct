@@ -94,6 +94,36 @@ describe('The local storage plugin', () => {
     expect(hasPollutedProto).toBeFalse();
   });
 
+  it('publishes changed identifiers from another tab and removes its listener on destroy', () => {
+    const listener = jasmine.createSpy('remoteChange');
+    openmct.objects.eventEmitter.on('remoteChange', listener);
+    const event = new StorageEvent('storage', {
+      storageArea: window.localStorage,
+      key: space,
+      oldValue: JSON.stringify({ changed: { location: 'mine' }, same: {} }),
+      newValue: JSON.stringify({ changed: { location: null }, same: {} })
+    });
+    window.dispatchEvent(event);
+    expect(listener).toHaveBeenCalledOnceWith({ namespace: '', key: 'changed' });
+    openmct.emit('destroy');
+    listener.calls.reset();
+    window.dispatchEvent(event);
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('does not parse remote storage changes without an interested consumer', () => {
+    spyOn(JSON, 'parse').and.callThrough();
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        storageArea: window.localStorage,
+        key: space,
+        oldValue: '{}',
+        newValue: '{"changed":{"location":null}}'
+      })
+    );
+    expect(JSON.parse).not.toHaveBeenCalled();
+  });
+
   afterEach(() => {
     resetApplicationState(openmct);
     resetLocalStorage();
