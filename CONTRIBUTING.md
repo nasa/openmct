@@ -29,6 +29,10 @@ As such, any new functionality or enhancements to existing functionality that yo
 
 Alternatively, we encourage you to enhance and upgrade Open MCT's capabilities with new plugins provided via your own repository. Please tell us about your plugins and we will link to them from our website.
 
+### Contribution Flow Chart
+
+
+
 ## Contribution Process
 
 ### Roles
