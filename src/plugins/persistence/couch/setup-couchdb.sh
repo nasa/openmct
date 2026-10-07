@@ -51,11 +51,11 @@ create_admin_user() {
 }
 
 is_cors_enabled() {
-    resource_exists "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/httpd/enable_cors
+    resource_exists "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/chttpd/enable_cors
 }
 
 enable_cors() {
-    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/httpd/enable_cors -d '"true"'
+    curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/chttpd/enable_cors -d '"true"'
     curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/cors/origins -d '"*"'
     curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/cors/credentials -d '"true"'
     curl -su "${CURL_USERPASS_ARG}" -o /dev/null -X PUT "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'
