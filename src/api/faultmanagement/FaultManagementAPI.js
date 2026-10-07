@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/** @type {ShelveDuration[]} */
-export const DEFAULT_SHELVE_DURATIONS = [
+/** @type {ReadonlyArray<ShelveDuration>} */
+export const DEFAULT_SHELVE_DURATIONS = Object.freeze([
   {
     name: '5 Minutes',
     value: 300000
@@ -38,7 +38,20 @@ export const DEFAULT_SHELVE_DURATIONS = [
     name: 'Unlimited',
     value: null
   }
-];
+]);
+
+/**
+ * @param {*} shelveDuration
+ * @returns {boolean}
+ */
+function isShelveDuration(shelveDuration) {
+  return (
+    shelveDuration !== null &&
+    typeof shelveDuration === 'object' &&
+    typeof shelveDuration.name === 'string' &&
+    (typeof shelveDuration.value === 'number' || shelveDuration.value === null)
+  );
+}
 
 /**
  * Provides an API for managing faults within Open MCT.
@@ -136,14 +149,20 @@ export default class FaultManagementAPI {
   /**
    * Retrieves the available shelve durations from the provider, or the default durations if the
    * provider does not provide any.
-   * @returns {ShelveDuration[] | undefined}
+   * @returns {ShelveDuration[]}
    */
   getShelveDurations() {
     if (!this.provider) {
-      return;
+      return [...DEFAULT_SHELVE_DURATIONS];
     }
 
-    return this.provider.getShelveDurations?.() ?? DEFAULT_SHELVE_DURATIONS;
+    const shelveDurations = this.provider.getShelveDurations?.();
+    const hasValidShelveDurations =
+      Array.isArray(shelveDurations) &&
+      shelveDurations.length > 0 &&
+      [...shelveDurations].every(isShelveDuration);
+
+    return hasValidShelveDurations ? shelveDurations : [...DEFAULT_SHELVE_DURATIONS];
   }
 }
 
