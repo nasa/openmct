@@ -510,10 +510,6 @@ export default {
                 this.sections
               );
 
-              if (!this.domainObject.locked) {
-                mutateObject(this.openmct, this.domainObject, 'locked', true);
-              }
-
               prompt.dismiss();
             }
           },
