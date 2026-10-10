@@ -54,7 +54,13 @@ export default {
   emits: ['set-view'],
   computed: {
     viewSwitcherLabel() {
-      return 'Open the View Switcher Menu';
+      // Include the visible label (the current view's name) in the accessible
+      // name so that the accessible name contains the visible label text.
+      // See https://www.w3.org/TR/accname-1.2/ and IBM Equal Access rule
+      // "Accessible name must match or contain the visible label text".
+      return this.currentView.name
+        ? `${this.currentView.name} - Open the View Switcher Menu`
+        : 'Open the View Switcher Menu';
     }
   },
   methods: {
