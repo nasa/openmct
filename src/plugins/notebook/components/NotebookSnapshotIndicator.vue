@@ -97,8 +97,8 @@ export default {
       const { openmct, snapshotContainer } = this;
       const toggleSnapshot = this.toggleSnapshot.bind(this);
       const drawerElement = document.querySelector('.l-shell__drawer');
-      drawerElement.innerHTML = '<div></div>';
-      const divElement = document.querySelector('.l-shell__drawer div');
+      drawerElement.innerHTML = '<div class="l-shell__drawer-content"></div>';
+      const divElement = document.querySelector('.l-shell__drawer .l-shell__drawer-content');
 
       if (this.destroySnapshotContainer) {
         this.destroySnapshotContainer();
