@@ -70,6 +70,8 @@ const config = {
     clean: true
   },
   resolve: {
+    symlinks: false,
+    extensions: ['.js', '.mjs', '.vue', '.json'],
     alias: {
       '@': path.join(projectRootDir, 'src'),
       legacyRegistry: path.join(projectRootDir, 'src/legacyRegistry'),
@@ -84,6 +86,13 @@ const config = {
       objectUtils: path.join(projectRootDir, 'src/api/objects/object-utils.js'),
       utils: path.join(projectRootDir, 'src/utils'),
       vue: 'vue/dist/vue.esm-bundler'
+    }
+  },
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      // Invalidate the cache when any webpack config file changes.
+      config: [fileURLToPath(import.meta.url)]
     }
   },
   plugins: [
