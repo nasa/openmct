@@ -357,6 +357,7 @@ export default {
 
     return {
       curVal: DEFAULT_CURRENT_VALUE,
+      futureBuffer: [],
       digits: 3,
       precision: gaugeController.precision,
       displayMinMax: gaugeController.isDisplayMinMax,
@@ -627,7 +628,28 @@ export default {
     },
     refreshData(bounds, isTick) {
       if (!isTick) {
+        this.futureBuffer = [];
         this.request();
+
+        return;
+      }
+
+      const eligibleData = this.futureBuffer.filter((datum) => {
+        return this.timeFormatter.parse(datum) <= bounds.end;
+      });
+
+      this.futureBuffer = this.futureBuffer.filter((datum) => {
+        return this.timeFormatter.parse(datum) > bounds.end;
+      });
+
+      if (eligibleData.length > 0) {
+        const latestEligibleDatum = eligibleData.reduce((latest, datum) => {
+          return this.timeFormatter.parse(datum) > this.timeFormatter.parse(latest)
+            ? datum
+            : latest;
+        });
+
+        this.updateValue(latestEligibleDatum);
       }
     },
     removeTelemetryObject() {
@@ -639,6 +661,7 @@ export default {
       this.triggerUnsubscribeFromStaleness(this.domainObject);
 
       this.curVal = DEFAULT_CURRENT_VALUE;
+      this.futureBuffer = [];
       this.formats = null;
       this.limitHigh = '';
       this.limitLow = '';
@@ -737,18 +760,25 @@ export default {
       }
 
       const { start, end } = this.openmct.time.getBounds();
-      const parsedValue = this.timeFormatter.parse(this.datum);
+      const parsedValue = this.timeFormatter.parse(datum);
 
       const beforeStartOfBounds = parsedValue < start;
       const afterEndOfBounds = parsedValue > end;
-      if (afterEndOfBounds || beforeStartOfBounds) {
+
+      if (afterEndOfBounds) {
+        this.futureBuffer.push(datum);
+
+        return;
+      }
+
+      if (beforeStartOfBounds) {
         return;
       }
 
       this.isRendering = this.renderWhenVisible(() => {
         this.isRendering = false;
 
-        this.curVal = this.round(this.formats[this.valueKey].format(this.datum), this.precision);
+        this.curVal = this.round(this.formats[this.valueKey].format(datum), this.precision);
       });
     },
     valToPercent(vValue) {
