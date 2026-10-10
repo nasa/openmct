@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { createSafeRegExp } from '../../utils/safeRegExp.js';
 import installWorker from './WebSocketWorker.js';
 
 /**
@@ -131,7 +132,25 @@ class BatchingWebSocket extends EventTarget {
     this.#throttleRate = throttleRate;
     this.#sendThrottleRateToWorker(this.#throttleRate);
   }
+  /**
+   * @param {string} throttleMessagePattern a regular expression. Messages
+   * matching it are sent on without waiting for the next batch.
+   *
+   * The pattern is checked here rather than in the worker, because the worker
+   * is built from the source of a single function and so cannot import
+   * anything. It is tested against every message that arrives, so a pattern
+   * that will not compile or that could backtrack catastrophically is refused:
+   * it would stall the batching of telemetry rather than throttle it.
+   */
   setThrottleMessagePattern(throttleMessagePattern) {
+    if (createSafeRegExp(throttleMessagePattern, 'm') === undefined) {
+      console.warn(
+        `Ignoring throttle message pattern "${throttleMessagePattern}". It is not a valid regular expression, or it could backtrack catastrophically.`
+      );
+
+      return;
+    }
+
     this.#worker.postMessage({
       type: 'setThrottleMessagePattern',
       throttleMessagePattern

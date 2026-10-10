@@ -313,7 +313,13 @@ export default function installWorker() {
     }
 
     setThrottleMessagePattern(priorityMessagePattern) {
-      this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
+      try {
+        this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
+      } catch (error) {
+        // BatchingWebSocket screens patterns before they are sent here. This is
+        // only so that one that somehow is not screened leaves the pattern
+        // already in use alone, rather than taking the message loop down.
+      }
     }
   }
 
