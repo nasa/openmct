@@ -80,7 +80,7 @@ test.describe('Telemetry Table', () => {
 
     // verify in telemetry table view
     await page.goto(sineWaveGenerator.url);
-    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel(/Open the View Switcher Menu/).click();
     await page.getByText('Telemetry Table', { exact: true }).click();
 
     expect(await getScrollPosition(page)).toBe(0);

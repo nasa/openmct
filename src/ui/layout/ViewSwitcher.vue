@@ -54,7 +54,7 @@ export default {
   emits: ['set-view'],
   computed: {
     viewSwitcherLabel() {
-      return 'Open the View Switcher Menu';
+      return `Open the View Switcher Menu for ${this.currentView.name}`;
     }
   },
   methods: {
