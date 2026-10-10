@@ -60,6 +60,7 @@ class Menu extends EventEmitter {
     }
 
     this.dismiss = this.dismiss.bind(this);
+    this.dismissIfClickedOutside = this.dismissIfClickedOutside.bind(this);
     this.show = this.show.bind(this);
     this.showMenu = this.showMenu.bind(this);
     this.showSuperMenu = this.showSuperMenu.bind(this);
@@ -74,7 +75,20 @@ class Menu extends EventEmitter {
       this.destroy = null;
     }
     document.removeEventListener('click', this.dismiss);
+    document.removeEventListener('click', this.dismissIfClickedOutside, true);
     this.emit('destroy');
+  }
+
+  /**
+   * Dismiss the menu when a click lands outside of it.
+   * @param {MouseEvent} event
+   */
+  dismissIfClickedOutside(event) {
+    if (this.el?.contains(event.target)) {
+      return;
+    }
+
+    this.dismiss();
   }
 
   /**
@@ -130,6 +144,9 @@ class Menu extends EventEmitter {
   show() {
     document.body.appendChild(this.el);
     document.addEventListener('click', this.dismiss);
+    // Listen during the capture phase as well, so that clicks on elements which stop
+    // propagation of their own click events still dismiss the menu.
+    document.addEventListener('click', this.dismissIfClickedOutside, true);
   }
 }
 
