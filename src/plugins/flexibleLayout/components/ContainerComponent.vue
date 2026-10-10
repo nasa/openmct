@@ -42,6 +42,7 @@
       class="c-fl-frame__drop-hint"
       :index="-1"
       :allow-drop="allowDrop"
+      label="Drop here to insert into this container"
       @object-drop-to="moveOrCreateNewFrame"
     />
 
@@ -62,6 +63,7 @@
           class="c-fl-frame__drop-hint"
           :index="i"
           :allow-drop="allowDrop"
+          label="Drop here to insert into this container"
           @object-drop-to="moveOrCreateNewFrame"
         />
 
@@ -80,9 +82,9 @@
 </template>
 
 <script>
+import DropHint from '@/ui/components/DropHint.vue';
 import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
 
-import DropHint from './DropHint.vue';
 import FrameComponent from './FrameComponent.vue';
 
 const MIN_FRAME_SIZE = 5;

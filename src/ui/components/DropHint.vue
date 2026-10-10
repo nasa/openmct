@@ -25,6 +25,8 @@
     <div
       class="c-drop-hint c-drop-hint--always-show"
       :class="{ 'is-mouse-over': isMouseOver }"
+      role="region"
+      :aria-label="label"
       @dragover.prevent
       @dragenter="dragenter"
       @dragleave="dragleave"
@@ -43,6 +45,10 @@ export default {
     allowDrop: {
       type: Function,
       required: true
+    },
+    label: {
+      type: String,
+      default: 'Drop here'
     }
   },
   emits: ['object-drop-to'],
@@ -72,12 +78,14 @@ export default {
     dropHandler(event) {
       this.$emit('object-drop-to', this.index, event);
       this.isValidTarget = false;
+      this.isMouseOver = false;
     },
     dragstart(event) {
       this.isValidTarget = this.allowDrop(event, this.index);
     },
     dragend() {
       this.isValidTarget = false;
+      this.isMouseOver = false;
     }
   }
 };

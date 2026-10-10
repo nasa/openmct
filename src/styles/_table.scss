@@ -196,6 +196,7 @@ div.c-table {
 }
 
 .c-lad-table-wrapper {
+  position: relative;
   width: 100%;
   height: 100%;
   padding: $mainViewPad;
@@ -203,6 +204,16 @@ div.c-table {
   &.is-stale {
     @include isStaleHolder();
   }
+}
+
+.c-lad-table__empty-message {
+  background: rgba($colorBodyFg, 0.1);
+  color: rgba($colorBodyFg, 0.7);
+  font-style: italic;
+  text-align: center;
+  line-height: 2em;
+  width: 100%;
+  margin-bottom: $interiorMargin;
 }
 
 .c-lad-table {
