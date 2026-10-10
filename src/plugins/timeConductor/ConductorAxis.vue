@@ -169,13 +169,14 @@ export default {
       this.xAxis.scale(this.xScale);
 
       this.xScale.range([PADDING, this.width - PADDING * 2]);
-      this.axisElement.call(this.xAxis);
 
       if (this.width > 1800) {
         this.xAxis.ticks(this.width / PIXELS_PER_TICK_WIDE);
       } else {
         this.xAxis.ticks(this.width / PIXELS_PER_TICK);
       }
+
+      this.axisElement.call(this.xAxis);
 
       this.msPerPixel = (this.viewBounds.end - this.viewBounds.start) / this.width;
     },
