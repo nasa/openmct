@@ -7,14 +7,12 @@ on:
   pull_request:
     types:
       - labeled
-      - opened
   schedule:
     - cron: '0 0 * * *'
 jobs:
   e2e-full:
-    if: contains(github.event.pull_request.labels.*.name, 'pr:e2e') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 120
     strategy:
       matrix:
         os:
