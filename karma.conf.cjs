@@ -100,7 +100,7 @@ module.exports = async (config) => {
       fixWebpackSourcePaths: true,
       skipFilesWithNoCoverage: true,
       dir: 'coverage/unit', //Sets coverage file to be consumed by codecov.io
-      reports: ['lcovonly']
+      reports: ['lcovonly', 'json']
     },
     specReporter: {
       maxLogLines: 5,

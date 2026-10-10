@@ -98,6 +98,9 @@ jobs:
                 dist
               key: ${{ needs.build_and_cache_dependencies_if_needed.outputs.cache_key }}
           - run: npm run lint
+          # Node-side tests for the coverage tooling in .webpack/. They run
+          # here rather than in unit-test because they need no browser.
+          - run: npm run test:coverage-tooling
     unit-test:
         needs: 
             - build_and_cache_dependencies_if_needed
@@ -113,6 +116,11 @@ jobs:
               npm ci
               npm run build
               npm run test
+          # Restrict SFC <template> coverage to branches only. Runs regardless of
+          # test outcome (npm skips the posttest hook when tests fail) so the
+          # uploaded report is always consistent. Idempotent.
+          - run: node .webpack/stripTemplateCoverage.cjs ./coverage/unit/coverage-final.json ./coverage/unit
+            if: always()
           - uses: codecov/codecov-action@v4
             if: always()
             with:
@@ -173,7 +181,12 @@ jobs:
         - run: |
             mkdir -p test-results
             npm run test:e2e:ci -- --shard=${{ matrix.shard }}/4
-        - run: npm run cov:e2e:report || true
+        # Not tolerated with `|| true`: this generates the report AND strips
+        # SFC <template> line coverage from it. Swallowing a failure here means
+        # uploading a stale or unstripped report, which is worse than a red
+        # step. nyc exits 0 when there is no coverage to report, so an empty
+        # shard does not fail this.
+        - run: npm run cov:e2e:report
         - uses: codecov/codecov-action@v4
           with:
             token: ${{ secrets.CODECOV_TOKEN }}

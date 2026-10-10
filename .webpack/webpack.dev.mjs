@@ -40,14 +40,17 @@ export default merge(common, {
       }
     },
     watchFiles: ['src/**/*.css', 'example/**/*.css'],
-    static: [{
-      directory: fileURLToPath(new URL('../dist', import.meta.url)),
-      publicPath: '/dist',
-      watch: false
-    }, {
-      directory: fileURLToPath(new URL('../e2e/test-data', import.meta.url)),
-      publicPath: '/test-data',
-      watch: false
-    }]
+    static: [
+      {
+        directory: fileURLToPath(new URL('../dist', import.meta.url)),
+        publicPath: '/dist',
+        watch: false
+      },
+      {
+        directory: fileURLToPath(new URL('../e2e/test-data', import.meta.url)),
+        publicPath: '/test-data',
+        watch: false
+      }
+    ]
   }
 });

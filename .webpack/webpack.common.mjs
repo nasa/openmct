@@ -15,7 +15,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
-import { merge } from 'webpack-merge';
+
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
@@ -54,7 +54,7 @@ const config = {
     espressoTheme: './src/plugins/themes/espresso-theme.scss',
     snowTheme: './src/plugins/themes/snow-theme.scss',
     darkmatterTheme: './src/plugins/themes/darkmatter-theme.scss',
-    historicalTelemetryWorker: './src/plugins/condition/historicalTelemetryWorker.js',
+    historicalTelemetryWorker: './src/plugins/condition/historicalTelemetryWorker.js'
   },
   output: {
     globalObject: 'this',
@@ -94,7 +94,7 @@ const config = {
       __OPENMCT_BUILD_BRANCH__: `'${gitBranch}'`,
       __VUE_OPTIONS_API__: true, // enable/disable Options API support, default: true
       __VUE_PROD_DEVTOOLS__: false, // enable/disable devtools support in production, default: false
-      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false, // enable/disable hydration mismatch details in production, default: false
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false // enable/disable hydration mismatch details in production, default: false
     }),
     new VueLoaderPlugin(),
     new CopyWebpackPlugin({
