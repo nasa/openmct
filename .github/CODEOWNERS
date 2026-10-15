@@ -9,6 +9,11 @@
 # on master also run with a write token and secrets, which pull requests from forks
 # never get. Ordinary source code is not listed: any maintainer can approve that.
 #
+# This file also decides which fork pull requests run CI automatically. The Fork
+# CI Approval workflow approves a fork's held CI unless the pull request changes a
+# path listed here, so adding a path here also holds it for a maintainer, and
+# removing one lets it run unreviewed.
+#
 # A later matching line overrides an earlier one, so keep the owner the same on
 # every line unless that is the intent.
 

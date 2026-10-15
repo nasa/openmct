@@ -88,6 +88,15 @@ Additionally:
 * Changes to API require approval by a senior developer.
 * When creating a PR, it is the author's responsibility to apply any priority label from the issue to the PR as well. This helps with prioritization.
 
+#### CI on pull requests from forks
+
+CI runs automatically on a pull request from a fork, unless it changes a file listed in
+[.github/CODEOWNERS](.github/CODEOWNERS): the workflows, dependencies, and build, lint and test
+configuration. Those files decide what runs on the project's machines and on everyone's who installs
+Open MCT, so a maintainer looks at the change first, and a comment on the pull request says which
+files are holding it. Keep such changes in a pull request of their own where you can, so the rest of
+your work is not held up.
+
 ### The Contribution Gate (pilot)
 
 We are piloting a bot that automates most of the steps between a pull request being opened and a
