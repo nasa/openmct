@@ -50,6 +50,8 @@
 <script>
 import NotificationsList from './NotificationsList.vue';
 
+const API_EVENTS = ['add', 'dismiss', 'dismiss-all'];
+
 export default {
   components: {
     NotificationsList
@@ -68,12 +70,14 @@ export default {
     }
   },
   mounted() {
-    this.openmct.notifications.on('notification', this.updateNotifications);
-    this.openmct.notifications.on('dismiss-all', this.updateNotifications);
+    API_EVENTS.forEach((eventName) => {
+      this.openmct.notifications.on(eventName, this.updateNotifications);
+    });
   },
   unmounted() {
-    this.openmct.notifications.off('notification', this.updateNotifications);
-    this.openmct.notifications.off('dismiss-all', this.updateNotifications);
+    API_EVENTS.forEach((eventName) => {
+      this.openmct.notifications.off(eventName, this.updateNotifications);
+    });
   },
   methods: {
     dismissAllNotifications() {
@@ -84,7 +88,7 @@ export default {
     },
     updateNotifications() {
       this.notifications = [...this.openmct.notifications.notifications];
-      this.highest = this.openmct.notifications.highest;
+      this.highest = { ...this.openmct.notifications.highest };
     },
     notificationsCountMessage(count) {
       if (count > 1) {

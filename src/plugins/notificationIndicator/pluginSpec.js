@@ -64,7 +64,18 @@ describe('the plugin', () => {
     it('notifies the user of the number of notifications', () => {
       let notificationCountElement = document.querySelector('.c-indicator__count');
 
-      expect(notificationCountElement.innerText).toEqual('1');
+      expect(notificationCountElement.innerText).toEqual('3');
+    });
+
+    it('updates the count when a single notification is dismissed', async () => {
+      openmct.notifications.notifications[0].dismiss();
+
+      await nextTick();
+
+      let countElements = document.querySelectorAll('.c-indicator__count');
+      let notificationCountElement = countElements[countElements.length - 1];
+
+      expect(notificationCountElement.innerText).toEqual('2');
     });
   });
 });

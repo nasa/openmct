@@ -169,4 +169,39 @@ describe('The Notification API', () => {
       expect(notificationAPIInstance.notifications.length).toEqual(0);
     });
   });
+
+  describe('event emission', () => {
+    let notificationAPI;
+
+    beforeEach(() => {
+      notificationAPI = new NotificationAPI();
+      spyOn(notificationAPI, 'emit').and.callThrough();
+    });
+
+    afterEach(() => {
+      notificationAPI.dismissAllNotifications();
+    });
+
+    it('emits an "add" event when a notification is created', () => {
+      notificationAPI.info('Example notification');
+
+      expect(notificationAPI.emit).toHaveBeenCalledWith('add');
+    });
+
+    it('emits a "dismiss" event when a single notification is dismissed', () => {
+      let notification = notificationAPI.alert('Example notification');
+      notification.dismiss();
+
+      expect(notificationAPI.emit).toHaveBeenCalledWith('dismiss');
+    });
+
+    it('resets highest severity when all notifications are dismissed', () => {
+      notificationAPI.error('Example error');
+      expect(notificationAPI.highest.severity).toEqual('error');
+
+      notificationAPI.dismissAllNotifications();
+
+      expect(notificationAPI.highest.severity).toEqual('info');
+    });
+  });
 });
