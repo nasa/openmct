@@ -14,29 +14,29 @@
 
 # CI: workflows, the scripts they run, issue and pull request templates, and this
 # file itself.
-/.github/ @nasa/openmct-web-admin
+/.github/ @nasa/openmct-web
 
 # Dependencies and the package registry. Install scripts run on every machine that
 # installs Open MCT, and on every CI run.
-/package.json @nasa/openmct-web-admin
-/package-lock.json @nasa/openmct-web-admin
-/.npmrc @nasa/openmct-web-admin
-/.nvmrc @nasa/openmct-web-admin
-/e2e/package.json @nasa/openmct-web-admin
-/e2e/package-lock.json @nasa/openmct-web-admin
-/src/plugins/persistence/couch/package.json @nasa/openmct-web-admin
+/package.json @nasa/openmct-web
+/package-lock.json @nasa/openmct-web
+/.npmrc @nasa/openmct-web
+/.nvmrc @nasa/openmct-web
+/e2e/package.json @nasa/openmct-web
+/e2e/package-lock.json @nasa/openmct-web
+/src/plugins/persistence/couch/package.json @nasa/openmct-web
 
 # Build configuration.
-/.webpack/ @nasa/openmct-web-admin
-/tsconfig.json @nasa/openmct-web-admin
+/.webpack/ @nasa/openmct-web
+/tsconfig.json @nasa/openmct-web
 
 # Lint and test configuration. These are JavaScript, executed by lint and test runs.
-/.eslintrc.cjs @nasa/openmct-web-admin
-/e2e/.eslintrc.cjs @nasa/openmct-web-admin
-/karma.conf.cjs @nasa/openmct-web-admin
-/e2e/playwright-*.config.js @nasa/openmct-web-admin
+/.eslintrc.cjs @nasa/openmct-web
+/e2e/.eslintrc.cjs @nasa/openmct-web
+/karma.conf.cjs @nasa/openmct-web
+/e2e/playwright-*.config.js @nasa/openmct-web
 
 # The CouchDB set-up that the e2e-couchdb CI job runs.
-/src/plugins/persistence/couch/couchdb-compose.yaml @nasa/openmct-web-admin
-/src/plugins/persistence/couch/setup-couchdb.sh @nasa/openmct-web-admin
-/src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh @nasa/openmct-web-admin
+/src/plugins/persistence/couch/couchdb-compose.yaml @nasa/openmct-web
+/src/plugins/persistence/couch/setup-couchdb.sh @nasa/openmct-web
+/src/plugins/persistence/couch/replace-localstorage-with-couchdb-indexhtml.sh @nasa/openmct-web
