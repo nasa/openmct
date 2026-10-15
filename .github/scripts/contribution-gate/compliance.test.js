@@ -139,7 +139,7 @@ test('unticked checklist items are quoted back to the author', () => {
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
   assert.deepEqual(failures.map((failure) => failure.id), ['pr-checklist-unchecked']);
-  assert.match(failures[0].summary, /"Changes address the original issue"/);
+  assert.match(failures[0].summary, /`Changes address the original issue`/);
 });
 
 test('a missing checklist is reported on its own', () => {
@@ -271,4 +271,10 @@ test('the current pull request template never asks for the type label or milesto
 
   assert.match(body, /\* \[ \] Have you associated a milestone/, 'the milestone item really is left unticked');
   assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
+});
+
+test('markdownSections drops nested, back-to-back and unclosed comments', () => {
+  const sections = parseSections('### Summary\n\n<!-<!-- x -->-> <!-- a --><!-- b -->\n\n### Steps to Reproduce\n\n<!-- never closed\n1. Do it\n');
+
+  assert.equal(hasFilledSection(sections, 'Steps to Reproduce'), false, 'an unclosed comment runs to the end');
 });

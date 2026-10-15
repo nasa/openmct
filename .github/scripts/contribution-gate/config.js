@@ -85,6 +85,14 @@ const TEST_EXEMPT_FILE_PATTERNS = [
 ];
 
 /**
+ * The account the gate posts as, which is the one GITHUB_TOKEN acts as. Only a
+ * comment from this account can hold the gate's state, so a contributor cannot
+ * plant state of their own. Change it if the gate ever posts with a different
+ * token, such as a GitHub App's.
+ */
+const GATE_BOT_LOGIN = 'github-actions[bot]';
+
+/**
  * The identity we REQUEST as a reviewer. It is not the identity the review is
  * posted under (see AI_REVIEWER_LOGINS). The API accepts the wrong one and
  * silently drops the request, so every request is read back.
@@ -184,6 +192,7 @@ module.exports = {
   CHECKS_REQUIRED_WHEN_REPORTED,
   COPILOT_REVIEWER_LOGIN,
   DEADLINE_DAYS,
+  GATE_BOT_LOGIN,
   GATE_EXEMPT_LABEL,
   CHECKLIST_ITEMS_HANDLED_BY_THE_GATE,
   MAXIMUM_INTAKE_PER_SWEEP,

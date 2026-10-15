@@ -10,7 +10,8 @@
 const HEADING_PATTERN = /^\s{0,3}#{1,6}\s+(.+?)\s*$/;
 const BOLD_HEADING_PATTERN = /^\s{0,3}\*\*(.+?)\*\*:?\s*$/;
 const NO_RESPONSE_PLACEHOLDER = '_no response_';
-const HTML_COMMENT_PATTERN = /<!--[\s\S]*?-->/g;
+const COMMENT_OPEN = '<!--';
+const COMMENT_CLOSE = '-->';
 
 /**
  * @param {string} body
@@ -94,24 +95,31 @@ function isMeaningfulContent(content) {
 }
 
 /**
- * Removing a comment can join the text either side of it into a new one
- * ("<!-<!-- x -->->"), so removal repeats until nothing changes, and any
- * half-open marker left over is removed too.
+ * Drops HTML comments, which templates use for instructions to the author, so a
+ * section holding nothing else counts as empty. A comment that is never closed
+ * runs to the end, as it would on GitHub.
+ *
+ * This only affects how sections are read. It is not what keeps the gate's
+ * comments safe: text quoted back to a contributor is made safe where it is
+ * quoted (quotedText.js), and the gate's state is only read from its own comment.
  */
 function withoutHtmlComments(body) {
   if (body === undefined || body === null) {
     return '';
   }
 
-  let previous;
-  let current = body;
+  const pieces = [];
+  let position = 0;
 
-  do {
-    previous = current;
-    current = previous.replace(HTML_COMMENT_PATTERN, '');
-  } while (current !== previous);
+  while (position < body.length) {
+    const commentStart = body.indexOf(COMMENT_OPEN, position);
+    const commentEnd = commentStart === -1 ? -1 : body.indexOf(COMMENT_CLOSE, commentStart + COMMENT_OPEN.length);
 
-  return current.replace(/<!--/g, '').replace(/-->/g, '');
+    pieces.push(body.slice(position, commentStart === -1 ? body.length : commentStart));
+    position = commentEnd === -1 ? body.length : commentEnd + COMMENT_CLOSE.length;
+  }
+
+  return pieces.join('');
 }
 
 module.exports = {

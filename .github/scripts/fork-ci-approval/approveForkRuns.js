@@ -19,6 +19,9 @@ const { DECISIONS, decideApproval } = require('./approvalDecision');
 const { readOwnedPatterns } = require('./codeowners');
 
 const STICKY_MARKER = '<!-- fork-ci-approval -->';
+
+/** The account this workflow posts as. Only its own comment is ever edited. */
+const BOT_LOGIN = 'github-actions[bot]';
 const HELD_CONCLUSION = 'action_required';
 const CODEOWNERS_PATH = '.github/CODEOWNERS';
 
@@ -265,7 +268,7 @@ async function findStickyComment(approver, pullNumber) {
     per_page: 100
   });
 
-  return comments.find((comment) => comment.body.includes(STICKY_MARKER));
+  return comments.find((comment) => comment.user?.login === BOT_LOGIN && comment.body.includes(STICKY_MARKER));
 }
 
 function renderHeldComment(verdict) {

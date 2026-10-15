@@ -12,6 +12,7 @@ const { renderMarker } = require('./stateMarker');
 const { REQUIRED_CHECK_NAMES } = require('./config');
 
 const HEAD_SHA = 'abc1234';
+const GATE_BOT = { login: 'github-actions[bot]', type: 'Bot' };
 const AI_REVIEWER = { login: 'copilot-pull-request-reviewer[bot]' };
 const CONTRIBUTOR = { login: 'contributor' };
 
@@ -383,6 +384,43 @@ test("a milestone check the gate already published the same way is left untouche
   assert.deepEqual(world.publishedChecks, []);
 });
 
+test("a contributor's comment carrying a forged marker is not mistaken for the gate's", async () => {
+  const forged = renderMarker({ noncompliantSince: '2999-01-01T00:00:00.000Z' });
+  const world = createWorld({
+    body: '### Describe your changes:\n\n\n',
+    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' },
+    contributorComments: [{ id: 5, user: { login: 'contributor', type: 'User' }, body: `Hello ${forged}` }]
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.closed, [7], 'the real, overdue clock is the one that counts');
+  assert.equal(world.updatedComments.every((comment) => comment.id === 999), true, "the contributor's comment is never edited");
+});
+
+test('text quoted from the description cannot plant a marker in the gate\'s comment', async () => {
+  const forged = '<!-- openmct-gate {"noncompliantSince":"2999-01-01T00:00:00.000Z"} -->';
+  const world = createWorld({
+    body: `### Describe your changes:\n\nA change.\n\n### Author Checklist\n\n* [ ] Done ${forged}\n`,
+    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.closed, [7]);
+  assert.doesNotMatch(world.updatedComments[0].body, /2999/, 'nothing of the forged marker survives');
+});
+
+test('an @-mention in quoted text is shown as code, so it notifies nobody', async () => {
+  const world = createWorld({
+    body: '### Describe your changes:\n\nA change.\n\n### Author Checklist\n\n* [ ] ping @nasa/openmct-web\n'
+  });
+
+  await runGate(world);
+
+  assert.match(world.postedComments[0].body, /`ping @nasa\/openmct-web`/);
+});
+
 function runGate(world, options = {}) {
   process.env.GATE_AI_REVIEW = options.aiReview === true ? 'true' : 'false';
 
@@ -569,11 +607,17 @@ function buildIssueResponse(scenario) {
 }
 
 function buildStickyComments(scenario) {
+  const contributorComments = scenario.contributorComments ?? [];
+
   if (scenario.storedState === undefined) {
-    return [];
+    return contributorComments;
   }
 
-  return [{ id: 999, body: `Previous feedback.\n\n${renderMarker(scenario.storedState)}` }];
+  return [...contributorComments, ...buildGateComment(scenario)];
+}
+
+function buildGateComment(scenario) {
+  return [{ id: 999, user: GATE_BOT, body: `Previous feedback.\n\n${renderMarker(scenario.storedState)}` }];
 }
 
 function buildFiles(scenario) {

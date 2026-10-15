@@ -11,7 +11,7 @@ The short version:
 
 1. Write your contribution or describe your idea in the form of a [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [start a GitHub discussion](https://github.com/nasa/openmct/discussions).
 2. If your contribution is a bug fix go ahead and create a PR to fix it, following the guidelines in this document.
-3. If your contribution is an enhancement to existing functionality, or it is new functionality, please wait for approval on the corresponding issue from an Open MCT maintainer BEFORE contributing a pull request. 
+3. If your contribution is an enhancement to existing functionality, or it is new functionality, please wait for approval on the corresponding issue from an Open MCT maintainer BEFORE contributing a pull request. See the contribution flow chart below.
 4. Make sure your contribution meets code, test, and commit message standards as described below.
 5. Submit a pull request from a topic branch back to `master`. Include a check list, as described below. (Optionally, assign this to a specific member for review.)
 6. Respond to any discussion. When the reviewer decides it's ready, they will merge back `master` and fill out their own check list.

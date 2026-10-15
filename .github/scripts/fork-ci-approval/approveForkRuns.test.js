@@ -61,7 +61,9 @@ test('with nothing held there is nothing to do', async () => {
 test('once a later commit drops the sensitive change, the earlier comment is corrected', async () => {
   const world = createWorld({
     changedFiles: ['src/a.js'],
-    existingComments: [{ id: 50, body: 'CI is waiting for a maintainer.\n\n<!-- fork-ci-approval -->' }]
+    existingComments: [
+      { id: 50, user: { login: 'github-actions[bot]' }, body: 'CI is waiting for a maintainer.\n\n<!-- fork-ci-approval -->' }
+    ]
   });
 
   await runFor(world);
@@ -69,6 +71,17 @@ test('once a later commit drops the sensitive change, the earlier comment is cor
   assert.deepEqual(world.approvedRunIds, [1, 2]);
   assert.equal(world.updatedComments.length, 1);
   assert.match(world.updatedComments[0], /approved automatically/);
+});
+
+test("a contributor's comment carrying the marker is never edited", async () => {
+  const world = createWorld({
+    changedFiles: ['src/a.js'],
+    existingComments: [{ id: 60, user: { login: 'contributor' }, body: 'Mine. <!-- fork-ci-approval -->' }]
+  });
+
+  await runFor(world);
+
+  assert.deepEqual(world.updatedComments, []);
 });
 
 test('the scheduled sweep only checks open pull requests whose latest commit is held', async () => {

@@ -6,7 +6,7 @@
  * request opened from a fork.
  */
 
-const { AI_REVIEWER_LOGINS, CHECKS_REQUIRED_WHEN_REPORTED, REQUIRED_CHECK_NAMES } = require('./config');
+const { AI_REVIEWER_LOGINS, CHECKS_REQUIRED_WHEN_REPORTED, GATE_BOT_LOGIN, REQUIRED_CHECK_NAMES } = require('./config');
 const { MARKER_PREFIX } = require('./stateMarker');
 
 const MAXIMUM_LINKED_ISSUES = 10;
@@ -215,7 +215,11 @@ async function fetchPullRequestsForHead(reader, head) {
   return pullRequests.map((pullRequest) => ({ number: pullRequest.number, isPullRequest: true }));
 }
 
-/** The single comment the gate keeps on a contribution, if it has posted one. */
+/**
+ * The single comment the gate keeps on a contribution, if it has posted one. The
+ * author is checked as well as the marker, because anyone can paste a marker into
+ * a comment of their own.
+ */
 async function fetchStickyComment(reader, contributionNumber) {
   const comments = await reader.github.paginate(reader.github.rest.issues.listComments, {
     owner: reader.owner,
@@ -224,7 +228,7 @@ async function fetchStickyComment(reader, contributionNumber) {
     per_page: 100
   });
 
-  return comments.find((comment) => comment.body.includes(MARKER_PREFIX));
+  return comments.find((comment) => comment.user?.login === GATE_BOT_LOGIN && comment.body.includes(MARKER_PREFIX));
 }
 
 /**

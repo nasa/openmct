@@ -10,6 +10,7 @@
 const { RECHECK_COMMAND } = require('./config');
 const { CONTRIBUTION_KINDS, formatDeadline } = require('./deadlines');
 const { renderMarker } = require('./stateMarker');
+const { quoteContributorText } = require('./quotedText');
 
 const MET = '✅';
 const NOT_YET = '⬜';
@@ -113,7 +114,7 @@ function renderThreadLine(thread) {
   const location = renderThreadLocation(thread);
   const note = thread.isResolved === true ? ' _(resolved, but no reply yet)_' : '';
 
-  return `- [${location}](${thread.url}): "${thread.summary}"${note}`;
+  return `- [${quoteContributorText(location)}](${thread.url}): ${quoteContributorText(thread.summary)}${note}`;
 }
 
 function renderThreadLocation(thread) {

@@ -15,6 +15,7 @@ const {
 const { matchesAnyPattern } = require('./globMatch');
 const { hasFilledSection, normalizeHeading, parseSections } = require('./markdownSections');
 const { findIssueFailures, hasTestingInstructions } = require('./issueCompliance');
+const { quoteContributorText } = require('./quotedText');
 
 const DESCRIPTION_HEADING = 'Describe your changes';
 const AUTHOR_CHECKLIST_HEADING = 'Author Checklist';
@@ -160,7 +161,7 @@ function isExemptFromTests(changedFiles) {
 }
 
 function quoteItems(items) {
-  return items.map((item) => `"${item}"`).join(', ');
+  return items.map(quoteContributorText).join(', ');
 }
 
 function stripMarkdownLinks(text) {
