@@ -114,7 +114,7 @@ const SECURITY_REVIEWER_LOGINS = ['github-advanced-security[bot]'];
 const AUTOMATED_REVIEWER_LOGINS = [...AI_REVIEWER_LOGINS, ...SECURITY_REVIEWER_LOGINS];
 
 /** The team asked to review once a pull request reaches stage 6. */
-const REVIEWER_TEAM_SLUG = 'openmct-maintainers';
+const REVIEWER_TEAM_SLUG = 'openmct-web';
 
 /**
  * Logins treated as team members even though `author_association` does not say

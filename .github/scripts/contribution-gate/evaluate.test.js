@@ -136,7 +136,7 @@ test('replying is enough: the gate resolves the thread and asks the team', async
   await runGate(world);
 
   assert.deepEqual(world.resolvedThreads, ['thread-1']);
-  assert.deepEqual(world.requestedReviewers, [{ number: 7, team_reviewers: ['openmct-maintainers'] }]);
+  assert.deepEqual(world.requestedReviewers, [{ number: 7, team_reviewers: ['openmct-web'] }]);
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
   assert.equal(readStoredState(world).teamReviewRequested, true);
 });
@@ -230,7 +230,7 @@ test('with the AI review off, green checks go straight to the team', async () =>
 
   await runGate(world);
 
-  assert.deepEqual(world.requestedReviewers, [{ number: 7, team_reviewers: ['openmct-maintainers'] }], 'nobody pays for an AI review');
+  assert.deepEqual(world.requestedReviewers, [{ number: 7, team_reviewers: ['openmct-web'] }], 'nobody pays for an AI review');
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
   assert.doesNotMatch(world.postedComments[0].body, /AI code review/);
 });
@@ -257,7 +257,7 @@ test('a team request the API silently drops is replaced by a mention', async () 
 
   await runGate(world);
 
-  const mention = world.postedComments.find((comment) => comment.body.includes('@nasa/openmct-maintainers'));
+  const mention = world.postedComments.find((comment) => comment.body.includes('@nasa/openmct-web'));
 
   assert.notEqual(mention, undefined, 'a person is still told');
   assert.match(mention.body, /could not be applied/);

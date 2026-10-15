@@ -122,7 +122,7 @@ their own names so that a failing shard cannot hide behind a passing one.
 ## Before the pilot
 
 1. Create the `new-workflow-candidate` label.
-2. Create the team named in `REVIEWER_TEAM_SLUG`, and check the token can request it. The gate reads
+2. Check the token can request the team named in `REVIEWER_TEAM_SLUG` (`openmct-web`). The gate reads
    the request back and, if the team is not on the pull request afterwards, posts a comment mentioning
    the team instead, so a person is told either way.
 3. Optionally create the `gate:needs-compliance`, `gate:awaiting-ci`, `gate:automated-review` and
