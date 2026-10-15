@@ -1,0 +1,27 @@
+name: Contribution Gate Listener
+
+# Replying to a review comment is how a contributor tells us an automated review
+# comment has been addressed, so the gate needs to know as soon as it happens.
+# These events hand a fork's pull request a read-only token, so this workflow can
+# do nothing itself. Its only job is to finish: the Contribution Gate workflow
+# runs when it completes, with the permissions it needs, and finds the pull
+# request from the branch the run was for.
+#
+# It has no permissions and checks nothing out. Keep it that way.
+
+on:
+  pull_request_review_comment:
+    types:
+      - created
+  pull_request_review:
+    types:
+      - submitted
+
+permissions: {}
+
+jobs:
+  wake-the-gate:
+    name: wake-the-gate
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Review activity recorded. The Contribution Gate runs next."
