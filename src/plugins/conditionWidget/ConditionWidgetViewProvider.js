@@ -22,6 +22,8 @@
 
 import mount from 'utils/mount';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import ConditionWidgetComponent from './components/ConditionWidget.vue';
 
 export default function ConditionWidget(openmct) {
@@ -37,9 +39,11 @@ export default function ConditionWidget(openmct) {
     },
     view: function (domainObject) {
       let _destroy = null;
+      let viewElement = null;
 
       return {
         show: function (element) {
+          viewElement = element;
           const { destroy } = mount(
             {
               el: element,
@@ -59,9 +63,17 @@ export default function ConditionWidget(openmct) {
           );
           _destroy = destroy;
         },
+        getViewContext() {
+          if (!viewElement) {
+            return {};
+          }
+
+          return getImageExportViewContext(openmct, viewElement, domainObject, 'condition-widget');
+        },
         destroy: function () {
           if (_destroy) {
             _destroy();
+            viewElement = null;
           }
         }
       };

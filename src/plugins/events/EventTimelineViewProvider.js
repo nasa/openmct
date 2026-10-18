@@ -21,6 +21,8 @@
  *****************************************************************************/
 import mount from 'utils/mount';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import EventTimelineView from './components/EventTimelineView.vue';
 
 export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
@@ -60,9 +62,11 @@ export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
     view: function (domainObject, objectPath) {
       let _destroy = null;
       let component = null;
+      let viewElement = null;
 
       return {
         show: function (element) {
+          viewElement = element;
           const { vNode, destroy } = mount(
             {
               el: element,
@@ -89,7 +93,16 @@ export default function EventTimestripViewProvider(openmct, extendedLinesBus) {
         destroy: function () {
           if (_destroy) {
             _destroy();
+            viewElement = null;
           }
+        },
+
+        getViewContext() {
+          if (!viewElement) {
+            return {};
+          }
+
+          return getImageExportViewContext(openmct, viewElement, domainObject, 'event-timeline');
         },
 
         getComponent() {
