@@ -313,7 +313,11 @@ export default function installWorker() {
     }
 
     setThrottleMessagePattern(priorityMessagePattern) {
-      this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
+      try {
+        this.#throttleMessagePattern = new RegExp(priorityMessagePattern, 'm');
+      } catch (e) {
+        this.#throttleMessagePattern = undefined;
+      }
     }
   }
 
