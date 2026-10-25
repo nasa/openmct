@@ -1028,18 +1028,45 @@ export default class TelemetryAPI {
  * @method evaluate
  * @param {*} datum the telemetry datum to evaluate
  * @param {TelemetryProperty} the property to check for limit violations
- * @returns {LimitViolation} metadata about
- *          the limit violation, or undefined if a value is within limits
+ * @returns {LimitViolation|undefined} a limit state describing the violated
+ *          limit, or undefined if the datum is within limits
  */
 
 /**
- * A violation of limits defined for a telemetry property.
- * @typedef LimitViolation
- * @property {string} cssClass the class (or space-separated classes) to
- *           apply to display elements for values which violate this limit
- * @property {string} name the human-readable name for the limit violation
- * @property {number} low a lower limit for violation
- * @property {number} high a higher limit violation
+ * A limit state returned by a limit evaluator for a telemetry datum whose
+ * value violated a configured limit. Open MCT uses this object as metadata
+ * for display and stores it on plotted telemetry as `mctLimitState`. Return
+ * `undefined` from `evaluate` when the datum is within limits.
+ *
+ * Only `cssClass` is required when an object is returned; `name`, `low`, and
+ * `high` are optional and may be omitted by providers that only need to style
+ * telemetry values.
+ *
+ * @typedef {Object} LimitViolation
+ * @property {string} cssClass the class, or space-separated classes, applied
+ *           to display elements for telemetry values that violate this limit;
+ *           required for built-in styling by telemetry tables, LAD tables,
+ *           display layouts, event timelines, and plot limit-state markers
+ * @property {string} [name] the human-readable name for the limit violation;
+ *           carried with the returned state for providers and custom consumers
+ *           that need a label for the limit state
+ * @property {*} [low] provider-defined lower threshold metadata for the
+ *           violation; carried with the returned state, and through
+ *           `mctLimitState` for plotted telemetry, for consumers that need to
+ *           inspect or display the lower bound associated with the evaluated
+ *           state
+ * @property {*} [high] provider-defined upper threshold metadata for the
+ *           violation; carried with the returned state, and through
+ *           `mctLimitState` for plotted telemetry, for consumers that need to
+ *           inspect or display the upper bound associated with the evaluated
+ *           state
+ * @example
+ * {
+ *   cssClass: 'is-limit--upr is-limit--red',
+ *   name: 'Red High',
+ *   low: 0.9,
+ *   high: Number.POSITIVE_INFINITY
+ * }
  */
 
 /**
