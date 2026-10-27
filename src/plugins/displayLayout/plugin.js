@@ -22,6 +22,8 @@
 
 import mount from 'utils/mount';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import CopyToClipboardAction from './actions/CopyToClipboardAction.js';
 import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
 import DisplayLayout from './components/DisplayLayout.vue';
@@ -41,6 +43,7 @@ class DisplayLayoutView {
   }
 
   show(container, isEditing, { renderWhenVisible }) {
+    this.container = container;
     const { vNode, destroy } = mount(
       {
         el: container,
@@ -77,7 +80,18 @@ class DisplayLayoutView {
       return {};
     }
 
-    return this.component.$refs.displayLayout.getViewContext();
+    const displayLayoutContext = this.component.$refs.displayLayout.getViewContext();
+    const imageExportContext = getImageExportViewContext(
+      this.openmct,
+      this.container,
+      this.domainObject,
+      'display-layout'
+    );
+
+    return {
+      ...displayLayoutContext,
+      ...imageExportContext
+    };
   }
 
   getSelectionContext() {
@@ -101,6 +115,7 @@ class DisplayLayoutView {
     if (this._destroy) {
       this._destroy();
       this.component = null;
+      this.container = null;
     }
   }
 }
