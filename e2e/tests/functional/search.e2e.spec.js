@@ -193,6 +193,258 @@ test.describe('Grand Search', () => {
     await expect(searchResults).toContainText(folderName);
   });
 
+  test('Removed objects are evicted from cached search results', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/340'
+    });
+
+    const folderName = uuid();
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: folderName
+    });
+
+    await grandSearchInput.fill(folderName);
+    await waitForSearchCompletion(page);
+
+    const matchingResult = page.getByLabel('Object Search Result').filter({
+      hasText: folderName
+    });
+    await expect(matchingResult).toHaveCount(1);
+
+    await page.getByLabel('OpenMCT Search').getByText(folderName).click();
+    await page.waitForURL(`**/${folder.uuid}?*`);
+
+    await page.getByRole('button', { name: 'More actions' }).click();
+    await page.getByRole('menuitem', { name: 'Remove' }).click();
+    await page.getByRole('button', { name: 'Ok', exact: true }).click();
+    await page.waitForURL((url) => !url.href.includes(folder.uuid));
+
+    await grandSearchInput.click();
+    await expect(matchingResult).toHaveCount(0);
+    await expect(page.getByText('No results found')).toBeVisible();
+  });
+
+  test('Removed objects disappear while search results remain visible', async ({ page }) => {
+    test.info().annotations.push({
+      type: 'issue',
+      description: 'https://github.com/nasa/openmct/issues/340'
+    });
+
+    const folderName = uuid();
+    const folder = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: folderName
+    });
+    await grandSearchInput.fill(folderName);
+    await waitForSearchCompletion(page);
+    const dropdown = page.getByRole('dialog', { name: 'Search Results Dropdown' });
+    const matchingResult = page.getByLabel('Object Search Result').filter({ hasText: folderName });
+    await expect(dropdown).toBeVisible();
+    await expect(matchingResult).toBeVisible();
+
+    // Use the removal action without an outside click that would dismiss search.
+    await page.evaluate(async (key) => {
+      const object = window.openmct.router.path.find((item) => item.identifier.key === key);
+      const objectPath = await window.openmct.objects.getOriginalPath(object);
+      await window.openmct.actions
+        .getAction('remove')
+        .removeFromComposition(objectPath[1], object, objectPath);
+    }, folder.uuid);
+
+    await expect(dropdown).toBeVisible();
+    await expect(grandSearchInput).toHaveValue(folderName);
+    await expect(matchingResult).toHaveCount(0);
+    await expect(dropdown.getByText('No results found')).toBeVisible();
+  });
+
+  test('Removing a parent evicts visible descendants and preserves unrelated results', async ({
+    page
+  }) => {
+    const prefix = uuid();
+    const parent = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: `Parent ${uuid()}`
+    });
+    const child = await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: `${prefix} child`,
+      parent: parent.uuid
+    });
+    await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: `${prefix} grandchild`,
+      parent: child.uuid
+    });
+    await createDomainObjectWithDefaults(page, { type: 'folder', name: `${prefix} unrelated` });
+    await grandSearchInput.fill(prefix);
+    const results = page.getByLabel('Object Search Result');
+    await expect(results).toHaveCount(3);
+    const dropdown = page.getByRole('dialog', { name: 'Search Results Dropdown' });
+    await expect(dropdown).toBeVisible();
+
+    await page.evaluate(async (identifier) => {
+      const object = await window.openmct.objects.get(identifier);
+      const objectPath = await window.openmct.objects.getOriginalPath(object);
+      await window.openmct.actions
+        .getAction('remove')
+        .removeFromComposition(objectPath[1], object, objectPath);
+    }, parent.uuid);
+
+    await expect(dropdown).toBeVisible();
+    await expect(grandSearchInput).toHaveValue(prefix);
+    await expect(results).toHaveCount(1);
+    await expect(results).toContainText(`${prefix} unrelated`);
+  });
+
+  test('Annotation soft-deletion and deleted targets disappear from visible results', async ({
+    page
+  }) => {
+    const target = await createDomainObjectWithDefaults(page, { type: 'folder', name: uuid() });
+    const tag = uuid();
+    const annotationKey = await page.evaluate(
+      async ({ identifier, tagKey }) => {
+        const openmct = window.openmct;
+        openmct.annotation.defineTag(tagKey, {
+          label: tagKey,
+          backgroundColor: '#000000',
+          foregroundColor: '#ffffff'
+        });
+        const object = await openmct.objects.get(identifier);
+        const annotation = await openmct.annotation.create({
+          name: 'Search deletion regression',
+          domainObject: object,
+          annotationType: 'TEMPORAL',
+          tags: [tagKey],
+          contentText: '',
+          targets: [{ keyString: openmct.objects.makeKeyString(object.identifier) }],
+          targetDomainObjects: [object]
+        });
+        return openmct.objects.makeKeyString(annotation.identifier);
+      },
+      { identifier: target.uuid, tagKey: tag }
+    );
+    await grandSearchInput.fill(tag);
+    const results = page.getByLabel('Annotation Search Result');
+    await expect(results).toHaveCount(1);
+    await page.evaluate(async (key) => {
+      const annotation = await window.openmct.objects.get(key);
+      window.openmct.annotation.deleteAnnotations([annotation]);
+    }, annotationKey);
+    await expect(results).toHaveCount(0);
+    await expect(page.getByRole('dialog', { name: 'Search Results Dropdown' })).toBeVisible();
+
+    await page.evaluate(async (key) => {
+      const annotation = await window.openmct.objects.get(key);
+      await window.openmct.annotation.unDeleteAnnotation(annotation);
+    }, annotationKey);
+    await grandSearchInput.fill('');
+    await grandSearchInput.fill(tag);
+    await expect(results).toHaveCount(1);
+    await page.evaluate(async (key) => {
+      const object = await window.openmct.objects.get(key);
+      const path = await window.openmct.objects.getOriginalPath(object);
+      await window.openmct.actions.getAction('remove').removeFromComposition(path[1], object, path);
+    }, target.uuid);
+    await expect(results).toHaveCount(0);
+    await expect(grandSearchInput).toHaveValue(tag);
+  });
+
+  test('Annotation deletion in another tab removes visible results @2p', async ({
+    page,
+    context
+  }) => {
+    const target = await createDomainObjectWithDefaults(page, { type: 'folder', name: uuid() });
+    const tag = uuid();
+    const annotationKey = await page.evaluate(
+      async ({ identifier, tagKey }) => {
+        const openmct = window.openmct;
+        openmct.annotation.defineTag(tagKey, {
+          label: tagKey,
+          backgroundColor: '#000000',
+          foregroundColor: '#ffffff'
+        });
+        const object = await openmct.objects.get(identifier);
+        const annotation = await openmct.annotation.create({
+          name: 'Search deletion regression',
+          domainObject: object,
+          annotationType: 'TEMPORAL',
+          tags: [tagKey],
+          contentText: '',
+          targets: [{ keyString: openmct.objects.makeKeyString(object.identifier) }],
+          targetDomainObjects: [object]
+        });
+        return openmct.objects.makeKeyString(annotation.identifier);
+      },
+      { identifier: target.uuid, tagKey: tag }
+    );
+    await grandSearchInput.fill(tag);
+    const results = page.getByLabel('Annotation Search Result');
+    await expect(results).toHaveCount(1);
+    const mutationPage = await context.newPage();
+    try {
+      await mutationPage.goto('./', { waitUntil: 'domcontentloaded' });
+      await mutationPage.waitForFunction(() => window.openmct?.objects);
+      await mutationPage.evaluate(async (key) => {
+        const annotation = await window.openmct.objects.get(key);
+        window.openmct.annotation.deleteAnnotations([annotation]);
+      }, annotationKey);
+      await expect(results).toHaveCount(0);
+    } finally {
+      await mutationPage.close();
+    }
+    await expect(page.getByRole('dialog', { name: 'Search Results Dropdown' })).toBeVisible();
+
+    await page.evaluate(async (key) => {
+      const annotation = await window.openmct.objects.get(key);
+      await window.openmct.annotation.unDeleteAnnotation(annotation);
+    }, annotationKey);
+    await grandSearchInput.fill('');
+    await grandSearchInput.fill(tag);
+    await expect(results).toHaveCount(1);
+    await page.evaluate(async (key) => {
+      const object = await window.openmct.objects.get(key);
+      const path = await window.openmct.objects.getOriginalPath(object);
+      await window.openmct.actions.getAction('remove').removeFromComposition(path[1], object, path);
+    }, target.uuid);
+    await expect(results).toHaveCount(0);
+    await expect(grandSearchInput).toHaveValue(tag);
+  });
+
+  test('A parent removed in another tab evicts visible descendants @2p', async ({
+    page,
+    context
+  }) => {
+    const parent = await createDomainObjectWithDefaults(page, { type: 'folder', name: uuid() });
+    const childName = uuid();
+    await createDomainObjectWithDefaults(page, {
+      type: 'folder',
+      name: childName,
+      parent: parent.uuid
+    });
+    await grandSearchInput.fill(childName);
+    const results = page.getByLabel('Object Search Result');
+    await expect(results).toHaveCount(1);
+    const secondPage = await context.newPage();
+    try {
+      await secondPage.goto('./', { waitUntil: 'domcontentloaded' });
+      await secondPage.waitForFunction(() => window.openmct?.objects);
+      await secondPage.evaluate(async (key) => {
+        const object = await window.openmct.objects.get(key);
+        const path = await window.openmct.objects.getOriginalPath(object);
+        await window.openmct.actions
+          .getAction('remove')
+          .removeFromComposition(path[1], object, path);
+      }, parent.uuid);
+      await expect(results).toHaveCount(0);
+      await expect(page.getByRole('dialog', { name: 'Search Results Dropdown' })).toBeVisible();
+      await expect(grandSearchInput).toHaveValue(childName);
+    } finally {
+      await secondPage.close();
+    }
+  });
+
   test.describe('Search will test for the presence of the object_names index, and', () => {
     test('use index if available @couchdb @network', async ({ page }) => {
       await createObjectsForSearch(page);

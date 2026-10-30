@@ -401,6 +401,7 @@ export default class AnnotationAPI extends EventEmitter {
    * @property {string} contentText - The text content of the annotation
    * @property {string} originalContextPath - The original context path of the annotation
    * @property {AnnotationTarget[]} targets - Array of targets for the annotation
+   * @property {{identifier: import("./../objects/ObjectAPI").Identifier, tags: string[]}[]} annotationSources - Source annotations contributing tags to a combined result
    * @property {Tag[]} fullTagModels - Full tag models including metadata
    * @property {string[]} matchingTagKeys - Array of tag keys that matched the search query
    * @property {TargetModel[]} targetModels - Array of target models with additional information
@@ -419,9 +420,19 @@ export default class AnnotationAPI extends EventEmitter {
         return this.areAnnotationTargetsEqual(annotationType, targets, annotationToFind.targets);
       });
       if (!existingAnnotation) {
-        combinedResults.push(currentAnnotation);
+        combinedResults.push({
+          ...currentAnnotation,
+          tags: [...currentAnnotation.tags],
+          annotationSources: [
+            { identifier: currentAnnotation.identifier, tags: [...currentAnnotation.tags] }
+          ]
+        });
       } else {
         existingAnnotation.tags.push(...currentAnnotation.tags);
+        existingAnnotation.annotationSources.push({
+          identifier: currentAnnotation.identifier,
+          tags: [...currentAnnotation.tags]
+        });
       }
     });
 
