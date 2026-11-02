@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// This should be used to install the re-instal default Notebook plugin with a simple url whitelist.
+// This should be used to install the re-install default Notebook plugin with a simple url whitelist.
 // e.g.
 // await page.addInitScript({ path: path.join(__dirname, 'addInitNotebookWithUrls.js') });
 const NOTEBOOK_NAME = 'Notebook';
