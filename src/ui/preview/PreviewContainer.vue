@@ -24,6 +24,7 @@
     <PreviewHeader
       ref="previewHeader"
       :current-view="view"
+      :current-view-provider="currentViewProvider"
       :domain-object="domainObject"
       :views="viewProviders"
     />
