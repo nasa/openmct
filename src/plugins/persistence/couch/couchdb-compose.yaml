@@ -7,7 +7,7 @@ services:
     volumes:
       - couchdb:/opt/couchdb/data
     environment:
-      COUCHDB_USER: admin
-      COUCHDB_PASSWORD: password
+      COUCHDB_USER: ${COUCHDB_USER:-admin}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD:-must_be_changed}
 volumes:
   couchdb:
