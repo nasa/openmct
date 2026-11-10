@@ -1,0 +1,99 @@
+name: Contribution Gate
+
+# Moves issues and pull requests through the contribution process, so that a
+# maintainer is asked to look at a pull request only once it is compliant, its
+# checks pass, and every automated review comment has been answered.
+#
+# PILOT: it runs alongside PR Cop, and acts only on issues and pull requests a
+# maintainer has labelled "new-workflow-candidate" (PILOT_LABEL in config.js).
+#
+# This workflow runs in the context of the base branch and never checks out or
+# runs contributed code. That is what makes it safe for it to hold a write token
+# on a pull request opened from a fork. Do not add a checkout of the pull
+# request's head to this file.
+
+on:
+  pull_request_target:
+    types:
+      # Adding the pilot label is what brings a pull request into the gate.
+      - labeled
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+      - converted_to_draft
+  issues:
+    types:
+      - labeled
+      - opened
+      - edited
+      - reopened
+  issue_comment:
+    types:
+      - created
+  workflow_run:
+    workflows:
+      - PR
+      - Contribution Gate Listener
+    types:
+      - completed
+  schedule:
+    # Catches review threads resolved without a reply, which GitHub Actions is
+    # never told about, and anything the events miss.
+    - cron: '*/30 * * * *'
+    # Sends reminders, closes contributions that have run out of time, and
+    # introduces a bounded number of new ones to the gate.
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+    inputs:
+      contribution:
+        description: 'Issue or pull request number to evaluate. Leave blank to sweep every open one in scope.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  # Write, because the gate publishes the "Check Milestone" check that branch
+  # protection requires. See MILESTONE_CHECK_NAME in config.js.
+  checks: write
+
+concurrency:
+  group: >-
+    contribution-gate-${{
+      github.event.pull_request.number ||
+      github.event.issue.number ||
+      github.event.inputs.contribution ||
+      github.event.workflow_run.id ||
+      github.run_id
+    }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: gate
+    # Most pull request events are for pull requests outside the pilot. Skipping
+    # them here saves a run; the gate checks the label again itself, which is what
+    # actually decides. Remove this at switch-over, with PILOT_LABEL.
+    if: >-
+      github.event_name != 'pull_request_target' ||
+      contains(github.event.pull_request.labels.*.name, 'new-workflow-candidate')
+    runs-on: ubuntu-latest
+    steps:
+      # Checks out the base branch, which is where the gate's own scripts live.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run the contribution gate
+        uses: actions/github-script@v7
+        env:
+          # The AI review stage is off until this is set to true. Turn it on only
+          # once an AI reviewer is working: see the README before doing so.
+          GATE_AI_REVIEW: ${{ vars.CONTRIBUTION_GATE_AI_REVIEW || 'false' }}
+        with:
+          script: |
+            const { run } = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/contribution-gate/evaluate.js`);
+            await run({ github, context, core });
