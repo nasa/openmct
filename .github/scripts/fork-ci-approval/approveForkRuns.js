@@ -135,7 +135,9 @@ async function approveRun(approver, heldRun) {
 
     return undefined;
   } catch (error) {
-    approver.core.warning(`GitHub refused to approve "${heldRun.name}" (${heldRun.id}): ${error.message}`);
+    approver.core.warning(
+      `GitHub refused to approve "${heldRun.name}" (${heldRun.id}): ${error.message}`
+    );
 
     return `"${heldRun.name}": ${error.message}`;
   }
@@ -157,12 +159,15 @@ function isFromFork(approver, pullRequest) {
 }
 
 async function findHeldRuns(approver, headSha) {
-  const runs = await approver.github.paginate(approver.github.rest.actions.listWorkflowRunsForRepo, {
-    owner: approver.owner,
-    repo: approver.repo,
-    head_sha: headSha,
-    per_page: 100
-  });
+  const runs = await approver.github.paginate(
+    approver.github.rest.actions.listWorkflowRunsForRepo,
+    {
+      owner: approver.owner,
+      repo: approver.repo,
+      head_sha: headSha,
+      per_page: 100
+    }
+  );
 
   return runs.filter((workflowRun) => workflowRun.conclusion === HELD_CONCLUSION);
 }
@@ -178,19 +183,24 @@ async function fetchChanges(approver, pullRequest) {
     pull_number: pullRequest.number,
     per_page: 100
   });
-  const changedPaths = files.flatMap((file) => [file.filename, file.previous_filename]).filter(isDefined);
+  const changedPaths = files
+    .flatMap((file) => [file.filename, file.previous_filename])
+    .filter(isDefined);
 
   return { changedPaths, isFileListComplete: files.length >= pullRequest.changed_files };
 }
 
 /** For the scheduled sweep: open fork pull requests whose latest commit has held runs. */
 async function findPullRequestsWithHeldRuns(approver) {
-  const heldRuns = await approver.github.paginate(approver.github.rest.actions.listWorkflowRunsForRepo, {
-    owner: approver.owner,
-    repo: approver.repo,
-    status: HELD_CONCLUSION,
-    per_page: 100
-  });
+  const heldRuns = await approver.github.paginate(
+    approver.github.rest.actions.listWorkflowRunsForRepo,
+    {
+      owner: approver.owner,
+      repo: approver.repo,
+      status: HELD_CONCLUSION,
+      per_page: 100
+    }
+  );
   const heldShas = new Set(heldRuns.map((workflowRun) => workflowRun.head_sha));
   const openPullRequests = await approver.github.paginate(approver.github.rest.pulls.list, {
     owner: approver.owner,
@@ -199,7 +209,9 @@ async function findPullRequestsWithHeldRuns(approver) {
     per_page: 100
   });
 
-  return openPullRequests.filter((pullRequest) => heldShas.has(pullRequest.head.sha)).map((pullRequest) => pullRequest.number);
+  return openPullRequests
+    .filter((pullRequest) => heldShas.has(pullRequest.head.sha))
+    .map((pullRequest) => pullRequest.number);
 }
 
 /**
@@ -268,16 +280,24 @@ async function findStickyComment(approver, pullNumber) {
     per_page: 100
   });
 
-  return comments.find((comment) => comment.user?.login === BOT_LOGIN && comment.body.includes(STICKY_MARKER));
+  return comments.find(
+    (comment) => comment.user?.login === BOT_LOGIN && comment.body.includes(STICKY_MARKER)
+  );
 }
 
 function renderHeldComment(verdict) {
   const lines = [
-    "**CI for this pull request is waiting for a maintainer.** It can't run automatically: " + verdict.reason
+    "**CI for this pull request is waiting for a maintainer.** It can't run automatically: " +
+      verdict.reason
   ];
 
   if (verdict.ownedPaths.length > 0) {
-    lines.push('', 'Files that need a maintainer to look first:', '', ...verdict.ownedPaths.map((ownedPath) => `- \`${ownedPath}\``));
+    lines.push(
+      '',
+      'Files that need a maintainer to look first:',
+      '',
+      ...verdict.ownedPaths.map((ownedPath) => `- \`${ownedPath}\``)
+    );
   }
 
   lines.push(

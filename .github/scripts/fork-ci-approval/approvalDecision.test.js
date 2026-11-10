@@ -1,7 +1,7 @@
 /**
  * Tests for which changes are held for a maintainer. Run with:
  *
- *   npm run test:fork-ci-approval
+ *   npm run test:workflow-scripts
  */
 
 const test = require('node:test');
@@ -13,7 +13,9 @@ const { findOwnedPaths, readOwnedPatterns } = require('./codeowners');
 const { DECISIONS, decideApproval } = require('./approvalDecision');
 
 const REPOSITORY_ROOT = path.resolve(__dirname, '../../..');
-const REAL_PATTERNS = readOwnedPatterns(fs.readFileSync(path.join(REPOSITORY_ROOT, '.github/CODEOWNERS'), 'utf8'));
+const REAL_PATTERNS = readOwnedPatterns(
+  fs.readFileSync(path.join(REPOSITORY_ROOT, '.github/CODEOWNERS'), 'utf8')
+);
 
 test('the real CODEOWNERS holds back every kind of file that runs code', () => {
   const sensitive = [
@@ -47,36 +49,47 @@ test('the real CODEOWNERS lets ordinary source, tests and docs through', () => {
 });
 
 test('an anchored pattern only matches from the repository root', () => {
-  assert.deepEqual(findOwnedPaths(['package.json', 'src/plugins/foo/package.json'], ['/package.json']), ['package.json']);
+  assert.deepEqual(
+    findOwnedPaths(['package.json', 'src/plugins/foo/package.json'], ['/package.json']),
+    ['package.json']
+  );
 });
 
 test('an unanchored pattern matches at any depth', () => {
-  assert.deepEqual(findOwnedPaths(['package.json', 'src/plugins/foo/package.json'], ['package.json']), [
-    'package.json',
-    'src/plugins/foo/package.json'
-  ]);
+  assert.deepEqual(
+    findOwnedPaths(['package.json', 'src/plugins/foo/package.json'], ['package.json']),
+    ['package.json', 'src/plugins/foo/package.json']
+  );
 });
 
 test('a directory pattern covers everything beneath it, and nothing that merely shares its name', () => {
-  assert.deepEqual(findOwnedPaths(['.github/a/b.yml', '.github', '.github-old/x'], ['/.github/']), ['.github/a/b.yml']);
-});
-
-test('comments and blank lines are not patterns', () => {
-  assert.deepEqual(readOwnedPatterns('# owners\n\n/.github/ @team\n  # indented comment\n/package.json @a @b\n'), [
-    '/.github/',
-    '/package.json'
+  assert.deepEqual(findOwnedPaths(['.github/a/b.yml', '.github', '.github-old/x'], ['/.github/']), [
+    '.github/a/b.yml'
   ]);
 });
 
+test('comments and blank lines are not patterns', () => {
+  assert.deepEqual(
+    readOwnedPatterns('# owners\n\n/.github/ @team\n  # indented comment\n/package.json @a @b\n'),
+    ['/.github/', '/package.json']
+  );
+});
+
 test('a pull request changing only ordinary files is approved', () => {
-  const verdict = decideApproval({ changedPaths: ['src/a.js', 'src/aSpec.js'], isFileListComplete: true }, REAL_PATTERNS);
+  const verdict = decideApproval(
+    { changedPaths: ['src/a.js', 'src/aSpec.js'], isFileListComplete: true },
+    REAL_PATTERNS
+  );
 
   assert.equal(verdict.decision, DECISIONS.approve);
 });
 
 test('a pull request changing a sensitive file is held, and says which', () => {
   const verdict = decideApproval(
-    { changedPaths: ['src/a.js', '.github/workflows/pr.yml', 'package.json'], isFileListComplete: true },
+    {
+      changedPaths: ['src/a.js', '.github/workflows/pr.yml', 'package.json'],
+      isFileListComplete: true
+    },
     REAL_PATTERNS
   );
 
@@ -86,7 +99,10 @@ test('a pull request changing a sensitive file is held, and says which', () => {
 
 test('moving a workflow out of .github/ is held, because the old path counts', () => {
   const verdict = decideApproval(
-    { changedPaths: ['docs/old-workflow.yml', '.github/workflows/pr.yml'], isFileListComplete: true },
+    {
+      changedPaths: ['docs/old-workflow.yml', '.github/workflows/pr.yml'],
+      isFileListComplete: true
+    },
     REAL_PATTERNS
   );
 
@@ -94,7 +110,10 @@ test('moving a workflow out of .github/ is held, because the old path counts', (
 });
 
 test('a pull request too large to list completely is held', () => {
-  const verdict = decideApproval({ changedPaths: ['src/a.js'], isFileListComplete: false }, REAL_PATTERNS);
+  const verdict = decideApproval(
+    { changedPaths: ['src/a.js'], isFileListComplete: false },
+    REAL_PATTERNS
+  );
 
   assert.equal(verdict.decision, DECISIONS.hold);
   assert.match(verdict.reason, /not every change could be checked/);

@@ -62,7 +62,11 @@ test('once a later commit drops the sensitive change, the earlier comment is cor
   const world = createWorld({
     changedFiles: ['src/a.js'],
     existingComments: [
-      { id: 50, user: { login: 'github-actions[bot]' }, body: 'CI is waiting for a maintainer.\n\n<!-- fork-ci-approval -->' }
+      {
+        id: 50,
+        user: { login: 'github-actions[bot]' },
+        body: 'CI is waiting for a maintainer.\n\n<!-- fork-ci-approval -->'
+      }
     ]
   });
 
@@ -76,7 +80,9 @@ test('once a later commit drops the sensitive change, the earlier comment is cor
 test("a contributor's comment carrying the marker is never edited", async () => {
   const world = createWorld({
     changedFiles: ['src/a.js'],
-    existingComments: [{ id: 60, user: { login: 'contributor' }, body: 'Mine. <!-- fork-ci-approval -->' }]
+    existingComments: [
+      { id: 60, user: { login: 'contributor' }, body: 'Mine. <!-- fork-ci-approval -->' }
+    ]
   });
 
   await runFor(world);
@@ -89,7 +95,11 @@ test('the scheduled sweep only checks open pull requests whose latest commit is 
 
   await run({ github: world.github, context: sweepContext(), core: quietCore() });
 
-  assert.deepEqual(world.checkedPullRequests, [7], 'not #8, whose held runs are for an older commit');
+  assert.deepEqual(
+    world.checkedPullRequests,
+    [7],
+    'not #8, whose held runs are for an older commit'
+  );
   assert.deepEqual(world.approvedRunIds, [1, 2]);
 });
 
@@ -98,7 +108,11 @@ function runFor(world) {
 }
 
 function pullRequestContext() {
-  return { eventName: 'pull_request_target', repo: { owner: 'nasa', repo: 'openmct' }, payload: { pull_request: { number: 7 } } };
+  return {
+    eventName: 'pull_request_target',
+    repo: { owner: 'nasa', repo: 'openmct' },
+    payload: { pull_request: { number: 7 } }
+  };
 }
 
 function sweepContext() {
@@ -116,7 +130,12 @@ function quietCore() {
 function createWorld(scenario) {
   process.env.GITHUB_WORKSPACE = REPOSITORY_ROOT;
 
-  const world = { approvedRunIds: [], postedComments: [], updatedComments: [], checkedPullRequests: [] };
+  const world = {
+    approvedRunIds: [],
+    postedComments: [],
+    updatedComments: [],
+    checkedPullRequests: []
+  };
   const heldRuns = scenario.heldRuns ?? [
     { id: 1, name: 'PR', conclusion: 'action_required', head_sha: HEAD_SHA },
     { id: 2, name: 'CodeQL', conclusion: 'action_required', head_sha: HEAD_SHA }
@@ -124,9 +143,10 @@ function createWorld(scenario) {
   const endpoints = {
     // Like the real API, runs asked for by commit only come back for that commit.
     listWorkflowRunsForRepo: async ({ head_sha }) =>
-      [...heldRuns, { id: 9, name: 'Old', conclusion: 'action_required', head_sha: 'stale' }].filter(
-        (workflowRun) => head_sha === undefined || workflowRun.head_sha === head_sha
-      ),
+      [
+        ...heldRuns,
+        { id: 9, name: 'Old', conclusion: 'action_required', head_sha: 'stale' }
+      ].filter((workflowRun) => head_sha === undefined || workflowRun.head_sha === head_sha),
     listFiles: async () => scenario.changedFiles.map((filename) => ({ filename })),
     listComments: async () => scenario.existingComments ?? [],
     list: async () => [

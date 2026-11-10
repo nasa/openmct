@@ -48,7 +48,7 @@ gets a comment asking a maintainer to approve it.
 ## Running the tests
 
 ```sh
-npm run test:fork-ci-approval
+npm run test:workflow-scripts
 ```
 
 The tests check the matching against the real `CODEOWNERS`, so an edit there that would let a
