@@ -1,0 +1,33 @@
+# Tests the scripts that our workflows run, under .github/scripts.
+#
+# They need nothing but Node, so this installs nothing and takes seconds. It only
+# runs when those scripts, or the CODEOWNERS file that fork CI approval reads, change.
+name: Workflow scripts
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/scripts/**'
+      - '.github/CODEOWNERS'
+      - '.github/workflows/workflow-scripts.yml'
+  pull_request:
+    paths:
+      - '.github/scripts/**'
+      - '.github/CODEOWNERS'
+      - '.github/workflows/workflow-scripts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  workflow-script-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - run: npm run test:workflow-scripts

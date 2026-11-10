@@ -33,10 +33,18 @@ function decideApproval(pullRequest, ownedPatterns) {
   const ownedPaths = findOwnedPaths(pullRequest.changedPaths, ownedPatterns);
 
   if (ownedPaths.length > 0) {
-    return { decision: DECISIONS.hold, reason: 'It changes files that decide what runs in CI or at install.', ownedPaths };
+    return {
+      decision: DECISIONS.hold,
+      reason: 'It changes files that decide what runs in CI or at install.',
+      ownedPaths
+    };
   }
 
-  return { decision: DECISIONS.approve, reason: 'It changes no file listed in CODEOWNERS.', ownedPaths: [] };
+  return {
+    decision: DECISIONS.approve,
+    reason: 'It changes no file listed in CODEOWNERS.',
+    ownedPaths: []
+  };
 }
 
 function hold(reason) {
