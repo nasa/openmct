@@ -127,10 +127,10 @@ class TimeAPI extends GlobalTimeContext {
   }
 
   /**
-   * @returns {Clock[]}
+   * @returns {Map<string, Clock>}
    */
   getAllClocks() {
-    return Array.from(this.clocks.values());
+    return this.clocks;
   }
 
   /**
