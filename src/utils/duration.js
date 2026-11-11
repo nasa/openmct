@@ -60,7 +60,7 @@ export function millisecondsToDHMS(numericDuration) {
     .filter(Boolean)
     .join(' ');
 
-  return `${dhms ? '+' : ''} ${dhms}`;
+  return dhms ? `+ ${dhms}` : '';
 }
 
 /**

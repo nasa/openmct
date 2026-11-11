@@ -170,7 +170,7 @@ describe('duration functions', () => {
       millisecondsToDHMS(661824000),
       millisecondsToDHMS(213927028)
     ];
-    const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s', '+ 2d 11h 25m 27s 28ms'];
+    const validResults = ['', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s', '+ 2d 11h 25m 27s 28ms'];
     expect(validResults).toEqual(functionResults);
   });
 
