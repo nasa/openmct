@@ -60,6 +60,11 @@ reviews:
   fail_commit_status: false
   abort_on_close: true
 
+  # Temporary: tests whether CodeRabbit approves only when its pre-merge checks pass,
+  # and whether its approval counts toward a required approval.
+  auto_approvals:
+    enabled: true
+
   auto_review:
     enabled: true
     drafts: false
