@@ -105,12 +105,9 @@ reviews:
     # The author cannot override a failing check; only a requested reviewer can.
     override_requested_reviewers_only: true
 
+    # Judged inconsistently in testing: it passed titles its own explanation said were wrong.
     title:
-      mode: warning
-      requirements: >-
-        Starts with a short subsystem or feature name in square brackets, followed by a
-        space and a plain summary of the change, e.g. "[Plot] Release axis listeners on
-        unmount".
+      mode: 'off'
     # Replaced by the more specific custom checks below.
     description:
       mode: 'off'
@@ -119,7 +116,8 @@ reviews:
 
     custom_checks:
       - name: Description explains why
-        mode: warning
+        # Temporary: tests whether a failing error-mode check fails the CodeRabbit status check.
+        mode: error
         instructions: >-
           Pass if the pull request description states the problem being solved or the
           reason for the change, in terms of Open MCT's behaviour or users, and not only
@@ -148,14 +146,15 @@ reviews:
           change cannot be tested. Fail otherwise, and name the changed behaviour that
           no test covers.
 
-      - name: Scope matches the linked issue
+      # The built-in issue assessment already checks for changes outside the issue's
+      # scope. This adds the one rule it lacks: a bug fix needs no maintainer approval,
+      # so a feature must not arrive labelled as one.
+      - name: A bug fix adds no features
         mode: warning
         instructions: >-
-          Read the issue this pull request closes or addresses. Fail if the diff adds
-          user-facing functionality, configuration options, or public API (anything
-          under src/api/ or documented in API.md) that the issue does not ask for. Fail
-          if the issue has the type:bug label and the diff adds new functionality
-          instead of correcting existing behaviour. Pass if every change in the diff is
-          needed to resolve the issue, including tests and documentation for it. If no
-          issue is linked, fail and say so. When failing, quote the issue text you
-          compared against and name the functionality that goes beyond it.
+          Read the issue this pull request closes or addresses. If that issue has the
+          type:bug label, fail if the diff adds new user-facing functionality,
+          configuration options, or public API (anything under src/api/ or documented
+          in API.md) instead of correcting existing behaviour. When failing, quote the
+          issue text and name the functionality that was added. Pass in every other
+          case, including when no issue is linked or the issue is not type:bug.
