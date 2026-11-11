@@ -109,7 +109,7 @@ export default {
         )} - ${this.formatTime(timespan.end, descriptionDateFormat)}`;
 
         if (this.timeSystem.isUTCBased && !this.openmct.time.isRealTime()) {
-          name = `${startTime} ${millisecondsToDHMS(timespan.end - timespan.start)}`;
+          name = `${startTime} ${millisecondsToDHMS(timespan.end - timespan.start)}`.trim();
         } else {
           name = description;
         }
