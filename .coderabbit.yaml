@@ -147,3 +147,15 @@ reviews:
           documentation, configuration or tests, or if the description explains why the
           change cannot be tested. Fail otherwise, and name the changed behaviour that
           no test covers.
+
+      - name: Scope matches the linked issue
+        mode: warning
+        instructions: >-
+          Read the issue this pull request closes or addresses. Fail if the diff adds
+          user-facing functionality, configuration options, or public API (anything
+          under src/api/ or documented in API.md) that the issue does not ask for. Fail
+          if the issue has the type:bug label and the diff adds new functionality
+          instead of correcting existing behaviour. Pass if every change in the diff is
+          needed to resolve the issue, including tests and documentation for it. If no
+          issue is linked, fail and say so. When failing, quote the issue text you
+          compared against and name the functionality that goes beyond it.
