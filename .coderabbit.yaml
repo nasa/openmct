@@ -64,6 +64,9 @@ reviews:
     enabled: true
     drafts: false
     auto_incremental_review: true
+    # Temporary: lets the CodeRabbit test pull requests target this branch.
+    base_branches:
+      - '^coderabbit-test-base$'
 
   # Anything that would commit to the author's branch or open pull requests on its own.
   finishing_touches:
