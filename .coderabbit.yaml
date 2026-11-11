@@ -1,0 +1,146 @@
+# CodeRabbit configuration for Open MCT.
+# Schema: https://coderabbit.ai/integrations/schema.v2.json
+# cspell:ignore coderabbitai
+#
+# CodeRabbit reviews pull requests and runs the pre-merge checks below. Every check
+# starts in "warning" mode; move one to "error" only after it has proven reliable.
+#
+# Contributors write their own pull request titles and descriptions, so nothing here
+# lets CodeRabbit write either one, or commit to a contributor's branch.
+
+language: en-US
+tone_instructions: >-
+  Be direct and specific. Write for a contributor who may be new to Open MCT: name the
+  file and line, say what is wrong and why, and point to the relevant project document.
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    # AGENTS.md and CLAUDE.md are read by default. These are the documents they point to.
+    filePatterns:
+      - CONTRIBUTING.md
+      - docs/src/process/common-coding-pitfalls.md
+      - TESTING.md
+      - files: e2e/README.md
+        applyTo: e2e/**
+      - files: API.md
+        applyTo: src/api/**
+  learnings:
+    scope: local
+
+reviews:
+  profile: chill
+
+  # Never write the title or description for the author. Each feature is switched
+  # on by a keyword in the title or description, so each keyword is set to a string
+  # nobody will type by accident.
+  high_level_summary: false
+  high_level_summary_placeholder: '@coderabbitai summary disabled-for-openmct'
+  auto_title_placeholder: '@coderabbitai title disabled-for-openmct'
+
+  poem: false
+  in_progress_fortune: false
+  sequence_diagrams: false
+  collapse_walkthrough: true
+  changed_files_summary: true
+  assess_linked_issues: true
+  estimate_code_review_effort: true
+
+  # The contribution gate owns labels and reviewer requests.
+  suggested_labels: false
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+
+  review_status: true
+  commit_status: true
+  fail_commit_status: false
+  abort_on_close: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+
+  # Anything that would commit to the author's branch or open pull requests on its own.
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+    simplify:
+      enabled: false
+    autofix:
+      enabled: false
+    fix_ci:
+      enabled: false
+    resolve_merge_conflict:
+      enabled: false
+
+  path_instructions:
+    - path: '**/*'
+      instructions: >-
+        Do not comment on formatting, style or spelling: ESLint, Prettier and cspell
+        already run in CI. Spend review effort on correctness, API compatibility for
+        third-party plugin authors, test coverage of the changed code path, and the
+        conventions in CONTRIBUTING.md and common-coding-pitfalls.md.
+    - path: 'src/api/**'
+      instructions: >-
+        Code under src/api is the public plugin-authoring API documented in API.md.
+        Flag any change to an exported signature, event, or documented behaviour that
+        would break an existing third-party plugin, and say whether API.md was updated
+        to match.
+    - path: 'e2e/**'
+      instructions: >-
+        Check new and changed tests against e2e/README.md, in particular its guidance on
+        fixtures, selectors, and avoiding pixel snapshot tests.
+
+  pre_merge_checks:
+    # The author cannot override a failing check; only a requested reviewer can.
+    override_requested_reviewers_only: true
+
+    title:
+      mode: warning
+      requirements: >-
+        Starts with a short subsystem or feature name in square brackets, followed by a
+        space and a plain summary of the change, e.g. "[Plot] Release axis listeners on
+        unmount".
+    # Replaced by the more specific custom checks below.
+    description:
+      mode: 'off'
+    issue_assessment:
+      mode: warning
+
+    custom_checks:
+      - name: Description explains why
+        mode: warning
+        instructions: >-
+          Pass if the pull request description states the problem being solved or the
+          reason for the change, in terms of Open MCT's behaviour or users, and not only
+          what was edited. Fail if the description only lists changed files, functions or
+          lines, restates the diff, or is empty. Fail if the description claims changes
+          that are not in the diff, or omits a change to behaviour that is in the diff.
+          Quote the sentence that is missing or inaccurate.
+
+      - name: Verification is described
+        mode: warning
+        instructions: >-
+          Pass if the description says how the author verified the change: the steps
+          they followed or the tests they ran, and what they observed. If the diff
+          changes anything under src/ that renders in the user interface (.vue files,
+          or styles), the description must also include a screenshot, image or video.
+          Fail if verification is absent, or is only a statement such as "tested
+          locally" or "all tests pass" with no steps or observations.
+
+      - name: Changed code is tested
+        mode: warning
+        instructions: >-
+          Pass if the diff adds or changes a test that exercises the changed behaviour.
+          Open MCT prefers Playwright end-to-end tests under e2e/ for new work; a
+          Jasmine spec (*Spec.js) also passes. Also pass if the diff only touches
+          documentation, configuration or tests, or if the description explains why the
+          change cannot be tested. Fail otherwise, and name the changed behaviour that
+          no test covers.
