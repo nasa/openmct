@@ -372,7 +372,11 @@ jobs:
             if-no-files-found: warn
     e2e-couchdb:
       name: e2e-couchdb
-      runs-on: ubuntu-latest
+      # Not ubuntu-latest: this job needs Docker for CouchDB, so it can't use the
+      # Playwright container like the other e2e jobs, and installs Playwright's
+      # browser dependencies itself. Playwright 1.57 can't install them on 26.04.
+      # Move this on when Playwright is upgraded to a version that supports it.
+      runs-on: ubuntu-24.04
       timeout-minutes: 60
       # The CouchDB suite covers the same application as e2e-ci against a real
       # database, so there is nothing to learn from running it while e2e-ci is
