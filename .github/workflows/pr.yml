@@ -13,7 +13,6 @@ on:
       - labeled
       - reopened
       - synchronize
-      - ready_for_review
 
 env:
   NODE_ENV: development
