@@ -378,12 +378,16 @@ jobs:
       # Move this on when Playwright is upgraded to a version that supports it.
       runs-on: ubuntu-24.04
       timeout-minutes: 60
-      # The CouchDB suite covers the same application as e2e-ci against a real
-      # database, so there is nothing to learn from running it while e2e-ci is
-      # still failing. Standing up CouchDB is the most expensive job we have.
+      # Standing up CouchDB is the most expensive job we have, so it runs last,
+      # once every other test has passed: a pull request that still needs
+      # another push for those learns nothing from it.
       needs:
           - build_and_cache_dependencies_if_needed
+          - unit-test
           - e2e-test
+          - visual-a11y
+          - perf-test
+          - mem-test
       steps:
         - uses: actions/checkout@v4
         - uses: actions/setup-node@v4
