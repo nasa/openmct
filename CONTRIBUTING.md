@@ -83,7 +83,7 @@ Additionally:
 * Every __author__ must include testing instructions. These instructions should identify the areas of code affected, and some minimal test steps. If addressing a bug, reproduction steps should be included, if they were not included in the original issue. If reproduction steps were included on the original issue, and are sufficient, refer to them.
 * A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
 * When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
-* Every PR must have two reviewers assigned, though only one approval is necessary for merge.
+* Every PR needs two approvals to merge: [CodeRabbit](https://coderabbit.ai)'s, which it gives once its pre-merge checks pass, and a maintainer's. CodeRabbit reviews every pull request on its own, configured by [.coderabbit.yaml](.coderabbit.yaml).
 * Changes to API require approval by a senior developer.
 * CI runs automatically on a pull request from a fork, unless it changes a file listed in [.github/CODEOWNERS](.github/CODEOWNERS): the workflows, dependencies, and build, lint and test configuration. Those files decide what runs on the project's machines and on everyone's who installs Open MCT, so a maintainer looks at the change first, and a comment on the pull request says which files are holding it. Keep such changes in a pull request of their own where you can, so the rest of your work is not held up.
 * When creating a PR, it is the author's responsibility to apply any priority label from the issue to the PR as well. This helps with prioritization.
@@ -100,19 +100,22 @@ do: it copies the `type:` label from the linked issue and records the milestone 
 
 A candidate pull request moves through these stages, and can move back if something changes:
 
-1. __The contribution rules__, all of which the bot checks: the description says what you changed,
-   every item in the author checklist is ticked, the pull request closes an issue, that issue is
-   complete, it carries testing instructions, and an automated test is included or updated. A change
-   that genuinely cannot carry a test should say so in the description and ask a maintainer for the
-   `pr:daveit` label.
+1. __The contribution rules__. The bot checks that every item in the author checklist is ticked, the
+   pull request closes an issue, that issue is complete, and it carries testing instructions.
+   CodeRabbit's pre-merge checks are rules too: your description explains why the change is needed
+   and how you verified it, with a screenshot for a change to the user interface; the changed code is
+   covered by an automated test; and a pull request for a bug fixes it rather than adding a feature.
+   CodeRabbit's comment says which of its checks failed and why. A change that genuinely cannot
+   carry a test should say why in the description.
 2. __The automated checks__: lint, unit tests, end-to-end tests and the visual and accessibility
    tests must pass, as must CodeQL where it runs.
 3. __The automated reviews__. CodeRabbit reviews every pull request, and CodeQL comments on its own
    if it finds a security problem. Reply to each of their comments saying how you addressed it (for
    example "fixed in abc1234") or why you disagree. The bot resolves each thread once you have
    replied; resolving one without a reply is not enough, because the reply is what a human reviewer
-   reads first.
-4. __Team review__: only now are the maintainers asked to look, and one approval merges it.
+   reads first. CodeRabbit then approves.
+4. __Team review__: only now are the maintainers asked to look, and one maintainer's approval, with
+   CodeRabbit's, merges it.
 
 Testing instructions belong on the issue. If you did not open that issue and cannot edit it, comment
 on it with a `### Testing Instructions` heading instead, and that counts.

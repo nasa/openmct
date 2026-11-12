@@ -4,25 +4,24 @@
  * Every rule returns feedback the author can act on without help from a
  * maintainer, and no rule asks for something an outside contributor lacks the
  * permission to do.
+ *
+ * The rules that need judgement, such as whether the description explains why
+ * and whether a test covers the change, are CodeRabbit's pre-merge checks. The
+ * gate reads their outcome from CodeRabbit's review.
  */
 
-const {
-  CHECKLIST_ITEMS_HANDLED_BY_THE_GATE,
-  GATE_EXEMPT_LABEL,
-  TEST_EXEMPT_FILE_PATTERNS,
-  TEST_FILE_PATTERNS
-} = require('./config');
-const { matchesAnyPattern } = require('./globMatch');
-const { hasFilledSection, normalizeHeading, parseSections } = require('./markdownSections');
+const { CHECKLIST_ITEMS_HANDLED_BY_THE_GATE, GATE_EXEMPT_LABEL } = require('./config');
+const { normalizeHeading, parseSections } = require('./markdownSections');
 const { findIssueFailures, hasTestingInstructions } = require('./issueCompliance');
 const { quoteContributorText } = require('./quotedText');
 
-const DESCRIPTION_HEADING = 'Describe your changes';
 const AUTHOR_CHECKLIST_HEADING = 'Author Checklist';
 const UNCHECKED_ITEM_PATTERN = /^\s*[-*]\s*\[ \]\s*(.+?)\s*$/gm;
+const CLOSED_STATE = 'CLOSED';
+const CHANGES_REQUESTED = 'CHANGES_REQUESTED';
 
 /**
- * @param {object} pullRequest body, labels and changedFiles of the pull request
+ * @param {object} pullRequest body, labels, state and aiReviewState of the pull request
  * @param {object[]} linkedIssues the issues the pull request closes, each with
  * body, labels and comments
  * @returns {{id: string, summary: string, fix: string}[]}
@@ -33,25 +32,27 @@ function findPullRequestFailures(pullRequest, linkedIssues) {
   }
 
   return [
-    ...findDescriptionFailures(pullRequest.body),
     ...findChecklistFailures(pullRequest.body),
     ...findLinkedIssueFailures(linkedIssues),
-    ...findAutomatedTestFailures(pullRequest.changedFiles)
+    ...findAiReviewFailures(pullRequest)
   ];
 }
 
-function findDescriptionFailures(body) {
-  const sections = parseSections(body);
-
-  if (hasFilledSection(sections, DESCRIPTION_HEADING)) {
+/**
+ * CodeRabbit does not review a closed pull request, so on one its verdict is
+ * from before the contributor's latest fixes. It does not stand in the way of
+ * reopening: once the pull request is open again, CodeRabbit reviews it again.
+ */
+function findAiReviewFailures(pullRequest) {
+  if (pullRequest.state === CLOSED_STATE || pullRequest.aiReviewState !== CHANGES_REQUESTED) {
     return [];
   }
 
   return [
     {
-      id: 'pr-description',
-      summary: `The **${DESCRIPTION_HEADING}** section is empty.`,
-      fix: 'Edit the pull request description and say what you changed and why.'
+      id: 'pr-ai-review',
+      summary: "CodeRabbit's pre-merge checks found something to fix.",
+      fix: "CodeRabbit's comment on this pull request lists each check that failed and how to resolve it. Fix those, push, and CodeRabbit checks again. If you think a check is wrong, reply to CodeRabbit's comment to say why, so a maintainer can see it."
     }
   ];
 }
@@ -87,24 +88,6 @@ function findLinkedIssueFailures(linkedIssues) {
   }
 
   return linkedIssues.flatMap(describeIssueProblems);
-}
-
-function findAutomatedTestFailures(changedFiles) {
-  if (isExemptFromTests(changedFiles)) {
-    return [];
-  }
-
-  if (changedFiles.some((filePath) => matchesAnyPattern(filePath, TEST_FILE_PATTERNS))) {
-    return [];
-  }
-
-  return [
-    {
-      id: 'pr-automated-tests',
-      summary: 'No automated test was added or updated.',
-      fix: 'Add a Playwright end-to-end test under `e2e/`, or update an existing `*Spec.js`. If a test is genuinely impossible here, say why in the description and ask a maintainer for the `pr:daveit` label.'
-    }
-  ];
 }
 
 function describeIssueProblems(issue) {
@@ -150,14 +133,6 @@ function readUncheckedItems(checklist) {
 
 function isHandledByTheGate(checklistItem) {
   return CHECKLIST_ITEMS_HANDLED_BY_THE_GATE.some((pattern) => pattern.test(checklistItem));
-}
-
-function isExemptFromTests(changedFiles) {
-  if (changedFiles.length === 0) {
-    return true;
-  }
-
-  return changedFiles.every((filePath) => matchesAnyPattern(filePath, TEST_EXEMPT_FILE_PATTERNS));
 }
 
 function quoteItems(items) {

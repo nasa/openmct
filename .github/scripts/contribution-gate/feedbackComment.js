@@ -18,7 +18,7 @@ const NOT_YET = '⬜';
 const STAGE_ROWS = [
   { key: 'compliance', label: 'Contribution rules met' },
   { key: 'checks', label: 'Automated checks passing' },
-  { key: 'automatedReview', label: 'Automated review comments addressed' },
+  { key: 'automatedReview', label: 'Automated review comments answered, and CodeRabbit approved' },
   { key: 'teamReview', label: 'Team review requested' }
 ];
 

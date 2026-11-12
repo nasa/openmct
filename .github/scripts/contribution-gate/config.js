@@ -67,20 +67,6 @@ const REQUIRED_CHECK_NAMES = [
  */
 const CHECKS_REQUIRED_WHEN_REPORTED = ['Analyze'];
 
-/** A pull request satisfies the automated-test rule by touching one of these. */
-const TEST_FILE_PATTERNS = ['**/*Spec.js', '**/*.e2e.spec.js', 'e2e/**/*.spec.js'];
-
-/** Changes that cannot reasonably carry an automated test. */
-const TEST_EXEMPT_FILE_PATTERNS = [
-  '**/*.md',
-  '.github/**',
-  'docs/**',
-  '*.json',
-  '.vscode/**',
-  '.claude/**',
-  'LICENSES/**'
-];
-
 /**
  * The account the gate posts as, which is the one GITHUB_TOKEN acts as. Only a
  * comment from this account can hold the gate's state, so a contributor cannot
@@ -91,7 +77,10 @@ const GATE_BOT_LOGIN = 'github-actions[bot]';
 
 /**
  * CodeRabbit reviews every pull request on its own, as configured in
- * .coderabbit.yaml, so the gate never requests it.
+ * .coderabbit.yaml, so the gate never requests it. Its verdict is how the gate
+ * learns whether CodeRabbit's pre-merge checks passed: it approves when they
+ * do, and requests changes when one in error mode fails. Its approval is also
+ * one of the two that branch protection requires.
  */
 const AI_REVIEWER_LOGINS = ['coderabbitai[bot]'];
 
@@ -170,6 +159,7 @@ const TESTING_INSTRUCTION_HEADINGS = [
 ];
 
 module.exports = {
+  AI_REVIEWER_LOGINS,
   AUTOMATED_REVIEWER_LOGINS,
   CHECKS_REQUIRED_WHEN_REPORTED,
   DEADLINE_DAYS,
@@ -189,8 +179,6 @@ module.exports = {
   STAGE_LABELS,
   TEAM_ALLOWLIST,
   TEAM_AUTHOR_ASSOCIATIONS,
-  TEST_EXEMPT_FILE_PATTERNS,
-  TEST_FILE_PATTERNS,
   TESTING_INSTRUCTION_HEADINGS,
   TYPE_LABEL_PREFIX
 };

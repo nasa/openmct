@@ -1,8 +1,17 @@
 # CodeRabbit configuration for Open MCT.
 # Schema: https://coderabbit.ai/integrations/schema.v2.json
 #
-# CodeRabbit reviews pull requests and runs the pre-merge checks below. Every check
-# starts in "warning" mode; move one to "error" only after it has proven reliable.
+# CodeRabbit reviews pull requests and runs the pre-merge checks below. Its approval
+# is one of the two that master's branch protection requires, alongside a
+# maintainer's, and the contribution gate reads it to decide when to ask the team.
+#
+# With auto_approvals on, CodeRabbit requests changes when a check in "error" mode
+# fails and approves otherwise. A failing "warning" check does not stop it
+# approving, so every check that must hold a pull request back is in error mode.
+#
+# This file is read from the branch a pull request targets, never from the pull
+# request itself, so a pull request cannot change its own review. A change here
+# reaches an open pull request at that pull request's next push.
 #
 # Contributors write their own pull request titles and descriptions, so nothing here
 # lets CodeRabbit write either one, or commit to a contributor's branch.
@@ -59,6 +68,11 @@ reviews:
   fail_commit_status: false
   abort_on_close: true
 
+  # Approve once every error-mode pre-merge check passes and CodeRabbit's review
+  # threads are resolved; request changes when one of those checks fails.
+  auto_approvals:
+    enabled: true
+
   auto_review:
     enabled: true
     drafts: false
@@ -112,7 +126,7 @@ reviews:
 
     custom_checks:
       - name: Description explains why
-        mode: warning
+        mode: error
         instructions: >-
           Pass if the pull request description states the problem being solved or the
           reason for the change, in terms of Open MCT's behaviour or users, and not only
@@ -122,7 +136,7 @@ reviews:
           Quote the sentence that is missing or inaccurate.
 
       - name: Verification is described
-        mode: warning
+        mode: error
         instructions: >-
           Pass if the description says how the author verified the change: the steps
           they followed or the tests they ran, and what they observed. If the diff
@@ -132,7 +146,7 @@ reviews:
           locally" or "all tests pass" with no steps or observations.
 
       - name: Changed code is tested
-        mode: warning
+        mode: error
         instructions: >-
           Pass if the diff adds or changes a test that exercises the changed behaviour.
           Open MCT prefers Playwright end-to-end tests under e2e/ for new work; a
@@ -145,7 +159,7 @@ reviews:
       # scope. This adds the one rule it lacks: a bug fix needs no maintainer approval,
       # so a feature must not arrive labelled as one.
       - name: A bug fix adds no features
-        mode: warning
+        mode: error
         instructions: >-
           Read the issue this pull request closes or addresses. If that issue has the
           type:bug label, fail if the diff adds new user-facing functionality,
