@@ -13,7 +13,7 @@ const { REQUIRED_CHECK_NAMES } = require('./config');
 
 const HEAD_SHA = 'abc1234';
 const GATE_BOT = { login: 'github-actions[bot]', type: 'Bot' };
-const AI_REVIEWER = { login: 'copilot-pull-request-reviewer[bot]' };
+const AI_REVIEWER = { login: 'coderabbitai[bot]' };
 const CONTRIBUTOR = { login: 'contributor' };
 
 const COMPLIANT_ISSUE = {
@@ -96,28 +96,9 @@ test('a draft is not reviewed until it is ready', async () => {
   assert.equal(world.requestedReviewers.length, 0);
 });
 
-test('green checks buy exactly one AI review', async () => {
-  const world = createWorld({});
-
-  await runGate(world, { aiReview: true });
-
-  assert.deepEqual(world.requestedReviewers, [{ number: 7, reviewers: ['Copilot'] }]);
-  assert.match(world.postedComments[0].body, /AI code review has been requested/);
-  assert.equal(readStoredState(world).aiReviewRequestedSha, HEAD_SHA);
-});
-
-test('an AI review already paid for is not paid for twice', async () => {
-  const world = createWorld({ storedState: { aiReviewRequestedSha: HEAD_SHA } });
-
-  await runGate(world, { aiReview: true });
-
-  assert.deepEqual(world.requestedReviewers, [], 'the stored state records that we already asked');
-});
-
 test('an unanswered AI comment holds the pull request back', async () => {
   const world = createWorld({
-    storedState: { aiReviewRequestedSha: HEAD_SHA },
-    reviews: [{ author: AI_REVIEWER }],
+    storedState: {},
     reviewThreads: [aiThread({ id: 'thread-1', isResolved: true, replies: [] })]
   });
 
@@ -131,8 +112,7 @@ test('an unanswered AI comment holds the pull request back', async () => {
 
 test('replying is enough: the gate resolves the thread and asks the team', async () => {
   const world = createWorld({
-    storedState: { aiReviewRequestedSha: HEAD_SHA },
-    reviews: [{ author: AI_REVIEWER }],
+    storedState: {},
     reviewThreads: [
       aiThread({
         id: 'thread-1',
@@ -152,8 +132,7 @@ test('replying is enough: the gate resolves the thread and asks the team', async
 
 test('the team is asked only once', async () => {
   const world = createWorld({
-    storedState: { aiReviewRequestedSha: HEAD_SHA, teamReviewRequested: true },
-    reviews: [{ author: AI_REVIEWER }],
+    storedState: { teamReviewRequested: true },
     reviewThreads: [
       aiThread({
         id: 'thread-1',
@@ -248,7 +227,7 @@ test('an exempt pull request is left alone entirely', async () => {
   assert.deepEqual(world.postedComments, []);
 });
 
-test('with the AI review off, green checks go straight to the team', async () => {
+test('with green checks and no review comments to answer, the team is asked, and no one else', async () => {
   const world = createWorld({});
 
   await runGate(world);
@@ -256,13 +235,12 @@ test('with the AI review off, green checks go straight to the team', async () =>
   assert.deepEqual(
     world.requestedReviewers,
     [{ number: 7, team_reviewers: ['openmct-web'] }],
-    'nobody pays for an AI review'
+    'CodeRabbit and CodeQL review on their own, so the gate never requests them'
   );
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
-  assert.doesNotMatch(world.postedComments[0].body, /AI code review/);
 });
 
-test('a CodeQL finding nobody has answered still holds a pull request back with the AI review off', async () => {
+test('a CodeQL finding nobody has answered holds a pull request back', async () => {
   const codeqlThread = {
     id: 'codeql-1',
     isResolved: true,
@@ -299,23 +277,6 @@ test('a team request the API silently drops is replaced by a mention', async () 
   assert.notEqual(mention, undefined, 'a person is still told');
   assert.match(mention.body, /could not be applied/);
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
-});
-
-test('an AI review the API silently drops does not strand the pull request', async () => {
-  const world = createWorld({ aiReviewerSilentlyDropped: true });
-
-  await runGate(world, { aiReview: true });
-
-  assert.equal(
-    readStoredState(world).aiReviewRequestedSha,
-    undefined,
-    'it is not recorded as requested'
-  );
-  assert.deepEqual(
-    world.addedLabels.at(-1),
-    { number: 7, label: 'gate:team-review' },
-    'it fails open to the team'
-  );
 });
 
 test('the milestone check passes once the rules are met, and not before', async () => {
@@ -482,8 +443,6 @@ test('an @-mention in quoted text is shown as code, so it notifies nobody', asyn
 });
 
 function runGate(world, options = {}) {
-  process.env.GATE_AI_REVIEW = options.aiReview === true ? 'true' : 'false';
-
   return run({
     github: world.github,
     context: options.recheck === true ? recheckContext(world) : pullRequestContext(world),
@@ -526,7 +485,6 @@ function createWorld(scenario) {
     closed: [],
     reopened: [],
     publishedChecks: [],
-    usersOnReviewList: [],
     teamsOnReviewList: []
   };
   const stickyComments = buildStickyComments(scenario);
@@ -567,17 +525,13 @@ function createWorld(scenario) {
           );
 
           // The real API returns success and silently drops what it will not accept.
-          if (reviewers !== undefined && scenario.aiReviewerSilentlyDropped !== true) {
-            world.usersOnReviewList = reviewers;
-          }
-
           if (team_reviewers !== undefined && scenario.teamSilentlyDropped !== true) {
             world.teamsOnReviewList = team_reviewers;
           }
         },
         listRequestedReviewers: async () => ({
           data: {
-            users: world.usersOnReviewList.map((login) => ({ login })),
+            users: [],
             teams: world.teamsOnReviewList.map((slug) => ({ slug }))
           }
         })
@@ -639,7 +593,6 @@ function buildPullRequest(scenario, number) {
     milestone: scenario.hasMilestone === true ? { number: 81 } : null,
     labels: { nodes: readLabels(scenario).map((name) => ({ name })) },
     closingIssuesReferences: { nodes: readLinkedIssues(scenario) },
-    reviews: { nodes: scenario.reviews ?? [] },
     reviewThreads: { nodes: scenario.reviewThreads ?? [] }
   };
 }

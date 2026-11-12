@@ -23,7 +23,7 @@ const { renderPullRequestComment } = require('./feedbackComment');
 
 const NOTICE_SENT_AT = '2026-09-01T00:00:00.000Z';
 const AI_COMMENT = {
-  author: { login: 'copilot-pull-request-reviewer[bot]' },
+  author: { login: 'coderabbitai[bot]' },
   body: 'Consider extracting this.',
   url: 'https://example.test/1'
 };
@@ -91,7 +91,7 @@ test('the team is never closed out, outside contributors are', () => {
 });
 
 test('state survives a round trip through the sticky comment', () => {
-  const state = { noncompliantSince: NOTICE_SENT_AT, aiReviewRequestedSha: 'abc1234' };
+  const state = { noncompliantSince: NOTICE_SENT_AT, teamReviewRequested: true };
   const commentBody = `Some feedback.\n\n${renderMarker(state)}`;
 
   assert.deepEqual(readMarker(commentBody), state);

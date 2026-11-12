@@ -29,16 +29,16 @@ pass, and every automated review comment has been answered.
 State lives in that sticky comment, in an HTML comment marker, so the gate needs no database. The
 `gate:*` labels show the current stage.
 
-Two reviewers comment without a person asking, and the gate treats them differently:
+Two reviewers comment without a person asking. The gate requests neither, but a contributor must
+reply to every comment from either before the team is asked to look:
 
-- __The AI reviewer__ (Copilot, in the code today) is **switched off**. See "The AI review stage"
-  below. When it is on, only its review satisfies the wait at stage 5, which is why
-  `AI_REVIEWER_LOGINS` is a narrower list than `AUTOMATED_REVIEWER_LOGINS`.
-- __CodeQL__ (`github-advanced-security[bot]`) posts its own security findings. The gate never requests
-  it, but a contributor must still reply to each finding, and its `Analyze` check must pass whenever it
-  runs. CodeQL skips pull requests that only touch specs, documentation or configuration, so it is in
-  `CHECKS_REQUIRED_WHEN_REPORTED` rather than `REQUIRED_CHECK_NAMES`: a check that never reports would
-  otherwise leave those pull requests waiting forever.
+- __CodeRabbit__ (`coderabbitai[bot]`) reviews every pull request into `master`, configured by
+  [.coderabbit.yaml](../../../.coderabbit.yaml). Its pre-merge checks are shown in its own comment;
+  the gate does not read them.
+- __CodeQL__ (`github-advanced-security[bot]`) posts its own security findings, and its `Analyze` check
+  must pass whenever it runs. CodeQL skips pull requests that only touch specs, documentation or
+  configuration, so it is in `CHECKS_REQUIRED_WHEN_REPORTED` rather than `REQUIRED_CHECK_NAMES`: a
+  check that never reports would otherwise leave those pull requests waiting forever.
 
 Two workflows drive it:
 
@@ -84,26 +84,6 @@ To look at one contribution on demand, run the workflow manually with its number
 gate takes is logged as a line starting `Gate:`.
 
 To try the process on an issue as well as a pull request, label the issue.
-
-## The AI review stage
-
-It is **off**. The gate goes from "checks pass" straight to asking the team, after any CodeQL finding
-has been answered. Set the repository variable `CONTRIBUTION_GATE_AI_REVIEW` to `true` to turn it on,
-but only once an AI reviewer really works, because the stage as written is for Copilot and Copilot has
-three traps:
-
-- **The API silently drops a review request it will not honour.** It returns success and records
-  nothing, for instance when the account has no Copilot entitlement. The gate therefore reads every
-  request back, and skips the stage rather than waiting for a review nobody asked for.
-- **The identity you request is not the identity the review is posted under.** The request is for
-  `Copilot` (`COPILOT_REVIEWER_LOGIN`); the review arrives as `copilot-pull-request-reviewer[bot]`.
-- **A review requested with `GITHUB_TOKEN` is billed to, and needs the entitlement of, a bot with no
-  seat.** Expect it to be dropped, and plan for a token that belongs to a licensed account.
-
-To use a different AI reviewer, add its bot login to `AI_REVIEWER_LOGINS` and replace
-`requestAiReview` in `gateActions.js`. The repository rule set "Copilot review for default branch"
-also requests Copilot on its own; remove it before turning this stage on, or reviews are paid for
-twice.
 
 ## Branch protection
 

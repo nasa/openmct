@@ -31,9 +31,6 @@ const STAGE_LABELS = {
  */
 const MILESTONE_CHECK_NAME = 'Check Milestone';
 
-/** A maintainer applies this to pay for a second Copilot review. */
-const AI_REVIEW_AGAIN_LABEL = 'gate:ai-review-again';
-
 /** Dependabot and maintainers use this to opt a pull request out of the gate. */
 const GATE_EXEMPT_LABEL = 'pr:daveit';
 
@@ -50,7 +47,7 @@ const DEADLINE_DAYS = {
 /** A single reminder goes out this many days before the deadline. */
 const REMINDER_LEAD_DAYS = 2;
 
-/** Every one of these must succeed before the gate pays for an AI review. */
+/** Every one of these must succeed before the team is asked to review. */
 const REQUIRED_CHECK_NAMES = [
   'lint',
   'unit-test',
@@ -93,25 +90,12 @@ const TEST_EXEMPT_FILE_PATTERNS = [
 const GATE_BOT_LOGIN = 'github-actions[bot]';
 
 /**
- * The identity we REQUEST as a reviewer. It is not the identity the review is
- * posted under (see AI_REVIEWER_LOGINS). The API accepts the wrong one and
- * silently drops the request, so every request is read back.
+ * CodeRabbit reviews every pull request on its own, as configured in
+ * .coderabbit.yaml, so the gate never requests it.
  */
-const COPILOT_REVIEWER_LOGIN = 'Copilot';
+const AI_REVIEWER_LOGINS = ['coderabbitai[bot]'];
 
-/**
- * Copilot has posted under several logins. Only these count as the AI review we
- * paid for and are waiting on.
- */
-const AI_REVIEWER_LOGINS = [
-  'copilot-pull-request-reviewer[bot]',
-  'copilot-pull-request-reviewer',
-  'github-copilot[bot]',
-  'copilot[bot]',
-  'copilot'
-];
-
-/** CodeQL reviews on its own, and is never requested by the gate. */
+/** CodeQL also reviews on its own, and is never requested by the gate. */
 const SECURITY_REVIEWER_LOGINS = ['github-advanced-security[bot]'];
 
 /**
@@ -186,11 +170,8 @@ const TESTING_INSTRUCTION_HEADINGS = [
 ];
 
 module.exports = {
-  AI_REVIEW_AGAIN_LABEL,
-  AI_REVIEWER_LOGINS,
   AUTOMATED_REVIEWER_LOGINS,
   CHECKS_REQUIRED_WHEN_REPORTED,
-  COPILOT_REVIEWER_LOGIN,
   DEADLINE_DAYS,
   GATE_BOT_LOGIN,
   GATE_EXEMPT_LABEL,
