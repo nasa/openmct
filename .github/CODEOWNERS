@@ -21,6 +21,10 @@
 # file itself.
 /.github/ @nasa/openmct-web
 
+# AI code review. This decides what CodeRabbit checks on every pull request, and
+# what it will approve.
+/.coderabbit.yaml @nasa/openmct-web
+
 # Dependencies and the package registry. Install scripts run on every machine that
 # installs Open MCT, and on every CI run.
 /package.json @nasa/openmct-web
