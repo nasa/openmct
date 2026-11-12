@@ -147,8 +147,9 @@ test('the AI reviewer talking to itself is not a reply', () => {
 });
 
 test('a CodeQL security finding also needs an explanation', () => {
+  // As the GraphQL API names it: without the "[bot]" suffix the REST API adds.
   const securityComment = {
-    author: { login: 'github-advanced-security[bot]' },
+    author: { login: 'github-advanced-security' },
     body: 'Incomplete URL sanitization.',
     url: 'https://example.test/3'
   };
