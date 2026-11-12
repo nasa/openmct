@@ -271,7 +271,7 @@ test('a CodeQL finding nobody has answered still holds a pull request back with 
     comments: {
       nodes: [
         {
-          author: { login: 'github-advanced-security[bot]' },
+          author: { login: 'github-advanced-security' },
           body: 'Incomplete sanitization.',
           url: 'https://example.test/c'
         }
