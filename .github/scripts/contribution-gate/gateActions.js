@@ -5,12 +5,7 @@
  * of API calls and a run's log reads as a list of what it changed.
  */
 
-const {
-  AI_REVIEWER_LOGINS,
-  COPILOT_REVIEWER_LOGIN,
-  REVIEWER_TEAM_SLUG,
-  STAGE_LABELS
-} = require('./config');
+const { REVIEWER_TEAM_SLUG, STAGE_LABELS } = require('./config');
 
 const RESOLVE_THREAD_MUTATION = `
   mutation resolveGateThread($threadId: ID!) {
@@ -113,39 +108,11 @@ class GateActions {
   }
 
   /**
-   * Asks Copilot for a code review. This is the step that costs money.
-   *
-   * @returns {Promise<boolean>} true only when Copilot really is on the review
-   * list afterwards. The API answers success to a request it silently drops, for
-   * instance when the account has no Copilot entitlement, so the outcome is read
-   * back rather than trusted.
-   */
-  async requestAiReview(pullNumber) {
-    this.log(`request an AI review on #${pullNumber}`);
-
-    const wasSent = await this.tryRequest(() =>
-      this.github.rest.pulls.requestReviewers({
-        owner: this.owner,
-        repo: this.repo,
-        pull_number: pullNumber,
-        reviewers: [COPILOT_REVIEWER_LOGIN]
-      })
-    );
-
-    if (wasSent === false) {
-      return false;
-    }
-
-    return this.confirmReviewer(pullNumber, 'the AI reviewer', (requested) =>
-      requested.users.some((user) => AI_REVIEWER_LOGINS.includes(user.login.toLowerCase()))
-    );
-  }
-
-  /**
    * The one moment the gate asks for human attention.
    *
    * @returns {Promise<boolean>} true only when the team really is on the review
-   * list afterwards; see requestAiReview for why the answer is read back.
+   * list afterwards. The API answers success to a request it silently drops, so
+   * the outcome is read back rather than trusted.
    */
   async requestTeamReview(pullNumber) {
     this.log(`request review from @${this.owner}/${REVIEWER_TEAM_SLUG} on #${pullNumber}`);

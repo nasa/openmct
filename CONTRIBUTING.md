@@ -107,10 +107,11 @@ A candidate pull request moves through these stages, and can move back if someth
    `pr:daveit` label.
 2. __The automated checks__: lint, unit tests, end-to-end tests and the visual and accessibility
    tests must pass, as must CodeQL where it runs.
-3. __The automated reviews__. CodeQL comments on its own if it finds a security problem. Reply to
-   each comment saying how you addressed it (for example "fixed in abc1234") or why you disagree. The
-   bot resolves each thread once you have replied; resolving one without a reply is not enough,
-   because the reply is what a human reviewer reads first.
+3. __The automated reviews__. CodeRabbit reviews every pull request, and CodeQL comments on its own
+   if it finds a security problem. Reply to each of their comments saying how you addressed it (for
+   example "fixed in abc1234") or why you disagree. The bot resolves each thread once you have
+   replied; resolving one without a reply is not enough, because the reply is what a human reviewer
+   reads first.
 4. __Team review__: only now are the maintainers asked to look, and one approval merges it.
 
 Testing instructions belong on the issue. If you did not open that issue and cannot edit it, comment

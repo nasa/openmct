@@ -1,8 +1,8 @@
 /**
  * Works out which of the automated reviewers' comments the author has answered.
  *
- * Two reviewers comment without being asked by a person: Copilot, which the gate
- * requests, and CodeQL, which posts its own security findings. Our rule is that
+ * Two reviewers comment without being asked by a person: CodeRabbit, which reviews
+ * every pull request, and CodeQL, which posts its own security findings. Our rule is that
  * every comment from either gets a reply, saying how it was addressed or why the
  * author disagrees. Resolving a thread by clicking, with no reply, leaves nothing
  * for a human reviewer to read, so it does not count.

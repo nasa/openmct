@@ -6,19 +6,13 @@
  * request opened from a fork.
  */
 
-const {
-  AI_REVIEWER_LOGINS,
-  CHECKS_REQUIRED_WHEN_REPORTED,
-  GATE_BOT_LOGIN,
-  REQUIRED_CHECK_NAMES
-} = require('./config');
+const { CHECKS_REQUIRED_WHEN_REPORTED, GATE_BOT_LOGIN, REQUIRED_CHECK_NAMES } = require('./config');
 const { MARKER_PREFIX } = require('./stateMarker');
 
 const MAXIMUM_LINKED_ISSUES = 10;
 const MAXIMUM_ISSUE_COMMENTS = 100;
 const MAXIMUM_REVIEW_THREADS = 100;
 const MAXIMUM_THREAD_COMMENTS = 50;
-const MAXIMUM_REVIEWS = 100;
 const THREAD_SUMMARY_LENGTH = 120;
 
 const PULL_REQUEST_QUERY = `
@@ -45,7 +39,6 @@ const PULL_REQUEST_QUERY = `
             comments(first: ${MAXIMUM_ISSUE_COMMENTS}) { nodes { body author { login } } }
           }
         }
-        reviews(first: ${MAXIMUM_REVIEWS}) { nodes { author { login } } }
         reviewThreads(first: ${MAXIMUM_REVIEW_THREADS}) {
           nodes {
             id
@@ -105,7 +98,6 @@ async function fetchPullRequestContext(reader, pullNumber) {
     changedFiles: head.changedFiles,
     linkedIssues: pullRequest.closingIssuesReferences.nodes.map(toLinkedIssue),
     reviewThreads: pullRequest.reviewThreads.nodes.map(toReviewThread),
-    hasAiReview: pullRequest.reviews.nodes.some(isAiReviewer),
     checkConclusions: await fetchCheckConclusions(reader, head.sha)
   };
 }
@@ -345,19 +337,6 @@ function summarize(comment) {
   }
 
   return `${firstLine.slice(0, THREAD_SUMMARY_LENGTH)}…`;
-}
-
-/**
- * Only Copilot counts here. CodeQL also submits reviews, and treating one of
- * those as the AI review would send a pull request on to a human before the
- * review we paid for had arrived.
- */
-function isAiReviewer(review) {
-  if (review.author === null) {
-    return false;
-  }
-
-  return AI_REVIEWER_LOGINS.includes(review.author.login.toLowerCase());
 }
 
 function readAuthorLogin(pullRequest) {
