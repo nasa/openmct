@@ -1,0 +1,64 @@
+name: Fork CI Approval
+
+# GitHub holds every workflow run from a fork until a maintainer approves it. This
+# approves those runs automatically, unless the pull request changes a file listed
+# in .github/CODEOWNERS: workflows, dependencies, and build, lint and test
+# configuration. Those wait for a maintainer, and the pull request gets a comment
+# saying which files and why. Anything this cannot check, it leaves held.
+#
+# It relies on the repository setting that requires approval for all outside
+# contributors. Relax that setting and GitHub runs fork CI before this sees it.
+#
+# pull_request_target runs master's copy of this workflow, never the pull
+# request's, so a pull request cannot change how it is judged. It reads the pull
+# request only through the API. Never add a checkout of the pull request's head:
+# this workflow holds a token that can approve CI runs.
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  # A backstop for runs GitHub had not created yet when the event above fired.
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: 'Pull request number to check. Leave blank to check every held fork pull request.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  # To approve held workflow runs.
+  actions: write
+  # To comment on a pull request whose CI is held.
+  pull-requests: write
+
+concurrency:
+  group: fork-ci-approval-${{ github.event.pull_request.number || github.event.inputs.pull_request || 'sweep' }}
+  cancel-in-progress: false
+
+jobs:
+  approve:
+    name: approve
+    # Pull requests from branches in this repository are never held.
+    if: >-
+      github.event_name != 'pull_request_target' ||
+      github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      # Checks out master, for this script and for CODEOWNERS. Never the pull request.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: .github
+
+      - name: Approve held runs that change nothing sensitive
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { run } = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/fork-ci-approval/approveForkRuns.js`);
+            await run({ github, context, core });
