@@ -4,15 +4,19 @@
  * Everything an open source contribution goes through before a maintainer is
  * asked to spend time on it:
  *
- *   1-4. the contribution rules, with feedback and a deadline
- *   5.   the automated checks, then one AI code review
- *   6.   every AI comment answered, then the team is asked to review
+ *   1-4. the contribution rules, CodeRabbit's pre-merge checks among them, with
+ *        feedback and a deadline
+ *   5.   the automated checks
+ *   6.   every automated review comment answered and CodeRabbit's approval, then
+ *        the team is asked to review
+ *
+ * CodeRabbit and CodeQL review on their own, so the gate never requests them.
+ * Branch protection requires two approvals: CodeRabbit's and a maintainer's.
  *
  * A contribution only ever moves as far as it has earned, and can move back.
  */
 
 const {
-  AI_REVIEW_AGAIN_LABEL,
   GATE_EXEMPT_LABEL,
   MAXIMUM_INTAKE_PER_SWEEP,
   MILESTONE_CHECK_NAME,
@@ -55,11 +59,12 @@ const { TRIGGER_KINDS, findTrigger } = require('./trigger');
 
 const OPEN_STATE = 'OPEN';
 const DRAFT_WAITING_NOTE =
-  'This is a draft, so the AI review has not been requested yet. Mark it ready for review when you would like that to happen.';
+  'This is a draft, so it has not been reviewed yet. Mark it ready for review when you would like that to happen.';
+const APPROVED = 'APPROVED';
+const AI_APPROVAL_WAITING_NOTE =
+  'Waiting for CodeRabbit to approve. It does so once its pre-merge checks pass and its review threads are resolved, and checks again each time you push.';
 const CLOSED_NOTE =
   'This is closed because the points above were not addressed in time. Fix them, push any commits you need, then comment `/recheck` and it reopens automatically.';
-const AI_REVIEW_REQUESTED_NOTE =
-  'An AI code review has been requested. Its comments usually arrive within a few minutes.';
 
 /** Entry point called by the workflow. */
 async function run({ github, context, core }) {
@@ -73,14 +78,11 @@ async function run({ github, context, core }) {
 
 function createEvaluator({ github, context, core }) {
   const { owner, repo } = context.repo;
-  const aiReviewEnabled = process.env.GATE_AI_REVIEW === 'true';
 
   core.info(describeScope());
-  core.info(`The AI review stage is ${aiReviewEnabled ? 'on' : 'off'}.`);
 
   return {
     core,
-    aiReviewEnabled,
     now: new Date(),
     reader: { github, owner, repo },
     gate: new GateActions({ github, core, owner, repo })
@@ -329,7 +331,7 @@ async function advanceCompliantPullRequest(report) {
  * actions each step needs on the way.
  */
 async function findProgress(report, state) {
-  const { contribution, evaluator } = report;
+  const { contribution } = report;
 
   if (contribution.isDraft === true) {
     return atStage(STAGE_LABELS.awaitingCi, state, { waitingNote: DRAFT_WAITING_NOTE });
@@ -343,43 +345,13 @@ async function findProgress(report, state) {
     });
   }
 
-  if (evaluator.aiReviewEnabled === true) {
-    const aiReviewProgress = await awaitAiReview(report, state);
-
-    if (aiReviewProgress !== undefined) {
-      return aiReviewProgress;
-    }
-  }
-
   return finishAutomatedReviews(report, state);
 }
 
 /**
- * @returns {Promise<object|undefined>} where the pull request has got while
- * waiting for the AI review, or undefined when there is nothing left to wait for.
- * It also gives up waiting when the review could not be requested, so a request
- * the API silently dropped cannot leave a pull request waiting for ever.
- */
-async function awaitAiReview(report, state) {
-  const { contribution, evaluator } = report;
-
-  if (needsAiReviewRequest(contribution, state)) {
-    return requestAiReview(evaluator, contribution, state);
-  }
-
-  if (contribution.hasAiReview === false) {
-    return atStage(STAGE_LABELS.automatedReview, state, {
-      waitingNote: AI_REVIEW_REQUESTED_NOTE,
-      checksPassed: true
-    });
-  }
-
-  return undefined;
-}
-
-/**
- * Every automated reviewer's comments, from CodeQL and from the AI reviewer when
- * it is switched on, need an answer before a person is asked to look.
+ * Every automated reviewer's comments, from CodeRabbit and CodeQL, need an
+ * answer before a person is asked to look, and CodeRabbit must have approved,
+ * because its approval is one of the two a pull request needs to merge.
  */
 async function finishAutomatedReviews(report, state) {
   const { contribution, evaluator } = report;
@@ -395,30 +367,14 @@ async function finishAutomatedReviews(report, state) {
     });
   }
 
-  return requestTeamReview(evaluator, contribution, state);
-}
-
-async function requestAiReview(evaluator, contribution, state) {
-  const wasRequested = await evaluator.gate.requestAiReview(contribution.number);
-
-  if (wasRequested === false) {
-    evaluator.core.warning(
-      `The AI review could not be requested on #${contribution.number}, so it is skipped.`
-    );
-
-    return undefined;
+  if (contribution.aiReviewState !== APPROVED) {
+    return atStage(STAGE_LABELS.automatedReview, state, {
+      waitingNote: AI_APPROVAL_WAITING_NOTE,
+      checksPassed: true
+    });
   }
 
-  await evaluator.gate.removeLabel(contribution.number, AI_REVIEW_AGAIN_LABEL);
-
-  return atStage(
-    STAGE_LABELS.automatedReview,
-    { ...state, aiReviewRequestedSha: contribution.headSha },
-    {
-      waitingNote: AI_REVIEW_REQUESTED_NOTE,
-      checksPassed: true
-    }
-  );
+  return requestTeamReview(evaluator, contribution, state);
 }
 
 async function requestTeamReview(evaluator, contribution, state) {
@@ -474,14 +430,6 @@ function atStage(stage, state, progress = {}) {
       teamReview: progress.teamReviewRequested === true
     }
   };
-}
-
-function needsAiReviewRequest(contribution, state) {
-  if (contribution.labels.includes(AI_REVIEW_AGAIN_LABEL)) {
-    return true;
-  }
-
-  return state.aiReviewRequestedSha === undefined;
 }
 
 /**

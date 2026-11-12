@@ -1,6 +1,6 @@
 /**
- * Reads the state of the automated checks the gate waits for before it spends
- * money on an AI review.
+ * Reads the state of the automated checks the gate waits for before it asks the
+ * team to review.
  */
 
 const { CHECKS_REQUIRED_WHEN_REPORTED, REQUIRED_CHECK_NAMES } = require('./config');

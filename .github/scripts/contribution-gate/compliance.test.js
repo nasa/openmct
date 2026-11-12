@@ -10,7 +10,6 @@ const assert = require('node:assert/strict');
 const { findIssueFailures, hasTestingInstructions } = require('./issueCompliance');
 const { findPullRequestFailures } = require('./prCompliance');
 const { hasFilledSection, parseSections } = require('./markdownSections');
-const { matchesAnyPattern } = require('./globMatch');
 
 const COMPLIANT_PULL_REQUEST_BODY = `
 Closes #4321
@@ -124,25 +123,10 @@ test('an empty testing instructions comment does not count', () => {
 test('a complete pull request has nothing to report', () => {
   const pullRequest = {
     body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: [],
-    changedFiles: ['src/plugins/plot/Plot.js', 'e2e/tests/plot.e2e.spec.js']
+    labels: []
   };
 
   assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
-});
-
-test('an empty description is reported', () => {
-  const pullRequest = {
-    body: '### Describe your changes:\n\n<!--- tell us what you did -->\n\n### Author Checklist\n\n* [x] Done\n',
-    labels: [],
-    changedFiles: ['src/a.js', 'src/aSpec.js']
-  };
-  const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
-
-  assert.deepEqual(
-    failures.map((failure) => failure.id),
-    ['pr-description']
-  );
 });
 
 test('unticked checklist items are quoted back to the author', () => {
@@ -151,8 +135,7 @@ test('unticked checklist items are quoted back to the author', () => {
       '* [x] Changes address the original issue',
       '* [ ] Changes address the original issue'
     ),
-    labels: [],
-    changedFiles: ['src/a.js', 'src/aSpec.js']
+    labels: []
   };
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
@@ -166,8 +149,7 @@ test('unticked checklist items are quoted back to the author', () => {
 test('a missing checklist is reported on its own', () => {
   const pullRequest = {
     body: '### Describe your changes:\n\nA change.\n',
-    labels: [],
-    changedFiles: ['src/a.js', 'src/aSpec.js']
+    labels: []
   };
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
@@ -180,8 +162,7 @@ test('a missing checklist is reported on its own', () => {
 test('a pull request with no linked issue is told how to link one', () => {
   const pullRequest = {
     body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: [],
-    changedFiles: ['src/a.js', 'src/aSpec.js']
+    labels: []
   };
   const failures = findPullRequestFailures(pullRequest, []);
 
@@ -196,8 +177,7 @@ test('problems with the linked issue are reported against the issue', () => {
   const incompleteIssue = { ...COMPLIANT_ISSUE, body: '### Summary\n\nPlots drift.\n' };
   const pullRequest = {
     body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: [],
-    changedFiles: ['src/a.js', 'src/aSpec.js']
+    labels: []
   };
   const failures = findPullRequestFailures(pullRequest, [incompleteIssue]);
 
@@ -206,50 +186,50 @@ test('problems with the linked issue are reported against the issue', () => {
   assert.match(failures.at(-1).fix, /comment on it with a `### Testing Instructions` heading/);
 });
 
-test('a pull request with no test is told what to add', () => {
+test('the exemption label takes a pull request out of the gate entirely', () => {
+  const pullRequest = { body: '', labels: ['pr:daveit'] };
+
+  assert.deepEqual(findPullRequestFailures(pullRequest, []), []);
+});
+
+test('CodeRabbit requesting changes is a rule the pull request fails', () => {
   const pullRequest = {
     body: COMPLIANT_PULL_REQUEST_BODY,
     labels: [],
-    changedFiles: ['src/plugins/plot/Plot.js']
+    state: 'OPEN',
+    aiReviewState: 'CHANGES_REQUESTED'
   };
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
   assert.deepEqual(
     failures.map((failure) => failure.id),
-    ['pr-automated-tests']
+    ['pr-ai-review']
   );
+  assert.match(failures[0].fix, /CodeRabbit's comment/);
 });
 
-test('documentation-only changes do not need a test', () => {
+test('a CodeRabbit verdict not yet given, or an approval, is no failure', () => {
+  for (const aiReviewState of [undefined, 'APPROVED']) {
+    const pullRequest = {
+      body: COMPLIANT_PULL_REQUEST_BODY,
+      labels: [],
+      state: 'OPEN',
+      aiReviewState
+    };
+
+    assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
+  }
+});
+
+test("on a closed pull request, CodeRabbit's last verdict does not count, because it reviews again on reopening", () => {
   const pullRequest = {
     body: COMPLIANT_PULL_REQUEST_BODY,
     labels: [],
-    changedFiles: ['README.md', '.github/workflows/pr.yml']
+    state: 'CLOSED',
+    aiReviewState: 'CHANGES_REQUESTED'
   };
 
   assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
-});
-
-test('the exemption label takes a pull request out of the gate entirely', () => {
-  const pullRequest = { body: '', labels: ['pr:daveit'], changedFiles: ['package.json'] };
-
-  assert.deepEqual(findPullRequestFailures(pullRequest, []), []);
-});
-
-test('glob matching spans directories only where asked', () => {
-  assert.equal(matchesAnyPattern('src/plugins/plot/PlotSpec.js', ['**/*Spec.js']), true);
-  assert.equal(matchesAnyPattern('PlotSpec.js', ['**/*Spec.js']), true);
-  assert.equal(
-    matchesAnyPattern('e2e/tests/functional/plot.e2e.spec.js', ['e2e/**/*.spec.js']),
-    true
-  );
-  assert.equal(
-    matchesAnyPattern('src/deep/thing.json', ['*.json']),
-    false,
-    '*.json is the repository root only'
-  );
-  assert.equal(matchesAnyPattern('package.json', ['*.json']), true);
-  assert.equal(matchesAnyPattern('.github/workflows/pr.yml', ['.github/**']), true);
 });
 
 // The templates in use today. The gate runs alongside them during its pilot, and
@@ -310,7 +290,7 @@ test('the current pull request template never asks for the type label or milesto
       (match, checklist, next) =>
         checklist.replace(/\* \[ \] (?!.*(milestone|`type:` label))/g, '* [x] ') + next
     );
-  const pullRequest = { body, labels: [], changedFiles: ['src/a.js', 'src/aSpec.js'] };
+  const pullRequest = { body, labels: [] };
 
   assert.match(
     body,

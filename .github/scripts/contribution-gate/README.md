@@ -21,24 +21,31 @@ pass, and every automated review comment has been answered.
 | `fetchContext.js` | Reads contributions through the API. Metadata only; it never checks out contributed code. |
 | `gateActions.js` | Every write the gate makes, each one logged, so a run's log lists what it changed. |
 | `prCompliance.js`, `issueCompliance.js` | The rules, as pure functions returning what is missing. |
-| `markdownSections.js`, `globMatch.js` | Reading issue and pull request sections, and matching file paths. |
-| `reviewThreads.js`, `checkStatus.js` | Which automated-reviewer comments are answered, and whether CI has passed. |
+| `markdownSections.js` | Reading issue and pull request sections. |
+| `reviewThreads.js`, `reviewerLogins.js`, `checkStatus.js` | Which automated-reviewer comments are answered, who the automated reviewers are, and whether CI has passed. |
 | `deadlines.js` | The clock: when a contribution runs out of time, and who is exempt. |
 | `feedbackComment.js`, `stateMarker.js` | The single sticky comment, and the state hidden inside it. |
 
 State lives in that sticky comment, in an HTML comment marker, so the gate needs no database. The
 `gate:*` labels show the current stage.
 
-Two reviewers comment without a person asking, and the gate treats them differently:
+Two reviewers comment without a person asking. The gate requests neither, but a contributor must
+reply to every comment from either before the team is asked to look:
 
-- __The AI reviewer__ (Copilot, in the code today) is **switched off**. See "The AI review stage"
-  below. When it is on, only its review satisfies the wait at stage 5, which is why
-  `AI_REVIEWER_LOGINS` is a narrower list than `AUTOMATED_REVIEWER_LOGINS`.
-- __CodeQL__ (`github-advanced-security[bot]`) posts its own security findings. The gate never requests
-  it, but a contributor must still reply to each finding, and its `Analyze` check must pass whenever it
-  runs. CodeQL skips pull requests that only touch specs, documentation or configuration, so it is in
-  `CHECKS_REQUIRED_WHEN_REPORTED` rather than `REQUIRED_CHECK_NAMES`: a check that never reports would
-  otherwise leave those pull requests waiting forever.
+- __CodeRabbit__ (`coderabbitai[bot]`) reviews every pull request into `master`, configured by
+  [.coderabbit.yaml](../../../.coderabbit.yaml). Its pre-merge checks are the rules that need
+  judgement: that the description explains why and how the change was verified, that a test covers
+  it, and that a bug fix adds no features. Their results appear only in CodeRabbit's comment, and its
+  "CodeRabbit" status check succeeds whatever they say, so the gate reads its **review** instead.
+  With `auto_approvals` on, CodeRabbit requests changes when a check in `error` mode fails, which the
+  gate treats as a broken rule, deadline and all; and approves once they pass and its threads are
+  resolved, which is the last thing the gate waits for before asking the team. A failing `warning`
+  check does not stop it approving, so any check that must hold a pull request back has to be in
+  `error` mode.
+- __CodeQL__ (`github-advanced-security[bot]`) posts its own security findings, and its `Analyze` check
+  must pass whenever it runs. CodeQL skips pull requests that only touch specs, documentation or
+  configuration, so it is in `CHECKS_REQUIRED_WHEN_REPORTED` rather than `REQUIRED_CHECK_NAMES`: a
+  check that never reports would otherwise leave those pull requests waiting forever.
 
 Two workflows drive it:
 
@@ -85,29 +92,17 @@ gate takes is logged as a line starting `Gate:`.
 
 To try the process on an issue as well as a pull request, label the issue.
 
-## The AI review stage
-
-It is **off**. The gate goes from "checks pass" straight to asking the team, after any CodeQL finding
-has been answered. Set the repository variable `CONTRIBUTION_GATE_AI_REVIEW` to `true` to turn it on,
-but only once an AI reviewer really works, because the stage as written is for Copilot and Copilot has
-three traps:
-
-- **The API silently drops a review request it will not honour.** It returns success and records
-  nothing, for instance when the account has no Copilot entitlement. The gate therefore reads every
-  request back, and skips the stage rather than waiting for a review nobody asked for.
-- **The identity you request is not the identity the review is posted under.** The request is for
-  `Copilot` (`COPILOT_REVIEWER_LOGIN`); the review arrives as `copilot-pull-request-reviewer[bot]`.
-- **A review requested with `GITHUB_TOKEN` is billed to, and needs the entitlement of, a bot with no
-  seat.** Expect it to be dropped, and plan for a token that belongs to a licensed account.
-
-To use a different AI reviewer, add its bot login to `AI_REVIEWER_LOGINS` and replace
-`requestAiReview` in `gateActions.js`. The repository rule set "Copilot review for default branch"
-also requests Copilot on its own; remove it before turning this stage on, or reviews are paid for
-twice.
-
 ## Branch protection
 
-Branch protection on `master` requires a status check named `Check Milestone`, which PR Cop produces.
+Branch protection on `master` requires **two approvals**: CodeRabbit's and a maintainer's. GitHub
+counts CodeRabbit's approval like a person's, which was tested on a branch with a one-approval rule.
+Every pull request needs CodeRabbit's, not only those in the pilot. When one of its checks is wrong, a
+maintainer who has been requested as a reviewer can tell it to ignore the failure with
+`@coderabbitai ignore pre-merge checks` (`override_requested_reviewers_only` stops the author doing
+so). Whether CodeRabbit then approves has not been tested; two maintainers' approvals merge a pull
+request either way.
+
+Branch protection also requires a status check named `Check Milestone`, which PR Cop produces.
 The gate publishes it too, on the pull requests it covers (`MILESTONE_CHECK_NAME`): passing when the
 pull request has a milestone or the `no milestone` label, which the gate adds once the contribution
 rules are met. It has to publish it itself, because a label added with `GITHUB_TOKEN` does not start new
@@ -121,7 +116,8 @@ their own names so that a failing shard cannot hide behind a passing one.
 
 ## Before the pilot
 
-1. Create the `new-workflow-candidate` label.
+1. Create the `new-workflow-candidate` label, and require two approvals on `master`, just before this
+   merges: with one, CodeRabbit's approval alone would let a pull request merge.
 2. Check the token can request the team named in `REVIEWER_TEAM_SLUG` (`openmct-web`). The gate reads
    the request back and, if the team is not on the pull request afterwards, posts a comment mentioning
    the team instead, so a person is told either way.

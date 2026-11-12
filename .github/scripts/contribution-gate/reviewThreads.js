@@ -1,22 +1,14 @@
 /**
  * Works out which of the automated reviewers' comments the author has answered.
  *
- * Two reviewers comment without being asked by a person: Copilot, which the gate
- * requests, and CodeQL, which posts its own security findings. Our rule is that
+ * Two reviewers comment without being asked by a person: CodeRabbit, which reviews
+ * every pull request, and CodeQL, which posts its own security findings. Our rule is that
  * every comment from either gets a reply, saying how it was addressed or why the
  * author disagrees. Resolving a thread by clicking, with no reply, leaves nothing
  * for a human reviewer to read, so it does not count.
  */
 
-const { AUTOMATED_REVIEWER_LOGINS } = require('./config');
-
-/**
- * The GraphQL API, which the threads come from, names a bot without the "[bot]"
- * suffix the REST API adds: CodeQL is "github-advanced-security" there. Logins
- * are compared without it, so the configured names work in either form.
- */
-const BOT_SUFFIX = /\[bot\]$/;
-const AUTOMATED_REVIEWERS = AUTOMATED_REVIEWER_LOGINS.map(normalizeLogin);
+const { isAutomatedReviewerLogin } = require('./reviewerLogins');
 
 function findAutomatedReviewThreads(reviewThreads) {
   return reviewThreads.filter(isStartedByAutomatedReviewer);
@@ -35,7 +27,7 @@ function findRepliedOpenThreads(reviewThreads) {
 }
 
 function isFromAutomatedReviewer(comment) {
-  return AUTOMATED_REVIEWERS.includes(normalizeLogin(readLogin(comment)));
+  return isAutomatedReviewerLogin(readLogin(comment));
 }
 
 function isStartedByAutomatedReviewer(thread) {
@@ -60,10 +52,6 @@ function readLogin(comment) {
   }
 
   return comment.author.login;
-}
-
-function normalizeLogin(login) {
-  return login.toLowerCase().replace(BOT_SUFFIX, '');
 }
 
 module.exports = { findAutomatedReviewThreads, findRepliedOpenThreads, findThreadsAwaitingReply };

@@ -6,19 +6,15 @@
  * request opened from a fork.
  */
 
-const {
-  AI_REVIEWER_LOGINS,
-  CHECKS_REQUIRED_WHEN_REPORTED,
-  GATE_BOT_LOGIN,
-  REQUIRED_CHECK_NAMES
-} = require('./config');
+const { CHECKS_REQUIRED_WHEN_REPORTED, GATE_BOT_LOGIN, REQUIRED_CHECK_NAMES } = require('./config');
+const { isAiReviewerLogin } = require('./reviewerLogins');
 const { MARKER_PREFIX } = require('./stateMarker');
 
 const MAXIMUM_LINKED_ISSUES = 10;
 const MAXIMUM_ISSUE_COMMENTS = 100;
 const MAXIMUM_REVIEW_THREADS = 100;
 const MAXIMUM_THREAD_COMMENTS = 50;
-const MAXIMUM_REVIEWS = 100;
+const MAXIMUM_REVIEWERS = 20;
 const THREAD_SUMMARY_LENGTH = 120;
 
 const PULL_REQUEST_QUERY = `
@@ -31,9 +27,6 @@ const PULL_REQUEST_QUERY = `
         state
         authorAssociation
         headRefOid
-        headRefName
-        baseRefName
-        headRepositoryOwner { login }
         author { login }
         milestone { number }
         labels(first: 50) { nodes { name } }
@@ -45,7 +38,9 @@ const PULL_REQUEST_QUERY = `
             comments(first: ${MAXIMUM_ISSUE_COMMENTS}) { nodes { body author { login } } }
           }
         }
-        reviews(first: ${MAXIMUM_REVIEWS}) { nodes { author { login } } }
+        latestOpinionatedReviews(first: ${MAXIMUM_REVIEWERS}) {
+          nodes { state author { login } }
+        }
         reviewThreads(first: ${MAXIMUM_REVIEW_THREADS}) {
           nodes {
             id
@@ -89,7 +84,6 @@ async function fetchPullRequestContext(reader, pullNumber) {
     number: pullNumber
   });
   const pullRequest = response.repository.pullRequest;
-  const head = await fetchHead(reader, pullRequest);
 
   return {
     isPullRequest: true,
@@ -97,60 +91,29 @@ async function fetchPullRequestContext(reader, pullNumber) {
     body: pullRequest.body ?? '',
     isDraft: pullRequest.isDraft,
     state: pullRequest.state,
-    headSha: head.sha,
+    headSha: pullRequest.headRefOid,
     authorLogin: readAuthorLogin(pullRequest),
     authorAssociation: pullRequest.authorAssociation,
     hasMilestone: pullRequest.milestone !== null,
     labels: readNames(pullRequest.labels),
-    changedFiles: head.changedFiles,
     linkedIssues: pullRequest.closingIssuesReferences.nodes.map(toLinkedIssue),
+    aiReviewState: readAiReviewState(pullRequest.latestOpinionatedReviews.nodes),
     reviewThreads: pullRequest.reviewThreads.nodes.map(toReviewThread),
-    hasAiReview: pullRequest.reviews.nodes.some(isAiReviewer),
-    checkConclusions: await fetchCheckConclusions(reader, head.sha)
+    checkConclusions: await fetchCheckConclusions(reader, pullRequest.headRefOid)
   };
 }
 
 /**
- * The commit and files to judge a pull request by.
- *
- * GitHub freezes a closed pull request at the commit it was closed on: commits
- * pushed afterwards only join it once it reopens. Judging a closed pull request
- * by that frozen state would deadlock it, because a fix that needs a commit, such
- * as adding a test, could never count towards reopening it. So a closed pull
- * request is judged by the tip of its branch instead.
+ * @returns {'APPROVED'|'CHANGES_REQUESTED'|undefined} CodeRabbit's latest
+ * verdict. It approves only when every pre-merge check in error mode passes,
+ * and requests changes when one fails. Undefined means it has given neither yet.
  */
-async function fetchHead(reader, pullRequest) {
-  if (pullRequest.state !== 'CLOSED') {
-    return {
-      sha: pullRequest.headRefOid,
-      changedFiles: await fetchChangedFiles(reader, pullRequest.number)
-    };
-  }
+function readAiReviewState(latestReviews) {
+  const aiReview = latestReviews.find(
+    (review) => review.author !== null && isAiReviewerLogin(review.author.login)
+  );
 
-  return fetchBranchTip(reader, pullRequest);
-}
-
-async function fetchBranchTip(reader, pullRequest) {
-  const headOwner = pullRequest.headRepositoryOwner?.login;
-
-  try {
-    const { data: comparison } = await reader.github.rest.repos.compareCommitsWithBasehead({
-      owner: reader.owner,
-      repo: reader.repo,
-      basehead: `${pullRequest.baseRefName}...${headOwner}:${pullRequest.headRefName}`
-    });
-
-    return {
-      sha: comparison.commits.at(-1)?.sha ?? pullRequest.headRefOid,
-      changedFiles: comparison.files.map((file) => file.filename)
-    };
-  } catch (error) {
-    // The branch has been deleted, so there is nothing newer than the frozen state.
-    return {
-      sha: pullRequest.headRefOid,
-      changedFiles: await fetchChangedFiles(reader, pullRequest.number)
-    };
-  }
+  return aiReview?.state;
 }
 
 async function fetchIssueContext(reader, issueNumber) {
@@ -258,17 +221,6 @@ async function fetchPullRequestsReferencingIssue(reader, issueNumber) {
   return deduplicateByNumber(referencedPullRequests);
 }
 
-async function fetchChangedFiles(reader, pullNumber) {
-  const files = await reader.github.paginate(reader.github.rest.pulls.listFiles, {
-    owner: reader.owner,
-    repo: reader.repo,
-    pull_number: pullNumber,
-    per_page: 100
-  });
-
-  return files.map((file) => file.filename);
-}
-
 async function fetchIssueComments(reader, issueNumber) {
   const comments = await reader.github.paginate(reader.github.rest.issues.listComments, {
     owner: reader.owner,
@@ -345,19 +297,6 @@ function summarize(comment) {
   }
 
   return `${firstLine.slice(0, THREAD_SUMMARY_LENGTH)}…`;
-}
-
-/**
- * Only Copilot counts here. CodeQL also submits reviews, and treating one of
- * those as the AI review would send a pull request on to a human before the
- * review we paid for had arrived.
- */
-function isAiReviewer(review) {
-  if (review.author === null) {
-    return false;
-  }
-
-  return AI_REVIEWER_LOGINS.includes(review.author.login.toLowerCase());
 }
 
 function readAuthorLogin(pullRequest) {

@@ -18,7 +18,7 @@ const NOT_YET = '⬜';
 const STAGE_ROWS = [
   { key: 'compliance', label: 'Contribution rules met' },
   { key: 'checks', label: 'Automated checks passing' },
-  { key: 'automatedReview', label: 'Automated review comments addressed' },
+  { key: 'automatedReview', label: 'Automated review comments answered, and CodeRabbit approved' },
   { key: 'teamReview', label: 'Team review requested' }
 ];
 
@@ -105,7 +105,7 @@ function renderThreadsAwaitingReply(threads) {
 
   return [
     '#### Automated review comments still needing a reply',
-    'These are from our automated reviewers: Copilot, and CodeQL where it found something. Please reply to each one saying how you addressed it (for example "fixed in abc1234") or why you disagree. A short reply is fine, and it is what a human reviewer reads first. There is no need to un-resolve anything.',
+    'These are from our automated reviewers: CodeRabbit, and CodeQL where it found something. Please reply to each one saying how you addressed it (for example "fixed in abc1234") or why you disagree. A short reply is fine, and it is what a human reviewer reads first. There is no need to un-resolve anything.',
     items.join('\n')
   ].join('\n\n');
 }

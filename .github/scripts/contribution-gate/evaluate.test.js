@@ -13,7 +13,8 @@ const { REQUIRED_CHECK_NAMES } = require('./config');
 
 const HEAD_SHA = 'abc1234';
 const GATE_BOT = { login: 'github-actions[bot]', type: 'Bot' };
-const AI_REVIEWER = { login: 'copilot-pull-request-reviewer[bot]' };
+// As the GraphQL API names it: without the "[bot]" suffix the REST API adds.
+const AI_REVIEWER = { login: 'coderabbitai' };
 const CONTRIBUTOR = { login: 'contributor' };
 
 const COMPLIANT_ISSUE = {
@@ -63,7 +64,7 @@ test('a non-compliant pull request is labelled and told what is missing', async 
   const comment = world.postedComments[0].body;
 
   assert.match(comment, /What is needed next/);
-  assert.match(comment, /Describe your changes/);
+  assert.match(comment, /Author Checklist/);
   assert.match(comment, /not linked to an issue/);
   assert.match(comment, /closed automatically/);
   assert.equal(world.requestedReviewers.length, 0, 'nothing is paid for before the rules are met');
@@ -96,28 +97,9 @@ test('a draft is not reviewed until it is ready', async () => {
   assert.equal(world.requestedReviewers.length, 0);
 });
 
-test('green checks buy exactly one AI review', async () => {
-  const world = createWorld({});
-
-  await runGate(world, { aiReview: true });
-
-  assert.deepEqual(world.requestedReviewers, [{ number: 7, reviewers: ['Copilot'] }]);
-  assert.match(world.postedComments[0].body, /AI code review has been requested/);
-  assert.equal(readStoredState(world).aiReviewRequestedSha, HEAD_SHA);
-});
-
-test('an AI review already paid for is not paid for twice', async () => {
-  const world = createWorld({ storedState: { aiReviewRequestedSha: HEAD_SHA } });
-
-  await runGate(world, { aiReview: true });
-
-  assert.deepEqual(world.requestedReviewers, [], 'the stored state records that we already asked');
-});
-
 test('an unanswered AI comment holds the pull request back', async () => {
   const world = createWorld({
-    storedState: { aiReviewRequestedSha: HEAD_SHA },
-    reviews: [{ author: AI_REVIEWER }],
+    storedState: {},
     reviewThreads: [aiThread({ id: 'thread-1', isResolved: true, replies: [] })]
   });
 
@@ -131,8 +113,7 @@ test('an unanswered AI comment holds the pull request back', async () => {
 
 test('replying is enough: the gate resolves the thread and asks the team', async () => {
   const world = createWorld({
-    storedState: { aiReviewRequestedSha: HEAD_SHA },
-    reviews: [{ author: AI_REVIEWER }],
+    storedState: {},
     reviewThreads: [
       aiThread({
         id: 'thread-1',
@@ -152,8 +133,7 @@ test('replying is enough: the gate resolves the thread and asks the team', async
 
 test('the team is asked only once', async () => {
   const world = createWorld({
-    storedState: { aiReviewRequestedSha: HEAD_SHA, teamReviewRequested: true },
-    reviews: [{ author: AI_REVIEWER }],
+    storedState: { teamReviewRequested: true },
     reviewThreads: [
       aiThread({
         id: 'thread-1',
@@ -248,7 +228,7 @@ test('an exempt pull request is left alone entirely', async () => {
   assert.deepEqual(world.postedComments, []);
 });
 
-test('with the AI review off, green checks go straight to the team', async () => {
+test('with green checks and no review comments to answer, the team is asked, and no one else', async () => {
   const world = createWorld({});
 
   await runGate(world);
@@ -256,13 +236,47 @@ test('with the AI review off, green checks go straight to the team', async () =>
   assert.deepEqual(
     world.requestedReviewers,
     [{ number: 7, team_reviewers: ['openmct-web'] }],
-    'nobody pays for an AI review'
+    'CodeRabbit and CodeQL review on their own, so the gate never requests them'
   );
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
-  assert.doesNotMatch(world.postedComments[0].body, /AI code review/);
 });
 
-test('a CodeQL finding nobody has answered still holds a pull request back with the AI review off', async () => {
+test('until CodeRabbit approves, the team is not asked', async () => {
+  const world = createWorld({ aiReviewState: null });
+
+  await runGate(world);
+
+  assert.deepEqual(world.requestedReviewers, []);
+  assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:automated-review' });
+  assert.match(world.postedComments[0].body, /Waiting for CodeRabbit to approve/);
+});
+
+test("CodeRabbit's failed checks start the clock like any other rule", async () => {
+  const world = createWorld({ aiReviewState: 'CHANGES_REQUESTED' });
+
+  await runGate(world);
+
+  assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:needs-compliance' });
+  assert.match(
+    world.postedComments[0].body,
+    /CodeRabbit's pre-merge checks found something to fix/
+  );
+  assert.notEqual(readStoredState(world).noncompliantSince, undefined);
+  assert.deepEqual(world.requestedReviewers, []);
+});
+
+test("an outside contributor who leaves CodeRabbit's checks failing is closed in time", async () => {
+  const world = createWorld({
+    aiReviewState: 'CHANGES_REQUESTED',
+    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.closed, [7]);
+});
+
+test('a CodeQL finding nobody has answered holds a pull request back', async () => {
   const codeqlThread = {
     id: 'codeql-1',
     isResolved: true,
@@ -301,23 +315,6 @@ test('a team request the API silently drops is replaced by a mention', async () 
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
 });
 
-test('an AI review the API silently drops does not strand the pull request', async () => {
-  const world = createWorld({ aiReviewerSilentlyDropped: true });
-
-  await runGate(world, { aiReview: true });
-
-  assert.equal(
-    readStoredState(world).aiReviewRequestedSha,
-    undefined,
-    'it is not recorded as requested'
-  );
-  assert.deepEqual(
-    world.addedLabels.at(-1),
-    { number: 7, label: 'gate:team-review' },
-    'it fails open to the team'
-  );
-});
-
 test('the milestone check passes once the rules are met, and not before', async () => {
   const compliant = createWorld({});
   const incomplete = createWorld({ body: '### Describe your changes:\n\n\n' });
@@ -339,26 +336,28 @@ test('a pull request with a milestone already set passes the milestone check eve
   assert.deepEqual(world.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
 });
 
-test('a closed pull request reopens on /recheck once a fix pushed after closing is on its branch', async () => {
+test('a closed pull request reopens on /recheck once its rules are met, whatever CodeRabbit last said', async () => {
   const world = createWorld({
     state: 'CLOSED',
     storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' },
-    changedFiles: ['src/plugins/plot/Plot.js'],
-    branchTipFiles: ['src/plugins/plot/Plot.js', 'src/plugins/plot/PlotSpec.js']
+    aiReviewState: 'CHANGES_REQUESTED'
   });
 
   await runGate(world, { recheck: true });
 
-  assert.deepEqual(world.reopened, [7], 'the test pushed after closing counts');
+  assert.deepEqual(
+    world.reopened,
+    [7],
+    'CodeRabbit does not review a closed pull request, so it looks again once reopened'
+  );
   assert.deepEqual(world.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
 });
 
 test('/recheck leaves a closed pull request closed while something is still missing, and says how to reopen it', async () => {
   const world = createWorld({
+    body: 'Closes #4321\n\n### Describe your changes:\n\nA change.\n',
     state: 'CLOSED',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' },
-    changedFiles: ['src/plugins/plot/Plot.js'],
-    branchTipFiles: ['src/plugins/plot/Plot.js']
+    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
   });
 
   await runGate(world, { recheck: true });
@@ -482,8 +481,6 @@ test('an @-mention in quoted text is shown as code, so it notifies nobody', asyn
 });
 
 function runGate(world, options = {}) {
-  process.env.GATE_AI_REVIEW = options.aiReview === true ? 'true' : 'false';
-
   return run({
     github: world.github,
     context: options.recheck === true ? recheckContext(world) : pullRequestContext(world),
@@ -526,7 +523,6 @@ function createWorld(scenario) {
     closed: [],
     reopened: [],
     publishedChecks: [],
-    usersOnReviewList: [],
     teamsOnReviewList: []
   };
   const stickyComments = buildStickyComments(scenario);
@@ -558,8 +554,6 @@ function createWorld(scenario) {
         }
       },
       pulls: {
-        // A closed pull request's files are frozen at the commit it was closed on.
-        listFiles: async () => buildFiles(scenario),
         list: async () => ({ data: [] }),
         requestReviewers: async ({ pull_number, reviewers, team_reviewers }) => {
           world.requestedReviewers.push(
@@ -567,26 +561,14 @@ function createWorld(scenario) {
           );
 
           // The real API returns success and silently drops what it will not accept.
-          if (reviewers !== undefined && scenario.aiReviewerSilentlyDropped !== true) {
-            world.usersOnReviewList = reviewers;
-          }
-
           if (team_reviewers !== undefined && scenario.teamSilentlyDropped !== true) {
             world.teamsOnReviewList = team_reviewers;
           }
         },
         listRequestedReviewers: async () => ({
           data: {
-            users: world.usersOnReviewList.map((login) => ({ login })),
+            users: [],
             teams: world.teamsOnReviewList.map((slug) => ({ slug }))
-          }
-        })
-      },
-      repos: {
-        compareCommitsWithBasehead: async () => ({
-          data: {
-            commits: [{ sha: 'branch-tip-sha' }],
-            files: (scenario.branchTipFiles ?? []).map((filename) => ({ filename }))
           }
         })
       },
@@ -630,18 +612,26 @@ function buildPullRequest(scenario, number) {
     body: scenario.body ?? COMPLIANT_BODY,
     isDraft: scenario.isDraft === true,
     state: scenario.state ?? 'OPEN',
-    headRefName: 'fix-branch',
-    baseRefName: 'master',
-    headRepositoryOwner: { login: 'contributor' },
     authorAssociation: scenario.authorAssociation ?? 'CONTRIBUTOR',
     headRefOid: HEAD_SHA,
     author: CONTRIBUTOR,
     milestone: scenario.hasMilestone === true ? { number: 81 } : null,
     labels: { nodes: readLabels(scenario).map((name) => ({ name })) },
     closingIssuesReferences: { nodes: readLinkedIssues(scenario) },
-    reviews: { nodes: scenario.reviews ?? [] },
+    latestOpinionatedReviews: { nodes: buildLatestReviews(scenario) },
     reviewThreads: { nodes: scenario.reviewThreads ?? [] }
   };
+}
+
+/** CodeRabbit has approved unless the scenario says otherwise; null means no verdict yet. */
+function buildLatestReviews(scenario) {
+  const aiReviewState = scenario.aiReviewState === undefined ? 'APPROVED' : scenario.aiReviewState;
+
+  if (aiReviewState === null) {
+    return [];
+  }
+
+  return [{ state: aiReviewState, author: AI_REVIEWER }];
 }
 
 /** Every scenario is a pilot candidate unless it says otherwise. */
@@ -685,15 +675,6 @@ function buildGateComment(scenario) {
   return [
     { id: 999, user: GATE_BOT, body: `Previous feedback.\n\n${renderMarker(scenario.storedState)}` }
   ];
-}
-
-function buildFiles(scenario) {
-  const filenames = scenario.changedFiles ?? [
-    'src/plugins/plot/Plot.js',
-    'e2e/tests/plot.e2e.spec.js'
-  ];
-
-  return filenames.map((filename) => ({ filename }));
 }
 
 function buildCheckRuns(scenario) {
