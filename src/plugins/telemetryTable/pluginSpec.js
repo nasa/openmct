@@ -276,21 +276,27 @@ describe('the plugin', () => {
       expect(rows.length).toBe(3);
     });
 
-    it('Adds a row in place when updating with existing telemetry', async () => {
+    it('Updates a row in place with the latest telemetry', async () => {
       let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
       await nextTick();
       expect(rows.length).toBe(3);
+      const existingRow = tableInstance.tableRows.rows[1];
+
       // fire some telemetry
       const newTelemetry = {
         utc: 2,
-        'some-key': 'some-value 2',
         'some-other-key': 'spacecraft'
       };
       spyOn(tableInstance.tableRows, 'getInPlaceUpdateIndex').and.returnValue(1);
       spyOn(tableInstance.tableRows, 'updateRowInPlace').and.callThrough();
       telemetryCallback(newTelemetry);
+      await nextTick();
 
       expect(tableInstance.tableRows.updateRowInPlace.calls.count()).toBeGreaterThan(0);
+      const updatedRow = tableInstance.tableRows.rows[1];
+      expect(updatedRow).not.toBe(existingRow);
+      expect(updatedRow.datum['some-key']).toBe('some-value 2');
+      expect(updatedRow.datum['some-other-key']).toBe('spacecraft');
     });
 
     it('Renders a column for every item in telemetry metadata', () => {
