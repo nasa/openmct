@@ -23,6 +23,12 @@ The workflow is `.github/workflows/fork-ci-approval.yml`.
 - **It holds when unsure.** No `CODEOWNERS`, a pull request too large for GitHub to list in full, or
   GitHub refusing an approval all leave the runs held, which is how GitHub treats every fork anyway.
 - **A rename counts at both ends**, so moving a workflow out of `.github/` is held too.
+- **Every pull request sharing the held runs is judged.** Runs belong to a commit, so two fork pull
+  requests whose branches point at the same commit share them. They are approved only if none of
+  those pull requests changes a listed file.
+- **The verdict is for the held commit.** GitHub lists a pull request's files for whatever its head
+  is when asked, so if a head moves while it is being checked, nothing is approved; the push that
+  moved it starts a fresh check.
 
 The approved runs are fork runs: GitHub gives them a read-only token and no secrets whatever their
 workflow files say. What a maintainer is protecting by looking at the held ones is what runs on the

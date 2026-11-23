@@ -96,11 +96,39 @@ test('the scheduled sweep only checks open pull requests whose latest commit is 
   await run({ github: world.github, context: sweepContext(), core: quietCore() });
 
   assert.deepEqual(
-    world.checkedPullRequests,
+    [...world.checkedPullRequests],
     [7],
     'not #8, whose held runs are for an older commit'
   );
   assert.deepEqual(world.approvedRunIds, [1, 2]);
+});
+
+test('runs shared with another pull request at the same commit wait if that one changes a sensitive file', async () => {
+  const world = createWorld({
+    changedFilesByPullRequest: { 7: ['src/a.js'], 12: ['.github/workflows/pr.yml'] },
+    openPullRequests: [
+      { number: 7, head: { sha: HEAD_SHA } },
+      { number: 12, head: { sha: HEAD_SHA } }
+    ]
+  });
+
+  await runFor(world);
+
+  assert.deepEqual(world.approvedRunIds, [], "#12's workflow change would run in them too");
+  assert.match(world.postedComments[0], /`\.github\/workflows\/pr\.yml`/);
+});
+
+test('nothing is approved if the pull request moves to a new commit while it is checked', async () => {
+  const world = createWorld({ changedFiles: ['src/a.js'], movesAfterFirstRead: 7 });
+
+  await runFor(world);
+
+  assert.deepEqual(
+    world.approvedRunIds,
+    [],
+    'the file list may describe the new commit, not the held one'
+  );
+  assert.deepEqual(world.postedComments, []);
 });
 
 function runFor(world) {
@@ -134,7 +162,7 @@ function createWorld(scenario) {
     approvedRunIds: [],
     postedComments: [],
     updatedComments: [],
-    checkedPullRequests: []
+    checkedPullRequests: new Set()
   };
   const heldRuns = scenario.heldRuns ?? [
     { id: 1, name: 'PR', conclusion: 'action_required', head_sha: HEAD_SHA },
@@ -147,13 +175,16 @@ function createWorld(scenario) {
         ...heldRuns,
         { id: 9, name: 'Old', conclusion: 'action_required', head_sha: 'stale' }
       ].filter((workflowRun) => head_sha === undefined || workflowRun.head_sha === head_sha),
-    listFiles: async () => scenario.changedFiles.map((filename) => ({ filename })),
+    listFiles: async ({ pull_number }) =>
+      readChangedFiles(scenario, pull_number).map((filename) => ({ filename })),
     listComments: async () => scenario.existingComments ?? [],
-    list: async () => [
-      { number: 7, head: { sha: HEAD_SHA } },
-      { number: 8, head: { sha: 'newer-than-its-held-runs' } }
-    ]
+    list: async () =>
+      scenario.openPullRequests ?? [
+        { number: 7, head: { sha: HEAD_SHA } },
+        { number: 8, head: { sha: 'newer-than-its-held-runs' } }
+      ]
   };
+  const timesRead = new Map();
 
   world.github = {
     paginate: async (endpoint, parameters) => endpoint(parameters),
@@ -168,9 +199,12 @@ function createWorld(scenario) {
       actions: { listWorkflowRunsForRepo: endpoints.listWorkflowRunsForRepo },
       pulls: {
         get: async ({ pull_number }) => {
-          world.checkedPullRequests.push(pull_number);
+          const readCount = (timesRead.get(pull_number) ?? 0) + 1;
 
-          return { data: buildPullRequest(pull_number, scenario) };
+          timesRead.set(pull_number, readCount);
+          world.checkedPullRequests.add(pull_number);
+
+          return { data: buildPullRequest(pull_number, scenario, readCount) };
         },
         listFiles: endpoints.listFiles,
         list: endpoints.list
@@ -186,13 +220,20 @@ function createWorld(scenario) {
   return world;
 }
 
-function buildPullRequest(pullNumber, scenario) {
+/** A pull request can move to a new commit after it is first read. */
+function buildPullRequest(pullNumber, scenario, readCount) {
+  const hasMoved = scenario.movesAfterFirstRead === pullNumber && readCount > 1;
+
   return {
     number: pullNumber,
-    changed_files: scenario.changedFiles.length,
+    changed_files: readChangedFiles(scenario, pullNumber).length,
     head: {
-      sha: HEAD_SHA,
+      sha: hasMoved ? 'pushed-during-the-check' : HEAD_SHA,
       repo: { full_name: scenario.isFork === false ? 'nasa/openmct' : 'contributor/openmct' }
     }
   };
+}
+
+function readChangedFiles(scenario, pullNumber) {
+  return scenario.changedFilesByPullRequest?.[pullNumber] ?? scenario.changedFiles;
 }

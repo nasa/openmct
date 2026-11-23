@@ -75,15 +75,26 @@ async function checkPullRequest(approver, pullNumber) {
     return;
   }
 
-  const heldRuns = await findHeldRuns(approver, pullRequest.head.sha);
+  const headSha = pullRequest.head.sha;
+  const heldRuns = await findHeldRuns(approver, headSha);
 
   if (heldRuns.length === 0) {
-    approver.core.info(`#${pullNumber} has no held runs at ${pullRequest.head.sha.slice(0, 7)}.`);
+    approver.core.info(`#${pullNumber} has no held runs at ${headSha.slice(0, 7)}.`);
 
     return;
   }
 
-  const changes = await fetchChanges(approver, pullRequest);
+  const pullRequestsAtHead = await findPullRequestsAt(approver, pullRequest);
+  const changes = await fetchChangesOfAll(approver, pullRequestsAtHead);
+
+  if ((await isStillAt(approver, pullRequestsAtHead, headSha)) === false) {
+    approver.core.info(
+      `A pull request at ${headSha.slice(0, 7)} moved while it was being checked; the next check covers its new commit.`
+    );
+
+    return;
+  }
+
   const verdict = decideApproval(changes, approver.ownedPatterns);
 
   approver.core.info(`#${pullNumber}: ${verdict.decision}. ${verdict.reason}`);
@@ -156,6 +167,61 @@ async function fetchPullRequest(approver, pullNumber) {
 /** A fork that has since been deleted reports no repository; it is still a fork. */
 function isFromFork(approver, pullRequest) {
   return pullRequest.head.repo?.full_name !== `${approver.owner}/${approver.repo}`;
+}
+
+/**
+ * Held runs belong to a commit, not to a pull request: two fork pull requests
+ * whose branches point at the same commit share them. Approving the runs approves
+ * them for every such pull request, so every one of them is checked.
+ */
+async function findPullRequestsAt(approver, pullRequest) {
+  const openPullRequests = await approver.github.paginate(approver.github.rest.pulls.list, {
+    owner: approver.owner,
+    repo: approver.repo,
+    state: 'open',
+    per_page: 100
+  });
+  const others = openPullRequests.filter(
+    (other) => other.number !== pullRequest.number && other.head.sha === pullRequest.head.sha
+  );
+  const pullRequestsAtHead = [pullRequest];
+
+  for (const other of others) {
+    pullRequestsAtHead.push(await fetchPullRequest(approver, other.number));
+  }
+
+  return pullRequestsAtHead;
+}
+
+async function fetchChangesOfAll(approver, pullRequests) {
+  const allChanges = [];
+
+  for (const pullRequest of pullRequests) {
+    allChanges.push(await fetchChanges(approver, pullRequest));
+  }
+
+  return {
+    changedPaths: allChanges.flatMap((changes) => changes.changedPaths),
+    isFileListComplete: allChanges.every((changes) => changes.isFileListComplete)
+  };
+}
+
+/**
+ * The file list is read by pull request number, so it describes whatever the head
+ * is when it is read, while the held runs are for the commit read before it. A
+ * push in between would let the verdict on one commit approve the runs of
+ * another, so nothing is approved unless every head is where it started.
+ */
+async function isStillAt(approver, pullRequests, headSha) {
+  for (const pullRequest of pullRequests) {
+    const current = await fetchPullRequest(approver, pullRequest.number);
+
+    if (current.head.sha !== headSha) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 async function findHeldRuns(approver, headSha) {
