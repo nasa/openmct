@@ -24,6 +24,7 @@ import fs from 'fs';
 import {
   createDomainObjectWithDefaults,
   createPlanFromJSON,
+  getDomainObject,
   navigateToObjectWithFixedTimeBounds
 } from '../../../appActions.js';
 import { expect, test } from '../../../pluginFixtures.js';
@@ -161,4 +162,154 @@ test("View a timelist in expanded view, verify all the activities are displayed 
     const hidden = page.getByRole('row').locator('path').nth(1);
     await expect(hidden).toBeHidden();
   });
+});
+
+test.describe('Time List display style', () => {
+  const activities = examplePlanSmall1['Group 1'];
+
+  async function edit(page) {
+    await page.getByRole('button', { name: 'Edit Object', exact: true }).click();
+    await page.getByRole('tab', { name: 'Config', exact: true }).click();
+  }
+
+  async function save(page) {
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await page.getByRole('listitem', { name: 'Save and Finish Editing', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Edit Object', exact: true })).toBeVisible();
+  }
+
+  async function expectStyle(page, style, activityCount) {
+    const view = page.locator('.c-timelist');
+    const isExpanded = style === 'Expanded';
+    await expect(view).toBeVisible();
+    await expect(view.locator('table')).toHaveCount(isExpanded ? 0 : 1);
+    await expect(view.getByRole('row')).toHaveCount(activityCount + (isExpanded ? 0 : 1));
+  }
+
+  function storedConfiguration(page, timelist) {
+    // Read persistence without refreshing the mutable object used by the editor.
+    return page.evaluate(async (key) => {
+      const identifier = { namespace: '', key };
+      const provider = window.openmct.objects.getProvider(identifier);
+      return (await provider.get(identifier)).configuration;
+    }, timelist.uuid);
+  }
+
+  async function previewStyles(page, styles, timelist, originalConfiguration) {
+    const rows = page.locator('.c-timelist').getByRole('row');
+    for (const style of styles) {
+      await page.getByLabel('Display Style').selectOption({ label: style });
+      await expectStyle(page, style, activities.length);
+      await expect(rows.filter({ hasText: 'Past event' }).first()).toContainText('Past event 5');
+
+      await expect(page.getByLabel('Display Style')).toHaveValue(String(style === 'Expanded'));
+    }
+    // Activity selection must still work after replacing the row layout.
+    await rows.filter({ hasText: 'Past event 2' }).click();
+    await page.getByRole('tab', { name: 'Activity', exact: true }).click();
+    await expect(page.getByLabel('Activity Status').locator("[aria-selected='true']")).toHaveText(
+      'Not started'
+    );
+    expect(await storedConfiguration(page, timelist)).toEqual(originalConfiguration);
+  }
+
+  for (const initialStyle of ['Compact', 'Expanded']) {
+    test.describe(`from ${initialStyle}`, () => {
+      const changedStyle = initialStyle === 'Compact' ? 'Expanded' : 'Compact';
+      let timelist;
+      let originalConfiguration;
+
+      test.beforeEach(async ({ page }) => {
+        await page.goto('./', { waitUntil: 'domcontentloaded' });
+        timelist = await createDomainObjectWithDefaults(page, { type: 'Time List' });
+        await createPlanFromJSON(page, {
+          name: 'Test Plan',
+          json: examplePlanSmall1,
+          parent: timelist.uuid
+        });
+        await navigateToObjectWithFixedTimeBounds(
+          page,
+          timelist.url,
+          activities[0].start,
+          activities[activities.length - 1].end
+        );
+        await edit(page);
+        await page.getByLabel('Display Style').selectOption({ label: initialStyle });
+        await page
+          .locator('.c-inspect-properties__row')
+          .filter({ hasText: 'Sort Order' })
+          .locator('select')
+          .selectOption({ label: 'End descending' });
+        await page
+          .locator('.c-inspect-properties__row')
+          .filter({ hasText: 'Activity Names' })
+          .locator('textarea')
+          .pressSequentially('Past event 2');
+        await save(page);
+        await expectStyle(page, initialStyle, 1);
+        originalConfiguration = (await getDomainObject(page, timelist.uuid)).configuration;
+      });
+
+      test('previews repeated changes and persists the saved style after reopening', async ({
+        page
+      }) => {
+        await edit(page);
+        await previewStyles(
+          page,
+          [changedStyle, initialStyle, changedStyle],
+          timelist,
+          originalConfiguration
+        );
+        await save(page);
+        await page.reload();
+
+        await expectStyle(page, changedStyle, 1);
+        await expect(
+          page.locator('.c-timelist').getByRole('row').filter({ hasText: 'Past event 2' })
+        ).toBeVisible();
+        expect((await getDomainObject(page, timelist.uuid)).configuration).toEqual({
+          ...originalConfiguration,
+          isExpanded: changedStyle === 'Expanded'
+        });
+        await edit(page);
+        await expect(page.getByLabel('Display Style')).toHaveValue(
+          String(changedStyle === 'Expanded')
+        );
+        await save(page);
+      });
+
+      test('cancels repeated previews and restores appearance and settings after reopening', async ({
+        page
+      }) => {
+        await edit(page);
+        await previewStyles(
+          page,
+          [changedStyle, initialStyle, changedStyle],
+          timelist,
+          originalConfiguration
+        );
+        await page.getByRole('button', { name: 'Cancel Editing', exact: true }).click();
+        await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+        await expectStyle(page, changedStyle, activities.length);
+        await page.getByRole('button', { name: 'Cancel Editing', exact: true }).click();
+        await page.getByRole('button', { name: 'Ok', exact: true }).click();
+        await expect(page.getByRole('button', { name: 'Edit Object', exact: true })).toBeVisible();
+
+        await expectStyle(page, initialStyle, 1);
+        expect((await getDomainObject(page, timelist.uuid)).configuration).toEqual(
+          originalConfiguration
+        );
+        await page.reload();
+        await expectStyle(page, initialStyle, 1);
+        await edit(page);
+        await expect(page.getByLabel('Display Style')).toHaveValue(
+          String(initialStyle === 'Expanded')
+        );
+        expect((await getDomainObject(page, timelist.uuid)).configuration).toEqual(
+          originalConfiguration
+        );
+        await save(page);
+      });
+    });
+  }
 });

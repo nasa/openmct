@@ -312,11 +312,11 @@ export default {
     setViewFromConfig(configuration) {
       this.filterValue = configuration.filter || '';
       this.filterMetadataValue = configuration.filterMetadata || '';
+      this.isExpanded = configuration.isExpanded;
       if (this.isEditing) {
         this.hideAll = false;
       } else {
         this.setSort();
-        this.isExpanded = configuration.isExpanded;
       }
       this.listActivities();
     },

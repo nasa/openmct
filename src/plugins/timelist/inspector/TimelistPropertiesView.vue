@@ -27,7 +27,7 @@
         <div class="c-inspect-properties_header" title="'Display options'">Display Options</div>
         <li class="c-inspect-properties__row">
           <div v-if="canEdit" class="c-inspect-properties__hint span-all">
-            These settings don't affect the view while editing, but will be applied after editing is
+            Display style changes appear immediately. Other settings are applied after editing is
             finished.
           </div>
           <div class="c-inspect-properties__label" title="Display Style">Display Style</div>
