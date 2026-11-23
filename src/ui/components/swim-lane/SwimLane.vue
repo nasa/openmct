@@ -142,8 +142,7 @@ export default {
       }
     },
     domainObject: {
-      type: Object,
-      default: undefined
+      type: Object
     },
     hideButton: {
       type: Boolean,

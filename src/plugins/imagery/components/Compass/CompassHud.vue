@@ -92,8 +92,7 @@ export default {
       required: true
     },
     cameraAzimuth: {
-      type: Number,
-      default: undefined
+      type: Number
     },
     transformations: {
       type: Object,
@@ -108,8 +107,7 @@ export default {
       required: true
     },
     sunHeading: {
-      type: Number,
-      default: undefined
+      type: Number
     }
   },
   computed: {

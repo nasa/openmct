@@ -54,12 +54,10 @@ export default {
   inject: ['openmct'],
   props: {
     domainObject: {
-      type: Object,
-      default: undefined
+      type: Object
     },
     parentDomainObject: {
-      type: Object,
-      default: undefined
+      type: Object
     }
   },
   data() {

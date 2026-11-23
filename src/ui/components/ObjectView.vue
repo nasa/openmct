@@ -48,8 +48,7 @@ export default {
   props: {
     showEditView: Boolean,
     defaultObject: {
-      type: Object,
-      default: undefined
+      type: Object
     },
     objectPath: {
       type: Array,

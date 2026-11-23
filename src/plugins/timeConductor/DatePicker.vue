@@ -104,8 +104,7 @@ export default {
   inject: ['openmct'],
   props: {
     defaultDateTime: {
-      type: String,
-      default: undefined
+      type: String
     },
     bottom: {
       type: Boolean,

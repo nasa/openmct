@@ -49,8 +49,7 @@ export default {
   inject: ['openmct'],
   props: {
     selectedLayoutItems: {
-      type: Array,
-      default: undefined
+      type: Array
     },
     gridSize: {
       type: Array,
