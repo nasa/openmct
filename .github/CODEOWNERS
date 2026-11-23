@@ -25,6 +25,12 @@
 # what it will approve.
 /.coderabbit.yaml @nasa/openmct-web
 
+# Instructions for AI coding assistants. Contributors' agents follow them, and
+# CodeRabbit reviews every pull request against AGENTS.md and CLAUDE.md.
+/AGENTS.md @nasa/openmct-web
+/CLAUDE.md @nasa/openmct-web
+/GEMINI.md @nasa/openmct-web
+
 # Dependencies and the package registry. Install scripts run on every machine that
 # installs Open MCT, and on every CI run.
 /package.json @nasa/openmct-web
