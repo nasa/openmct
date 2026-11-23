@@ -11,7 +11,12 @@ config.devServer.hot = false;
 
 config.module.rules.push({
   test: /\.js$/,
-  exclude: /(Spec\.js$)|(node_modules)/,
+  exclude: [
+    /(Spec\.js$)|(node_modules)/,
+    // BatchingWebSocket serializes this function into a Blob. Istanbul helpers
+    // would remain in the page scope and cause a ReferenceError in the worker.
+    /[/\\]src[/\\]api[/\\]telemetry[/\\]WebSocketWorker\.js$/
+  ],
   use: {
     loader: 'babel-loader',
     options: {
