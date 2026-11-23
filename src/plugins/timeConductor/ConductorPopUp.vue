@@ -10,6 +10,8 @@
         v-else
         class="c-conductor__mode-select"
         title="Sets the Time Conductor's mode."
+        :defer-changes="true"
+        @mode-selected="setPendingTimeMode"
       />
       <IndependentClock
         v-if="isIndependent"
@@ -28,14 +30,23 @@
         title="Sets the Time Conductor's time system."
       />
     </div>
-    <ConductorInputsFixed v-if="isFixedTimeMode" @dismiss-inputs-fixed="dismiss" />
-    <ConductorInputsRealtime v-else @dismiss-inputs-realtime="dismiss" />
+    <ConductorInputsFixed
+      v-if="isDisplayedFixedTimeMode"
+      @dismiss-inputs-fixed="dismiss"
+      @submit="commitPendingTimeMode"
+    />
+    <ConductorInputsRealtime
+      v-else
+      @dismiss-inputs-realtime="dismiss"
+      @submit="commitPendingTimeMode"
+    />
   </div>
 </template>
 
 <script>
 import { ref } from 'vue';
 
+import { FIXED_MODE_KEY } from '../../api/time/constants.js';
 import ConductorClock from './ConductorClock.vue';
 import ConductorInputsFixed from './ConductorInputsFixed.vue';
 import ConductorInputsRealtime from './ConductorInputsRealtime.vue';
@@ -54,7 +65,7 @@ export default {
     ConductorInputsFixed,
     ConductorInputsRealtime
   },
-  inject: ['openmct', 'isFixedTimeMode'],
+  inject: ['openmct', 'isFixedTimeMode', 'timeContext', 'timeMode'],
   props: {
     positionX: {
       type: Number,
@@ -84,7 +95,15 @@ export default {
       conductorPopupElement
     };
   },
+  data() {
+    return {
+      pendingTimeMode: this.timeMode
+    };
+  },
   computed: {
+    isDisplayedFixedTimeMode() {
+      return this.isIndependent ? this.isFixedTimeMode : this.pendingTimeMode === FIXED_MODE_KEY;
+    },
     position() {
       const position = {
         left: `${this.positionX}px`
@@ -98,7 +117,7 @@ export default {
     },
     popupClasses() {
       const value = this.bottom ? 'c-tc-input-popup--bottom ' : '';
-      const mode = this.isFixedTimeMode ? 'fixed-mode' : 'realtime-mode';
+      const mode = this.isDisplayedFixedTimeMode ? 'fixed-mode' : 'realtime-mode';
       const independentClass = this.isIndependent ? 'itc-popout ' : '';
 
       return `${independentClass}${value}c-tc-input-popup--${mode}`;
@@ -108,6 +127,14 @@ export default {
     this.$emit('popup-loaded');
   },
   methods: {
+    setPendingTimeMode(mode) {
+      this.pendingTimeMode = mode;
+    },
+    commitPendingTimeMode() {
+      if (!this.isIndependent && this.pendingTimeMode !== this.timeMode) {
+        this.timeContext.setMode(this.pendingTimeMode);
+      }
+    },
     dismiss() {
       this.$emit('dismiss');
     }
