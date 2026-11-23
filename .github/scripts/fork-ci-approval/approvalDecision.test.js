@@ -68,6 +68,14 @@ test('a directory pattern covers everything beneath it, and nothing that merely 
   ]);
 });
 
+test('**/ matches no directories as well as any number of them, as GitHub does', () => {
+  const paths = ['a/b', 'a/x/b', 'a/x/y/b', 'a/xb', 'b', 'x/b'];
+
+  assert.deepEqual(findOwnedPaths(paths, ['/a/**/b']), ['a/b', 'a/x/b', 'a/x/y/b']);
+  assert.deepEqual(findOwnedPaths(paths, ['**/b']), ['a/b', 'a/x/b', 'a/x/y/b', 'b', 'x/b']);
+  assert.deepEqual(findOwnedPaths(['a', 'a/b', 'a/x/b'], ['/a/**']), ['a/b', 'a/x/b']);
+});
+
 test('comments and blank lines are not patterns', () => {
   assert.deepEqual(
     readOwnedPatterns('# owners\n\n/.github/ @team\n  # indented comment\n/package.json @a @b\n'),

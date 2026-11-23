@@ -12,7 +12,8 @@
 
 const COMMENT_PREFIX = '#';
 const ANY_DEPTH_PREFIX = '(?:^|.*/)';
-const DOUBLE_STAR_PLACEHOLDER = '\u0000';
+const DIRECTORIES_PLACEHOLDER = '\u0000';
+const DOUBLE_STAR_PLACEHOLDER = '\u0001';
 const REGEXP_SPECIAL_CHARACTERS = /[.+^${}()|[\]\\]/g;
 
 /** @returns {string[]} the path pattern from each rule in a CODEOWNERS file */
@@ -42,12 +43,16 @@ function patternToRegExp(pattern) {
   return new RegExp(`${prefix}${body}${suffix}`);
 }
 
+// `**/` stands for no directories as well as any number, so `/a/**/b` covers `a/b`.
 function globToExpression(glob) {
   return glob
     .replace(REGEXP_SPECIAL_CHARACTERS, '\\$&')
+    .replace(/\*\*\//g, DIRECTORIES_PLACEHOLDER)
     .replace(/\*\*/g, DOUBLE_STAR_PLACEHOLDER)
     .replace(/\*/g, '[^/]*')
     .replace(/\?/g, '[^/]')
+    .split(DIRECTORIES_PLACEHOLDER)
+    .join('(?:.*/)?')
     .split(DOUBLE_STAR_PLACEHOLDER)
     .join('.*');
 }
