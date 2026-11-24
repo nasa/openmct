@@ -199,6 +199,7 @@ export default {
         },
         this
       );
+      this.listenTo(series, 'change:stats', this.updateStatsDisplay, this);
       this.subscribeToStaleness(series.domainObject);
       this.initialize();
     },
@@ -239,6 +240,13 @@ export default {
         this.mctLimitStateClass = '';
       }
 
+      this.updateStatsDisplay();
+    },
+    updateStatsDisplay() {
+      const seriesObject = this.getSeries(this.seriesKeyString);
+      if (!seriesObject) {
+        return;
+      }
       const stats = seriesObject.get('stats');
       if (stats) {
         this.formattedYValueFromStats = seriesObject.formatY(
