@@ -34,8 +34,10 @@ describe('The local storage plugin', () => {
   });
 
   it('initializes localstorage if not already initialized', () => {
+    const namespacedStorage = openmct.getNamespacedLocalStorage();
+    const namespacedKey = namespacedStorage.getNamespacedKey(space);
     const ls = getLocalStorage();
-    expect(ls[space]).toBeDefined();
+    expect(ls[namespacedKey]).toBeDefined();
   });
 
   it('successfully persists an object to localstorage', async () => {
@@ -81,7 +83,9 @@ describe('The local storage plugin', () => {
     };
 
     const pollutedSpaceString = `{"test-key":{"__proto__":{"toString":"foobar"},"type":"folder","name":"A test object","identifier":{"namespace":"","key":"test-key"}}}`;
-    getLocalStorage()[space] = pollutedSpaceString;
+    const namespacedStorage = openmct.getNamespacedLocalStorage();
+    const namespacedKey = namespacedStorage.getNamespacedKey(space);
+    getLocalStorage()[namespacedKey] = pollutedSpaceString;
 
     let testObject = await openmct.objects.get(identifier);
 
@@ -100,7 +104,9 @@ describe('The local storage plugin', () => {
   });
 
   function resetLocalStorage() {
-    delete window.localStorage[space];
+    const namespacedStorage = openmct.getNamespacedLocalStorage();
+    const namespacedKey = namespacedStorage.getNamespacedKey(space);
+    delete window.localStorage[namespacedKey];
   }
 
   function getLocalStorage() {
@@ -108,6 +114,12 @@ describe('The local storage plugin', () => {
   }
 
   function getSpaceAsObject() {
-    return JSON.parse(getLocalStorage()[space]);
+    const namespacedStorage = openmct.getNamespacedLocalStorage();
+    const namespacedKey = namespacedStorage.getNamespacedKey(space);
+    const spaceData = getLocalStorage()[namespacedKey];
+    if (!spaceData) {
+      return {};
+    }
+    return JSON.parse(spaceData);
   }
 });

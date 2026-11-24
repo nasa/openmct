@@ -23,15 +23,19 @@
 import { ACTIVE_ROLE_LOCAL_STORAGE_KEY } from './constants.js';
 
 class StoragePersistence {
+  constructor(namespacedLocalStorage) {
+    this.storage = namespacedLocalStorage;
+  }
+
   getActiveRole() {
-    return localStorage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+    return this.storage.getItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
   }
   setActiveRole(role) {
-    return localStorage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
+    return this.storage.setItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY, role);
   }
   clearActiveRole() {
-    return localStorage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
+    return this.storage.removeItem(ACTIVE_ROLE_LOCAL_STORAGE_KEY);
   }
 }
 
-export default new StoragePersistence();
+export default StoragePersistence;
