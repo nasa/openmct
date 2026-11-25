@@ -59,7 +59,6 @@ export default {
   },
   mounted() {
     this.deletedSearchObjectKeys = new Set();
-    this.remoteSearchRefreshes = new Map();
     this.openmct.objects.eventEmitter.on('mutation', this.onSearchObjectMutation);
     this.openmct.objects.eventEmitter.on('refresh', this.onSearchObjectRefresh);
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
@@ -214,16 +213,9 @@ export default {
         this.deletedSearchObjectKeys.has(this.openmct.objects.makeKeyString(object.identifier))
       );
     },
-    onSearchObjectRefresh(object, fromRemoteSearch = false) {
-      const key = this.openmct.objects.makeKeyString(object.identifier);
-      if (!fromRemoteSearch && this.remoteSearchRefreshes.has(key)) {
-        return;
-      }
-
+    onSearchObjectRefresh(object) {
       if (object.location === null || object._deleted) {
         this.onSearchObjectMutation(object, {});
-      } else if (fromRemoteSearch) {
-        this.refreshSearchResultPaths(object);
       }
     },
     async onRemoteSearchObjectChange(identifier) {
@@ -255,18 +247,12 @@ export default {
       try {
         do {
           pending.set(key, false);
-          this.remoteSearchRefreshes.set(key, (this.remoteSearchRefreshes.get(key) || 0) + 1);
-          try {
-            const object = await this.openmct.objects.get(identifier, signal, true);
-            if (!signal.aborted && object) {
-              this.onSearchObjectRefresh(object, true);
-            }
-          } finally {
-            const count = this.remoteSearchRefreshes.get(key) - 1;
-            if (count) {
-              this.remoteSearchRefreshes.set(key, count);
+          const object = await this.openmct.objects.get(identifier, signal, true);
+          if (!signal.aborted && object) {
+            if (object.location === null || object._deleted) {
+              this.onSearchObjectRefresh(object);
             } else {
-              this.remoteSearchRefreshes.delete(key);
+              this.refreshSearchResultPaths(object);
             }
           }
         } while (!signal.aborted && pending.get(key));
