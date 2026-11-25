@@ -346,6 +346,23 @@ describe('the plugin', function () {
       expect(yAxisElement.length).toBe(2);
     });
 
+    it('Updates the Y-axis label when it is changed on the axis model', async () => {
+      function getRenderedLabels() {
+        return Array.from(
+          element.querySelectorAll('.gl-plot-axis-area.gl-plot-y .gl-plot-y-label')
+        ).map((labelElement) => labelElement.textContent.trim());
+      }
+
+      expect(getRenderedLabels()).toContain('Test Object 2 Label');
+
+      const editedYAxis = config.additionalYAxes.find((yAxis) => yAxis.id === 3);
+      editedYAxis.set('label', 'Edited Y Axis Label');
+      await nextTick();
+
+      expect(getRenderedLabels()).toContain('Edited Y Axis Label');
+      expect(getRenderedLabels()).not.toContain('Test Object 2 Label');
+    });
+
     describe('the inspector view', () => {
       let inspectorComponent;
       let viewComponentObject;
