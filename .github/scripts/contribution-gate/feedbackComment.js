@@ -11,27 +11,26 @@ const { RECHECK_COMMAND } = require('./config');
 const { CONTRIBUTION_KINDS, formatDeadline } = require('./deadlines');
 const { renderMarker } = require('./stateMarker');
 const { quoteContributorText } = require('./quotedText');
+const { STATUSES } = require('./checklist');
 
-const MET = '✅';
-const NOT_YET = '⬜';
+const STATUS_SYMBOLS = {
+  [STATUSES.done]: '✅',
+  [STATUSES.toDo]: '⬜',
+  [STATUSES.inProgress]: '⏳'
+};
 
-const STAGE_ROWS = [
-  { key: 'compliance', label: 'Contribution rules met' },
-  { key: 'checks', label: 'Automated checks passing' },
-  { key: 'automatedReview', label: 'Automated review comments answered, and CodeRabbit approved' },
-  { key: 'teamReview', label: 'Team review requested' }
-];
+const STATUS_KEY = `${STATUS_SYMBOLS.done} done · ${STATUS_SYMBOLS.toDo} not yet · ${STATUS_SYMBOLS.inProgress} in progress, nothing for you to do`;
 
 const INTRODUCTION =
-  'Thanks for contributing to Open MCT! This comment is kept up to date automatically, ' +
-  'so it always shows what is left to do. It is edited in place rather than replaced, ' +
-  'and no reviewer time is needed until every box below is ticked.';
+  'Thanks for contributing to Open MCT! Below is every check this pull request goes through, ' +
+  'in order, ticked off automatically as each one passes. This comment is edited in place ' +
+  'rather than replaced, so it always shows where things stand.';
 
 function renderPullRequestComment(report) {
   return joinSections([
     INTRODUCTION,
-    renderProgressList(report.stageStatuses),
-    renderFailures(report.failures),
+    STATUS_KEY,
+    ...report.checklist.map(renderChecklistSection),
     renderThreadsAwaitingReply(report.threadsAwaitingReply),
     renderWaitingNote(report.waitingNote),
     renderDeadlineNote(report.deadline),
@@ -41,8 +40,11 @@ function renderPullRequestComment(report) {
 
 function renderIssueComment(report) {
   return joinSections([
-    'Thanks for raising this! This comment is kept up to date automatically and shows what is left to do.',
-    renderFailures(report.failures),
+    'Thanks for raising this! Below is everything an issue needs, ticked off automatically as each one is done.',
+    renderChecklistSection({
+      title: 'What this issue needs',
+      items: report.issueItems
+    }),
     renderWaitingNote(report.waitingNote),
     renderDeadlineNote(report.deadline),
     renderMarker(report.state)
@@ -74,16 +76,19 @@ function renderTeamMentionComment({ teamHandle }) {
   return `@${teamHandle}: this pull request has passed every automated check and is ready for a human review. The automatic review request could not be applied, so this comment is the notification.`;
 }
 
-function renderProgressList(stageStatuses) {
-  const rows = STAGE_ROWS.map((stage) => renderStageRow(stage, stageStatuses[stage.key]));
-
-  return ['**Progress**', rows.join('\n')].join('\n\n');
+function renderChecklistSection(section) {
+  return [`#### ${section.title}`, section.items.map(renderChecklistItem).join('\n')].join('\n\n');
 }
 
-function renderStageRow(stage, isMet) {
-  const symbol = isMet === true ? MET : NOT_YET;
+/** What to do is shown only while there is something left to do. */
+function renderChecklistItem(item) {
+  const line = `- ${STATUS_SYMBOLS[item.status]} ${item.label}`;
 
-  return `- ${symbol} ${stage.label}`;
+  if (item.status === STATUSES.done || item.fix === undefined) {
+    return line;
+  }
+
+  return `${line}\n  - ${item.fix}`;
 }
 
 function renderFailures(failures) {

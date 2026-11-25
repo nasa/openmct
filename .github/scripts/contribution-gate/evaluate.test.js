@@ -9,7 +9,7 @@ const assert = require('node:assert/strict');
 
 const { run } = require('./evaluate');
 const { renderMarker } = require('./stateMarker');
-const { REQUIRED_CHECK_NAMES } = require('./config');
+const { AI_REQUIRED_CHECK_NAMES, REQUIRED_CHECK_NAMES } = require('./config');
 
 const HEAD_SHA = 'abc1234';
 const GATE_BOT = { login: 'github-actions[bot]', type: 'Bot' };
@@ -63,9 +63,8 @@ test('a non-compliant pull request is labelled and told what is missing', async 
 
   const comment = world.postedComments[0].body;
 
-  assert.match(comment, /What is needed next/);
-  assert.match(comment, /Author Checklist/);
-  assert.match(comment, /not linked to an issue/);
+  assert.match(comment, /⬜ Linked to an issue.*\n {2}- Add a line such as `Closes #1234`/);
+  assert.match(comment, /⬜ \*\*Author Checklist\*\* completed\n {2}- Restore the checklist/);
   assert.match(comment, /closed automatically/);
   assert.equal(world.requestedReviewers.length, 0, 'nothing is paid for before the rules are met');
 });
@@ -84,7 +83,10 @@ test('a compliant pull request waits for the checks, and says which', async () =
     ],
     'the type label is copied from the issue and the milestone decision recorded'
   );
-  assert.match(world.postedComments[0].body, /These checks need to pass.*lint/);
+  assert.match(
+    world.postedComments[0].body,
+    /⬜ `lint` passes\n {2}- Open the failed check from the Checks tab/
+  );
   assert.equal(world.requestedReviewers.length, 0);
 });
 
@@ -93,7 +95,7 @@ test('a draft is not reviewed until it is ready', async () => {
 
   await runGate(world);
 
-  assert.match(world.postedComments[0].body, /This is a draft/);
+  assert.match(world.postedComments[0].body, /⬜ Marked ready for review\n {2}- This is a draft/);
   assert.equal(world.requestedReviewers.length, 0);
 });
 
@@ -248,7 +250,7 @@ test('until CodeRabbit approves, the team is not asked', async () => {
 
   assert.deepEqual(world.requestedReviewers, []);
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:automated-review' });
-  assert.match(world.postedComments[0].body, /Waiting for CodeRabbit to approve/);
+  assert.match(world.postedComments[0].body, /⬜ CodeRabbit approves\n {2}- It approves once/);
 });
 
 test("CodeRabbit's failed checks start the clock like any other rule", async () => {
@@ -257,10 +259,7 @@ test("CodeRabbit's failed checks start the clock like any other rule", async () 
   await runGate(world);
 
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:needs-compliance' });
-  assert.match(
-    world.postedComments[0].body,
-    /CodeRabbit's pre-merge checks found something to fix/
-  );
+  assert.match(world.postedComments[0].body, /⬜ CodeRabbit's pre-merge checks pass/);
   assert.notEqual(readStoredState(world).noncompliantSince, undefined);
   assert.deepEqual(world.requestedReviewers, []);
 });
@@ -480,6 +479,92 @@ test('an @-mention in quoted text is shown as code, so it notifies nobody', asyn
   assert.match(world.postedComments[0].body, /`ping @nasa\/openmct-web`/);
 });
 
+test('every check is shown as it stands, even while a contribution rule is outstanding', async () => {
+  const world = createWorld({ body: COMPLIANT_BODY.replace('Closes #4321', '') });
+
+  await runGate(world);
+
+  const comment = world.postedComments[0].body;
+
+  assert.match(comment, /⬜ Linked to an issue/);
+  assert.match(
+    comment,
+    /✅ `lint` passes/,
+    'CI that passed is ticked, though the rules are not met'
+  );
+  assert.match(comment, /⬜ The maintainers are asked to review/);
+});
+
+test('the type label and milestone decision are ticked in the run that sets them', async () => {
+  const world = createWorld({});
+
+  await runGate(world);
+
+  const comment = world.postedComments[0].body;
+
+  assert.match(comment, /✅ A `type:` label, copied from the linked issue/);
+  assert.match(comment, /✅ A milestone, or the "no milestone" label/);
+});
+
+test("CodeRabbit's checks are ticked from its comment once every one has passed", async () => {
+  const table = AI_REQUIRED_CHECK_NAMES.map(
+    (name) => `| ${name} | ![Passed](https://example.test/passed.svg) | Fine. |`
+  ).join('\n');
+  const world = createWorld({
+    aiReviewState: null,
+    contributorComments: [
+      { id: 300, user: { login: 'coderabbitai[bot]', type: 'Bot' }, body: table }
+    ]
+  });
+
+  await runGate(world);
+
+  const comment = world.postedComments[0].body;
+
+  assert.match(comment, /✅ CodeRabbit's pre-merge checks pass/);
+  assert.match(comment, /⬜ CodeRabbit approves/, 'it has not approved yet');
+});
+
+test('a sharded job is one line, naming the shard that failed', async () => {
+  const world = createWorld({
+    checkConclusions: { 'e2e-ci (shard 2/4)': 'failure', 'visual-a11y-ci (shard 1/2)': null }
+  });
+
+  await runGate(world);
+
+  const comment = world.postedComments[0].body;
+
+  assert.match(
+    comment,
+    /⬜ `e2e-ci` passes on every shard\n {2}- Failed: `e2e-ci \(shard 2\/4\)`\./
+  );
+  assert.match(comment, /⏳ `visual-a11y-ci` passes on every shard/);
+  assert.match(comment, /✅ `lint` passes\n/);
+  assert.doesNotMatch(comment, /shard 1\/4/);
+});
+
+test('a check CodeQL skips is waited for only while the required checks run', async () => {
+  const running = createWorld({ checkConclusions: { lint: null } });
+  const finished = createWorld({});
+
+  await runGate(running);
+  await runGate(finished);
+
+  assert.match(running.postedComments[0].body, /⏳ `Analyze` passes, if it runs/);
+  assert.match(finished.postedComments[0].body, /✅ `Analyze` passes, if it runs/);
+});
+
+test("only a maintainer's approval ticks the maintainer's approval", async () => {
+  const approvedByMaintainer = createWorld({ approvals: ['MEMBER'] });
+  const approvedByOutsider = createWorld({ approvals: ['CONTRIBUTOR'] });
+
+  await runGate(approvedByMaintainer);
+  await runGate(approvedByOutsider);
+
+  assert.match(approvedByMaintainer.postedComments[0].body, /✅ A maintainer approves/);
+  assert.match(approvedByOutsider.postedComments[0].body, /⏳ A maintainer approves/);
+});
+
 function runGate(world, options = {}) {
   return run({
     github: world.github,
@@ -627,11 +712,17 @@ function buildPullRequest(scenario, number) {
 function buildLatestReviews(scenario) {
   const aiReviewState = scenario.aiReviewState === undefined ? 'APPROVED' : scenario.aiReviewState;
 
+  const approvals = (scenario.approvals ?? []).map((authorAssociation, index) => ({
+    state: 'APPROVED',
+    authorAssociation,
+    author: { login: `reviewer-${index}` }
+  }));
+
   if (aiReviewState === null) {
-    return [];
+    return approvals;
   }
 
-  return [{ state: aiReviewState, author: AI_REVIEWER }];
+  return [{ state: aiReviewState, authorAssociation: 'NONE', author: AI_REVIEWER }, ...approvals];
 }
 
 /** Every scenario is a pilot candidate unless it says otherwise. */
@@ -680,7 +771,11 @@ function buildGateComment(scenario) {
 function buildCheckRuns(scenario) {
   const overrides = scenario.checkConclusions ?? {};
 
-  return REQUIRED_CHECK_NAMES.map((name) => ({ name, conclusion: overrides[name] ?? 'success' }));
+  // A conclusion of null is a check still running, so only an absent one defaults.
+  return REQUIRED_CHECK_NAMES.map((name) => ({
+    name,
+    conclusion: Object.hasOwn(overrides, name) ? overrides[name] : 'success'
+  }));
 }
 
 function aiThread({ id, isResolved, replies }) {

@@ -19,7 +19,9 @@ const { findRepliedOpenThreads, findThreadsAwaitingReply } = require('./reviewTh
 const { summarizeRequiredChecks } = require('./checkStatus');
 const { REQUIRED_CHECK_NAMES } = require('./config');
 const { TRIGGER_KINDS, findTrigger } = require('./trigger');
-const { renderPullRequestComment } = require('./feedbackComment');
+const { renderIssueComment, renderPullRequestComment } = require('./feedbackComment');
+const { assessIssue } = require('./issueCompliance');
+const { createDoneItem, createInProgressItem, createToDoItem } = require('./checklist');
 
 const NOTICE_SENT_AT = '2026-09-01T00:00:00.000Z';
 const AI_COMMENT = {
@@ -254,16 +256,19 @@ test('a finished run for a fork is traced to its pull request by branch', () => 
   });
 });
 
-test('the comment tells a contributor what is left and when it closes', () => {
+test('the comment lists every check, with what to do under each one not yet done', () => {
   const body = renderPullRequestComment({
-    stageStatuses: { compliance: false },
-    failures: [
+    checklist: [
       {
-        id: 'pr-description',
-        summary: 'The **Describe your changes** section is empty.',
-        fix: 'Say what you changed.'
+        title: 'Contribution rules',
+        items: [
+          createDoneItem('Linked to issue #4321'),
+          createToDoItem('The description says why', 'Say what you changed.'),
+          createInProgressItem('`lint` passes')
+        ]
       }
     ],
+    threadsAwaitingReply: [],
     deadline: {
       date: findDeadline(NOTICE_SENT_AT, 'readyPullRequest'),
       contributionKind: 'readyPullRequest'
@@ -271,18 +276,32 @@ test('the comment tells a contributor what is left and when it closes', () => {
     state: { noncompliantSince: NOTICE_SENT_AT }
   });
 
-  assert.match(body, /What is needed next/);
-  assert.match(body, /Say what you changed\./);
+  assert.match(body, /#### Contribution rules/);
+  assert.match(
+    body,
+    /- ✅ Linked to issue #4321\n- ⬜ The description says why\n {2}- Say what you changed\.\n- ⏳ `lint` passes/
+  );
   assert.match(body, /2026-09-08/);
   assert.match(body, /\/recheck/);
   assert.match(body, /convert this pull request to a draft/);
   assert.deepEqual(readMarker(body), { noncompliantSince: NOTICE_SENT_AT });
 });
 
+test('an issue is shown every section it needs, filled in or not', () => {
+  const issue = { labels: ['type:bug'], body: '### Summary\n\nPlots drift.\n', comments: [] };
+  const body = renderIssueComment({ issueItems: assessIssue(issue), state: {} });
+
+  assert.match(body, /✅ \*\*Summary\*\* is filled in/);
+  assert.match(
+    body,
+    /⬜ \*\*Expected vs Current Behavior\*\* is filled in\n {2}- Edit the issue description/
+  );
+  assert.match(body, /⬜ \*\*Steps to Reproduce\*\* is filled in/);
+});
+
 test('an unanswered AI comment is spelled out, with a link', () => {
   const body = renderPullRequestComment({
-    stageStatuses: { compliance: true, checks: true },
-    failures: [],
+    checklist: [],
     threadsAwaitingReply: [
       {
         id: 'a',

@@ -84,6 +84,18 @@ const GATE_BOT_LOGIN = 'github-actions[bot]';
  */
 const AI_REVIEWER_LOGINS = ['coderabbitai[bot]'];
 
+/**
+ * CodeRabbit's pre-merge checks in error mode, named as in .coderabbit.yaml. Any
+ * one failing stops CodeRabbit approving. Its comment reports each one's
+ * result, which tells the gate they have all passed before CodeRabbit approves.
+ */
+const AI_REQUIRED_CHECK_NAMES = [
+  'Description explains why',
+  'Verification is described',
+  'Changed code is tested',
+  'A bug fix adds no features'
+];
+
 /** CodeQL also reviews on its own, and is never requested by the gate. */
 const SECURITY_REVIEWER_LOGINS = ['github-advanced-security[bot]'];
 
@@ -159,6 +171,7 @@ const TESTING_INSTRUCTION_HEADINGS = [
 ];
 
 module.exports = {
+  AI_REQUIRED_CHECK_NAMES,
   AI_REVIEWER_LOGINS,
   AUTOMATED_REVIEWER_LOGINS,
   CHECKS_REQUIRED_WHEN_REPORTED,

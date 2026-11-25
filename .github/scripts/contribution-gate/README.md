@@ -20,7 +20,9 @@ pass, and every automated review comment has been answered.
 | `trigger.js` | Turns a GitHub event into a decision about what to look at. |
 | `fetchContext.js` | Reads contributions through the API. Metadata only; it never checks out contributed code. |
 | `gateActions.js` | Every write the gate makes, each one logged, so a run's log lists what it changed. |
-| `prCompliance.js`, `issueCompliance.js` | The rules, as pure functions returning what is missing. |
+| `prCompliance.js`, `issueCompliance.js` | The rules, as pure functions returning a checklist item for each, met or not. |
+| `checklist.js`, `pullRequestChecklist.js` | The checklist the comment shows: every check in the process, each marked done, not yet, or in progress. |
+| `aiCheckResults.js` | Reads each of CodeRabbit's pre-merge check results from its summary comment. |
 | `markdownSections.js` | Reading issue and pull request sections. |
 | `reviewThreads.js`, `reviewerLogins.js`, `checkStatus.js` | Which automated-reviewer comments are answered, who the automated reviewers are, and whether CI has passed. |
 | `deadlines.js` | The clock: when a contribution runs out of time, and who is exempt. |
@@ -29,6 +31,14 @@ pass, and every automated review comment has been answered.
 State lives in that sticky comment, in an HTML comment marker, so the gate needs no database. The
 `gate:*` labels show the current stage.
 
+The comment is a checklist of every check a contribution goes through: the linked issue, which gets
+the same checklist of its own sections and testing instructions on the issue itself; the Author
+Checklist, with any unticked items named; CodeRabbit's pre-merge checks, as one line; each required
+CI job, with its shards as one line; replies to CodeRabbit and CodeQL; CodeRabbit's approval; the
+labels the gate sets; the team review request; and a maintainer's approval. Every check is assessed
+on every run, wherever the pull request has got to, so a contributor sees green CI even while a rule
+is still outstanding. The stage is still decided as before; the checklist only reports.
+
 Two reviewers comment without a person asking. The gate requests neither, but a contributor must
 reply to every comment from either before the team is asked to look:
 
@@ -36,12 +46,15 @@ reply to every comment from either before the team is asked to look:
   [.coderabbit.yaml](../../../.coderabbit.yaml). Its pre-merge checks are the rules that need
   judgement: that the description explains why and how the change was verified, that a test covers
   it, and that a bug fix adds no features. Their results appear only in CodeRabbit's comment, and its
-  "CodeRabbit" status check succeeds whatever they say, so the gate reads its **review** instead.
-  With `auto_approvals` on, CodeRabbit requests changes when a check in `error` mode fails, which the
-  gate treats as a broken rule, deadline and all; and approves once they pass and its threads are
-  resolved, which is the last thing the gate waits for before asking the team. A failing `warning`
-  check does not stop it approving, so any check that must hold a pull request back has to be in
-  `error` mode.
+  "CodeRabbit" status check succeeds whatever they say. The gate reads CodeRabbit's **review**, and
+  also the results table in that comment, accepting it only from the `coderabbitai[bot]` account, so
+  it can show the checks passed before CodeRabbit approves. That format is undocumented, so the
+  review wins where they disagree. With `auto_approvals` on, CodeRabbit requests changes when a
+  check in `error` mode fails, which the gate treats as a broken rule, deadline and all; and approves
+  once they pass and its threads are resolved, which is the last thing the gate waits for before
+  asking the team. A failing `warning` check does not stop it approving, so any check that must hold
+  a pull request back has to be in `error` mode. `AI_REQUIRED_CHECK_NAMES` in `config.js` must list exactly the `error`-mode checks,
+  which a test enforces.
 - __CodeQL__ (`github-advanced-security[bot]`) posts its own security findings, and its `Analyze` check
   must pass whenever it runs. CodeQL skips pull requests that only touch specs, documentation or
   configuration, so it is in `CHECKS_REQUIRED_WHEN_REPORTED` rather than `REQUIRED_CHECK_NAMES`: a

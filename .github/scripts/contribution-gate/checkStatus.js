@@ -5,13 +5,21 @@
 
 const { CHECKS_REQUIRED_WHEN_REPORTED, REQUIRED_CHECK_NAMES } = require('./config');
 
+const CHECK_STATUSES = {
+  passed: 'passed',
+  failed: 'failed',
+  pending: 'pending'
+};
+
 /** Conclusions that do not mean the check found a problem. */
 const ACCEPTABLE_CONCLUSIONS = ['success', 'skipped', 'neutral'];
 
 function summarizeRequiredChecks(checkConclusions) {
-  const pending = REQUIRED_CHECK_NAMES.filter((name) => isPending(checkConclusions, name));
-  const failing = [...REQUIRED_CHECK_NAMES, ...CHECKS_REQUIRED_WHEN_REPORTED].filter((name) =>
-    isFailing(checkConclusions, name)
+  const pending = REQUIRED_CHECK_NAMES.filter(
+    (name) => findCheckStatus(checkConclusions, name) === CHECK_STATUSES.pending
+  );
+  const failing = [...REQUIRED_CHECK_NAMES, ...CHECKS_REQUIRED_WHEN_REPORTED].filter(
+    (name) => findCheckStatus(checkConclusions, name) === CHECK_STATUSES.failed
   );
 
   return {
@@ -21,28 +29,19 @@ function summarizeRequiredChecks(checkConclusions) {
   };
 }
 
-function describeCheckState(checkSummary) {
-  if (checkSummary.failing.length > 0) {
-    return `These checks need to pass before a reviewer is asked to look: ${checkSummary.failing.join(', ')}.`;
-  }
-
-  return `Waiting for the automated checks to finish: ${checkSummary.pending.join(', ')}.`;
-}
-
-function isPending(checkConclusions, name) {
+/** @returns {string} one of CHECK_STATUSES; a check that has not reported is pending */
+function findCheckStatus(checkConclusions, name) {
   const conclusion = checkConclusions.get(name);
 
-  return conclusion === undefined || conclusion === null;
-}
-
-function isFailing(checkConclusions, name) {
-  const conclusion = checkConclusions.get(name);
-
-  if (isPending(checkConclusions, name)) {
-    return false;
+  if (conclusion === undefined || conclusion === null) {
+    return CHECK_STATUSES.pending;
   }
 
-  return ACCEPTABLE_CONCLUSIONS.includes(conclusion) === false;
+  if (ACCEPTABLE_CONCLUSIONS.includes(conclusion)) {
+    return CHECK_STATUSES.passed;
+  }
+
+  return CHECK_STATUSES.failed;
 }
 
-module.exports = { describeCheckState, summarizeRequiredChecks };
+module.exports = { CHECK_STATUSES, findCheckStatus, summarizeRequiredChecks };

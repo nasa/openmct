@@ -7,7 +7,9 @@
  */
 
 const { CHECKS_REQUIRED_WHEN_REPORTED, GATE_BOT_LOGIN, REQUIRED_CHECK_NAMES } = require('./config');
-const { isAiReviewerLogin } = require('./reviewerLogins');
+const { readAiCheckResults } = require('./aiCheckResults');
+const { isTeamAuthor } = require('./deadlines');
+const { isAiReviewerLogin, isAutomatedReviewerLogin } = require('./reviewerLogins');
 const { MARKER_PREFIX } = require('./stateMarker');
 
 const MAXIMUM_LINKED_ISSUES = 10;
@@ -16,6 +18,7 @@ const MAXIMUM_REVIEW_THREADS = 100;
 const MAXIMUM_THREAD_COMMENTS = 50;
 const MAXIMUM_REVIEWERS = 20;
 const THREAD_SUMMARY_LENGTH = 120;
+const APPROVED = 'APPROVED';
 
 const PULL_REQUEST_QUERY = `
   query pullRequestGateContext($owner: String!, $repo: String!, $number: Int!) {
@@ -39,7 +42,7 @@ const PULL_REQUEST_QUERY = `
           }
         }
         latestOpinionatedReviews(first: ${MAXIMUM_REVIEWERS}) {
-          nodes { state author { login } }
+          nodes { state authorAssociation author { login } }
         }
         reviewThreads(first: ${MAXIMUM_REVIEW_THREADS}) {
           nodes {
@@ -84,6 +87,7 @@ async function fetchPullRequestContext(reader, pullNumber) {
     number: pullNumber
   });
   const pullRequest = response.repository.pullRequest;
+  const conversation = await fetchConversation(reader, pullNumber);
 
   return {
     isPullRequest: true,
@@ -98,6 +102,9 @@ async function fetchPullRequestContext(reader, pullNumber) {
     labels: readNames(pullRequest.labels),
     linkedIssues: pullRequest.closingIssuesReferences.nodes.map(toLinkedIssue),
     aiReviewState: readAiReviewState(pullRequest.latestOpinionatedReviews.nodes),
+    aiCheckResults: readAiCheckResults(conversation),
+    isApprovedByTeam: isApprovedByTeam(pullRequest.latestOpinionatedReviews.nodes),
+    stickyComment: findStickyComment(conversation),
     reviewThreads: pullRequest.reviewThreads.nodes.map(toReviewThread),
     checkConclusions: await fetchCheckConclusions(reader, pullRequest.headRefOid)
   };
@@ -114,6 +121,23 @@ function readAiReviewState(latestReviews) {
   );
 
   return aiReview?.state;
+}
+
+/**
+ * Branch protection counts only an approval from someone with write access, so
+ * an approval from anyone else is not shown as the one a pull request needs.
+ */
+function isApprovedByTeam(latestReviews) {
+  return latestReviews.some(
+    (review) =>
+      review.state === APPROVED &&
+      review.author !== null &&
+      isAutomatedReviewerLogin(review.author.login) === false &&
+      isTeamAuthor({
+        authorLogin: review.author.login,
+        authorAssociation: review.authorAssociation
+      })
+  );
 }
 
 async function fetchIssueContext(reader, issueNumber) {
@@ -191,13 +215,10 @@ async function fetchPullRequestsForHead(reader, head) {
  * a comment of their own.
  */
 async function fetchStickyComment(reader, contributionNumber) {
-  const comments = await reader.github.paginate(reader.github.rest.issues.listComments, {
-    owner: reader.owner,
-    repo: reader.repo,
-    issue_number: contributionNumber,
-    per_page: 100
-  });
+  return findStickyComment(await fetchConversation(reader, contributionNumber));
+}
 
+function findStickyComment(comments) {
   return comments.find(
     (comment) => comment.user?.login === GATE_BOT_LOGIN && comment.body.includes(MARKER_PREFIX)
   );
@@ -221,13 +242,18 @@ async function fetchPullRequestsReferencingIssue(reader, issueNumber) {
   return deduplicateByNumber(referencedPullRequests);
 }
 
-async function fetchIssueComments(reader, issueNumber) {
-  const comments = await reader.github.paginate(reader.github.rest.issues.listComments, {
+/** Every comment on a contribution, as the REST API returns them. */
+function fetchConversation(reader, contributionNumber) {
+  return reader.github.paginate(reader.github.rest.issues.listComments, {
     owner: reader.owner,
     repo: reader.repo,
-    issue_number: issueNumber,
+    issue_number: contributionNumber,
     per_page: 100
   });
+}
+
+async function fetchIssueComments(reader, issueNumber) {
+  const comments = await fetchConversation(reader, issueNumber);
 
   return comments.map((comment) => ({ body: comment.body ?? '' }));
 }

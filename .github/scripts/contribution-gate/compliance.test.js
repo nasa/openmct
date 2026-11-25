@@ -7,9 +7,17 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { findIssueFailures, hasTestingInstructions } = require('./issueCompliance');
-const { findPullRequestFailures } = require('./prCompliance');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const { assessIssue, findIssueFailures, hasTestingInstructions } = require('./issueCompliance');
+const { assessPullRequestRules, findPullRequestFailures } = require('./prCompliance');
 const { hasFilledSection, parseSections } = require('./markdownSections');
+const { AI_CHECK_RESULTS, findAiCheckResult, readAiCheckResults } = require('./aiCheckResults');
+const { STATUSES } = require('./checklist');
+const { AI_REQUIRED_CHECK_NAMES } = require('./config');
+
+const REPOSITORY_ROOT = path.resolve(__dirname, '../../..');
 
 const COMPLIANT_PULL_REQUEST_BODY = `
 Closes #4321
@@ -121,36 +129,31 @@ test('an empty testing instructions comment does not count', () => {
 });
 
 test('a complete pull request has nothing to report', () => {
-  const pullRequest = {
-    body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: []
-  };
-
-  assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
+  assert.deepEqual(findPullRequestFailures(buildPullRequest(), [COMPLIANT_ISSUE]), []);
 });
 
-test('unticked checklist items are quoted back to the author', () => {
-  const pullRequest = {
-    body: COMPLIANT_PULL_REQUEST_BODY.replace(
-      '* [x] Changes address the original issue',
-      '* [ ] Changes address the original issue'
-    ),
-    labels: []
-  };
+test('the Author Checklist is one line, quoting back every item left unticked', () => {
+  const pullRequest = buildPullRequest({
+    body: COMPLIANT_PULL_REQUEST_BODY.replace(/\* \[x\]/g, '* [ ]')
+  });
+  const items = assessPullRequestRules(pullRequest, [COMPLIANT_ISSUE]).filter((item) =>
+    item.label.includes('Author Checklist')
+  );
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
+  assert.equal(items.length, 1);
   assert.deepEqual(
     failures.map((failure) => failure.id),
     ['pr-checklist-unchecked']
   );
-  assert.match(failures[0].summary, /`Changes address the original issue`/);
+  assert.match(
+    failures[0].fix,
+    /`Changes address the original issue`, `Automated tests are included or updated`/
+  );
 });
 
 test('a missing checklist is reported on its own', () => {
-  const pullRequest = {
-    body: '### Describe your changes:\n\nA change.\n',
-    labels: []
-  };
+  const pullRequest = buildPullRequest({ body: '### Describe your changes:\n\nA change.\n' });
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
   assert.deepEqual(
@@ -160,11 +163,7 @@ test('a missing checklist is reported on its own', () => {
 });
 
 test('a pull request with no linked issue is told how to link one', () => {
-  const pullRequest = {
-    body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: []
-  };
-  const failures = findPullRequestFailures(pullRequest, []);
+  const failures = findPullRequestFailures(buildPullRequest(), []);
 
   assert.deepEqual(
     failures.map((failure) => failure.id),
@@ -173,32 +172,46 @@ test('a pull request with no linked issue is told how to link one', () => {
   assert.match(failures[0].fix, /Closes #1234/);
 });
 
-test('problems with the linked issue are reported against the issue', () => {
-  const incompleteIssue = { ...COMPLIANT_ISSUE, body: '### Summary\n\nPlots drift.\n' };
-  const pullRequest = {
-    body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: []
-  };
-  const failures = findPullRequestFailures(pullRequest, [incompleteIssue]);
+test("with no linked issue, the issue's requirements are still listed, as not yet met", () => {
+  const items = assessPullRequestRules(buildPullRequest(), []);
 
-  assert.equal(failures.length, 3, 'two missing sections plus the testing instructions');
-  assert.match(failures[0].summary, /Issue #4321/);
-  assert.match(failures.at(-1).fix, /comment on it with a `### Testing Instructions` heading/);
+  assert.equal(items[1].status, STATUSES.toDo);
+  assert.equal(items[1].label, 'The linked issue meets its requirements');
+  assert.equal(items[1].failure, undefined, 'the missing link is the one thing to fix');
+});
+
+test('an incomplete issue is one line on the pull request, naming everything it is missing', () => {
+  const incompleteIssue = { ...COMPLIANT_ISSUE, body: '### Summary\n\nPlots drift.\n' };
+  const failures = findPullRequestFailures(buildPullRequest(), [incompleteIssue]);
+
+  assert.deepEqual(
+    failures.map((failure) => failure.id),
+    ['pr-issue-4321']
+  );
+  assert.equal(
+    failures[0].summary,
+    'Issue #4321 is missing **Expected vs Current Behavior**, **Steps to Reproduce** and testing instructions.'
+  );
+  assert.match(failures[0].fix, /under a `### Testing Instructions` heading/);
+});
+
+test('the issue itself lists its testing instructions, without holding the issue to them', () => {
+  const issue = { ...COMPLIANT_ISSUE, body: '### Summary\n\nPlots drift.\n' };
+  const testingItem = assessIssue(issue).at(-1);
+
+  assert.match(testingItem.label, /Testing instructions/);
+  assert.equal(testingItem.status, STATUSES.toDo);
+  assert.equal(testingItem.failure, undefined, 'only a pull request closing the issue needs them');
 });
 
 test('the exemption label takes a pull request out of the gate entirely', () => {
-  const pullRequest = { body: '', labels: ['pr:daveit'] };
+  const pullRequest = buildPullRequest({ body: '', labels: ['pr:daveit'] });
 
   assert.deepEqual(findPullRequestFailures(pullRequest, []), []);
 });
 
-test('CodeRabbit requesting changes is a rule the pull request fails', () => {
-  const pullRequest = {
-    body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: [],
-    state: 'OPEN',
-    aiReviewState: 'CHANGES_REQUESTED'
-  };
+test("CodeRabbit requesting changes is a failed rule even when its comment can't be read", () => {
+  const pullRequest = buildPullRequest({ aiReviewState: 'CHANGES_REQUESTED' });
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
   assert.deepEqual(
@@ -208,36 +221,132 @@ test('CodeRabbit requesting changes is a rule the pull request fails', () => {
   assert.match(failures[0].fix, /CodeRabbit's comment/);
 });
 
+test("CodeRabbit's checks are one line, failed when its comment says one failed", () => {
+  const pullRequest = buildPullRequest({
+    aiCheckResults: aiResults({ 'Description explains why': 'error' })
+  });
+
+  assert.deepEqual(aiCheckStatuses(pullRequest), [STATUSES.toDo]);
+  assert.deepEqual(
+    findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]).map((failure) => failure.id),
+    ['pr-ai-review']
+  );
+});
+
+test("CodeRabbit's checks are in progress until it has reported every one", () => {
+  const partlyRun = buildPullRequest({
+    aiCheckResults: aiResults({ 'Changed code is tested': 'passed' })
+  });
+
+  assert.deepEqual(aiCheckStatuses(buildPullRequest()), [STATUSES.inProgress]);
+  assert.deepEqual(aiCheckStatuses(partlyRun), [STATUSES.inProgress]);
+});
+
+test("CodeRabbit's checks are done once all pass, before it approves", () => {
+  const allPassed = Object.fromEntries(AI_REQUIRED_CHECK_NAMES.map((name) => [name, 'passed']));
+
+  assert.deepEqual(aiCheckStatuses(buildPullRequest({ aiCheckResults: aiResults(allPassed) })), [
+    STATUSES.done
+  ]);
+});
+
+test("CodeRabbit's verdict wins over its table", () => {
+  const allPassed = Object.fromEntries(AI_REQUIRED_CHECK_NAMES.map((name) => [name, 'passed']));
+  const approvedOverOldFailure = buildPullRequest({
+    aiReviewState: 'APPROVED',
+    aiCheckResults: aiResults({ 'Description explains why': 'error' })
+  });
+  const changesRequestedOverPasses = buildPullRequest({
+    aiReviewState: 'CHANGES_REQUESTED',
+    aiCheckResults: aiResults(allPassed)
+  });
+
+  assert.deepEqual(aiCheckStatuses(approvedOverOldFailure), [STATUSES.done]);
+  assert.deepEqual(aiCheckStatuses(changesRequestedOverPasses), [STATUSES.toDo]);
+});
+
 test('a CodeRabbit verdict not yet given, or an approval, is no failure', () => {
   for (const aiReviewState of [undefined, 'APPROVED']) {
-    const pullRequest = {
-      body: COMPLIANT_PULL_REQUEST_BODY,
-      labels: [],
-      state: 'OPEN',
-      aiReviewState
-    };
+    const pullRequest = buildPullRequest({ aiReviewState });
 
     assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
   }
 });
 
 test("on a closed pull request, CodeRabbit's last verdict does not count, because it reviews again on reopening", () => {
-  const pullRequest = {
-    body: COMPLIANT_PULL_REQUEST_BODY,
-    labels: [],
+  const pullRequest = buildPullRequest({
     state: 'CLOSED',
-    aiReviewState: 'CHANGES_REQUESTED'
-  };
+    aiReviewState: 'CHANGES_REQUESTED',
+    aiCheckResults: aiResults({ 'Description explains why': 'error' })
+  });
 
   assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
 });
 
+test("CodeRabbit's results are read from the table in its own comment", () => {
+  const results = readAiCheckResults([
+    codeRabbitComment([
+      '|         Check name        |   Status   | Explanation |',
+      '| :----------------------- | :--------: | :---------- |',
+      '|  Description Explains Why |   ![Error](https://example.test/error.svg)   | Restates the diff. |',
+      '| Changed Code Is Tested | ![Passed](https://example.test/passed.svg) | A spec covers it. |'
+    ])
+  ]);
+
+  assert.equal(findAiCheckResult(results, 'Description explains why'), AI_CHECK_RESULTS.error);
+  assert.equal(findAiCheckResult(results, 'Changed code is tested'), AI_CHECK_RESULTS.passed);
+  assert.equal(findAiCheckResult(results, 'Verification is described'), undefined);
+});
+
+test("nobody else's comment can pass for CodeRabbit's results", () => {
+  const table = '| Description Explains Why | ![Passed](https://example.test/passed.svg) | Fine. |';
+  const results = readAiCheckResults([
+    { body: table, user: { login: 'contributor', type: 'User' } },
+    { body: table, user: { login: 'coderabbitai', type: 'User' } },
+    { body: table, user: null }
+  ]);
+
+  assert.equal(results.size, 0);
+});
+
+test("the checks listed are exactly CodeRabbit's error-mode checks in .coderabbit.yaml", () => {
+  const configuration = fs.readFileSync(path.join(REPOSITORY_ROOT, '.coderabbit.yaml'), 'utf8');
+  const errorModeChecks = [...configuration.matchAll(/^\s*- name: (.+)\n\s*mode: error$/gm)].map(
+    ([, name]) => name.trim()
+  );
+
+  assert.deepEqual(errorModeChecks, AI_REQUIRED_CHECK_NAMES);
+});
+
+function buildPullRequest(overrides = {}) {
+  return {
+    body: COMPLIANT_PULL_REQUEST_BODY,
+    labels: [],
+    state: 'OPEN',
+    aiReviewState: undefined,
+    aiCheckResults: new Map(),
+    ...overrides
+  };
+}
+
+function aiResults(resultsByName) {
+  return new Map(
+    Object.entries(resultsByName).map(([name, result]) => [name.toLowerCase(), result])
+  );
+}
+
+function aiCheckStatuses(pullRequest) {
+  return assessPullRequestRules(pullRequest, [COMPLIANT_ISSUE])
+    .filter((item) => item.label === "CodeRabbit's pre-merge checks pass")
+    .map((item) => item.status);
+}
+
+function codeRabbitComment(lines) {
+  return { body: lines.join('\n'), user: { login: 'coderabbitai[bot]', type: 'Bot' } };
+}
+
 // The templates in use today. The gate runs alongside them during its pilot, and
 // pull requests mostly close issues filed under them, so it must read them.
-const fs = require('node:fs');
-const path = require('node:path');
-
-const REPOSITORY_ROOT = path.resolve(__dirname, '../../..');
 
 function readTemplate(relativePath) {
   return fs
@@ -290,7 +399,7 @@ test('the current pull request template never asks for the type label or milesto
       (match, checklist, next) =>
         checklist.replace(/\* \[ \] (?!.*(milestone|`type:` label))/g, '* [x] ') + next
     );
-  const pullRequest = { body, labels: [] };
+  const pullRequest = buildPullRequest({ body });
 
   assert.match(
     body,

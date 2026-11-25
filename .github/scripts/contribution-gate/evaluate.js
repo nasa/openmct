@@ -27,7 +27,8 @@ const {
   TYPE_LABEL_PREFIX
 } = require('./config');
 const { GateActions } = require('./gateActions');
-const { describeCheckState, summarizeRequiredChecks } = require('./checkStatus');
+const { summarizeRequiredChecks } = require('./checkStatus');
+const { listFailures } = require('./checklist');
 const {
   findContributionKind,
   findDeadline,
@@ -51,18 +52,17 @@ const {
   renderReminderComment,
   renderTeamMentionComment
 } = require('./feedbackComment');
-const { findIssueFailures } = require('./issueCompliance');
-const { findPullRequestFailures } = require('./prCompliance');
+const { assessIssue } = require('./issueCompliance');
+const { assessPullRequestRules } = require('./prCompliance');
+const { buildPullRequestChecklist } = require('./pullRequestChecklist');
 const { findRepliedOpenThreads, findThreadsAwaitingReply } = require('./reviewThreads');
 const { readMarker } = require('./stateMarker');
 const { TRIGGER_KINDS, findTrigger } = require('./trigger');
 
 const OPEN_STATE = 'OPEN';
-const DRAFT_WAITING_NOTE =
-  'This is a draft, so it has not been reviewed yet. Mark it ready for review when you would like that to happen.';
 const APPROVED = 'APPROVED';
-const AI_APPROVAL_WAITING_NOTE =
-  'Waiting for CodeRabbit to approve. It does so once its pre-merge checks pass and its review threads are resolved, and checks again each time you push.';
+const TEAM_REVIEW_NOTE =
+  'Everything automated is done, and the maintainers have been asked to review. Thank you for your patience.';
 const CLOSED_NOTE =
   'This is closed because the points above were not addressed in time. Fix them, push any commits you need, then comment `/recheck` and it reopens automatically.';
 
@@ -131,12 +131,20 @@ async function evaluatePullRequest(evaluator, trigger) {
     return;
   }
 
-  const stickyComment = await fetchStickyComment(evaluator.reader, pullRequest.number);
-  const state = readMarker(stickyComment === undefined ? '' : stickyComment.body);
-  const failures = findPullRequestFailures(pullRequest, pullRequest.linkedIssues);
-  const report = { evaluator, contribution: pullRequest, failures, state, stickyComment, trigger };
+  const { stickyComment } = pullRequest;
+  const ruleItems = assessPullRequestRules(pullRequest, pullRequest.linkedIssues);
+  const report = {
+    evaluator,
+    contribution: pullRequest,
+    ruleItems,
+    failures: listFailures(ruleItems),
+    threadsAwaitingReply: findThreadsAwaitingReply(pullRequest.reviewThreads),
+    state: readMarker(stickyComment === undefined ? '' : stickyComment.body),
+    stickyComment,
+    trigger
+  };
 
-  if (failures.length > 0) {
+  if (report.failures.length > 0) {
     await handleNonCompliantPullRequest(report);
 
     return;
@@ -148,8 +156,17 @@ async function evaluatePullRequest(evaluator, trigger) {
 async function evaluateIssue(evaluator, trigger, issue) {
   const stickyComment = await fetchStickyComment(evaluator.reader, issue.number);
   const state = readMarker(stickyComment === undefined ? '' : stickyComment.body);
-  const failures = findIssueFailures(issue);
-  const report = { evaluator, contribution: issue, failures, state, stickyComment, trigger };
+  const issueItems = assessIssue(issue);
+  const failures = listFailures(issueItems);
+  const report = {
+    evaluator,
+    contribution: issue,
+    failures,
+    issueItems,
+    state,
+    stickyComment,
+    trigger
+  };
 
   if (failures.length === 0) {
     await handleCompliantIssue(report);
@@ -244,7 +261,7 @@ async function evaluateOneSafely(evaluator, contribution) {
 }
 
 async function handleNonCompliantPullRequest(report) {
-  const { contribution, evaluator, failures } = report;
+  const { contribution, evaluator } = report;
   const clockedState = startClock(report.state, evaluator.now);
   const deadline = findDeadlineFor(contribution, clockedState);
   const { state, isClosed } = await closeOrRemind(report, clockedState, deadline);
@@ -260,8 +277,8 @@ async function handleNonCompliantPullRequest(report) {
   await writeStickyComment(
     report,
     renderPullRequestComment({
-      stageStatuses: {},
-      failures,
+      checklist: buildChecklist(report, { isTeamReviewRequested: false }),
+      threadsAwaitingReply: report.threadsAwaitingReply,
       ...describeDeadline(deadline, isClosed),
       state
     })
@@ -269,7 +286,7 @@ async function handleNonCompliantPullRequest(report) {
 }
 
 async function handleNonCompliantIssue(report) {
-  const { contribution, evaluator, failures } = report;
+  const { contribution, evaluator } = report;
   const clockedState = startClock(report.state, evaluator.now);
   const deadline = findDeadlineFor(contribution, clockedState);
   const { state, isClosed } = await closeOrRemind(report, clockedState, deadline);
@@ -281,7 +298,11 @@ async function handleNonCompliantIssue(report) {
   );
   await writeStickyComment(
     report,
-    renderIssueComment({ failures, ...describeDeadline(deadline, isClosed), state })
+    renderIssueComment({
+      issueItems: report.issueItems,
+      ...describeDeadline(deadline, isClosed),
+      state
+    })
   );
 }
 
@@ -299,16 +320,25 @@ async function handleCompliantIssue(report) {
   }
 
   await evaluator.gate.removeLabel(contribution.number, STAGE_LABELS.needsCompliance);
-  await writeStickyComment(report, renderIssueComment({ failures: [], state: stopClock(state) }));
+  await writeStickyComment(
+    report,
+    renderIssueComment({ issueItems: report.issueItems, state: stopClock(state) })
+  );
 }
 
-async function advanceCompliantPullRequest(report) {
+async function advanceCompliantPullRequest(reportBeforeLabelling) {
+  await reopenIfRequested(reportBeforeLabelling);
+
+  const report = {
+    ...reportBeforeLabelling,
+    contribution: await setWhatOnlyMaintainersCan(
+      reportBeforeLabelling.evaluator,
+      reportBeforeLabelling.contribution
+    )
+  };
   const { contribution, evaluator } = report;
   const state = stopClock(report.state);
 
-  await reopenIfRequested(report);
-  await copyTypeLabelFromIssues(evaluator, contribution);
-  await markMilestoneDecided(evaluator, contribution);
   await publishMilestoneCheck(evaluator, contribution, { isDecided: true });
 
   const progress = await findProgress(report, state);
@@ -317,9 +347,10 @@ async function advanceCompliantPullRequest(report) {
   await writeStickyComment(
     report,
     renderPullRequestComment({
-      stageStatuses: progress.stageStatuses,
-      failures: [],
-      threadsAwaitingReply: progress.threadsAwaitingReply,
+      checklist: buildChecklist(report, {
+        isTeamReviewRequested: progress.stage === STAGE_LABELS.teamReview
+      }),
+      threadsAwaitingReply: report.threadsAwaitingReply,
       waitingNote: progress.waitingNote,
       state: progress.state
     })
@@ -334,15 +365,11 @@ async function findProgress(report, state) {
   const { contribution } = report;
 
   if (contribution.isDraft === true) {
-    return atStage(STAGE_LABELS.awaitingCi, state, { waitingNote: DRAFT_WAITING_NOTE });
+    return atStage(STAGE_LABELS.awaitingCi, state);
   }
 
-  const checkSummary = summarizeRequiredChecks(contribution.checkConclusions);
-
-  if (checkSummary.allPassed === false) {
-    return atStage(STAGE_LABELS.awaitingCi, state, {
-      waitingNote: describeCheckState(checkSummary)
-    });
+  if (summarizeRequiredChecks(contribution.checkConclusions).allPassed === false) {
+    return atStage(STAGE_LABELS.awaitingCi, state);
   }
 
   return finishAutomatedReviews(report, state);
@@ -358,20 +385,8 @@ async function finishAutomatedReviews(report, state) {
 
   await resolveThreadsAlreadyAnswered(evaluator, contribution);
 
-  const threadsAwaitingReply = findThreadsAwaitingReply(contribution.reviewThreads);
-
-  if (threadsAwaitingReply.length > 0) {
-    return atStage(STAGE_LABELS.automatedReview, state, {
-      threadsAwaitingReply,
-      checksPassed: true
-    });
-  }
-
-  if (contribution.aiReviewState !== APPROVED) {
-    return atStage(STAGE_LABELS.automatedReview, state, {
-      waitingNote: AI_APPROVAL_WAITING_NOTE,
-      checksPassed: true
-    });
+  if (report.threadsAwaitingReply.length > 0 || contribution.aiReviewState !== APPROVED) {
+    return atStage(STAGE_LABELS.automatedReview, state);
   }
 
   return requestTeamReview(evaluator, contribution, state);
@@ -385,13 +400,7 @@ async function requestTeamReview(evaluator, contribution, state) {
   return atStage(
     STAGE_LABELS.teamReview,
     { ...state, teamReviewRequested: true },
-    {
-      waitingNote:
-        'Everything automated is done, and the maintainers have been asked to review. Thank you for your patience.',
-      checksPassed: true,
-      automatedReviewAddressed: true,
-      teamReviewRequested: true
-    }
+    TEAM_REVIEW_NOTE
   );
 }
 
@@ -417,19 +426,17 @@ async function resolveThreadsAlreadyAnswered(evaluator, contribution) {
   }
 }
 
-function atStage(stage, state, progress = {}) {
-  return {
-    stage,
-    state,
-    threadsAwaitingReply: progress.threadsAwaitingReply,
-    waitingNote: progress.waitingNote,
-    stageStatuses: {
-      compliance: true,
-      checks: progress.checksPassed === true,
-      automatedReview: progress.automatedReviewAddressed === true,
-      teamReview: progress.teamReviewRequested === true
-    }
-  };
+function atStage(stage, state, waitingNote) {
+  return { stage, state, waitingNote };
+}
+
+/** Every check is shown, met or not, whatever stage the pull request has reached. */
+function buildChecklist(report, { isTeamReviewRequested }) {
+  return buildPullRequestChecklist(report.contribution, {
+    ruleItems: report.ruleItems,
+    threadsAwaitingReply: report.threadsAwaitingReply,
+    isTeamReviewRequested
+  });
 }
 
 /**
@@ -512,10 +519,22 @@ async function reopenIfRequested(report) {
   await evaluator.gate.reopenContribution(contribution.number);
 }
 
-/** Outside contributors cannot label, so the gate copies the type from the issue. */
+/** @returns {Promise<object>} the pull request, with the labels the gate has just added */
+async function setWhatOnlyMaintainersCan(evaluator, pullRequest) {
+  const typeLabels = await copyTypeLabelFromIssues(evaluator, pullRequest);
+  const milestoneLabels = await markMilestoneDecided(evaluator, pullRequest);
+
+  return { ...pullRequest, labels: [...pullRequest.labels, ...typeLabels, ...milestoneLabels] };
+}
+
+/**
+ * Outside contributors cannot label, so the gate copies the type from the issue.
+ *
+ * @returns {Promise<string[]>} the label added, if one was
+ */
 async function copyTypeLabelFromIssues(evaluator, pullRequest) {
   if (pullRequest.labels.some(isTypeLabel)) {
-    return;
+    return [];
   }
 
   const issueTypeLabels = pullRequest.linkedIssues.flatMap((issue) =>
@@ -523,25 +542,33 @@ async function copyTypeLabelFromIssues(evaluator, pullRequest) {
   );
 
   if (issueTypeLabels.length === 0) {
-    return;
+    return [];
   }
 
   await evaluator.gate.addLabel(pullRequest.number, issueTypeLabels[0]);
+
+  return [issueTypeLabels[0]];
 }
 
-/** Outside contributors cannot set a milestone either; a label records the decision. */
+/**
+ * Outside contributors cannot set a milestone either; a label records the decision.
+ *
+ * @returns {Promise<string[]>} the label added, if one was
+ */
 async function markMilestoneDecided(evaluator, pullRequest) {
   if (pullRequest.hasMilestone === true) {
     await evaluator.gate.removeLabel(pullRequest.number, NO_MILESTONE_LABEL);
 
-    return;
+    return [];
   }
 
   if (pullRequest.labels.includes(NO_MILESTONE_LABEL)) {
-    return;
+    return [];
   }
 
   await evaluator.gate.addLabel(pullRequest.number, NO_MILESTONE_LABEL);
+
+  return [NO_MILESTONE_LABEL];
 }
 
 function hasMilestoneDecision(pullRequest) {
