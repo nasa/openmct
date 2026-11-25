@@ -14,6 +14,12 @@ on:
       - reopened
       - synchronize
 
+# The repository's default token can write. No job here needs to: caches and
+# artifacts use the Actions runtime token, and Codecov, Docker Hub and Percy their
+# own secrets. A job that needs more says so, and its block replaces this one.
+permissions:
+  contents: read
+
 env:
   NODE_ENV: development
   NODE_VERSION: 24.14.1
