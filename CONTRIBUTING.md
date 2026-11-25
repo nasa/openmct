@@ -70,6 +70,7 @@ Additionally:
 * When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
 * Every PR must have two reviewers assigned, though only one approval is necessary for merge.
 * Changes to API require approval by a senior developer.
+* CI runs automatically on a pull request from a fork, unless it changes a file listed in [.github/CODEOWNERS](.github/CODEOWNERS): the workflows, dependencies, and build, lint and test configuration. Those files decide what runs on the project's machines and on everyone's who installs Open MCT, so a maintainer looks at the change first, and a comment on the pull request says which files are holding it. Keep such changes in a pull request of their own where you can, so the rest of your work is not held up.
 * When creating a PR, it is the author's responsibility to apply any priority label from the issue to the PR as well. This helps with prioritization.
 
 ## Standards
