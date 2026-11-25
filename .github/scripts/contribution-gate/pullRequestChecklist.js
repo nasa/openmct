@@ -7,13 +7,7 @@
  * outstanding.
  */
 
-const {
-  CHECKS_REQUIRED_WHEN_REPORTED,
-  DEADLINE_DAYS,
-  NO_MILESTONE_LABEL,
-  REQUIRED_CHECK_NAMES,
-  TYPE_LABEL_PREFIX
-} = require('./config');
+const { CHECKS_REQUIRED_WHEN_REPORTED, DEADLINE_DAYS, REQUIRED_CHECK_NAMES } = require('./config');
 const { CHECK_STATUSES, findCheckStatus, summarizeRequiredChecks } = require('./checkStatus');
 const { createDoneItem, createInProgressItem, createToDoItem } = require('./checklist');
 const { isAiReviewerLogin } = require('./reviewerLogins');
@@ -35,19 +29,11 @@ function buildPullRequestChecklist(pullRequest, progress) {
   return [
     { title: 'Contribution rules', items: progress.ruleItems },
     {
-      title: 'Set by the gate, since only maintainers can',
-      items: assessGateRecords(pullRequest)
-    },
-    {
       title: 'Before the maintainers are asked to review',
       items: assessReadiness(pullRequest, progress.threadsAwaitingReply)
     },
     { title: 'Review', items: assessReview(pullRequest, progress.isTeamReviewRequested) }
   ];
-}
-
-function assessGateRecords(pullRequest) {
-  return [assessTypeLabel(pullRequest), assessMilestone(pullRequest)];
 }
 
 function assessReadiness(pullRequest, threadsAwaitingReply) {
@@ -69,29 +55,6 @@ function assessReview(pullRequest, isTeamReviewRequested) {
     assessTeamReviewRequest(isTeamReviewRequested),
     assessTeamApproval(pullRequest, isTeamReviewRequested)
   ];
-}
-
-function assessTypeLabel(pullRequest) {
-  const label = 'A `type:` label, copied from the linked issue';
-
-  if (pullRequest.labels.some((name) => name.startsWith(TYPE_LABEL_PREFIX))) {
-    return createDoneItem(label);
-  }
-
-  return createToDoItem(
-    label,
-    'Copied once the contribution rules are met. If the issue has none, a maintainer adds one.'
-  );
-}
-
-function assessMilestone(pullRequest) {
-  const label = `A milestone, or the "${NO_MILESTONE_LABEL}" label`;
-
-  if (pullRequest.hasMilestone === true || pullRequest.labels.includes(NO_MILESTONE_LABEL)) {
-    return createDoneItem(label);
-  }
-
-  return createToDoItem(label, 'Recorded once the contribution rules are met.');
 }
 
 function assessReadyForReview(pullRequest) {

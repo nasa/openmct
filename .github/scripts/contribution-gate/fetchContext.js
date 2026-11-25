@@ -31,7 +31,6 @@ const PULL_REQUEST_QUERY = `
         authorAssociation
         headRefOid
         author { login }
-        milestone { number }
         labels(first: 50) { nodes { name } }
         closingIssuesReferences(first: ${MAXIMUM_LINKED_ISSUES}) {
           nodes {
@@ -98,7 +97,6 @@ async function fetchPullRequestContext(reader, pullNumber) {
     headSha: pullRequest.headRefOid,
     authorLogin: readAuthorLogin(pullRequest),
     authorAssociation: pullRequest.authorAssociation,
-    hasMilestone: pullRequest.milestone !== null,
     labels: readNames(pullRequest.labels),
     linkedIssues: pullRequest.closingIssuesReferences.nodes.map(toLinkedIssue),
     aiReviewState: readAiReviewState(pullRequest.latestOpinionatedReviews.nodes),

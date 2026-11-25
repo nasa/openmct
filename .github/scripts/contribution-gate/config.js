@@ -24,18 +24,8 @@ const STAGE_LABELS = {
   teamReview: 'gate:team-review'
 };
 
-/**
- * The check that branch protection requires before a pull request can merge.
- * The gate publishes it itself, because the label it relies on is added with a
- * token whose events do not start new workflow runs.
- */
-const MILESTONE_CHECK_NAME = 'Check Milestone';
-
 /** Dependabot and maintainers use this to opt a pull request out of the gate. */
 const GATE_EXEMPT_LABEL = 'pr:daveit';
-
-/** Stands in for a milestone, which outside contributors cannot set. */
-const NO_MILESTONE_LABEL = 'no milestone';
 
 /** How long a non-compliant contribution has before it is closed. */
 const DEADLINE_DAYS = {
@@ -121,9 +111,6 @@ const TEAM_AUTHOR_ASSOCIATIONS = ['OWNER', 'MEMBER', 'COLLABORATOR'];
 /** Comment command that asks the gate to look again, including at closed items. */
 const RECHECK_COMMAND = '/recheck';
 
-/** Marks which kind of change a contribution is; copied from issue to pull request. */
-const TYPE_LABEL_PREFIX = 'type:';
-
 /**
  * How many contributions the daily sweep introduces to the gate in one run.
  * This keeps a large backlog from exhausting the API rate limit, at the cost of
@@ -151,11 +138,11 @@ const REQUIRED_ISSUE_SECTIONS = {
 };
 
 /**
- * Author-checklist items about things the gate does itself, so it never asks a
- * contributor to tick them: it copies the type label from the issue, and records
- * the milestone decision. Outside contributors could not do either.
+ * Author Checklist items the pull request template used to have, about the type
+ * label and the milestone. Pull requests opened from the older template still
+ * carry them, so the gate never asks for them to be ticked.
  */
-const CHECKLIST_ITEMS_HANDLED_BY_THE_GATE = [/\bmilestone\b/i, /`?type:`?\s*label/i];
+const RETIRED_CHECKLIST_ITEMS = [/\bmilestone\b/i, /`?type:`?\s*label/i];
 
 /**
  * Headings that count as testing instructions, in an issue body or in a comment
@@ -178,12 +165,10 @@ module.exports = {
   DEADLINE_DAYS,
   GATE_BOT_LOGIN,
   GATE_EXEMPT_LABEL,
-  CHECKLIST_ITEMS_HANDLED_BY_THE_GATE,
   MAXIMUM_INTAKE_PER_SWEEP,
-  MILESTONE_CHECK_NAME,
-  NO_MILESTONE_LABEL,
   PILOT_LABEL,
   RECHECK_COMMAND,
+  RETIRED_CHECKLIST_ITEMS,
   REMINDER_LEAD_DAYS,
   REQUIRED_CHECK_NAMES,
   REQUIRED_ISSUE_SECTIONS,
@@ -192,6 +177,5 @@ module.exports = {
   STAGE_LABELS,
   TEAM_ALLOWLIST,
   TEAM_AUTHOR_ASSOCIATIONS,
-  TESTING_INSTRUCTION_HEADINGS,
-  TYPE_LABEL_PREFIX
+  TESTING_INSTRUCTION_HEADINGS
 };

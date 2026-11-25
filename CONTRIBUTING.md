@@ -97,8 +97,7 @@ maintainer reading it. It applies only to pull requests a maintainer has labelle
 On a candidate pull request, the bot posts a single comment and keeps it up to date, so there is always
 one place that says what is left to do. The comment is a checklist of every check in the process below,
 each ticked off as it passes, with what to do under any that has not. It never asks you to do something
-you do not have permission to do: it copies the `type:` label from the linked issue and records the
-milestone decision itself.
+you do not have permission to do.
 
 A candidate pull request moves through these stages, and can move back if something changes:
 

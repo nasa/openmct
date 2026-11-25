@@ -10,11 +10,7 @@
  * gate reads their outcome from CodeRabbit's summary comment and its review.
  */
 
-const {
-  AI_REQUIRED_CHECK_NAMES,
-  CHECKLIST_ITEMS_HANDLED_BY_THE_GATE,
-  GATE_EXEMPT_LABEL
-} = require('./config');
+const { AI_REQUIRED_CHECK_NAMES, GATE_EXEMPT_LABEL, RETIRED_CHECKLIST_ITEMS } = require('./config');
 const { AI_CHECK_RESULTS, findAiCheckResult } = require('./aiCheckResults');
 const {
   createDoneItem,
@@ -176,11 +172,11 @@ function assessAiChecks(pullRequest) {
   return [createFailedRuleItem(AI_CHECKS_LABEL, AI_CHECKS_FAILURE)];
 }
 
-/** The items left unticked, other than those the gate takes care of itself. */
+/** The items left unticked, other than those the template no longer has. */
 function readUncheckedItems(checklist) {
   return [...checklist.matchAll(UNCHECKED_ITEM_PATTERN)]
     .map(([, text]) => stripMarkdownLinks(text))
-    .filter((text) => isHandledByTheGate(text) === false);
+    .filter((text) => isRetired(text) === false);
 }
 
 function joinWithAnd(items) {
@@ -191,8 +187,8 @@ function joinWithAnd(items) {
   return `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
 }
 
-function isHandledByTheGate(checklistItemText) {
-  return CHECKLIST_ITEMS_HANDLED_BY_THE_GATE.some((pattern) => pattern.test(checklistItemText));
+function isRetired(checklistItemText) {
+  return RETIRED_CHECKLIST_ITEMS.some((pattern) => pattern.test(checklistItemText));
 }
 
 function stripMarkdownLinks(text) {

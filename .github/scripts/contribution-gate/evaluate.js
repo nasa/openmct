@@ -19,12 +19,9 @@
 const {
   GATE_EXEMPT_LABEL,
   MAXIMUM_INTAKE_PER_SWEEP,
-  MILESTONE_CHECK_NAME,
-  NO_MILESTONE_LABEL,
   PILOT_LABEL,
   REVIEWER_TEAM_SLUG,
-  STAGE_LABELS,
-  TYPE_LABEL_PREFIX
+  STAGE_LABELS
 } = require('./config');
 const { GateActions } = require('./gateActions');
 const { summarizeRequiredChecks } = require('./checkStatus');
@@ -266,9 +263,6 @@ async function handleNonCompliantPullRequest(report) {
   const deadline = findDeadlineFor(contribution, clockedState);
   const { state, isClosed } = await closeOrRemind(report, clockedState, deadline);
 
-  await publishMilestoneCheck(evaluator, contribution, {
-    isDecided: hasMilestoneDecision(contribution)
-  });
   await evaluator.gate.setStage(
     contribution.number,
     STAGE_LABELS.needsCompliance,
@@ -326,20 +320,11 @@ async function handleCompliantIssue(report) {
   );
 }
 
-async function advanceCompliantPullRequest(reportBeforeLabelling) {
-  await reopenIfRequested(reportBeforeLabelling);
-
-  const report = {
-    ...reportBeforeLabelling,
-    contribution: await setWhatOnlyMaintainersCan(
-      reportBeforeLabelling.evaluator,
-      reportBeforeLabelling.contribution
-    )
-  };
+async function advanceCompliantPullRequest(report) {
   const { contribution, evaluator } = report;
   const state = stopClock(report.state);
 
-  await publishMilestoneCheck(evaluator, contribution, { isDecided: true });
+  await reopenIfRequested(report);
 
   const progress = await findProgress(report, state);
 
@@ -519,81 +504,6 @@ async function reopenIfRequested(report) {
   await evaluator.gate.reopenContribution(contribution.number);
 }
 
-/** @returns {Promise<object>} the pull request, with the labels the gate has just added */
-async function setWhatOnlyMaintainersCan(evaluator, pullRequest) {
-  const typeLabels = await copyTypeLabelFromIssues(evaluator, pullRequest);
-  const milestoneLabels = await markMilestoneDecided(evaluator, pullRequest);
-
-  return { ...pullRequest, labels: [...pullRequest.labels, ...typeLabels, ...milestoneLabels] };
-}
-
-/**
- * Outside contributors cannot label, so the gate copies the type from the issue.
- *
- * @returns {Promise<string[]>} the label added, if one was
- */
-async function copyTypeLabelFromIssues(evaluator, pullRequest) {
-  if (pullRequest.labels.some(isTypeLabel)) {
-    return [];
-  }
-
-  const issueTypeLabels = pullRequest.linkedIssues.flatMap((issue) =>
-    issue.labels.filter(isTypeLabel)
-  );
-
-  if (issueTypeLabels.length === 0) {
-    return [];
-  }
-
-  await evaluator.gate.addLabel(pullRequest.number, issueTypeLabels[0]);
-
-  return [issueTypeLabels[0]];
-}
-
-/**
- * Outside contributors cannot set a milestone either; a label records the decision.
- *
- * @returns {Promise<string[]>} the label added, if one was
- */
-async function markMilestoneDecided(evaluator, pullRequest) {
-  if (pullRequest.hasMilestone === true) {
-    await evaluator.gate.removeLabel(pullRequest.number, NO_MILESTONE_LABEL);
-
-    return [];
-  }
-
-  if (pullRequest.labels.includes(NO_MILESTONE_LABEL)) {
-    return [];
-  }
-
-  await evaluator.gate.addLabel(pullRequest.number, NO_MILESTONE_LABEL);
-
-  return [NO_MILESTONE_LABEL];
-}
-
-function hasMilestoneDecision(pullRequest) {
-  return pullRequest.hasMilestone === true || pullRequest.labels.includes(NO_MILESTONE_LABEL);
-}
-
-/**
- * Branch protection requires this check. The gate publishes it because it is
- * the gate that records the decision, and the label it adds with GITHUB_TOKEN
- * would not start the workflow that used to compute it.
- */
-async function publishMilestoneCheck(evaluator, pullRequest, { isDecided }) {
-  await evaluator.gate.publishCheck({
-    headSha: pullRequest.headSha,
-    name: MILESTONE_CHECK_NAME,
-    isPassing: isDecided,
-    title: isDecided
-      ? 'Milestone decision recorded'
-      : 'Waiting for the contribution rules to be met',
-    summary: isDecided
-      ? 'This pull request has a milestone, or carries the "no milestone" label.'
-      : 'A milestone decision is recorded automatically, as the "no milestone" label, once the contribution rules are met. The Contribution Gate comment says what is outstanding.'
-  });
-}
-
 async function writeStickyComment(report, body) {
   const { contribution, evaluator, stickyComment } = report;
 
@@ -649,10 +559,6 @@ function describeWhySkipped(pullRequest) {
 
 function hasGateLabel(contribution) {
   return contribution.labels.some((label) => label.startsWith('gate:'));
-}
-
-function isTypeLabel(label) {
-  return label.startsWith(TYPE_LABEL_PREFIX);
 }
 
 function reportNothingToDo(evaluator, trigger) {

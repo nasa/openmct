@@ -387,26 +387,22 @@ test('an enhancement filed under the current template is read by its own heading
   assert.deepEqual(findIssueFailures({ body, labels: ['type:enhancement'] }), []);
 });
 
-test('the current pull request template never asks for the type label or milestone the gate sets itself', () => {
-  const template = readTemplate('.github/PULL_REQUEST_TEMPLATE.md');
-  const body = template
-    .replace(
-      /### Describe your changes:\n/,
-      '### Describe your changes:\nRe-anchors the plot after a zoom.\n'
-    )
-    .replace(
-      /(### Author Checklist[\s\S]*?)(### Reviewer Checklist)/,
-      (match, checklist, next) =>
-        checklist.replace(/\* \[ \] (?!.*(milestone|`type:` label))/g, '* [x] ') + next
-    );
-  const pullRequest = buildPullRequest({ body });
-
-  assert.match(
-    body,
-    /\* \[ \] Have you associated a milestone/,
-    'the milestone item really is left unticked'
+test('the current pull request template is complete once every Author Checklist item is ticked', () => {
+  const body = readTemplate('.github/PULL_REQUEST_TEMPLATE.md').replace(
+    /(### Author Checklist[\s\S]*?)(### Reviewer Checklist)/,
+    (match, checklist, next) => checklist.replace(/\* \[ \] /g, '* [x] ') + next
   );
-  assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
+
+  assert.doesNotMatch(body, /milestone|`type:` label/i, 'the template no longer asks for either');
+  assert.deepEqual(findPullRequestFailures(buildPullRequest({ body }), [COMPLIANT_ISSUE]), []);
+});
+
+test('a pull request opened from the older template is not asked to tick its type label or milestone items', () => {
+  const body = `${COMPLIANT_PULL_REQUEST_BODY}* [ ] Have you associated this PR with a \`type:\` label?
+* [ ] Have you associated a milestone with this PR? Note: leave blank if unsure.
+`;
+
+  assert.deepEqual(findPullRequestFailures(buildPullRequest({ body }), [COMPLIANT_ISSUE]), []);
 });
 
 test('markdownSections drops nested, back-to-back and unclosed comments', () => {

@@ -89,14 +89,13 @@ gate on it straight away; removing it stops the gate, but leaves its labels and 
 
 While it is in the pilot:
 
-- **PR Cop keeps running** on every pull request, candidates included. Both publish the required
-  `Check Milestone` check by the same rule, so they never disagree. PR Cop's other checks are not
-  required, and on a candidate its `Check type Label` can stay red until the next push, because the
-  gate adds that label with a token whose events do not re-run workflows.
-- **The current issue and pull request templates stay.** The gate reads them as they are: the
-  enhancement template's own headings count, and it never asks a contributor to tick the checklist
-  items about the type label or the milestone, because it sets those itself
-  (`CHECKLIST_ITEMS_HANDLED_BY_THE_GATE`). Testing instructions can be added to the issue as a comment.
+- **PR Cop keeps running** on every pull request, candidates included, checking the description
+  against the template. None of its checks is required.
+- **The current issue templates stay.** The gate reads them as they are: the enhancement template's
+  own headings count. Testing instructions can be added to the issue as a comment.
+- **Neither a `type:` label nor a milestone is required.** The pull request template no longer asks
+  for them. Pull requests opened from the older template still carry those two checklist items, so
+  the gate never asks for them to be ticked (`RETIRED_CHECKLIST_ITEMS`).
 - **Nothing outside the pilot is closed.** The daily sweep looks only at labelled contributions, so
   there is no backlog to work through.
 
@@ -115,14 +114,6 @@ maintainer who has been requested as a reviewer can tell it to ignore the failur
 so). Whether CodeRabbit then approves has not been tested; two maintainers' approvals merge a pull
 request either way.
 
-Branch protection also requires a status check named `Check Milestone`, which PR Cop produces.
-The gate publishes it too, on the pull requests it covers (`MILESTONE_CHECK_NAME`): passing when the
-pull request has a milestone or the `no milestone` label, which the gate adds once the contribution
-rules are met. It has to publish it itself, because a label added with `GITHUB_TOKEN` does not start new
-workflow runs, so PR Cop would never see the label and its check would stay red. The two use the same
-rule, and the newer check of a name is the one that counts. Both come from the GitHub Actions app,
-which is the source branch protection expects.
-
 The gate also waits for these checks, which are named in `config.js` and must keep matching `pr.yml`:
 `lint`, `unit-test`, `e2e-ci (shard N/4)` and `visual-a11y-ci (shard N/2)`. The two visual shards have
 their own names so that a failing shard cannot hide behind a passing one.
@@ -130,7 +121,9 @@ their own names so that a failing shard cannot hide behind a passing one.
 ## Before the pilot
 
 1. Create the `new-workflow-candidate` label, and require two approvals on `master`, just before this
-   merges: with one, CodeRabbit's approval alone would let a pull request merge.
+   merges: with one, CodeRabbit's approval alone would let a pull request merge. At the same time,
+   remove `Check Milestone` from `master`'s required status checks: nothing produces it any more, so
+   every pull request would wait for it forever.
 2. Check the token can request the team named in `REVIEWER_TEAM_SLUG` (`openmct-web`). The gate reads
    the request back and, if the team is not on the pull request afterwards, posts a comment mentioning
    the team instead, so a person is told either way.
@@ -146,7 +139,7 @@ Once the pilot has earned it:
    `contribution-gate.yml`. The daily sweep then starts on the open backlog, up to
    `MAXIMUM_INTAKE_PER_SWEEP` a day, and everything it finds incomplete gets a reminder before
    anything is closed. Expect a lot of old bug reports among them.
-2. Remove PR Cop (`prcop.yml` and `prcop-config.json`). The gate publishes `Check Milestone` itself.
+2. Remove PR Cop (`prcop.yml` and `prcop-config.json`).
 3. Move the issue templates to Issue Forms with a required Testing Instructions field, update the pull
    request template to describe what happens next, and disable blank issues.
 4. Set "Fork pull request workflows from outside collaborators" to require approval only for

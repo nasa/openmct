@@ -17,14 +17,6 @@ const RESOLVE_THREAD_MUTATION = `
 
 const ALL_STAGE_LABELS = Object.values(STAGE_LABELS);
 
-/**
- * Marks the checks the gate creates. A workflow job's check run comes from the
- * same GitHub Actions app and can share a name, as PR Cop's "Check Milestone"
- * does, so the app alone cannot tell them apart. The gate must only ever update
- * its own checks, never another workflow's job.
- */
-const GATE_CHECK_EXTERNAL_ID = 'openmct-contribution-gate';
-
 class GateActions {
   constructor({ github, core, owner, repo }) {
     this.github = github;
@@ -135,50 +127,6 @@ class GateActions {
     );
   }
 
-  /**
-   * Publishes a check on a commit, updating the gate's earlier one rather than
-   * stacking another on top of it. Another workflow's check of the same name is
-   * left alone: the gate's sits beside it, and being newer, is the one branch
-   * protection reads.
-   */
-  async publishCheck({ headSha, name, isPassing, title, summary }) {
-    const conclusion = isPassing ? 'success' : 'failure';
-    const existingCheck = await this.findOwnCheck(headSha, name);
-
-    if (existingCheck !== undefined && existingCheck.conclusion === conclusion) {
-      this.core.info(`The "${name}" check is already ${conclusion} on ${headSha.slice(0, 7)}.`);
-
-      return;
-    }
-
-    this.log(
-      `publish the "${name}" check as ${isPassing ? 'passing' : 'failing'} on ${headSha.slice(0, 7)}`
-    );
-
-    const result = { conclusion, output: { title, summary } };
-
-    if (existingCheck === undefined) {
-      await this.github.rest.checks.create({
-        owner: this.owner,
-        repo: this.repo,
-        head_sha: headSha,
-        name,
-        external_id: GATE_CHECK_EXTERNAL_ID,
-        status: 'completed',
-        ...result
-      });
-
-      return;
-    }
-
-    await this.github.rest.checks.update({
-      owner: this.owner,
-      repo: this.repo,
-      check_run_id: existingCheck.id,
-      ...result
-    });
-  }
-
   /** Resolves a thread the author has already replied to, so they need not. */
   async resolveReviewThread(threadId) {
     this.log(`resolve review thread ${threadId}`);
@@ -213,20 +161,6 @@ class GateActions {
 
   log(description) {
     this.core.info(`Gate: ${description}`);
-  }
-
-  async findOwnCheck(headSha, name) {
-    const checks = await this.github.paginate(this.github.rest.checks.listForRef, {
-      owner: this.owner,
-      repo: this.repo,
-      ref: headSha,
-      check_name: name,
-      per_page: 100
-    });
-
-    return checks.find(
-      (check) => check.name === name && check.external_id === GATE_CHECK_EXTERNAL_ID
-    );
   }
 
   async tryRequest(request) {

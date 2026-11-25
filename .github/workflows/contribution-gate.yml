@@ -56,9 +56,8 @@ permissions:
   contents: read
   issues: write
   pull-requests: write
-  # Write, because the gate publishes the "Check Milestone" check that branch
-  # protection requires. See MILESTONE_CHECK_NAME in config.js.
-  checks: write
+  # Read, to see whether CI has passed.
+  checks: read
 
 concurrency:
   group: >-

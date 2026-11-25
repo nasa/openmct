@@ -76,13 +76,10 @@ test('a compliant pull request waits for the checks, and says which', async () =
 
   assert.deepEqual(
     world.addedLabels,
-    [
-      { number: 7, label: 'type:bug' },
-      { number: 7, label: 'no milestone' },
-      { number: 7, label: 'gate:awaiting-ci' }
-    ],
-    'the type label is copied from the issue and the milestone decision recorded'
+    [{ number: 7, label: 'gate:awaiting-ci' }],
+    'the gate sets no type label or milestone'
   );
+  assert.doesNotMatch(world.postedComments[0].body, /milestone|`type:`/i);
   assert.match(
     world.postedComments[0].body,
     /⬜ `lint` passes\n {2}- Open the failed check from the Checks tab/
@@ -201,11 +198,6 @@ test('a pull request without the pilot label is left entirely alone', async () =
 
   assert.deepEqual(world.addedLabels, []);
   assert.deepEqual(world.postedComments, []);
-  assert.deepEqual(
-    world.publishedChecks,
-    [],
-    'not even the milestone check, which PR Cop owns for it'
-  );
   assert.deepEqual(world.closed, []);
 });
 
@@ -314,27 +306,6 @@ test('a team request the API silently drops is replaced by a mention', async () 
   assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
 });
 
-test('the milestone check passes once the rules are met, and not before', async () => {
-  const compliant = createWorld({});
-  const incomplete = createWorld({ body: '### Describe your changes:\n\n\n' });
-
-  await runGate(compliant);
-  await runGate(incomplete);
-
-  assert.deepEqual(compliant.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
-  assert.deepEqual(incomplete.publishedChecks, [
-    { name: 'Check Milestone', conclusion: 'failure' }
-  ]);
-});
-
-test('a pull request with a milestone already set passes the milestone check even when incomplete', async () => {
-  const world = createWorld({ body: '### Describe your changes:\n\n\n', hasMilestone: true });
-
-  await runGate(world);
-
-  assert.deepEqual(world.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
-});
-
 test('a closed pull request reopens on /recheck once its rules are met, whatever CodeRabbit last said', async () => {
   const world = createWorld({
     state: 'CLOSED',
@@ -349,7 +320,6 @@ test('a closed pull request reopens on /recheck once its rules are met, whatever
     [7],
     'CodeRabbit does not review a closed pull request, so it looks again once reopened'
   );
-  assert.deepEqual(world.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
 });
 
 test('/recheck leaves a closed pull request closed while something is still missing, and says how to reopen it', async () => {
@@ -385,51 +355,6 @@ test('the comment left on a pull request as it is closed does not promise a dead
   assert.deepEqual(world.closed, [7]);
   assert.doesNotMatch(world.updatedComments[0].body, /will be closed automatically/);
   assert.match(world.updatedComments[0].body, /This is closed/);
-});
-
-test("PR Cop's milestone check is never rewritten: the gate publishes its own beside it", async () => {
-  const prCopJobCheck = {
-    id: 111,
-    name: 'Check Milestone',
-    conclusion: 'failure',
-    app: { slug: 'github-actions' },
-    external_id: 'a-workflow-job-uuid'
-  };
-  const world = createWorld({ existingChecks: [prCopJobCheck] });
-
-  await runGate(world);
-
-  assert.deepEqual(world.publishedChecks, [{ name: 'Check Milestone', conclusion: 'success' }]);
-});
-
-test('the gate updates its own earlier milestone check rather than adding another', async () => {
-  const gateCheck = {
-    id: 222,
-    name: 'Check Milestone',
-    conclusion: 'failure',
-    app: { slug: 'github-actions' },
-    external_id: 'openmct-contribution-gate'
-  };
-  const world = createWorld({ existingChecks: [gateCheck] });
-
-  await runGate(world);
-
-  assert.deepEqual(world.publishedChecks, [{ updated: 222, conclusion: 'success' }]);
-});
-
-test('a milestone check the gate already published the same way is left untouched', async () => {
-  const gateCheck = {
-    id: 333,
-    name: 'Check Milestone',
-    conclusion: 'success',
-    app: { slug: 'github-actions' },
-    external_id: 'openmct-contribution-gate'
-  };
-  const world = createWorld({ existingChecks: [gateCheck] });
-
-  await runGate(world);
-
-  assert.deepEqual(world.publishedChecks, []);
 });
 
 test("a contributor's comment carrying a forged marker is not mistaken for the gate's", async () => {
@@ -493,17 +418,6 @@ test('every check is shown as it stands, even while a contribution rule is outst
     'CI that passed is ticked, though the rules are not met'
   );
   assert.match(comment, /⬜ The maintainers are asked to review/);
-});
-
-test('the type label and milestone decision are ticked in the run that sets them', async () => {
-  const world = createWorld({});
-
-  await runGate(world);
-
-  const comment = world.postedComments[0].body;
-
-  assert.match(comment, /✅ A `type:` label, copied from the linked issue/);
-  assert.match(comment, /✅ A milestone, or the "no milestone" label/);
 });
 
 test("CodeRabbit's checks are ticked from its comment once every one has passed", async () => {
@@ -607,7 +521,6 @@ function createWorld(scenario) {
     resolvedThreads: [],
     closed: [],
     reopened: [],
-    publishedChecks: [],
     teamsOnReviewList: []
   };
   const stickyComments = buildStickyComments(scenario);
@@ -658,18 +571,7 @@ function createWorld(scenario) {
         })
       },
       checks: {
-        // Asked for one check by name, it answers with the checks already published
-        // under that name; asked for everything, with the CI results.
-        listForRef: async ({ check_name }) =>
-          check_name === undefined
-            ? buildCheckRuns(scenario)
-            : (scenario.existingChecks ?? []).filter((check) => check.name === check_name),
-        create: async ({ name, conclusion }) => {
-          world.publishedChecks.push({ name, conclusion });
-        },
-        update: async ({ check_run_id, conclusion }) => {
-          world.publishedChecks.push({ updated: check_run_id, conclusion });
-        }
+        listForRef: async () => buildCheckRuns(scenario)
       }
     }
   };
@@ -700,7 +602,6 @@ function buildPullRequest(scenario, number) {
     authorAssociation: scenario.authorAssociation ?? 'CONTRIBUTOR',
     headRefOid: HEAD_SHA,
     author: CONTRIBUTOR,
-    milestone: scenario.hasMilestone === true ? { number: 81 } : null,
     labels: { nodes: readLabels(scenario).map((name) => ({ name })) },
     closingIssuesReferences: { nodes: readLinkedIssues(scenario) },
     latestOpinionatedReviews: { nodes: buildLatestReviews(scenario) },
