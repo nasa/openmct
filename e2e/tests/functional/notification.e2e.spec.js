@@ -28,7 +28,7 @@ import { createDomainObjectWithDefaults, createNotification } from '../../appAct
 import { expect, test } from '../../pluginFixtures.js';
 
 test.describe('Notifications List', () => {
-  test.fixme('Notifications can be dismissed individually', async ({ page }) => {
+  test('Notifications can be dismissed individually', async ({ page }) => {
     test.info().annotations.push({
       type: 'issue',
       description: 'https://github.com/nasa/openmct/issues/6820'
@@ -72,7 +72,7 @@ test.describe('Notifications List', () => {
     await page.getByLabel('Dismiss notification of Alert message').click();
 
     // Verify that there is no dialog since the notification overlay was closed automatically after all notifications were dismissed
-    await expect(page.locator('div[role="dialog"]')).toHaveCount(0);
+    await expect(page.getByRole('dialog', { name: 'Overlay' })).toHaveCount(0);
   });
 });
 
