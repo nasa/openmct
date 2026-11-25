@@ -16,6 +16,8 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
+
+import ServiceWorkerManifestPlugin from './ServiceWorkerManifestPlugin.mjs';
 let gitRevision = 'error-retrieving-revision';
 let gitBranch = 'error-retrieving-branch';
 
@@ -55,6 +57,7 @@ const config = {
     snowTheme: './src/plugins/themes/snow-theme.scss',
     darkmatterTheme: './src/plugins/themes/darkmatter-theme.scss',
     historicalTelemetryWorker: './src/plugins/condition/historicalTelemetryWorker.js',
+    serviceWorker: './src/plugins/pwa/serviceWorker.js'
   },
   output: {
     globalObject: 'this',
@@ -112,9 +115,13 @@ const config = {
         {
           from: 'src/plugins/imagery/layers',
           to: 'imagery'
+        },
+        {
+          from: 'src/plugins/pwa/manifest.json'
         }
       ]
     }),
+    new ServiceWorkerManifestPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].css'
