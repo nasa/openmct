@@ -25,6 +25,12 @@ const BOT_LOGIN = 'github-actions[bot]';
 const HELD_CONCLUSION = 'action_required';
 const CODEOWNERS_PATH = '.github/CODEOWNERS';
 
+/**
+ * GitHub returns at most this many files from a comparison, so one that reaches
+ * it may have left some out, and is held.
+ */
+const MAXIMUM_COMPARED_FILES = 300;
+
 /** Entry point called by the workflow. */
 async function run({ github, context, core }) {
   const approver = createApprover({ github, context, core });
@@ -84,17 +90,8 @@ async function checkPullRequest(approver, pullNumber) {
     return;
   }
 
-  const pullRequestsAtHead = await findPullRequestsAt(approver, pullRequest);
-  const changes = await fetchChangesOfAll(approver, pullRequestsAtHead);
-
-  if ((await isStillAt(approver, pullRequestsAtHead, headSha)) === false) {
-    approver.core.info(
-      `A pull request at ${headSha.slice(0, 7)} moved while it was being checked; the next check covers its new commit.`
-    );
-
-    return;
-  }
-
+  const baseShas = await findBaseShasSharing(approver, pullRequest);
+  const changes = await fetchChangesAgainstEach(approver, baseShas, headSha);
   const verdict = decideApproval(changes, approver.ownedPatterns);
 
   approver.core.info(`#${pullNumber}: ${verdict.decision}. ${verdict.reason}`);
@@ -172,9 +169,12 @@ function isFromFork(approver, pullRequest) {
 /**
  * Held runs belong to a commit, not to a pull request: two fork pull requests
  * whose branches point at the same commit share them. Approving the runs approves
- * them for every such pull request, so every one of them is checked.
+ * them for every such pull request, so each one's changes are judged, against its
+ * own base.
+ *
+ * @returns {string[]} the base commit of every open pull request at this head
  */
-async function findPullRequestsAt(approver, pullRequest) {
+async function findBaseShasSharing(approver, pullRequest) {
   const openPullRequests = await approver.github.paginate(approver.github.rest.pulls.list, {
     owner: approver.owner,
     repo: approver.repo,
@@ -184,44 +184,21 @@ async function findPullRequestsAt(approver, pullRequest) {
   const others = openPullRequests.filter(
     (other) => other.number !== pullRequest.number && other.head.sha === pullRequest.head.sha
   );
-  const pullRequestsAtHead = [pullRequest];
 
-  for (const other of others) {
-    pullRequestsAtHead.push(await fetchPullRequest(approver, other.number));
-  }
-
-  return pullRequestsAtHead;
+  return [pullRequest, ...others].map((sharing) => sharing.base.sha);
 }
 
-async function fetchChangesOfAll(approver, pullRequests) {
+async function fetchChangesAgainstEach(approver, baseShas, headSha) {
   const allChanges = [];
 
-  for (const pullRequest of pullRequests) {
-    allChanges.push(await fetchChanges(approver, pullRequest));
+  for (const baseSha of baseShas) {
+    allChanges.push(await fetchChanges(approver, baseSha, headSha));
   }
 
   return {
     changedPaths: allChanges.flatMap((changes) => changes.changedPaths),
     isFileListComplete: allChanges.every((changes) => changes.isFileListComplete)
   };
-}
-
-/**
- * The file list is read by pull request number, so it describes whatever the head
- * is when it is read, while the held runs are for the commit read before it. A
- * push in between would let the verdict on one commit approve the runs of
- * another, so nothing is approved unless every head is where it started.
- */
-async function isStillAt(approver, pullRequests, headSha) {
-  for (const pullRequest of pullRequests) {
-    const current = await fetchPullRequest(approver, pullRequest.number);
-
-    if (current.head.sha !== headSha) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 async function findHeldRuns(approver, headSha) {
@@ -239,21 +216,27 @@ async function findHeldRuns(approver, headSha) {
 }
 
 /**
+ * The files the held commit changes, compared between two fixed commits. The
+ * pull request's own file list would describe whatever its head is when asked,
+ * so a push during the check could have a verdict on one commit approve the
+ * runs of another. The comparison is the same file list the pull request shows,
+ * pinned to the held commit.
+ *
  * Both ends of a rename count: moving a workflow out of .github/ changes what CI
  * runs just as much as editing it.
  */
-async function fetchChanges(approver, pullRequest) {
-  const files = await approver.github.paginate(approver.github.rest.pulls.listFiles, {
+async function fetchChanges(approver, baseSha, headSha) {
+  const { data: comparison } = await approver.github.rest.repos.compareCommitsWithBasehead({
     owner: approver.owner,
     repo: approver.repo,
-    pull_number: pullRequest.number,
-    per_page: 100
+    basehead: `${baseSha}...${headSha}`
   });
+  const files = comparison.files ?? [];
   const changedPaths = files
     .flatMap((file) => [file.filename, file.previous_filename])
     .filter(isDefined);
 
-  return { changedPaths, isFileListComplete: files.length >= pullRequest.changed_files };
+  return { changedPaths, isFileListComplete: files.length < MAXIMUM_COMPARED_FILES };
 }
 
 /** For the scheduled sweep: open fork pull requests whose latest commit has held runs. */

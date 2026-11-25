@@ -106,29 +106,37 @@ test('the scheduled sweep only checks open pull requests whose latest commit is 
 test('runs shared with another pull request at the same commit wait if that one changes a sensitive file', async () => {
   const world = createWorld({
     changedFilesByPullRequest: { 7: ['src/a.js'], 12: ['.github/workflows/pr.yml'] },
-    openPullRequests: [
-      { number: 7, head: { sha: HEAD_SHA } },
-      { number: 12, head: { sha: HEAD_SHA } }
-    ]
+    openPullRequests: [openPullRequest(7, HEAD_SHA), openPullRequest(12, HEAD_SHA)]
   });
 
   await runFor(world);
 
   assert.deepEqual(world.approvedRunIds, [], "#12's workflow change would run in them too");
   assert.match(world.postedComments[0], /`\.github\/workflows\/pr\.yml`/);
+  assert.deepEqual(world.comparisons, [`base-of-7...${HEAD_SHA}`, `base-of-12...${HEAD_SHA}`]);
 });
 
-test('nothing is approved if the pull request moves to a new commit while it is checked', async () => {
-  const world = createWorld({ changedFiles: ['src/a.js'], movesAfterFirstRead: 7 });
+test("the files judged are the held commit's, so a push during the check cannot change them", async () => {
+  const world = createWorld({ changedFiles: ['src/a.js'] });
 
   await runFor(world);
 
   assert.deepEqual(
-    world.approvedRunIds,
-    [],
-    'the file list may describe the new commit, not the held one'
+    world.comparisons,
+    [`base-of-7...${HEAD_SHA}`],
+    'compared between two fixed commits, never read from wherever the head is by then'
   );
-  assert.deepEqual(world.postedComments, []);
+  assert.deepEqual(world.approvedRunIds, [1, 2]);
+});
+
+test('a comparison too large for GitHub to return in full is held', async () => {
+  const manyFiles = Array.from({ length: 300 }, (unused, index) => `src/file${index}.js`);
+  const world = createWorld({ changedFiles: manyFiles });
+
+  await runFor(world);
+
+  assert.deepEqual(world.approvedRunIds, []);
+  assert.equal(world.postedComments.length, 1);
 });
 
 function runFor(world) {
@@ -162,7 +170,8 @@ function createWorld(scenario) {
     approvedRunIds: [],
     postedComments: [],
     updatedComments: [],
-    checkedPullRequests: new Set()
+    checkedPullRequests: new Set(),
+    comparisons: []
   };
   const heldRuns = scenario.heldRuns ?? [
     { id: 1, name: 'PR', conclusion: 'action_required', head_sha: HEAD_SHA },
@@ -175,16 +184,29 @@ function createWorld(scenario) {
         ...heldRuns,
         { id: 9, name: 'Old', conclusion: 'action_required', head_sha: 'stale' }
       ].filter((workflowRun) => head_sha === undefined || workflowRun.head_sha === head_sha),
-    listFiles: async ({ pull_number }) =>
-      readChangedFiles(scenario, pull_number).map((filename) => ({ filename })),
+    // Each pull request's base commit is named after it, so a comparison says whose it is.
+    compareCommitsWithBasehead: async ({ basehead }) => {
+      const [baseSha, headSha] = basehead.split('...');
+      const pullNumber = Number(baseSha.replace('base-of-', ''));
+
+      world.comparisons.push(basehead);
+
+      return {
+        data: {
+          files:
+            headSha === HEAD_SHA
+              ? readChangedFiles(scenario, pullNumber).map((filename) => ({ filename }))
+              : []
+        }
+      };
+    },
     listComments: async () => scenario.existingComments ?? [],
     list: async () =>
       scenario.openPullRequests ?? [
-        { number: 7, head: { sha: HEAD_SHA } },
-        { number: 8, head: { sha: 'newer-than-its-held-runs' } }
+        openPullRequest(7, HEAD_SHA),
+        openPullRequest(8, 'newer-than-its-held-runs')
       ]
   };
-  const timesRead = new Map();
 
   world.github = {
     paginate: async (endpoint, parameters) => endpoint(parameters),
@@ -199,16 +221,13 @@ function createWorld(scenario) {
       actions: { listWorkflowRunsForRepo: endpoints.listWorkflowRunsForRepo },
       pulls: {
         get: async ({ pull_number }) => {
-          const readCount = (timesRead.get(pull_number) ?? 0) + 1;
-
-          timesRead.set(pull_number, readCount);
           world.checkedPullRequests.add(pull_number);
 
-          return { data: buildPullRequest(pull_number, scenario, readCount) };
+          return { data: buildPullRequest(pull_number, scenario) };
         },
-        listFiles: endpoints.listFiles,
         list: endpoints.list
       },
+      repos: { compareCommitsWithBasehead: endpoints.compareCommitsWithBasehead },
       issues: {
         listComments: endpoints.listComments,
         createComment: async ({ body }) => world.postedComments.push(body),
@@ -220,18 +239,19 @@ function createWorld(scenario) {
   return world;
 }
 
-/** A pull request can move to a new commit after it is first read. */
-function buildPullRequest(pullNumber, scenario, readCount) {
-  const hasMoved = scenario.movesAfterFirstRead === pullNumber && readCount > 1;
-
+function buildPullRequest(pullNumber, scenario) {
   return {
     number: pullNumber,
-    changed_files: readChangedFiles(scenario, pullNumber).length,
+    base: { sha: `base-of-${pullNumber}` },
     head: {
-      sha: hasMoved ? 'pushed-during-the-check' : HEAD_SHA,
+      sha: HEAD_SHA,
       repo: { full_name: scenario.isFork === false ? 'nasa/openmct' : 'contributor/openmct' }
     }
   };
+}
+
+function openPullRequest(pullNumber, headSha) {
+  return { number: pullNumber, base: { sha: `base-of-${pullNumber}` }, head: { sha: headSha } };
 }
 
 function readChangedFiles(scenario, pullNumber) {

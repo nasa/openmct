@@ -26,9 +26,10 @@ The workflow is `.github/workflows/fork-ci-approval.yml`.
 - **Every pull request sharing the held runs is judged.** Runs belong to a commit, so two fork pull
   requests whose branches point at the same commit share them. They are approved only if none of
   those pull requests changes a listed file.
-- **The verdict is for the held commit.** GitHub lists a pull request's files for whatever its head
-  is when asked, so if a head moves while it is being checked, nothing is approved; the push that
-  moved it starts a fresh check.
+- **The verdict is for the held commit.** The changed files come from comparing each pull request's
+  base commit with the held commit, not from the pull request's file list, which describes wherever
+  its head is when asked. A push during the check cannot change what is judged. A comparison that
+  reaches GitHub's limit of 300 files is held, since some may be missing.
 
 The approved runs are fork runs: GitHub gives them a read-only token and no secrets whatever their
 workflow files say. What a maintainer is protecting by looking at the held ones is what runs on the
