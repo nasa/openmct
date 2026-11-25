@@ -8,7 +8,15 @@ The Open MCT team secures our code base using a combination of code review, depe
 
 For general defects, please for a [Bug Report](https://github.com/nasa/openmct/issues/new/choose)
 
-To report a vulnerability for Open MCT please send a detailed report to [arc-dl-openmct](mailto:arc-dl-openmct@mail.nasa.gov). 
+To report a vulnerability for Open MCT please send a detailed report with a reproduction to [arc-dl-openmct](mailto:arc-dl-openmct@mail.nasa.gov). Reported security vulnerabilities must be exploitable via real-world workflows, and not via isolation of UI components. Additionally they should not require compromise of external systems. For example, vulnerability reports that require the prior compromise of an external telemetry source, or Couch DB, should be reported as bugs for general hardening, and not as security vulnerabilities.
+
+We will not accept reports of CSV injection vectors. 
+
+All vulnerability reports must include a reproduction in the form of either:
+1. Steps for manually exploiting the vulnerability with real user interactions via the Open MCT user interface OR
+2. An e2e test that reproduces the vulnerability using a real-world workflow.
+
+Recommendations for code hardening that do not constitute exploitable real-world vulnerabilities are very welcome, and should be reported as _bugs_.
 
 See our [top-level security policy](https://github.com/nasa/openmct/security/policy) for additional information.
 
