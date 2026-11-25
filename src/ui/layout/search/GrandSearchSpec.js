@@ -270,6 +270,31 @@ describe('GrandSearch', () => {
     expect(document.querySelector('[name="Test Folder"]')).toBeNull();
   });
 
+  it('should refresh object paths after a move before removing the new ancestor', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Folder');
+    const originalResult = search.objectSearchResults.find(
+      (result) => result.name === mockFolderObject.name
+    );
+    expect(originalResult).toBeDefined();
+
+    openmct.objects.mutate(originalResult, 'location', 'fooNameSpace:topObject');
+    expect(originalResult.location).toBe('fooNameSpace:topObject');
+    await search.refreshSearchResultPaths(originalResult);
+    const movedResult = search.objectSearchResults.find(
+      (result) => result.name === mockFolderObject.name
+    );
+    expect(movedResult.objectPath.map((object) => object.identifier.key)).toEqual([
+      'someFolder',
+      'topObject'
+    ]);
+
+    openmct.objects.mutate(movedResult.objectPath[1], 'location', null);
+    expect(
+      search.objectSearchResults.some((result) => result.name === mockFolderObject.name)
+    ).toBeFalse();
+  });
+
   it('should not add per-result location observers or duplicate mutation listeners', async () => {
     const search = grandSearchComponent.$refs.root;
     const emitter = openmct.objects.eventEmitter;
@@ -321,10 +346,45 @@ describe('GrandSearch', () => {
     expect(search.$refs.searchResultsDropDown.annotationResults).toEqual([]);
   });
 
+  it('should refresh result paths when a target moves before its new ancestor is removed', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Dri');
+    expect(search.annotationSearchResults.length).toBe(1);
+    const targetModel = search.annotationSearchResults[0].targetModels[0];
+
+    openmct.objects.mutate(targetModel, 'location', 'fooNameSpace:someParent');
+    expect(targetModel.location).toBe('fooNameSpace:someParent');
+    await search.refreshSearchResultPaths(targetModel);
+    expect(
+      search.annotationSearchResults[0].targetModels[0].originalPath.map(
+        (object) => object.identifier.key
+      )
+    ).toEqual(['some-object', 'someParent', 'topObject']);
+
+    openmct.objects.mutate(
+      search.annotationSearchResults[0].targetModels[0].originalPath[1],
+      'location',
+      null
+    );
+    expect(search.annotationSearchResults).toEqual([]);
+  });
+
   it('should preserve other annotations combined into the same result', async () => {
+    const commonTag = 'Dri common test tag';
+    const deletedSourceTag = 'Dri deleted source test tag';
+    const survivingSourceTag = 'Dri surviving source test tag';
+    [commonTag, deletedSourceTag, survivingSourceTag].forEach((tagKey) => {
+      openmct.annotation.defineTag(tagKey, {
+        label: tagKey,
+        backgroundColor: '#000000',
+        foregroundColor: '#ffffff'
+      });
+    });
+    mockAnnotationObject.tags = [commonTag, deletedSourceTag];
     const secondAnnotation = {
       ...mockAnnotationObject,
-      identifier: { namespace: 'fooNameSpace', key: 'secondAnnotation' }
+      identifier: { namespace: 'fooNameSpace', key: 'secondAnnotation' },
+      tags: [commonTag, survivingSourceTag]
     };
     spyOn(openmct.objects, 'search').and.returnValue([
       Promise.resolve([mockAnnotationObject, secondAnnotation])
@@ -336,7 +396,11 @@ describe('GrandSearch', () => {
     openmct.objects.mutate(mockAnnotationObject, '_deleted', true);
     await nextTick();
     expect(search.annotationSearchResults.length).toBe(1);
-    expect(search.annotationSearchResults[0].fullTagModels.length).toBeGreaterThan(0);
+    expect(search.annotationSearchResults[0].tags).toEqual([commonTag, survivingSourceTag]);
+    expect(search.annotationSearchResults[0].fullTagModels.map((tag) => tag.tagID)).toEqual([
+      commonTag,
+      survivingSourceTag
+    ]);
     openmct.objects.mutate(secondAnnotation, '_deleted', true);
     expect(search.annotationSearchResults).toEqual([]);
   });
@@ -528,16 +592,41 @@ describe('GrandSearch', () => {
     });
 
     it('should cancel a remote lookup when the query is replaced', async () => {
-      await search.searchEverything('foo');
+      const annotationResult = {
+        ...mockAnnotationObject,
+        annotationSources: [
+          { identifier: mockAnnotationObject.identifier, tags: mockAnnotationObject.tags }
+        ],
+        targetModels: [{ ...mockDomainObject, originalPath: [mockDomainObject, mockTopObject] }],
+        matchingTagKeys: mockAnnotationObject.tags
+      };
+      openmct.annotation.searchForTags.and.resolveTo([annotationResult]);
+      await search.searchEverything('Dri');
+      expect(search.annotationSearchResults.length).toBe(1);
       const remote = deferred();
-      spyOn(openmct.objects, 'get').and.returnValue(remote.promise);
-      const pendingRemote = search.onRemoteSearchObjectChange(mockDomainObject.identifier);
+      const remoteStarted = deferred();
+      let deferFirstGet = true;
+      const originalProviderGet = mockObjectProvider.get;
+      spyOn(mockObjectProvider, 'get').and.callFake((identifier, signal) => {
+        if (deferFirstGet && identifier.key === mockAnnotationObject.identifier.key) {
+          deferFirstGet = false;
+          remoteStarted.resolve();
+
+          return remote.promise;
+        }
+
+        return originalProviderGet(identifier, signal);
+      });
+      const pendingRemote = search.onRemoteSearchObjectChange(mockAnnotationObject.identifier);
+      await remoteStarted.promise;
       const signal = search.resultController.signal;
-      await search.searchEverything('');
-      remote.resolve({ ...mockDomainObject, location: null });
+      await search.searchEverything('S');
+      expect(search.annotationSearchResults.length).toBe(1);
+      remote.resolve({ ...mockAnnotationObject, _deleted: true });
       await pendingRemote;
       expect(signal.aborted).toBeTrue();
       expect(search.deletedSearchObjectKeys.size).toBe(0);
+      expect(search.annotationSearchResults.length).toBe(1);
     });
 
     it('should reject a descendant whose ancestor was deleted during path lookup', async () => {

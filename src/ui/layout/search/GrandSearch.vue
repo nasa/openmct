@@ -59,6 +59,7 @@ export default {
   },
   mounted() {
     this.deletedSearchObjectKeys = new Set();
+    this.remoteSearchRefreshes = new Map();
     this.openmct.objects.eventEmitter.on('mutation', this.onSearchObjectMutation);
     this.openmct.objects.eventEmitter.on('refresh', this.onSearchObjectRefresh);
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
@@ -213,9 +214,16 @@ export default {
         this.deletedSearchObjectKeys.has(this.openmct.objects.makeKeyString(object.identifier))
       );
     },
-    onSearchObjectRefresh(object) {
+    onSearchObjectRefresh(object, fromRemoteSearch = false) {
+      const key = this.openmct.objects.makeKeyString(object.identifier);
+      if (!fromRemoteSearch && this.remoteSearchRefreshes.has(key)) {
+        return;
+      }
+
       if (object.location === null || object._deleted) {
         this.onSearchObjectMutation(object, {});
+      } else if (fromRemoteSearch) {
+        this.refreshSearchResultPaths(object);
       }
     },
     async onRemoteSearchObjectChange(identifier) {
@@ -247,9 +255,19 @@ export default {
       try {
         do {
           pending.set(key, false);
-          const object = await this.openmct.objects.get(identifier, signal, true);
-          if (!signal.aborted && object) {
-            this.onSearchObjectRefresh(object);
+          this.remoteSearchRefreshes.set(key, (this.remoteSearchRefreshes.get(key) || 0) + 1);
+          try {
+            const object = await this.openmct.objects.get(identifier, signal, true);
+            if (!signal.aborted && object) {
+              this.onSearchObjectRefresh(object, true);
+            }
+          } finally {
+            const count = this.remoteSearchRefreshes.get(key) - 1;
+            if (count) {
+              this.remoteSearchRefreshes.set(key, count);
+            } else {
+              this.remoteSearchRefreshes.delete(key);
+            }
           }
         } while (!signal.aborted && pending.get(key));
       } finally {
@@ -299,11 +317,13 @@ export default {
       const key = this.openmct.objects.makeKeyString(object.identifier);
       if (object.location !== null && !object._deleted) {
         this.deletedSearchObjectKeys.delete(key);
+        this.refreshSearchResultPaths(object);
 
         return;
       }
 
       // Also remember deletions while a provider or path lookup is still pending.
+      this.searchMutationRevision = (this.searchMutationRevision || 0) + 1;
       this.deletedSearchObjectKeys.add(key);
       const results = this.objectSearchResults.filter(
         (result) => !this.hasDeletedSearchAncestor(result)
@@ -313,6 +333,81 @@ export default {
       this.objectSearchResults = results;
       // Update the dropdown explicitly without reopening a dismissed search.
       this.$refs.searchResultsDropDown.updateObjectResults(results);
+    },
+    async refreshSearchResultPaths(changedObject) {
+      const signal = this.resultController?.signal;
+      if (!signal || signal.aborted) {
+        return;
+      }
+
+      const revision = (this.searchMutationRevision || 0) + 1;
+      this.searchMutationRevision = revision;
+      const objects = this.openmct.objects;
+      function includesChangedObject(path) {
+        return path?.some((pathObject) =>
+          objects.areIdsEqual(pathObject.identifier, changedObject.identifier)
+        );
+      }
+      try {
+        const objectResults = this.objectSearchResults;
+        const annotationResults = this.annotationSearchResults;
+        const updatedObjects = await Promise.all(
+          objectResults.map(async (result) => {
+            if (!includesChangedObject(result.objectPath)) {
+              return result;
+            }
+
+            const resultObject = objects.areIdsEqual(result.identifier, changedObject.identifier)
+              ? changedObject
+              : result.identifier;
+            const objectPath = await objects.getOriginalPath(resultObject, [], signal);
+
+            return { ...result, objectPath };
+          })
+        );
+        const updatedAnnotations = await Promise.all(
+          annotationResults.map(async (result) => {
+            let changed = false;
+            const targetModels = await Promise.all(
+              (result.targetModels || []).map(async (target) => {
+                if (!includesChangedObject(target.originalPath)) {
+                  return target;
+                }
+
+                changed = true;
+                const targetObject = objects.areIdsEqual(
+                  target.identifier,
+                  changedObject.identifier
+                )
+                  ? changedObject
+                  : target.identifier;
+                const originalPath = await objects.getOriginalPath(targetObject, [], signal);
+
+                return { ...target, originalPath };
+              })
+            );
+
+            return changed ? { ...result, targetModels } : result;
+          })
+        );
+
+        if (signal.aborted || this.searchMutationRevision !== revision) {
+          return;
+        }
+
+        this.objectSearchResults = updatedObjects.filter(
+          (result) =>
+            this.openmct.objects.isReachable(result.objectPath) &&
+            !this.hasDeletedSearchAncestor(result)
+        );
+        this.annotationSearchResults = this.filterAnnotationResults(updatedAnnotations);
+        this.$refs.searchResultsDropDown.updateAnnotationResults(this.annotationSearchResults);
+        this.$refs.searchResultsDropDown.updateObjectResults(this.objectSearchResults);
+      } catch (error) {
+        if (!signal.aborted && error.name !== 'AbortError') {
+          console.error('Unable to refresh search result paths', error);
+        }
+      }
     },
     async searchAnnotations(abortSignal) {
       const annotationSearchResults = await this.openmct.annotation.searchForTags(

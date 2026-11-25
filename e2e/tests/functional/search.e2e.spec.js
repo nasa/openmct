@@ -304,7 +304,7 @@ test.describe('Grand Search', () => {
     const target = await createDomainObjectWithDefaults(page, { type: 'folder', name: uuid() });
     const tag = uuid();
     const annotationKey = await page.evaluate(
-      async ({ identifier, tagKey }) => {
+      async ({ identifier, tagKey, testNotes }) => {
         const openmct = window.openmct;
         openmct.annotation.defineTag(tagKey, {
           label: tagKey,
@@ -317,13 +317,13 @@ test.describe('Grand Search', () => {
           domainObject: object,
           annotationType: 'TEMPORAL',
           tags: [tagKey],
-          contentText: '',
+          contentText: testNotes,
           targets: [{ keyString: openmct.objects.makeKeyString(object.identifier) }],
           targetDomainObjects: [object]
         });
         return openmct.objects.makeKeyString(annotation.identifier);
       },
-      { identifier: target.uuid, tagKey: tag }
+      { identifier: target.uuid, tagKey: tag, testNotes: page.testNotes }
     );
     await grandSearchInput.fill(tag);
     const results = page.getByLabel('Annotation Search Result');
@@ -358,7 +358,7 @@ test.describe('Grand Search', () => {
     const target = await createDomainObjectWithDefaults(page, { type: 'folder', name: uuid() });
     const tag = uuid();
     const annotationKey = await page.evaluate(
-      async ({ identifier, tagKey }) => {
+      async ({ identifier, tagKey, testNotes }) => {
         const openmct = window.openmct;
         openmct.annotation.defineTag(tagKey, {
           label: tagKey,
@@ -371,13 +371,13 @@ test.describe('Grand Search', () => {
           domainObject: object,
           annotationType: 'TEMPORAL',
           tags: [tagKey],
-          contentText: '',
+          contentText: testNotes,
           targets: [{ keyString: openmct.objects.makeKeyString(object.identifier) }],
           targetDomainObjects: [object]
         });
         return openmct.objects.makeKeyString(annotation.identifier);
       },
-      { identifier: target.uuid, tagKey: tag }
+      { identifier: target.uuid, tagKey: tag, testNotes: page.testNotes }
     );
     await grandSearchInput.fill(tag);
     const results = page.getByLabel('Annotation Search Result');
