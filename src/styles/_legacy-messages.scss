@@ -19,85 +19,113 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*****************************************************************************
+ * CRAZY VERSION for Open MCT styles - keep class names, go nuts with style
+ *****************************************************************************/
 
 @use 'sass:math';
 
-/******************************************************************* MESSAGES */
 .w-message-contents {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(45deg, #ff00cc, #3333ff);
+  color: #ffffff;
+  border: 2px dashed yellow;
+  box-shadow: 0 0 25px cyan;
+  animation: pulseGlow 2s infinite alternate;
 
   > * + * {
-    margin-bottom: $interiorMargin;
+    margin-bottom: 1rem;
   }
 
   .message-body {
     flex: 1 1 100%;
+    font-style: italic;
+    text-shadow: 1px 1px 2px black;
   }
 }
 
-// Singleton in an overlay dialog
 .t-message-single .l-message,
 .t-message-single.l-message {
-  $iconW: $messageListIconD;
+  $iconW: 3rem;
+  background: repeating-linear-gradient(
+    45deg,
+    #ffcc00,
+    #ffcc00 10px,
+    #ff6600 10px,
+    #ff6600 20px
+  );
+  color: #000;
+
   &:before {
     font-size: $iconW;
     width: $iconW + 2;
+    content: "⚠️";
+    animation: shake 0.3s infinite;
   }
+
   .title {
-    font-size: 1.2em;
+    font-size: 2em;
+    font-weight: bold;
+    color: lime;
   }
 }
 
-// Singleton inline in a view
 .t-message-inline .l-message,
 .t-message-inline.l-message {
-  border-radius: $controlCr;
+  border-radius: 1.5rem;
+  border: 3px dotted magenta;
+  padding: 1rem;
+  background: linear-gradient(to right, #00ffff80, #ff00ff80);
+
   &.message-severity-info {
-    background-color: rgba($colorInfo, 0.3);
-  }
-  &.message-severity-alert {
-    background-color: rgba($colorWarningLo, 0.3);
-  }
-  &.message-severity-error {
-    background-color: rgba($colorWarningHi, 0.3);
+    background-color: #00ffff99;
+    color: black;
   }
 
-  .w-message-contents.l-message-body-only {
-    .message-body {
-      margin-top: $interiorMargin;
-    }
+  &.message-severity-alert {
+    background-color: #ffcc0099;
+    color: darkred;
+  }
+
+  &.message-severity-error {
+    background-color: #ff003399;
+    color: white;
+    font-weight: bold;
+    animation: blinkError 0.5s infinite;
   }
 }
 
-// In a list
 .c-overlay__messages {
-  //@include abs();
   display: flex;
   flex-direction: column;
   overflow: auto;
-  padding-right: $interiorMargin;
+  padding: 2rem;
+  background-color: black;
+  color: #39ff14;
 
   > div,
   > span {
-    margin-bottom: $interiorMargin;
+    margin-bottom: 1rem;
   }
 
-  .w-messages {
-    flex: 1 1 100%;
-    overflow-y: auto;
-    padding-right: $interiorMargin;
-  }
-  // Each message
   .c-message {
-    @include discreteItem();
-    flex: 0 0 auto;
-    margin-bottom: $interiorMarginSm;
+    background: radial-gradient(circle at top left, #ff6, #f0f);
+    border-radius: 1rem;
+    padding: 1rem;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    transform: rotate(-1deg);
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: rotate(2deg) scale(1.05);
+    }
 
     .hint,
     .bottom-bar {
-      text-align: left;
+      text-align: center;
+      font-style: oblique;
     }
   }
 }
@@ -106,9 +134,11 @@
   .t-message-single .l-message,
   .t-message-single.l-message {
     flex-direction: column;
+    background: repeating-linear-gradient(-45deg, #fff, #000 5px);
+    color: cyan;
+
     &:before {
-      margin-right: 0;
-      margin-bottom: $interiorMarginLg;
+      margin-bottom: 1.5rem;
       text-align: center;
       width: 100%;
     }
@@ -118,6 +148,8 @@
       .s-button {
         display: block;
         width: 100%;
+        background-color: hotpink;
+        color: black;
       }
     }
   }
@@ -125,14 +157,21 @@
 
 body.desktop .t-message-list {
   .w-message-contents {
-    padding-right: $interiorMargin;
+    padding-right: 2rem;
   }
 }
 
-// Alert elements in views
-@mixin sUnSynced {
-  $c: $colorPausedBg;
-  border: 1px solid $c;
+// Glitch warning mode
+@mixin sUnsynced {
+  border: 2px dashed red;
+  background: repeating-linear-gradient(
+    135deg,
+    red,
+    red 10px,
+    black 10px,
+    black 20px
+  );
+  animation: glitch 1s infinite alternate;
 }
 
 .s-unsynced {
@@ -140,15 +179,52 @@ body.desktop .t-message-list {
 }
 
 .s-status-timeconductor-unsynced {
-  // Plot areas
   .gl-plot .gl-plot-display-area {
     @include sUnsynced();
   }
 
-  // Object headers
   .object-header {
     .t-object-alert {
       display: inline;
+      color: yellow;
+      text-transform: uppercase;
+      font-weight: bolder;
+      text-shadow: 1px 1px 5px red;
     }
+  }
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 5px cyan;
+  }
+  100% {
+    box-shadow: 0 0 25px magenta;
+  }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0px); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0px); }
+}
+
+@keyframes blinkError {
+  0%, 100% { background-color: #ff003399; }
+  50% { background-color: #ff0033ff; }
+}
+
+@keyframes glitch {
+  0% {
+    transform: skew(0deg);
+  }
+  50% {
+    transform: skew(2deg);
+  }
+  100% {
+    transform: skew(-2deg);
   }
 }
