@@ -185,7 +185,9 @@ export default {
       domainObject: undefined,
       viewKey: undefined,
       isEditing: this.openmct.editor.isEditing(),
-      notebookEnabled: this.openmct.types.get('notebook'),
+      notebookEnabled:
+        this.openmct.types.listKeys().includes('notebook') ||
+        this.openmct.types.listKeys().includes('restricted-notebook'),
       statusBarItems: [],
       status: ''
     };
