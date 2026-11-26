@@ -100,7 +100,7 @@ test.describe('Basic Condition Set Use', () => {
     await page.locator('button[title="Save"]').click();
     await page.getByRole('listitem', { name: 'Save and Finish Editing' }).click();
 
-    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel(/Open the View Switcher Menu/).click();
 
     await expect(page.getByRole('menuitem', { name: /Lad Table/ })).toBeHidden();
     await expect(page.getByRole('menuitem', { name: /Conditions View/ })).toBeVisible();
@@ -110,10 +110,10 @@ test.describe('Basic Condition Set Use', () => {
     await expect(
       page.getByLabel('Plot Legend Collapsed').getByText('Test Condition Set')
     ).toBeVisible();
-    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel(/Open the View Switcher Menu/).click();
     await page.getByLabel('Telemetry Table').click();
     await expect(page.getByRole('searchbox', { name: 'value filter input' })).toBeVisible();
-    await page.getByLabel('Open the View Switcher Menu').click();
+    await page.getByLabel(/Open the View Switcher Menu/).click();
     await page.getByLabel('Conditions View').click();
     await expect(page.getByText('Current Output')).toBeVisible();
   });
