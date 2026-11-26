@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="l-browse-bar__end">
-      <ViewSwitcher :v-if="!hideViewSwitcher" :views="views" :current-view="currentView" />
+      <ViewSwitcher v-if="!hideViewSwitcher" :views="views" :current-view="currentViewProvider" />
       <NotebookMenuSwitcher
         :domain-object="domainObject"
         :object-path="objectPath"
@@ -109,6 +109,14 @@ export default {
       statusBarItems: [],
       menuActionItems: []
     };
+  },
+  computed: {
+    currentViewProvider() {
+      // `currentView` is the active view instance (used for actions and the
+      // notebook menu). The ViewSwitcher needs the matching view provider,
+      // which carries the human-readable `name` and `cssClass` for its label.
+      return this.views.find((view) => view.key === this.currentView.key) ?? {};
+    }
   },
   watch: {
     currentView: {
