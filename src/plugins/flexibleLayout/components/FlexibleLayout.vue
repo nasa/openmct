@@ -39,6 +39,7 @@
           class="c-fl-frame__drop-hint"
           :index="-1"
           :allow-drop="allowContainerDrop"
+          label="Drop here to reorder containers"
           @object-drop-to="moveContainer"
         />
 
@@ -69,6 +70,7 @@
           class="c-fl-frame__drop-hint"
           :index="index"
           :allow-drop="allowContainerDrop"
+          label="Drop here to reorder containers"
           @object-drop-to="moveContainer"
         />
       </template>
@@ -77,12 +79,12 @@
 </template>
 
 <script>
+import DropHint from '@/ui/components/DropHint.vue';
 import Container from '@/ui/layout/Container.js';
 import Frame from '@/ui/layout/Frame.js';
 import ResizeHandle from '@/ui/layout/ResizeHandle/ResizeHandle.vue';
 
 import ContainerComponent from './ContainerComponent.vue';
-import DropHint from './DropHint.vue';
 
 const MIN_CONTAINER_SIZE = 5;
 
