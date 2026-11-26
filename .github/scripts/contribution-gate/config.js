@@ -1,0 +1,181 @@
+/**
+ * Policy for the contribution gate.
+ *
+ * Everything here is a decision about how we want the process to behave, kept
+ * apart from the logic that enforces it. Changing the process should mean
+ * changing this file and nothing else.
+ */
+
+/**
+ * While the gate is being piloted alongside PR Cop, it acts only on issues and
+ * pull requests a maintainer has given this label, and ignores everything else.
+ * Outside contributors cannot add labels, so nobody is opted in by accident.
+ *
+ * Set this to undefined to switch over, so that the gate covers every
+ * contribution. See "Switching over" in the README first.
+ */
+const PILOT_LABEL = 'new-workflow-candidate';
+
+/** Records which stage of the contribution process a pull request has reached. */
+const STAGE_LABELS = {
+  needsCompliance: 'gate:needs-compliance',
+  awaitingCi: 'gate:awaiting-ci',
+  automatedReview: 'gate:automated-review',
+  teamReview: 'gate:team-review'
+};
+
+/** Dependabot and maintainers use this to opt a pull request out of the gate. */
+const GATE_EXEMPT_LABEL = 'pr:daveit';
+
+/** How long a non-compliant contribution has before it is closed. */
+const DEADLINE_DAYS = {
+  readyPullRequest: 7,
+  draftPullRequest: 30,
+  issue: 7
+};
+
+/** A single reminder goes out this many days before the deadline. */
+const REMINDER_LEAD_DAYS = 2;
+
+/** Every one of these must succeed before the team is asked to review. */
+const REQUIRED_CHECK_NAMES = [
+  'lint',
+  'unit-test',
+  'e2e-ci (shard 1/4)',
+  'e2e-ci (shard 2/4)',
+  'e2e-ci (shard 3/4)',
+  'e2e-ci (shard 4/4)',
+  'visual-a11y-ci (shard 1/2)',
+  'visual-a11y-ci (shard 2/2)'
+];
+
+/**
+ * Checks that must pass if they run at all, but whose absence is not held
+ * against a contribution. CodeQL skips pull requests that only touch specs,
+ * documentation and configuration, so requiring it outright would leave those
+ * waiting for a check that is never coming.
+ */
+const CHECKS_REQUIRED_WHEN_REPORTED = ['Analyze'];
+
+/**
+ * The account the gate posts as, which is the one GITHUB_TOKEN acts as. Only a
+ * comment from this account can hold the gate's state, so a contributor cannot
+ * plant state of their own. Change it if the gate ever posts with a different
+ * token, such as a GitHub App's.
+ */
+const GATE_BOT_LOGIN = 'github-actions[bot]';
+
+/**
+ * CodeRabbit reviews every pull request on its own, as configured in
+ * .coderabbit.yaml, so the gate never requests it. It approves once its
+ * pre-merge checks pass and its comments are answered, and requests changes
+ * for a failed check or a blocking comment alike, so the gate reads the checks'
+ * results from its comment instead. Its approval is one of the two that branch
+ * protection requires.
+ */
+const AI_REVIEWER_LOGINS = ['coderabbitai[bot]'];
+
+/**
+ * CodeRabbit's pre-merge checks in error mode, named as in .coderabbit.yaml. Any
+ * one failing stops CodeRabbit approving. Its comment reports each one's
+ * result, which tells the gate they have all passed before CodeRabbit approves.
+ */
+const AI_REQUIRED_CHECK_NAMES = [
+  'Issue explains why',
+  'Changed code is tested',
+  'A bug fix adds no features'
+];
+
+/** CodeQL also reviews on its own, and is never requested by the gate. */
+const SECURITY_REVIEWER_LOGINS = ['github-advanced-security[bot]'];
+
+/**
+ * Every reviewer whose comments a contributor must answer before a maintainer is
+ * asked to read the pull request. A security finding nobody has explained should
+ * never reach a human as a surprise.
+ */
+const AUTOMATED_REVIEWER_LOGINS = [...AI_REVIEWER_LOGINS, ...SECURITY_REVIEWER_LOGINS];
+
+/** The team asked to review once a pull request reaches stage 6. */
+const REVIEWER_TEAM_SLUG = 'openmct-web';
+
+/**
+ * Logins treated as team members even though `author_association` does not say
+ * so, which happens when someone's organization membership is private.
+ */
+const TEAM_ALLOWLIST = [];
+
+/** Author associations GitHub reports for people on the team. */
+const TEAM_AUTHOR_ASSOCIATIONS = ['OWNER', 'MEMBER', 'COLLABORATOR'];
+
+/** Comment command that asks the gate to look again, including at closed items. */
+const RECHECK_COMMAND = '/recheck';
+
+/**
+ * How many contributions the daily sweep introduces to the gate in one run.
+ * This keeps a large backlog from exhausting the API rate limit, at the cost of
+ * taking a few days to work through it.
+ */
+const MAXIMUM_INTAKE_PER_SWEEP = 60;
+
+/**
+ * Sections an issue must fill in, chosen by the issue's `type:` label. Where an
+ * entry is a list, any one of those headings will do, because issues were filed
+ * under templates that have worded the same section differently over the years.
+ *
+ * Testing instructions are not required here. A pull request needs them on its
+ * issue, and checks for them itself, accepting them in a comment as well, since
+ * whoever fixes an issue often cannot edit it.
+ */
+const REQUIRED_ISSUE_SECTIONS = {
+  'type:bug': ['Summary', 'Expected vs Current Behavior', 'Steps to Reproduce'],
+  'type:enhancement': [
+    ['Summary', 'Is your feature request related to a problem? Please describe.'],
+    "Describe the solution you'd like"
+  ],
+  'type:maintenance': ['Summary'],
+  untyped: ['Summary']
+};
+
+/**
+ * Author Checklist items the pull request template used to have, about the type
+ * label and the milestone. Pull requests opened from the older template still
+ * carry them, so the gate never asks for them to be ticked.
+ */
+const RETIRED_CHECKLIST_ITEMS = [/\bmilestone\b/i, /`?type:`?\s*label/i];
+
+/**
+ * Headings that count as testing instructions, in an issue body or in a comment
+ * on the issue. Several spellings are accepted because issues filed under the
+ * older Markdown templates used their own wording.
+ */
+const TESTING_INSTRUCTION_HEADINGS = [
+  'Testing Instructions',
+  'Verification Instructions',
+  'Testing',
+  'Steps to Test',
+  'How to Test'
+];
+
+module.exports = {
+  AI_REQUIRED_CHECK_NAMES,
+  AI_REVIEWER_LOGINS,
+  AUTOMATED_REVIEWER_LOGINS,
+  CHECKS_REQUIRED_WHEN_REPORTED,
+  DEADLINE_DAYS,
+  GATE_BOT_LOGIN,
+  GATE_EXEMPT_LABEL,
+  MAXIMUM_INTAKE_PER_SWEEP,
+  PILOT_LABEL,
+  RECHECK_COMMAND,
+  RETIRED_CHECKLIST_ITEMS,
+  REMINDER_LEAD_DAYS,
+  REQUIRED_CHECK_NAMES,
+  REQUIRED_ISSUE_SECTIONS,
+  REVIEWER_TEAM_SLUG,
+  SECURITY_REVIEWER_LOGINS,
+  STAGE_LABELS,
+  TEAM_ALLOWLIST,
+  TEAM_AUTHOR_ASSOCIATIONS,
+  TESTING_INSTRUCTION_HEADINGS
+};

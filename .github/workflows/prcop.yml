@@ -5,8 +5,6 @@ on:
     types:
       - labeled
       - unlabeled
-      - milestoned
-      - demilestoned
       - opened
       - reopened
       - synchronize
@@ -14,8 +12,6 @@ on:
   pull_request_review_comment:
     types:
       - created
-env:
-  LABELS: ${{ join( github.event.pull_request.labels.*.name, ' ' ) }}
 jobs:
   prcop:
     runs-on: ubuntu-latest
@@ -26,15 +22,3 @@ jobs:
         with:
           config-file: '.github/workflows/prcop-config.json'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  check-type-label:
-    name: Check type Label
-    runs-on: ubuntu-latest
-    steps:
-      - if: contains( env.LABELS, 'type:' ) == false
-        run: exit 1
-  check-milestone:
-    name: Check Milestone
-    runs-on: ubuntu-latest
-    steps:
-      - if: github.event.pull_request.milestone == null && contains( env.LABELS, 'no milestone' ) == false
-        run: exit 1
