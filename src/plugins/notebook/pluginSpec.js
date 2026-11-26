@@ -412,6 +412,19 @@ describe('Notebook plugin:', () => {
 
       expect(snapshotsText).toBe('Notebook Snapshots');
     });
+
+    it('snapshots container is wrapped in a styled element that can flex within the drawer', async () => {
+      await clickSnapshotIndicator();
+
+      const contentWrapper = drawerElement.querySelector('.l-shell__drawer-content');
+
+      // Without a class the wrapper cannot be styled, so it drops out of the
+      // drawer's flex chain and its contents overflow the drawer instead of
+      // scrolling within it.
+      expect(contentWrapper).not.toBeNull();
+      expect(contentWrapper.parentElement).toBe(drawerElement);
+      expect(contentWrapper.querySelector('.c-snapshots-h')).not.toBeNull();
+    });
   });
 
   function getEntryText(entryNumber) {
