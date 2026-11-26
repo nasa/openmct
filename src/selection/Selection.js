@@ -24,23 +24,43 @@ import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 
 /**
- * @typedef {Object} Selectable
- * @property {HTMLElement} element The HTML element that is selectable
- * @property {Object} context The context of the selectable, which may include a DomainObject
+ * Manages the styling of selected elements.
  */
-
-/**
- * @typedef {import('../../src/MCT').MCT} OpenMCT
- */
-
-/**
- * Manages selection state for Open MCT
- * @constructor
- * @extends EventEmitter
- */
-export default class Selection extends EventEmitter {
+class SelectionStyler {
   /**
-   * @param {OpenMCT} openmct The Open MCT instance
+   * Adds selection style to the given selectable.
+   * @param {Object} selectable - The selectable object.
+   */
+  static addSelectionStyle(selectable) {
+    if (selectable[0] && selectable[0].element) {
+      selectable[0].element.setAttribute('s-selected', '');
+    }
+    if (selectable[1] && selectable[1].element) {
+      selectable[1].element.setAttribute('s-selected-parent', '');
+    }
+  }
+
+  /**
+   * Removes selection style from the given selectable.
+   * @param {Object} selectionPath - The selection path object.
+   * @param {boolean} keepParentStyle - Whether to keep the parent style.
+   */
+  static removeSelectionStyle(selectionPath, keepParentStyle = false) {
+    if (selectionPath[0] && selectionPath[0].element) {
+      selectionPath[0].element.removeAttribute('s-selected');
+    }
+    if (selectionPath[1] && selectionPath[1].element && !keepParentStyle) {
+      selectionPath[1].element.removeAttribute('s-selected-parent');
+    }
+  }
+}
+
+/**
+ * Manages the selection state.
+ */
+class SelectionManager extends EventEmitter {
+  /**
+   * @param {Object} openmct - The Open MCT API object.
    */
   constructor(openmct) {
     super();
@@ -61,177 +81,157 @@ export default class Selection extends EventEmitter {
   }
 
   /**
-   * Selects the selectable object and emits the 'change' event.
-   *
-   * @param {Selectable|Selectable[]} selectable An object or array of objects with element and context properties
-   * @param {boolean} isMultiSelectEvent flag indication shift key is pressed or not
-   * @private
+   * Selects the given selectable object(s).
+   * @param {Object|Array} selectable - The selectable object(s) to select.
+   * @param {boolean} isMultiSelectEvent - Whether this is a multi-select event.
    */
   select(selectable, isMultiSelectEvent) {
     if (!Array.isArray(selectable)) {
       selectable = [selectable];
     }
 
-    let multiSelect =
-      isMultiSelectEvent &&
-      this.parentSupportsMultiSelect(selectable) &&
-      this.isPeer(selectable) &&
-      !this.selectionContainsParent(selectable);
-
-    if (multiSelect) {
+    if (isMultiSelectEvent && this.canMultiSelect(selectable)) {
       this.handleMultiSelect(selectable);
     } else {
       this.handleSingleSelect(selectable);
     }
   }
+
   /**
-   * @private
+   * Checks if multi-select is possible for the given selectable.
+   * @param {Object} selectable - The selectable object to check.
+   * @returns {boolean} Whether multi-select is possible.
+   */
+  canMultiSelect(selectable) {
+    return (
+      this.parentSupportsMultiSelect(selectable) &&
+      this.isPeer(selectable) &&
+      !this.selectionContainsParent(selectable)
+    );
+  }
+
+  /**
+   * Handles multi-select logic.
+   * @param {Object} selectable - The selectable object.
    */
   handleMultiSelect(selectable) {
     if (this.elementSelected(selectable)) {
       this.remove(selectable);
     } else {
-      this.addSelectionAttributes(selectable);
-      this.selected.push(selectable);
+      this.addSelection(selectable);
     }
-
     this.emit('change', this.selected);
   }
+
   /**
-   * @private
+   * Handles single-select logic.
+   * @param {Object} selectable - The selectable object.
    */
   handleSingleSelect(selectable) {
     if (!_.isEqual([selectable], this.selected)) {
-      this.setSelectionStyles(selectable);
-      this.selected = [selectable];
-
+      this.clearSelection();
+      this.addSelection(selectable);
       this.emit('change', this.selected);
     }
   }
+
   /**
-   * @private
+   * Adds a selectable to the selection.
+   * @param {Object} selectable - The selectable object to add.
+   */
+  addSelection(selectable) {
+    this.selected.push(selectable);
+    SelectionStyler.addSelectionStyle(selectable);
+  }
+
+  /**
+   * Clears the current selection.
+   */
+  clearSelection() {
+    this.selected.forEach(SelectionStyler.removeSelectionStyle);
+    this.selected = [];
+  }
+
+  /**
+   * Removes a selectable from the selection.
+   * @param {Object} selectable - The selectable object to remove.
+   */
+  remove(selectable) {
+    this.selected = this.selected.filter(
+      (selectionPath) => !_.isEqual(selectionPath, selectable)
+    );
+    if (this.selected.length === 0) {
+      SelectionStyler.removeSelectionStyle(selectable);
+      selectable[1].element.click(); // Select the parent if there is no selection.
+    } else {
+      SelectionStyler.removeSelectionStyle(selectable, true);
+    }
+  }
+
+  /**
+   * Checks if the given selectable is currently selected.
+   * @param {Object} selectable - The selectable object to check.
+   * @returns {boolean} Whether the selectable is currently selected.
    */
   elementSelected(selectable) {
     return this.selected.some((selectionPath) => _.isEqual(selectionPath, selectable));
   }
-  /**
-   * @private
-   */
-  remove(selectable) {
-    this.selected = this.selected.filter((selectionPath) => !_.isEqual(selectionPath, selectable));
 
-    if (this.selected.length === 0) {
-      this.removeSelectionAttributes(selectable);
-      selectable[1].element.click(); // Select the parent if there is no selection.
-    } else {
-      this.removeSelectionAttributes(selectable, true);
-    }
-  }
   /**
-   * @private
-   */
-  setSelectionStyles(selectable) {
-    this.selected.forEach((selectionPath) => this.removeSelectionAttributes(selectionPath));
-    this.addSelectionAttributes(selectable);
-  }
-  removeSelectionAttributes(selectionPath, keepParentStyle) {
-    if (selectionPath[0] && selectionPath[0].element) {
-      selectionPath[0].element.removeAttribute('s-selected');
-    }
-
-    if (selectionPath[1] && selectionPath[1].element && !keepParentStyle) {
-      selectionPath[1].element.removeAttribute('s-selected-parent');
-    }
-  }
-  /**
-   * Adds selection attributes to the selected element and its parent.
-   * @private
-   */
-  addSelectionAttributes(selectable) {
-    if (selectable[0] && selectable[0].element) {
-      selectable[0].element.setAttribute('s-selected', '');
-    }
-
-    if (selectable[1] && selectable[1].element) {
-      selectable[1].element.setAttribute('s-selected-parent', '');
-    }
-  }
-  /**
-   * @private
+   * Checks if the parent of the given selectable supports multi-select.
+   * @param {Object} selectable - The selectable object to check.
+   * @returns {boolean} Whether the parent supports multi-select.
    */
   parentSupportsMultiSelect(selectable) {
     return selectable[1] && selectable[1].context.supportsMultiSelect;
   }
+
   /**
-   * @private
-   */
-  selectionContainsParent(selectable) {
-    return this.selected.some((selectionPath) => _.isEqual(selectionPath[0], selectable[1]));
-  }
-  /**
-   * @private
+   * Checks if the given selectable is a peer of the current selection.
+   * @param {Object} selectable - The selectable object to check.
+   * @returns {boolean} Whether the selectable is a peer.
    */
   isPeer(selectable) {
     return this.selected.some((selectionPath) => _.isEqual(selectionPath[1], selectable[1]));
   }
-  /**
-   * @private
-   */
-  isSelectable(element) {
-    if (!element) {
-      return false;
-    }
 
-    return Boolean(element.closest('[data-selectable]'));
+  /**
+   * Checks if the current selection contains the parent of the given selectable.
+   * @param {Object} selectable - The selectable object to check.
+   * @returns {boolean} Whether the selection contains the parent.
+   */
+  selectionContainsParent(selectable) {
+    return this.selected.some((selectionPath) => _.isEqual(selectionPath[0], selectable[1]));
   }
+}
+
+/**
+ * Manages the attachment of selection behavior to elements.
+ */
+class SelectableAttacher {
   /**
-   * @private
+   * @param {Object} openmct - The Open MCT API object.
+   * @param {SelectionManager} selectionManager - The selection manager instance.
    */
-  capture(selectable) {
-    let capturingContainsSelectable = this.capturing && this.capturing.includes(selectable);
-
-    if (!this.capturing || capturingContainsSelectable) {
-      this.capturing = [];
-    }
-
-    this.capturing.push(selectable);
+  constructor(openmct, selectionManager) {
+    this.openmct = openmct;
+    this.selectionManager = selectionManager;
+    this.capturing = null;
   }
-  /**
-   * @private
-   */
-  selectCapture(selectable, event) {
-    if (!this.capturing) {
-      return;
-    }
 
-    let reversedCapturing = this.capturing.reverse();
-    delete this.capturing;
-    this.select(reversedCapturing, event.shiftKey);
-  }
   /**
-   * Attaches the click handlers to the element.
-   *
-   * @param element an html element
-   * @param context object which defines item or other arbitrary properties.
-   * e.g. {
-   *          item: domainObject,
-   *          elementProxy: element,
-   *          controller: fixedController
-   *       }
-   * @param select a flag to select the element if true
-   * @returns a function that removes the click handlers from the element
-   * @public
+   * Attaches selection behavior to an element.
+   * @param {HTMLElement} element - The element to attach to.
+   * @param {Object} context - The context object.
+   * @param {boolean|Object} select - Whether to select the element immediately.
+   * @returns {Function} A function to remove the attached behavior.
    */
-  selectable(element, context, select) {
+  attach(element, context, select) {
     if (!this.isSelectable(element)) {
       return () => {};
     }
 
-    let selectable = {
-      context: context,
-      element: element
-    };
-
+    const selectable = { context, element };
     const capture = this.capture.bind(this, selectable);
     const selectCapture = this.selectCapture.bind(this, selectable);
     let removeMutable = false;
@@ -252,13 +252,116 @@ export default class Selection extends EventEmitter {
       }
     }
 
-    return function () {
+    return () => {
       element.removeEventListener('click', capture, true);
       element.removeEventListener('click', selectCapture);
 
       if (context.item !== undefined && context.item.isMutable && removeMutable === true) {
         this.openmct.objects.destroyMutable(context.item);
       }
-    }.bind(this);
+    };
+  }
+
+  /**
+   * Checks if an element is selectable.
+   * @param {HTMLElement} element - The element to check.
+   * @returns {boolean} Whether the element is selectable.
+   */
+  isSelectable(element) {
+    return element && Boolean(element.closest('[data-selectable]'));
+  }
+
+  /**
+   * Captures a selection event.
+   * @param {Object} selectable - The selectable object.
+   * @param {Event} event - The triggering event.
+   */
+  capture(selectable, event) {
+    event.stopPropagation();
+    
+    const capturingContainsSelectable = this.capturing && this.capturing.includes(selectable);
+
+    if (!this.capturing || capturingContainsSelectable) {
+      this.capturing = [];
+    }
+
+    this.capturing.push(selectable);
+  }
+
+  /**
+   * Processes a captured selection event.
+   * @param {Object} selectable - The selectable object.
+   * @param {Event} event - The triggering event.
+   */
+  selectCapture(selectable, event) {
+    event.stopPropagation();
+    
+    if (!this.capturing) {
+      return;
+    }
+
+    const reversedCapturing = this.capturing.reverse();
+    this.capturing = null;
+    
+    this.selectionManager.select(reversedCapturing, event.shiftKey);
+  }
+}
+
+/**
+ * Main Selection class that serves as a facade for selection functionality.
+ */
+export default class Selection {
+  /**
+   * @param {Object} openmct - The Open MCT API object.
+   */
+  constructor(openmct) {
+    this.selectionManager = new SelectionManager(openmct);
+    this.selectableAttacher = new SelectableAttacher(openmct, this.selectionManager);
+  }
+
+  /**
+   * Gets the current selection.
+   * @returns {Array} The currently selected objects.
+   */
+  get() {
+    return this.selectionManager.get();
+  }
+
+  /**
+   * Selects the given selectable object(s).
+   * @param {Object|Array} selectable - The selectable object(s) to select.
+   * @param {boolean} isMultiSelectEvent - Whether this is a multi-select event.
+   */
+  select(selectable, isMultiSelectEvent) {
+    this.selectionManager.select(selectable, isMultiSelectEvent);
+  }
+
+  /**
+   * Makes an element selectable.
+   * @param {HTMLElement} element - The element to make selectable.
+   * @param {Object} context - The context object.
+   * @param {boolean|Object} select - Whether to select the element immediately.
+   * @returns {Function} A function to remove the selectable behavior.
+   */
+  selectable(element, context, select) {
+    return this.selectableAttacher.attach(element, context, select);
+  }
+
+  /**
+   * Adds an event listener.
+   * @param {string} eventName - The name of the event.
+   * @param {Function} callback - The callback function.
+   */
+  on(eventName, callback) {
+    this.selectionManager.on(eventName, callback);
+  }
+
+  /**
+   * Removes an event listener.
+   * @param {string} eventName - The name of the event.
+   * @param {Function} callback - The callback function to remove.
+   */
+  off(eventName, callback) {
+    this.selectionManager.off(eventName, callback);
   }
 }
