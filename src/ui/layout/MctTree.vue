@@ -273,9 +273,7 @@ export default {
       await this.syncTreeOpenItems();
     } else {
       if (this.initialSelection.identifier) {
-        const objectPath = await this.openmct.objects.getOriginalPath(
-          this.initialSelection.identifier
-        );
+        const objectPath = await this.getPathForInitialSelection();
         const navigationPath = this.buildNavigationPath(objectPath);
 
         this.openAndScrollTo(navigationPath);
@@ -442,6 +440,27 @@ export default {
         }
       }
     },
+    // getOriginalPath walks `location` only. Some objects are still in the tree
+    // via composition with a missing/null location (see #8324) — use router.path
+    // when it points at the same object so the locator can still open.
+    async getPathForInitialSelection() {
+      let objectPath = await this.openmct.objects.getOriginalPath(this.initialSelection.identifier);
+
+      if (!this.openmct.objects.isReachable(objectPath)) {
+        const routerPath = this.openmct.router.path;
+        if (
+          routerPath?.length &&
+          this.openmct.objects.areIdsEqual(
+            routerPath[0].identifier,
+            this.initialSelection.identifier
+          )
+        ) {
+          objectPath = routerPath;
+        }
+      }
+
+      return objectPath;
+    },
     openAndScrollTo(navigationPath) {
       if (navigationPath.includes('/ROOT')) {
         navigationPath = navigationPath.split('/ROOT').join('');
@@ -472,7 +491,12 @@ export default {
         .reduce(async (parentLoaded, childPath) => {
           await parentLoaded;
 
-          return this.openTreeItem(this.getTreeItemByPath(childPath));
+          const treeItem = this.getTreeItemByPath(childPath);
+          if (!treeItem) {
+            return;
+          }
+
+          return this.openTreeItem(treeItem);
         }, Promise.resolve())
         .then(() => {
           if (this.isSelectorTree) {
@@ -487,7 +511,12 @@ export default {
               item = this.getTreeItemByPath(navigationPath);
             }
 
-            this.treeItemSelection(item);
+            if (item) {
+              this.treeItemSelection(item);
+            } else if (this.treeItems.length > 0) {
+              // Keep the locator usable if the preferred path cannot be resolved
+              this.treeItemSelection(this.treeItems[0]);
+            }
           }
 
           this.scrollToCheck(navigationPath);
