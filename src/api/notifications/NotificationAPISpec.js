@@ -126,6 +126,29 @@ describe('The Notification API', () => {
     });
   });
 
+  describe('the notification timestamp', () => {
+    let timestampNotificationAPIInstance;
+
+    beforeEach(() => {
+      jasmine.clock().install();
+      jasmine.clock().mockDate(new Date(Date.UTC(2026, 7, 19, 13, 34, 56, 789)));
+      timestampNotificationAPIInstance = new NotificationAPI();
+    });
+
+    afterEach(() => {
+      timestampNotificationAPIInstance.dismissAllNotifications();
+      jasmine.clock().uninstall();
+    });
+
+    it('formats the creation time as YYYY-MM-DD HH:mm:ss.SSS', () => {
+      const timestamp = timestampNotificationAPIInstance.alert('Timestamp test').model.timestamp;
+
+      // The mocked instant has pairwise-distinct components, so an exact
+      // match also catches transposed format tokens (e.g. MM for mm).
+      expect(timestamp).toBe('2026-08-19 13:34:56.789');
+    });
+  });
+
   describe('the progress method', () => {
     let title = 'This is a progress notification';
     let message1 = 'Example progress message 1';
