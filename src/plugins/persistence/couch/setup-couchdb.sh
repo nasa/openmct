@@ -36,12 +36,23 @@ create_db() {
     echo "$response"
 }
 
+# Echo TRUE if the admin user exists, FALSE if CouchDB says it does not, and
+# ERROR if CouchDB could not be reached or gave any other answer. Reporting
+# FALSE for every failure would make an unreachable server or bad credentials
+# look like a missing user.
 admin_user_exists() {
-    response=$(curl -su "${CURL_USERPASS_ARG}" -o /dev/null -I -w "%{http_code}" "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/admins/"$COUCH_ADMIN_USER");
-    if [ "200" == "${response}" ]; then
+    local curl_status=0
+    response=$(curl -su "${CURL_USERPASS_ARG}" -o /dev/null -I -w "%{http_code}" "$COUCH_BASE_LOCAL"/_node/"$COUCH_NODE_NAME"/_config/admins/"$COUCH_ADMIN_USER") || curl_status=$?
+    if [ 0 -ne "${curl_status}" ]; then
+        echo "Could not reach CouchDB at $COUCH_BASE_LOCAL (curl exited ${curl_status})" 1>&2
+        echo "ERROR"
+    elif [ "200" == "${response}" ]; then
         echo "TRUE"
+    elif [ "404" == "${response}" ]; then
+        echo "FALSE"
     else
-        echo "FALSE";
+        echo "Unexpected response ${response} when checking for admin user $COUCH_ADMIN_USER" 1>&2
+        echo "ERROR"
     fi
 }
 
@@ -224,8 +235,14 @@ add_index_and_views() {
 
 # Main script execution
 
-# Check if the admin user exists; if not, create it.
-if [ "$(admin_user_exists)" == "FALSE" ]; then
+# Check if the admin user exists; if not, create it. An indeterminate answer
+# means CouchDB is unreachable or misconfigured, so stop instead of guessing.
+admin_user_status=$(admin_user_exists)
+if [ "ERROR" == "${admin_user_status}" ]; then
+    echo "Unable to determine whether the admin user exists at $COUCH_BASE_LOCAL, aborting." 1>&2
+    echo "Check that CouchDB is running and that COUCH_ADMIN_USER, COUCH_ADMIN_PASSWORD and COUCH_NODE_NAME are correct." 1>&2
+    exit 1
+elif [ "FALSE" == "${admin_user_status}" ]; then
     echo "Admin user does not exist, creating..."
     create_admin_user
 else
