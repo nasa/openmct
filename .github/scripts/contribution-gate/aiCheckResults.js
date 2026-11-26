@@ -6,7 +6,7 @@
  * CodeRabbit reports them only as a table in its summary comment, one row per
  * check, with an image whose alt text is the result:
  *
- *   |  Description Explains Why  | ![Passed](https://…/pre-merge-checks-passed.svg) | … |
+ *   |  Issue Explains Why  | ![Passed](https://…/pre-merge-checks-passed.svg) | … |
  *
  * That format is CodeRabbit's, and undocumented. Until every check is found in
  * it, they are shown as still in progress, and CodeRabbit's verdict, which the

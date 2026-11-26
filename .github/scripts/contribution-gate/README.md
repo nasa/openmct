@@ -44,8 +44,8 @@ reply to every comment from either before the team is asked to look:
 
 - __CodeRabbit__ (`coderabbitai[bot]`) reviews every pull request into `master`, configured by
   [.coderabbit.yaml](../../../.coderabbit.yaml). Its pre-merge checks are the rules that need
-  judgement: that the description explains why and how the change was verified, that a test covers
-  it, and that a bug fix adds no features. Their results appear only in CodeRabbit's comment, and its
+  judgement: that the linked issue explains why the change is needed, that a test covers it, and that
+  a bug fix adds no features. Their results appear only in CodeRabbit's comment, and its
   "CodeRabbit" status check succeeds whatever they say. The gate reads CodeRabbit's **review**, and
   also the results table in that comment, accepting it only from the `coderabbitai[bot]` account, so
   it can show the checks passed before CodeRabbit approves. That format is undocumented, so the

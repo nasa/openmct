@@ -5,8 +5,8 @@
  * maintainer, and no rule asks for something an outside contributor lacks the
  * permission to do.
  *
- * The rules that need judgement, such as whether the description explains why
- * and whether a test covers the change, are CodeRabbit's pre-merge checks. The
+ * The rules that need judgement, such as whether the issue explains why the
+ * change is needed and whether a test covers it, are CodeRabbit's pre-merge checks. The
  * gate reads their outcome from CodeRabbit's summary comment and its review.
  */
 

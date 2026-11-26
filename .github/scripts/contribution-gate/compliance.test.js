@@ -223,7 +223,7 @@ test("CodeRabbit requesting changes is a failed rule even when its comment can't
 
 test("CodeRabbit's checks are one line, failed when its comment says one failed", () => {
   const pullRequest = buildPullRequest({
-    aiCheckResults: aiResults({ 'Description explains why': 'error' })
+    aiCheckResults: aiResults({ 'Issue explains why': 'error' })
   });
 
   assert.deepEqual(aiCheckStatuses(pullRequest), [STATUSES.toDo]);
@@ -254,7 +254,7 @@ test("CodeRabbit's verdict wins over its table", () => {
   const allPassed = Object.fromEntries(AI_REQUIRED_CHECK_NAMES.map((name) => [name, 'passed']));
   const approvedOverOldFailure = buildPullRequest({
     aiReviewState: 'APPROVED',
-    aiCheckResults: aiResults({ 'Description explains why': 'error' })
+    aiCheckResults: aiResults({ 'Issue explains why': 'error' })
   });
   const changesRequestedOverPasses = buildPullRequest({
     aiReviewState: 'CHANGES_REQUESTED',
@@ -277,7 +277,7 @@ test("on a closed pull request, CodeRabbit's last verdict does not count, becaus
   const pullRequest = buildPullRequest({
     state: 'CLOSED',
     aiReviewState: 'CHANGES_REQUESTED',
-    aiCheckResults: aiResults({ 'Description explains why': 'error' })
+    aiCheckResults: aiResults({ 'Issue explains why': 'error' })
   });
 
   assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
@@ -288,18 +288,18 @@ test("CodeRabbit's results are read from the table in its own comment", () => {
     codeRabbitComment([
       '|         Check name        |   Status   | Explanation |',
       '| :----------------------- | :--------: | :---------- |',
-      '|  Description Explains Why |   ![Error](https://example.test/error.svg)   | Restates the diff. |',
+      '|  Issue Explains Why |   ![Error](https://example.test/error.svg)   | Restates the diff. |',
       '| Changed Code Is Tested | ![Passed](https://example.test/passed.svg) | A spec covers it. |'
     ])
   ]);
 
-  assert.equal(findAiCheckResult(results, 'Description explains why'), AI_CHECK_RESULTS.error);
+  assert.equal(findAiCheckResult(results, 'Issue explains why'), AI_CHECK_RESULTS.error);
   assert.equal(findAiCheckResult(results, 'Changed code is tested'), AI_CHECK_RESULTS.passed);
-  assert.equal(findAiCheckResult(results, 'Verification is described'), undefined);
+  assert.equal(findAiCheckResult(results, 'A bug fix adds no features'), undefined);
 });
 
 test("nobody else's comment can pass for CodeRabbit's results", () => {
-  const table = '| Description Explains Why | ![Passed](https://example.test/passed.svg) | Fine. |';
+  const table = '| Issue Explains Why | ![Passed](https://example.test/passed.svg) | Fine. |';
   const results = readAiCheckResults([
     { body: table, user: { login: 'contributor', type: 'User' } },
     { body: table, user: { login: 'coderabbitai', type: 'User' } },

@@ -125,25 +125,21 @@ reviews:
       mode: warning
 
     custom_checks:
-      - name: Description explains why
+      # Why a change is needed belongs on its issue, not its pull request. Testing
+      # instructions belong there too, but the contribution gate checks for those
+      # itself, because it also accepts them in a comment on the issue, which
+      # CodeRabbit does not read.
+      - name: Issue explains why
         mode: error
         instructions: >-
-          Pass if the pull request description states the problem being solved or the
-          reason for the change, in terms of Open MCT's behaviour or users, and not only
-          what was edited. Fail if the description only lists changed files, functions or
-          lines, restates the diff, or is empty. Fail if the description claims changes
-          that are not in the diff, or omits a change to behaviour that is in the diff.
-          Quote the sentence that is missing or inaccurate.
-
-      - name: Verification is described
-        mode: error
-        instructions: >-
-          Pass if the description says how the author verified the change: the steps
-          they followed or the tests they ran, and what they observed. If the diff
-          changes anything under src/ that renders in the user interface (.vue files,
-          or styles), the description must also include a screenshot, image or video.
-          Fail if verification is absent, or is only a statement such as "tested
-          locally" or "all tests pass" with no steps or observations.
+          Read the issue this pull request closes or addresses. Judge that issue's
+          description, not the pull request's: the pull request does not need to
+          explain why. Pass if the issue's description states the problem to be solved
+          or the reason for the change, in terms of Open MCT's behaviour or its users,
+          and not only what code should be edited. Fail if it only names files,
+          functions or code changes to make, or is empty. Pass if no issue is linked,
+          because another check requires one. When failing, quote the issue text that
+          falls short.
 
       - name: Changed code is tested
         mode: error

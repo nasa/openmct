@@ -103,9 +103,9 @@ A candidate pull request moves through these stages, and can move back if someth
 
 1. __The contribution rules__. The bot checks that every item in the author checklist is ticked, the
    pull request closes an issue, that issue is complete, and it carries testing instructions.
-   CodeRabbit's pre-merge checks are rules too: your description explains why the change is needed
-   and how you verified it, with a screenshot for a change to the user interface; the changed code is
-   covered by an automated test; and a pull request for a bug fixes it rather than adding a feature.
+   CodeRabbit's pre-merge checks are rules too: the linked issue explains why the change is needed;
+   the changed code is covered by an automated test; and a pull request for a bug fixes it rather than
+   adding a feature.
    CodeRabbit's comment says which of its checks failed and why. A change that genuinely cannot
    carry a test should say why in the description.
 2. __The automated checks__: lint, unit tests, end-to-end tests and the visual and accessibility

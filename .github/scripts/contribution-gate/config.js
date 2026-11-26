@@ -80,8 +80,7 @@ const AI_REVIEWER_LOGINS = ['coderabbitai[bot]'];
  * result, which tells the gate they have all passed before CodeRabbit approves.
  */
 const AI_REQUIRED_CHECK_NAMES = [
-  'Description explains why',
-  'Verification is described',
+  'Issue explains why',
   'Changed code is tested',
   'A bug fix adds no features'
 ];
