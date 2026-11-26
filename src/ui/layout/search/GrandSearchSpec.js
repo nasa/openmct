@@ -36,6 +36,7 @@ describe('GrandSearch', () => {
   let sharedWorkerToRestore;
   let mockDomainObject;
   let mockAnnotationObject;
+  let mockLayoutAnnotationObject;
   let mockDisplayLayout;
   let mockFolderObject;
   let mockAnotherFolderObject;
@@ -108,6 +109,7 @@ describe('GrandSearch', () => {
       type: 'layout',
       name: 'Bar Layout',
       composition: [],
+      location: 'fooNameSpace:topObject',
       identifier: {
         key: 'some-layout',
         namespace: 'fooNameSpace'
@@ -130,6 +132,21 @@ describe('GrandSearch', () => {
         {
           keyString: 'fooNameSpace:some-object',
           entryId: 'fooBarEntry'
+        }
+      ]
+    };
+    mockLayoutAnnotationObject = {
+      type: 'annotation',
+      name: 'Some Layout Annotation',
+      annotationType: openmct.annotation.ANNOTATION_TYPES.PLOT_SPATIAL,
+      tags: [availableTags[2].id],
+      identifier: {
+        key: 'aLayoutAnnotationKey',
+        namespace: 'fooNameSpace'
+      },
+      targets: [
+        {
+          keyString: 'fooNameSpace:some-layout'
         }
       ]
     };
@@ -168,6 +185,8 @@ describe('GrandSearch', () => {
         return mockTopObject;
       } else if (identifier.key === mockNewObject.identifier.key) {
         return mockNewObject;
+      } else if (identifier.key === mockLayoutAnnotationObject.identifier.key) {
+        return mockLayoutAnnotationObject;
       } else {
         return null;
       }
@@ -283,6 +302,18 @@ describe('GrandSearch', () => {
     const annotationResults = document.querySelectorAll('[aria-label="Annotation Search Result"]');
     expect(annotationResults.length).toBe(1);
     expect(annotationResults[0].innerText).toContain('Driving');
+  });
+
+  it('should render an annotation search result with the icon of the annotated object type', async () => {
+    await openmct.objects.inMemorySearchProvider.index(mockLayoutAnnotationObject);
+    await grandSearchComponent.$refs.root.searchEverything('Drilling');
+    await nextTick();
+    const annotationResults = document.querySelectorAll('[aria-label="Annotation Search Result"]');
+    expect(annotationResults.length).toBe(1);
+    expect(annotationResults[0].innerText).toContain('Bar Layout');
+    const typeIcon = annotationResults[0].querySelector('.c-gsearch-result__type-icon');
+    expect(typeIcon.classList.contains('icon-layout')).toBeTrue();
+    expect(typeIcon.classList.contains('icon-notebook')).toBeFalse();
   });
 
   it('should render no annotation search results if no match', async () => {

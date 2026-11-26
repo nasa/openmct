@@ -97,7 +97,7 @@ export default {
       }
     },
     resultTypeIcon() {
-      return this.openmct.types.get(this.result.type).definition.cssClass;
+      return this.openmct.types.get(this.domainObject.type).definition.cssClass;
     },
     tagBackgroundColor() {
       return this.result.fullTagModels[0].backgroundColor;
