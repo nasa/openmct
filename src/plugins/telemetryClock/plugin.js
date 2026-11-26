@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2024, United States Government
+ * Open MCT, Copyright (c) 2014-2024, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,16 +14,26 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LADClock from './LADClock.js';
+import TelemetryClock from './TelemetryClock.js';
 
-export default function () {
-  return function (openmct) {
-    openmct.time.addClock(new LADClock());
+/**
+ * Installs a clock that ticks from the timestamps of all incoming telemetry,
+ * instead of from the local system clock.
+ *
+ * The clock must also be named by a time conductor menu option before it can
+ * be selected.
+ *
+ * @param {number} [tickPeriod] the minimum interval, in milliseconds, between
+ *        ticks
+ */
+export default function (tickPeriod) {
+  return function install(openmct) {
+    openmct.time.addClock(new TelemetryClock(openmct, tickPeriod));
   };
 }

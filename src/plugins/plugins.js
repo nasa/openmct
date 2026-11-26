@@ -74,6 +74,7 @@ import RemoteClock from './remoteClock/plugin.js';
 import StaticRootPlugin from './staticRootPlugin/plugin.js';
 import SummaryWidget from './summaryWidget/plugin.js';
 import Tabs from './tabs/plugin.js';
+import TelemetryClock from './telemetryClock/plugin.js';
 import TelemetryMean from './telemetryMean/plugin.js';
 import TelemetryTablePlugin from './telemetryTable/plugin.js';
 import DarkMatter from './themes/darkmatter.js';
@@ -109,6 +110,7 @@ plugins.example.ExampleStaleness = ExampleStaleness;
 plugins.UTCTimeSystem = UTCTimeSystem;
 plugins.LocalTimeSystem = LocalTimeSystem;
 plugins.RemoteClock = RemoteClock;
+plugins.TelemetryClock = TelemetryClock;
 
 plugins.MyItems = MyItems;
 
