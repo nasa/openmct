@@ -51,7 +51,7 @@ test.describe('Visual - Example Imagery', () => {
     await page.getByRole('button', { name: 'More actions' }).click();
     await page.getByRole('menuitem', { name: 'Edit Properties...' }).click();
     await page
-      .locator('#imageLocation-textarea')
+      .locator('#form-imageLocation')
       .fill(
         'https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg,https://raw.githubusercontent.com/nasa/openmct/554f77c42fec81cf0f63e62b278012cb08d82af9/e2e/test-data/rick.jpg'
       );
