@@ -154,4 +154,41 @@ describe('The folder plugin', () => {
       });
     });
   });
+
+  describe('the folder telemetry views', () => {
+    let ladTableViewProvider;
+    let stackedPlotViewProvider;
+    let folderObject;
+
+    beforeEach(() => {
+      folderObject = {
+        identifier: {
+          namespace: 'test-namespace',
+          key: 'folder-object'
+        },
+        name: 'Test Folder',
+        type: 'folder',
+        composition: []
+      };
+
+      ladTableViewProvider = openmct.objectViews
+        .get(folderObject, [folderObject])
+        .find((view) => view.key === 'lad-table-for-folder');
+      stackedPlotViewProvider = openmct.objectViews
+        .get(folderObject, [folderObject])
+        .find((view) => view.key === 'stacked-plot-for-folder');
+    });
+
+    describe('the LAD Table view', () => {
+      it('is installed by the plugin and is applicable to the folder type', () => {
+        expect(ladTableViewProvider).toBeDefined();
+      });
+    });
+
+    describe('the Stacked Plot view', () => {
+      it('is installed by the plugin and is applicable to the folder type', () => {
+        expect(stackedPlotViewProvider).toBeDefined();
+      });
+    });
+  });
 });

@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import FolderGridView from './FolderGridView.js';
+import FolderLadTableViewProvider from './FolderLadTableViewProvider.js';
 import FolderListView from './FolderListView.js';
+import FolderStackedPlotViewProvider from './FolderStackedPlotViewProvider.js';
 
 export default function () {
   return function install(openmct) {
@@ -38,5 +40,7 @@ export default function () {
 
     openmct.objectViews.addProvider(new FolderGridView(openmct));
     openmct.objectViews.addProvider(new FolderListView(openmct));
+    openmct.objectViews.addProvider(new FolderLadTableViewProvider(openmct));
+    openmct.objectViews.addProvider(new FolderStackedPlotViewProvider(openmct));
   };
 }
