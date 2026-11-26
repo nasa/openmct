@@ -29,9 +29,10 @@ const UNKNOWN_TYPE = new Type({
 
 /**
  * @typedef TypeDefinition
- * @property {string} label the name for this type of object
- * @property {string} description a longer-form description of this type
- * @property {function(domainObject:DomainObject): void} [initialize] a function which initializes
+ * @property {string} [name] human-readable name for this type
+ * @property {string} [label] legacy support for type name (preferred: name)
+ * @property {string} [description] a longer-form description of this type
+ * @property {function(import('../objects/ObjectAPI').DomainObject): void} [initialize] a function which initializes
  *           the model for new domain objects of this type
  * @property {boolean} [creatable=false] true if users should be allowed to
  *           create this type (default: false)
