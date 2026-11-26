@@ -127,6 +127,9 @@ class MutableDomainObject {
     // In the future we could update a specific property of the object using the 'path' parameter.
     this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), model);
 
+    // Notify global listeners without treating a remote refresh as a local edit.
+    this._globalEventEmitter.emit('refresh', this);
+
     //Emit wildcard event, with path so that callback knows what changed
     this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this);
   }

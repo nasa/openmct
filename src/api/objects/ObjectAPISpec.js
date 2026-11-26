@@ -250,6 +250,28 @@ describe('The Object API', () => {
         });
       });
 
+      it('does not refresh cached objects when a provider read is aborted', async () => {
+        mockProvider.create = jasmine.createSpy('create');
+        mockProvider.update = jasmine.createSpy('update');
+        const refreshListener = jasmine.createSpy('refresh listener');
+        objectAPI.eventEmitter.on('refresh', refreshListener);
+        const abortedRequest = new AbortController();
+        abortedRequest.abort();
+
+        const abortedResult = await objectAPI.get(
+          mockDomainObject.identifier,
+          abortedRequest.signal,
+          true
+        );
+
+        expect(abortedResult.name).toBe(mockDomainObject.name);
+        expect(refreshListener).not.toHaveBeenCalled();
+
+        await objectAPI.get(mockDomainObject.identifier, undefined, true);
+        expect(refreshListener).toHaveBeenCalledTimes(1);
+        objectAPI.eventEmitter.off('refresh', refreshListener);
+      });
+
       it('displays a notification in the event of an error', () => {
         openmct.notifications.warn = jasmine.createSpy('warn');
         mockProvider.get.and.returnValue(

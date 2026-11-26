@@ -240,7 +240,7 @@ export default class ObjectAPI {
         }
         domainObject = this.applyGetInterceptors(identifier, domainObject);
 
-        if (this.supportsMutation(identifier)) {
+        if (this.supportsMutation(identifier) && !abortSignal?.aborted) {
           const mutableDomainObject = this.toMutable(domainObject);
           mutableDomainObject.$refresh(domainObject);
           this.destroyMutable(mutableDomainObject);
