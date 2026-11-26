@@ -6,9 +6,13 @@
  * permission to do.
  *
  * The rules that need judgement, such as whether the issue explains why the
- * change is needed and whether a test covers it, are CodeRabbit's pre-merge checks. The
- * gate reads their outcome from CodeRabbit's summary comment and its review.
+ * change is needed and whether a test covers it, are CodeRabbit's pre-merge
+ * checks. The gate reads their outcome from CodeRabbit's summary comment and its
+ * review.
  */
+
+const fs = require('node:fs');
+const path = require('node:path');
 
 const { AI_REQUIRED_CHECK_NAMES, GATE_EXEMPT_LABEL, RETIRED_CHECKLIST_ITEMS } = require('./config');
 const { AI_CHECK_RESULTS, findAiCheckResult } = require('./aiCheckResults');
@@ -25,10 +29,17 @@ const { assessIssue } = require('./issueCompliance');
 const { quoteContributorText } = require('./quotedText');
 
 const AUTHOR_CHECKLIST_HEADING = 'Author Checklist';
-const UNCHECKED_ITEM_PATTERN = /^\s*[-*]\s*\[ \]\s*(.+?)\s*$/gm;
+const CHECKLIST_ITEM_PATTERN = /^\s*[-*]\s*\[([ xX])\]\s*(.+?)\s*$/gm;
+const UNTICKED_BOX = ' ';
 const CLOSED_STATE = 'CLOSED';
 const APPROVED = 'APPROVED';
-const CHANGES_REQUESTED = 'CHANGES_REQUESTED';
+
+/**
+ * Read from the gate's own checkout, which is master's, so a pull request
+ * cannot change what its own checklist must contain.
+ */
+const TEMPLATE_PATH = path.resolve(__dirname, '../../PULL_REQUEST_TEMPLATE.md');
+const REQUIRED_CHECKLIST_ITEMS = readTemplateChecklistItems();
 
 const LINKED_ISSUE_LABEL =
   'Linked to an issue, by a line such as `Closes #1234` in the description';
@@ -120,29 +131,29 @@ function assessAuthorChecklist(body) {
     ];
   }
 
-  return [assessUncheckedItems(label, readUncheckedItems(checklist))];
+  return [assessOutstandingItems(label, findOutstandingItems(checklist))];
 }
 
-function assessUncheckedItems(label, uncheckedItems) {
-  if (uncheckedItems.length === 0) {
+function assessOutstandingItems(label, outstandingItems) {
+  if (outstandingItems.length === 0) {
     return createDoneItem(label);
   }
 
-  const quotedItems = uncheckedItems.map(quoteContributorText).join(', ');
+  const quotedItems = outstandingItems.map(quoteContributorText).join(', ');
 
   return createFailedRuleItem(label, {
     id: 'pr-checklist-unchecked',
-    summary: `${uncheckedItems.length} item(s) in the **Author Checklist** are not ticked: ${quotedItems}.`,
-    fix: `Not ticked yet: ${quotedItems}. Tick each one in the description once you have done what it asks.`
+    summary: `${outstandingItems.length} item(s) in the **Author Checklist** are not ticked: ${quotedItems}.`,
+    fix: `Not ticked yet: ${quotedItems}. Tick each one in the description once you have done what it asks, restoring any from the pull request template that are missing.`
   });
 }
 
 /**
  * One line for all of CodeRabbit's pre-merge checks; its comment says which
- * failed and why. Its verdict decides where it has given one: an approval means
- * every check passed, and changes requested means one failed. Until then, the
- * results in its comment say whether they have all passed, which they can
- * before it approves, since it also waits for its comments to be answered.
+ * failed and why. The results in that comment decide, since CodeRabbit's
+ * verdict cannot: it requests changes for any blocking review comment, not only
+ * a failed check, and approves only once its comments are answered as well. An
+ * approval still means every check passed.
  *
  * On a closed pull request a failure is shown, but is not counted against it:
  * CodeRabbit does not review a closed pull request, so the result is from
@@ -153,11 +164,11 @@ function assessAiChecks(pullRequest) {
     findAiCheckResult(pullRequest.aiCheckResults, checkName)
   );
   const hasPassed = results.every((result) => result === AI_CHECK_RESULTS.passed);
-  const hasFailed =
-    pullRequest.aiReviewState === CHANGES_REQUESTED ||
-    results.some((result) => result !== undefined && result !== AI_CHECK_RESULTS.passed);
+  const hasFailed = results.some(
+    (result) => result !== undefined && result !== AI_CHECK_RESULTS.passed
+  );
 
-  if (pullRequest.aiReviewState === APPROVED || (hasPassed && hasFailed === false)) {
+  if (pullRequest.aiReviewState === APPROVED || hasPassed) {
     return [createDoneItem(AI_CHECKS_LABEL)];
   }
 
@@ -172,11 +183,50 @@ function assessAiChecks(pullRequest) {
   return [createFailedRuleItem(AI_CHECKS_LABEL, AI_CHECKS_FAILURE)];
 }
 
-/** The items left unticked, other than those the template no longer has. */
-function readUncheckedItems(checklist) {
-  return [...checklist.matchAll(UNCHECKED_ITEM_PATTERN)]
-    .map(([, text]) => stripMarkdownLinks(text))
-    .filter((text) => isRetired(text) === false);
+/**
+ * Every item the template's checklist has must be there and ticked, so deleting
+ * an item does not remove its requirement. An item the author added and left
+ * unticked is outstanding too. Items the template no longer has are not.
+ *
+ * @returns {string[]}
+ */
+function findOutstandingItems(checklist) {
+  const items = readChecklistItems(checklist).filter((item) => isRetired(item.text) === false);
+  const tickedItems = new Set(
+    items.filter((item) => item.isTicked).map((item) => toComparable(item.text))
+  );
+  const templateItems = new Set(REQUIRED_CHECKLIST_ITEMS.map(toComparable));
+  const missingOrUnticked = REQUIRED_CHECKLIST_ITEMS.filter(
+    (text) => tickedItems.has(toComparable(text)) === false
+  );
+  const otherUnticked = items
+    .filter(
+      (item) => item.isTicked === false && templateItems.has(toComparable(item.text)) === false
+    )
+    .map((item) => item.text);
+
+  return [...missingOrUnticked, ...otherUnticked];
+}
+
+/** @returns {{text: string, isTicked: boolean}[]} */
+function readChecklistItems(checklist) {
+  return [...checklist.matchAll(CHECKLIST_ITEM_PATTERN)].map(([, box, text]) => ({
+    text: stripMarkdownLinks(text),
+    isTicked: box !== UNTICKED_BOX
+  }));
+}
+
+/** @returns {string[]} the texts of the template's Author Checklist items */
+function readTemplateChecklistItems() {
+  const template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
+  const checklist = parseSections(template).get(normalizeHeading(AUTHOR_CHECKLIST_HEADING));
+
+  return readChecklistItems(checklist).map((item) => item.text);
+}
+
+/** Case and spacing may differ from the template's; the words may not. */
+function toComparable(text) {
+  return text.toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
 function joinWithAnd(items) {

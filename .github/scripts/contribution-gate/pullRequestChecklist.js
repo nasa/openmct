@@ -106,7 +106,7 @@ function assessJob(checkConclusions, job) {
     );
   }
 
-  if (statuses.includes(CHECK_STATUSES.pending)) {
+  if (statuses.some(isUnfinished)) {
     return createInProgressItem(label);
   }
 
@@ -120,7 +120,7 @@ function assessCheck(checkConclusions, name, label) {
     return createDoneItem(label);
   }
 
-  if (status === CHECK_STATUSES.pending) {
+  if (isUnfinished(status)) {
     return createInProgressItem(label);
   }
 
@@ -134,7 +134,7 @@ function assessCheck(checkConclusions, name, label) {
  */
 function assessCheckIfRun(checkConclusions, name) {
   const label = `\`${name}\` passes, if it runs for this change`;
-  const isUnreported = findCheckStatus(checkConclusions, name) === CHECK_STATUSES.pending;
+  const isUnreported = findCheckStatus(checkConclusions, name) === CHECK_STATUSES.unreported;
 
   if (isUnreported && summarizeRequiredChecks(checkConclusions).pending.length === 0) {
     return createDoneItem(label);
@@ -200,6 +200,11 @@ function assessTeamApproval(pullRequest, isTeamReviewRequested) {
   }
 
   return createToDoItem(label);
+}
+
+/** Running, or not yet reported at all. */
+function isUnfinished(status) {
+  return status === CHECK_STATUSES.pending || status === CHECK_STATUSES.unreported;
 }
 
 function isStartedByAiReviewer(thread) {

@@ -6,8 +6,9 @@
 # maintainer's, and the contribution gate reads it to decide when to ask the team.
 #
 # With auto_approvals on, CodeRabbit requests changes when a check in "error" mode
-# fails and approves otherwise. A failing "warning" check does not stop it
-# approving, so every check that must hold a pull request back is in error mode.
+# fails, or for any blocking review comment, and approves once neither is left.
+# A failing "warning" check does not stop it approving, so every check that must
+# hold a pull request back is in error mode.
 #
 # This file is read from the branch a pull request targets, never from the pull
 # request itself, so a pull request cannot change its own review. A change here
@@ -69,7 +70,8 @@ reviews:
   abort_on_close: true
 
   # Approve once every error-mode pre-merge check passes and CodeRabbit's review
-  # threads are resolved; request changes when one of those checks fails.
+  # threads are resolved; request changes when a check fails or a review comment
+  # blocks.
   auto_approvals:
     enabled: true
 
@@ -77,6 +79,9 @@ reviews:
     enabled: true
     drafts: false
     auto_incremental_review: true
+    # The default pauses automatic reviews after five reviewed commits, which
+    # would leave later pushes without a review, and so without an approval.
+    auto_pause_after_reviewed_commits: 0
 
   # Anything that would commit to the author's branch or open pull requests on its own.
   finishing_touches:

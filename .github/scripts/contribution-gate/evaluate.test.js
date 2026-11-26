@@ -16,6 +16,14 @@ const GATE_BOT = { login: 'github-actions[bot]', type: 'Bot' };
 // As the GraphQL API names it: without the "[bot]" suffix the REST API adds.
 const AI_REVIEWER = { login: 'coderabbitai' };
 const CONTRIBUTOR = { login: 'contributor' };
+const DAY = 24 * 60 * 60 * 1000;
+
+/** Long past its deadline, and reminded long enough ago that it may close. */
+const OVERDUE_STATE = {
+  noncompliantSince: '2020-01-01T00:00:00.000Z',
+  reminderPostedAt: '2020-01-06T00:00:00.000Z'
+};
+const CLOSED_BY_GATE_STATE = { ...OVERDUE_STATE, closedByGate: true };
 
 const COMPLIANT_ISSUE = {
   number: 4321,
@@ -49,8 +57,10 @@ const COMPLIANT_BODY = [
   '',
   '### Author Checklist',
   '',
-  '* [x] Changes address the original issue',
-  '* [x] Automated tests are included or updated with these changes'
+  '* [x] Changes address original issue?',
+  '* [x] Tests included and/or updated with changes?',
+  '* [x] Has this been smoke tested?',
+  '* [x] Testing instructions included in associated issue OR is this a dependency/testcase change?'
 ].join('\n');
 
 test('a non-compliant pull request is labelled and told what is missing', async () => {
@@ -169,7 +179,7 @@ test('the team is asked only once', async () => {
 test('an outside contributor who has run out of time is closed, kindly', async () => {
   const world = createWorld({
     body: '### Describe your changes:\n\n\n',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+    storedState: OVERDUE_STATE
   });
 
   await runGate(world);
@@ -183,7 +193,7 @@ test('a team member in the same position is never closed', async () => {
   const world = createWorld({
     body: '### Describe your changes:\n\n\n',
     authorAssociation: 'MEMBER',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+    storedState: OVERDUE_STATE
   });
 
   await runGate(world);
@@ -224,7 +234,7 @@ test('an overdue pull request without the pilot label is never closed', async ()
   const world = createWorld({
     body: '### Describe your changes:\n\n\n',
     notCandidate: true,
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+    storedState: OVERDUE_STATE
   });
 
   await runGate(world);
@@ -265,7 +275,10 @@ test('until CodeRabbit approves, the team is not asked', async () => {
 });
 
 test("CodeRabbit's failed checks start the clock like any other rule", async () => {
-  const world = createWorld({ aiReviewState: 'CHANGES_REQUESTED' });
+  const world = createWorld({
+    aiReviewState: 'CHANGES_REQUESTED',
+    contributorComments: [aiResultsComment({ 'Issue explains why': 'Error' })]
+  });
 
   await runGate(world);
 
@@ -278,7 +291,8 @@ test("CodeRabbit's failed checks start the clock like any other rule", async () 
 test("an outside contributor who leaves CodeRabbit's checks failing is closed in time", async () => {
   const world = createWorld({
     aiReviewState: 'CHANGES_REQUESTED',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+    contributorComments: [aiResultsComment({ 'Issue explains why': 'Error' })],
+    storedState: OVERDUE_STATE
   });
 
   await runGate(world);
@@ -328,7 +342,7 @@ test('a team request the API silently drops is replaced by a mention', async () 
 test('a closed pull request reopens on /recheck once its rules are met, whatever CodeRabbit last said', async () => {
   const world = createWorld({
     state: 'CLOSED',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' },
+    storedState: CLOSED_BY_GATE_STATE,
     aiReviewState: 'CHANGES_REQUESTED'
   });
 
@@ -345,7 +359,7 @@ test('/recheck leaves a closed pull request closed while something is still miss
   const world = createWorld({
     body: 'Closes #4321\n\n### Describe your changes:\n\nA change.\n',
     state: 'CLOSED',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+    storedState: CLOSED_BY_GATE_STATE
   });
 
   await runGate(world, { recheck: true });
@@ -366,7 +380,7 @@ test('/recheck leaves a closed pull request closed while something is still miss
 test('the comment left on a pull request as it is closed does not promise a deadline that has passed', async () => {
   const world = createWorld({
     body: '### Describe your changes:\n\n\n',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+    storedState: OVERDUE_STATE
   });
 
   await runGate(world);
@@ -380,7 +394,7 @@ test("a contributor's comment carrying a forged marker is not mistaken for the g
   const forged = renderMarker({ noncompliantSince: '2999-01-01T00:00:00.000Z' });
   const world = createWorld({
     body: '### Describe your changes:\n\n\n',
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' },
+    storedState: OVERDUE_STATE,
     contributorComments: [
       { id: 5, user: { login: 'contributor', type: 'User' }, body: `Hello ${forged}` }
     ]
@@ -400,7 +414,7 @@ test("text quoted from the description cannot plant a marker in the gate's comme
   const forged = '<!-- openmct-gate {"noncompliantSince":"2999-01-01T00:00:00.000Z"} -->';
   const world = createWorld({
     body: `### Describe your changes:\n\nA change.\n\n### Author Checklist\n\n* [ ] Done ${forged}\n`,
-    storedState: { noncompliantSince: '2020-01-01T00:00:00.000Z' }
+    storedState: OVERDUE_STATE
   });
 
   await runGate(world);
@@ -498,6 +512,158 @@ test("only a maintainer's approval ticks the maintainer's approval", async () =>
   assert.match(approvedByOutsider.postedComments[0].body, /⏳ A maintainer approves/);
 });
 
+test('CodeRabbit requesting changes over a review comment is no failed rule, so an answered thread is resolved', async () => {
+  const allPassed = Object.fromEntries(AI_REQUIRED_CHECK_NAMES.map((name) => [name, 'Passed']));
+  const world = createWorld({
+    storedState: {},
+    aiReviewState: 'CHANGES_REQUESTED',
+    contributorComments: [aiResultsComment(allPassed)],
+    reviewThreads: [
+      aiThread({
+        id: 'thread-1',
+        isResolved: false,
+        replies: [{ author: CONTRIBUTOR, body: 'Fixed in abc1234.', url: 'https://example.test/2' }]
+      })
+    ]
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:automated-review' });
+  assert.equal(readStoredState(world).noncompliantSince, undefined, 'no deadline starts');
+  assert.deepEqual(world.resolvedThreads, ['thread-1'], 'so CodeRabbit can approve');
+  assert.deepEqual(world.requestedReviewers, [], 'it has not approved yet');
+});
+
+test('/recheck does not reopen a pull request a maintainer closed', async () => {
+  const world = createWorld({ state: 'CLOSED', storedState: {} });
+
+  await runGate(world, { recheck: true });
+
+  assert.deepEqual(world.reopened, []);
+  assert.deepEqual(world.updatedComments, [], 'and the gate leaves it alone');
+});
+
+test('/recheck does not reopen a merged pull request', async () => {
+  const world = createWorld({ state: 'MERGED', storedState: CLOSED_BY_GATE_STATE });
+
+  await runGate(world, { recheck: true });
+
+  assert.deepEqual(world.reopened, []);
+});
+
+test("once a pull request is open again, the gate's closure is forgotten", async () => {
+  const world = createWorld({ storedState: { closedByGate: true } });
+
+  await runGate(world);
+
+  assert.equal(
+    readStoredState(world).closedByGate,
+    undefined,
+    'a maintainer closing it later is not the gate closing it'
+  );
+});
+
+test('a draft marked ready after its seven days is reminded first, not closed', async () => {
+  const tenDaysAgo = new Date(Date.now() - 10 * DAY).toISOString();
+  const world = createWorld({
+    body: '### Describe your changes:\n\n\n',
+    storedState: { noncompliantSince: tenDaysAgo }
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.closed, []);
+  assert.match(world.postedComments[0].body, /friendly reminder/);
+  assert.match(
+    world.postedComments[0].body,
+    new RegExp(new Date(Date.now() + 2 * DAY).toISOString().slice(0, 10)),
+    'it closes two days from the reminder'
+  );
+});
+
+test('after a late reminder, closing waits out its two days', async () => {
+  const world = createWorld({
+    body: '### Describe your changes:\n\n\n',
+    storedState: {
+      noncompliantSince: '2020-01-01T00:00:00.000Z',
+      reminderPostedAt: new Date(Date.now() - DAY).toISOString()
+    }
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.closed, []);
+});
+
+test('a second run in the reminder window sends no second reminder', async () => {
+  const fiveDaysAgo = new Date(Date.now() - 5 * DAY).toISOString();
+  const first = createWorld({
+    body: '### Describe your changes:\n\n\n',
+    storedState: { noncompliantSince: fiveDaysAgo }
+  });
+
+  await runGate(first);
+
+  const second = createWorld({
+    body: '### Describe your changes:\n\n\n',
+    storedState: readStoredState(first)
+  });
+
+  await runGate(second);
+
+  assert.equal(first.postedComments.length, 1);
+  assert.deepEqual(second.postedComments, []);
+});
+
+test('a running CodeQL analysis is waited for, though it is required only when it runs', async () => {
+  const world = createWorld({ checkConclusions: { Analyze: null } });
+
+  await runGate(world);
+
+  assert.match(world.postedComments[0].body, /⏳ `Analyze` passes, if it runs/);
+  assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:awaiting-ci' });
+  assert.deepEqual(world.requestedReviewers, []);
+});
+
+test('a pull request whose pilot label is removed mid-run is left alone', async () => {
+  const world = createWorld({ pilotLabelRemovedMidRun: true });
+
+  await runGate(world);
+
+  assert.deepEqual(world.addedLabels, []);
+  assert.deepEqual(world.postedComments, []);
+});
+
+test('a pull request the gate fails to close gets no comment announcing it', async () => {
+  const world = createWorld({
+    body: '### Describe your changes:\n\n\n',
+    storedState: OVERDUE_STATE,
+    refuseClose: true
+  });
+
+  await assert.rejects(runGate(world));
+
+  assert.equal(
+    world.postedComments.some((comment) => /Closing this/.test(comment.body)),
+    false
+  );
+});
+
+test('a failure to remove an old stage label is reported, not swallowed', async () => {
+  const world = createWorld({ labels: ['gate:needs-compliance'], removeLabelFails: true });
+
+  await assert.rejects(runGate(world), /Service Unavailable/);
+});
+
+test('a stage label already gone is no failure', async () => {
+  const world = createWorld({ labels: ['gate:needs-compliance'], removeLabelMissing: true });
+
+  await runGate(world);
+
+  assert.deepEqual(world.addedLabels.at(-1), { number: 7, label: 'gate:team-review' });
+});
+
 function runGate(world, options = {}) {
   return run({
     github: world.github,
@@ -556,6 +722,14 @@ function createWorld(scenario) {
           world.addedLabels.push({ number: issue_number, label: labels[0] });
         },
         removeLabel: async ({ issue_number, name }) => {
+          if (scenario.removeLabelFails === true) {
+            throw Object.assign(new Error('Service Unavailable'), { status: 503 });
+          }
+
+          if (scenario.removeLabelMissing === true) {
+            throw Object.assign(new Error('Label does not exist'), { status: 404 });
+          }
+
           world.removedLabels.push({ number: issue_number, label: name });
         },
         createComment: async ({ issue_number, body }) => {
@@ -565,6 +739,10 @@ function createWorld(scenario) {
           world.updatedComments.push({ id: comment_id, body });
         },
         update: async ({ issue_number, state }) => {
+          if (scenario.refuseClose === true && state === 'closed') {
+            throw Object.assign(new Error('Server Error'), { status: 500 });
+          }
+
           const record = state === 'closed' ? world.closed : world.reopened;
 
           record.push(issue_number);
@@ -621,7 +799,7 @@ function buildPullRequest(scenario, number) {
     authorAssociation: scenario.authorAssociation ?? 'CONTRIBUTOR',
     headRefOid: HEAD_SHA,
     author: CONTRIBUTOR,
-    labels: { nodes: readLabels(scenario).map((name) => ({ name })) },
+    labels: { nodes: readPullRequestLabels(scenario).map((name) => ({ name })) },
     closingIssuesReferences: { nodes: readLinkedIssues(scenario) },
     latestOpinionatedReviews: { nodes: buildLatestReviews(scenario) },
     reviewThreads: { nodes: scenario.reviewThreads ?? [] }
@@ -660,6 +838,15 @@ function readLinkedIssues(scenario) {
   return [COMPLIANT_ISSUE];
 }
 
+/** As the later fetch sees them, which a maintainer may have changed since the event. */
+function readPullRequestLabels(scenario) {
+  if (scenario.pilotLabelRemovedMidRun === true) {
+    return readLabels(scenario).filter((label) => label !== 'new-workflow-candidate');
+  }
+
+  return readLabels(scenario);
+}
+
 function buildIssueResponse(scenario) {
   return {
     number: 7,
@@ -691,11 +878,22 @@ function buildGateComment(scenario) {
 function buildCheckRuns(scenario) {
   const overrides = scenario.checkConclusions ?? {};
 
+  const otherNames = Object.keys(overrides).filter((name) => !REQUIRED_CHECK_NAMES.includes(name));
+
   // A conclusion of null is a check still running, so only an absent one defaults.
-  return REQUIRED_CHECK_NAMES.map((name) => ({
+  return [...REQUIRED_CHECK_NAMES, ...otherNames].map((name) => ({
     name,
     conclusion: Object.hasOwn(overrides, name) ? overrides[name] : 'success'
   }));
+}
+
+/** CodeRabbit's summary comment, carrying a results table for the checks named. */
+function aiResultsComment(resultsByName) {
+  const rows = Object.entries(resultsByName).map(
+    ([name, result]) => `| ${name} | ![${result}](https://example.test/${result}.svg) | Why. |`
+  );
+
+  return { id: 300, user: { login: 'coderabbitai[bot]', type: 'Bot' }, body: rows.join('\n') };
 }
 
 function aiThread({ id, isResolved, replies }) {

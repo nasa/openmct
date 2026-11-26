@@ -122,9 +122,10 @@ Testing instructions belong on the issue. If you did not open that issue and can
 on it with a `### Testing Instructions` heading instead, and that counts.
 
 A candidate pull request that stays incomplete is closed automatically: after a week if it is ready for
-review, or after a month if it is a draft. A reminder goes out two days beforehand. Nothing is lost when
-it is closed this way: address the points in the bot's comment, push any commits you need, and comment
-`/recheck`, and it reopens. Pull requests from the team are held to the same rules, but are never closed
+review, or after a month if it is a draft. A reminder always goes out at least two days beforehand.
+Nothing is lost when it is closed this way: address the points in the bot's comment, push any commits
+you need, and comment `/recheck`, and it reopens. `/recheck` reopens only what the bot closed, never a
+pull request a maintainer closed. Pull requests from the team are held to the same rules, but are never closed
 automatically.
 
 The gate lives in [.github/scripts/contribution-gate](.github/scripts/contribution-gate), and the

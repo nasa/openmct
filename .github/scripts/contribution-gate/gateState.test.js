@@ -10,9 +10,10 @@ const {
   findContributionKind,
   findDeadline,
   formatDeadline,
-  isPastDeadline,
-  isTeamAuthor,
-  isWithinReminderWindow
+  findClosingDate,
+  isClosingDue,
+  isReminderDue,
+  isTeamAuthor
 } = require('./deadlines');
 const { readMarker, renderMarker } = require('./stateMarker');
 const { findRepliedOpenThreads, findThreadsAwaitingReply } = require('./reviewThreads');
@@ -43,39 +44,58 @@ test('a ready pull request has a week, a draft has a month', () => {
   assert.equal(formatDeadline(draftDeadline), '2026-10-01');
 });
 
-test('the clock runs from the notice, not from when the work was opened', () => {
+test('the clock runs from the notice, and closing waits for the reminder to have been out two days', () => {
+  const reminded = {
+    noncompliantSince: NOTICE_SENT_AT,
+    reminderPostedAt: '2026-09-06T00:00:00.000Z'
+  };
+  const notReminded = { noncompliantSince: NOTICE_SENT_AT };
   const dayBeforeDeadline = new Date('2026-09-07T12:00:00.000Z');
   const dayAfterDeadline = new Date('2026-09-09T00:00:00.000Z');
 
-  assert.equal(isPastDeadline(NOTICE_SENT_AT, 'readyPullRequest', dayBeforeDeadline), false);
-  assert.equal(isPastDeadline(NOTICE_SENT_AT, 'readyPullRequest', dayAfterDeadline), true);
+  assert.equal(isClosingDue(reminded, 'readyPullRequest', dayBeforeDeadline), false);
+  assert.equal(isClosingDue(reminded, 'readyPullRequest', dayAfterDeadline), true);
+  assert.equal(
+    isClosingDue(notReminded, 'readyPullRequest', dayAfterDeadline),
+    false,
+    'never without a reminder'
+  );
 });
 
-test('one reminder goes out in the two days before the deadline', () => {
+test('a reminder is due two days before the deadline, and still due after it until sent', () => {
+  const state = { noncompliantSince: NOTICE_SENT_AT };
+
   assert.equal(
-    isWithinReminderWindow(
-      NOTICE_SENT_AT,
-      'readyPullRequest',
-      new Date('2026-09-05T00:00:00.000Z')
-    ),
+    isReminderDue(state, 'readyPullRequest', new Date('2026-09-05T00:00:00.000Z')),
     false
   );
   assert.equal(
-    isWithinReminderWindow(
-      NOTICE_SENT_AT,
-      'readyPullRequest',
-      new Date('2026-09-06T01:00:00.000Z')
-    ),
+    isReminderDue(state, 'readyPullRequest', new Date('2026-09-06T01:00:00.000Z')),
     true
   );
   assert.equal(
-    isWithinReminderWindow(
-      NOTICE_SENT_AT,
+    isReminderDue(state, 'readyPullRequest', new Date('2026-09-20T00:00:00.000Z')),
+    true
+  );
+  assert.equal(
+    isReminderDue(
+      { ...state, reminderPostedAt: '2026-09-06T01:00:00.000Z' },
       'readyPullRequest',
-      new Date('2026-09-09T00:00:00.000Z')
+      new Date('2026-09-07T00:00:00.000Z')
     ),
     false,
-    'past the deadline is not a reminder'
+    'only one is ever sent'
+  );
+});
+
+test('a late reminder moves the closing date to two days after it', () => {
+  const state = { noncompliantSince: NOTICE_SENT_AT, reminderPostedAt: '2026-09-20T00:00:00.000Z' };
+
+  assert.equal(
+    formatDeadline(
+      findClosingDate(state, 'readyPullRequest', new Date('2026-09-20T00:00:00.000Z'))
+    ),
+    '2026-09-22'
   );
 });
 

@@ -8,16 +8,24 @@ const { CHECKS_REQUIRED_WHEN_REPORTED, REQUIRED_CHECK_NAMES } = require('./confi
 const CHECK_STATUSES = {
   passed: 'passed',
   failed: 'failed',
-  pending: 'pending'
+  pending: 'pending',
+  unreported: 'unreported'
 };
 
 /** Conclusions that do not mean the check found a problem. */
 const ACCEPTABLE_CONCLUSIONS = ['success', 'skipped', 'neutral'];
 
+/**
+ * A required check that has not reported yet is waiting. One that is required
+ * only when it runs is waited for only once it has reported, and is running.
+ */
 function summarizeRequiredChecks(checkConclusions) {
-  const pending = REQUIRED_CHECK_NAMES.filter(
-    (name) => findCheckStatus(checkConclusions, name) === CHECK_STATUSES.pending
-  );
+  const pending = [
+    ...REQUIRED_CHECK_NAMES.filter((name) => isUnfinished(checkConclusions, name)),
+    ...CHECKS_REQUIRED_WHEN_REPORTED.filter(
+      (name) => findCheckStatus(checkConclusions, name) === CHECK_STATUSES.pending
+    )
+  ];
   const failing = [...REQUIRED_CHECK_NAMES, ...CHECKS_REQUIRED_WHEN_REPORTED].filter(
     (name) => findCheckStatus(checkConclusions, name) === CHECK_STATUSES.failed
   );
@@ -29,11 +37,18 @@ function summarizeRequiredChecks(checkConclusions) {
   };
 }
 
-/** @returns {string} one of CHECK_STATUSES; a check that has not reported is pending */
+/**
+ * @returns {string} one of CHECK_STATUSES: unreported if the check has not
+ * appeared, pending while it runs
+ */
 function findCheckStatus(checkConclusions, name) {
+  if (checkConclusions.has(name) === false) {
+    return CHECK_STATUSES.unreported;
+  }
+
   const conclusion = checkConclusions.get(name);
 
-  if (conclusion === undefined || conclusion === null) {
+  if (conclusion === null) {
     return CHECK_STATUSES.pending;
   }
 
@@ -42,6 +57,12 @@ function findCheckStatus(checkConclusions, name) {
   }
 
   return CHECK_STATUSES.failed;
+}
+
+function isUnfinished(checkConclusions, name) {
+  const status = findCheckStatus(checkConclusions, name);
+
+  return status === CHECK_STATUSES.pending || status === CHECK_STATUSES.unreported;
 }
 
 module.exports = { CHECK_STATUSES, findCheckStatus, summarizeRequiredChecks };

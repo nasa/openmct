@@ -27,11 +27,11 @@ const { GateActions } = require('./gateActions');
 const { summarizeRequiredChecks } = require('./checkStatus');
 const { listFailures } = require('./checklist');
 const {
+  findClosingDate,
   findContributionKind,
-  findDeadline,
-  isPastDeadline,
-  isTeamAuthor,
-  isWithinReminderWindow
+  isClosingDue,
+  isReminderDue,
+  isTeamAuthor
 } = require('./deadlines');
 const {
   fetchContributionsWithLabels,
@@ -57,6 +57,7 @@ const { readMarker } = require('./stateMarker');
 const { TRIGGER_KINDS, findTrigger } = require('./trigger');
 
 const OPEN_STATE = 'OPEN';
+const CLOSED_STATE = 'CLOSED';
 const APPROVED = 'APPROVED';
 const TEAM_REVIEW_NOTE =
   'Everything automated is done, and the maintainers have been asked to review. Thank you for your patience.';
@@ -121,14 +122,17 @@ async function evaluateContribution(evaluator, trigger) {
 
 async function evaluatePullRequest(evaluator, trigger) {
   const pullRequest = await fetchPullRequestContext(evaluator.reader, trigger.number);
+  const { stickyComment } = pullRequest;
+  const state = readState(stickyComment, pullRequest);
 
-  if (shouldLeaveAlone(pullRequest, trigger)) {
-    evaluator.core.info(`Skipping #${pullRequest.number}: ${describeWhySkipped(pullRequest)}.`);
+  if (shouldLeaveAlone(pullRequest, trigger, state)) {
+    evaluator.core.info(
+      `Skipping #${pullRequest.number}: ${describeWhySkipped(pullRequest, state)}.`
+    );
 
     return;
   }
 
-  const { stickyComment } = pullRequest;
   const ruleItems = assessPullRequestRules(pullRequest, pullRequest.linkedIssues);
   const report = {
     evaluator,
@@ -136,7 +140,7 @@ async function evaluatePullRequest(evaluator, trigger) {
     ruleItems,
     failures: listFailures(ruleItems),
     threadsAwaitingReply: findThreadsAwaitingReply(pullRequest.reviewThreads),
-    state: readMarker(stickyComment === undefined ? '' : stickyComment.body),
+    state,
     stickyComment,
     trigger
   };
@@ -152,7 +156,14 @@ async function evaluatePullRequest(evaluator, trigger) {
 
 async function evaluateIssue(evaluator, trigger, issue) {
   const stickyComment = await fetchStickyComment(evaluator.reader, issue.number);
-  const state = readMarker(stickyComment === undefined ? '' : stickyComment.body);
+  const state = readState(stickyComment, issue);
+
+  if (isLeftClosed(issue, trigger, state)) {
+    evaluator.core.info(`Skipping #${issue.number}: ${describeWhyLeftClosed(state)}.`);
+
+    return;
+  }
+
   const issueItems = assessIssue(issue);
   const failures = listFailures(issueItems);
   const report = {
@@ -259,9 +270,8 @@ async function evaluateOneSafely(evaluator, contribution) {
 
 async function handleNonCompliantPullRequest(report) {
   const { contribution, evaluator } = report;
-  const clockedState = startClock(report.state, evaluator.now);
-  const deadline = findDeadlineFor(contribution, clockedState);
-  const { state, isClosed } = await closeOrRemind(report, clockedState, deadline);
+  const { state, isClosed } = await closeOrRemind(report, startClock(report.state, evaluator.now));
+  const deadline = findDeadlineFor(contribution, state, evaluator.now);
 
   await evaluator.gate.setStage(
     contribution.number,
@@ -281,9 +291,8 @@ async function handleNonCompliantPullRequest(report) {
 
 async function handleNonCompliantIssue(report) {
   const { contribution, evaluator } = report;
-  const clockedState = startClock(report.state, evaluator.now);
-  const deadline = findDeadlineFor(contribution, clockedState);
-  const { state, isClosed } = await closeOrRemind(report, clockedState, deadline);
+  const { state, isClosed } = await closeOrRemind(report, startClock(report.state, evaluator.now));
+  const deadline = findDeadlineFor(contribution, state, evaluator.now);
 
   await evaluator.gate.setStage(
     contribution.number,
@@ -301,11 +310,10 @@ async function handleNonCompliantIssue(report) {
 }
 
 async function handleCompliantIssue(report) {
-  const { contribution, evaluator, state, stickyComment } = report;
+  const { contribution, evaluator, stickyComment } = report;
   const wasInTheGate =
     contribution.labels.includes(STAGE_LABELS.needsCompliance) || stickyComment !== undefined;
-
-  await reopenIfRequested(report);
+  const state = await reopenIfRequested(report);
 
   if (wasInTheGate === false) {
     evaluator.core.info(`Issue #${contribution.number} meets the rules; nothing to say.`);
@@ -323,10 +331,9 @@ async function handleCompliantIssue(report) {
 async function advanceCompliantPullRequest(report) {
   const { contribution, evaluator } = report;
 
-  await reopenIfRequested(report);
-
+  const reopenedState = await reopenIfRequested(report);
   const stage = findStage(report);
-  const state = await actOnStage(report, stage, stopClock(report.state));
+  const state = await actOnStage(report, stage, stopClock(reopenedState));
   const isTeamReviewRequested = stage === STAGE_LABELS.teamReview;
 
   await evaluator.gate.setStage(contribution.number, stage, contribution.labels);
@@ -430,41 +437,45 @@ function buildChecklist(report, { isTeamReviewRequested }) {
 
 /**
  * Closes a contribution that has run out of time, or sends the single reminder
- * that goes out before that happens.
+ * that goes out before that happens. Nothing is closed until that reminder has
+ * given its notice.
  *
  * @returns {{state: object, isClosed: boolean}} the state to store, which
- * records a sent reminder so that only one is ever sent, and whether the
- * contribution is now closed
+ * records a sent reminder so that only one is ever sent, and a closure so that
+ * only what the gate closed reopens on /recheck; and whether the contribution
+ * is now closed
  */
-async function closeOrRemind(report, state, deadline) {
+async function closeOrRemind(report, state) {
   const { contribution, evaluator, failures } = report;
+  const contributionKind = findContributionKind(contribution);
 
   if (contribution.state !== OPEN_STATE) {
     return { state, isClosed: true };
   }
 
-  if (deadline === undefined) {
+  if (isTeamAuthor(contribution)) {
     return { state, isClosed: false };
   }
 
-  const contributionKind = findContributionKind(contribution);
-
-  if (isPastDeadline(state.noncompliantSince, contributionKind, evaluator.now)) {
+  if (isClosingDue(state, contributionKind, evaluator.now)) {
     await evaluator.gate.closeContribution(contribution.number, renderClosingComment({ failures }));
 
-    return { state, isClosed: true };
+    return { state: { ...state, closedByGate: true }, isClosed: true };
   }
 
-  if (shouldRemind(state, contributionKind, evaluator.now) === false) {
+  if (isReminderDue(state, contributionKind, evaluator.now) === false) {
     return { state, isClosed: false };
   }
+
+  const remindedState = { ...state, reminderPostedAt: evaluator.now.toISOString() };
+  const deadline = findDeadlineFor(contribution, remindedState, evaluator.now);
 
   await evaluator.gate.postComment(
     contribution.number,
     renderReminderComment({ failures, deadline })
   );
 
-  return { state: { ...state, reminderPostedAt: evaluator.now.toISOString() }, isClosed: false };
+  return { state: remindedState, isClosed: false };
 }
 
 /** A closed contribution is told how to reopen, not shown a deadline that has passed. */
@@ -476,36 +487,73 @@ function describeDeadline(deadline, isClosed) {
   return { deadline };
 }
 
-function shouldRemind(state, contributionKind, now) {
-  if (state.reminderPostedAt !== undefined) {
-    return false;
-  }
-
-  return isWithinReminderWindow(state.noncompliantSince, contributionKind, now);
-}
-
 /** Team members are held to the same rules, but the gate never closes their work. */
-function findDeadlineFor(contribution, state) {
+function findDeadlineFor(contribution, state, now) {
   if (isTeamAuthor(contribution)) {
     return undefined;
   }
 
   const contributionKind = findContributionKind(contribution);
 
-  return {
-    contributionKind,
-    date: findDeadline(state.noncompliantSince, contributionKind)
-  };
+  return { contributionKind, date: findClosingDate(state, contributionKind, now) };
 }
 
+/**
+ * Only what the gate closed reopens: anything a maintainer closed, or that
+ * merged, stays as it is.
+ *
+ * @returns {Promise<object>} the state to store
+ */
 async function reopenIfRequested(report) {
-  const { contribution, evaluator, trigger } = report;
+  const { contribution, evaluator, state, trigger } = report;
 
-  if (contribution.state === OPEN_STATE || trigger.isRecheck !== true) {
-    return;
+  if (isReopenRequested(contribution, trigger, state) === false) {
+    return state;
   }
 
   await evaluator.gate.reopenContribution(contribution.number);
+
+  return forgetClosure(state);
+}
+
+function isReopenRequested(contribution, trigger, state) {
+  return (
+    trigger.isRecheck === true && contribution.state === CLOSED_STATE && state.closedByGate === true
+  );
+}
+
+/**
+ * The gate's stored state. A closure it recorded counts only while the
+ * contribution is still closed: once reopened, by the gate or by a maintainer,
+ * a later close is no longer the gate's.
+ */
+function readState(stickyComment, contribution) {
+  const state = readMarker(stickyComment === undefined ? '' : stickyComment.body);
+
+  if (contribution.state === OPEN_STATE) {
+    return forgetClosure(state);
+  }
+
+  return state;
+}
+
+function forgetClosure(state) {
+  return withoutKeys(state, ['closedByGate']);
+}
+
+/** A closed contribution is looked at only when /recheck asks to reopen what the gate closed. */
+function isLeftClosed(contribution, trigger, state) {
+  return (
+    contribution.state !== OPEN_STATE && isReopenRequested(contribution, trigger, state) === false
+  );
+}
+
+function describeWhyLeftClosed(state) {
+  if (state.closedByGate === true) {
+    return 'the gate closed it, and only /recheck reopens it';
+  }
+
+  return 'it was closed or merged, and not by the gate';
 }
 
 async function writeStickyComment(report, body) {
@@ -523,9 +571,11 @@ function startClock(state, now) {
 }
 
 function stopClock(state) {
-  const { noncompliantSince, reminderPostedAt, ...remaining } = state;
+  return withoutKeys(state, ['noncompliantSince', 'reminderPostedAt']);
+}
 
-  return remaining;
+function withoutKeys(state, keys) {
+  return Object.fromEntries(Object.entries(state).filter(([key]) => keys.includes(key) === false));
 }
 
 /** While the gate is piloted, it acts only on contributions a maintainer has opted in. */
@@ -545,20 +595,28 @@ function describeScope() {
   return `The gate is in its pilot: it acts only on contributions labelled "${PILOT_LABEL}".`;
 }
 
-function shouldLeaveAlone(pullRequest, trigger) {
-  if (pullRequest.labels.includes(GATE_EXEMPT_LABEL)) {
+/**
+ * The pilot label is checked again on the pull request as fetched, since a
+ * maintainer may have removed it since the event that started this run.
+ */
+function shouldLeaveAlone(pullRequest, trigger, state) {
+  if (pullRequest.labels.includes(GATE_EXEMPT_LABEL) || isInScope(pullRequest) === false) {
     return true;
   }
 
-  return pullRequest.state !== OPEN_STATE && trigger.isRecheck !== true;
+  return isLeftClosed(pullRequest, trigger, state);
 }
 
-function describeWhySkipped(pullRequest) {
+function describeWhySkipped(pullRequest, state) {
   if (pullRequest.labels.includes(GATE_EXEMPT_LABEL)) {
     return `it carries the "${GATE_EXEMPT_LABEL}" label`;
   }
 
-  return `it is ${pullRequest.state.toLowerCase()}`;
+  if (isInScope(pullRequest) === false) {
+    return `it no longer carries the "${PILOT_LABEL}" label`;
+  }
+
+  return describeWhyLeftClosed(state);
 }
 
 function hasGateLabel(contribution) {

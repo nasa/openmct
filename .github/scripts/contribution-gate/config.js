@@ -67,10 +67,11 @@ const GATE_BOT_LOGIN = 'github-actions[bot]';
 
 /**
  * CodeRabbit reviews every pull request on its own, as configured in
- * .coderabbit.yaml, so the gate never requests it. Its verdict is how the gate
- * learns whether CodeRabbit's pre-merge checks passed: it approves when they
- * do, and requests changes when one in error mode fails. Its approval is also
- * one of the two that branch protection requires.
+ * .coderabbit.yaml, so the gate never requests it. It approves once its
+ * pre-merge checks pass and its comments are answered, and requests changes
+ * for a failed check or a blocking comment alike, so the gate reads the checks'
+ * results from its comment instead. Its approval is one of the two that branch
+ * protection requires.
  */
 const AI_REVIEWER_LOGINS = ['coderabbitai[bot]'];
 

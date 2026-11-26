@@ -48,13 +48,14 @@ reply to every comment from either before the team is asked to look:
   a bug fix adds no features. Their results appear only in CodeRabbit's comment, and its
   "CodeRabbit" status check succeeds whatever they say. The gate reads CodeRabbit's **review**, and
   also the results table in that comment, accepting it only from the `coderabbitai[bot]` account, so
-  it can show the checks passed before CodeRabbit approves. That format is undocumented, so the
-  review wins where they disagree. With `auto_approvals` on, CodeRabbit requests changes when a
-  check in `error` mode fails, which the gate treats as a broken rule, deadline and all; and approves
-  once they pass and its threads are resolved, which is the last thing the gate waits for before
-  asking the team. A failing `warning` check does not stop it approving, so any check that must hold
-  a pull request back has to be in `error` mode. `AI_REQUIRED_CHECK_NAMES` in `config.js` must list exactly the `error`-mode checks,
-  which a test enforces.
+  it can tell whether the checks passed. With `auto_approvals` on, CodeRabbit requests changes for a
+  failed `error`-mode check and for any blocking review comment alike, so its review cannot say which.
+  The table decides: a failed check there is a broken rule, deadline and all, while changes requested
+  over a comment only means CodeRabbit has not approved yet. It approves once the checks pass and its
+  threads are resolved, which is the last thing the gate waits for before asking the team. A failing
+  `warning` check does not stop it approving, so any check that must hold a pull request back has to
+  be in `error` mode. `AI_REQUIRED_CHECK_NAMES` in `config.js` must list exactly the `error`-mode
+  checks, which a test enforces.
 - __CodeQL__ (`github-advanced-security[bot]`) posts its own security findings, and its `Analyze` check
   must pass whenever it runs. CodeQL skips pull requests that only touch specs, documentation or
   configuration, so it is in `CHECKS_REQUIRED_WHEN_REPORTED` rather than `REQUIRED_CHECK_NAMES`: a

@@ -16,6 +16,7 @@ const RESOLVE_THREAD_MUTATION = `
 `;
 
 const ALL_STAGE_LABELS = Object.values(STAGE_LABELS);
+const NOT_FOUND = 404;
 
 class GateActions {
   constructor({ github, core, owner, repo }) {
@@ -134,9 +135,8 @@ class GateActions {
     await this.github.graphql(RESOLVE_THREAD_MUTATION, { threadId });
   }
 
+  /** Closed first, so a failed close never leaves a comment announcing it. */
   async closeContribution(contributionNumber, body) {
-    await this.postComment(contributionNumber, body);
-
     this.log(`close #${contributionNumber}`);
 
     await this.github.rest.issues.update({
@@ -146,6 +146,7 @@ class GateActions {
       state: 'closed',
       state_reason: 'not_planned'
     });
+    await this.postComment(contributionNumber, body);
   }
 
   async reopenContribution(contributionNumber) {
@@ -194,10 +195,18 @@ class GateActions {
     return isConfirmed;
   }
 
+  /**
+   * A label that is already gone is no failure. Anything else is thrown, so a
+   * run that left two stage labels says so, and a later run tidies up.
+   */
   async ignoreMissing(request) {
     try {
       await request;
     } catch (error) {
+      if (error.status !== NOT_FOUND) {
+        throw error;
+      }
+
       this.core.debug(`Gate: nothing to do (${error.message})`);
     }
   }

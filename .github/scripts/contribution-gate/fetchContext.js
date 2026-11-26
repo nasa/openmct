@@ -37,7 +37,8 @@ const PULL_REQUEST_QUERY = `
             number
             body
             labels(first: 20) { nodes { name } }
-            comments(first: ${MAXIMUM_ISSUE_COMMENTS}) { nodes { body author { login } } }
+            # The newest, where testing instructions added for a fix will be.
+            comments(last: ${MAXIMUM_ISSUE_COMMENTS}) { nodes { body author { login } } }
           }
         }
         latestOpinionatedReviews(first: ${MAXIMUM_REVIEWERS}) {
@@ -110,8 +111,9 @@ async function fetchPullRequestContext(reader, pullNumber) {
 
 /**
  * @returns {'APPROVED'|'CHANGES_REQUESTED'|undefined} CodeRabbit's latest
- * verdict. It approves only when every pre-merge check in error mode passes,
- * and requests changes when one fails. Undefined means it has given neither yet.
+ * verdict. It approves only when every pre-merge check in error mode passes and
+ * its comments are answered, and requests changes for a failed check or a
+ * blocking comment. Undefined means it has given neither yet.
  */
 function readAiReviewState(latestReviews) {
   const aiReview = latestReviews.find(

@@ -28,8 +28,10 @@ Teaches the plot renderer to re-anchor after a zoom.
 
 ### Author Checklist
 
-* [x] Changes address the original issue
-* [x] Automated tests are included or updated
+* [x] Changes address original issue?
+* [x] Tests included and/or updated with changes?
+* [x] Has this been smoke tested?
+* [x] Testing instructions included in associated issue OR is this a dependency/testcase change?
 `;
 
 const COMPLIANT_ISSUE = {
@@ -148,7 +150,7 @@ test('the Author Checklist is one line, quoting back every item left unticked', 
   );
   assert.match(
     failures[0].fix,
-    /`Changes address the original issue`, `Automated tests are included or updated`/
+    /`Changes address original issue\?`, `Tests included and\/or updated with changes\?`/
   );
 });
 
@@ -210,15 +212,31 @@ test('the exemption label takes a pull request out of the gate entirely', () => 
   assert.deepEqual(findPullRequestFailures(pullRequest, []), []);
 });
 
-test("CodeRabbit requesting changes is a failed rule even when its comment can't be read", () => {
+test('CodeRabbit requesting changes is no failed rule on its own, since a review comment can cause it', () => {
   const pullRequest = buildPullRequest({ aiReviewState: 'CHANGES_REQUESTED' });
+
+  assert.deepEqual(findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]), []);
+  assert.deepEqual(aiCheckStatuses(pullRequest), [STATUSES.inProgress]);
+});
+
+test('an empty Author Checklist is not a complete one', () => {
+  const pullRequest = buildPullRequest({ body: 'Closes #4321\n\n### Author Checklist\n\n' });
   const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
 
   assert.deepEqual(
     failures.map((failure) => failure.id),
-    ['pr-ai-review']
+    ['pr-checklist-unchecked']
   );
-  assert.match(failures[0].fix, /CodeRabbit's comment/);
+  assert.match(failures[0].fix, /`Has this been smoke tested\?`/);
+});
+
+test('deleting an item from the Author Checklist does not remove what it asks', () => {
+  const pullRequest = buildPullRequest({
+    body: COMPLIANT_PULL_REQUEST_BODY.replace('* [x] Has this been smoke tested?\n', '')
+  });
+  const failures = findPullRequestFailures(pullRequest, [COMPLIANT_ISSUE]);
+
+  assert.match(failures[0].fix, /^Not ticked yet: `Has this been smoke tested\?`\./);
 });
 
 test("CodeRabbit's checks are one line, failed when its comment says one failed", () => {
@@ -250,7 +268,7 @@ test("CodeRabbit's checks are done once all pass, before it approves", () => {
   ]);
 });
 
-test("CodeRabbit's verdict wins over its table", () => {
+test("CodeRabbit's approval wins over an older table, and its table over a request for changes", () => {
   const allPassed = Object.fromEntries(AI_REQUIRED_CHECK_NAMES.map((name) => [name, 'passed']));
   const approvedOverOldFailure = buildPullRequest({
     aiReviewState: 'APPROVED',
@@ -262,7 +280,11 @@ test("CodeRabbit's verdict wins over its table", () => {
   });
 
   assert.deepEqual(aiCheckStatuses(approvedOverOldFailure), [STATUSES.done]);
-  assert.deepEqual(aiCheckStatuses(changesRequestedOverPasses), [STATUSES.toDo]);
+  assert.deepEqual(
+    aiCheckStatuses(changesRequestedOverPasses),
+    [STATUSES.done],
+    'changes requested over a review comment still has every check passed'
+  );
 });
 
 test('a CodeRabbit verdict not yet given, or an approval, is no failure', () => {
