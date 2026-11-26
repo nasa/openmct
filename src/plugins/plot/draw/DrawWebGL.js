@@ -95,15 +95,19 @@ class DrawWebGL extends EventEmitter {
     super();
     eventHelpers.extend(this);
     this.canvas = canvas;
-    this.gl =
-      this.canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
-      this.canvas.getContext('experimental-webgl', { preserveDrawingBuffer: true });
-
     this.overlay = overlay;
     this.c2d = overlay.getContext('2d');
     if (!this.c2d) {
       throw new Error('No canvas 2d!');
     }
+
+    this._isDestroyed = false;
+    this._isContextLost = false;
+    this._hasFallenBack = false;
+
+    this.gl =
+      this.canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
+      this.canvas.getContext('experimental-webgl', { preserveDrawingBuffer: true });
 
     // Ensure a context was actually available before proceeding
     if (!this.gl) {
@@ -113,14 +117,65 @@ class DrawWebGL extends EventEmitter {
     this.initContext();
 
     this.listenTo(this.canvas, 'webglcontextlost', this.onContextLost, this);
+    this.listenTo(this.canvas, 'webglcontextrestored', this.onContextRestored, this);
   }
   onContextLost(event) {
-    this.emit('error');
-    this.isContextLost = true;
-    this.destroy();
-    // TODO re-initialize and re-draw on context restored
+    if (this._isDestroyed || this._hasFallenBack) {
+      return;
+    }
+
+    event.preventDefault();
+    this._isContextLost = true;
+
+    console.log('[DrawWebGL] WebGL context lost detected.');
+    this.disposeResources();
+    this.emit('contextlost');
+
+    // Prevent multiple concurrent recovery timers
+    if (this.recoveryTimeout) {
+      clearTimeout(this.recoveryTimeout);
+    }
+
+    console.log('[DrawWebGL] Starting 5s recovery timeout...');
+    this.recoveryTimeout = setTimeout(() => {
+      this.recoveryTimeout = undefined;
+
+      if (this._isDestroyed || !this._isContextLost) {
+        return;
+      }
+
+      console.warn('[DrawWebGL] WebGL context restoration timed out. Falling back to 2D.');
+      this._hasFallenBack = true;
+      this.emit('error');
+    }, 5000);
+  }
+  onContextRestored(event) {
+    if (this._isDestroyed || this._hasFallenBack) {
+      console.log('[DrawWebGL] Context restored ignored: renderer is destroyed or already fallen back.');
+      return;
+    }
+
+    console.log('[DrawWebGL] WebGL context restored detected.');
+    if (this.recoveryTimeout) {
+      console.log('[DrawWebGL] Clearing pending recovery timeout.');
+      clearTimeout(this.recoveryTimeout);
+      this.recoveryTimeout = undefined;
+    }
+
+    // Re-acquire context if it has changed, though usually the same object is restored
+    this.gl =
+      this.canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
+      this.canvas.getContext('experimental-webgl', { preserveDrawingBuffer: true });
+
+    this.initContext();
+    this._isContextLost = false;
+    this.emit('restored');
   }
   initContext() {
+    if (this._isDestroyed) {
+      return;
+    }
+
     // Initialize shaders
     this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
     this.gl.shaderSource(this.vertexShader, VERTEX_SHADER);
@@ -162,23 +217,53 @@ class DrawWebGL extends EventEmitter {
     // conceptually, color(RGBA) = (sourceColor * sfactor) + (destinationColor * dfactor)
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
   }
+  disposeResources() {
+    if (!this.gl) {
+      return;
+    }
+
+    if (this.buffer) {
+      this.gl.deleteBuffer(this.buffer);
+      this.buffer = undefined;
+    }
+
+    if (this.program) {
+      this.gl.deleteProgram(this.program);
+      this.program = undefined;
+    }
+
+    if (this.vertexShader) {
+      this.gl.deleteShader(this.vertexShader);
+      this.vertexShader = undefined;
+    }
+
+    if (this.fragmentShader) {
+      this.gl.deleteShader(this.fragmentShader);
+      this.fragmentShader = undefined;
+    }
+  }
   destroy() {
+    console.log('[DrawWebGL] Destroying renderer.');
+    this._isDestroyed = true;
+
+    if (this.recoveryTimeout) {
+      console.log('[DrawWebGL] Clearing pending recovery timeout during destruction.');
+      clearTimeout(this.recoveryTimeout);
+      this.recoveryTimeout = undefined;
+    }
+
     // Lose the context and delete all associated resources
     // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices#lose_contexts_eagerly
     this.gl?.getExtension('WEBGL_lose_context')?.loseContext();
-    this.gl?.deleteBuffer(this.buffer);
-    this.buffer = undefined;
-    this.gl?.deleteProgram(this.program);
-    this.program = undefined;
-    this.gl?.deleteShader(this.vertexShader);
-    this.vertexShader = undefined;
-    this.gl?.deleteShader(this.fragmentShader);
-    this.fragmentShader = undefined;
+    this.disposeResources();
     this.gl = undefined;
 
     this.stopListening();
     this.canvas = undefined;
     this.overlay = undefined;
+  }
+  get isContextLost() {
+    return this._isContextLost || this._hasFallenBack;
   }
   // Convert from logical to physical x coordinates
   x(v) {
