@@ -322,71 +322,79 @@ async function handleCompliantIssue(report) {
 
 async function advanceCompliantPullRequest(report) {
   const { contribution, evaluator } = report;
-  const state = stopClock(report.state);
 
   await reopenIfRequested(report);
 
-  const progress = await findProgress(report, state);
+  const stage = findStage(report);
+  const state = await actOnStage(report, stage, stopClock(report.state));
+  const isTeamReviewRequested = stage === STAGE_LABELS.teamReview;
 
-  await evaluator.gate.setStage(contribution.number, progress.stage, contribution.labels);
+  await evaluator.gate.setStage(contribution.number, stage, contribution.labels);
   await writeStickyComment(
     report,
     renderPullRequestComment({
-      checklist: buildChecklist(report, {
-        isTeamReviewRequested: progress.stage === STAGE_LABELS.teamReview
-      }),
+      checklist: buildChecklist(report, { isTeamReviewRequested }),
       threadsAwaitingReply: report.threadsAwaitingReply,
-      waitingNote: progress.waitingNote,
-      state: progress.state
+      waitingNote: isTeamReviewRequested ? TEAM_REVIEW_NOTE : undefined,
+      state
     })
   );
 }
 
 /**
- * Decides how far a compliant pull request has got, performing the one-off
- * actions each step needs on the way.
+ * How far a compliant pull request has got. Every automated reviewer's
+ * comments, from CodeRabbit and CodeQL, need an answer before a person is
+ * asked to look, and CodeRabbit must have approved, because its approval is
+ * one of the two a pull request needs to merge.
+ *
+ * @returns {string} the stage label
  */
-async function findProgress(report, state) {
+function findStage(report) {
   const { contribution } = report;
+  const isWaitingForCi =
+    contribution.isDraft === true ||
+    summarizeRequiredChecks(contribution.checkConclusions).allPassed === false;
 
-  if (contribution.isDraft === true) {
-    return atStage(STAGE_LABELS.awaitingCi, state);
+  if (isWaitingForCi) {
+    return STAGE_LABELS.awaitingCi;
   }
 
-  if (summarizeRequiredChecks(contribution.checkConclusions).allPassed === false) {
-    return atStage(STAGE_LABELS.awaitingCi, state);
+  if (report.threadsAwaitingReply.length > 0 || contribution.aiReviewState !== APPROVED) {
+    return STAGE_LABELS.automatedReview;
   }
 
-  return finishAutomatedReviews(report, state);
+  return STAGE_LABELS.teamReview;
 }
 
 /**
- * Every automated reviewer's comments, from CodeRabbit and CodeQL, need an
- * answer before a person is asked to look, and CodeRabbit must have approved,
- * because its approval is one of the two a pull request needs to merge.
+ * Does what reaching a stage calls for. Once CI has passed, the gate resolves
+ * the automated review threads the contributor has answered; at team review, it
+ * asks the team, once.
+ *
+ * @returns {Promise<object>} the state to store
  */
-async function finishAutomatedReviews(report, state) {
+async function actOnStage(report, stage, state) {
   const { contribution, evaluator } = report;
+
+  if (stage === STAGE_LABELS.awaitingCi) {
+    return state;
+  }
 
   await resolveThreadsAlreadyAnswered(evaluator, contribution);
 
-  if (report.threadsAwaitingReply.length > 0 || contribution.aiReviewState !== APPROVED) {
-    return atStage(STAGE_LABELS.automatedReview, state);
+  if (stage !== STAGE_LABELS.teamReview) {
+    return state;
   }
 
-  return requestTeamReview(evaluator, contribution, state);
+  return requestTeamReviewOnce(evaluator, contribution, state);
 }
 
-async function requestTeamReview(evaluator, contribution, state) {
+async function requestTeamReviewOnce(evaluator, contribution, state) {
   if (state.teamReviewRequested !== true) {
     await notifyTeam(evaluator, contribution);
   }
 
-  return atStage(
-    STAGE_LABELS.teamReview,
-    { ...state, teamReviewRequested: true },
-    TEAM_REVIEW_NOTE
-  );
+  return { ...state, teamReviewRequested: true };
 }
 
 /** The review request is the notification, with a comment as the fallback. */
@@ -409,10 +417,6 @@ async function resolveThreadsAlreadyAnswered(evaluator, contribution) {
   for (const thread of answeredThreads) {
     await evaluator.gate.resolveReviewThread(thread.id);
   }
-}
-
-function atStage(stage, state, waitingNote) {
-  return { stage, state, waitingNote };
 }
 
 /** Every check is shown, met or not, whatever stage the pull request has reached. */

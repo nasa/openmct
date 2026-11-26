@@ -130,6 +130,25 @@ test('replying is enough: the gate resolves the thread and asks the team', async
   assert.equal(readStoredState(world).teamReviewRequested, true);
 });
 
+test('answered threads are left for the gate to resolve until CI has passed', async () => {
+  const world = createWorld({
+    storedState: {},
+    checkConclusions: { lint: 'failure' },
+    reviewThreads: [
+      aiThread({
+        id: 'thread-1',
+        isResolved: false,
+        replies: [{ author: CONTRIBUTOR, body: 'Fixed in abc1234.', url: 'https://example.test/2' }]
+      })
+    ]
+  });
+
+  await runGate(world);
+
+  assert.deepEqual(world.resolvedThreads, []);
+  assert.deepEqual(world.requestedReviewers, []);
+});
+
 test('the team is asked only once', async () => {
   const world = createWorld({
     storedState: { teamReviewRequested: true },
