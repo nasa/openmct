@@ -33,6 +33,8 @@
 <script>
 import _ from 'lodash';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import ScatterPlotWithUnderlay from './ScatterPlotWithUnderlay.vue';
 
 export default {
@@ -121,6 +123,9 @@ export default {
     },
     removeFromComposition(telemetryObject) {
       this.composition.remove(telemetryObject);
+    },
+    getViewContext() {
+      return getImageExportViewContext(this.openmct, this.$el, this.domainObject, 'scatter-plot');
     },
     addTelemetryObject(telemetryObject) {
       // grab information we need from the added telemetry object

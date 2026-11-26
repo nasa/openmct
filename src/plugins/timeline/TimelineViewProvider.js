@@ -22,6 +22,8 @@
 
 import mount from 'utils/mount';
 
+import { getImageExportViewContext } from '@/exporters/imageExportContext.js';
+
 import TimelineViewLayout from './TimelineViewLayout.vue';
 
 export default function TimelineViewProvider(openmct, extendedLinesBus) {
@@ -40,9 +42,11 @@ export default function TimelineViewProvider(openmct, extendedLinesBus) {
     view: function (domainObject, objectPath) {
       let component = null;
       let _destroy = null;
+      let viewElement = null;
 
       return {
         show: function (element, isEditing) {
+          viewElement = element;
           const { vNode, destroy } = mount(
             {
               el: element,
@@ -77,12 +81,20 @@ export default function TimelineViewProvider(openmct, extendedLinesBus) {
             component.$refs.timeline[action](...args);
           }
         },
+        getViewContext() {
+          if (!viewElement) {
+            return {};
+          }
+
+          return getImageExportViewContext(openmct, viewElement, domainObject, 'time-strip');
+        },
         onEditModeChange(isEditing) {
           component.isEditing = isEditing;
         },
         destroy: function () {
           if (_destroy) {
             _destroy();
+            viewElement = null;
           }
         }
       };

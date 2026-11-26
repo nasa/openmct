@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { isPlotView } from '@/plugins/plot/actions/utils';
+import { isExportableView } from '@/plugins/plot/actions/utils';
 
 const exportPNG = {
   name: 'Export as PNG',
@@ -47,7 +47,7 @@ const viewActions = [exportPNG, exportJPG];
 
 viewActions.forEach((action) => {
   action.appliesTo = (objectPath, view = {}) => {
-    return isPlotView(view);
+    return isExportableView(view);
   };
 });
 
