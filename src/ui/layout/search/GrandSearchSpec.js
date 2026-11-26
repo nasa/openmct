@@ -362,6 +362,37 @@ describe('GrandSearch', () => {
     ).toBeTrue();
   });
 
+  it('should keep the newest path update when duplicate targets resolve out of order', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Dri');
+    search.objectSearchResults = [];
+    const annotationResult = search.annotationSearchResults[0];
+    const targetModel = annotationResult.targetModels[0];
+    annotationResult.targetModels.push({ ...targetModel });
+    let resolveOlderPath;
+    const olderPath = new Promise((resolve) => {
+      resolveOlderPath = resolve;
+    });
+    const latestPath = [mockDomainObject, mockAnotherFolderObject, mockTopObject];
+    spyOn(openmct.objects, 'getOriginalPath').and.returnValues(
+      olderPath,
+      Promise.resolve(latestPath)
+    );
+
+    const pendingRefresh = search.refreshSearchResultPaths(mockDomainObject);
+    resolveOlderPath([mockDomainObject, mockTopObject]);
+    await pendingRefresh;
+
+    expect(
+      search.annotationSearchResults[0].targetModels.map((target) =>
+        target.originalPath.map((object) => object.identifier.key)
+      )
+    ).toEqual([
+      ['some-object', 'someParent', 'topObject'],
+      ['some-object', 'someParent', 'topObject']
+    ]);
+  });
+
   it('should not add per-result location observers or duplicate mutation listeners', async () => {
     const search = grandSearchComponent.$refs.root;
     const emitter = openmct.objects.eventEmitter;

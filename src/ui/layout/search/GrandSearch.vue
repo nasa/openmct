@@ -356,7 +356,10 @@ export default {
             : result.identifier;
           pathLookups.push(
             objects.getOriginalPath(resultObject, [], signal).then((objectPath) => {
-              objectPathUpdates.set(objectKey, { refreshKey, version, objectPath });
+              const existingUpdate = objectPathUpdates.get(objectKey);
+              if (!existingUpdate || existingUpdate.version < version) {
+                objectPathUpdates.set(objectKey, { refreshKey, version, objectPath });
+              }
             })
           );
         });
@@ -375,7 +378,10 @@ export default {
               : target.identifier;
             pathLookups.push(
               objects.getOriginalPath(targetObject, [], signal).then((originalPath) => {
-                targetPathUpdates.set(objectKey, { refreshKey, version, originalPath });
+                const existingUpdate = targetPathUpdates.get(objectKey);
+                if (!existingUpdate || existingUpdate.version < version) {
+                  targetPathUpdates.set(objectKey, { refreshKey, version, originalPath });
+                }
               })
             );
           });
