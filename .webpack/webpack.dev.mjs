@@ -13,15 +13,23 @@ import common from './webpack.common.mjs';
 
 export default merge(common, {
   mode: 'development',
+  output: {
+    // Skip generating verbose path comments in modules — significantly speeds up rebuilds.
+    pathinfo: false
+  },
+  optimization: {
+    // Skip work that doesn't matter in dev to make incremental rebuilds faster.
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false
+  },
   watchOptions: {
-    // Since we use require.context, webpack is watching the entire directory.
-    // We need to exclude any files we don't want webpack to watch.
-    // See: https://webpack.js.org/configuration/watch/#watchoptions-exclude
+    aggregateTimeout: 300,
     ignored: [
-      '**/{node_modules,dist,docs,e2e}', // All files in node_modules, dist, docs, e2e,
-      '**/{*.yml,Procfile,webpack*.js,babel*.js,package*.json,tsconfig.json}', // Config files
-      '**/*.{sh,md,png,ttf,woff,svg}', // Non source files
-      '**/.*' // dotfiles and dotfolders
+      '**/{node_modules,dist,docs,e2e}',
+      '**/{*.yml,Procfile,webpack*.js,babel*.js,package*.json,tsconfig.json}',
+      '**/*.{sh,md,png,ttf,woff,svg}',
+      '**/.*'
     ]
   },
   plugins: [
@@ -29,7 +37,7 @@ export default merge(common, {
       __OPENMCT_ROOT_RELATIVE__: '"dist/"'
     })
   ],
-  devtool: 'eval-source-map',
+  devtool: 'eval-cheap-module-source-map',
   devServer: {
     devMiddleware: {
       writeToDisk: (filePathString) => {
