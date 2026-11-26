@@ -119,6 +119,7 @@
 import _ from 'lodash';
 import { markRaw, reactive } from 'vue';
 
+import { makeKeyString } from '../../api/objects/object-utils.js';
 import Search from '../components/SearchComponent.vue';
 import TreeItem from './TreeItem.vue';
 
@@ -729,7 +730,7 @@ export default {
       );
     },
     compositionAddHandler(navigationPath) {
-      return (domainObject) => {
+      return (domainObject, index) => {
         const parentItem = this.getTreeItemByPath(navigationPath);
         const parentObjectPath = parentItem?.objectPath || [];
         const newItem = this.buildTreeItem(domainObject, parentObjectPath, true);
@@ -748,25 +749,39 @@ export default {
           return;
         }
 
-        if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
-          const newItemIndex = directDescendants.findIndex(
-            (descendant) => this.sortNameAscending(descendant, newItem) > 0
-          );
-          const shouldInsertFirst = newItemIndex === 0;
-          const shouldInsertLast = newItemIndex === -1;
-
-          if (shouldInsertFirst) {
-            this.addItemToTreeAfter(newItem, parentItem);
-          } else if (shouldInsertLast) {
-            this.addItemToTreeAfter(newItem, descendants.pop());
+        if (index !== undefined) {
+          if (index < 0) {
+            throw new Error(
+              `Invalid composition index in tree. Index ${index} for object ${makeKeyString(domainObject.identifier)}`
+            );
+          }
+          if (index >= directDescendants.length) {
+            //Append to the end
+            this.addItemToTreeAfter(newItem, directDescendants[index - 1]);
           } else {
-            this.addItemToTreeBefore(newItem, directDescendants[newItemIndex]);
+            this.addItemToTreeBefore(newItem, directDescendants[index]);
+          }
+        } else {
+          if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
+            const newItemIndex = directDescendants.findIndex(
+              (descendant) => this.sortNameAscending(descendant, newItem) > 0
+            );
+            const shouldInsertFirst = newItemIndex === 0;
+            const shouldInsertLast = newItemIndex === -1;
+
+            if (shouldInsertFirst) {
+              this.addItemToTreeAfter(newItem, parentItem);
+            } else if (shouldInsertLast) {
+              this.addItemToTreeAfter(newItem, descendants.pop());
+            } else {
+              this.addItemToTreeBefore(newItem, directDescendants[newItemIndex]);
+            }
+
+            return;
           }
 
-          return;
+          this.addItemToTreeAfter(newItem, descendants.pop());
         }
-
-        this.addItemToTreeAfter(newItem, descendants.pop());
       };
     },
     compositionRemoveHandler(navigationPath) {
