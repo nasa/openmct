@@ -31,8 +31,12 @@ if (document.currentScript) {
 }
 
 import { MCT } from './src/MCT.js';
+import { info } from './src/utils/logger.js';
 
 const openmct = new MCT();
+
+// Startup log
+info('Open MCT starting');
 
 export default openmct;
 
