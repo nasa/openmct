@@ -158,42 +158,46 @@ function ToolbarProvider(openmct) {
           return [];
         }
 
-        deleteContainer = {
-          control: 'button',
-          domainObject: primary.context.item,
-          method: function () {
-            let containerId = primary.context.containerId;
+        // only show delete btn when theres more than one container
+        let containers = secondary.context.item.configuration.containers;
+        if (containers.length > 1) {
+          deleteContainer = {
+            control: 'button',
+            domainObject: primary.context.item,
+            method: function () {
+              let containerId = primary.context.containerId;
 
-            let prompt = openmct.overlays.dialog({
-              iconClass: 'alert',
-              message:
-                'This action will permanently delete this container from this Flexible Layout. Do you want to continue?',
-              buttons: [
-                {
-                  label: 'Ok',
-                  emphasis: 'true',
-                  callback: function () {
-                    openmct.objectViews.emit(
-                      `contextAction:${primaryKeyString}`,
-                      'deleteContainer',
-                      containerId
-                    );
-                    prompt.dismiss();
+              let prompt = openmct.overlays.dialog({
+                iconClass: 'alert',
+                message:
+                  'This action will permanently delete this container from this Flexible Layout. Do you want to continue?',
+                buttons: [
+                  {
+                    label: 'Ok',
+                    emphasis: 'true',
+                    callback: function () {
+                      openmct.objectViews.emit(
+                        `contextAction:${primaryKeyString}`,
+                        'deleteContainer',
+                        containerId
+                      );
+                      prompt.dismiss();
+                    }
+                  },
+                  {
+                    label: 'Cancel',
+                    callback: function () {
+                      prompt.dismiss();
+                    }
                   }
-                },
-                {
-                  label: 'Cancel',
-                  callback: function () {
-                    prompt.dismiss();
-                  }
-                }
-              ]
-            });
-          },
-          key: 'remove',
-          icon: 'icon-trash',
-          title: 'Remove Container'
-        };
+                ]
+              });
+            },
+            key: 'remove',
+            icon: 'icon-trash',
+            title: 'Remove Container'
+          };
+        }
 
         const domainObject = secondary.context.item;
         const keyString = openmct.objects.makeKeyString(domainObject.identifier);
