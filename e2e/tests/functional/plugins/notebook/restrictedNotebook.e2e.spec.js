@@ -70,14 +70,32 @@ test.describe('Restricted Notebook', () => {
 });
 
 test.describe('Restricted Notebook with at least one entry and with the page locked @addInit', () => {
-  let notebook;
   test.beforeEach(async ({ page }) => {
-    notebook = await startAndAddRestrictedNotebookObject(page);
+    await startAndAddRestrictedNotebookObject(page);
     await enterTextEntry(page, TEST_TEXT);
     await lockPage(page);
 
     // open sidebar
     await page.locator('button.c-notebook__toggle-nav-button').click();
+  });
+
+  test('Notebook can be renamed after committing a page @addInit', async ({ page }) => {
+    const notebookName = page.locator('.l-browse-bar__object-name');
+    const renamedNotebook = 'Renamed Shift Log';
+
+    await expect(page.getByLabel('Browse bar', { exact: true }).locator('.icon-lock')).toHaveCount(
+      0
+    );
+    await expect(notebookName).toBeEditable();
+    await notebookName.fill(renamedNotebook);
+    await notebookName.press('Enter');
+    await expect(notebookName).toHaveText(renamedNotebook);
+
+    await expect(
+      page.getByText('This page has been committed and cannot be modified or removed', {
+        exact: true
+      })
+    ).toBeVisible();
   });
 
   test('Locked page should now be in a locked state @addInit', async ({ page }, testInfo) => {
@@ -93,11 +111,10 @@ test.describe('Restricted Notebook with at least one entry and with the page loc
     const pageLockIcon = page.locator('ul.c-notebook__pages li div.icon-lock');
     await expect(pageLockIcon).toHaveCount(1);
 
-    // no way to remove a restricted notebook with a locked page
-    await openObjectTreeContextMenu(page, notebook.url);
-    const menuOptions = page.locator('.c-menu ul');
-
-    await expect(menuOptions).not.toContainText('Remove');
+    // Committing protects the page, without applying an object-level notebook lock.
+    await expect(page.locator('ul.c-notebook__pages').getByTitle('Open context menu')).toHaveCount(
+      0
+    );
   });
 
   test('Can still: add page, rename, add entry, delete unlocked pages @addInit', async ({
