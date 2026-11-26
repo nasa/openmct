@@ -31,12 +31,19 @@ export default class LADTableViewProvider {
   }
 
   canView(domainObject) {
-    const supportsComposition = this.openmct.composition.supportsComposition(domainObject);
     const providesTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
     const isLadTable = domainObject.type === 'LadTable';
     const isConditionSet = domainObject.type === 'conditionSet';
 
-    return !isConditionSet && (isLadTable || (providesTelemetry && supportsComposition));
+    return !isConditionSet && (isLadTable || providesTelemetry);
+  }
+
+  priority(domainObject) {
+    // A telemetry object with no composition is shown as a single row, which is an
+    // alternative to its plot and table views rather than a replacement for them.
+    const supportsComposition = this.openmct.composition.supportsComposition(domainObject);
+
+    return supportsComposition ? this.openmct.priority.DEFAULT : this.openmct.priority.LOW;
   }
 
   canEdit(domainObject) {

@@ -46,7 +46,8 @@
           :domain-object="ladRow.domainObject"
           :limit-definition="ladRow.limitDefinition"
           :limit-column-names="limitColumnNames"
-          :path-to-table="objectPath"
+          :path-to-table="pathToTable"
+          :can-remove="!isSingleTelemetryObject"
           :has-units="hasUnits"
           :is-stale="staleObjects.includes(ladRow.key)"
           :configuration="configuration"
@@ -84,10 +85,16 @@ export default {
     return {
       items: [],
       viewContext: {},
+      isSingleTelemetryObject: false,
       configuration: this.ladTableConfiguration.getConfiguration()
     };
   },
   computed: {
+    pathToTable() {
+      // When this view's object is itself the single row, it is already the head of
+      // objectPath; dropping it keeps LadRow from repeating it in the row's own path.
+      return this.isSingleTelemetryObject ? this.objectPath.slice(1) : this.objectPath;
+    },
     hasUnits() {
       let itemsWithUnits = this.items.filter((item) => {
         let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
@@ -151,10 +158,16 @@ export default {
   async mounted() {
     this.ladTableConfiguration.on('change', this.handleConfigurationChange);
     this.composition = this.openmct.composition.get(this.domainObject);
-    this.composition.on('add', this.addItem);
-    this.composition.on('remove', this.removeItem);
-    this.composition.on('reorder', this.reorder);
-    this.composition.load();
+    if (this.composition) {
+      this.composition.on('add', this.addItem);
+      this.composition.on('remove', this.removeItem);
+      this.composition.on('reorder', this.reorder);
+      this.composition.load();
+    } else {
+      // A telemetry object with no composition provides the only row in its own table.
+      this.isSingleTelemetryObject = true;
+      this.addItem(this.domainObject);
+    }
     await nextTick();
     this.viewActionsCollection = this.openmct.actions.getActionsCollection(
       this.objectPath,
@@ -170,9 +183,11 @@ export default {
   unmounted() {
     this.ladTableConfiguration.off('change', this.handleConfigurationChange);
 
-    this.composition.off('add', this.addItem);
-    this.composition.off('remove', this.removeItem);
-    this.composition.off('reorder', this.reorder);
+    if (this.composition) {
+      this.composition.off('add', this.addItem);
+      this.composition.off('remove', this.removeItem);
+      this.composition.off('reorder', this.reorder);
+    }
   },
   methods: {
     async addItem(domainObject) {

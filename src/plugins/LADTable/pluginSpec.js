@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import {
+  createMouseEvent,
   createOpenMct,
   getLatestTelemetry,
   getMockObjects,
@@ -30,6 +31,7 @@ import {
 } from 'utils/testing';
 import { nextTick } from 'vue';
 
+import LADTableConfiguration from './LADTableConfiguration.js';
 import LadPlugin from './plugin.js';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
@@ -105,13 +107,82 @@ describe('The LAD Table', () => {
     return resetApplicationState(openmct);
   });
 
-  it('should provide a table view only for lad table objects', () => {
+  it('should provide a table view for lad table objects', () => {
     let applicableViews = openmct.objectViews.get(mockObj.ladTable, []);
 
     let ladTableView = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
 
     expect(applicableViews.length).toEqual(1);
     expect(ladTableView).toBeDefined();
+  });
+
+  it('should provide a table view for telemetry producing objects', () => {
+    const applicableViews = openmct.objectViews.get(mockObj.telemetry, [mockObj.telemetry]);
+
+    const ladTableView = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
+
+    expect(ladTableView).toBeDefined();
+  });
+
+  it('should not supersede the other views of a telemetry producing object', () => {
+    const applicableViews = openmct.objectViews.get(mockObj.telemetry, [mockObj.telemetry]);
+
+    const ladTableIndex = applicableViews.findIndex(
+      (viewProvider) => viewProvider.key === ladTableKey
+    );
+
+    expect(ladTableIndex).toBeGreaterThan(0);
+  });
+
+  it('should not provide a table view for condition sets', () => {
+    const conditionSetObj = getMockObjects({
+      objectKeyStrings: ['telemetry'],
+      overwrite: {
+        telemetry: {
+          name: 'Condition Set Object',
+          type: 'conditionSet',
+          identifier: {
+            namespace: '',
+            key: 'condition-set-object'
+          },
+          configuration: {
+            conditionCollection: []
+          }
+        }
+      }
+    }).telemetry;
+
+    const applicableViews = openmct.objectViews.get(conditionSetObj, [conditionSetObj]);
+
+    const ladTableView = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
+
+    expect(ladTableView).toBeUndefined();
+  });
+
+  it('should apply configuration changes to read only objects without persisting them', () => {
+    const readOnlyObj = getMockObjects({
+      objectKeyStrings: ['telemetry'],
+      overwrite: {
+        telemetry: {
+          name: 'Read Only Telemetry Object',
+          identifier: {
+            namespace: 'read-only',
+            key: 'read-only-telemetry-object'
+          }
+        }
+      }
+    }).telemetry;
+    const ladTableConfiguration = new LADTableConfiguration(readOnlyObj, openmct);
+    const changed = jasmine.createSpy('changed');
+    ladTableConfiguration.on('change', changed);
+
+    const configuration = ladTableConfiguration.getConfiguration();
+    configuration.isFixedLayout = !configuration.isFixedLayout;
+
+    expect(() => {
+      ladTableConfiguration.updateConfiguration(configuration);
+    }).not.toThrow();
+    expect(changed).toHaveBeenCalledWith(configuration);
   });
 
   describe('composition', () => {
@@ -288,6 +359,84 @@ describe('The LAD Table', () => {
       const actualRangeValue = parent.querySelector(TABLE_BODY_FIRST_ROW_THIRD_DATA).innerText;
       expect(actualRangeValue).toBe(rangeValue);
       expect(actualDomainValue).toBe(domainValue);
+    });
+  });
+
+  describe('telemetry object view', () => {
+    beforeEach(async () => {
+      let telemetryRequestResolve;
+      const telemetryRequestPromise = new Promise((resolve) => {
+        telemetryRequestResolve = resolve;
+      });
+
+      spyOnBuiltins(['requestAnimationFrame']);
+      window.requestAnimationFrame.and.callFake((callBack) => {
+        callBack();
+      });
+
+      historicalProvider.request = () => {
+        telemetryRequestResolve(mockTelemetry);
+
+        return telemetryRequestPromise;
+      };
+
+      openmct.time.bounds({
+        start: bounds.start,
+        end: bounds.end
+      });
+
+      const applicableViews = openmct.objectViews.get(mockObj.telemetry, [mockObj.telemetry]);
+      const ladTableViewProvider = applicableViews.find(
+        (viewProvider) => viewProvider.key === ladTableKey
+      );
+      const ladTableView = ladTableViewProvider.view(mockObj.telemetry, [mockObj.telemetry]);
+      ladTableView.show(child, false, { renderWhenVisible });
+
+      await telemetryRequestPromise;
+      await nextTick();
+      await nextTick();
+    });
+
+    it('should show a single row for the telemetry object itself', () => {
+      const rowCount = parent.querySelectorAll(TABLE_BODY_ROWS).length;
+
+      expect(rowCount).toBe(1);
+    });
+
+    it('should show the name provided for the telemetry producing object', () => {
+      const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText.trim();
+
+      expect(rowName).toBe(mockObj.telemetry.name);
+    });
+
+    it('should show the most recent datum from the telemetry producing object', async () => {
+      const latestDatum = getLatestTelemetry(mockTelemetry, { timeFormat });
+      const expectedDate = utcTimeFormat(latestDatum[timeFormat]);
+      await nextTick();
+
+      const latestDate = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
+
+      expect(latestDate).toBe(expectedDate);
+    });
+
+    describe('row context menu', () => {
+      beforeEach(() => {
+        spyOn(openmct.menus, 'actionsToMenuItems').and.returnValue([]);
+
+        parent.querySelector(TABLE_BODY_FIRST_ROW).dispatchEvent(createMouseEvent('contextmenu'));
+      });
+
+      it('should not repeat the telemetry object in the row object path', () => {
+        const objectPath = openmct.menus.actionsToMenuItems.calls.mostRecent().args[1];
+
+        expect(objectPath).toEqual([mockObj.telemetry]);
+      });
+
+      it('should not offer to remove the telemetry object from its parent', () => {
+        const actions = openmct.menus.actionsToMenuItems.calls.mostRecent().args[0];
+
+        expect(actions.some((action) => action?.key === 'remove')).toBe(false);
+      });
     });
   });
 });

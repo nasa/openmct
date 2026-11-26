@@ -99,6 +99,12 @@ export default {
       type: Object,
       required: true
     },
+    canRemove: {
+      type: Boolean,
+      default() {
+        return true;
+      }
+    },
     limitDefinition: {
       type: Object,
       default() {
@@ -296,7 +302,11 @@ export default {
     showContextMenu(event) {
       this.updateViewContext();
 
-      const actions = CONTEXT_MENU_ACTIONS.map((key) => this.openmct.actions.getAction(key));
+      // Removal takes a row out of the table that contains it; when the row is the
+      // table's own object, that would instead remove it from wherever it lives.
+      const actions = CONTEXT_MENU_ACTIONS.filter(
+        (key) => this.canRemove || key !== REMOVE_ACTION_KEY
+      ).map((key) => this.openmct.actions.getAction(key));
       const menuItems = this.openmct.menus.actionsToMenuItems(
         actions,
         this.objectPath,
