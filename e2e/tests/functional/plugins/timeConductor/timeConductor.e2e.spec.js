@@ -24,7 +24,8 @@ import {
   setEndOffset,
   setFixedTimeMode,
   setRealTimeMode,
-  setStartOffset
+  setStartOffset,
+  setTimeConductorBounds
 } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
@@ -322,32 +323,129 @@ test.describe('Global Time Conductor', () => {
     await page.waitForURL(urlRegex);
   });
 
-  test.fixme(
-    'time conductor history in fixed time mode will track changing start and end times',
-    async ({ page }) => {
-      // change start time, verify it's tracked in history
-      // change end time, verify it's tracked in history
-    }
-  );
+  const HISTORY_DAY = '2024-01-01';
+  const HISTORY_DAY_AFTER = '2024-01-02';
+  const HISTORY_ONE_O_CLOCK = '01:00:00';
+  const HISTORY_TWO_O_CLOCK = '02:00:00';
 
-  test.fixme(
-    'time conductor history in realtime mode will track changing start and end times',
-    async ({ page }) => {
-      // change start offset, verify it's tracked in history
-      // change end offset, verify it's tracked in history
-    }
-  );
+  test('time conductor history in fixed time mode will track changing start and end times', async ({
+    page
+  }) => {
+    const historyItems = page.locator('.c-conductor__history-menu li.icon-history');
 
-  test.fixme(
-    'time conductor history allows you to set a historical timeframe',
-    async ({ page }) => {
-      // make sure there are historical history options
-      // select an option and make sure the time conductor start and end bounds are updated correctly
-    }
-  );
+    await page.getByLabel('Time Conductor History').click();
+    await expect(historyItems).toHaveCount(0);
 
-  test.fixme('time conductor history allows you to set a realtime offsets', async ({ page }) => {
+    // change start time, verify it's tracked in history
+    await setTimeConductorBounds(page, {
+      startDate: HISTORY_DAY,
+      startTime: HISTORY_ONE_O_CLOCK
+    });
+    await page.getByLabel('Time Conductor History').click();
+    await expect(historyItems).toHaveCount(1);
+
+    // change end time, verify it's tracked in history
+    await setTimeConductorBounds(page, {
+      endDate: HISTORY_DAY_AFTER,
+      endTime: HISTORY_TWO_O_CLOCK
+    });
+    await page.getByLabel('Time Conductor History').click();
+    await expect(historyItems).toHaveCount(2);
+  });
+
+  test('time conductor history in realtime mode will track changing start and end times', async ({
+    page
+  }) => {
+    const historyItems = page.locator('.c-conductor__history-menu li.icon-history');
+
+    await setRealTimeMode(page);
+
+    await page.getByLabel('Time Conductor History').click();
+    await expect(historyItems).toHaveCount(0);
+
+    // change start offset, verify it's tracked in history
+    await setStartOffset(page, { startMins: '20', startSecs: '00' });
+    await page.getByLabel('Time Conductor History').click();
+    await expect(historyItems).toHaveCount(1);
+
+    // change end offset, verify it's tracked in history
+    await setEndOffset(page, { endSecs: '45' });
+    await page.getByLabel('Time Conductor History').click();
+    await expect(historyItems).toHaveCount(2);
+  });
+
+  test('time conductor history allows you to set a historical timeframe', async ({ page }) => {
+    // make sure there are historical history options
+    await setTimeConductorBounds(page, {
+      startDate: HISTORY_DAY,
+      startTime: HISTORY_ONE_O_CLOCK,
+      endDate: HISTORY_DAY,
+      endTime: HISTORY_TWO_O_CLOCK
+    });
+    await setTimeConductorBounds(page, {
+      startDate: HISTORY_DAY_AFTER,
+      startTime: HISTORY_ONE_O_CLOCK,
+      endDate: HISTORY_DAY_AFTER,
+      endTime: HISTORY_TWO_O_CLOCK
+    });
+
+    await page.getByLabel('Time Conductor History').click();
+    const historyItems = page.locator('.c-conductor__history-menu li.icon-history');
+    await expect(historyItems).toHaveCount(2);
+
+    // select an option and make sure the time conductor start and end bounds are updated correctly
+    await historyItems.nth(1).click();
+
+    await expect(page.getByLabel('Start bounds')).toHaveText(
+      `${HISTORY_DAY} ${HISTORY_ONE_O_CLOCK}.000Z`
+    );
+    await expect(page.getByLabel('End bounds')).toHaveText(
+      `${HISTORY_DAY} ${HISTORY_TWO_O_CLOCK}.000Z`
+    );
+  });
+
+  test('time conductor history allows you to set a realtime offsets', async ({ page }) => {
+    await setRealTimeMode(page);
+
     // make sure there are realtime history options
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+    await page.getByLabel('Start offset minutes').fill('20');
+    await page.getByLabel('Start offset seconds').fill('00');
+    await page.getByLabel('End offset seconds').fill('45');
+    await page.getByLabel('Submit time offsets').click();
+
+    await expect(page.getByLabel('Start offset: 00:20:00')).toBeVisible();
+    await expect(page.getByLabel('End offset: 00:00:45')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Time Conductor Mode', exact: true }).click();
+    await page.getByLabel('Start offset minutes').fill('05');
+    await page.getByLabel('Start offset seconds').fill('00');
+    await page.getByLabel('End offset seconds').fill('10');
+    await page.getByLabel('Submit time offsets').click();
+
+    await expect(page.getByLabel('Start offset: 00:05:00')).toBeVisible();
+    await expect(page.getByLabel('End offset: 00:00:10')).toBeVisible();
+
     // select an option and verify the offsets are updated correctly
+    await page.getByLabel('Time Conductor History').click();
+    const historyItems = page.locator('.c-conductor__history-menu li.icon-history');
+    await expect(historyItems).toHaveCount(2);
+    await historyItems.nth(1).click();
+
+    await expect(page.getByLabel('Start offset: 00:20:00')).toBeVisible();
+    await expect(page.getByLabel('End offset: 00:00:45')).toBeVisible();
+  });
+
+  test('time conductor history presets allow you to select a realtime offset', async ({ page }) => {
+    await setRealTimeMode(page);
+
+    await page.getByLabel('Time Conductor History').click();
+    const presetItems = page.locator('.c-conductor__history-menu li.icon-clock');
+    await expect(presetItems).toHaveCount(5);
+
+    await presetItems.filter({ hasText: '30 Minutes' }).click();
+
+    await expect(page.getByLabel('Start offset: 00:30:00')).toBeVisible();
+    await expect(page.getByLabel('End offset: 00:00:30')).toBeVisible();
   });
 });
