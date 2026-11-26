@@ -483,9 +483,13 @@ export default {
 
       return filters.some((search) => {
         const normalized = search.trim().toLowerCase();
-        const regex = new RegExp(normalized);
+        try {
+          const regex = new RegExp(normalized);
 
-        return regex.test(name.toLowerCase());
+          return regex.test(name.toLowerCase());
+        } catch (e) {
+          return false;
+        }
       });
     },
     filterByMetadata(activity) {
@@ -493,10 +497,14 @@ export default {
 
       return filters.some((search) => {
         const normalized = search.trim().toLowerCase();
-        const regex = new RegExp(normalized);
-        const activityValues = getFilteredValues(activity);
+        try {
+          const regex = new RegExp(normalized);
+          const activityValues = getFilteredValues(activity);
 
-        return regex.test(activityValues.join().toLowerCase());
+          return regex.test(activityValues.join().toLowerCase());
+        } catch (e) {
+          return false;
+        }
       });
     },
     // Add activity classes, increase activity counts by type,
