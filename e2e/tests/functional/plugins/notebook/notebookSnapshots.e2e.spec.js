@@ -24,6 +24,7 @@
 This test suite is dedicated to tests which verify the basic operations surrounding Notebooks.
 */
 
+import { createDomainObjectWithDefaults } from '../../../../appActions.js';
 import { expect, test } from '../../../../pluginFixtures.js';
 
 test.describe('Snapshot Menu tests', () => {
@@ -80,6 +81,43 @@ test.describe('Snapshot Container tests', () => {
     await page.getByRole('menuitem', { name: 'Quick View' }).click();
     await expect(page.getByLabel('Modal Overlay')).toBeVisible();
     await expect(page.getByLabel('Preview Container')).toBeVisible();
+  });
+  test('Dragging a snapshot thumbnail into a Notebook keeps snapshot semantics', async ({
+    page
+  }) => {
+    await createDomainObjectWithDefaults(page, {
+      type: 'Notebook'
+    });
+
+    await page.locator('.c-notebook__drag-area').click();
+    await page.getByLabel('Notebook Entry Input').last().fill('Snapshot target');
+    await page.locator('.c-ne__save-button > button').click();
+
+    const snapshotContainer = page.locator('.c-snapshots-h .c-snapshots');
+    const snapshotThumbnail = snapshotContainer.getByRole('img', {
+      name: 'My Items thumbnail'
+    });
+    const dataTransfer = await page.evaluateHandle(() => new DataTransfer());
+
+    await snapshotThumbnail.dispatchEvent('dragstart', { dataTransfer });
+    const snapshotId = await dataTransfer.evaluate((transfer) =>
+      transfer.getData('openmct/snapshot/id')
+    );
+    expect(snapshotId).not.toEqual('');
+
+    await dataTransfer.evaluate((transfer) => {
+      transfer.setData('URL', 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=');
+    });
+
+    const targetEntry = page.locator('.c-notebook__entry').last();
+    await targetEntry.dispatchEvent('drop', { dataTransfer });
+
+    await expect(snapshotThumbnail).toHaveCount(0);
+
+    const notebookEmbed = targetEntry.getByLabel('My Items Notebook Embed');
+    await expect(notebookEmbed).toBeVisible();
+    await notebookEmbed.getByLabel('More actions').click();
+    await expect(page.getByRole('menuitem', { name: 'Quick View' })).toBeVisible();
   });
   test('A snapshot can be Viewed, Annotated, display deleted, and saved from Container with 3 dot action menu', async ({
     page
