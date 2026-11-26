@@ -47,8 +47,8 @@
           criteria.</template
         >
         <template v-else
-          >The first condition to match is the one that is applied. Drag conditions to
-          reorder.</template
+          >The first condition to match is the one that is applied. Conditions, including default,
+          evaluate on receipt of telemetry. Drag conditions to reorder.</template
         >
       </div>
 
