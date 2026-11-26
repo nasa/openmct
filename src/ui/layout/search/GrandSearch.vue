@@ -59,6 +59,7 @@ export default {
   },
   mounted() {
     this.deletedSearchObjectKeys = new Set();
+    this.searchPathRefreshVersions = new Map();
     this.openmct.objects.eventEmitter.on('mutation', this.onSearchObjectMutation);
     this.openmct.objects.eventEmitter.on('refresh', this.onSearchObjectRefresh);
     this.getSearchResults = this.debounceAsyncFunction(this.getSearchResults, SEARCH_DEBOUNCE_TIME);
@@ -309,7 +310,6 @@ export default {
       }
 
       // Also remember deletions while a provider or path lookup is still pending.
-      this.searchMutationRevision = (this.searchMutationRevision || 0) + 1;
       this.deletedSearchObjectKeys.add(key);
       const results = this.objectSearchResults.filter(
         (result) => !this.hasDeletedSearchAncestor(result)
@@ -326,66 +326,96 @@ export default {
         return;
       }
 
-      const revision = (this.searchMutationRevision || 0) + 1;
-      this.searchMutationRevision = revision;
       const objects = this.openmct.objects;
+      const refreshVersions = this.searchPathRefreshVersions;
       function includesChangedObject(path) {
         return path?.some((pathObject) =>
           objects.areIdsEqual(pathObject.identifier, changedObject.identifier)
         );
       }
+      function beginPathRefresh(type, identifier) {
+        const objectKey = objects.makeKeyString(identifier);
+        const refreshKey = `${type}:${objectKey}`;
+        const version = (refreshVersions.get(refreshKey) || 0) + 1;
+        refreshVersions.set(refreshKey, version);
+
+        return { objectKey, refreshKey, version };
+      }
       try {
-        const objectResults = this.objectSearchResults;
-        const annotationResults = this.annotationSearchResults;
-        const updatedObjects = await Promise.all(
-          objectResults.map(async (result) => {
-            if (!includesChangedObject(result.objectPath)) {
-              return result;
+        const objectPathUpdates = new Map();
+        const targetPathUpdates = new Map();
+        const pathLookups = [];
+        this.objectSearchResults.forEach((result) => {
+          if (!includesChangedObject(result.objectPath)) {
+            return;
+          }
+
+          const { objectKey, refreshKey, version } = beginPathRefresh('object', result.identifier);
+          const resultObject = objects.areIdsEqual(result.identifier, changedObject.identifier)
+            ? changedObject
+            : result.identifier;
+          pathLookups.push(
+            objects.getOriginalPath(resultObject, [], signal).then((objectPath) => {
+              objectPathUpdates.set(objectKey, { refreshKey, version, objectPath });
+            })
+          );
+        });
+        this.annotationSearchResults.forEach((result) => {
+          (result.targetModels || []).forEach((target) => {
+            if (!includesChangedObject(target.originalPath)) {
+              return;
             }
 
-            const resultObject = objects.areIdsEqual(result.identifier, changedObject.identifier)
+            const { objectKey, refreshKey, version } = beginPathRefresh(
+              'target',
+              target.identifier
+            );
+            const targetObject = objects.areIdsEqual(target.identifier, changedObject.identifier)
               ? changedObject
-              : result.identifier;
-            const objectPath = await objects.getOriginalPath(resultObject, [], signal);
-
-            return { ...result, objectPath };
-          })
-        );
-        const updatedAnnotations = await Promise.all(
-          annotationResults.map(async (result) => {
-            let changed = false;
-            const targetModels = await Promise.all(
-              (result.targetModels || []).map(async (target) => {
-                if (!includesChangedObject(target.originalPath)) {
-                  return target;
-                }
-
-                changed = true;
-                const targetObject = objects.areIdsEqual(
-                  target.identifier,
-                  changedObject.identifier
-                )
-                  ? changedObject
-                  : target.identifier;
-                const originalPath = await objects.getOriginalPath(targetObject, [], signal);
-
-                return { ...target, originalPath };
+              : target.identifier;
+            pathLookups.push(
+              objects.getOriginalPath(targetObject, [], signal).then((originalPath) => {
+                targetPathUpdates.set(objectKey, { refreshKey, version, originalPath });
               })
             );
+          });
+        });
 
-            return changed ? { ...result, targetModels } : result;
-          })
-        );
-
-        if (signal.aborted || this.searchMutationRevision !== revision) {
+        await Promise.all(pathLookups);
+        if (signal.aborted) {
           return;
         }
 
-        this.objectSearchResults = updatedObjects.filter(
-          (result) =>
-            this.openmct.objects.isReachable(result.objectPath) &&
-            !this.hasDeletedSearchAncestor(result)
-        );
+        this.objectSearchResults = this.objectSearchResults
+          .map((result) => {
+            const objectKey = objects.makeKeyString(result.identifier);
+            const update = objectPathUpdates.get(objectKey);
+            if (!update || refreshVersions.get(update.refreshKey) !== update.version) {
+              return result;
+            }
+
+            return { ...result, objectPath: update.objectPath };
+          })
+          .filter(
+            (result) =>
+              objects.isReachable(result.objectPath) && !this.hasDeletedSearchAncestor(result)
+          );
+        const updatedAnnotations = this.annotationSearchResults.map((result) => {
+          let changed = false;
+          const targetModels = (result.targetModels || []).map((target) => {
+            const targetKey = objects.makeKeyString(target.identifier);
+            const update = targetPathUpdates.get(targetKey);
+            if (!update || refreshVersions.get(update.refreshKey) !== update.version) {
+              return target;
+            }
+
+            changed = true;
+
+            return { ...target, originalPath: update.originalPath };
+          });
+
+          return changed ? { ...result, targetModels } : result;
+        });
         this.annotationSearchResults = this.filterAnnotationResults(updatedAnnotations);
         this.$refs.searchResultsDropDown.updateAnnotationResults(this.annotationSearchResults);
         this.$refs.searchResultsDropDown.updateObjectResults(this.objectSearchResults);

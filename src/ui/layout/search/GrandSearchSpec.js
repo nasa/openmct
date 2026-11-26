@@ -295,6 +295,73 @@ describe('GrandSearch', () => {
     ).toBeFalse();
   });
 
+  it('should merge pending path refreshes with current results after unrelated mutations', async () => {
+    const search = grandSearchComponent.$refs.root;
+    await search.searchEverything('Folder');
+    const originalResult = search.objectSearchResults.find(
+      (result) => result.name === mockFolderObject.name
+    );
+    let resolvePath;
+    const pathReady = new Promise((resolve) => {
+      resolvePath = resolve;
+    });
+    let resolvePathStarted;
+    const pathStarted = new Promise((resolve) => {
+      resolvePathStarted = resolve;
+    });
+    const getOriginalPath = openmct.objects.getOriginalPath.bind(openmct.objects);
+    spyOn(openmct.objects, 'getOriginalPath').and.callFake((...args) => {
+      const objectIdentifier = args[0]?.identifier || args[0];
+      if (
+        objectIdentifier &&
+        openmct.objects.areIdsEqual(objectIdentifier, originalResult.identifier)
+      ) {
+        resolvePathStarted();
+
+        return pathReady;
+      }
+
+      return getOriginalPath(...args);
+    });
+
+    originalResult.location = 'fooNameSpace:topObject';
+    const pendingRefresh = search.refreshSearchResultPaths(originalResult);
+    await pathStarted;
+
+    openmct.objects.mutate(
+      {
+        identifier: { namespace: 'fooNameSpace', key: 'unrelated-object' },
+        location: 'fooNameSpace:topObject'
+      },
+      'location',
+      null
+    );
+    const addedObject = {
+      ...mockDomainObject,
+      name: 'Added Notebook Result'
+    };
+    addedObject.objectPath = [addedObject, mockTopObject];
+    search.searchValue = 'Dri';
+    await search.searchAnnotations(search.resultController.signal);
+    const addedAnnotation = search.annotationSearchResults[0];
+    search.objectSearchResults.push(addedObject);
+
+    resolvePath([mockFolderObject, mockTopObject]);
+    await pendingRefresh;
+
+    expect(
+      search.objectSearchResults
+        .find((result) => result.name === mockFolderObject.name)
+        .objectPath.map((object) => object.identifier.key)
+    ).toEqual(['someFolder', 'topObject']);
+    expect(
+      search.objectSearchResults.some((result) => result.name === addedObject.name)
+    ).toBeTrue();
+    expect(
+      search.annotationSearchResults.some((result) => result.name === addedAnnotation.name)
+    ).toBeTrue();
+  });
+
   it('should not add per-result location observers or duplicate mutation listeners', async () => {
     const search = grandSearchComponent.$refs.root;
     const emitter = openmct.objects.eventEmitter;
